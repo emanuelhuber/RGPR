@@ -40,7 +40,7 @@ setClass(
 #------------------------------------------#
 #-------------- CONSTRUCTOR ---------------#
 # GPR = classical GPR list
-GPR <- function(x,name="",description="",filename=""){
+gpr <- function(x,name="",description="",filename=""){
 	rec_coord <- cbind(x$dt1$recx,x$dt1$recy,x$dt1$recz)
 	trans_coord <- cbind(x$dt1$transx,x$dt1$transy,x$dt1$transz)
 	if(sum(is.na(rec_coord))>0){
@@ -135,7 +135,7 @@ setMethod("readGPR", "character", function(filename, description="", coordfile=N
 			if(".DT1" == toupper(substr(filename,start=nchar(filename)-3,stop=nchar(filename)))){
 				name=strsplit(basename(filename),'[.]')[[1]][1]
 				A <- readDT1(filename)
-				x <- (GPR(A,name=name,filename=filename,description=description))
+				x <- (gpr(A,name=name,filename=filename,description=description))
 				if(!is.null(coordfile)){
 					cat("coordinates added\n")
 					coords <- as.matrix(read.table(coordfile,sep=",",head=TRUE))
@@ -200,22 +200,91 @@ setMethod("readGPR", "character", function(filename, description="", coordfile=N
 #------------------------------------------#
 #---------------- COERCION ----------------#
 # Coercion
-setAs("GPR", "matrix", function(from){ from@data } )
+setAs(from = "GPR", to = "matrix", def = function(from){ from@data } )
 setMethod("as.matrix",signature(x="GPR"),function(x){as(x,"matrix")})
 
-# # as.matrix(myGPR2)
-# setAs("GPR", "matrix", function(from){ stop("NOT IMPLEMTED YET!\n" )} ) # FIX ME!
-# setAs("as.matrix",signature(x="GPR"),function(x){as(x,"matrix")})
-# setAs("as.numeric", "GPR", function(x, ...) as.numeric(x@data))
-setAs("GPR", "vector", function(from){ from@data})
+setAs(from = "GPR", to = "vector", def = function(from){ from@data})
 setMethod("as.vector", signature(x="GPR"), function(x,mode="any"){ as.vector(x@data)})
-# # as.matrix(myGPR2)
+# setAs("as.numeric", "GPR", function(x, ...) as.numeric(x@data))
+
+setAs(from = "matrix", to = "GPR",
+      def = function (from) as.GPR(from))
+as.GPR <- function (x, ...){
+	new("GPR", 	
+		data=x,
+		traces=1:ncol(x),	# x$dt1$traces
+		# com=x$dt1$com, 	# x$dt1$fid		<-> x$dt1$x8
+		# coord=coord, 	# x$dt1$topo	of the traces
+		pos=(1:ncol(x) -1)*0.25,		# x$dt1$position	of the traces
+		depth= (1:nrow(x) -1)*0.8,
+		# rec=rec_coord, 		# x$dt1$recx,x$dt1$recy,x$dt1$recz
+		# trans=trans_coord,
+		time0=rep(0,ncol(x)),	# x$dt1$time0
+		time=rep(0,ncol(x)), 		# x$dt1$time
+		proc=character(0),	# processing steps
+		vel=list(0.1),	#m/ns
+		name = "",
+		description = "",
+		filename = "",
+		ntr = ncol(x), 
+		w = nrow(x)*0.8, 
+		dz = ncol(x)*0.25, 
+		dx = 0.25, 
+		depthunit = "ns",
+		posunit = "m",
+		freq = 100, 
+		antsep = 1, 
+		surveymode = "reflection",
+		date = format(Sys.time(), "%d/%m/%Y"),
+		crs = "",
+		# delineations=list(),
+		hd=list()		# header
+	)
+}	  
+	  
+
+setAs(from = "GPR", to = "SpatialLines",
+      def = function (from) as.SpatialLines(from))
+setAs(from = "GPR", to = "SpatialPoints",
+      def = function (from) as.SpatialPoints(from))	  
+
+as.SpatialLines <- function (x, ...){
+	myLine <- sp::Line(x@coord[,1:2])
+	myLines <- sp::Lines(list(myLine), ID=x@name)
+	mySpatLines <- sp::SpatialLines(list(myLines))
+	if(crs(x) == '' || nchar(crs(x)) == 1){
+		warning("no CRS defined!\n")
+	}else{
+		sp::proj4string(mySpatLines) <- sp::CRS(crs(x))
+	}
+	return(mySpatLines)
+}
+
+as.SpatialPoints <- function (x, ...){
+	# TOPO <- x@coords
+	# Names <- x@names
+	# allTopo <- do.call(rbind,TOPO)	#  N, E, Z
+	# # allNames <- sapply(rep(Names, each=sapply(TOPO, length))
+	# A <- cbind(allTopo,allNames)
+	# allTogether <- as.data.frame(cbind(allTopo,allNames))
+	myPoints <- as.data.frame(x@coord)
+	coordinates(myPoints) = ~E + N
+	if(crs(x) == '' || nchar(crs(x)) == 1){
+		warning("no CRS defined!\n")
+	}else{
+		proj4string(myPoints) <- CRS(crs(x))
+	}
+	return(myPoints)
+}
+		
+
+setMethod("as.numeric", "GPR",  function(x, ...) as.numeric(x@data))
+setMethod("as.double", "GPR",  function(x, ...) as.double(x@data))
 
 setMethod("length", "GPR", function(x) ncol(x@data))
-# setMethod("range", "GPR", function(..., na.rm=FALSE) range(as.matrix(...),na.rm=na.rm))
 setMethod("summary", "GPR", function(object, ...) summary(as.vector(object@data)))
 setMethod("mean", "GPR", function(x, ...) mean(as.vector(x@data)))
-
+# setMethod("range", "GPR", function(..., na.rm=FALSE) range(as.matrix(...),na.rm=na.rm))
 
 
 setMethod(
@@ -722,7 +791,8 @@ setMethod("hampelFilter", "GPR", function(x, w=10,x0=0.1){
 setMethod("gain", "GPR", function(x, type=c("geospreading","exp","agc"),...){
 	type <- match.arg(type)
 	if(type=="geospreading"){
-		# args = alpha,d_t,t_0=NULL,t_end=NULL,t_cst=NULL
+		stop('deprecated! Use type="power" instead.')
+	}else if(type=="power"){
 		x@data <- gain_geospreading(x@data, d_t=x@dz, ...)
 	}else if(type=="exp"){
 		x@data <- gain_exp(x@data, d_t=x@dz, ...)
@@ -731,7 +801,6 @@ setMethod("gain", "GPR", function(x, type=c("geospreading","exp","agc"),...){
 	}
 	proc <- get_args()
 	x@proc <- c(x@proc, proc)
-	# list(y = y[(k+1):(n-k)], ind = ind)
 	return(x)
 	} 
 )
@@ -918,6 +987,20 @@ print.GPR <- function(x, ...){
 setMethod("show", "GPR", function(object){print.GPR(object)}) 	
 
 
+lines.GPR <- function(x,...){
+	if(length(x@vel)>0){	
+		vel <- x@vel[[1]]
+	}else{
+		vel <- 0
+	}
+	if(any(dim(x) == 1)){
+		z <- seq(0,by=x@dz,length.out=length(x@data))
+		lines(z,x@data,...)
+ 	}else{
+		stop("x must a vector!")
+	}
+}
+
 # options: type=c(raster,wiggles), add_topo, clip, normalize
 plot.GPR <- function(x,y,...){
 	# type=c("raster","wiggles"),add_topo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,...){
@@ -994,7 +1077,7 @@ plot.GPR <- function(x,y,...){
 		abline(h=0,lty=3,col="grey")
 		abline(v=x@time0,col="red")
 		abline(v=depth_0,col="grey",lty=3)
-		lines(z,x@data)
+		lines(z,x@data,...)
 		title(paste(x@name, ": trace n°", x@traces," @",x@pos,x@posunit,sep=""),outer=TRUE)
 		mtext(paste("depth (m),   v=",vel,"m/ns",sep="") ,side=3, line=2)
  	}else{
@@ -1858,19 +1941,13 @@ setMethod("exportFID", "GPR", function(x,filepath=NULL){
 
 setMethod("exportCoord", "GPR", function(x,filename=NULL,folder='.',type=c("points","lines")){
 	type=match.arg(type)
-	TOPO <- x@coord
-	Names <- x@name
+	folder <- dirname(filepath)
+	filename <- basename(filepath)
 	if(is.null(filename)){
 		filename <- x@name
 	}
 	if(type=="lines"){	
-		topoLines <- sp::Lines(sp::Line(TOPO[,1:2]),x@name)
-		mySpatLines <- SpatialLines(list(topoLines))
-		if(crs(x) == '' || nchar(crs(x)) == 1){
-			warning("no CRS defined!\n")
-		}else{
-			proj4string(mySpatLines) <- CRS(crs(x))
-		}
+		mySpatLines <- as.SpatialLines(x)
 		dfl <- data.frame(z=c(1), row.names = x@name)
 		mySpatLinesdf <- SpatialLinesDataFrame(mySpatLines, dfl , match.ID = TRUE)
 		writeOGR(mySpatLinesdf, folder, filename, driver="ESRI Shapefile")
@@ -1878,17 +1955,14 @@ setMethod("exportCoord", "GPR", function(x,filename=NULL,folder='.',type=c("poin
 		# allNames <- sapply(rep(Names, each=sapply(TOPO, length))
 		# A <- cbind(allTopo,allNames)
 		# allTogether <- as.data.frame(cbind(allTopo,allNames))
-		allTopo <- as.data.frame(TOPO)
-		myTr <- c("tr"=x@traces)
-		allTopo <- cbind(allTopo, myTr)
-		colnames(allTopo) <- c(colnames(TOPO),"tr")
-		coordinates(allTopo) = ~E + N
-		if(crs(x) == '' || nchar(crs(x)) == 1){
-			warning("no CRS defined!\n")
-		}else{
-			proj4string(allTopo) <- CRS(crs(x))
-		}
+		mySpatPoints <- as.SpatialPoints(x)
 		writeOGR(allTopo, folder, filename, driver="ESRI Shapefile")
 	}
 })
 
+
+setMethod("exportProc", "GPR", function(x,filepath=NULL,sep="\t", row.names=FALSE,
+	col.names=FALSE, ...){
+	write.table(x@proc, file = filepath, row.names = row.names,
+            col.names = col.names,...)
+})

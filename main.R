@@ -7,8 +7,14 @@ cat("15.03.2015\n")
 cat("Emanuel Huber, emanuel.huber@unibas.ch\n")
 cat("********************\n")
 
+#---changes v0.0.8.1---#
+#	- GPR::gain -> rename gain_geospreading in power!
+#	- lines.GPR
+#	- GPR::exportProc
+#	- GPR::exportCoord
+
 #---changes v0.0.8---#
-# gpr:reverse (check pos)
+# GPR::reverse (check pos)
 # plotWig > add_ann
 #---changes v0.0.7---#
 # local orientation added
@@ -16,25 +22,132 @@ cat("********************\n")
 # fx-filter
 # medianFilter
 
-# TODO
-#	- function "lines" to plot a GPR trace on a previous plot
-#			plot(gpr[,100])
-#			lines(gpr[,101],col="red")
-#	- as.numeric, as.vector
-#	- use function "inPoly" to plot in 3D only a selection of traces from GPRsurvey
-#	- migration/topoShift > integrate the function time2depth or depth2time!!!!
-#	- by delineation > use the same scheme for both raster and wiggles!
-#	- check option image and use raster! check grid with smooth image...
-#	- scaling after gain!
-#	- rms agc, instantaneous gain 
-#	- rename gain_geospreading in power!
-#	- dewow: method: "hampel", "gaussian"
-#	- export topot -> shapefile, lines
-#	- plot function: check if all the "..." parameters corresponds to the possible paramters. If not -> error!
-# 	- different taper window: cos, triang, hamming, bartlett, limtaper, hann, flattop....
-#	- fx spec > use power! (log scale)
-#	- check how time0 is used
+
+# THINK: GPR is EITHER RASTER OR VECTOR...
+# THINK: PRIVATE FUNCTION .myfunction()
+
+# FIX ME!
+#	- GPR::exportCoord & GPRsurvey::exportCoord -> export as points -> use point.data.frame (add z-information)
+#	- GPRsurvey::plot3D -> use function "inPoly" to plot in 3D only a selection of traces from GPRsurvey
+#	- GPR::migration/topoShift -> integrate the function time2depth or depth2time!!!!
+#	- GPR::delineation -> use the same scheme for both raster and wiggles!
+#	- GPR::interpTraces -> use a raster to get the v-elevation!
+#	- plot.GPR function
+#		-> check if all the "..." parameters corresponds to the possible paramters. If not > error!
+#		-> check option image and use the "raster" option. Check grid with smooth image...
+#	- GPR::gain -> t0=NULL then t0 <- mean(time0)
 #	- gain: t0=NULL then t0 <- mean(time0)
+#	- scaling after gain!
+# 	- different taper window: cos, triang, hamming, bartlett, limtaper, hann, flattop....
+#	- GPR::spec(type "f-t") -> use power and log scale (?)
+#	- GPR::plotAmpl -> option log y-axis
+#	- check how time0 is used
+#	- GPR::exportPDF -> add processing steps!
+#	- consistency of the function arguments:
+#		- path, filename, filepath...
+
+# FIX ME!!
+#		-> check FIX ME!!
+#		-> plot3D -> add a zlim or a max depth!!!
+#		-> add x@pts="numeric"  points number ??
+#		-> export(type=PDF) use function plot (wiggles)!
+#		-> with generic method: use exactly the same arguments
+#				use args(plot) to know the arguments
+#		-> rename "fid" into  "fiducial marks"	=> fid
+# Idea for trace to trace processing:
+# -> list of all function with their argument to use
+# -> use a FUN_WRAP function : apply(GPR$data,2,FUN_WRAP)
+# -> FUN_WRAP process each single trace according to the list of function and theirs args.
+
+
+#======== TODO =========#
+# check book "Near-surface Geophysics, vol 13"
+
+#--- STRUCTURE ---#
+# - keep @ann > for intersections
+# - add @version
+# - add @vDatum	> for vertical geodesic datum
+
+
+#--- declipping ---#
+# - least-square polynomial interpolation
+# - AR/ARMA model
+# - PCA/SVD decomposition
+# - DCT (cf. R package)
+# - deconvolution/convolution
+
+#--- gain functions ---#
+# - rms AGC
+# - instantaneous AGC
+# - automatic gain > check MATGPR
+# - tpow gain (frequency-dependent gain, Fowler and Clearbout
+
+#--- editing functions ---#
+# - merge (or cbind)
+# - rbind()
+# - align GPR profile with FFT
+
+#--- resolution ---#
+# - bicubique interpolation
+# - L1-DFT-based interpolation (L1 norm, sparsity)
+# - anti-alisasing filter
+
+#--- migration ---#
+# - Kirchhoff
+# - SAR (cf book with matlab)
+# - f-k migration
+# - phase-shift migration
+
+#--- PEF-filter ---#
+# - f-xy filter
+# - t-x
+# - f-x
+# - ...
+
+#--- deconvolution ---#
+# - despiking
+# - wiener
+# - BP
+# - mixed-phase
+
+#--- denoising ---#
+# - denoising tensor field based on Riemannian geometry (Mathematical Methods for Signal and Image Analysis and Representation)
+# - adaptative smoothing
+# - hampel filter
+# - bp_salsa_d
+# - n-pt median filter (scalar median filter SMF)
+# - correction for trace-to-trace jitter
+# - Radon transform
+
+#--- local orientation ---#
+# - local orientation
+# - angular unconformity
+
+#--- plot functions ---#
+# - plot3Draster > to plot raster data in 3D with the GPR profiles
+# - plot3D > check alternative to RGL for high-quality figures
+
+#--- attributes ---#
+# - instantaneous (phase, amplitude, cf. Hilbert)
+# - coherency
+# - energy
+
+
+#--- CMP ---#
+# - 
+
+#--- miscs ---#
+# - function to read NMEA-GPS string
+# - GPRsurvey::bbox
+# - GPRsurvey::convexhull
+# - GPRsurvey -> intersections (also as spatialPoints)
+# - pre-defined color bar with funny names...
+# - GPRsurvey -> add spatial data (e.g. borehole) > closest distance...
+# - time function ->  gpr <- readGPR(file.choose());	as.POSIXct(gpr@time, origin = "1970-01-01")
+# - proc(gpr) -> return x@proc
+# - vel(gpr) -> return x@vel
+
+
 
 # TAPER WINDOWS
 # tapertype = MinPhase.tapertype;
@@ -68,24 +181,6 @@ cat("********************\n")
         # taper = flattopwin(2*tabpZL+1);
         # ACFoutput = ACFoutput.*taper;
 # end
-
-# FIX ME!!
-#		-> check FIX ME!!
-# 		-> write(gpr...) -> update gpr@filename
-#		-> read(gpr,... -> update gpr@filename
-#		-> exportPDF: add processing steps!
-#		-> plot3D -> add a zlim or a max depth!!!
-#		-> add x@pts="numeric"  points number ??
-#		-> export(type=PDF) use function plot (wiggles)!
-#		-> with generic method: use exactly the same arguments
-#				use args(plot) to know the arguments
-#		-> rename "fid" into  "fiducial marks"	=> fid
-#		-> as.numeric, as.vector
-# Idea for trace to trace processing:
-# -> list of all function with their argument to use
-# -> use a FUN_WRAP function : apply(GPR$data,2,FUN_WRAP)
-# -> FUN_WRAP process each single trace according to the list of function and theirs args.
-
 # -------------------------------------------#
 # --------- load_install_package ------------#
 # -------------------------------------------#

@@ -89,6 +89,71 @@ GPRsurvey <- function(LINES){
 }
 
 
+setAs(from = "GPRsurvey", to = "SpatialLines",
+      def = function (from) as.SpatialLines(from))
+setAs(from = "GPRsurvey", to = "SpatialPoints",
+      def = function (from) as.SpatialPoints(from))	  
+
+as.SpatialLines <- function (x, ...){
+	TOPO <- x@coords
+	Names <- x@names
+	lineList <- lapply(TOPO,coord2Line)
+	linesList <- lapply(seq_along(lineList), Line2Lines, lineList ,Names)
+	mySpatLines <- sp::SpatialLines(linesList)
+	if(crs(x) == '' || nchar(crs(x)) == 1){
+		warning("no CRS defined!\n")
+	}else{
+		proj4string(mySpatLines) <- CRS(crs(x))
+	}
+	return(mySpatLines)
+}
+
+as.SpatialPoints <- function (x, ...){
+	allTopo <- do.call(rbind,x@coords)	#  N, E, Z
+	allTopo2 <- as.data.frame(allTopo)
+	sp::coordinates(allTopo2) = ~E + N
+	if(crs(x) == '' || nchar(crs(x)) == 1){
+		warning("no CRS defined!\n")
+	}else{
+		sp::proj4string(allTopo2) <- sp::CRS(crs(x))
+	}
+	return(allTopo2)
+}
+		
+	
+	  # type=match.arg(type)
+	# TOPO <- x@coords
+	# Names <- x@names
+	# if(type=="lines"){	
+		# lineList <- lapply(TOPO,coord2Line)
+		# linesList <- lapply(seq_along(lineList), Line2Lines, lineList ,Names)
+		# mySpatLines <- SpatialLines(linesList)
+		# if(crs(x) == '' || nchar(crs(x)) == 1){
+			# warning("no CRS defined!\n")
+		# }else{
+			# proj4string(mySpatLines) <- CRS(crs(x))
+		# }
+		
+		# d.f <- data.frame(z=seq_along(mySpatLines), row.names = sapply(slot(mySpatLines, "lines"), 
+			# function(x) slot(x, "ID")))
+
+		# mySpatLinesdf <- SpatialLinesDataFrame(mySpatLines, d.f , match.ID = TRUE)
+
+		# writeOGR(mySpatLinesdf, folder, filename, driver="ESRI Shapefile")
+	# }else if(type=="points"){	
+		# allTopo <- do.call(rbind,TOPO)	#  N, E, Z
+		# # allNames <- sapply(rep(Names, each=sapply(TOPO, length))
+		# # A <- cbind(allTopo,allNames)
+		# # allTogether <- as.data.frame(cbind(allTopo,allNames))
+		# allTopo2 <- as.data.frame(allTopo)
+		# coordinates(allTopo2) = ~E + N
+		# if(crs(x) == '' || nchar(crs(x)) == 1){
+			# warning("no CRS defined!\n")
+		# }else{
+			# proj4string(allTopo2) <- CRS(crs(x))
+		# }
+		# writeOGR(allTopo2, folder, filename, driver="ESRI Shapefile")
+
 setMethod("setCoordref", "GPRsurvey", function(x){
 		if(length(x@coords)>0){
 			A <- do.call("rbind",x@coords)
@@ -498,39 +563,20 @@ setMethod("exportFID", "GPRsurvey", function(x,filepath=NULL){
 	}
 )
 
-setMethod("exportCoord", "GPRsurvey", function(x,filename=NULL,folder='.',type=c("points","lines")){
+setMethod("exportCoord", "GPRsurvey", function(x,filepath=NULL,type=c("points","lines"),driver="ESRI Shapefile",...){
 	type=match.arg(type)
-	TOPO <- x@coords
-	Names <- x@names
+	folder <- dirname(filepath)
+	filename <- basename(filepath)
 	if(type=="lines"){	
-		lineList <- lapply(TOPO,coord2Line)
-		linesList <- lapply(seq_along(lineList), Line2Lines, lineList ,Names)
-		mySpatLines <- SpatialLines(linesList)
-		if(crs(x) == '' || nchar(crs(x)) == 1){
-			warning("no CRS defined!\n")
-		}else{
-			proj4string(mySpatLines) <- CRS(crs(x))
-		}
-		
-		d.f <- data.frame(z=seq_along(mySpatLines), row.names = sapply(slot(mySpatLines, "lines"), 
-			function(x) slot(x, "ID")))
-
-		mySpatLinesdf <- SpatialLinesDataFrame(mySpatLines, d.f , match.ID = TRUE)
-
-		writeOGR(mySpatLinesdf, folder, filename, driver="ESRI Shapefile")
+		mySpatLines <- as.SpatialLines(x)
+		dfl <- data.frame(z=seq_along(mySpatLines), 
+				row.names = sapply(slot(mySpatLines, "lines"), 
+							function(x) slot(x, "ID")))
+		mySpatLinesdf <- SpatialLinesDataFrame(mySpatLines, dfl , match.ID = TRUE)
+		writeOGR(mySpatLinesdf, folder, filename, driver=driver,...)
 	}else if(type=="points"){	
-		allTopo <- do.call(rbind,TOPO)	#  N, E, Z
-		# allNames <- sapply(rep(Names, each=sapply(TOPO, length))
-		# A <- cbind(allTopo,allNames)
-		# allTogether <- as.data.frame(cbind(allTopo,allNames))
-		allTopo2 <- as.data.frame(allTopo)
-		coordinates(allTopo2) = ~E + N
-		if(crs(x) == '' || nchar(crs(x)) == 1){
-			warning("no CRS defined!\n")
-		}else{
-			proj4string(allTopo2) <- CRS(crs(x))
-		}
-		writeOGR(allTopo2, folder, filename, driver="ESRI Shapefile")
+		mySpatPoints <- as.SpatialPoints(x)
+		writeOGR(mySpatPoints, folder, filename, driver=driver,...)
 	}
 })
 

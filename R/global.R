@@ -192,9 +192,10 @@ setGenericVerif("writeGPR", function(x,path, format=c("DT1","rds")) standardGene
 
 
 
-setGenericVerif("exportCoord",  function(x,filename=NULL,folder='.',type=c("points","lines")) standardGeneric("exportCoord"))
+setGenericVerif("exportCoord",  function(x,filepath=NULL,type=c("points","lines"),driver="ESRI Shapefile",...) standardGeneric("exportCoord"))
 
-
+setGenericVerif("exportProc",  function(x,filepath=NULL,sep="\t", row.names=FALSE,
+	col.names=FALSE, ...) standardGeneric("exportProc"))
 
 setGeneric("reverse", function(x) standardGeneric("reverse"))
 
@@ -2274,5 +2275,5 @@ coord2Line <- function(x){
 	sp::Line(x[,1:2])
 }
 Line2Lines <- function(i,pp, myNames){
-	Lines(pp[i],myNames[i])
+	sp::Lines(pp[i],myNames[i])
 }

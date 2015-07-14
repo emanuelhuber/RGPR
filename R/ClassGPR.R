@@ -44,13 +44,13 @@ GPR <- function(x,name="",description="",filename=""){
 	rec_coord <- cbind(x$dt1$recx,x$dt1$recy,x$dt1$recz)
 	trans_coord <- cbind(x$dt1$transx,x$dt1$transy,x$dt1$transz)
 	if(sum(is.na(rec_coord))>0){
-		warning(paste(sum(is.na(rec_coord)), "NA's in the receiver coordinates\n"))
+		warning(paste(name,": ",sum(is.na(rec_coord)), "NA's in the receiver coordinates\n"))
 	}
 	if(sum(is.na(trans_coord))>0){
-		warning(paste(sum(is.na(trans_coord)), "NA's in the transmitter coordinates\n"))
+		warning(paste(name,": ",sum(is.na(trans_coord)), "NA's in the transmitter coordinates\n"))
 	}
 	if(sum(is.na(x$dt1$topo))>0){
-		warning(paste(sum(is.na(x$dt1$topo)), "NA's in the topo coordinates\n"))
+		warning(paste(name,": ",sum(is.na(x$dt1$topo)), "NA's in the topo coordinates\n"))
 	}
 	if(sum(abs(rec_coord),na.rm=TRUE) == 0 ){
 		rec_coord <- matrix(nrow=0, ncol=0) 
@@ -150,13 +150,50 @@ setMethod("readGPR", "character", function(filename, description="", coordfile=N
 				return(x)
 			}else if(".rds" == tolower(substr(filename,start=nchar(filename)-3,stop=nchar(filename)))){
 				x <- readRDS(filename)
-				x@filename <- filename
-				return(x)
+				if(class(x)=="GPR"){
+					x@filename <- filename
+					return(x)
+				}else if(class(x)=="list"){
+					versRGPR <- x[["version"]]
+					y <- new("GPR",
+						data=x[['data']],
+						traces=x[['traces']],	# x$dt1$traces
+						depth= x[['depth']],
+						pos=x[['pos']],		# x$dt1$position	of the traces
+						time0=x[['time0']],	# x$dt1$time0
+						time=x[['time']], 		# x$dt1$time
+						com=x[['com']], 	# x$dt1$fid		<-> x$dt1$x8
+						ann=x[['ann']], 	# x$dt1$fid		<-> x$dt1$x8
+						coord=x[['coord']], 	# x$dt1$topo	of the traces
+						rec=x[['rec']], 		# x$dt1$recx,x$dt1$recy,x$dt1$recz
+						trans=x[['trans']],
+						coordref=x[['coordref']], 	# x$dt1$topo	of the traces
+						ntr = x[['ntr']], 
+						w = x[['w']], 
+						freq = x[['freq']], 
+						dz = x[['dz']], 
+						dx = x[['dx']], 
+						antsep = x[['antsep']], 
+						name = x[['name']],
+						description = x[['description']],
+						filename =x[['filename']],
+						depthunit = x[['depthunit']],
+						posunit = x[['posunit']],
+						surveymode = x[['surveymode']],
+						date = x[['date']],
+						crs = x[['crs']],
+						proc=x[['proc']],	# processing steps
+						vel=x[['vel']],	#m/ns
+						delineations=x[['delineations']],
+						hd= x[['hd']]		# header
+					)
+					y@filename <- filename
+					return(y)
+				}
 			}
 		}else{
 			stop(filename, "does not exist!")
 		}
-		
 	} 
 )
 
@@ -1763,7 +1800,13 @@ setMethod("writeGPR", "GPR", function(x,path, format=c("DT1","rds")){
 				stop("Extension should be '.rds'")
 			}
 			x@filename <- as.character(path)
-			saveRDS(x, path)
+			namesSlot <- slotNames(x)
+			xList <- list()
+			xList[["version"]] <- "0.1"
+			for(i in seq_along(namesSlot)){
+				xList[[namesSlot[i]]] <- slot(x, namesSlot[i])
+			}
+			saveRDS(xList, path)
 		}
 		# 	mod2 <- readRDS("mymodel.rds")
 	} 
@@ -1817,6 +1860,9 @@ setMethod("exportCoord", "GPR", function(x,filename=NULL,folder='.',type=c("poin
 	type=match.arg(type)
 	TOPO <- x@coord
 	Names <- x@name
+	if(is.null(filename)){
+		filename <- x@name
+	}
 	if(type=="lines"){	
 		topoLines <- sp::Lines(sp::Line(TOPO[,1:2]),x@name)
 		mySpatLines <- SpatialLines(list(topoLines))
@@ -1825,11 +1871,8 @@ setMethod("exportCoord", "GPR", function(x,filename=NULL,folder='.',type=c("poin
 		}else{
 			proj4string(mySpatLines) <- CRS(crs(x))
 		}
-		
-		d.f <- data.frame(z=c(1), row.names = x@name)
-
-		mySpatLinesdf <- SpatialLinesDataFrame(mySpatLines, d.f , match.ID = TRUE)
-
+		dfl <- data.frame(z=c(1), row.names = x@name)
+		mySpatLinesdf <- SpatialLinesDataFrame(mySpatLines, dfl , match.ID = TRUE)
 		writeOGR(mySpatLinesdf, folder, filename, driver="ESRI Shapefile")
 	}else if(type=="points"){	
 		# allNames <- sapply(rep(Names, each=sapply(TOPO, length))

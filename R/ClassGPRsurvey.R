@@ -240,6 +240,7 @@ plot.GPRsurvey <- function(x,y,...){
 		addFid <- TRUE
 		dots <- list()
 		lwd=1
+		col <- 1
 		# print(list(...))
 		if( length(list(...)) ){
 			dots <- list(...)
@@ -252,6 +253,9 @@ plot.GPRsurvey <- function(x,y,...){
 			dots$addArrows <- NULL
 			if(!is.null(dots$lwd)){
 				lwd <- dots$lwd
+			}
+			if(!is.null(dots$col)){
+				col <- dots$col
 			}
 			if(!is.null(dots$addIntersections)){
 				addIntersections <- dots$addIntersections
@@ -270,6 +274,7 @@ plot.GPRsurvey <- function(x,y,...){
 		}
 		dots <- c(dots, list("type"="n"))
 		# print(dots)
+		# print(dots)
 		if(!plotAdd){
 			do.call("plot", c(list((do.call(rbind,x@coords))[,1:2]),dots))
 		}
@@ -284,7 +289,7 @@ plot.GPRsurvey <- function(x,y,...){
 				}
 			}
 		}
-		niet <- lapply(x@coords, plotLine, lwd=lwd)
+		niet <- lapply(x@coords, plotLine, lwd=lwd, col=col )
 		if(addArrows){
 			niet <- lapply(x@coords, plotArrows, lwd=lwd)
 		}
@@ -485,7 +490,7 @@ setMethod("plotDelineations3D", "GPRsurvey", function(x,sel=NULL,col=NULL,add=TR
 setMethod("exportFID", "GPRsurvey", function(x,filepath=NULL){
 		for(i in seq_along(x)){
 			gpr <- readGPR(x@filepaths[[i]])
-			file_name <- paste(filepath,"_",gpr@name,".txt",sep="")
+			file_name <- paste(filepath,gpr@name,".txt",sep="")
 			exportFID(gpr,file_name)
 			cat("File \"",file_name,"\" created!\n",sep="")
 			# x@coords[[gpr@name]] <- gpr@coord

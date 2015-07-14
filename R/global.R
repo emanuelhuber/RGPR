@@ -7,6 +7,7 @@
 readFID <- function(FID,sep=","){
 	myFid <- list() 
 	for(i in seq_along(FID)){
+		cat("read ", FID[[i]],"...\n",sep="")
 		A <- read.table(FID[[i]],sep=",",stringsAsFactors=FALSE,header=TRUE)
 		colnames(A) <- toupper(colnames(A))
 		if(!all(c("E","N","Z","TRACE") %in% colnames(A))){
@@ -158,7 +159,8 @@ fidpos <- function(xyz,fid){
 	return(xyz[trim(fid)!="",,drop=FALSE])
 }
 
-plotLine <- function(xyz,col=1,...){
+plotLine <- function(xyz,...){
+	# print(list(...))
 	lines(xyz[,1:2],...)
 	# arrows(x0=xyz[nrow(xyz)-1,1],y0=xyz[nrow(xyz)-1,2],x1=xyz[nrow(xyz),1],y1=xyz[nrow(xyz),1])
 }

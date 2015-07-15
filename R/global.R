@@ -188,7 +188,7 @@ setGenericVerif("interpTraces", function(x, topo) standardGeneric("interpTraces"
 setGenericVerif("coords<-",function(x,values){standardGeneric("coords<-")})
 
 
-setGenericVerif("writeGPR", function(x,path, format=c("DT1","rds")) standardGeneric("writeGPR"))
+setGenericVerif("writeGPR", function(x,path, format=c("DT1","rds"),overwrite=FALSE) standardGeneric("writeGPR"))
 
 
 
@@ -558,7 +558,7 @@ plotWig <- function(A, x=NULL, y=NULL, xlim = NULL, ylim=NULL, topo=NULL, main =
 		axis(side=4,at=pretty(y),labels=-pretty(y),tck=-0.02)
 	}
 	box()
-	if(!is.null(note)){
+	if(!is.null(note) && length(note) > 0){
 		 mtext(note, side = 1, line = 4, cex=0.6)
 	}
 	
@@ -650,7 +650,7 @@ plotRaster <- function(A,x=NULL,y=NULL,plot_raster=TRUE,barscale=TRUE, add= FALS
 	}	
 	
 	
-	if(!is.null(note)){
+	if(!is.null(note) && length(note) > 0){
 		mtext(note, side = 1, line = 4, cex=0.6)
 	}
 	box()
@@ -2200,6 +2200,173 @@ getHD <- function(A,string,number=TRUE,position=FALSE){
 
 }
 
+# -------------------------------------------
+# ------------writeDT1--------------------------
+# -------------------------------------------
+# @name	writeDT1 
+# @description This function writes *.HD and associated *.DT1
+# files  (Sensors & Software)
+
+# @date 07.11.2012 08:33
+# @auteur Emanuel Huber
+# @param [text]		fileNameHD 			(file path of *.hd file)
+# @param [text]		fileNameDT1 			(file path of *.dt1 file)
+
+
+# @return list((hd = headerHD, dt1hd = headerDT1, data=myData))
+# -------------------------------------------
+
+.writeDT1 <- function(x, filepath, overwrite=FALSE){
+	#-------------------------
+	# DT1 FILE: traces
+	traces <- x@data	# should ranges between -32768 and 32767
+	if(max(traces)/max(abs(traces))*32768 <= 32767){
+		traces <- traces/max(abs(traces))*32768
+	}else{
+		traces <- traces/max(abs(traces))*32767
+	}
+	storage.mode(traces) <- "integer"
+	
+	# DT1 FILE: header
+	indexDT1Header=c("traces", "position", "samples","topo", "NA1", "bytes","tracenb", 
+					"stack","window","NA2", "NA3", "NA4", "NA5", "NA6", "recx","recy",
+					"recz","transx","transy","transz","time0","zeroflag", "NA7", "time",
+					"x8", "com","com1","com2","com3","com4","com5","com6")
+	traces_hd <- list()
+	traces_hd$traces <- x@traces
+	traces_hd$position <- x@pos
+	traces_hd$samples <- nrow(x@data)
+	if(length(x@coord) > 0 && sum(is.na(x@coord)) > 0){
+		traces_hd$topo <- x@coord[,3]
+	}else{
+		traces_hd$topo <- rep.int(0L,ncol(x@data))
+	}
+	traces_hd$NA1 <- rep.int(0L,ncol(x@data))
+	traces_hd$bytes <- rep.int(2L,ncol(x@data))
+	traces_hd$tracenb <- rep(x@dz*(nrow(x@data)-1),ncol(x@data))	# time window
+	traces_hd$stack <- x@hd$nstacks
+	traces_hd$window <- traces_hd$tracenb
+	traces_hd$NA2 <- traces_hd$NA1 
+	traces_hd$NA3 <- traces_hd$NA1 
+	traces_hd$NA4 <- traces_hd$NA1 
+	traces_hd$NA5 <- traces_hd$NA1 
+	traces_hd$NA6 <- traces_hd$NA1 
+	if(length(x@rec) > 0 && sum(is.na(x@rec)) > 0){
+		traces_hd$recx <- x@rec[,1]
+		traces_hd$recy <- x@rec[,2]
+		traces_hd$recz <- x@rec[,3]
+	}else{
+		traces_hd$recx <- rep.int(0L,ncol(x@data))
+		traces_hd$recy <- rep.int(0L,ncol(x@data))
+		traces_hd$recz <- rep.int(0L,ncol(x@data))
+	}
+	if(length(x@trans) > 0 && sum(is.na(x@trans)) > 0){
+		traces_hd$transx <- x@trans[,2]
+		traces_hd$transy <- x@trans[,3]
+		traces_hd$transz <- x@trans[,3]
+	}else{
+		traces_hd$transx <- rep.int(0L,ncol(x@data))
+		traces_hd$transy <- rep.int(0L,ncol(x@data))
+		traces_hd$transz <- rep.int(0L,ncol(x@data))
+	}
+	traces_hd$time0 <- x@time0 
+	traces_hd$zeroflag <- rep.int(0L,ncol(x@data)) 
+	traces_hd$NA7 <- traces_hd$NA1 
+	traces_hd$time <- x@time
+	traces_hd$x8 <- rep.int(0L,ncol(x@data)) 
+	traces_hd$com <- x@com 
+	
+	# DT1 FILE: write
+	dirName 	<- dirname(filepath)
+	splitBaseName <- unlist(strsplit(basename(filepath),'[.]'))
+	baseName 	<- paste(splitBaseName[1:(length(splitBaseName)-1)],sep="")
+	if(dirName == '.'){
+		filepath <- baseName
+	}else{
+		filepath <- paste(dirName,'/',baseName)
+	}
+	if(overwrite==FALSE){
+		filepath_orgi <- filepath
+		k <- 0
+		while(file.exists(paste(filepath,".DT1",sep="")) || file.exists(paste(filepath,".HD",sep=""))){
+			filepath <- paste(filepath_orgi,"_",k,sep="")
+			k <- k+1
+		}
+	}else{
+		cat("file may be overwritten\n")
+	}
+	dt1_file <- file(paste(filepath,".DT1",sep="") , "wb")
+	for(i in 1:ncol(x@data)){
+		for(j in 1:25){
+			writeBin(as.double(traces_hd[[indexDT1Header[j]]][i]), dt1_file, size = 4)
+		}
+		comment28 <- as.character(traces_hd[[indexDT1Header[26]]][i])
+		com_add <- paste(c(rep(" ", 28-nchar(comment28)),comment28),sep="",collapse="")
+		writeChar(com_add, dt1_file,nchars =28,eos = NULL)
+		writeBin(traces[,i], dt1_file, size = 2)
+	}
+	close(dt1_file)
+	
+	#-------------------------
+	# HD FILE: traces
+	hd_file <- file(paste(filepath,".HD",sep="") , "w+")
+	writeLines("1234", con = hd_file, sep = "\r\n")
+	if(!is.null(x@hd$gprdevice)){
+		writeLines(as.character(x@hd$gprdevice), con = hd_file, sep = "\r\n")
+	}else{
+		writeLines("Data processed with RGPR", con = hd_file, sep = "\r\n")
+	}
+	writeLines(as.character(x@date), con = hd_file, sep = "\r\n")
+	writeLines(paste("NUMBER OF TRACES","= ",as.character(ncol(x@data)),sep=""), con = hd_file, sep = "\r\n")
+	writeLines(paste("NUMBER OF PTS/TRC","= ",as.character(nrow(x@data)),sep=""), con = hd_file, sep = "\r\n")
+	writeLines(paste("TIMEZERO AT POINT","=",
+				as.character(round(mean(x@time0)/x@dz)),sep=""), con = hd_file, sep = "\r\n")
+	writeLines(paste("TOTAL TIME WINDOW","=",as.character(x@dz*(nrow(x@data)-1)),sep=""), con = hd_file, sep = "\r\n")
+	startpos <- 0
+	if(!is.null(x@hd$startpos)){
+		startpos <- x@hd$startpos
+	}
+	writeLines(paste("STARTING POSITION","=",as.character(startpos),sep=""), con = hd_file, sep = "\r\n")
+	endpos <- (ncol(x@data)-1)*x@dx
+	if(!is.null(x@hd$endpos)){
+		endpos <- x@hd$endpos
+	}
+	writeLines(paste("FINAL POSITION","=",as.character(endpos),sep=""), con = hd_file, sep = "\r\n")
+	writeLines(paste("STEP SIZE USED","=",as.character(x@dx),sep=""), con = hd_file, sep = "\r\n")
+	writeLines(paste("POSITION UNITS","=","metres",sep=""), con = hd_file, sep = "\r\n")
+	if(x@posunit != "m"){
+		warning('Position units were defined as "meters"!\n')
+	}
+	writeLines(paste("NOMINAL FREQUENCY","=",as.character(x@freq),sep=""), con = hd_file, sep = "\r\n")
+	writeLines(paste("ANTENNA SEPARATION","=",as.character(x@antsep),sep=""), con = hd_file, sep = "\r\n")
+	pulservoltage <- 0
+	if(!is.null(x@hd$pulservoltage)){
+		pulservoltage <- x@hd$pulservoltage
+	}
+	writeLines(paste("PULSER VOLTAGE (V)","=",as.character(pulservoltage),sep=""), con = hd_file, sep = "\r\n")
+	nstacks <- 1
+	if(!is.null(x@hd$nstacks)){
+		nstacks <- x@hd$nstacks
+	}
+	writeLines(paste("NUMBER OF STACKS","=",as.character(nstacks),sep=""), con = hd_file, sep = "\r\n")
+	writeLines(paste("SURVEY MODE","=",as.character(x@surveymode),sep=""), con = hd_file, sep = "\r\n")
+	
+	if(length(x@hd) > 0){
+		hd <- x@hd
+		hdNames <- names(hd)
+		hdNames <- hdNames[!(hdNames %in% c("startpos","endpos","nstacks","gprdevice"))]
+		for(i in seq_along(hdNames)){
+			writeLines(paste(as.character(hdNames[i]),"=",as.character(hd[[hdNames[i]]]),sep=""), con = hd_file, sep = "\r\n")
+		}
+	}
+	close(hd_file)
+	return(filepath)
+}
+#-----------------
+
+
+
+
 #--------------------------------------
 
 # http://stackoverflow.com/questions/17256834/getting-the-arguments-of-a-parent-function-in-r-with-names
@@ -2207,10 +2374,6 @@ getHD <- function(A,string,number=TRUE,position=FALSE){
 # Ryan Grannell
 # website 	twitter.com/RyanGrannell
 # location 	Galway, Ireland
-
-
-
-
 get_args <- function (return_character=TRUE) {
 	arg <- as.list(match.call(def = sys.function( -1 ),
 				   call = sys.call(-1),

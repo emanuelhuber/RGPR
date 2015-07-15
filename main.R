@@ -25,6 +25,10 @@ cat("********************\n")
 
 # THINK: GPR is EITHER RASTER OR VECTOR...
 # THINK: PRIVATE FUNCTION .myfunction()
+# THINK: use Roxygen...
+
+# writeDT1
+# read/write SEGy
 
 # FIX ME!
 #	- GPR::exportCoord & GPRsurvey::exportCoord -> export as points -> use point.data.frame (add z-information)
@@ -67,7 +71,13 @@ cat("********************\n")
 # - keep @ann > for intersections
 # - add @version
 # - add @vDatum	> for vertical geodesic datum
-
+# - delete @depthunit, @posunit & replace by @units@depth and @units@pos
+# - delete @w  > not needed! x@w <- (nrow(x@data)-1)*x@dz
+# - delete @dx > not needed! x@dx <- mean(diff(x@pos))
+# - delete @dz > not needed! x@dz <- mean(diff(x@depth))
+# - delete @ntr > not needed! x@ntr <- ncol(x@data)
+# - empty slot should have length = 0 (use character(0) instead of "")
+# - replace @filename by @filepath
 
 #--- declipping ---#
 # - least-square polynomial interpolation

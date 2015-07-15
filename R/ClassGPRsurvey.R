@@ -271,10 +271,10 @@ print.GPRsurvey <- function(x, ...){
 	print(overview)
 	if(length(x@coords)>0 ){
 		cat("- - - - - - - - - - - - - - -\n")
-		if(x@crs!=""){
+		if(length(x@crs) > 0 ){
 			cat("Coordinate system:", x@crs,"\n")
 		}else{
-			cat("Coordinate system: unknown\n")
+			cat("Coordinate system: undefined\n")
 		}
 		cat
 	}

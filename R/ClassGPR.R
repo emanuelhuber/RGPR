@@ -9,8 +9,8 @@ setClass(
 		pos="numeric",		# position	of the traces
 		time0="numeric",	# time-zero (first air-wave arrival)
 		time="numeric", 	# time of the trace recording
-		com="character", 	# GPR$dt1$fid		<-> GPR$dt1$x8
-		ann="character",	# annotation
+		com="character", 	# fiducial marks
+		ann="character",	# annotation (e.g. intersections)
 		coord="matrix", 	# coordinates (x,y,z) of each traces
 		rec="matrix", 		# coordinates (x,y,z) of the receiver antenna
 		trans="matrix", 	# coordinates (x,y,z) of the transmitter antenna
@@ -39,8 +39,8 @@ setClass(
 
 #------------------------------------------#
 #-------------- CONSTRUCTOR ---------------#
-# GPR = classical GPR list
-gpr <- function(x,name="",description="",filename=""){
+# x = classical GPR list
+gpr <- function(x,name=character(0),description=character(0),filename=character(0)){
 	rec_coord <- cbind(x$dt1$recx,x$dt1$recy,x$dt1$recz)
 	trans_coord <- cbind(x$dt1$transx,x$dt1$transy,x$dt1$transz)
 	if(sum(is.na(rec_coord))>0){
@@ -83,7 +83,7 @@ gpr <- function(x,name="",description="",filename=""){
 	hd_list <- list("startpos" = getHD(x$hd, "STARTING POSITION"),
 					"endpos" = getHD(x$hd, "FINAL POSITION"),
 					"nstacks" = getHD(x$hd, "NUMBER OF STACKS"),
-					"nstacks" = getHD(x$hd, "NUMBER OF STACKS"),
+					"pulservoltage" = getHD(x$hd, "PULSER VOLTAGE (V)"),
 					"gprdevice" = GPR_device
 					)
 	if(nrow(x$hd)>17){
@@ -122,7 +122,7 @@ gpr <- function(x,name="",description="",filename=""){
 				antsep =getHD(x$hd, "ANTENNA SEPARATION"), 
 				surveymode =getHD(x$hd, "SURVEY MODE",number=FALSE),
 				date = d,
-				crs = "",
+				crs = character(0),
 				# delineations=list(),
 				hd=hd_list		# header
 	)
@@ -207,9 +207,9 @@ setAs(from = "GPR", to = "vector", def = function(from){ from@data})
 setMethod("as.vector", signature(x="GPR"), function(x,mode="any"){ as.vector(x@data)})
 # setAs("as.numeric", "GPR", function(x, ...) as.numeric(x@data))
 
-setAs(from = "matrix", to = "GPR",
-      def = function (from) as.GPR(from))
-as.GPR <- function (x, ...){
+#------ as(A,"GPR")
+setAs(from = "matrix", to = "GPR", def = function (from) .as.GPR.matrix(from))
+.as.GPR.matrix <- function (x, ...){
 	new("GPR", 	
 		data=x,
 		traces=1:ncol(x),	# x$dt1$traces
@@ -223,12 +223,12 @@ as.GPR <- function (x, ...){
 		time=rep(0,ncol(x)), 		# x$dt1$time
 		proc=character(0),	# processing steps
 		vel=list(0.1),	#m/ns
-		name = "",
-		description = "",
-		filename = "",
+		name = character(0),
+		description = character(0),
+		filename = character(0),
 		ntr = ncol(x), 
 		w = nrow(x)*0.8, 
-		dz = ncol(x)*0.25, 
+		dz = 0.8, 
 		dx = 0.25, 
 		depthunit = "ns",
 		posunit = "m",
@@ -236,10 +236,74 @@ as.GPR <- function (x, ...){
 		antsep = 1, 
 		surveymode = "reflection",
 		date = format(Sys.time(), "%d/%m/%Y"),
-		crs = "",
+		crs = character(0),
 		# delineations=list(),
 		hd=list()		# header
 	)
+}	
+
+setAs(from = "list", to = "GPR", def = function (from) .as.GPR.list(from))
+.as.GPR.list <- function (x, ...){
+	# prefix: "d_" for default
+	if(any("data" == tolower(names(x))) && is.matrix(x$data)){
+		if(is.null(x$pos) && !is.null(x$dx) && is.numeric(x$dx)){
+			x$pos <- (1:ncol(x$data) -1) * x$dx
+		}else{
+			x$pos <- (1:ncol(x$data) -1)*0.25
+		}
+		if(is.null(x$depth) && !is.null(x$dz) && is.numeric(x$dz)){
+			x$depth <- (1:nrow(x$data) -1) * x$dz
+		}else{
+			x$depth <- (1:nrow(x$data) -1)*0.8
+		}
+		if(is.null(x$dx)){
+			x$dx <- mean(diff(x$pos))
+		}
+		if(is.null(x$dz)){
+			x$dz <- mean(diff(x$depth))
+		}
+		myArg <- as.list(match.call(def = sys.function(-2),
+				   call = sys.call(-2),
+				   expand.dots = FALSE )
+				   )
+		d_name <- paste(eval(myArg[2]))
+		y <- new("GPR", 
+				data = x$data,
+				traces = 1:ncol(x$data),		# trace numbering
+				pos = x$pos,													# position of the traces
+				depth= x$depth,
+				time0 = rep(0,ncol(x$data)),	
+				time = rep(0,ncol(x$data)),	# time of trace records
+				proc =  character(0),	# processing steps
+				# proc =  ifelse(is.null(x$proc),character(0),x$proc),	# processing steps
+				vel = list(0.1),	#m/ns
+				name = as.character(d_name),
+				description = paste("coercion of ",
+								as.character(d_name)," (",typeof(x),") into GPR",sep=""),
+				filename = character(0),
+				ntr = ncol(x$data), 
+				w = nrow(x$data)*x$dz, 
+				dz = x$dz, 
+				dx = x$dx, 
+				depthunit = "ns",
+				posunit = "m",
+				freq = 100,
+				antsep = 1, 
+				surveymode = "reflection",
+				date = format(Sys.time(), "%d/%m/%Y"),
+				crs = character(0),
+				hd=list())
+		sNames <- slotNames(y)
+		sNames <- sNames[ !(sNames %in% c("data","pos","depth","w","dz","dx","ntr"))]
+		for(i in seq_along(sNames)){
+			if(!is.null(x[[sNames[i]]])){
+				slot(y, sNames[i], check = TRUE) <- x[[sNames[i]]]
+			}
+		}# if(!is.null(x$traces)) 
+		return(y)
+	}else{
+		stop("The list must have a 'data' index name")
+	}
 }	  
 	  
 
@@ -952,22 +1016,21 @@ setMethod("traceShift", "GPR", function(x,  fb,kip=10){
 .GPR.print 	<-	function(x, digits=5){
 	topaste <- c(paste("***","Class GPR", "***\n"))
 	topaste <- c(topaste, paste("name = ", x@name, "\n",sep=""))
-	if(x@filename != ""){
+	if(length(x@filename) > 0){
 		topaste <- c(topaste, paste("filename = ", x@filename, "\n",sep=""))
 	}
 	nbfid <- sum(trim(x@com)!= "")
 	if(nbfid > 0){
 		topaste <- c(topaste, paste(nbfid, " fiducial(s)\n",sep=""))
 	}
-	if(x@description != ""){
+	if(length(x@description) > 0){
 		topaste <- c(topaste, paste("description = ", x@description, "\n",sep=""))
 	}
-	if(x@date != ""){
+	if(length(x@date) > 0){
 		topaste <- c(topaste, paste("survey date = ", x@date,"\n",sep=""))
 	}
 	topaste <- c(topaste, paste(x@surveymode,", ",x@freq,"MHz,", " W=",x@w,x@depthunit,", dz=",x@dz,x@depthunit,"\n",sep=""))
 	topaste <- c(topaste, paste(x@ntr, " traces, ",diff(range(x@pos)),"",x@posunit," long\n",sep=""))
-	
 	if(length(x@proc)>0){
 		topaste <- c(topaste, paste("> PROCESSING\n"))
 		for(i in seq_along(x@proc)){
@@ -1870,14 +1933,14 @@ setMethod("upsample", "GPR", function(x,n){
 
 
 #----------------------- SAVE/EXPORT ------------------------#
-setMethod("writeGPR", "GPR", function(x,path, format=c("DT1","rds")){
+setMethod("writeGPR", "GPR", function(x,path, format=c("DT1","rds"), overwrite=FALSE){
 		type <- match.arg(format)
 		ext <-  tolower(substr(path,start=nchar(path)-3,stop=nchar(path)))
 		if(type == "DT1"){
 			if(".dt1" != ext ){
 				stop("Extension should be '.DT1'")
 			}
-			stop("not implemented yet!")
+			.writeDT1(x,path)
 		}else if(type == "rds"){
 			if(".rds" != ext ){
 				stop("Extension should be '.rds'")
@@ -1908,32 +1971,38 @@ setMethod("exportPDF", "GPR", function(x,filepath=NULL,add_topo=FALSE,clip=NULL,
 
 setMethod("exportFID", "GPR", function(x,filepath=NULL){
 		# Trace	Position	Comment	PNAME
-		tr_start <- 1
-		tr_end <- length(x)
-		tr <- which(fid(x) != "" & fid(x) != "skip")
-		trcom <- fid(x)[tr]
-
-		if(!(tr_start %in% tr)){	
-			tr <- c(tr_start,tr)
-			trcom <- c("F0",trcom)
-		}
-		if(!(tr_end %in% tr)){
-			tr <- c(tr,tr_end)
-			lastF <-regmatches(trcom[length(trcom)],regexpr(pattern="[[:digit:]]+",trcom[length(trcom)]))
-			if(length(lastF)>0){
-				trcom <- c(trcom,paste("F",as.numeric(lastF)+1,sep=""))
-			}else{
-				trcom <- c(trcom,"Fend")
+		if(length(x@com) > 0){
+			tr_start <- 1
+			tr_end <- length(x)
+			tr <- which(fid(x) != "" & fid(x) != "skip")
+			trcom <- fid(x)[tr]
+			if(!(tr_start %in% tr)){	
+				tr <- c(tr_start,tr)
+				trcom <- c("F0",trcom)
 			}
-		}
-		trpos <- x@pos[tr]
-		# trcom <- character(length(tr))
-		FID <- data.frame("TRACE" = tr,"POSITION" = trpos, "COMMENT" = trcom)
-
-		if(is.null(filepath)){
-			return(FID)
+			if(!(tr_end %in% tr)){
+				tr <- c(tr,tr_end)
+				lastF <-regmatches(trcom[length(trcom)],regexpr(pattern="[[:digit:]]+",trcom[length(trcom)]))
+				if(length(lastF)>0){
+					trcom <- c(trcom,paste("F",as.numeric(lastF)+1,sep=""))
+				}else{
+					trcom <- c(trcom,"Fend")
+				}
+			}
+			trpos <- x@pos[tr]
+			FID <- data.frame("TRACE" = tr,"POSITION" = trpos, "COMMENT" = trcom)
+			if(is.null(filepath)){
+				return(FID)
+			}else{
+				write.table(FID, filepath, sep=",",row.names = FALSE, col.names = TRUE, quote=FALSE)
+			}
 		}else{
-			write.table(FID, filepath, sep=",",row.names = FALSE, col.names = TRUE, quote=FALSE)
+			if(length(x@name)>0){
+				cat("No fiducials for",x@name,"\n")
+			}else{
+				cat("No fiducials\n")
+			}
+			return(NULL)
 		}
 	} 
 )

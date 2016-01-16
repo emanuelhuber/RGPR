@@ -1303,7 +1303,7 @@ phaseRotation <- function(x,phi){
 		# return(GPR(A,name=name,filepath=filepath,description=description))
 # }
 
-#setGeneric("readGPR", function(filepath,description="", coordfile=NULL,crs="",intfile=NULL) #standardGeneric("readGPR"))
+setGeneric("readGPR", function(filepath,description="", coordfile=NULL,crs="",intfile=NULL) standardGeneric("readGPR"))
 
 
 # setGenericVerif("writeGPR", function(x,filepath, format=c("DT1","rds")) standardGeneric("writeGPR"))

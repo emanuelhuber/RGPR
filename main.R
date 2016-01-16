@@ -7,6 +7,18 @@ cat("15.03.2015\n")
 cat("Emanuel Huber, emanuel.huber@unibas.ch\n")
 cat("********************\n")
 
+
+############## CHANGES ##################
+#--- changes v0.0.9---#
+#	- add fx: pal(), colGPR()
+#	- filepath instead of filename
+#   - slot @ntr removed (not needed! x@ntr <- ncol(x@data))
+# 	- slot @w removed (not needed! x@w <- (nrow(x@data)-1)*x@dz)
+#	- slot @version added 
+#	- slot @filename renamed as @filepath
+#	- new function: GPRsurvey:: write
+#	- handle two types of dates (readGPR): %Y %m %d and %d %m %Y with any kind of separator
+
 #---changes v0.0.8.1---#
 #	- GPR::gain -> rename gain_geospreading in power!
 #	- lines.GPR
@@ -16,6 +28,7 @@ cat("********************\n")
 #---changes v0.0.8---#
 # GPR::reverse (check pos)
 # plotWig > add_ann
+
 #---changes v0.0.7---#
 # local orientation added
 # deconvolution
@@ -23,61 +36,75 @@ cat("********************\n")
 # medianFilter
 
 
-# THINK: GPR is EITHER RASTER OR VECTOR...
-# THINK: PRIVATE FUNCTION .myfunction()
+############## RCODE : TO CHECK/THINK ###############
 # THINK: use Roxygen...
+# When plot with par(mfrow=c(2,1)).... reset the "par" after the plot (1) save op <- par(), 2) plot and 3) reset par: par(op).
 
-# writeDT1
+# CONVENTIONS: empty slot should have length = 0 (use character(0) instead of "")
+# CONVENTIONS: with generic method: use exactly the same arguments
+#				use args(plot) to know the arguments
+# CONVENTIONS: filepath (NOT filePath, fileName, filename, path)
+# CONVENTIONS: PRIVATE FUNCTION .myfunction()
+# CONVENTIONS: rename "fid" into  "fiducial marks"	=> fid
+
+# check lockBinding  (bibliotheque/documents/R/manuel-S4)
+
+# function invisible() > Return a (temporarily) invisible copy of an object.
+# used in plot function
+
+# DON'T WANT TO PASS "..."-ARGUMENTS TO A FUNCTION?
+# SOLUTION: use a wrapper function, where the args after ... are the args
+# that you don't want to have in the function. E.G:
+# lPoints <- function(..., log, axes, frame.plot, panel.first, panel.last) {
+#     points(...)
+# }
+
+
+
 # read/write SEGy
 
 # FIX ME!
-#	- GPR::exportCoord & GPRsurvey::exportCoord -> export as points -> use point.data.frame (add z-information)
 #	- GPRsurvey::plot3D -> use function "inPoly" to plot in 3D only a selection of traces from GPRsurvey
+#						-> add a zlim or a max depth!!!
+#	- GPR::plot3D -> add a zlim or a max depth!!!
+#	- GPR::exportCoord & GPRsurvey::exportCoord -> export as points -> use point.data.frame (add z-information)
 #	- GPR::migration/topoShift -> integrate the function time2depth or depth2time!!!!
 #	- GPR::delineation -> use the same scheme for both raster and wiggles!
+#	- GPR::fkFilter -> add as argument "slopes"
 #	- GPR::interpTraces -> use a raster to get the v-elevation!
 #	- plot.GPR function
 #		-> check if all the "..." parameters corresponds to the possible paramters. If not > error!
 #		-> check option image and use the "raster" option. Check grid with smooth image...
 #	- GPR::gain -> t0=NULL then t0 <- mean(time0)
-#	- gain: t0=NULL then t0 <- mean(time0)
-#	- scaling after gain!
-# 	- different taper window: cos, triang, hamming, bartlett, limtaper, hann, flattop....
 #	- GPR::spec(type "f-t") -> use power and log scale (?)
 #	- GPR::plotAmpl -> option log y-axis
-#	- check how time0 is used
 #	- GPR::exportPDF -> add processing steps!
-#	- consistency of the function arguments:
-#		- path, filename, filepath...
+#	- scaling after gain!
+# 	- different taper window: cos, triang, hamming, bartlett, limtaper, hann, flattop....
+#	- check how time0 is used
+#	- GPR::export(type=PDF) use function plot (wiggles)!
 
-# FIX ME!!
-#		-> check FIX ME!!
-#		-> plot3D -> add a zlim or a max depth!!!
-#		-> add x@pts="numeric"  points number ??
-#		-> export(type=PDF) use function plot (wiggles)!
-#		-> with generic method: use exactly the same arguments
-#				use args(plot) to know the arguments
-#		-> rename "fid" into  "fiducial marks"	=> fid
+
+
+#--- STRUCTURE ---#
+# - add @vDatum	> for vertical geodesic datum
+# (- delete @depthunit, @posunit & replace by @units@depth and @units@pos)
+# - delete @dx > not needed! x@dx <- mean(diff(x@pos))
+# - delete @dz > not needed! x@dz <- mean(diff(x@depth))
+
+# NEW CLASS: 	"GPRGrid" > based on survey but for x- and y-lines
+# 				2D plot: the lines start from the same position
+# 				can cut slices etc.
+
+
+################## GPR PROCESSING ######################3
+
+# check book "Near-surface Geophysics, vol 13"
+
 # Idea for trace to trace processing:
 # -> list of all function with their argument to use
 # -> use a FUN_WRAP function : apply(GPR$data,2,FUN_WRAP)
-# -> FUN_WRAP process each single trace according to the list of function and theirs args.
-
-
-#======== TODO =========#
-# check book "Near-surface Geophysics, vol 13"
-
-#--- STRUCTURE ---#
-# - keep @ann > for intersections
-# - add @version
-# - add @vDatum	> for vertical geodesic datum
-# - delete @depthunit, @posunit & replace by @units@depth and @units@pos
-# - delete @w  > not needed! x@w <- (nrow(x@data)-1)*x@dz
-# - delete @dx > not needed! x@dx <- mean(diff(x@pos))
-# - delete @dz > not needed! x@dz <- mean(diff(x@depth))
-# - delete @ntr > not needed! x@ntr <- ncol(x@data)
-# - empty slot should have length = 0 (use character(0) instead of "")
-# - replace @filename by @filepath
+# 		-> FUN_WRAP process each single trace according to the list of function and theirs args.
 
 #--- declipping ---#
 # - least-square polynomial interpolation
@@ -85,6 +112,7 @@ cat("********************\n")
 # - PCA/SVD decomposition
 # - DCT (cf. R package)
 # - deconvolution/convolution
+# - interpolation par cubic splines (see bibliotheque/document/courbes de bezier+++ )
 
 #--- gain functions ---#
 # - rms AGC
@@ -216,7 +244,7 @@ load_install_package <- function(package_names){
 is_installed <- function(mypkg) is.element(mypkg, installed.packages()[,1])
 
 
-requiredPackage = c('MASS','signal', 'colorspace','Cairo','rgeos','sp','rgl', 'rgdal','EMD','mmand','e1071','adimpro')
+requiredPackage = c('base','MASS','signal', 'colorspace','Cairo','rgeos','sp','rgl', 'rgdal','EMD','mmand','e1071','adimpro')
 load_install_package(requiredPackage)
 cat('> Package(s) loaded (if...): ',requiredPackage,' \n')
 	
@@ -243,8 +271,34 @@ source("R/ClassGPRsurvey.R")
 	
 	
 	
-	
-	
+# FILE FORMAT
+# 1		Trace number (1,2,3,4....,n)
+# 2		Trace position (0, 0.25, 0.5, 0.75,...)
+# 3		Samples: # Points/Traces (500,500,500,500,...)
+# 4 	Topo: elevation data (145.23, 146.1,146.45,...)
+# 5 	NA1: time? (0.000000e+00 3.713441e-43 7.426882e-43 1.112631e-42,...)
+# 6		Bytes (2,2,2,2,...)
+# 7		tracenb: in fact time windows in ps!!! (800,800,800,...)
+# 8		number of stacks (32,32,32,32,...)
+# 9		window: in fact NA1 (0,0,0,0,0,...)  > GPS x position 
+# 10	NA2: (0,0,0,0,0,...)  > GPS x position (double*8 number)
+# 11	NA3: (0,0,0,0,0,...)  > GPS y position (double*8 number)
+# 12	NA4: (0,0,0,0,0,...)  > GPS y position (double*8 number)
+# 13	NA5: (0,0,0,0,0,...)  > GPS z position (double*8 number)
+# 14	NA6: (0,0,0,0,0,...)  > GPS z position (double*8 number)
+# 15	receiver x position
+# 16	receiver y position
+# 17	receiver z position
+# 18	transmitter x position
+# 19	transmitter y position
+# 20	transmitter z position
+# 21	time-zero
+# 22	zero-flag: 0=data okay, 1=zero data
+# 23	NA not used (0,0,0,...)
+# 24	time of the day data collected in seconds pas midnight
+# 25	x8: comment flag: 1 = comment attached
+# 26-28 com: comment
+
 	
 	
 	

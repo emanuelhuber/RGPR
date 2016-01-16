@@ -32,7 +32,6 @@ readTopo <- function(TOPO,sep=","){
 }
  	
 plotTopo <- function(NEZ_file, add=TRUE){
-	
 	topo <- read.table(NEZ_file, header=TRUE, sep=",", stringsAsFactors = FALSE)
 	# topo$N <- -topo$N
 
@@ -42,7 +41,7 @@ plotTopo <- function(NEZ_file, add=TRUE){
 	REF 	<- agrep("REF" , PCODE)		# TOTAL STATION
 	WATER 	<- agrep("WATER" , PCODE)		# TOTAL STATION
 	CROSS 	<- which("CROSS" == PCODE)		# TOTAL STATION
-	REVERSE	<- agrep("REVERSE", PCODE)	# 180° hor, ver
+	REVERSE	<- agrep("REVERSE", PCODE)	# 180Â° hor, ver
 	LINES 	<- agrep("LINE", PCODE) 
 	LINES 	<- LINES[!(agrep("LINE", PCODE) %in% REVERSE)]
 
@@ -50,7 +49,6 @@ plotTopo <- function(NEZ_file, add=TRUE){
 	NOT_REVERSE <- !(1:length(PCODE) %in% agrep("REVERSE", PCODE))
 
 	not_rev <- !(1:nrow(topo) %in% agrep("REVERSE",topo$PCODE))
-
 
 	#----------------------------------------------------
 	if(add==FALSE){
@@ -93,10 +91,81 @@ plotTopo <- function(NEZ_file, add=TRUE){
 	#----------------------------------------------------
 	
 }
-	
+
 #----------- helper functions -------------------#
 
 
+	
+
+safeFilepath <- function(filepath=NULL){
+	# FILE NAMES
+	dirName 	<- dirname(filepath)
+	splitBaseName <- unlist(strsplit(basename(filepath),'[.]'))
+	baseName 	<- paste(splitBaseName[1:(length(splitBaseName)-1)],sep="")
+	ext <- tail(splitBaseName,1)
+	if(dirName == '.'){
+		filepath <- baseName
+	}else{
+		filepath <- paste(dirName,'/',baseName,sep="")
+	}
+# 	if(isTRUE(overwrite)){
+# 		cat("file may be overwritten\n")
+# 	}else{
+	filepath_orgi <- filepath
+	k <- 0
+	while(file.exists(paste(filepath,".",ext,sep="")) || file.exists(paste(filepath,".HD",sep=""))){
+		filepath <- paste(filepath_orgi,"_",k,sep="")
+		k <- k+1
+	}
+# 	}
+	newfilepath <- paste(filepath, ".", ext, sep="")
+	return(newfilepath)
+}
+
+
+
+
+
+
+
+
+#------------- COLOR FUNCTIONS -------------------#
+colGPR <- function(pal.name="seismic",n=101,power=1){
+	tmp <- structure(list(
+		seismic = colorRampPalette(c( "#1C007C", "#1B0086", "#1A0091", "#18009C", "#1600A7", "#1400B2", "#1100C3", "#0E00CF", "#0A00E0", "#0300F5",
+			"#0001FF", "#080FFF", "#1521FF", "#2232FF", "#2E42FF", "#3B52FF", "#4862FF", "#5470FF", "#617FFF", "#6E8CFF", "#7F9EFF",
+			"#8CAAFF", "#98B5FF", "#A5C1FF", "#B2CBFF", "#BFD5FF", "#CBDFFF", "#D8E7FF", "#E5F0FF", "#F2F7FF", "#FFFCFB", "#FFF4F0",
+			"#FFECE5", "#FFE3DA", "#FFDACE", "#FFCEC0", "#FFC4B5", "#FFB9AA", "#FFAE9E", "#FF9F90", "#FF9485", "#FF877A", "#FF766B",
+			"#FF6960", "#FF5B55", "#FF4946", "#FF3B4E", "#FF3045", "#FF253D", "#FF1632", "#FF0B2A", "#FF0022", "#F70023", "#EE0023",
+			"#E50023", "#DC0024", "#D30024", "#CA0024", "#C20024", "#B70023", "#AF0023", "#A70023", "#9C0022"))(n),
+		hcl_0 = diverge_hcl(n,power=1),
+		hcl_1 = diverge_hcl(n, c = 100, l = c(50, 90), power = power), # blue - white - red (fade)
+		hcl_2 = diverge_hcl(n, h = c(246, 40), c = 96, l = c(65, 90), power=power), # blue - white - orange (fade)
+		hcl_3 = diverge_hcl(n, h = c(130, 43), c = 100, l = c(70, 90), power=power), # green - white- orange (fade)
+		hcl_4 = diverge_hcl(n, h = c(255, 330), l = c(40, 90), power=power), # blue/violet - white - red/violet 
+		hcl_5 = diverge_hcl(n, h = c(20, 200), c = 90, l = c(70, 95), power=power),	# rose - white - turquise (fade)
+		hcl_6 = diverge_hcl(n, h = c(246, 10), c = 120, l = c(30, 90), power=power), # blue - white - red (vivid)
+		hcl_7 = diverge_hcl(n, h = c(220, 10), c = 100, l = c(20, 90), power=power), # blue - white - red (tern)
+		hcl_8 = diverge_hcl(n, h = c(250, 10), c = 150, l = c(30, 90), power=power), # blue - white - red (fade)
+		grey3 = diverge_hcl(n, h = c(300, 1), c = 1, l = c(1, 100), power=power), 
+		grey1 = sequential_hcl(n, h = c(1, 300), c = 0, l = c(10, 100), power=power), # too light
+		grey2 = sequential_hcl(n, h = c(300, 100), c = 0, l = c(120, 10), power=power), #  too dark	
+		grayish = sequential_hcl(n, h = c(190, 1), c = 10, l = c(1, 110), power=power)
+	))
+	(tmp[[match(pal.name, names(tmp))]])
+}
+
+# source: vignette of the R-package "colorspace" (Color Space Manipulation)
+# plot color palette
+# usage: 
+# pal(colGPR("seismic",50))
+# pal(colGPR(n=50))
+pal <- function(col, border = NA){
+	n <- length(col)
+	plot(0, 0, type="n", xlim = c(0, 1), ylim = c(0, 1), axes = FALSE, xlab = "", ylab = "")
+	rect(0:(n-1)/n, 0, 1:n/n, 1, col = col, border = border)
+}
+#------------- color functions -------------------#
 
 # returns string w/o leading or trailing whitespace
 trim <- function (x) gsub("^\\s+|\\s+$", "", x)
@@ -104,8 +173,9 @@ trim <- function (x) gsub("^\\s+|\\s+$", "", x)
 .filename <- function(x){
 	unlist(lapply(strsplit(basename(x),"[.]"), head , 1 ))
 }
+
 extension <- function(x){
-	cat("with caution... because split \'.\' may not be so good\n")
+# 	cat("with caution... because split \'.\' may not be so good\n")
 	unlist(lapply(strsplit(basename(x),"[.]"), tail , 1 ))
 }
 
@@ -135,7 +205,7 @@ setGenericVerif("setCoordref", function(x) standardGeneric("setCoordref"))
 
 
 #------------------------------
-setGenericVerif("getLine", function(x,no) standardGeneric("getLine"))
+setGenericVerif("getLine", function(x,id) standardGeneric("getLine"))
 
 
 
@@ -164,8 +234,8 @@ plotLine <- function(xyz,...){
 	lines(xyz[,1:2],...)
 	# arrows(x0=xyz[nrow(xyz)-1,1],y0=xyz[nrow(xyz)-1,2],x1=xyz[nrow(xyz),1],y1=xyz[nrow(xyz),1])
 }
-plotArrows <- function(xyz,...){
-	arrows(xyz[nrow(xyz)-1,1],xyz[nrow(xyz)-1,2],xyz[nrow(xyz),1],xyz[nrow(xyz),2],length = 0.1,col="red",...)
+plotArrows <- function(xyz,col="red",length=0.1,...){
+	arrows(xyz[nrow(xyz)-1,1],xyz[nrow(xyz)-1,2],xyz[nrow(xyz),1],xyz[nrow(xyz),2],length = length,col=col,...)
 	# arrows(x0=xyz[nrow(xyz)-1,1],y0=xyz[nrow(xyz)-1,2],x1=xyz[nrow(xyz),1],y1=xyz[nrow(xyz),1])
 }
 
@@ -188,8 +258,9 @@ setGenericVerif("interpTraces", function(x, topo) standardGeneric("interpTraces"
 setGenericVerif("coords<-",function(x,values){standardGeneric("coords<-")})
 
 
-setGenericVerif("writeGPR", function(x,path, format=c("DT1","rds"),overwrite=FALSE) standardGeneric("writeGPR"))
+setGenericVerif("writeGPR", function(x,filepath, format=c("DT1","rds"),overwrite=FALSE){ standardGeneric("writeGPR")})
 
+setGenericVerif("writeSurvey", function(x, filepath, overwrite=FALSE){ standardGeneric("writeSurvey")})
 
 
 setGenericVerif("exportCoord",  function(x,filepath=NULL,type=c("points","lines"),driver="ESRI Shapefile",...) standardGeneric("exportCoord"))
@@ -220,7 +291,7 @@ standardGeneric("plot3D"))
 
 
 
-.plot3D <- function(A,x,y,z,z0,col=diverge_hcl(101, h = c(246, 10), c = 120, l = c(30, 90)),back="fill", smooth = TRUE, lit=FALSE, lwd=0,empty=FALSE,...){
+.plot3D <- function(A,x,y,z,z0,col=colGPR(n=101),back="fill", smooth = TRUE, lit=FALSE, lwd=0,empty=FALSE,...){
 	nr = nrow(A)
 	nc = ncol(A)
 	if(empty==TRUE){
@@ -249,7 +320,7 @@ standardGeneric("plot3D"))
 }
 
 # NICHT BENUTZT!!!
-setCol <- function(A , col = diverge_hcl(101, h = c(246, 10), c = 120, l = c(30, 90))){
+setCol <- function(A , col = colGPR(n=101)){
 	CCY = (A-min(A,na.rm=TRUE))/(max(A,na.rm=TRUE)-min(A,na.rm=TRUE))
 	ClimY <- range(CCY,na.rm=TRUE)
 	ClenY <- ClimY[2] - ClimY[1] + 1
@@ -258,7 +329,7 @@ setCol <- function(A , col = diverge_hcl(101, h = c(246, 10), c = 120, l = c(30,
 	col[ (CCY)*100+1 ] 
 }
 
-plot3DSlice <- function(XYZ,slice=c("x","y","z"),section=1,col=diverge_hcl(101, h = c(246, 10), c = 120, l = c(30, 90)), sampling = c(0.25,0.25,0.04),rmStripes = TRUE){
+plot3DSlice <- function(XYZ,slice=c("x","y","z"),section=1,col=colGPR(n=101), sampling = c(0.25,0.25,0.04),rmStripes = TRUE){
 	# k=100
 	# j=25
 	# i=40
@@ -272,7 +343,7 @@ plot3DSlice <- function(XYZ,slice=c("x","y","z"),section=1,col=diverge_hcl(101, 
 	vz = seq(0,dimXYZ[3]-1,by=1)*sampling[3]	# dtime / 2 * v
 	vx = seq(0,dimXYZ[1]-1,by=1)*sampling[1]
 	vy = seq(0,dimXYZ[2]-1,by=1)*sampling[2]
-	if(rgl.cur()==0){	# si la fenêtre rgl est ouverte, on plot dedans...
+	if(rgl.cur()==0){	# si la fenÃªtre rgl est ouverte, on plot dedans...
 		rgl.open()
 		rgl.bg( color=c("white"))
 	}
@@ -345,7 +416,7 @@ setGeneric("addDelineation", function(x,...) standardGeneric("addDelineation"))
 
 setGeneric("showDelineations", function(x,sel=NULL,...) standardGeneric("showDelineations"))
 
-setGeneric("exportDelineations", function(x, path="") standardGeneric("exportDelineations"))
+setGeneric("exportDelineations", function(x, dirpath="") standardGeneric("exportDelineations"))
 
 setGeneric("plotDelineations3D", function(x,sel=NULL,col=NULL,add=TRUE,...) standardGeneric("plotDelineations3D"))
 	
@@ -410,7 +481,7 @@ doubleVector <- function(v,n=2L){
 # }
 
 # plotWig(x@data,x=xvalues, y= -rev(x@depth), main=x@name, xlab=x@posunit, ylab=ylab, topo= topo,
-					# note=x@filename,col="black",time_0=x@time0,antsep=x@antsep, v=vel,fid=x@com,ann=x@ann,
+					# note=x@filepath,col="black",time_0=x@time0,antsep=x@antsep, v=vel,fid=x@com,ann=x@ann,
 					# depthunit=x@depthunit,dots)
 plotWig <- function(A, x=NULL, y=NULL, xlim = NULL, ylim=NULL, topo=NULL, main ="", note=NULL,  
 					fid=NULL,ann = NULL, add_ann=TRUE,pdfName=NULL, ws =1, side=1, dx=0.25, dz=0.4, ratio=1,
@@ -571,7 +642,7 @@ plotWig <- function(A, x=NULL, y=NULL, xlim = NULL, ylim=NULL, topo=NULL, main =
 
 # col, main, xlab, ylab, mar, barscale
 plotRaster <- function(A,x=NULL,y=NULL,plot_raster=TRUE,barscale=TRUE, add= FALSE, 
-					mai=c(1, 0.8, 0.8, 1.8),  col=heat.colors(101),note=NULL,
+					mai=c(1, 0.8, 0.8, 1.8),  col=colGPR(n=101),note=NULL,
 					main="", time_0=0, antsep=1, v=0.1,ann=NULL,add_ann=TRUE,fid=NULL,depthunit="ns", ...){
 	GPR =  as.matrix(A)
 	GPR[is.na(GPR)]=0
@@ -690,7 +761,7 @@ setGenericVerif("gethd", function(x,hd=NULL) standardGeneric("gethd"))
 
 
 
-setGenericVerif("filename", function(x) standardGeneric("filename"))
+setGenericVerif("filepath", function(x) standardGeneric("filepath"))
 
 
 setGenericVerif("ann", function(x) standardGeneric("ann"))
@@ -817,7 +888,7 @@ setGenericVerif("dewow2", function(x, sig=100) standardGeneric("dewow2"))
 #==============================#
 #======= GAIN FUNCTIONS ========#
 
-setGenericVerif("gain", function(x, type=c("geospreading","exp","agc"),...) standardGeneric("gain"))
+setGenericVerif("gain", function(x, type=c("geospreading","power","exp","agc"),...) standardGeneric("gain"))
 
 
 
@@ -1226,16 +1297,16 @@ phaseRotation <- function(x,phi){
 }
 
 # # readGPR = read DT1 FORMAT and return object from class "GPR"
-# readGPR <- function(filename,description=""){
-		# A <- readDT1(filename)
-		# name=strsplit(basename(filename),'[.]')[[1]][1]
-		# return(GPR(A,name=name,filename=filename,description=description))
+# readGPR <- function(filepath,description=""){
+		# A <- readDT1(filepath)
+		# name=strsplit(basename(filepath),'[.]')[[1]][1]
+		# return(GPR(A,name=name,filepath=filepath,description=description))
 # }
 
-setGeneric("readGPR", function(filename,description="", coordfile=NULL,crs="",intfile=NULL) standardGeneric("readGPR"))
+setGeneric("readGPR", function(filepath,description="", coordfile=NULL,crs="",intfile=NULL) standardGeneric("readGPR"))
 
 
-# setGenericVerif("writeGPR", function(x,filename, format=c("DT1","rds")) standardGeneric("writeGPR"))
+# setGenericVerif("writeGPR", function(x,filepath, format=c("DT1","rds")) standardGeneric("writeGPR"))
 
 setGenericVerif("name", function(x) standardGeneric("name"))
 
@@ -1289,62 +1360,62 @@ setGenericVerif("description", function(x) standardGeneric("description"))
 
 # plot/add a 2D profile in rgl
 
-addProfile3D <- function(LINES, col=diverge_hcl(101, h = c(246, 10), c = 120, l = c(30, 90)),plotNew=FALSE, normalize=TRUE, v=1, zlim=NULL, AGC=FALSE, sig=10){
-	if(plotNew){
-		# rgl.open()
-		open3d()
-	}
-	for(i in seq_along(LINES)){
-		#------------- READ DATA ------------------#
-		lineName2 	<- strsplit(LINES,split="[.]")
-		lineName 	<- lineName2[[i]][1]
-		fileNameHD 	<- paste(lineName,".HD",sep="")
-		fileNameDT1 <- paste(lineName,".DT1",sep="")
-		cat(basename(lineName),"\n")
-		GPR <- readDT1(LINES[[i]])
-		#------------- read data ------------------#
+# addProfile3D <- function(LINES, col=colGPR(n=101),plotNew=FALSE, normalize=TRUE, v=1, zlim=NULL, AGC=FALSE, sig=10){
+	# if(plotNew){
+		# # rgl.open()
+		# open3d()
+	# }
+	# for(i in seq_along(LINES)){
+		# #------------- READ DATA ------------------#
+		# lineName2 	<- strsplit(LINES,split="[.]")
+		# lineName 	<- lineName2[[i]][1]
+		# fileNameHD 	<- paste(lineName,".HD",sep="")
+		# fileNameDT1 <- paste(lineName,".DT1",sep="")
+		# cat(basename(lineName),"\n")
+		# GPR <- readDT1(LINES[[i]])
+		# #------------- read data ------------------#
 
-		myGPRdZ <- as.numeric(as.character(GPR$hd[7,2]))/as.numeric(as.character(GPR$hd[5,2]))
-		HD <- GPR$dt1hd
+		# myGPRdZ <- as.numeric(as.character(GPR$hd[7,2]))/as.numeric(as.character(GPR$hd[5,2]))
+		# HD <- GPR$dt1hd
 		
-		A <- GPR$data
-		A[is.na(A)] <- 0
-		if(!is.null(zlim)){
-			sel <- seq(1, zlim/myGPRdZ/v,by=myGPRdZ)
-			A <- A[sel,]
-		}
-		if(normalize){
-			A <- normalizeGPR(A)
-		}
-		if(AGC){
-			A <- apply(A,2,gain,sig=sig)
-		}
-		 # example with GPR profile A 
-		nr = nrow(A)
-		nc = ncol(A)
-		X <- matrix(HD$recx, ncol=nc, nrow=nr, byrow=TRUE)
-		Y <- matrix(HD$recy, ncol=nc, nrow=nr, byrow=TRUE)
-		Z <-  matrix(HD$topo, ncol=nc, nrow=nr, byrow=TRUE) - matrix(myGPRdZ*v*(0:(nr-1)), ncol=nc, nrow=nr, byrow=FALSE)
-		if(all(HD$topo==0)){
-			warning("No topography \n")
-		}
-		if(all(HD$recx==0)){
-			warning("No x-coordinates \n")
-		}
-		if(all(HD$recy==0)){
-			warning("No y-coordinates \n")
-		}
-		A = (A-min(A))/(max(A)-min(A))
-		Alim <- range(A)
-		Alen <- Alim[2] - Alim[1] + 1
+		# A <- GPR$data
+		# A[is.na(A)] <- 0
+		# if(!is.null(zlim)){
+			# sel <- seq(1, zlim/myGPRdZ/v,by=myGPRdZ)
+			# A <- A[sel,]
+		# }
+		# if(normalize){
+			# A <- normalizeGPR(A)
+		# }
+		# if(AGC){
+			# A <- apply(A,2,gain,sig=sig)
+		# }
+		 # # example with GPR profile A 
+		# nr = nrow(A)
+		# nc = ncol(A)
+		# X <- matrix(HD$recx, ncol=nc, nrow=nr, byrow=TRUE)
+		# Y <- matrix(HD$recy, ncol=nc, nrow=nr, byrow=TRUE)
+		# Z <-  matrix(HD$topo, ncol=nc, nrow=nr, byrow=TRUE) - matrix(myGPRdZ*v*(0:(nr-1)), ncol=nc, nrow=nr, byrow=FALSE)
+		# if(all(HD$topo==0)){
+			# warning("No topography \n")
+		# }
+		# if(all(HD$recx==0)){
+			# warning("No x-coordinates \n")
+		# }
+		# if(all(HD$recy==0)){
+			# warning("No y-coordinates \n")
+		# }
+		# A = (A-min(A))/(max(A)-min(A))
+		# Alim <- range(A)
+		# Alen <- Alim[2] - Alim[1] + 1
 		
-		# if(is.null(col)) 		col <- tim.colors(101)	# height color lookup table
+		# # if(is.null(col)) 		col <- tim.colors(101)	# height color lookup table
 
-		colA <- col[ (A)*100+1 ] # assign colors to heights for each point 
-		rgl.surface(X, Y, Z, color=colA, back="fill", smooth = TRUE, lit=FALSE, lwd=0) 
-		# surface3d(X, Y, Z, color=colA, back="fill", smooth = FALSE, lit=FALSE, lwd=0) 
-	}
-}
+		# colA <- col[ (A)*100+1 ] # assign colors to heights for each point 
+		# rgl.surface(X, Y, Z, color=colA, back="fill", smooth = TRUE, lit=FALSE, lwd=0) 
+		# # surface3d(X, Y, Z, color=colA, back="fill", smooth = FALSE, lit=FALSE, lwd=0) 
+	# }
+# }
 
 
 
@@ -1512,7 +1583,7 @@ optPhaseRotation <- function(gpr,rot=0.01,plot=TRUE){
 		kurt[i] <- kurtosis( xrot)
 	}
 	phi_max <- pi_seq[which.max(kurt)]
-	cat("rotation angle =",phi_max/pi*180, "°\n",sep="")
+	cat("rotation angle =",phi_max/pi*180, "degree\n",sep="")
 	# dev.off(); windows()
 	if(plot==TRUE){
 		plot(pi_seq/pi*180,kurt,type="l")
@@ -1792,7 +1863,7 @@ inPoly <- function(x,y, vertx, verty){
 	return(inPo)
 }
 
-FKSpectrum <- function(A,dx=0.25,dz=0.8, npad=1, p=0.01,plot_spec=TRUE,return_spec=FALSE){
+.FKSpectrum <- function(A,dx=0.25,dz=0.8, npad=1, p=0.01,plot_spec=TRUE,return_spec=FALSE){
 	# A <- GPR$data		#[90:1000,]
 	nr <- nrow(A)	# time	
 	nc <- ncol(A)	# x	
@@ -1815,24 +1886,32 @@ FKSpectrum <- function(A,dx=0.25,dz=0.8, npad=1, p=0.01,plot_spec=TRUE,return_sp
 	# frequency
 	T = dz*10^(-9)		# [s] Sample time
 	# Fs = 1/T			# [Hz] Sampling frequency
-	fre <- 1:(nrow(A1_fft_pow)/2)/(2*(nrow(A1_fft_pow)/2) * T)/1000000	#[MHz]
-
+	# fre <- 1:(nrow(A1_fft_pow)/2)/(2*(nrow(A1_fft_pow)/2) * T)/1000000	#[MHz]
+	# Ts = T*(10^(-9))		# [s] Sample time
+	# Fs = 1/Ts			# [Hz] Sampling frequency
+	fac = 1000000
+	fre = (1/T)*seq(0,nf/2)/nf/fac
+	
 	# wavenumber
 	Ks = 1/dx			# [1/m] Sampling frequency
 	knu <- 1:(ncol(A1_fft_pow)/2)/(2*(ncol(A1_fft_pow)/2) * dx)	#[1/m]
 	knutot <- c(-rev(knu),knu)
 
 	# labels
-	xat 	<- c(1,nk/2,nk)
+	xat 	<- c(0,nk/2,nk)/nk
 	xLabels <- c(min(knutot), 0, max(knutot))
-	yat		<- c(1,nf/2,nf)
+	cat(fre)
+	yat		<- c(0,nf/2,nf)/nf
 	yLabels	<- c(0, max(fre)/2, max(fre))
 
 	# Note: when plotting spectra (S)  use log(S) or S.^alpha (alpha=0.1-0.3) to
 	#       increase the visibility of small events 
 	# p = 0.05
 	if(plot_spec){
-		image((t(A1_fft_pow[1:(nf/2),])^p), xat=xat, xLabels=xLabels, yat=yat,yLabels=yLabels,xlab="wavenumber (1/m)",ylab="frequency MHz")
+		image((t(A1_fft_pow[1:(nf/2),])^p), yaxt="n", xaxt="n",xlab="wavenumber (1/m)",ylab="frequency MHz")
+		axis(side=1,at=xat, labels=xLabels)
+		axis(side=2,at=yat, labels=yLabels)
+		# image((t(A1_fft_pow[1:(nf/2),])^p), xat=xat, xLabels=xLabels, yat=yat,yLabels=yLabels,xlab="wavenumber (1/m)",ylab="frequency MHz")
 	}
 	if(return_spec){
 		return(list(pow=A1_fft_pow[1:(nf/2),], pha=A1_fft_phase[1:(nf/2),]))
@@ -1842,7 +1921,7 @@ FKSpectrum <- function(A,dx=0.25,dz=0.8, npad=1, p=0.01,plot_spec=TRUE,return_sp
 
 
 
-FKFilter <- function(A,fk,L=c(5,5),npad=1){
+.FKFilter <- function(A,fk,L=c(5,5),npad=1){
 	nr <- nrow(A)	# time	
 	nc <- ncol(A)	# x	
 
@@ -2125,16 +2204,16 @@ repmat <- function(a,n,m) {kronecker(matrix(1,n,m),a)}
 
 # @date 30.04.2014 08:33
 # @auteur Emanuel Huber
-# @param [text]		filePath 			(file path of *.hd or *.dt1 file)
+# @param [text]		filepath 			(file path of *.hd or *.dt1 file)
 # @require source("trim.R")
 	# source('trim.R')
 	# cat('> Function(s) loaded: "trim.R" \n')
 # @return list((hd = headerHD, dt1hd = headerDT1, data=myData))
 # -------------------------------------------
 
-readDT1 <- function( filePath){
-	dirName 	<- dirname(filePath)
-	splitBaseName <- unlist(strsplit(basename(filePath),'[.]'))
+readDT1 <- function( filepath){
+	dirName 	<- dirname(filepath)
+	splitBaseName <- unlist(strsplit(basename(filepath),'[.]'))
 	baseName 	<- paste(splitBaseName[1:(length(splitBaseName)-1)],sep="")
 	
 	fileNameHD 	<- paste(dirName, "/",baseName,".HD",sep="")
@@ -2186,183 +2265,24 @@ readDT1 <- function( filePath){
 # if position = TRUE, return the row number
 # if number = TRUE, try to convert
 
-getHD <- function(A,string,number=TRUE,position=FALSE){
-	if(position){
-		which((trim(A[,1]) == string ) == TRUE)[1]
-	
+.getHD <- function(A,string,number=TRUE,position=FALSE){
+	if(number){
+		value <- as.numeric(A[trim(A[,1])==string,2])
 	}else{
-		if(number){
-			as.numeric(A[trim(A[,1])==string,2])
+		value <- A[trim(A[,1])==string,2]
+	}
+	if(length(value)>0){
+		if(position){
+			pos <- which((trim(A[,1]) == string ) == TRUE)[1]
+			return(c(value,pos))
 		}else{
-			A[trim(A[,1])==string,2]
+			return(value)
 		}
+	}else{
+		return(NULL)
 	}
-
 }
 
-# -------------------------------------------
-# ------------writeDT1--------------------------
-# -------------------------------------------
-# @name	writeDT1 
-# @description This function writes *.HD and associated *.DT1
-# files  (Sensors & Software)
-
-# @date 07.11.2012 08:33
-# @auteur Emanuel Huber
-# @param [text]		fileNameHD 			(file path of *.hd file)
-# @param [text]		fileNameDT1 			(file path of *.dt1 file)
-
-
-# @return list((hd = headerHD, dt1hd = headerDT1, data=myData))
-# -------------------------------------------
-
-.writeDT1 <- function(x, filepath, overwrite=FALSE){
-	#-------------------------
-	# DT1 FILE: traces
-	traces <- x@data	# should ranges between -32768 and 32767
-	if(max(traces)/max(abs(traces))*32768 <= 32767){
-		traces <- traces/max(abs(traces))*32768
-	}else{
-		traces <- traces/max(abs(traces))*32767
-	}
-	storage.mode(traces) <- "integer"
-	
-	# DT1 FILE: header
-	indexDT1Header=c("traces", "position", "samples","topo", "NA1", "bytes","tracenb", 
-					"stack","window","NA2", "NA3", "NA4", "NA5", "NA6", "recx","recy",
-					"recz","transx","transy","transz","time0","zeroflag", "NA7", "time",
-					"x8", "com","com1","com2","com3","com4","com5","com6")
-	traces_hd <- list()
-	traces_hd$traces <- x@traces
-	traces_hd$position <- x@pos
-	traces_hd$samples <- nrow(x@data)
-	if(length(x@coord) > 0 && sum(is.na(x@coord)) > 0){
-		traces_hd$topo <- x@coord[,3]
-	}else{
-		traces_hd$topo <- rep.int(0L,ncol(x@data))
-	}
-	traces_hd$NA1 <- rep.int(0L,ncol(x@data))
-	traces_hd$bytes <- rep.int(2L,ncol(x@data))
-	traces_hd$tracenb <- rep(x@dz*(nrow(x@data)-1),ncol(x@data))	# time window
-	traces_hd$stack <- x@hd$nstacks
-	traces_hd$window <- traces_hd$tracenb
-	traces_hd$NA2 <- traces_hd$NA1 
-	traces_hd$NA3 <- traces_hd$NA1 
-	traces_hd$NA4 <- traces_hd$NA1 
-	traces_hd$NA5 <- traces_hd$NA1 
-	traces_hd$NA6 <- traces_hd$NA1 
-	if(length(x@rec) > 0 && sum(is.na(x@rec)) > 0){
-		traces_hd$recx <- x@rec[,1]
-		traces_hd$recy <- x@rec[,2]
-		traces_hd$recz <- x@rec[,3]
-	}else{
-		traces_hd$recx <- rep.int(0L,ncol(x@data))
-		traces_hd$recy <- rep.int(0L,ncol(x@data))
-		traces_hd$recz <- rep.int(0L,ncol(x@data))
-	}
-	if(length(x@trans) > 0 && sum(is.na(x@trans)) > 0){
-		traces_hd$transx <- x@trans[,2]
-		traces_hd$transy <- x@trans[,3]
-		traces_hd$transz <- x@trans[,3]
-	}else{
-		traces_hd$transx <- rep.int(0L,ncol(x@data))
-		traces_hd$transy <- rep.int(0L,ncol(x@data))
-		traces_hd$transz <- rep.int(0L,ncol(x@data))
-	}
-	traces_hd$time0 <- x@time0 
-	traces_hd$zeroflag <- rep.int(0L,ncol(x@data)) 
-	traces_hd$NA7 <- traces_hd$NA1 
-	traces_hd$time <- x@time
-	traces_hd$x8 <- rep.int(0L,ncol(x@data)) 
-	traces_hd$com <- x@com 
-	
-	# DT1 FILE: write
-	dirName 	<- dirname(filepath)
-	splitBaseName <- unlist(strsplit(basename(filepath),'[.]'))
-	baseName 	<- paste(splitBaseName[1:(length(splitBaseName)-1)],sep="")
-	if(dirName == '.'){
-		filepath <- baseName
-	}else{
-		filepath <- paste(dirName,'/',baseName)
-	}
-	if(overwrite==FALSE){
-		filepath_orgi <- filepath
-		k <- 0
-		while(file.exists(paste(filepath,".DT1",sep="")) || file.exists(paste(filepath,".HD",sep=""))){
-			filepath <- paste(filepath_orgi,"_",k,sep="")
-			k <- k+1
-		}
-	}else{
-		cat("file may be overwritten\n")
-	}
-	dt1_file <- file(paste(filepath,".DT1",sep="") , "wb")
-	for(i in 1:ncol(x@data)){
-		for(j in 1:25){
-			writeBin(as.double(traces_hd[[indexDT1Header[j]]][i]), dt1_file, size = 4)
-		}
-		comment28 <- as.character(traces_hd[[indexDT1Header[26]]][i])
-		com_add <- paste(c(rep(" ", 28-nchar(comment28)),comment28),sep="",collapse="")
-		writeChar(com_add, dt1_file,nchars =28,eos = NULL)
-		writeBin(traces[,i], dt1_file, size = 2)
-	}
-	close(dt1_file)
-	
-	#-------------------------
-	# HD FILE: traces
-	hd_file <- file(paste(filepath,".HD",sep="") , "w+")
-	writeLines("1234", con = hd_file, sep = "\r\n")
-	if(!is.null(x@hd$gprdevice)){
-		writeLines(as.character(x@hd$gprdevice), con = hd_file, sep = "\r\n")
-	}else{
-		writeLines("Data processed with RGPR", con = hd_file, sep = "\r\n")
-	}
-	writeLines(as.character(x@date), con = hd_file, sep = "\r\n")
-	writeLines(paste("NUMBER OF TRACES","= ",as.character(ncol(x@data)),sep=""), con = hd_file, sep = "\r\n")
-	writeLines(paste("NUMBER OF PTS/TRC","= ",as.character(nrow(x@data)),sep=""), con = hd_file, sep = "\r\n")
-	writeLines(paste("TIMEZERO AT POINT","=",
-				as.character(round(mean(x@time0)/x@dz)),sep=""), con = hd_file, sep = "\r\n")
-	writeLines(paste("TOTAL TIME WINDOW","=",as.character(x@dz*(nrow(x@data)-1)),sep=""), con = hd_file, sep = "\r\n")
-	startpos <- 0
-	if(!is.null(x@hd$startpos)){
-		startpos <- x@hd$startpos
-	}
-	writeLines(paste("STARTING POSITION","=",as.character(startpos),sep=""), con = hd_file, sep = "\r\n")
-	endpos <- (ncol(x@data)-1)*x@dx
-	if(!is.null(x@hd$endpos)){
-		endpos <- x@hd$endpos
-	}
-	writeLines(paste("FINAL POSITION","=",as.character(endpos),sep=""), con = hd_file, sep = "\r\n")
-	writeLines(paste("STEP SIZE USED","=",as.character(x@dx),sep=""), con = hd_file, sep = "\r\n")
-	writeLines(paste("POSITION UNITS","=","metres",sep=""), con = hd_file, sep = "\r\n")
-	if(x@posunit != "m"){
-		warning('Position units were defined as "meters"!\n')
-	}
-	writeLines(paste("NOMINAL FREQUENCY","=",as.character(x@freq),sep=""), con = hd_file, sep = "\r\n")
-	writeLines(paste("ANTENNA SEPARATION","=",as.character(x@antsep),sep=""), con = hd_file, sep = "\r\n")
-	pulservoltage <- 0
-	if(!is.null(x@hd$pulservoltage)){
-		pulservoltage <- x@hd$pulservoltage
-	}
-	writeLines(paste("PULSER VOLTAGE (V)","=",as.character(pulservoltage),sep=""), con = hd_file, sep = "\r\n")
-	nstacks <- 1
-	if(!is.null(x@hd$nstacks)){
-		nstacks <- x@hd$nstacks
-	}
-	writeLines(paste("NUMBER OF STACKS","=",as.character(nstacks),sep=""), con = hd_file, sep = "\r\n")
-	writeLines(paste("SURVEY MODE","=",as.character(x@surveymode),sep=""), con = hd_file, sep = "\r\n")
-	
-	if(length(x@hd) > 0){
-		hd <- x@hd
-		hdNames <- names(hd)
-		hdNames <- hdNames[!(hdNames %in% c("startpos","endpos","nstacks","gprdevice"))]
-		for(i in seq_along(hdNames)){
-			writeLines(paste(as.character(hdNames[i]),"=",as.character(hd[[hdNames[i]]]),sep=""), con = hd_file, sep = "\r\n")
-		}
-	}
-	close(hd_file)
-	return(filepath)
-}
-#-----------------
 
 
 
@@ -2417,10 +2337,10 @@ addArg <- function(proc, arg){
 }
 
 #--------------------------------
-# wapply: A faster (but less functional) ‘rollapply’ for vector setups
+# wapply: A faster (but less functional) Â‘rollapplyÂ’ for vector setups
 # April 23, 2013
 # By A.N. Spiess, senior scientist at the Department of Andrology at the University Hospital Hamburg-Eppendorf
-# This is what turned out (wapply for “window apply”)
+# This is what turned out (wapply for Â“window applyÂ”)
 wapply <- function(x, width, by = NULL, FUN = NULL, ...){
 	FUN <- match.fun(FUN)
 	if (is.null(by)) by <- width

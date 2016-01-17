@@ -3,7 +3,7 @@
 \alias{ncol-methods}
 \alias{ncol,ANY-method}
 \alias{ncol,GPR-method}
-\title{ ~~ Methods for Function \code{ncol}  ~~}
+\title{ Methods for Function \code{ncol}}
 \description{
  ~~ Methods for function \code{ncol}  ~~
 }

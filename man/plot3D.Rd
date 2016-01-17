@@ -1,8 +1,11 @@
 \name{plot3D}
 \alias{plot3D}
+\alias{plot3D-methods}
+\alias{plot3D,GPR-method}
+\alias{plot3D,GPRsurvey-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	plot in 3D GPR data (with RGL)
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

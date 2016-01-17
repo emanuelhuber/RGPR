@@ -4,7 +4,7 @@
 \alias{dim,GPR-method}
 \title{ ~~ Methods for Function \code{dim}  ~~}
 \description{
- ~~ Methods for function \code{dim}  ~~
+	 Dimension of the GPR data
 }
 \section{Methods}{
 \describe{

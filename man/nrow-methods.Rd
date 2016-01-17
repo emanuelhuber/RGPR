@@ -3,7 +3,7 @@
 \alias{nrow-methods}
 \alias{nrow,ANY-method}
 \alias{nrow,GPR-method}
-\title{ ~~ Methods for Function \code{nrow}  ~~}
+\title{ Methods for Function \code{nrow}  }
 \description{
  ~~ Methods for function \code{nrow}  ~~
 }

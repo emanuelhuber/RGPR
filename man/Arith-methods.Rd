@@ -4,7 +4,7 @@
 \alias{Arith,ANY,GPR-method}
 \alias{Arith,GPR,ANY-method}
 \alias{Arith,GPR,GPR-method}
-\title{ ~~ Methods for Function \code{Arith}  ~~}
+\title{ Arithmetic operator working the GPR objects}
 \description{
  ~~ Methods for function \code{Arith}  ~~
 }

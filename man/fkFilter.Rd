@@ -1,8 +1,10 @@
 \name{fkFilter}
 \alias{fkFilter}
+\alias{fkFilter-methods}
+\alias{fkFilter,GPR-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	frequency-wave filter (f-k filter, 2D frequency filter)
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

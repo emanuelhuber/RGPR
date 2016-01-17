@@ -1,8 +1,10 @@
 \name{clip}
 \alias{clip}
+\alias{clip-methods}
+\alias{clip,GPR-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	Clip the GPR signal
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

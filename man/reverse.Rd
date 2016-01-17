@@ -1,8 +1,10 @@
 \name{reverse}
 \alias{reverse}
+\alias{reverse-methods}
+\alias{reverse,GPR-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	Reverse GPR profile
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

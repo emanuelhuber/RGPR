@@ -1,8 +1,10 @@
 \name{getAmpl}
 \alias{getAmpl}
+\alias{getAmpl-methods}
+\alias{getAmpl,GPR-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	Return mean/median trace amplitude
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

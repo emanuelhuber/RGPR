@@ -1,8 +1,10 @@
 \name{upsample}
 \alias{upsample}
+\alias{upsample-methods}
+\alias{upsample,GPR-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	Un-sampling o the GPR data
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

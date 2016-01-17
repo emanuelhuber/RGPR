@@ -894,16 +894,13 @@ setMethod("dewow", "GPR", function(x, type=c("MAD","Gaussian"),...){
 		if(length(dim(A))<2){
 			A <- matrix(A,ncol=1,nrow=length(A))
 		}
-		x@data[t0:nrow(x),] <- A[t0:nrow(x),] - gaussianSmooth(A,sig)[t0:nrow(x),]
+		x@data[t0:nrow(x),] <- A[t0:nrow(x),] - mmand::gaussianSmooth(A,sig)[t0:nrow(x),]
 	}
 	proc <- get_args()
 	x@proc <- c(x@proc, proc)
 	return(x) 
 })
 
-setMethod("dewow2", "GPR", function(x, sig=100){
-	stop("DEPRECATED!!! USE 'dewow(x,type=\"Gaussian\",sig=100)' instead!\n")
-})
 
 #----------------- 1D-FILTER
 setMethod("medianFilter1D", "GPR", function(x,w){
@@ -962,22 +959,21 @@ setMethod("gain", "GPR", function(x, type=c("geospreading","power","exp","agc"),
 )
 
 #----------------- SPATIAL-FILTER
-setMethod("adimproSmooth", "GPR", function(x,hmax=2,...){
- # adsmooth <- function(x,hmax=2){
-		 IMG <- x@data
-		 IMG <- (IMG-min(IMG))/(max(IMG)-min(IMG))
-		 adimg <- make.image(IMG)
-		 # img.smooth <- awsimage(adimg, hmax = 2)
-		 # img.smooth <- awsaniso(adimg, hmax = 2,...)
-		 img.smooth <- awspimage(adimg, hmax = 2,...)
-		 AA <- extract.image(img.smooth)
-		 AAA <- (AA-mean(AA))/sd(AA)
-		 x@data <- AAA
-		 proc <- get_args()
-		x@proc <- c(x@proc, proc)
-		 return(x)
-	}
-)
+#setMethod("adimproSmooth", "GPR", function(x,hmax=2,...){
+#		 IMG <- x@data
+#		 IMG <- (IMG-min(IMG))/(max(IMG)-min(IMG))
+#		 adimg <- make.image(IMG)
+#		 # img.smooth <- adimpro::awsimage(adimg, hmax = 2)
+#		 # img.smooth <- adimpro::awsaniso(adimg, hmax = 2,...)
+#		 img.smooth <- adimpro::awspimage(adimg, hmax = 2,...)
+#		 AA <- extract.image(img.smooth)
+#		 AAA <- (AA-mean(AA))/sd(AA)
+#		 x@data <- AAA
+#		 proc <- get_args()
+#		x@proc <- c(x@proc, proc)
+#		 return(x)
+#	}
+#)
 
 setMethod("medianFilter", "GPR", function(x){
 		x@data <-  .medianFilter(x@data)
@@ -1046,25 +1042,42 @@ setMethod("rotatePhase", "GPR", function(x, phi){
 	}
 )
 
-setMethod("deconvSpiking", "GPR", function(x, W,wtr,nf,mu){
-# deconvSpiking <- function(gpr,W,wtr,nf,mu){
-		W <- seq(W[1],W[2])
-		X <- rmsScaling(x)@data
-		# X <- X / apply(as.matrix(X),2,RMS)
-		Xdec <- matrix(nrow=nrow(X),ncol=ncol(X))
-		Fmin <- matrix(nrow=nf,ncol=ncol(X))
-		Wmin <- matrix(nrow=nf,ncol=ncol(X))
-		for(i in 1:ncol(X)){
-			ww <- (i-wtr):(i+wtr)
-			ww <- ww[ww <= ncol(X)]
-			ww <- ww[ww >= 1]
-			supertrace <- as.vector(X[W,ww])
-			# inverse minimum-phase wavelet estimation # variante 1 (Emanuel)
-			Fmin[,i] <- spikingFilter(supertrace,nf=nf ,mu=mu, shft=1)
-			# Wmin[,i] <- deconv(c(1,rep(0,nf-1)),Fmin[,i], nf=nf,mu=mu)
-			Wmin[,i] <- deconvFreq(c(1,rep(0,nf-1)),Fmin[,i], mu=mu)
-			# minimum-phase deconvolued data
-			Xdec[,i] <- convolution(X[,i],Fmin[,i])[1:nrow(X)]
+setMethod("deconvolution", "GPR", function(x, method=c("spiking","wavelet","min-phase"),...){
+		method <- match.arg(method, c("spiking","wavelet","min-phase"))
+		if(method == "spiking"){
+		# deconvSpiking <- function(x,W,wtr,nf,mu){
+			if(missing(W) || missing(wtr) || missing(nf) || missing(mu)){
+				stop("spiking deconvolution requires the following arguments: W,wtr,nf,mu\n")
+			}
+			if(missing(shft)){
+				shft=1
+			}
+			W <- seq(W[1],W[2])
+			X <- rmsScaling(x)@data
+			# X <- X / apply(as.matrix(X),2,RMS)
+			Xdec <- matrix(nrow=nrow(X),ncol=ncol(X))
+			Fmin <- matrix(nrow=nf,ncol=ncol(X))
+			Wmin <- matrix(nrow=nf,ncol=ncol(X))
+			for(i in 1:ncol(X)){
+				ww <- (i-wtr):(i+wtr)
+				ww <- ww[ww <= ncol(X)]
+				ww <- ww[ww >= 1]
+				supertrace <- as.vector(X[W,ww])
+				# inverse minimum-phase wavelet estimation # variante 1 (Emanuel)
+				Fmin[,i] <- spikingFilter(supertrace,nf=nf ,mu=mu, shft=shft)
+				# Wmin[,i] <- deconv(c(1,rep(0,nf-1)),Fmin[,i], nf=nf,mu=mu)
+				Wmin[,i] <- deconvFreq(c(1,rep(0,nf-1)),Fmin[,i], mu=mu)
+				# minimum-phase deconvolued data
+				Xdec[,i] <- convolution(X[,i],Fmin[,i])[1:nrow(X)]
+			}
+		}else if(method == "wavelet"){
+			if(missing(h) || missing(mu)){
+				stop("wavelet deconvolution requires the following arguments: h, mu\n")
+			}
+			X <- rmsScaling(x)@data
+			Xdec <- apply(X,2, deconvFreq, h, mu)			
+		}else if(method== "min-phase"){
+			stop("min-phase deconvolution has to be first written!!!\n")
 		}
 		# gprdec <- gpr
 		x@data <- Xdec

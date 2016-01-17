@@ -1,6 +1,7 @@
 \name{GPRsurvey-class}
 \Rdversion{1.1}
 \docType{class}
+\alias{GPRsurvey}
 \alias{GPRsurvey-class}
 \alias{[,GPRsurvey,ANY,ANY,ANY-method}
 \alias{coords<-,GPRsurvey-method}
@@ -18,7 +19,7 @@
 
 \title{Class \code{"GPRsurvey"}}
 \description{
-%%  ~~ A concise (1-5 lines) description of what the class is. ~~
+GPRsurvey class
 }
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{new("GPRsurvey", ...)}.

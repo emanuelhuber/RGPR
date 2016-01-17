@@ -83,7 +83,7 @@ cat("********************\n")
 # 	- different taper window: cos, triang, hamming, bartlett, limtaper, hann, flattop....
 #	- check how time0 is used
 #	- GPR::export(type=PDF) use function plot (wiggles)!
-
+# 	- global -> optPhaseRotation -> check if 'e1071::kurtosis' is needed.	
 
 
 #--- STRUCTURE ---#
@@ -143,6 +143,7 @@ cat("********************\n")
 # - ...
 
 #--- deconvolution ---#
+# ALL IN ONE SINGLE FUNCTION!!!!
 # - despiking
 # - wiener
 # - BP
@@ -256,11 +257,11 @@ cat('> Package(s) loaded (if...): ',requiredPackage,' \n')
 	# library(rgeos)
 	# library(sp)
 	# mmand::gaussianSmooth
-	# e1071::kurtosis
+	# e1071::kurtosis	
 	
 
 	
-	
+	#EMD, mmand, rgl
 	
 	
 source("R/global.R")

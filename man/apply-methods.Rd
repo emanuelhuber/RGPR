@@ -5,7 +5,7 @@
 \alias{apply,GPR-method}
 \title{ ~~ Methods for Function \code{apply}  ~~}
 \description{
- ~~ Methods for function \code{apply}  ~~
+ apply function for GPR objects
 }
 \section{Methods}{
 \describe{

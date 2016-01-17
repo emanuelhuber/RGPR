@@ -1,8 +1,14 @@
 \name{ann}
 \alias{ann}
+\alias{ann<-}
+\alias{ann<--methods}
+\alias{ann<-,GPR-method}
+\alias{ann-methods}
+\alias{ann,GPR-method}
+
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	Return the annotations of every traces
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

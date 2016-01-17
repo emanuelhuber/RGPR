@@ -1,6 +1,7 @@
 \name{GPR-class}
 \Rdversion{1.1}
 \docType{class}
+\alias{GPR}
 \alias{GPR-class}
 \alias{[,GPR,ANY,ANY,ANY-method}
 \alias{[<-,GPR,ANY,ANY,ANY-method}
@@ -64,12 +65,13 @@
 \alias{summary,GPR-method}
 \alias{time0,GPR-method}
 \alias{time0<-,GPR-method}
+\alias{timeToDepth,GPR-method}
 \alias{upsample,GPR-method}
 \alias{writeGPR,GPR-method}
 
 \title{Class \code{"GPR"}}
 \description{
-%%  ~~ A concise (1-5 lines) description of what the class is. ~~
+GPR class
 }
 \section{Objects from the Class}{
 Objects can be created by calls of the form \code{new("GPR", ...)}.

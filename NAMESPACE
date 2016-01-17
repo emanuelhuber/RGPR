@@ -15,18 +15,17 @@ exportMethods(
     "crs",
     "crs<-",
     "dcshift",
+	"deconvolution",
     "delineate",
     "delineations",
     "description",
     "dewow",
-    "dewow2",
     "dim",
     "exportDelineations",
     "exportFID",
     "exportPDF",
     "fid",
     "fid<-",
-    "filename",
     "firstBreack",
     "fkFilter",
     "freqFilter",
@@ -49,6 +48,7 @@ exportMethods(
     "name",
     "ncol",
     "nrow",
+	"plot",
     "plot3D",
     "plotAmpl",
     "plotDelineations",
@@ -73,3 +73,8 @@ exportClasses(
     "GPR",
      "GPRsurvey" 
 )
+import(methods)
+import(graphics)
+import(sp)
+import(rgdal)
+import(rgeos, MASS, signal, colorspace, Cairo, e1071, EMD, mmand, rgl)

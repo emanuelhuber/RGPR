@@ -1,8 +1,10 @@
 \name{dewow}
 \alias{dewow}
+\alias{dewow-methods}
+\alias{dewow,GPR-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	GPR dewowing ("wow" removal)
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

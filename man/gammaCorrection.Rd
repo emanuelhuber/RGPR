@@ -1,8 +1,10 @@
 \name{gammaCorrection}
 \alias{gammaCorrection}
+\alias{gammaCorrection-methods}
+\alias{gammaCorrection,GPR-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	Gamma correction of the GPR data (like for image processing)
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

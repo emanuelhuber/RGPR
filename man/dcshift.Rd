@@ -1,8 +1,10 @@
 \name{dcshift}
 \alias{dcshift}
+\alias{dcshift-methods}
+\alias{dcshift,GPR-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	DC-shift
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

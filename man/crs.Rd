@@ -1,8 +1,13 @@
 \name{crs}
 \alias{crs}
+\alias{crs-methods}
+\alias{crs,GPR-method}
+\alias{crs<-}
+\alias{crs<--methods}
+\alias{crs<-,GPR-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	Coordinate reference system
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

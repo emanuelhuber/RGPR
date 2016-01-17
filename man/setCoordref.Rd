@@ -1,8 +1,10 @@
 \name{setCoordref}
 \alias{setCoordref}
+\alias{setCoordref-methods}
+\alias{setCoordref,GPRsurvey-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+Set a local reference center
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

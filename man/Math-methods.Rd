@@ -2,9 +2,9 @@
 \docType{methods}
 \alias{Math-methods}
 \alias{Math,GPR-method}
-\title{ ~~ Methods for Function \code{Math}  ~~}
+\title{ Mathematical functions applicable to the GPR objects}
 \description{
- ~~ Methods for function \code{Math}  ~~
+	 Mathematical functions applicable to the GPR objects
 }
 \section{Methods}{
 \describe{

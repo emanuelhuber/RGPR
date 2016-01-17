@@ -1,8 +1,11 @@
 \name{interpTraces}
 \alias{interpTraces}
+\alias{interpTraces-methods}
+\alias{interpTraces,GPR-method}
+\alias{interpTraces,GPRsurvey-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	Interpolate the position of the GPR traces
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

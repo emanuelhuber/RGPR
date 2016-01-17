@@ -1,8 +1,10 @@
 \name{plotDelineations}
 \alias{plotDelineations}
+\alias{plotDelineations-methods}
+\alias{plotDelineations,GPR-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	Plot delineated data (2D)
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

@@ -1,8 +1,13 @@
 \name{fid}
 \alias{fid}
+\alias{fid-methods}
+\alias{fid,GPR-method}
+\alias{fid<-}
+\alias{fid<--methods}
+\alias{fid<-,GPR-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	Fiducials (marker) of GPR
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

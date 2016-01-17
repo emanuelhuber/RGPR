@@ -2,7 +2,7 @@
 \alias{convolution2D}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	2D convolution
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

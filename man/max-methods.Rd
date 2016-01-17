@@ -2,7 +2,7 @@
 \docType{methods}
 \alias{max-methods}
 \alias{max,GPR-method}
-\title{ ~~ Methods for Function \code{max}  ~~}
+\title{ Methods for Function \code{max}}
 \description{
  ~~ Methods for function \code{max}  ~~
 }

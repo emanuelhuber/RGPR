@@ -2,7 +2,7 @@
 \docType{methods}
 \alias{[<--methods}
 \alias{[<-,GPR,ANY,ANY,ANY-method}
-\title{ ~~ Methods for Function \code{[<-}  ~~}
+\title{ Methods for Function \code{[<-} }
 \description{
  ~~ Methods for function \code{[<-}  ~~
 }

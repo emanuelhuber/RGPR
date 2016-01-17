@@ -1,8 +1,11 @@
 \name{writeGPR}
 \alias{writeGPR}
+\alias{writeGPR-methods}
+\alias{writeGPR,GPR-method}
+\alias{writeGPR,GPRsurvey-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	Write the GPR data in various format
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

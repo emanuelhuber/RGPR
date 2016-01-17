@@ -1,8 +1,10 @@
 \name{identifyDelineation}
 \alias{identifyDelineation}
+\alias{identifyDelineation-methods}
+\alias{identifyDelineation,GPR-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	On a GPR plot, identify the delineations
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

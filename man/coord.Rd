@@ -1,8 +1,13 @@
 \name{coord}
 \alias{coord}
+\alias{coord-methods}
+\alias{coord,GPR-method}
+\alias{coord<-}
+\alias{coord<--methods}
+\alias{coord<-,GPR-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	Coordinates of every traces
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

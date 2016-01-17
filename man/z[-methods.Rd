@@ -3,9 +3,9 @@
 \alias{[-methods}
 \alias{[,GPR,ANY,ANY,ANY-method}
 \alias{[,GPRsurvey,ANY,ANY,ANY-method}
-\title{ ~~ Methods for Function \code{[}  ~~}
+\title{ Methods for Function \code{[} }
 \description{
- ~~ Methods for function \code{[}  ~~
+ Methods for function \code{[} 
 }
 \section{Methods}{
 \describe{

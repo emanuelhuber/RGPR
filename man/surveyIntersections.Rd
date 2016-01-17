@@ -1,8 +1,10 @@
 \name{surveyIntersections}
 \alias{surveyIntersections}
+\alias{surveyIntersections-methods}
+\alias{surveyIntersections,GPRsurvey-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	Compute the GPR profile intersections of survey
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

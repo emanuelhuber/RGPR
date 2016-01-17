@@ -1,8 +1,10 @@
 \name{spec}
 \alias{spec}
+\alias{spec-methods}
+\alias{spec,GPR-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	Show the spectrum
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

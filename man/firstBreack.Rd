@@ -1,8 +1,10 @@
 \name{firstBreack}
 \alias{firstBreack}
+\alias{firstBreack-methods}
+\alias{firstBreack,GPR-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	GPR firstBreack
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

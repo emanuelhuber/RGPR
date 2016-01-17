@@ -2,7 +2,7 @@
 \alias{byte2volt}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	Conversion byte to volt
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

@@ -1,8 +1,10 @@
 \name{freqFilter}
 \alias{freqFilter}
+\alias{freqFilter-methods}
+\alias{freqFilter,GPR-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	Trace to trace frequency filter
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

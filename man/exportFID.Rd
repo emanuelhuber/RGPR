@@ -1,8 +1,11 @@
 \name{exportFID}
 \alias{exportFID}
+\alias{exportFID-methods}
+\alias{exportFID,GPR-method}
+\alias{exportFID,GPRsurvey-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	Export the fiducials (marker)
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

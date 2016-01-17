@@ -5,7 +5,7 @@
 \alias{length,GPRsurvey-method}
 \title{ ~~ Methods for Function \code{length}  ~~}
 \description{
- ~~ Methods for function \code{length}  ~~
+	 Length of the GPR/GPRsurvey objects
 }
 \section{Methods}{
 \describe{

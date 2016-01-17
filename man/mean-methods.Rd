@@ -3,7 +3,7 @@
 \alias{mean-methods}
 \alias{mean,ANY-method}
 \alias{mean,GPR-method}
-\title{ ~~ Methods for Function \code{mean}  ~~}
+\title{ Methods for Function \code{mean} }
 \description{
  ~~ Methods for function \code{mean}  ~~
 }

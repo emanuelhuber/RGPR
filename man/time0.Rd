@@ -1,8 +1,13 @@
 \name{time0}
 \alias{time0}
+\alias{time0-methods}
+\alias{time0,GPR-method}
+\alias{time0<-}
+\alias{time0<--methods}
+\alias{time0<-,GPR-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+ 	time-zero
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

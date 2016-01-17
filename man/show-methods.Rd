@@ -3,7 +3,7 @@
 \alias{show-methods}
 \alias{show,GPR-method}
 \alias{show,GPRsurvey-method}
-\title{ ~~ Methods for Function \code{show}  ~~}
+\title{ Methods for Function \code{show}}
 \description{
  ~~ Methods for function \code{show}  ~~
 }

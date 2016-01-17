@@ -2,7 +2,7 @@
 \docType{methods}
 \alias{min-methods}
 \alias{min,GPR-method}
-\title{ ~~ Methods for Function \code{min}  ~~}
+\title{ Methods for Function \code{min} }
 \description{
  ~~ Methods for function \code{min}  ~~
 }

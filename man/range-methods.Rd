@@ -2,7 +2,7 @@
 \docType{methods}
 \alias{range-methods}
 \alias{range,GPR-method}
-\title{ ~~ Methods for Function \code{range}  ~~}
+\title{ Methods for Function \code{range}  }
 \description{
  ~~ Methods for function \code{range}  ~~
 }

@@ -1,8 +1,11 @@
 \name{plotDelineations3D}
 \alias{plotDelineations3D}
+\alias{plotDelineations3D-methods}
+\alias{plotDelineations3D,GPR-method}
+\alias{plotDelineations3D,GPRsurvey-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	plot in 3D the delineated data
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

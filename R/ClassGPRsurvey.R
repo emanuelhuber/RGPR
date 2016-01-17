@@ -474,6 +474,13 @@ setMethod("interpTraces", "GPRsurvey", function(x,topo){
 	}
 )
 
+setMethod(
+	f="coords",
+	signature="GPRsurvey",
+	definition=function(x){
+		return(x@coords)
+	}
+)
 
 setReplaceMethod(
 	f="coords",

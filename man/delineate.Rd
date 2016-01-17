@@ -1,8 +1,10 @@
 \name{delineate}
 \alias{delineate}
+\alias{delineate-methods}
+\alias{delineate,GPR-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	Delineate GPR (GPR interpretation)
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

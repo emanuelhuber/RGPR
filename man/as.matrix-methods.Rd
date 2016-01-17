@@ -2,7 +2,9 @@
 \docType{methods}
 \alias{as.matrix-methods}
 \alias{as.matrix,GPR-method}
-\title{ ~~ Methods for Function \code{as.matrix}  ~~}
+\alias{coerce-methods}
+\alias{coerce,GPR,matrix-method}
+\title{ Coerce an object GPR into a matrix}
 \description{
  ~~ Methods for function \code{as.matrix}  ~~
 }

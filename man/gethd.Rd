@@ -1,8 +1,10 @@
 \name{gethd}
 \alias{gethd}
+\alias{gethd-methods}
+\alias{gethd,GPR-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	Access to the GPR header
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

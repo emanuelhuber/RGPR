@@ -1,8 +1,10 @@
 \name{medianFilter}
 \alias{medianFilter}
+\alias{medianFilter-methods}
+\alias{medianFilter,GPR-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	2D median filter
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

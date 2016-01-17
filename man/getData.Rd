@@ -1,8 +1,13 @@
 \name{getData}
 \alias{getData}
+\alias{getData-methods}
+\alias{getData,GPR-method}
+\alias{setData<-}
+\alias{setData<--methods}
+\alias{setData<-,GPR-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	Get the GPR data
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

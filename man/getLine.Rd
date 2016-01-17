@@ -1,8 +1,10 @@
 \name{getLine}
 \alias{getLine}
+\alias{getLine-methods}
+\alias{getLine,GPRsurvey-method}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-%%  ~~function to do ... ~~
+	Extract a GPR object from a GPRsurvey object
 }
 \description{
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~

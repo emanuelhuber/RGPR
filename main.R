@@ -49,9 +49,11 @@ cat("********************\n")
 
 # check lockBinding  (bibliotheque/documents/R/manuel-S4)
 
-# function invisible() > Return a (temporarily) invisible copy of an object.
-# used in plot function
-
+# function:
+#	- invisible() > Return a (temporarily) invisible copy of an object.
+# 		used in plot function
+# 	- missing() > check if an arguments is missing
+ 
 # DON'T WANT TO PASS "..."-ARGUMENTS TO A FUNCTION?
 # SOLUTION: use a wrapper function, where the args after ... are the args
 # that you don't want to have in the function. E.G:
@@ -84,7 +86,9 @@ cat("********************\n")
 #	- check how time0 is used
 #	- GPR::export(type=PDF) use function plot (wiggles)!
 # 	- global -> optPhaseRotation -> check if 'e1071::kurtosis' is needed.	
-
+# 	- GPR::interpTraces > rename into "interpTracePos" (the trace position is interpolated)
+#	- GPR::Math > add in @proc the name of the mathematical function
+#	- GPR::exportCoord > add option to export txt-file
 
 #--- STRUCTURE ---#
 # - add @vDatum	> for vertical geodesic datum

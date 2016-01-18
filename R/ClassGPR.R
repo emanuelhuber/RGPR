@@ -2323,24 +2323,28 @@ setMethod("exportFID", "GPR", function(x,filepath=NULL){
 )
 
 
-setMethod("exportCoord", "GPR", function(x,filepath=NULL,folder='.',type=c("points","lines")){
+setMethod("exportCoord", "GPR", function(x,filepath=NULL,folder='.',type=c("SpatialPoints","SpatialLines")){
 	type=match.arg(type)
 	folder <- dirname(filepath)
 	filename <- basename(filepath)
 	if(is.null(filename)){
 		filename <- x@name
 	}
-	if(type=="lines"){	
+	if(type=="SpatialLines"){	
 		mySpatLines <- as.SpatialLines(x)
 		dfl <- data.frame(z=c(1), row.names = x@name)
 		mySpatLinesdf <- SpatialLinesDataFrame(mySpatLines, dfl , match.ID = TRUE)
 		writeOGR(mySpatLinesdf, folder, filename, driver="ESRI Shapefile")
-	}else if(type=="points"){	
+	}else if(type=="SpatialPoints"){	
 		# allNames <- sapply(rep(Names, each=sapply(TOPO, length))
 		# A <- cbind(allTopo,allNames)
 		# allTogether <- as.data.frame(cbind(allTopo,allNames))
 		mySpatPoints <- as.SpatialPoints(x)
 		writeOGR(allTopo, folder, filename, driver="ESRI Shapefile")
+	}else if(type=="points"){
+		stop("use type = SpatialPoints instead.\n)"
+	}else if(type=="lines"){
+		stop("use type = SpatialLines instead.\n)"
 	}
 })
 

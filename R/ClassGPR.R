@@ -427,6 +427,8 @@ as.SpatialPoints <- function (x, ...){
 	}
 	return(myPoints)
 }
+
+		  
 		
 
 setMethod("as.numeric", "GPR",  function(x, ...) as.numeric(x@data))

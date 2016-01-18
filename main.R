@@ -66,6 +66,7 @@ cat("********************\n")
 # read/write SEGy
 
 # FIX ME!
+#	- GPRsurvey > as.SpatialLines & GPR as.SpatialLines > DEUX FOIS LA MEME FONCTION!!!!
 #	- GPRsurvey::plot3D -> use function "inPoly" to plot in 3D only a selection of traces from GPRsurvey
 #						-> add a zlim or a max depth!!!
 #	- GPR::plot3D -> add a zlim or a max depth!!!

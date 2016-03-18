@@ -2344,9 +2344,9 @@ setMethod("exportCoord", "GPR", function(x,filepath=NULL,folder='.',type=c("Spat
 		mySpatPoints <- as.SpatialPoints(x)
 		writeOGR(allTopo, folder, filename, driver="ESRI Shapefile")
 	}else if(type=="points"){
-		stop("use type = SpatialPoints instead.\n)"
+		stop("use type = SpatialPoints instead.\n")
 	}else if(type=="lines"){
-		stop("use type = SpatialLines instead.\n)"
+		stop("use type = SpatialLines instead.\n")
 	}
 })
 

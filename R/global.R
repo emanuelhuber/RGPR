@@ -258,6 +258,8 @@ setGenericVerif("interpTraces", function(x, topo) standardGeneric("interpTraces"
 setGenericVerif("coords", function(x) standardGeneric("coords"))
 setGenericVerif("coords<-",function(x,values){standardGeneric("coords<-")})
 
+setGenericVerif("velocity", function(x) standardGeneric("velocity"))
+setGenericVerif("velocity<-",function(x,values){standardGeneric("velocity<-")})
 
 setGenericVerif("writeGPR", function(x,filepath, format=c("DT1","rds"),overwrite=FALSE){ standardGeneric("writeGPR")})
 
@@ -556,6 +558,8 @@ plotWig <- function(A, x=NULL, y=NULL, xlim = NULL, ylim=NULL, topo=NULL, main =
 			  pointsize=10,
 			  # units = "in",
 			  title = pdfName)	
+	}else{
+	  op <- par(no.readonly=TRUE) 
 	}
 	par(mai=mai,omi=omi,mgp=mgp)
 		  
@@ -636,6 +640,8 @@ plotWig <- function(A, x=NULL, y=NULL, xlim = NULL, ylim=NULL, topo=NULL, main =
 	
 	if(!is.null(pdfName)){
 		dev.off()
+	}else{
+	  par(op)
 	}
 }
 
@@ -645,6 +651,7 @@ plotWig <- function(A, x=NULL, y=NULL, xlim = NULL, ylim=NULL, topo=NULL, main =
 plotRaster <- function(A,x=NULL,y=NULL,plot_raster=TRUE,barscale=TRUE, add= FALSE, 
 					mai=c(1, 0.8, 0.8, 1.8),  col=colGPR(n=101),note=NULL,
 					main="", time_0=0, antsep=1, v=0.1,ann=NULL,add_ann=TRUE,fid=NULL,depthunit="ns", ...){
+  op <- par(no.readonly=TRUE)
 	GPR =  as.matrix(A)
 	GPR[is.na(GPR)]=0
 	time_0 <- mean(time_0)
@@ -726,7 +733,7 @@ plotRaster <- function(A,x=NULL,y=NULL,plot_raster=TRUE,barscale=TRUE, add= FALS
 		mtext(note, side = 1, line = 4, cex=0.6)
 	}
 	box()
-	op <- par(no.readonly = TRUE)
+	#op <- par(no.readonly = TRUE)
 	if(barscale && grepl("[s]$",depthunit)){
 		fin <- par()$fin
 		# par(new=TRUE)
@@ -1083,7 +1090,7 @@ powSpec <- function(A,T = 0.8, fac = 1000000, plot_spec=TRUE, return_spec=FALSE,
 	# select only first half of vectors
 	pow = pow[1:nfreq,,drop=FALSE] 
 	pow_mean = apply(pow,1, mean, na.rm=TRUE)
-	unwrap_pha <- apply(pha,2, unwrap)
+	unwrap_pha <- apply(pha,2, signal::unwrap)
 	pha_mean = apply(unwrap_pha,1, mean, na.rm=TRUE)
 	
 	# samping interval GPR = 0.8 ns
@@ -1098,6 +1105,7 @@ powSpec <- function(A,T = 0.8, fac = 1000000, plot_spec=TRUE, return_spec=FALSE,
 	fre = Fs*seq(0,N/2)/N/fac
 	# plot the power spectrum
 	if(plot_spec){
+	  op <- par(no.readonly=TRUE)
 		m = seq(0,10000,by=50)
 		par(mfrow=c(2,1))
 		par(mar=c(0, 4, 4, 2) + 0.1, oma=c(1,1,1,1) )
@@ -1118,6 +1126,7 @@ powSpec <- function(A,T = 0.8, fac = 1000000, plot_spec=TRUE, return_spec=FALSE,
 			}
 			lines(fre,pha_mean,col="red")
 			Axis(side = 1, tcl = +0.3,  labels=m ,at=m)
+			par(op)
 	}
 	if(return_spec){
 		return(list(freq = fre, pow = pow, pha = pha))

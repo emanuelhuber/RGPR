@@ -36,7 +36,7 @@ GPRsurvey <- function(LINES){
 	line_lengths <- numeric(n)
 	posunit <- character(1)
 	crs <- character(1)
-	coords <- list()
+	xyzCoords <- list()
 	fids <- list()
 	for(i in seq_along(LINES)){
 		gpr <- readGPR(LINES[[i]])
@@ -54,18 +54,18 @@ GPRsurvey <- function(LINES){
 		crs 					<- gpr@crs[1]
 		if(length(gpr@coord)>0){
 			if(is.null(colnames(gpr@coord))){
-				coords[[line_names[i] ]] <- gpr@coord
+				xyzCoords[[line_names[i] ]] <- gpr@coord
 			}else if(all(toupper(colnames(gpr@coord)) %in% c("E","N","Z"))){
-				coords[[line_names[i] ]] <- gpr@coord[,c("E","N","Z")]
+				xyzCoords[[line_names[i] ]] <- gpr@coord[,c("E","N","Z")]
 			}else if(all(toupper(colnames(gpr@coord)) %in% c("X","Y","Z"))){
-				coords[[line_names[i] ]] <- gpr@coord[,c("X","Y","Z")]
+				xyzCoords[[line_names[i] ]] <- gpr@coord[,c("X","Y","Z")]
 			}else{
-				coords[[line_names[i] ]] <- gpr@coord
+				xyzCoords[[line_names[i] ]] <- gpr@coord
 			}
-			# coords[[line_names[i] ]] 	<- gpr@coord
+			# xyzCoords[[line_names[i] ]] 	<- gpr@coord
 			line_lengths[i]			<- lineDist(gpr@coord[,1:2],last=TRUE)
 		}else{
-			# coords[[line_names[i]]] 	<- NULL
+			# xyzCoords[[line_names[i]]] 	<- NULL
 # 			line_lengths[i]		<- gpr@dx * gpr@ntr
 			line_lengths[i]		<- gpr@dx * ncol(gpr@data)
 		}
@@ -84,7 +84,7 @@ GPRsurvey <- function(LINES){
 				antseps 		= line_antsep,			# length = [n]
 				posunit 		= posunit,		# length = 1
 				crs 			= crs,			# length = 1
-				coords			= coords,		# header
+				coords			= xyzCoords,		# header
 				fids			= fids,
 				intersections	= list()
 	)

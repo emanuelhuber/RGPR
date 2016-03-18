@@ -222,9 +222,9 @@ setMethod("readGPR", "character", function(filepath, description="", coordfile=N
 				x <- (.gpr(A,name=name,filepath=filepath,description=description))
 				if(!is.null(coordfile)){
 					cat("coordinates added\n")
-					coords <- as.matrix(read.table(coordfile,sep=",",head=TRUE))
+					xyzCoord <- as.matrix(read.table(coordfile,sep=",",head=TRUE))
 					crs(x)	 <- 	crs		
-					coord(x) <- 	coords
+					coord(x) <- 	xyzCoord
 				}
 				if(!is.null(intfile)){
 					cat("intersection added\n")
@@ -412,12 +412,6 @@ as.SpatialLines <- function (x, ...){
 }
 
 as.SpatialPoints <- function (x, ...){
-	# TOPO <- x@coords
-	# Names <- x@names
-	# allTopo <- do.call(rbind,TOPO)	#  N, E, Z
-	# # allNames <- sapply(rep(Names, each=sapply(TOPO, length))
-	# A <- cbind(allTopo,allNames)
-	# allTogether <- as.data.frame(cbind(allTopo,allNames))
 	myPoints <- as.data.frame(x@coord)
 	coordinates(myPoints) = ~E + N
 	if(crs(x) == '' || nchar(crs(x)) == 1){
@@ -753,6 +747,20 @@ setReplaceMethod(
 		return(x)
 	}
 )
+setMethod("velocity", "GPR", function(x){
+  return(x@vel[[1]])
+} 
+)
+setReplaceMethod(
+  f="velocity",
+  signature="GPR",
+  definition=function(x,value){
+    value <- as.vector(value)[1]
+    x@vel[[1]] <- value
+    return(x)
+  }
+)
+
 setMethod("time0", "GPR", function(x){
 		return(x@time0)
 	} 
@@ -1239,6 +1247,7 @@ plot.GPR <- function(x,y,...){
 		vel <- 0
 	}
 	if(any(dim(x) == 1)){
+	  op <- par(no.readonly=TRUE)
 		par(mar=c(5,4,3,2)+0.1,oma=c(0,0,3,0), mgp=c(2, 0.5, 0))
 		z <- seq(0,by=x@dz,length.out=length(x@data))
 		plot(z,x@data,type="n",xlab=x@depthunit,ylab="mV",xaxt="n")
@@ -1258,6 +1267,7 @@ plot.GPR <- function(x,y,...){
 		lines(z,x@data,...)
 		title(paste(x@name, ": trace nb", x@traces," @",x@pos,x@posunit,sep=""),outer=TRUE)
 		mtext(paste("depth (m),   v=",vel,"m/ns",sep="") ,side=3, line=2)
+		par(op)
  	}else{
 		if(!is.null(nupspl)){
 			x <- upsample(x,n=nupspl)

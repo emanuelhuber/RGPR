@@ -10,6 +10,7 @@ cat("********************\n")
 
 ############## CHANGES ##################
 #--- changes v0.0.9---#
+# - add velocity()
 #	- add fx: pal(), colGPR()
 #	- filepath instead of filename
 #   - slot @ntr removed (not needed! x@ntr <- ncol(x@data))
@@ -38,21 +39,14 @@ cat("********************\n")
 
 ############## RCODE : TO CHECK/THINK ###############
 # THINK: use Roxygen...
-# When plot with par(mfrow=c(2,1)).... reset the "par" after the plot (1) save op <- par(), 2) plot and 3) reset par: par(op).
 
-# CONVENTIONS: empty slot should have length = 0 (use character(0) instead of "")
-# CONVENTIONS: with generic method: use exactly the same arguments
-#				use args(plot) to know the arguments
-# CONVENTIONS: filepath (NOT filePath, fileName, filename, path)
-# CONVENTIONS: PRIVATE FUNCTION .myfunction()
-# CONVENTIONS: rename "fid" into  "fiducial marks"	=> fid
 
 # check lockBinding  (bibliotheque/documents/R/manuel-S4)
 
 # function:
 #	- invisible() > Return a (temporarily) invisible copy of an object.
 # 		used in plot function
-# 	- missing() > check if an arguments is missing
+# - missing() > check if an arguments is missing
  
 # DON'T WANT TO PASS "..."-ARGUMENTS TO A FUNCTION?
 # SOLUTION: use a wrapper function, where the args after ... are the args
@@ -76,6 +70,7 @@ cat("********************\n")
 #	- GPR::fkFilter -> add as argument "slopes"
 #	- GPR::interpTraces -> use a raster to get the v-elevation!
 #	- plot.GPR function
+#   -> use plot3D::image2D !!
 #		-> check if all the "..." parameters corresponds to the possible paramters. If not > error!
 #		-> check option image and use the "raster" option. Check grid with smooth image...
 #	- GPR::gain -> t0=NULL then t0 <- mean(time0)

@@ -97,29 +97,29 @@ plotTopo <- function(NEZ_file, add=TRUE){
 
 	
 
-safeFilepath <- function(filepath=NULL){
+safeFilepath <- function(filename=NULL){
 	# FILE NAMES
-	dirName 	<- dirname(filepath)
-	splitBaseName <- unlist(strsplit(basename(filepath),'[.]'))
+	dirName 	<- dirname(filename)
+	splitBaseName <- unlist(strsplit(basename(filename),'[.]'))
 	baseName 	<- paste(splitBaseName[1:(length(splitBaseName)-1)],sep="")
 	ext <- tail(splitBaseName,1)
 	if(dirName == '.'){
-		filepath <- baseName
+		filename <- baseName
 	}else{
-		filepath <- paste(dirName,'/',baseName,sep="")
+		filename <- paste(dirName,'/',baseName,sep="")
 	}
 # 	if(isTRUE(overwrite)){
 # 		cat("file may be overwritten\n")
 # 	}else{
-	filepath_orgi <- filepath
+	filename_orgi <- filename
 	k <- 0
-	while(file.exists(paste(filepath,".",ext,sep="")) || file.exists(paste(filepath,".HD",sep=""))){
-		filepath <- paste(filepath_orgi,"_",k,sep="")
+	while(file.exists(paste(filename,".",ext,sep="")) || file.exists(paste(filename,".HD",sep=""))){
+		filename <- paste(filename_orgi,"_",k,sep="")
 		k <- k+1
 	}
 # 	}
-	newfilepath <- paste(filepath, ".", ext, sep="")
-	return(newfilepath)
+	newfilename <- paste(filename, ".", ext, sep="")
+	return(newfilename)
 }
 
 
@@ -258,17 +258,17 @@ setGenericVerif("interpTraces", function(x, topo) standardGeneric("interpTraces"
 setGenericVerif("coords", function(x) standardGeneric("coords"))
 setGenericVerif("coords<-",function(x,values){standardGeneric("coords<-")})
 
-setGenericVerif("velocity", function(x) standardGeneric("velocity"))
-setGenericVerif("velocity<-",function(x,values){standardGeneric("velocity<-")})
+setGenericVerif("vel", function(x) standardGeneric("vel"))
+setGenericVerif("vel<-",function(x,values){standardGeneric("vel<-")})
 
-setGenericVerif("writeGPR", function(x,filepath, format=c("DT1","rds"),overwrite=FALSE){ standardGeneric("writeGPR")})
+setGenericVerif("writeGPR", function(x,filename, format=c("DT1","rds"),overwrite=FALSE){ standardGeneric("writeGPR")})
 
-setGenericVerif("writeSurvey", function(x, filepath, overwrite=FALSE){ standardGeneric("writeSurvey")})
+setGenericVerif("writeSurvey", function(x, filename, overwrite=FALSE){ standardGeneric("writeSurvey")})
 
 
-setGenericVerif("exportCoord",  function(x,filepath=NULL,type=c("points","lines"),driver="ESRI Shapefile",...) standardGeneric("exportCoord"))
+setGenericVerif("exportCoord",  function(x,filename=NULL,type=c("points","lines"),driver="ESRI Shapefile",...) standardGeneric("exportCoord"))
 
-setGenericVerif("exportProc",  function(x,filepath=NULL,sep="\t", row.names=FALSE,
+setGenericVerif("exportProc",  function(x,filename=NULL,sep="\t", row.names=FALSE,
 	col.names=FALSE, ...) standardGeneric("exportProc"))
 
 setGeneric("reverse", function(x) standardGeneric("reverse"))
@@ -404,7 +404,7 @@ plot3DSlice <- function(XYZ,slice=c("x","y","z"),section=1,col=colGPR(n=101), sa
 }
 
 
-setGeneric("exportPDF", function(x,filepath=NULL,add_topo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,...) standardGeneric("exportPDF"))
+setGeneric("exportPDF", function(x,filename=NULL,add_topo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,...) standardGeneric("exportPDF"))
 
 
 
@@ -484,7 +484,7 @@ doubleVector <- function(v,n=2L){
 # }
 
 # plotWig(x@data,x=xvalues, y= -rev(x@depth), main=x@name, xlab=x@posunit, ylab=ylab, topo= topo,
-					# note=x@filepath,col="black",time_0=x@time0,antsep=x@antsep, v=vel,fid=x@com,ann=x@ann,
+					# note=x@filename,col="black",time_0=x@time0,antsep=x@antsep, v=vel,fid=x@com,ann=x@ann,
 					# depthunit=x@depthunit,dots)
 plotWig <- function(A, x=NULL, y=NULL, xlim = NULL, ylim=NULL, topo=NULL, main ="", note=NULL,  
 					fid=NULL,ann = NULL, add_ann=TRUE,pdfName=NULL, ws =1, side=1, dx=0.25, dz=0.4, ratio=1,
@@ -759,7 +759,7 @@ plotRaster <- function(A,x=NULL,y=NULL,plot_raster=TRUE,barscale=TRUE, add= FALS
 
 
 
-setGenericVerif("exportFID", function(x,filepath=NULL) standardGeneric("exportFID"))
+setGenericVerif("exportFID", function(x,filename=NULL) standardGeneric("exportFID"))
 
 
 
@@ -769,8 +769,8 @@ setGenericVerif("gethd", function(x,hd=NULL) standardGeneric("gethd"))
 
 
 
-setGenericVerif("filepath", function(x) standardGeneric("filepath"))
-
+#setGenericVerif("filepath", function(x) standardGeneric("filepath"))
+setGenericVerif("filename", function(x) standardGeneric("filename"))
 
 setGenericVerif("ann", function(x) standardGeneric("ann"))
 
@@ -807,7 +807,7 @@ setGenericVerif("setData<-", function(x,value) standardGeneric("setData<-"))
 
 #==============================#
 #========== DC-SHIFT =========#
-setGenericVerif("dcshift", function(x, u) standardGeneric("dcshift"))
+setGenericVerif("dcshift", function(x, u=1:10, FUN=mean) standardGeneric("dcshift"))
 
 
 #==============================#
@@ -898,13 +898,13 @@ dewow2 <- function(x, sig=100){
 #==============================#
 #======= GAIN FUNCTIONS ========#
 
-setGenericVerif("gain", function(x, type=c("geospreading","power","exp","agc"),...) standardGeneric("gain"))
+setGenericVerif("gain", function(x, type=c("power","exp","agc","geospreading"),...) standardGeneric("gain"))
 
 
 
 # CF Yilmaz, p85
-gain_geospreading <- function(A,alpha,d_t,t_0=NULL,t_end=NULL,t_cst=NULL){
-	g <- .gain_geospreading(A[,1],alpha,d_t,t_0,t_end,t_cst)
+gain_power <- function(A,alpha,d_t,t_0=NULL,t_end=NULL,t_cst=NULL){
+	g <- .gain_power(A[,1],alpha,d_t,t_0,t_end,t_cst)
 	Anew <- (A)*g
 	# s1 = ((max(A))-(min(A)));	# scale factor
 	# s1 = apply(A,2,max)-apply(A,2,min)	# scale factor
@@ -916,7 +916,7 @@ gain_geospreading <- function(A,alpha,d_t,t_0=NULL,t_end=NULL,t_cst=NULL){
 	return(Anew/s2*s1 )
 }
 
-.gain_geospreading <- function(d,alpha,d_t,t_0=NULL,t_end=NULL,t_cst=NULL){
+.gain_power <- function(d,alpha,d_t,t_0=NULL,t_end=NULL,t_cst=NULL){
 	if(is.null(t_0)) t_0 <-0
 	if(is.null(t_end)) t_end <-(length(d)-1)*d_t
 	if(!is.null(t_cst) && !(t_cst > t_0 && t_cst < t_end)){
@@ -1126,7 +1126,7 @@ powSpec <- function(A,T = 0.8, fac = 1000000, plot_spec=TRUE, return_spec=FALSE,
 			}
 			lines(fre,pha_mean,col="red")
 			Axis(side = 1, tcl = +0.3,  labels=m ,at=m)
-			par(op)
+		par(op)
 	}
 	if(return_spec){
 		return(list(freq = fre, pow = pow, pha = pha))
@@ -1309,15 +1309,15 @@ phaseRotation <- function(x,phi){
 }
 
 # # readGPR = read DT1 FORMAT and return object from class "GPR"
-# readGPR <- function(filepath,description=""){
-		# A <- readDT1(filepath)
-		# name=strsplit(basename(filepath),'[.]')[[1]][1]
-		# return(GPR(A,name=name,filepath=filepath,description=description))
+# readGPR <- function(filename,description=""){
+		# A <- readDT1(filename)
+		# name=strsplit(basename(filename),'[.]')[[1]][1]
+		# return(GPR(A,name=name,filename=filename,description=description))
 # }
 
-setGenericVerif("readGPR", function(filepath,description="", coordfile=NULL,crs="",intfile=NULL) standardGeneric("readGPR"))
+setGenericVerif("readGPR", function(filename,description="", coordfile=NULL,crs="",intfile=NULL) standardGeneric("readGPR"))
 
-# setGenericVerif("writeGPR", function(x,filepath, format=c("DT1","rds")) standardGeneric("writeGPR"))
+# setGenericVerif("writeGPR", function(x,filename, format=c("DT1","rds")) standardGeneric("writeGPR"))
 
 setGenericVerif("name", function(x) standardGeneric("name"))
 
@@ -1361,7 +1361,7 @@ setGenericVerif("description", function(x) standardGeneric("description"))
 # cat('"GPR_readDT1.R" \n')
 # cat('"GPR_gain.R" \n')
 
-# @param [list] 	LINE 			(list containing several filepath of the DT1 file)
+# @param [list] 	LINE 			(list containing several filename of the DT1 file)
 # @param [c(1)] 	col=NULL 	(palette of color)	
 # @param [boolean] 	plotNew=FALSE	(if true, open a new rgl window)
 # @return void
@@ -2004,16 +2004,16 @@ repmat <- function(a,n,m) {kronecker(matrix(1,n,m),a)}
 
 # @date 30.04.2014 08:33
 # @auteur Emanuel Huber
-# @param [text]		filepath 			(file path of *.hd or *.dt1 file)
+# @param [text]		filename 			(file path of *.hd or *.dt1 file)
 # @require source("trim.R")
 	# source('trim.R')
 	# cat('> Function(s) loaded: "trim.R" \n')
 # @return list((hd = headerHD, dt1hd = headerDT1, data=myData))
 # -------------------------------------------
 
-readDT1 <- function( filepath){
-	dirName 	<- dirname(filepath)
-	splitBaseName <- unlist(strsplit(basename(filepath),'[.]'))
+readDT1 <- function( filename){
+	dirName 	<- dirname(filename)
+	splitBaseName <- unlist(strsplit(basename(filename),'[.]'))
 	baseName 	<- paste(splitBaseName[1:(length(splitBaseName)-1)],sep="")
 	
 	fileNameHD 	<- paste(dirName, "/",baseName,".HD",sep="")

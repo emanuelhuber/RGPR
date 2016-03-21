@@ -10,7 +10,9 @@ cat("********************\n")
 
 ############## CHANGES ##################
 #--- changes v0.0.9---#
-# - add velocity()
+#	- slot @filepath renamed as @filename
+# - add FUN arg to GPR::dcshift()
+# - new fx GPR::velocity()
 #	- add fx: pal(), colGPR()
 #	- filepath instead of filename
 #   - slot @ntr removed (not needed! x@ntr <- ncol(x@data))

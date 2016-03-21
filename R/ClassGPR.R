@@ -23,8 +23,8 @@ setClass(
 		dx ="numeric", 		# spatial trace sampling
 		antsep ="numeric", 	# antenna separation
 		name="character",	# name of the profile
-		description ="character",	# description of the profile
-		filepath ="character",	# filepath of the profile
+		description ="character",	# description of the pro
+		filename ="character",	# filepath of the profile
 		depthunit ="character", # time/depth unit
 		posunit = "character",	# spatial unit
 		surveymode ="character", # survey mode (reflection/CMP)
@@ -41,7 +41,7 @@ setClass(
 #------------------------------------------#
 #-------------- CONSTRUCTOR ---------------#
 # x = classical GPR list
-.gpr <- function(x,name=character(0),description=character(0),filepath=character(0)){
+.gpr <- function(x,name=character(0),description=character(0),filename=character(0)){
 	rec_coord <- cbind(x$dt1$recx,x$dt1$recy,x$dt1$recz)
 	trans_coord <- cbind(x$dt1$transx,x$dt1$transy,x$dt1$transz)
 	if(sum(is.na(rec_coord))>0){
@@ -194,7 +194,7 @@ setClass(
 				vel=list(0.1),	#m/ns
 				name = name,
 				description = description,
-				filepath = filepath,
+				filename = filename,
 # 				ntr = ncol(x$data), 
 # 				w = ttw[1],	#  "TOTAL TIME WINDOW"
 				dz = dz, 
@@ -212,14 +212,14 @@ setClass(
 
 }
 
-setMethod("readGPR", "character", function(filepath, description="", coordfile=NULL,crs="",intfile=NULL){
-		ext <- extension(filepath)
+setMethod("readGPR", "character", function(filename, description="", coordfile=NULL,crs="",intfile=NULL){
+		ext <- extension(filename)
 		# DT1
-		if(file.exists(filepath)){
+		if(file.exists(filename)){
 			if("DT1" == toupper(ext)){
-				name <- .filename(filepath)
-				A <- readDT1(filepath)
-				x <- (.gpr(A,name=name,filepath=filepath,description=description))
+				name <- .filename(filename)
+				A <- readDT1(filename)
+				x <- (.gpr(A,name=name,filename=filename,description=description))
 				if(!is.null(coordfile)){
 					cat("coordinates added\n")
 					xyzCoord <- as.matrix(read.table(coordfile,sep=",",head=TRUE))
@@ -233,9 +233,9 @@ setMethod("readGPR", "character", function(filepath, description="", coordfile=N
 				}
 				return(x)
 			}else if(".rds" == tolower(ext)){
-				x <- readRDS(filepath)
+				x <- readRDS(filename)
 				if(class(x)=="GPR"){
-					x@filepath <- filepath
+					x@filename <- filename
 					return(x)
 				}else if(class(x)=="list"){
 					versRGPR <- x[["version"]]
@@ -261,7 +261,7 @@ setMethod("readGPR", "character", function(filepath, description="", coordfile=N
 						antsep = x[['antsep']], 
 						name = x[['name']],
 						description = x[['description']],
-						filepath =x[['filepath']],
+						filename =x[['filename']],
 						depthunit = x[['depthunit']],
 						posunit = x[['posunit']],
 						surveymode = x[['surveymode']],
@@ -272,12 +272,12 @@ setMethod("readGPR", "character", function(filepath, description="", coordfile=N
 						delineations=x[['delineations']],
 						hd= x[['hd']]		# header
 					)
-					y@filepath <- filepath
+					y@filename <- filename
 					return(y)
 				}
 			}
 		}else{
-			stop(filepath, "does not exist!")
+			stop(filename, "does not exist!")
 		}
 	} 
 )
@@ -311,7 +311,7 @@ setAs(from = "matrix", to = "GPR", def = function (from) .as.GPR.matrix(from))
 		vel=list(0.1),	#m/ns
 		name = character(0),
 		description = character(0),
-		filepath = character(0),
+		filename = character(0),
 # 		ntr = ncol(x), 
 # 		w = nrow(x)*0.8, 
 		dz = 0.8, 
@@ -367,7 +367,7 @@ setAs(from = "list", to = "GPR", def = function (from) .as.GPR.list(from))
 				name = as.character(d_name),
 				description = paste("coercion of ",
 								as.character(d_name)," (",typeof(x),") into GPR",sep=""),
-				filepath = character(0),
+				filename = character(0),
 # 				ntr = ncol(x$data), 
 # 				w = nrow(x$data)*x$dz, 
 				dz = x$dz, 
@@ -692,8 +692,17 @@ setMethod("gethd", "GPR", function(x,hd=NULL){
 	} 
 )
 
-setMethod("filepath", "GPR", function(x){
-		return(x@filepath)
+setMethod("name", "GPR", function(x){
+  return(x@name)
+} 
+)
+
+setMethod("description", "GPR", function(x){
+  return(x@description)
+} 
+)
+setMethod("filename", "GPR", function(x){
+		return(x@filename)
 	} 
 )
 setMethod("ann", "GPR", function(x){
@@ -747,16 +756,15 @@ setReplaceMethod(
 		return(x)
 	}
 )
-setMethod("velocity", "GPR", function(x){
-  return(x@vel[[1]])
+setMethod("vel", "GPR", function(x){
+  return(x@vel)
 } 
 )
 setReplaceMethod(
-  f="velocity",
+  f="vel",
   signature="GPR",
-  definition=function(x,value){
-    value <- as.vector(value)[1]
-    x@vel[[1]] <- value
+  definition=function(x,values){
+    x@vel <- values
     return(x)
   }
 )
@@ -811,23 +819,22 @@ setMethod("getAmpl", "GPR", function(x, FUN=mean, ...){
 	} 
 )
 
-setMethod("name", "GPR", function(x){
-		return(x@name)
-	} 
-)
 
-setMethod("description", "GPR", function(x){
-		return(x@description)
-	} 
-)
 
 
 #================= PROCESSING ===============#
 
 #----------------- DC-SHIFT
-setMethod("dcshift", "GPR", function(x, u){
-		x <-  x - apply(x[u,],2,mean)
-		x@proc <- c(x@proc, "dc-shift")
+setMethod("dcshift", "GPR", function(x, u, FUN=mean){
+		x <-  x - apply(x[u,],2,FUN)
+		if(class(FUN)=="function"){
+		  nameFun <- "FUN"
+		}else{
+	#	if(isGeneric("FUN")){
+		  nameFun0 <- selectMethod(FUN, "numeric")
+		  nameFun <-nameFun0@generic[1]
+		}
+	  x@proc <- c(x@proc, paste0("dcshift:",head(u,1),"-",tail(u,1),"+",nameFun))
 		return(x)
 	} 
 )
@@ -890,21 +897,21 @@ setMethod("dewow", "GPR", function(x, type=c("MAD","Gaussian"),...){
 		}
 		x@data <- A - Y[(w+1):(n-w),]
 	}else if(type == "Gaussian"){
-		sig = 100	# argument initialization
+		w = 100	# argument initialization
 		if( length(list(...)) ){
 			dots <- list(...)
-			if( !is.null(dots$sig)){
-				sig <- dots$sig
+			if( !is.null(dots$w)){
+				w <- dots$w
 			}
 		}
-		sig <- sig * x@dz
+		w <- w * x@dz
 		t0 <- round(mean(x@time0)/x@dz)
 		A <- x@data
 		A[1:t0,] <- 0
 		if(length(dim(A))<2){
 			A <- matrix(A,ncol=1,nrow=length(A))
 		}
-		x@data[t0:nrow(x),] <- A[t0:nrow(x),] - mmand::gaussianSmooth(A,sig)[t0:nrow(x),]
+		x@data[t0:nrow(x),] <- A[t0:nrow(x),] - mmand::gaussianSmooth(A,w)[t0:nrow(x),]
 	}
 	proc <- get_args()
 	x@proc <- c(x@proc, proc)
@@ -951,12 +958,12 @@ setMethod("hampelFilter", "GPR", function(x, w=10,x0=0.1){
 )
 
 #----------------- 1D-SCALING (GAIN)
-setMethod("gain", "GPR", function(x, type=c("geospreading","power","exp","agc"),...){
+setMethod("gain", "GPR", function(x, type=c("power","exp","agc","geospreading"),...){
 	type <- match.arg(type)
 	if(type=="geospreading"){
 		stop('deprecated! Use type="power" instead.')
 	}else if(type=="power"){
-		x@data <- gain_geospreading(x@data, d_t=x@dz, ...)
+		x@data <- gain_power(x@data, d_t=x@dz, ...)
 	}else if(type=="exp"){
 		x@data <- gain_exp(x@data, d_t=x@dz, ...)
 	}else{# if("agc"){
@@ -1131,8 +1138,8 @@ setMethod("traceShift", "GPR", function(x,  fb,kip=10){
 .GPR.print 	<-	function(x, digits=5){
 	topaste <- c(paste("***","Class GPR", "***\n"))
 	topaste <- c(topaste, paste("name = ", x@name, "\n",sep=""))
-	if(length(x@filepath) > 0){
-		topaste <- c(topaste, paste("filepath = ", x@filepath, "\n",sep=""))
+	if(length(x@filename) > 0){
+		topaste <- c(topaste, paste("filename = ", x@filename, "\n",sep=""))
 	}
 	nbfid <- sum(trim(x@com)!= "")
 	if(nbfid > 0){
@@ -1304,7 +1311,7 @@ plot.GPR <- function(x,y,...){
 			}
 			do.call(plotRaster, c(list(A=x@data, #col= myCol, 
 										x=xvalues, y= -rev(x@depth), main=x@name, xlab=x@posunit, ylab=ylab, 
-										note=x@filepath,time_0=x@time0,antsep=x@antsep, v=vel,fid=x@com,ann=x@ann,
+										note=x@filename,time_0=x@time0,antsep=x@antsep, v=vel,fid=x@com,ann=x@ann,
 										depthunit=x@depthunit),dots))
 		}else if(type=="wiggles"){
 			if(add_topo && length(x@coord)>0){
@@ -1331,7 +1338,7 @@ plot.GPR <- function(x,y,...){
 			# x@posunit
 			# print(...)
 			do.call(plotWig, c(list(A=x@data,x=xvalues, y= -rev(x@depth), main=x@name, xlab=x@posunit, ylab=ylab, topo= topo,
-					note=x@filepath,col="black",time_0=x@time0,antsep=x@antsep, v=vel,fid=x@com,ann=x@ann,
+					note=x@filename,col="black",time_0=x@time0,antsep=x@antsep, v=vel,fid=x@com,ann=x@ann,
 					depthunit=x@depthunit),dots))
 		}
 	}
@@ -2056,33 +2063,33 @@ setMethod("upsample", "GPR", function(x,n){
 
 
 #----------------------- SAVE/EXPORT ------------------------#
-setMethod("writeGPR", "GPR", function(x,filepath, format=c("DT1","rds"), overwrite=FALSE){
-		typetype <- match.arg(format)
-		splitBaseName <- unlist(strsplit(basename(filepath),'[.]'))
+setMethod("writeGPR", "GPR", function(x,filename, format=c("DT1","rds"), overwrite=FALSE){
+		type <- match.arg(format)
+		splitBaseName <- unlist(strsplit(basename(filename),'[.]'))
 		ext <- tail(splitBaseName,1)
 # 		ext <-  tolower(substr(path,start=nchar(path)-3,stop=nchar(path)))
 		if(isTRUE(overwrite)){
 			catcat("file may be overwritten\n")
 		}else{
-			filepath <- safeFilepath(filepath)
+			filename <- safeFilepath(filename)
 		}
 		if(type == "DT1"){
 			if(".dt1" != ext ){
 				stop("Extension should be '.DT1'")
 			}
-			.writeDT1(x,filepath,overwrite)
+			.writeDT1(x,filename,overwrite)
 		}else if(type == "rds"){
 			if(".rds" != ext ){
 				stop("Extension should be '.rds'")
 			}
-			x@filepath <- as.character(filepath)
+			x@filename <- as.character(filename)
 			namesSlot <- slotNames(x)
 			xList <- list()
 # 			xList[["version"]] <- "0.1"
 			for(i in seq_along(namesSlot)){
 				xList[[namesSlot[i]]] <- slot(x, namesSlot[i])
 			}
-			saveRDS(xList, filepath)
+			saveRDS(xList, filename)
 		}
 		# 	mod2 <- readRDS("mymodel.rds")
 	} 
@@ -2105,7 +2112,7 @@ setMethod("writeGPR", "GPR", function(x,filepath, format=c("DT1","rds"), overwri
 # @return list((hd = headerHD, dt1hd = headerDT1, data=myData))
 # -------------------------------------------
 
-.writeDT1 <- function(x, filepath, overwrite=FALSE){
+.writeDT1 <- function(x, filename, overwrite=FALSE){
 	#-------------------------
 	# DT1 FILE: traces
 	traceData <- x@data	# should ranges between -32768 and 32767
@@ -2179,28 +2186,28 @@ setMethod("writeGPR", "GPR", function(x,filepath, format=c("DT1","rds"), overwri
 	traces_hd$com <- x@com 
 	
 	# FILE NAMES
-	dirName 	<- dirname(filepath)
-	splitBaseName <- unlist(strsplit(basename(filepath),'[.]'))
+	dirName 	<- dirname(filename)
+	splitBaseName <- unlist(strsplit(basename(filename),'[.]'))
 	baseName 	<- paste(splitBaseName[1:(length(splitBaseName)-1)],sep="")
 	if(dirName == '.'){
-		filepath <- baseName
+		filename <- baseName
 	}else{
-		filepath <- paste(dirName,'/',baseName,sep="")
+		filename <- paste(dirName,'/',baseName,sep="")
 	}
 	if(isTRUE(overwrite)){
 		cat("file may be overwritten\n")
 	}else{
-		filepath_orgi <- filepath
+		filename_orgi <- filename
 		k <- 0
-		while(file.exists(paste(filepath,".DT1",sep="")) || file.exists(paste(filepath,".HD",sep=""))){
-			filepath <- paste(filepath_orgi,"_",k,sep="")
+		while(file.exists(paste(filename,".DT1",sep="")) || file.exists(paste(filename,".HD",sep=""))){
+			filename <- paste(filename_orgi,"_",k,sep="")
 			k <- k+1
 		}
 	}
 	
 	
 	# WRITE DT1 FILE
-	dt1_file <- file(paste(filepath,".DT1",sep="") , "wb")
+	dt1_file <- file(paste(filename,".DT1",sep="") , "wb")
 	for(i in 1:ncol(x@data)){
 		for(j in 1:25){
 			realData4 <- traces_hd[[j]][i]
@@ -2228,7 +2235,7 @@ setMethod("writeGPR", "GPR", function(x,filepath, format=c("DT1","rds"), overwri
 	
 	#-------------------------
 	# HD FILE: traces
-	hd_file <- file(paste(filepath,".HD",sep="") , "w+")
+	hd_file <- file(paste(filename,".HD",sep="") , "w+")
 	writeLines("1234", con = hd_file, sep = "\r\n")
 	if(!is.null(x@hd$gprdevice)){
 		writeLines(as.character(x@hd$gprdevice), con = hd_file, sep = "\r\n")
@@ -2281,22 +2288,22 @@ setMethod("writeGPR", "GPR", function(x,filepath, format=c("DT1","rds"), overwri
 		}
 	}
 	close(hd_file)
-	return(filepath)
+	return(filename)
 }
 #-----------------
 
-setMethod("exportPDF", "GPR", function(x,filepath=NULL,add_topo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,...){
-		if(is.null(filepath)){
-			stop("filepath must be given\n")
+setMethod("exportPDF", "GPR", function(x,filename=NULL,add_topo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,...){
+		if(is.null(filename)){
+			stop("filename must be given\n")
 		}
 		if(any(dim(x) == 1)){
 			stop("no export because dim = 1\n")
 		}
-		plot(x,clip=clip, add_topo=add_topo,type="wiggles",pdfName=filepath,normalize=normalize,nupspl=nupspl,...)
+		plot(x,clip=clip, add_topo=add_topo,type="wiggles",pdfName=filename,normalize=normalize,nupspl=nupspl,...)
 	}
 )
 
-setMethod("exportFID", "GPR", function(x,filepath=NULL){
+setMethod("exportFID", "GPR", function(x,filename=NULL){
 		# Trace	Position	Comment	PNAME
 		if(length(x@com) > 0){
 			tr_start <- 1
@@ -2318,10 +2325,10 @@ setMethod("exportFID", "GPR", function(x,filepath=NULL){
 			}
 			trpos <- x@pos[tr]
 			FID <- data.frame("TRACE" = tr,"POSITION" = trpos, "COMMENT" = trcom)
-			if(is.null(filepath)){
+			if(is.null(filename)){
 				return(FID)
 			}else{
-				write.table(FID, filepath, sep=",",row.names = FALSE, col.names = TRUE, quote=FALSE)
+				write.table(FID, filename, sep=",",row.names = FALSE, col.names = TRUE, quote=FALSE)
 			}
 		}else{
 			if(length(x@name)>0){
@@ -2335,10 +2342,10 @@ setMethod("exportFID", "GPR", function(x,filepath=NULL){
 )
 
 
-setMethod("exportCoord", "GPR", function(x,filepath=NULL,folder='.',type=c("SpatialPoints","SpatialLines")){
+setMethod("exportCoord", "GPR", function(x,filename=NULL,folder='.',type=c("SpatialPoints","SpatialLines")){
 	type=match.arg(type)
-	folder <- dirname(filepath)
-	filename <- basename(filepath)
+	folder <- dirname(filename)
+	filename <- basename(filename)
 	if(is.null(filename)){
 		filename <- x@name
 	}
@@ -2361,8 +2368,8 @@ setMethod("exportCoord", "GPR", function(x,filepath=NULL,folder='.',type=c("Spat
 })
 
 
-setMethod("exportProc", "GPR", function(x,filepath=NULL,sep="\t", row.names=FALSE,
+setMethod("exportProc", "GPR", function(x,filename=NULL,sep="\t", row.names=FALSE,
 	col.names=FALSE, ...){
-	write.table(x@proc, file = filepath, row.names = row.names,
+	write.table(x@proc, file = filename, row.names = row.names,
             col.names = col.names,...)
 })

@@ -2075,12 +2075,12 @@ setMethod("writeGPR", "GPR", function(x,filename, format=c("DT1","rds"), overwri
 			filename <- safeFilepath(filename)
 		}
 		if(type == "DT1"){
-			if(".dt1" != ext ){
+			if("dt1" != ext ){
 				stop("Extension should be '.DT1'")
 			}
 			.writeDT1(x,filename,overwrite)
 		}else if(type == "rds"){
-			if(".rds" != ext ){
+			if("rds" != ext ){
 				stop("Extension should be '.rds'")
 			}
 			x@filename <- as.character(filename)

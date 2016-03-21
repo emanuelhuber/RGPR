@@ -1260,7 +1260,7 @@ plot.GPR <- function(x,y,...){
 		depth_0 <- depth0(x@time0, velo, antsep=x@antsep)
 		depth2 <- seq(0.1,by=0.1,0.9)
 		depthat0 <- depthToTime(0, x@time0, velo, antsep=x@antsep)
-		if(max(z) > 1.3){
+		if(max(z)*velo/2 > 1.3){
 			depth <- pretty(seq(1.1,by=0.1,max(z)*velo/2 ),10)
 			depthat <- depthToTime(depth, x@time0, velo, antsep=x@antsep)
 			axis(side=3,at=depthat, labels=depth,tck=+0.02)

@@ -1304,16 +1304,21 @@ plot.GPR <- function(x,y,...){
 			}else if(grepl("[s]$",x@depthunit)){
 				ylab <- paste("two-way travel time (",x@depthunit,")",sep="")
 			}
-			# xvalues <- x@pos
-			if(length(x@coord)>0 && sum(abs(x@coord[,1:2])>0)){
-				xvalues <- lineDist(x@coord)
-			}else{
-				xvalues <- x@pos
+			if(length(x@coord) == 0){
+				x@coord <- matrix(0,nrow=ncol(x),ncol=3)
+				x@coord[,1] <- x@pos
 			}
+			xvalues <- lineDist(x@coord)
+# 			xvalues <- x@pos
+# 			if(length(x@coord)>0 && sum(abs(x@coord[,1:2])>0)){
+# 				xvalues <- lineDist(x@coord)
+# 			}else{
+# 				xvalues <- x@pos
+# 			}
 			do.call(plotRaster, c(list(A=x@data, #col= myCol, 
 										x=xvalues, y= -rev(x@depth), main=x@name, xlab=x@posunit, ylab=ylab, 
-										note=x@filename,time_0=x@time0,antsep=x@antsep, v=velo,fid=x@com,ann=x@ann,
-										depthunit=x@depthunit),dots))
+										note=x@filename,time_0=x@time0,antsep=x@antsep, v=velo,fid=x@com,annotations=x@ann,
+										depthunit=x@depthunit, posunit=x@posunit),dots))
 		}else if(type=="wiggles"){
 			if(add_topo && length(x@coord)>0){
 				topo <- x@coord[,3]
@@ -1339,7 +1344,7 @@ plot.GPR <- function(x,y,...){
 			# x@posunit
 			# print(...)
 			do.call(plotWig, c(list(A=x@data,x=xvalues, y= -rev(x@depth), main=x@name, xlab=x@posunit, ylab=ylab, topo= topo,
-					note=x@filename,col="black",time_0=x@time0,antsep=x@antsep, v=velo,fid=x@com,ann=x@ann,
+					note=x@filename,col="black",time_0=x@time0,antsep=x@antsep, v=velo,fid=x@com,annotations=x@ann,
 					depthunit=x@depthunit),dots))
 		}
 	}
@@ -1595,7 +1600,11 @@ setMethod("delineate", "GPR", function(x,name=NULL,type=c("raster","wiggles"),ad
 					yvalues <- yvalues + depth_0
 				}
 			}
-			xvalues <- lineDist(x@coord)			
+			if(length(x@coord) == 0){
+				x@coord <- matrix(0,nrow=ncol(x),ncol=3)
+				x@coord[,1] <- x@pos
+			}
+			xvalues <- lineDist(x@coord)
 			posxOnPlot <- sapply(itp$x, myWhichMin, xvalues)
 			posyOnPlot <- sapply(itp$y, myWhichMin, yvalues)
 			mySel <- posxOnPlot >= 0 & posxOnPlot <= length(x) & posyOnPlot >= 0 & posyOnPlot <= nrow(x)
@@ -1648,6 +1657,10 @@ setMethod("addDelineation", "GPR", function(x,itp, name=NULL,type=c("raster","wi
 				depth_0 <- depthToTime(z=0, time_0, v=velo, antsep=x@antsep) * velo/ 2
 				yvalues <- yvalues + depth_0
 			}
+		}
+		if(length(x@coord) == 0){
+			x@coord <- matrix(0,nrow=ncol(x),ncol=3)
+			x@coord[,1] <- x@pos
 		}
 		xvalues <- lineDist(x@coord)			
 		posxOnPlot <- sapply(itp$x, myWhichMin, xvalues)
@@ -1735,6 +1748,10 @@ setMethod("delineations", "GPR", function(x,sel=NULL,...){
 		deli <- x@delineations
 		n_d <- length(deli)
 		if(n_d >0){
+			if(length(x@coord) == 0){
+				x@coord <- matrix(0,nrow=ncol(x),ncol=3)
+				x@coord[,1] <- x@pos
+			}
 			x_dist <- lineDist(x@coord)
 			cat("*** delineated lines ****\n")
 			it <- 0
@@ -1801,6 +1818,10 @@ setMethod("showDelineations", "GPR", function(x,sel=NULL,...){
 	}
 )
 setMethod("exportDelineations", "GPR", function(x, dirpath=""){
+		if(length(x@coord) == 0){
+			x@coord <- matrix(0,nrow=ncol(x),ncol=3)
+			x@coord[,1] <- x@pos
+		}
 		x_dist <- lineDist(x@coord)
 		deli <- x@delineations
 		z0 <- max(coord(x)[,3]) 
@@ -1883,6 +1904,10 @@ setMethod("plotDelineations", "GPR", function(x,sel=NULL,col=NULL,...){
 		deli <- x@delineations
 		n_d <- length(deli)
 		if(n_d >0){
+			if(length(x@coord) == 0){
+				x@coord <- matrix(0,nrow=ncol(x),ncol=3)
+				x@coord[,1] <- x@pos
+			}
 			x_dist <- lineDist(x@coord)
 			if(is.null(col)){
 				col <- 1:n_d
@@ -1920,6 +1945,10 @@ setMethod("identifyDelineation", "GPR", function(x,sel=NULL,...){
 		n_d <- length(deli)
 		it <- 0
 		if(n_d >0){
+			if(length(x@coord) == 0){
+				x@coord <- matrix(0,nrow=ncol(x),ncol=3)
+				x@coord[,1] <- x@pos
+			}
 			x_dist <- lineDist(x@coord)
 			for(i in 1:n_d){
 				if(typeof(deli[[i]])=="list"){

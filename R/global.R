@@ -487,8 +487,8 @@ doubleVector <- function(v,n=2L){
 					# note=x@filename,col="black",time_0=x@time0,antsep=x@antsep, v=vel,fid=x@com,ann=x@ann,
 					# depthunit=x@depthunit,dots)
 plotWig <- function(A, x=NULL, y=NULL, xlim = NULL, ylim=NULL, topo=NULL, main ="", note=NULL,  
-					fid=NULL,ann = NULL, add_ann=TRUE,pdfName=NULL, ws =1, side=1, dx=0.25, dz=0.4, ratio=1,
-					col=black, time_0=0, antsep=1, v=0.1,depthunit="ns",lwd=0.5,...){
+					fid=NULL,annotations = NULL, add_ann=TRUE,pdfName=NULL, ws =1, side=1, dx=0.25, dz=0.4, ratio=1,
+					col=black, time_0=0, antsep=1, v=0.1,depthunit="ns",lwd=0.5,posunit="m",...){
 	dx <- mean(diff(x)) # estimated x-step
 	A[is.na(A)]=0
 	A =  A/max(abs(A))*dx
@@ -517,7 +517,7 @@ plotWig <- function(A, x=NULL, y=NULL, xlim = NULL, ylim=NULL, topo=NULL, main =
 		topo <- topo - max(topo)
 	}
 	if(grepl("[s]$",depthunit)){
-		# y <- y + time0
+		y <- y + time_0
 	}else if(grepl("[m]$",depthunit)){
 		depth_0 <- depthToTime(z=0, time_0 , v=v, antsep=antsep) * v/ 2
 		y <- y + depth_0
@@ -563,25 +563,25 @@ plotWig <- function(A, x=NULL, y=NULL, xlim = NULL, ylim=NULL, topo=NULL, main =
 	}
 	par(mai=mai,omi=omi,mgp=mgp)
 		  
-	plot(0,0, type="n", xaxs="i", yaxs="i", axes=FALSE,
+	plot(0,0, type="n", xaxs="i", yaxs="i", yaxt="n",
 			xlim=xlim, ylim=ylim, ...)
-	title(main,outer=TRUE,line=1)
-	if(!is.null(fid) && length(fid)>0 && any(fid!="")){
-		pin <- par("pin")
-		usr <- par("usr")
-		cin <- par()$cin[2]
-		posfid <- x[test]
-		fid <- fid[test]
-		testfid <- (fid != "")
-		yr <- diff(usr[3:4])/(pin[2])
-		if(sum(testfid)>0){	
-			par(xpd=TRUE)
-			cst <- yr*cin
-			points(posfid[testfid],cst/2*0.75+rep(ylim[2],sum(testfid)),pch=25,col="red",bg="yellow",cex=1)
-			text(posfid[testfid],cst+rep(ylim[2],sum(testfid)),fid[testfid],cex=0.6)#,pos=3,offset =0)
-			par(xpd=FALSE)
-		}
-	}
+# 	title(main,outer=TRUE,line=1)
+# 	if(!is.null(fid) && length(fid)>0 && any(fid!="")){
+# 		pin <- par("pin")
+# 		usr <- par("usr")
+# 		cin <- par()$cin[2]
+# 		posfid <- x[test]
+# 		fid <- fid[test]
+# 		testfid <- (fid != "")
+# 		yr <- diff(usr[3:4])/(pin[2])
+# 		if(sum(testfid)>0){	
+# 			par(xpd=TRUE)
+# 			cst <- yr*cin
+# 			points(posfid[testfid],cst/2*0.75+rep(ylim[2],sum(testfid)),pch=25,col="red",bg="yellow",cex=1)
+# 			text(posfid[testfid],cst+rep(ylim[2],sum(testfid)),fid[testfid],cex=0.6)#,pos=3,offset =0)
+# 			par(xpd=FALSE)
+# 		}
+# 	}
 	if(side==1){
 		for(i in rev(seq_along(x))){
 			y2 <- y + topo[i]
@@ -604,35 +604,59 @@ plotWig <- function(A, x=NULL, y=NULL, xlim = NULL, ylim=NULL, topo=NULL, main =
 		y2 <- y + topo[i]
 		lines(x[i]+ws*A[,i],y2,lwd=lwd)	
 	}
-	if(add_ann && !is.null(ann) && length(ann)>0){
-		posann <- x[test]
-		ann <- ann[test]
-		testann <- (ann != "")
-		ann <- gsub("#","\n",ann)
-		if(sum(testann)>0){
-			abline(v=posann[testann],col="red",lwd=0.5)
-			mtext(ann[testann], side = 3, line = 1.7, at=posann[testann], col="red",cex=0.9)
-		}
+# 	if(add_ann && !is.null(ann) && length(ann)>0){
+# 		posann <- x[test]
+# 		ann <- ann[test]
+# 		testann <- (ann != "")
+# 		ann <- gsub("#","\n",ann)
+# 		if(sum(testann)>0){
+# 			abline(v=posann[testann],col="red",lwd=0.5)
+# 			mtext(ann[testann], side = 3, line = 1.7, at=posann[testann], col="red",cex=0.9)
+# 		}
+# 	}
+	
+	# plot fiducial markers
+	if(!is.null(fid) && length(fid) > 0){
+		.plotFid(fid[test], x[test])
 	}
 	
+	# plot annotations
+	testAnn <- FALSE
+	if(add_ann && !is.null(annotations) && length(annotations) > 0){
+		testAnn <- .plotAnn(annotations[test],x[test])
+	}
 	
-	axis(side=1,tck=-0.02)
-	if(grepl("[s]$",depthunit)){
-		abline(h=-time_0,col="red",lwd=0.5)
-		depth <- (seq(0,by=2.5,max(abs(y))*v))
-		depth2 <- seq(0.1,by=0.1,0.9)
-		depthat <- depthToTime(depth, time_0, v, antsep)
-		depthat2 <- depthToTime(depth2,time_0, v, antsep)
-		axis(side=4,at=-depthat, labels=depth,tck=-0.02)
-		axis(side=4,at=-depthat2, labels=FALSE,tck=-0.01)
-		axis(side=4,at= -1* depthToTime(1, time_0, v, antsep), labels=FALSE,tck=-0.02)
-		axis(side=2,at=pretty(y)-time_0,labels=-pretty(y),tck=-0.02)
-		mtext(paste("depth (m),   v=",v,"m/ns",sep="") ,side=4, line=2)
+	# plot title
+	if(add_ann && testAnn){
+		title(main,outer=TRUE,line=1)
 	}else{
-		abline(h=0,col="red",lwd=0.5)
-		axis(side=2,at=pretty(y),labels=-pretty(y),tck=-0.02)
-		axis(side=4,at=pretty(y),labels=-pretty(y),tck=-0.02)
+		title(main)	
 	}
+	
+	# plot axis
+# 	axis(side=2, at=pretty_y + dusr/2, labels= -pretty_y)
+# 	dusr <- dylim/length(y)
+	pretty_y <- pretty(y ,10)
+	axis(side=2, at=pretty_y, labels= -pretty_y)
+	.depthAxis(y, pretty_y, time_0, v, antsep, depthunit, posunit )
+	
+# 	axis(side=1,tck=-0.02)
+# 	if(grepl("[s]$",depthunit)){
+# 		abline(h=-time_0,col="red",lwd=0.5)
+# 		depth <- (seq(0,by=2.5,max(abs(y))*v))
+# 		depth2 <- seq(0.1,by=0.1,0.9)
+# 		depthat <- depthToTime(depth, time_0, v, antsep)
+# 		depthat2 <- depthToTime(depth2,time_0, v, antsep)
+# 		axis(side=4,at=-depthat, labels=depth,tck=-0.02)
+# 		axis(side=4,at=-depthat2, labels=FALSE,tck=-0.01)
+# 		axis(side=4,at= -1* depthToTime(1, time_0, v, antsep), labels=FALSE,tck=-0.02)
+# 		axis(side=2,at=pretty(y)-time_0,labels=-pretty(y),tck=-0.02)
+# 		mtext(paste("depth (m),   v=",v,"m/ns",sep="") ,side=4, line=2)
+# 	}else{
+# 		abline(h=0,col="red",lwd=0.5)
+# 		axis(side=2,at=pretty(y),labels=-pretty(y),tck=-0.02)
+# 		axis(side=4,at=pretty(y),labels=-pretty(y),tck=-0.02)
+# 	}
 	box()
 	if(!is.null(note) && length(note) > 0){
 		 mtext(note, side = 1, line = 4, cex=0.6)
@@ -641,7 +665,7 @@ plotWig <- function(A, x=NULL, y=NULL, xlim = NULL, ylim=NULL, topo=NULL, main =
 	if(!is.null(pdfName)){
 		dev.off()
 	}else{
-	  par(op)
+# 	  par(op)
 	}
 }
 
@@ -650,25 +674,29 @@ plotWig <- function(A, x=NULL, y=NULL, xlim = NULL, ylim=NULL, topo=NULL, main =
 # col, main, xlab, ylab, mar, barscale
 plotRaster <- function(A, x = NULL, y = NULL, rasterImage=TRUE,resfac = 1, barscale=TRUE, add= FALSE, 
 						col=colGPR(n=101),note=NULL, clab="mV",addGrid = FALSE, relTime0=TRUE,
-						main="", time_0=0, antsep=1, v=0.1,ann=NULL,add_ann=TRUE,fid=NULL,depthunit="ns", ...){
+						main="", time_0=0, antsep=1, v=0.1,annotations=NULL,add_ann=TRUE,fid=NULL,depthunit="ns",
+						posunit="m",...){
 	op <- par(no.readonly=TRUE)
 	GPR =  as.matrix(A)
 	GPR[is.na(GPR)]=0
 	time_0 <- mean(time_0)
-	clim = c(-1, 1) * max(abs(GPR))
+	zlim = c(-1, 1) * max(abs(GPR))
+	xlim <- NULL
 	mai <- op$mai
 	if( length(list(...)) > 0 ){
 		dots <- list(...)
 		if( !is.null(dots$zlim)){
-			clim <- dots$zlim
+			zlim <- dots$zlim
+		}
+		if( !is.null(dots$xlim)){
+			xlim <- dots$xlim
 		}
 	}
 	if(grepl("[s]$",depthunit)){
 		mai <- op$mai + c(0,0,0,1.5)
 	}
-	# cat("number of traces",ncol(GPR),"\n")
-	reverse <- nrow(GPR) : 1
-	GPR <- t(GPR[reverse,])
+
+	GPR <- t(GPR[nrow(GPR):1,])
 
 	if(is.null(x)){
 		x <- (1:nrow(GPR))
@@ -680,24 +708,86 @@ plotRaster <- function(A, x = NULL, y = NULL, rasterImage=TRUE,resfac = 1, barsc
 		par(new = TRUE)
 	}else{
 		par( mai = mai)
-# 		par( mai = mai,oma=c(0,0,3,0))
 	}
 	if(relTime0){
 		y <- y + time_0
 	}
-	#image(x,y,GPR,col=col,zlim=zlim,xaxs="i", yaxs="i", yaxt="n",...)	# matlab color
-	image2D(x = x, y = y, z = GPR, col = col, xaxs = "i", yaxs = "i", yaxt="n",
+#  	image(x,y,GPR,col=col,zlim=zlim,xaxs="i", yaxs="i", yaxt="n",...)	# matlab color
+	image2D(x = x, y = y, z = GPR, zlim=zlim, col = col, xaxs = "i", yaxs = "i", yaxt="n",
 			rasterImage = rasterImage, resfac=resfac,main = "", bty="n",colkey = FALSE, ...)	
 	if(barscale){
-		colkey(clim = clim, clab = clab, width=0.7, dist=0.15, add=TRUE,col = col)
+		colkey(clim = zlim, clab = clab, width=0.7, dist=0.15, add=TRUE,col = col)
 	}
-
+	if(is.null(xlim) ){
+	   test <- rep(TRUE,length(x))
+	}else{
+		test <- ( x >= xlim[1] & x <= xlim[2] )
+	}
 	
+	# plot fiducial markers
+	if(!is.null(fid) && length(fid) > 0){
+		.plotFid(fid[test], x[test])
+	}
+	
+	# plot annotations
+	testAnn <- FALSE
+	if(add_ann && !is.null(annotations) && length(annotations) > 0){
+		testAnn <- .plotAnn(annotations[test],x[test])
+	}
+	
+	# plot title
+	if(add_ann && testAnn){
+		title(main,outer=TRUE,line=1)
+	}else{
+		title(main)	
+	}
+	
+	# plot axis
+# 	axis(side=2, at=pretty_y + dusr/2, labels= -pretty_y)
+# 	dusr <- dylim/length(y)
+	pretty_y <- pretty(y,10)
+	axis(side=2, at=pretty_y, labels= -pretty_y)
+	.depthAxis(y, pretty_y, time_0, v, antsep, depthunit, posunit )
+	
+	# plot time0
+	abline(h=0,col="red",lwd=0.5)
+	
+	# plot note
+	if(!is.null(note) && length(note) > 0){
+		mtext(note, side = 1, line = 4, cex=0.6)
+	}
+	
+	# add grid
+	if(addGrid){
+		grid()
+	}
+	# add barscale
+# 	if(barscale){
+# 		.barScale(zlim, col, collab="mV",collabcex=0.8)
+# 	}
+	box()
+# 	par(op)
+}
+#---
+
+.plotAnn <- function(ann, x, line=1.7){
+	if(length(ann)>0){
+		testann <- (ann != "")
+		if(sum(testann)>0){
+			posann <- x
+			ann <- gsub("#","\n",ann)
+			abline(v=posann[testann],col="red",lwd=1)
+			mtext(ann[testann], side = 3, line = line, at=posann[testann], col="red",cex=0.9)
+		}
+		return(TRUE)
+	}else{
+		return(FALSE)
+	}
+}
+
+.plotFid <- function(fid, x){
 	usr <- par()$usr
 	pin <- par()$pin	# inch
-	dylim <- diff(usr[3:4])
-	dusr <- dylim/length(y)
-	pretty_y <- pretty(y,10)
 	if(!is.null(fid) && length(fid)>0 && any(fid!="")){
 		cin <- par()$cin[2]
 		posfid <- x
@@ -707,73 +797,59 @@ plotRaster <- function(A, x = NULL, y = NULL, rasterImage=TRUE,resfac = 1, barsc
 		if(sum(testfid)>0){	
 			par(xpd=TRUE)
 			cst <- yr*cin
-			points(posfid[testfid],cst/2*0.75+rep(ylim[2],sum(testfid)),pch=25,col="red",bg="yellow",cex=1)
-			text(posfid[testfid],cst+rep(ylim[2],sum(testfid)),fid[testfid],cex=0.6)#,pos=3,offset =0)
+			points(posfid[testfid],cst/2*0.75+rep(usr[4],sum(testfid)),pch=25,col="red",bg="yellow",cex=1)
+			text(posfid[testfid],cst+rep(usr[4],sum(testfid)),fid[testfid],cex=0.6)#,pos=3,offset =0)
 			par(xpd=FALSE)
 		}
 	}
-	if(add_ann && !is.null(ann) && length(ann)>0){
-		posann <- x
-		testann <- (ann != "")
-		ann <- gsub("#","\n",ann)
-		if(sum(testann)>0){
-			abline(v=posann[testann],col="red",lwd=1)
-			mtext(ann[testann], side = 3, line = 1.7, at=posann[testann], col="red",cex=0.9)
-		}
-		title(main,outer=TRUE,line=1)
-	}else{
-		title(main)
-	}
-# 	axis(side=2, at=pretty_y + dusr/2, labels= -pretty_y)
-	axis(side=2, at=pretty_y, labels= -pretty_y)
-	
-	abline(h=0,col="red",lwd=0.5)
+}
+
+.barScale <- function(zlim, col, collab="mV",collabcex=0.8){
+	dxin <- diff(usr[1:2])/(pin[1])
+	usr <- par()$usr
+	pin <- par()$pin	# inch
+	dylim <- diff(usr[3:4])
+	fin <- par()$fin
+	# par(new=TRUE)
+# 	mai2 <- c(1, 0.8 + pin[1] + 1, 0.8, 0.8)
+	mai2 <- c(par("mai")[1], par("mai")[1] + pin[1] + 1, par("mai")[3], 0.6)
+	par(mai=mai2)
+	fin2 <- par()$fin
+	wstrip <- dxin*(fin2[1] - mai2[2] - mai2[4])/2
+	xpos <- dxin*(mai2[2] - mai[2])
+	zstrip <- matrix(seq(zlim[1],zlim[2],length.out=length(col)),nrow=1)
+# 	xstrip <- c( xpos,  xpos + wstrip*dxin)*c(0.97,1.03)
+	xstrip <- c( xpos - 2*wstrip,  xpos + 2*wstrip)#*c(0.9, 1.1)
+	ystrip <- seq(min(y),max(y),length.out=length(col))
+	ystrip <- seq(usr[3],usr[4],length.out=length(col))
+	pretty_z <- pretty(as.vector(zstrip))
+	dzlim <- zlim[2]-zlim[1] 
+	pretty_at <- usr[3] - dylim * (zlim[1] - pretty_z)/dzlim
+	axis(side=4,las=2, at=pretty_at, labels=pretty_z)
+	print(par("usr"))
+	print(range(xstrip))
+	image(xstrip,ystrip,zstrip,zlim=zlim,add=TRUE, col=col, axes=FALSE, xlab="", ylab="", xaxs="i", yaxs="i")
+	# axis(side=4, las=2)
+	title(collab, cex=0.8)
+	box()
+}
+.depthAxis <- function(y, pretty_y, time_0, v, antsep, depthunit, posunit ){
 	if(grepl("[s]$",depthunit)){
 # 		depth <- (seq(0,by=2.5,max(abs(y))*v))
-		depth <- pretty(seq(0,by=0.1,max(abs(y + 2*time_0))*v),10)
-		depth <- depth[depth != 1]
+		depth <- pretty(seq(1.1,by=0.1,max(abs(y + 2*time_0))*v),10)
 		depth2 <- seq(0.1,by=0.1,0.9)
 		depthat <- depthToTime(depth, 0, v, antsep)
 		depthat2 <- depthToTime(depth2,0, v, antsep)
 		axis(side=4,at=-depthat, labels=depth,tck=-0.02)
 		axis(side=4,at=-depthat2, labels=FALSE,tck=-0.01)
 		axis(side=4,at= -1* depthToTime(1, 0, v, antsep), labels="1",tck=-0.02)
-		mtext(paste("depth (m),   v=",v,"m/ns",sep="") ,side=4, line=3)
+		mtext(paste0("depth (m),   v = ",v, " ", posunit,"/",depthunit) ,side=4, line=3)
 	}else{
-		axis(side=4, at=pretty_y + dusr/2 , labels= -pretty_y)
-	}	
-	
-	if(!is.null(note) && length(note) > 0){
-		mtext(note, side = 1, line = 4, cex=0.6)
+# 		axis(side=4, at=pretty_y + dusr/2 , labels= -pretty_y)
+		axis(side=4, at=pretty_y, labels= -pretty_y)
 	}
-	if(addGrid){
-		grid()
-	}
-	box()
-	# #op <- par(no.readonly = TRUE)
-	# if(barscale && grepl("[s]$",depthunit)){
-	# 	fin <- par()$fin
-	# 	# par(new=TRUE)
-	# 	mai2 <- c(1, 0.8+pin[1]+1, 0.8, 0.6)
-	# 	par(mai=mai2)
-	# 	fin2 <- par()$fin
-	# 	wstrip <- fin2[1] - mai2[2] - mai2[4]
-	# 	xpos <- diff(usr[1:2])*(mai2[2] - mai[2])/pin[1]
-	# 	zstrip <- matrix(seq(zlim[1],zlim[2],length.out=length(col)),nrow=1)
-	# 	xstrip <- c( xpos,  xpos+wstrip*dxin)*c(0.9,1.1)
-	# 	ystrip <- seq(min(y),max(y),length.out=length(col))
-	# 	pretty_z <- pretty(as.vector(zstrip))
-	# 	dzlim <- zlim[2]-zlim[1] 
-	# 	pretty_at <- usr[3] - dylim * (zlim[1] - pretty_z)/dzlim
-	# 	axis(side=4,las=2, at=pretty_at, labels=pretty_z)
-	# 	image(xstrip,ystrip,zstrip,zlim=zlim,add=TRUE, col=col, axes=FALSE, xlab="", ylab="", xaxs="i", yaxs="i")
-	# 	# axis(side=4, las=2)
-	# 	box()
-	# }
-	par(op)
-}
-#---
 
+}
 
 
 setGenericVerif("exportFID", function(x,filename=NULL) standardGeneric("exportFID"))
@@ -2169,16 +2245,7 @@ wapply <- function(x=NULL, width = NULL, by = NULL, FUN = NULL, ...){
 	OUT <- base:::simplify2array(OUT, higher = TRUE)
 	return(OUT)
 }
-wapply0 <- function(x=NULL, width = NULL, by = NULL, FUN = NULL){
-# 	FUN <- match.fun(FUN)
-	if (is.null(by)) by <- width
-	lenX <- length(x)
-	SEQ1 <- seq(1, lenX - width + 1, by = by)
-	SEQ2 <- lapply(SEQ1, function(x) x:(x + width - 1))
-	OUT <- lapply(SEQ2, function(a) FUN(x[a]))
-	OUT <- base:::simplify2array(OUT, higher = TRUE)
-	return(OUT)
-}
+
 
 
 coord2Line <- function(x){

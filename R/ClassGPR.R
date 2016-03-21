@@ -1177,9 +1177,9 @@ setMethod("show", "GPR", function(object){print.GPR(object)})
 
 lines.GPR <- function(x,...){
 	if(length(x@vel)>0){	
-		vel <- x@vel[[1]]
+		velo <- x@vel[[1]]
 	}else{
-		vel <- 0
+		velo <- 0
 	}
 	if(any(dim(x) == 1)){
 		z <- seq(0,by=x@dz,length.out=length(x@data))
@@ -1249,31 +1249,33 @@ plot.GPR <- function(x,y,...){
 		# print(dots)
 	}
 	if(length(x@vel)>0){	
-		vel <- x@vel[[1]]
+		velo <- x@vel[[1]]
 	}else{
-		vel <- 0
+		velo <- 0
 	}
 	if(any(dim(x) == 1)){
 	  op <- par(no.readonly=TRUE)
 		par(mar=c(5,4,3,2)+0.1,oma=c(0,0,3,0), mgp=c(2, 0.5, 0))
 		z <- seq(0,by=x@dz,length.out=length(x@data))
-		plot(z,x@data,type="n",xlab=x@depthunit,ylab="mV",xaxt="n")
-		x_axis <- pretty(seq(x@time0,by=x@dz,length.out=length(x@data)))
+		plot(z,x@data,type="n",xlab=paste0("time (",x@depthunit,")"),ylab="mV",xaxt="n")
+		x_axis <- pretty(seq(-x@time0,by=x@dz,length.out=length(x@data)),10)
 		axis(side=1,at=x_axis+x@time0, labels=x_axis,tck=+0.02)
-		depth_0 <- depth0(x@time0, vel, antsep=x@antsep)
-		depth <- (seq(0,by=2.5,max(z)*vel))
+		depth_0 <- depth0(x@time0, velo, antsep=x@antsep)
+		depth <- pretty(seq(1.1,by=0.1,max(z)*velo/2 ),10)
 		depth2 <- seq(0.1,by=0.1,0.9)
-		depthat <- depthToTime(depth, x@time0, vel, antsep=x@antsep)
-		depthat2 <- depthToTime(depth2, x@time0, vel, antsep=x@antsep)
+		depthat0 <- depthToTime(0, x@time0, velo, antsep=x@antsep)
+		depthat <- depthToTime(depth, x@time0, velo, antsep=x@antsep)
+		depthat2 <- depthToTime(depth2, x@time0, velo, antsep=x@antsep)
+		axis(side=3,at=depthat0, labels="0",tck=+0.02)
 		axis(side=3,at=depthat, labels=depth,tck=+0.02)
 		axis(side=3,at=depthat2, labels=FALSE,tck=+0.01)
-		axis(side=3,at=depthToTime(1, x@time0, vel, antsep=x@antsep), labels=FALSE,tck=+0.02)
+		axis(side=3,at=depthToTime(1, x@time0, velo, antsep=x@antsep), labels=FALSE,tck=+0.02)
 		abline(h=0,lty=3,col="grey")
 		abline(v=x@time0,col="red")
 		abline(v=depth_0,col="grey",lty=3)
 		lines(z,x@data,...)
-		title(paste(x@name, ": trace nb", x@traces," @",x@pos,x@posunit,sep=""),outer=TRUE)
-		mtext(paste("depth (m),   v=",vel,"m/ns",sep="") ,side=3, line=2)
+		title(paste0(x@name, ": trace #", x@traces," @",x@pos,x@posunit),outer=TRUE)
+		mtext(paste0("depth (m),   v=",velo,"m/ns") ,side=3, line=2)
 		par(op)
  	}else{
 		if(!is.null(nupspl)){
@@ -1311,7 +1313,7 @@ plot.GPR <- function(x,y,...){
 			}
 			do.call(plotRaster, c(list(A=x@data, #col= myCol, 
 										x=xvalues, y= -rev(x@depth), main=x@name, xlab=x@posunit, ylab=ylab, 
-										note=x@filename,time_0=x@time0,antsep=x@antsep, v=vel,fid=x@com,ann=x@ann,
+										note=x@filename,time_0=x@time0,antsep=x@antsep, v=velo,fid=x@com,ann=x@ann,
 										depthunit=x@depthunit),dots))
 		}else if(type=="wiggles"){
 			if(add_topo && length(x@coord)>0){
@@ -1338,7 +1340,7 @@ plot.GPR <- function(x,y,...){
 			# x@posunit
 			# print(...)
 			do.call(plotWig, c(list(A=x@data,x=xvalues, y= -rev(x@depth), main=x@name, xlab=x@posunit, ylab=ylab, topo= topo,
-					note=x@filename,col="black",time_0=x@time0,antsep=x@antsep, v=vel,fid=x@com,ann=x@ann,
+					note=x@filename,col="black",time_0=x@time0,antsep=x@antsep, v=velo,fid=x@com,ann=x@ann,
 					depthunit=x@depthunit),dots))
 		}
 	}
@@ -1351,9 +1353,9 @@ plot.GPR <- function(x,y,...){
 setMethod("plot3D", "GPR", function(x,add_topo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,add=TRUE,xlim=NULL,ylim=NULL,zlim=NULL,...) {
 # plot3D <- function(x,type=c("raster","wiggles"),add_topo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,...){
 		if(length(x@vel)>0){	
-			vel <- x@vel[[1]]
+			velo <- x@vel[[1]]
 		}else{
-			vel <- 0
+			velo <- 0
 		}
 		xsel <- rep(TRUE,length(x))
 		if(!is.null(xlim)){
@@ -1567,9 +1569,9 @@ setMethod("delineate", "GPR", function(x,name=NULL,type=c("raster","wiggles"),ad
 		itp <- locator(type="l", n=n)
 		if(length(itp)>0){
 			if(length(x@vel)>0){	
-				vel <- x@vel[[1]]
+				velo <- x@vel[[1]]
 			}else{
-				vel <- 0
+				velo <- 0
 			}
 			if(!is.null(nupspl)){
 				x <- upsample(x,n=nupspl)
@@ -1588,9 +1590,9 @@ setMethod("delineate", "GPR", function(x,name=NULL,type=c("raster","wiggles"),ad
 				if(add_topo){
 					topo <- x@coord[,3]
 					topo <- topo - max(topo)
-					yvalues <- yvalues * vel/ 2
+					yvalues <- yvalues * velo/ 2
 					time_0 <- mean(x@time0)
-					depth_0 <- depthToTime(z=0, time_0, v=vel, antsep=x@antsep) * vel/ 2
+					depth_0 <- depthToTime(z=0, time_0, v=velo, antsep=x@antsep) * velo/ 2
 					yvalues <- yvalues + depth_0
 				}
 			}
@@ -1642,9 +1644,9 @@ setMethod("addDelineation", "GPR", function(x,itp, name=NULL,type=c("raster","wi
 			if(add_topo){
 				topo <- x@coord[,3]
 				topo <- topo - max(topo)
-				yvalues <- yvalues * vel/ 2
+				yvalues <- yvalues * velo/ 2
 				time_0 <- mean(x@time0)
-				depth_0 <- depthToTime(z=0, time_0, v=vel, antsep=x@antsep) * vel/ 2
+				depth_0 <- depthToTime(z=0, time_0, v=velo, antsep=x@antsep) * velo/ 2
 				yvalues <- yvalues + depth_0
 			}
 		}

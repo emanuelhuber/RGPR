@@ -876,9 +876,9 @@ setMethod("dewow", "GPR", function(x, type=c("MAD","Gaussian"),...){
 				x0 <- dots$x0
 			}
 		}
-		cat("dewow with ", w,"ns")
+# 		cat("dewow with ", w,"ns")
 		w <- round(w / x@dz)
-		cat("  (", w,"pts)\n")
+# 		cat("  (", w,"pts)\n")
 		A <- x@data
 		if(length(dim(A))<2){
 			A <- matrix(A,ncol=1,nrow=length(A))
@@ -886,14 +886,11 @@ setMethod("dewow", "GPR", function(x, type=c("MAD","Gaussian"),...){
 		X <- rbind(matrix(0,ncol=ncol(A),nrow=w), A, matrix(0,ncol=ncol(A),nrow=w))
 		n <- nrow(X)
 		Y <- X
-		cat("use wapply(x, width, by = NULL, FUN = NULL, ...)\n")
 		for (i in (w + 1):(n - w)) {
-			Xmed <- apply( X[(i - w):(i + w),,drop=FALSE],2, median)
+			Y[i,] <-  apply( X[(i - w):(i + w),,drop=FALSE],2, median)
 			# S0 <- 1.4826 * apply( abs(X[(i - w):(i + w),,drop=FALSE] - Xmed),2, median)
 			# test <- abs(X[i,] - Xmed) > x0 * S0
-			# Y[i,test] <- Xmed[test]
-			Y[i,] <- Xmed
-			
+			# Y[i,test] <- Xmed[test]			
 		}
 		x@data <- A - Y[(w+1):(n-w),]
 	}else if(type == "Gaussian"){

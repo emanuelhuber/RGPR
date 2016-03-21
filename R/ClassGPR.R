@@ -1258,13 +1258,15 @@ plot.GPR <- function(x,y,...){
 		x_axis <- pretty(seq(-x@time0,by=x@dz,length.out=length(x@data)),10)
 		axis(side=1,at=x_axis+x@time0, labels=x_axis,tck=+0.02)
 		depth_0 <- depth0(x@time0, velo, antsep=x@antsep)
-		depth <- pretty(seq(1.1,by=0.1,max(z)*velo/2 ),10)
 		depth2 <- seq(0.1,by=0.1,0.9)
 		depthat0 <- depthToTime(0, x@time0, velo, antsep=x@antsep)
-		depthat <- depthToTime(depth, x@time0, velo, antsep=x@antsep)
+		if(max(z) > 1.3){
+			depth <- pretty(seq(1.1,by=0.1,max(z)*velo/2 ),10)
+			depthat <- depthToTime(depth, x@time0, velo, antsep=x@antsep)
+			axis(side=3,at=depthat, labels=depth,tck=+0.02)
+		}
 		depthat2 <- depthToTime(depth2, x@time0, velo, antsep=x@antsep)
 		axis(side=3,at=depthat0, labels="0",tck=+0.02)
-		axis(side=3,at=depthat, labels=depth,tck=+0.02)
 		axis(side=3,at=depthat2, labels=FALSE,tck=+0.01)
 		axis(side=3,at=depthToTime(1, x@time0, velo, antsep=x@antsep), labels=FALSE,tck=+0.02)
 		abline(h=0,lty=3,col="grey")

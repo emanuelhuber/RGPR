@@ -792,7 +792,6 @@ plotRaster <- function(A, x = NULL, y = NULL, rasterImage=TRUE,resfac = 1, barsc
 		cin <- par()$cin[2]
 		posfid <- x
 		testfid <- (fid != "")
-		ylim=range(y)
 		yr <- diff(usr[3:4])/(pin[2])
 		if(sum(testfid)>0){	
 			par(xpd=TRUE)

@@ -646,24 +646,25 @@ plotWig <- function(A, x=NULL, y=NULL, xlim = NULL, ylim=NULL, topo=NULL, main =
 }
 
 
-
+# @relTime0 > boolean, y scale relative to time0? 0 <-> time0
 # col, main, xlab, ylab, mar, barscale
-plotRaster <- function(A,x=NULL,y=NULL,plot_raster=TRUE,barscale=TRUE, add= FALSE, 
-					mai=c(1, 0.8, 0.8, 1.8),  col=colGPR(n=101),note=NULL,
-					main="", time_0=0, antsep=1, v=0.1,ann=NULL,add_ann=TRUE,fid=NULL,depthunit="ns", ...){
-  op <- par(no.readonly=TRUE)
+plotRaster <- function(A, x = NULL, y = NULL, rasterImage=TRUE,resfac = 1, barscale=TRUE, add= FALSE, 
+						col=colGPR(n=101),note=NULL, clab="mV",addGrid = FALSE, relTime0=TRUE,
+						main="", time_0=0, antsep=1, v=0.1,ann=NULL,add_ann=TRUE,fid=NULL,depthunit="ns", ...){
+	op <- par(no.readonly=TRUE)
 	GPR =  as.matrix(A)
 	GPR[is.na(GPR)]=0
 	time_0 <- mean(time_0)
-	zlim = range(GPR)
-	if( length(list(...)) ){
-		Lst <- list(...)
-		if( !is.null(Lst$zlim)){
-			zlim <- Lst$zlim
+	clim = c(-1, 1) * max(abs(GPR))
+	mai <- op$mai
+	if( length(list(...)) > 0 ){
+		dots <- list(...)
+		if( !is.null(dots$zlim)){
+			clim <- dots$zlim
 		}
 	}
-	if(grepl("[m]$",depthunit)){
-		mai <- c(1, 0.8, 0.8, 0.5)
+	if(grepl("[s]$",depthunit)){
+		mai <- op$mai + c(0,0,0,1.5)
 	}
 	# cat("number of traces",ncol(GPR),"\n")
 	reverse <- nrow(GPR) : 1
@@ -678,17 +679,25 @@ plotRaster <- function(A,x=NULL,y=NULL,plot_raster=TRUE,barscale=TRUE, add= FALS
 	if(add == TRUE){ 
 		par(new = TRUE)
 	}else{
-		par( mai = mai,oma=c(0,0,3,0))
+		par( mai = mai)
+# 		par( mai = mai,oma=c(0,0,3,0))
 	}
-	y <- y + time_0
-	image(x,y,GPR,col=col,zlim=zlim,xaxs="i", yaxs="i", yaxt="n",...)	# matlab color
-	title(main,outer=TRUE,line=1)
+	if(relTime0){
+		y <- y + time_0
+	}
+	#image(x,y,GPR,col=col,zlim=zlim,xaxs="i", yaxs="i", yaxt="n",...)	# matlab color
+	image2D(x = x, y = y, z = GPR, col = col, xaxs = "i", yaxs = "i", yaxt="n",
+			rasterImage = rasterImage, resfac=resfac,main = "", bty="n",colkey = FALSE, ...)	
+	if(barscale){
+		colkey(clim = clim, clab = clab, width=0.7, dist=0.15, add=TRUE,col = col)
+	}
+
+	
 	usr <- par()$usr
 	pin <- par()$pin	# inch
-	dxin <- diff(usr[1:2])/(pin[1])
 	dylim <- diff(usr[3:4])
 	dusr <- dylim/length(y)
-	pretty_y <- pretty(y)
+	pretty_y <- pretty(y,10)
 	if(!is.null(fid) && length(fid)>0 && any(fid!="")){
 		cin <- par()$cin[2]
 		posfid <- x
@@ -711,48 +720,56 @@ plotRaster <- function(A,x=NULL,y=NULL,plot_raster=TRUE,barscale=TRUE, add= FALS
 			abline(v=posann[testann],col="red",lwd=1)
 			mtext(ann[testann], side = 3, line = 1.7, at=posann[testann], col="red",cex=0.9)
 		}
+		title(main,outer=TRUE,line=1)
+	}else{
+		title(main)
 	}
-	axis(side=2, at=pretty_y + dusr/2, labels= -pretty_y)
+# 	axis(side=2, at=pretty_y + dusr/2, labels= -pretty_y)
+	axis(side=2, at=pretty_y, labels= -pretty_y)
 	
 	abline(h=0,col="red",lwd=0.5)
 	if(grepl("[s]$",depthunit)){
-		depth <- (seq(0,by=2.5,max(abs(y))*v))
+# 		depth <- (seq(0,by=2.5,max(abs(y))*v))
+		depth <- pretty(seq(0,by=0.1,max(abs(y + 2*time_0))*v),10)
+		depth <- depth[depth != 1]
 		depth2 <- seq(0.1,by=0.1,0.9)
 		depthat <- depthToTime(depth, 0, v, antsep)
 		depthat2 <- depthToTime(depth2,0, v, antsep)
 		axis(side=4,at=-depthat, labels=depth,tck=-0.02)
 		axis(side=4,at=-depthat2, labels=FALSE,tck=-0.01)
-		axis(side=4,at= -1* depthToTime(1, 0, v, antsep), labels=FALSE,tck=-0.02)
-		mtext(paste("depth (m),   v=",v,"m/ns",sep="") ,side=4, line=2)
+		axis(side=4,at= -1* depthToTime(1, 0, v, antsep), labels="1",tck=-0.02)
+		mtext(paste("depth (m),   v=",v,"m/ns",sep="") ,side=4, line=3)
 	}else{
 		axis(side=4, at=pretty_y + dusr/2 , labels= -pretty_y)
 	}	
 	
-	
 	if(!is.null(note) && length(note) > 0){
 		mtext(note, side = 1, line = 4, cex=0.6)
 	}
-	box()
-	#op <- par(no.readonly = TRUE)
-	if(barscale && grepl("[s]$",depthunit)){
-		fin <- par()$fin
-		# par(new=TRUE)
-		mai2 <- c(1, 0.8+pin[1]+1, 0.8, 0.6)
-		par(mai=mai2)
-		fin2 <- par()$fin
-		wstrip <- fin2[1] - mai2[2] - mai2[4]
-		xpos <- diff(usr[1:2])*(mai2[2] - mai[2])/pin[1]
-		zstrip <- matrix(seq(zlim[1],zlim[2],length.out=length(col)),nrow=1)
-		xstrip <- c( xpos,  xpos+wstrip*dxin)*c(0.9,1.1)
-		ystrip <- seq(min(y),max(y),length.out=length(col))
-		pretty_z <- pretty(as.vector(zstrip))
-		dzlim <- zlim[2]-zlim[1] 
-		pretty_at <- usr[3] - dylim * (zlim[1] - pretty_z)/dzlim
-		axis(side=4,las=2, at=pretty_at, labels=pretty_z)
-		image(xstrip,ystrip,zstrip,zlim=zlim,add=TRUE, col=col, axes=FALSE, xlab="", ylab="", xaxs="i", yaxs="i")
-		# axis(side=4, las=2)
-		box()
+	if(addGrid){
+		grid()
 	}
+	box()
+	# #op <- par(no.readonly = TRUE)
+	# if(barscale && grepl("[s]$",depthunit)){
+	# 	fin <- par()$fin
+	# 	# par(new=TRUE)
+	# 	mai2 <- c(1, 0.8+pin[1]+1, 0.8, 0.6)
+	# 	par(mai=mai2)
+	# 	fin2 <- par()$fin
+	# 	wstrip <- fin2[1] - mai2[2] - mai2[4]
+	# 	xpos <- diff(usr[1:2])*(mai2[2] - mai[2])/pin[1]
+	# 	zstrip <- matrix(seq(zlim[1],zlim[2],length.out=length(col)),nrow=1)
+	# 	xstrip <- c( xpos,  xpos+wstrip*dxin)*c(0.9,1.1)
+	# 	ystrip <- seq(min(y),max(y),length.out=length(col))
+	# 	pretty_z <- pretty(as.vector(zstrip))
+	# 	dzlim <- zlim[2]-zlim[1] 
+	# 	pretty_at <- usr[3] - dylim * (zlim[1] - pretty_z)/dzlim
+	# 	axis(side=4,las=2, at=pretty_at, labels=pretty_z)
+	# 	image(xstrip,ystrip,zstrip,zlim=zlim,add=TRUE, col=col, axes=FALSE, xlab="", ylab="", xaxs="i", yaxs="i")
+	# 	# axis(side=4, las=2)
+	# 	box()
+	# }
 	par(op)
 }
 #---

@@ -247,7 +247,7 @@ load_install_package <- function(package_names){
 is_installed <- function(mypkg) is.element(mypkg, installed.packages()[,1])
 
 
-requiredPackage = c('base','MASS','signal', 'colorspace','Cairo','rgeos','sp','rgl', 'rgdal','EMD','mmand','e1071','adimpro')
+requiredPackage = c('base','plot3D','MASS','signal', 'colorspace','Cairo','rgeos','sp','rgl', 'rgdal','EMD','mmand','e1071','adimpro')
 load_install_package(requiredPackage)
 cat('> Package(s) loaded (if...): ',requiredPackage,' \n')
 	

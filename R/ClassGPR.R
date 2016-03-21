@@ -1233,7 +1233,7 @@ plot.GPR <- function(x,y,...){
 		if( !is.null(dots$add_topo) && isTRUE(dots$add_topo) ){
 			add_topo <- TRUE
 		}
-		dots$col <- NULL
+		#dots$col <- NULL
 		dots$add_fid <- NULL
 		dots$add_topo <- NULL
 		dots$addArrows <- NULL

@@ -1,4 +1,10 @@
 
+#
+#		CHECK:	http://r-pkgs.had.co.nz/
+#
+
+
+
 	
 #----------- helper functions -------------------#
 # FID <- choose.files(caption = " txt files",filters = c("txt","*.txt"))
@@ -314,7 +320,7 @@ setGenericVerif("reverse", function(x) standardGeneric("reverse"))
 setGenericVerif("migration", function(x,type=c("static","kirchhoff"), ...) standardGeneric("migration"))
 setGenericVerif("upsample", function(x,n) standardGeneric("upsample"))
 setGenericVerif("filter1D", function(x, type = c("median", "hampel"), ...) standardGeneric("filter1D"))
-setGenericVerif("filter2D", function(x, type=c("median3x3"), ...) standardGeneric("medianFilter"))
+setGenericVerif("filter2D", function(x, type=c("median3x3"), ...) standardGeneric("filter2D"))
 setGenericVerif("dewow", function(x,type=c("MAD","Gaussian"),... ) standardGeneric("dewow"))
 setGenericVerif("gain", function(x, type=c("power","exp","agc","geospreading"),...) standardGeneric("gain"))
 setGenericVerif("dcshift", function(x, u=1:10, FUN=mean) standardGeneric("dcshift"))

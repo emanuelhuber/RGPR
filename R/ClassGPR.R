@@ -1062,8 +1062,8 @@ setMethod("trScale", "GPR", function(x, type = c("stat","min-max","95","eq","sum
 	}
 )
 #----------------- FREQUENCY FILTERS
-setMethod("fFilter", "GPR", function(x, f=100, type=c('low','high','bandpass'),L=257,plotSpec=FALSE){
-		x@data <- .fFilter1D(x@data, f=f,  type = type, L=L, T = x@dz, plotSpec = plotSpec)
+setMethod("fFilter", "GPR", function(x, f = 100, type = c('low','high','bandpass'),L = 257, plotSpec = FALSE){
+		x@data <- .fFilter1D(x@data, f = f,  type = type, L = L, T = x@dz, plotSpec = plotSpec)
 		proc <- getArgs()
 		x@proc <- c(x@proc, proc)
 		return(x)
@@ -1460,6 +1460,7 @@ setMethod("plot3DRGL", "GPR", function(x,addTopo=FALSE,clip=NULL,normalize=NULL,
 )
 
 setMethod("plotAmpl", "GPR", function(x, FUN=mean, add=FALSE, ylim=NULL,xlim=NULL,col=1,all=FALSE, ...){
+	op <- par(no.readonly=TRUE)
 	AMP <- apply(abs(x@data),1,FUN,...)
 	z <- seq(0,by=x@dz,length.out=length(AMP))
 	if(!add){
@@ -1475,7 +1476,7 @@ setMethod("plotAmpl", "GPR", function(x, FUN=mean, add=FALSE, ylim=NULL,xlim=NUL
 		}
 		lines(z,log(AMP),col=col)
 	}
-	# return(AMP)
+	par(op)
 	} 
 )
 
@@ -1486,7 +1487,7 @@ setMethod("spec", "GPR", function(x, type=c("f-x","f-k"), returnSpec=FALSE,plotS
 		if(type == "f-x"){
 			S <- powSpec(x@data,T = x@dz, fac = 1000000, 
 						plotSpec = plotSpec, returnSpec = returnSpec, 
-						title_spec = x@name)
+						titleSpec = x@name)
 						# cat(x@name)
 			
 		}else if(type == "f-k"){

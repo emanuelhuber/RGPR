@@ -1245,6 +1245,7 @@ powSpec <- function(A,T = 0.8, fac = 1000000, plotSpec=TRUE, returnSpec=FALSE,ti
 	fre = Fs*(0:(Nfft/2))/Nfft/1000000	#[MHz]
 	
 	if(plotSpec == TRUE){
+		op <- par(no.readonly=TRUE)
 		# plot the power spectrum
 		m = seq(0,900,by=50)
 		#par(mfrow=c(2,1), mar=c(5, 4, 4, 6) + 0.1 )
@@ -1263,6 +1264,7 @@ powSpec <- function(A,T = 0.8, fac = 1000000, plotSpec=TRUE, returnSpec=FALSE,ti
 			abline(v=f/1000000, col="grey",lty=2)
 			#title("Power spectrum")
 			#title("Power spectrum")
+		 par(op)
 	}
 	a = (L-1)/2
 	y = mvfft(Y, inverse = TRUE)

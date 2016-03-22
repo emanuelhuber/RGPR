@@ -351,27 +351,15 @@ setGenericVerif("exportPDF", function(x,fPath=NULL,addTopo=FALSE,clip=NULL,norma
 
 
 #---------------------- DELINEATIONS ---------------------#
-
 setGenericVerif("delineate", function(x,name=NULL,type=c("raster","wiggles"),addTopo=FALSE,nupspl=NULL,n=10000,...) standardGeneric("delineate"))
-
 setGenericVerif("rmDelineations<-", function(x,values=NULL) standardGeneric("rmDelineations<-"))
-
 setGenericVerif("delineations", function(x,sel=NULL,...) standardGeneric("delineations"))
 setGenericVerif("addDelineation", function(x,...) standardGeneric("addDelineation"))
-
 setGenericVerif("showDelineations", function(x,sel=NULL,...) standardGeneric("showDelineations"))
-
 setGenericVerif("exportDelineations", function(x, dirpath="") standardGeneric("exportDelineations"))
-
 setGenericVerif("plotDelineations3D", function(x,sel=NULL,col=NULL,add=TRUE,...) standardGeneric("plotDelineations3D"))
-	
 setGenericVerif("plotDelineations", function(x,sel=NULL,col=NULL,...) standardGeneric("plotDelineations"))
-
 setGenericVerif("identifyDelineation", function(x,sel=NULL,...) standardGeneric("identifyDelineation"))
-
-
-
-
 
 timeToDepth <- function(tt, time_0, v=0.1, antsep=1){
 	t0 <- time_0 - antsep/0.299
@@ -384,10 +372,6 @@ depthToTime <- function(z, time_0, v=0.1, antsep=1){
 depth0 <- function(time_0, v=0.1, antsep=1){
 	time_0 - antsep/0.299 + antsep/v
 }
-
-
-
-
 
 .plot3DRGL <- function(A,x,y,z,z0,col=palGPR(n=101),back="fill", smooth = TRUE, lit=FALSE, lwd=0,empty=FALSE,...){
 	nr = nrow(A)

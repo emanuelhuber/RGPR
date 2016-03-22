@@ -24,7 +24,7 @@ setClass(
 		antsep ="numeric", 	# antenna separation
 		name="character",	# name of the profile
 		description ="character",	# description of the pro
-		filename ="character",	# filepath of the profile
+		filepath ="character",	# filepath of the profile
 		depthunit ="character", # time/depth unit
 		posunit = "character",	# spatial unit
 		surveymode ="character", # survey mode (reflection/CMP)
@@ -194,7 +194,7 @@ setClass(
 				vel=list(0.1),	#m/ns
 				name = name,
 				description = description,
-				filename = filename,
+				filepath = filename,
 # 				ntr = ncol(x$data), 
 # 				w = ttw[1],	#  "TOTAL TIME WINDOW"
 				dz = dz, 
@@ -235,7 +235,7 @@ setMethod("readGPR", "character", function(filename, description="", coordfile=N
 			}else if(".rds" == tolower(ext)){
 				x <- readRDS(filename)
 				if(class(x)=="GPR"){
-					x@filename <- filename
+					x@filepath <- filename
 					return(x)
 				}else if(class(x)=="list"){
 					versRGPR <- x[["version"]]
@@ -261,7 +261,7 @@ setMethod("readGPR", "character", function(filename, description="", coordfile=N
 						antsep = x[['antsep']], 
 						name = x[['name']],
 						description = x[['description']],
-						filename =x[['filename']],
+						filepath =x[['filename']],
 						depthunit = x[['depthunit']],
 						posunit = x[['posunit']],
 						surveymode = x[['surveymode']],
@@ -272,7 +272,7 @@ setMethod("readGPR", "character", function(filename, description="", coordfile=N
 						delineations=x[['delineations']],
 						hd= x[['hd']]		# header
 					)
-					y@filename <- filename
+					y@filepath <- filename
 					return(y)
 				}
 			}
@@ -311,7 +311,7 @@ setAs(from = "matrix", to = "GPR", def = function (from) .as.GPR.matrix(from))
 		vel=list(0.1),	#m/ns
 		name = character(0),
 		description = character(0),
-		filename = character(0),
+		filepath = character(0),
 # 		ntr = ncol(x), 
 # 		w = nrow(x)*0.8, 
 		dz = 0.8, 
@@ -367,7 +367,7 @@ setAs(from = "list", to = "GPR", def = function (from) .as.GPR.list(from))
 				name = as.character(d_name),
 				description = paste("coercion of ",
 								as.character(d_name)," (",typeof(x),") into GPR",sep=""),
-				filename = character(0),
+				filepath = character(0),
 # 				ntr = ncol(x$data), 
 # 				w = nrow(x$data)*x$dz, 
 				dz = x$dz, 
@@ -701,8 +701,8 @@ setMethod("description", "GPR", function(x){
   return(x@description)
 } 
 )
-setMethod("filename", "GPR", function(x){
-		return(x@filename)
+setMethod("filepath", "GPR", function(x){
+		return(x@filepath)
 	} 
 )
 setMethod("ann", "GPR", function(x){
@@ -1135,8 +1135,8 @@ setMethod("traceShift", "GPR", function(x,  fb,kip=10){
 .GPR.print 	<-	function(x, digits=5){
 	topaste <- c(paste("***","Class GPR", "***\n"))
 	topaste <- c(topaste, paste("name = ", x@name, "\n",sep=""))
-	if(length(x@filename) > 0){
-		topaste <- c(topaste, paste("filename = ", x@filename, "\n",sep=""))
+	if(length(x@filepath) > 0){
+		topaste <- c(topaste, paste("filepath = ", x@filepath, "\n",sep=""))
 	}
 	nbfid <- sum(trim(x@com)!= "")
 	if(nbfid > 0){
@@ -1317,7 +1317,7 @@ plot.GPR <- function(x,y,...){
 # 			}
 			do.call(plotRaster, c(list(A=x@data, #col= myCol, 
 										x=xvalues, y= -rev(x@depth), main=x@name, xlab=x@posunit, ylab=ylab, 
-										note=x@filename,time_0=x@time0,antsep=x@antsep, v=velo,fid=x@com,annotations=x@ann,
+										note=x@filepath,time_0=x@time0,antsep=x@antsep, v=velo,fid=x@com,annotations=x@ann,
 										depthunit=x@depthunit, posunit=x@posunit),dots))
 		}else if(type=="wiggles"){
 			if(add_topo && length(x@coord)>0){
@@ -1344,7 +1344,7 @@ plot.GPR <- function(x,y,...){
 			# x@posunit
 			# print(...)
 			do.call(plotWig, c(list(A=x@data,x=xvalues, y= -rev(x@depth), main=x@name, xlab=x@posunit, ylab=ylab, topo= topo,
-					note=x@filename,col="black",time_0=x@time0,antsep=x@antsep, v=velo,fid=x@com,annotations=x@ann,
+					note=x@filepath,col="black",time_0=x@time0,antsep=x@antsep, v=velo,fid=x@com,annotations=x@ann,
 					depthunit=x@depthunit),dots))
 		}
 	}
@@ -2112,7 +2112,7 @@ setMethod("writeGPR", "GPR", function(x,filename, format=c("DT1","rds"), overwri
 			if("rds" != ext ){
 				stop("Extension should be '.rds'")
 			}
-			x@filename <- as.character(filename)
+			x@filepath <- as.character(filename)
 			namesSlot <- slotNames(x)
 			xList <- list()
 # 			xList[["version"]] <- "0.1"

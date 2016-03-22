@@ -862,7 +862,7 @@ setGenericVerif("gethd", function(x,hd=NULL) standardGeneric("gethd"))
 
 
 #setGenericVerif("filepath", function(x) standardGeneric("filepath"))
-setGenericVerif("filename", function(x) standardGeneric("filename"))
+setGenericVerif("filepath", function(x) standardGeneric("filepath"))
 
 setGenericVerif("ann", function(x) standardGeneric("ann"))
 

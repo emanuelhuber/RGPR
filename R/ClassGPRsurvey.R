@@ -5,7 +5,7 @@ setClass(
 	Class="GPRsurvey",	
 	slots=c(
 		version = "character", 		# version of the class
-		filenames="character", 		# filepath of the GPR data
+		filepaths="character", 		# filepath of the GPR data
 		names="character",			# names of the GPR profiles
 		descriptions ="character",	# descriptions of the GPR profiles
 		freqs ="numeric", 			# frequencies of the GPR profiles
@@ -74,7 +74,7 @@ GPRsurvey <- function(LINES){
 	
 	x <- new("GPRsurvey",
 				version 		= "0.1",
-				filenames		= LINES, 				# vector of [n] file names
+				filepaths		= LINES, 				# vector of [n] file names
 				names			= line_names,			# length = [n]
 				descriptions 	= line_descriptions,	# length = [n]
 				surveymodes 	= line_surveymodes,		# length = [n]
@@ -199,7 +199,7 @@ setMethod(
 		# cat(j,"\n")
 		# i <- as.numeric(i)
 		y <- x
-		y@filenames		<- x@filenames[i]		# vector of [n] file names
+		y@filepaths		<- x@filepaths[i]		# vector of [n] file names
 		y@names			<- x@names[i]			# length = [n]
 		y@descriptions	<- x@descriptions[i] 	# length = [n]
 		y@surveymodes 	<- x@surveymodes[i]		# length = [n]
@@ -236,11 +236,11 @@ setMethod("getLine", "GPRsurvey", function(x,id){
 			id <- id[1]
 		}
 		if(is.numeric(id)){
-			gpr <- readGPR(x@filenames[[id]])
+			gpr <- readGPR(x@filepaths[[id]])
 		}else if(is.character(id)){
 			no <- which(x@names == trim(id))
 			if(length(no > 0)){
-				gpr <- readGPR(x@filenames[[no]])
+				gpr <- readGPR(x@filepaths[[no]])
 			}else{
 				stop("No GPR lines with name", trim(id),"\n")
 			}
@@ -268,7 +268,7 @@ setMethod("getLine", "GPRsurvey", function(x,id){
 print.GPRsurvey <- function(x, ...){
 	cat("*** Class GPRsurvey ***\n")
 	n <- length(x)
-	dirNames <- dirname(x@filenames)
+	dirNames <- dirname(x@filepaths)
 	if(length(unique(dirNames))==1){
 		cat("Unique directory:", dirNames[1],"\n")
 	}else{
@@ -291,7 +291,7 @@ print.GPRsurvey <- function(x, ...){
 	
 	is_test <- c("NO","YES")
 	cat("- - - - - - - - - - - - - - -\n")
-	overview <- data.frame("name (id)"=.filename(x@filenames),
+	overview <- data.frame("name (id)"=.filename(x@filepaths),
 							"length"=round(x@lengths,2),
 							"units" = rep(x@posunit,n),
 							"date" = x@dates,
@@ -317,7 +317,7 @@ setMethod("show", "GPRsurvey", function(object){print.GPRsurvey(object)})
 setMethod("length", "GPRsurvey", function(x) ncol(x@data))
 
 setMethod(f="length", signature="GPRsurvey", definition=function(x){
-		length(x@filenames)
+		length(x@filepaths)
 	}
 )
 
@@ -463,7 +463,7 @@ setMethod("intersections", "GPRsurvey", function(x){
 
 setMethod("interpTraces", "GPRsurvey", function(x,topo){
 		for(i in seq_along(x)){
-			gpr <- readGPR(x@filenames[[i]])
+			gpr <- readGPR(x@filepaths[[i]])
 			topoLine <- topo[[i]]
 			gpr <- interpTraces(gpr,topoLine)
 			x@coords[[gpr@name]] <- gpr@coord
@@ -515,7 +515,7 @@ setMethod("plot3D", "GPRsurvey", function(x,add_topo=FALSE,clip=NULL,normalize=N
 		add<-add
 		for(i in seq_along(x)){
 			cat("***", i , "***\n")
-			gpr <- readGPR(x@filenames[[i]])
+			gpr <- readGPR(x@filepaths[[i]])
 			if(length(x@coords[[gpr@name]])>0){
 				coord(gpr) <- x@coords[[gpr@name]]
 				# cat(x@coordref,"\n")
@@ -537,7 +537,7 @@ setMethod("plot3D", "GPRsurvey", function(x,add_topo=FALSE,clip=NULL,normalize=N
 setMethod("plotDelineations3D", "GPRsurvey", function(x,sel=NULL,col=NULL,add=TRUE,...){
 		add<-add
 		for(i in seq_along(x)){
-			gpr <- readGPR(x@filenames[[i]])
+			gpr <- readGPR(x@filepaths[[i]])
 			if(length(x@coords[[gpr@name]])>0){
 				coord(gpr) <- x@coords[[gpr@name]]
 				# cat(x@coordref,"\n")
@@ -563,7 +563,7 @@ setMethod("writeSurvey", "GPRsurvey", function(x, filename, overwrite=FALSE){
 	}else{
 	  filename <- safeFilepath(filename)
 	}
-	x@filename <- as.character(filename)
+	x@filepath <- as.character(filename)
 	namesSlot <- slotNames(x)
 	xList <- list()
 # 	xList[["version"]] <- "0.1"
@@ -621,7 +621,7 @@ setMethod("writeGPR", "GPRsurvey", function(x,filename, format=c("DT1","rds"), o
 
 setMethod("exportFID", "GPRsurvey", function(x,filename=NULL){
 		for(i in seq_along(x)){
-			gpr <- readGPR(x@filenames[[i]])
+			gpr <- readGPR(x@filepaths[[i]])
 			file_name <- paste(filename,gpr@name,".txt",sep="")
 			exportFID(gpr,file_name)
 			cat("File \"",file_name,"\" created!\n",sep="")

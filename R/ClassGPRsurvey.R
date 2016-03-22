@@ -63,13 +63,13 @@ GPRsurvey <- function(LINES){
 				xyzCoords[[line_names[i] ]] <- gpr@coord
 			}
 			# xyzCoords[[line_names[i] ]] 	<- gpr@coord
-			line_lengths[i]			<- lineDist(gpr@coord[,1:2],last=TRUE)
+			line_lengths[i]			<- posLine(gpr@coord[,1:2],last=TRUE)
 		}else{
 			# xyzCoords[[line_names[i]]] 	<- NULL
 # 			line_lengths[i]		<- gpr@dx * gpr@ntr
 			line_lengths[i]		<- gpr@dx * ncol(gpr@data)
 		}
-		fids[[line_names[i] ]]		<- trim(gpr@com)
+		fids[[line_names[i] ]]		<- trimStr(gpr@com)
 	}
 	
 	x <- new("GPRsurvey",
@@ -88,7 +88,7 @@ GPRsurvey <- function(LINES){
 				fids			= fids,
 				intersections	= list()
 	)
-	x <- setCoordref(x)
+	x <- coordref(x)
 	return(x)
 }
 
@@ -101,8 +101,8 @@ setAs(from = "GPRsurvey", to = "SpatialPoints",
 as.SpatialLines <- function (x, ...){
 	TOPO <- x@coords
 	Names <- x@names
-	lineList <- lapply(TOPO,coord2Line)
-	linesList <- lapply(seq_along(lineList), Line2Lines, lineList ,Names)
+	lineList <- lapply(TOPO,xyToLine)
+	linesList <- lapply(seq_along(lineList), LineToLines, lineList ,Names)
 	mySpatLines <- sp::SpatialLines(linesList)
 	if(crs(x) == '' || nchar(crs(x)) == 1){
 		warning("no CRS defined!\n")
@@ -129,8 +129,8 @@ as.SpatialPoints <- function (x, ...){
 	# TOPO <- x@coords
 	# Names <- x@names
 	# if(type=="lines"){	
-		# lineList <- lapply(TOPO,coord2Line)
-		# linesList <- lapply(seq_along(lineList), Line2Lines, lineList ,Names)
+		# lineList <- lapply(TOPO,xyToLine)
+		# linesList <- lapply(seq_along(lineList), LineToLines, lineList ,Names)
 		# mySpatLines <- SpatialLines(linesList)
 		# if(crs(x) == '' || nchar(crs(x)) == 1){
 			# warning("no CRS defined!\n")
@@ -143,7 +143,7 @@ as.SpatialPoints <- function (x, ...){
 
 		# mySpatLinesdf <- SpatialLinesDataFrame(mySpatLines, d.f , match.ID = TRUE)
 
-		# writeOGR(mySpatLinesdf, folder, filename, driver="ESRI Shapefile")
+		# writeOGR(mySpatLinesdf, folder, fPath, driver="ESRI Shapefile")
 	# }else if(type=="points"){	
 		# allTopo <- do.call(rbind,TOPO)	#  N, E, Z
 		# # allNames <- sapply(rep(Names, each=sapply(TOPO, length))
@@ -156,18 +156,18 @@ as.SpatialPoints <- function (x, ...){
 		# }else{
 			# proj4string(allTopo2) <- CRS(crs(x))
 		# }
-		# writeOGR(allTopo2, folder, filename, driver="ESRI Shapefile")
+		# writeOGR(allTopo2, folder, fPath, driver="ESRI Shapefile")
 
-setMethod("setCoordref", "GPRsurvey", function(x){
+setMethod("coordref", "GPRsurvey", function(x){
 		if(length(x@coords)>0){
 			A <- do.call("rbind",x@coords)
 			A <- apply(round(A),2,range)
-			Evalue <- minCommon10(A[1,1],A[2,1])
-			Nvalue <- minCommon10(A[1,2],A[2,2])
+			Evalue <- .minCommon10(A[1,1],A[2,1])
+			Nvalue <- .minCommon10(A[1,2],A[2,2])
 			Zvalue <- 0
 			x@coordref <- c(Evalue, Nvalue,Zvalue)
 			cat("Coordinates of the local system:", x@coordref,"\n")
-			x <- surveyIntersections(x)
+			x <- surveyIntersect(x)
 		}
 		return(x)
 	}
@@ -219,18 +219,18 @@ setMethod(
 #------------------------------
 # "[["
 # return an instance of the class GPR!
-# identical to getLine
+# identical to getGPR
 # i can be either the gpr data number or the gpr data name
 setMethod(
 	f= "[[",
 	signature="GPRsurvey",
 	definition=function (x, i, j, ...){
 		if(missing(i)) i <- j
-		return(getLine(x,id=i))
+		return(getGPR(x,id=i))
 	}
 )
 
-setMethod("getLine", "GPRsurvey", function(x,id){
+setMethod("getGPR", "GPRsurvey", function(x,id){
 		if(length(id)>1){
 			warning("Length of id > 1, I take only the first element!\n")
 			id <- id[1]
@@ -238,11 +238,11 @@ setMethod("getLine", "GPRsurvey", function(x,id){
 		if(is.numeric(id)){
 			gpr <- readGPR(x@filepaths[[id]])
 		}else if(is.character(id)){
-			no <- which(x@names == trim(id))
+			no <- which(x@names == trimStr(id))
 			if(length(no > 0)){
 				gpr <- readGPR(x@filepaths[[no]])
 			}else{
-				stop("No GPR lines with name", trim(id),"\n")
+				stop("No GPR lines with name", trimStr(id),"\n")
 			}
 		}
 		if(length(x@coords[[gpr@name]])>0){
@@ -291,7 +291,7 @@ print.GPRsurvey <- function(x, ...){
 	
 	is_test <- c("NO","YES")
 	cat("- - - - - - - - - - - - - - -\n")
-	overview <- data.frame("name (id)"=.filename(x@filepaths),
+	overview <- data.frame("name (id)"=.fNameWExt(x@filepaths),
 							"length"=round(x@lengths,2),
 							"units" = rep(x@posunit,n),
 							"date" = x@dates,
@@ -392,13 +392,14 @@ plot.GPRsurvey <- function(x,y,...){
 				}
 			}
 		}
-		niet <- lapply(x@coords, plotLine, lwd=lwd, col=col )
+		niet <- lapply(x@coords, .plotLine, lwd=lwd, col=col )
 		if(addArrows){
-			niet <- lapply(x@coords, plotArrows, lwd=lwd)
+			niet <- lapply(x@coords, .plotArrows, lwd=lwd)
 		}
 		if(!is.null(parFid)){
 			for(i in 1:length(x)){
-				fidxyz <- fidpos(x@coords[[i]],x@fids[[i]])
+# 				fidxyz <- .fidpos(x@coords[[i]],x@fids[[i]])
+				fidxyz <- x@coords[[i]][trimStr(x@fids[[i]]) != "", , drop=FALSE]
 				if(length(fidxyz)>0){
 					do.call( points, c(list(x=fidxyz[,1:2]),parFid))
 				}
@@ -417,7 +418,7 @@ plot.GPRsurvey <- function(x,y,...){
 	}
 }
 
-setMethod("surveyIntersections", "GPRsurvey", function(x){
+setMethod("surveyIntersect", "GPRsurvey", function(x){
 		# intersections <- list()
 		for(i in seq_along(x@coords)){
 		  top0 <- x@coords[[i]]
@@ -461,15 +462,15 @@ setMethod("intersections", "GPRsurvey", function(x){
 	}
 )
 
-setMethod("interpTraces", "GPRsurvey", function(x,topo){
+setMethod("interpPos", "GPRsurvey", function(x,topo, ...){
 		for(i in seq_along(x)){
 			gpr <- readGPR(x@filepaths[[i]])
 			topoLine <- topo[[i]]
-			gpr <- interpTraces(gpr,topoLine)
+			gpr <- interpPos(gpr,topoLine, ...)
 			x@coords[[gpr@name]] <- gpr@coord
-			x@lengths[i] <- lineDist(gpr@coord[,1:2],last=TRUE)
+			x@lengths[i] <- posLine(gpr@coord[,1:2],last=TRUE)
 		}			
-		x <- setCoordref(x)
+		x <- coordref(x)
 		return(x)
 	}
 )
@@ -477,8 +478,15 @@ setMethod("interpTraces", "GPRsurvey", function(x,topo){
 setMethod(
 	f="coords",
 	signature="GPRsurvey",
-	definition=function(x){
-		return(x@coords)
+	definition=function(x, i){
+		if(length(x@coords) == 0){
+		  return(x@coords)
+		}
+		if(missing(i)){
+		  return(x@coords)
+		}else{
+		  return(x@coords[[i]])
+		}
 	}
 )
 
@@ -500,18 +508,18 @@ setReplaceMethod(
 			}else{
 				x@coords[[x@names[i]]] <- values[[i]]
 			}
-			x@lengths[i] <- lineDist(values[[i]][,1:2],last=TRUE)
+			x@lengths[i] <- posLine(values[[i]][,1:2],last=TRUE)
 		}
-		# in setCoordref, the intersection is computed by 
-		#		"x <- surveyIntersections(x)"
-		x <- setCoordref(x)
+		# in coordref, the intersection is computed by 
+		#		"x <- surveyIntersect(x)"
+		x <- coordref(x)
 		return(x)
 	}
 )
 
-setMethod("plot3D", "GPRsurvey", function(x,add_topo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,add=TRUE,
+setMethod("plot3DRGL", "GPRsurvey", function(x,addTopo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,add=TRUE,
 		xlim=NULL,ylim=NULL,zlim=NULL,...){
-# plot3D <- function(x,type=c("raster","wiggles"),add_topo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,...){
+# plot3D <- function(x,type=c("raster","wiggles"),addTopo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,...){
 		add<-add
 		for(i in seq_along(x)){
 			cat("***", i , "***\n")
@@ -524,7 +532,7 @@ setMethod("plot3D", "GPRsurvey", function(x,add_topo=FALSE,clip=NULL,normalize=N
 			if(length(coord(gpr))==0){
 				cat(gpr@name, ": no coordinates, I cannot plot this line!!\n",sep="")
 			}else{
-				plot3D(gpr,add_topo=add_topo,clip=clip,normalize=normalize,nupspl=nupspl,add=add,xlim=xlim,ylim=ylim,zlim=zlim,...)
+				plot3DRGL(gpr,addTopo=addTopo,clip=clip,normalize=normalize,nupspl=nupspl,add=add,xlim=xlim,ylim=ylim,zlim=zlim,...)
 			}
 			add <- TRUE
 		}	
@@ -557,26 +565,26 @@ setMethod("plotDelineations3D", "GPRsurvey", function(x,sel=NULL,col=NULL,add=TR
 
 
 #----------------------- EXPORT/SAVE -----------------#
-setMethod("writeSurvey", "GPRsurvey", function(x, filename, overwrite=FALSE){
+setMethod("writeSurvey", "GPRsurvey", function(x, fPath, overwrite=FALSE){
 	if(isTRUE(overwrite)){
 		cat("file may be overwritten\n")
 	}else{
-	  filename <- safeFilepath(filename)
+	  fPath <- safeFPath(fPath)
 	}
-	x@filepath <- as.character(filename)
+	x@filepath <- as.character(fPath)
 	namesSlot <- slotNames(x)
 	xList <- list()
 # 	xList[["version"]] <- "0.1"
 	for(i in seq_along(namesSlot)){
 		xList[[namesSlot[i]]] <- slot(x, namesSlot[i])
 	}
-	saveRDS(xList, filename)
-# 	saveRDS(x, filename)
+	saveRDS(xList, fPath)
+# 	saveRDS(x, fPath)
 })
 
 
 
-setMethod("writeGPR", "GPRsurvey", function(x,filename, format=c("DT1","rds"), overwrite=FALSE){
+setMethod("writeGPR", "GPRsurvey", function(x,fPath, format=c("DT1","rds"), overwrite=FALSE){
 		type=match.arg(format)
 		mainDir <- dirname(path)
 		if(mainDir =="." || mainDir =="/" ){
@@ -593,7 +601,7 @@ setMethod("writeGPR", "GPRsurvey", function(x,filename, format=c("DT1","rds"), o
 			dir.create(file.path(mainDir, subDir))
 		}
 		for(i in seq_along(x)){
-			# gpr <- readGPR(x@filenames[[i]])
+			# gpr <- readGPR(x@fPaths[[i]])
 			gpr <- x[[i]]
 			if(length(x@coords[[gpr@name]])>0){
 				coord(gpr) <- x@coords[[gpr@name]]
@@ -611,18 +619,18 @@ setMethod("writeGPR", "GPRsurvey", function(x,filename, format=c("DT1","rds"), o
 			# }
 			# dir.create(file.path(mainDir, subDir))
 			# setwd(file.path(mainDir, subDir))
-			filename <- paste(mainDir,"/",subDir,"/",gpr@name,".",type,sep="")
-			writeGPR(gpr, path=filename,format=type , overwrite=FALSE)
-			cat("File saved:",filename,"\n")
+			fPath <- paste(mainDir,"/",subDir,"/",gpr@name,".",type,sep="")
+			writeGPR(gpr, path=fPath,format=type , overwrite=FALSE)
+			cat("File saved:",fPath,"\n")
 		}			
 	
 	}
 )
 
-setMethod("exportFID", "GPRsurvey", function(x,filename=NULL){
+setMethod("exportFID", "GPRsurvey", function(x,fPath=NULL){
 		for(i in seq_along(x)){
 			gpr <- readGPR(x@filepaths[[i]])
-			file_name <- paste(filename,gpr@name,".txt",sep="")
+			file_name <- paste(fPath,gpr@name,".txt",sep="")
 			exportFID(gpr,file_name)
 			cat("File \"",file_name,"\" created!\n",sep="")
 			# x@coords[[gpr@name]] <- gpr@coord
@@ -630,25 +638,25 @@ setMethod("exportFID", "GPRsurvey", function(x,filename=NULL){
 	}
 )
 
-setMethod("exportCoord", "GPRsurvey", function(x,filename=NULL,type=c("points","lines"),driver="ESRI Shapefile",...){
+setMethod("exportCoord", "GPRsurvey", function(x,fPath=NULL,type=c("points","lines"),driver="ESRI Shapefile",...){
 	type=match.arg(type)
-	folder <- dirname(filename)
-	filename <- basename(filename)
+	folder <- dirname(fPath)
+	fPath <- basename(fPath)
 	if(type=="lines"){	
 		mySpatLines <- as.SpatialLines(x)
 		dfl <- data.frame(z=seq_along(mySpatLines), 
 				row.names = sapply(slot(mySpatLines, "lines"), 
 							function(x) slot(x, "ID")))
 		mySpatLinesdf <- SpatialLinesDataFrame(mySpatLines, dfl , match.ID = TRUE)
-		writeOGR(mySpatLinesdf, folder, filename, driver=driver,...)
+		writeOGR(mySpatLinesdf, folder, fPath, driver=driver,...)
 	}else if(type=="points"){	
 		mySpatPoints <- as.SpatialPoints(x)
-		writeOGR(mySpatPoints, folder, filename, driver=driver,...)
+		writeOGR(mySpatPoints, folder, fPath, driver=driver,...)
 	}
 })
 
 setMethod("exportDelineations", "GPRsurvey", function(x, dirpath=""){
 	for(i in seq_along(x)){
-		exportDelineations(getLine(x,id=i),path=path)
+		exportDelineations(getGPR(x,id=i),path=path)
 	}
 })

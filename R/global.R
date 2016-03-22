@@ -94,45 +94,34 @@ plotTopo <- function(NEZ_file, add=TRUE){
 
 #----------- helper functions -------------------#
 
-
-	
-
-safeFilepath <- function(filename=NULL){
-	# FILE NAMES
-	dirName 	<- dirname(filename)
-	splitBaseName <- unlist(strsplit(basename(filename),'[.]'))
-	baseName 	<- paste(splitBaseName[1:(length(splitBaseName)-1)],sep="")
-	ext <- tail(splitBaseName,1)
+# NAME: safe file path
+# test if the file already exists
+# if yes, add a suffix to the filepath
+safeFPath <- function(fPath = NULL){
+	dirName 	<- dirname(fPath)
+	fName <- .fNameWExt(fPath)
+	ext <- .fExt(fPath)
 	if(dirName == '.'){
-		filename <- baseName
+		fPath <- fName
 	}else{
-		filename <- paste(dirName,'/',baseName,sep="")
+		fPath <- paste0(dirName, '/' , fName)
 	}
-# 	if(isTRUE(overwrite)){
-# 		cat("file may be overwritten\n")
-# 	}else{
-	filename_orgi <- filename
+	fPath_orgi <- fPath
 	k <- 0
-	while(file.exists(paste(filename,".",ext,sep="")) || file.exists(paste(filename,".HD",sep=""))){
-		filename <- paste(filename_orgi,"_",k,sep="")
-		k <- k+1
+	while(file.exists(paste0(fPath, ".", ext)) || file.exists( paste0(fPath, ".HD"))){
+		fPath <- paste0(fPath_orgi, "_", k)
+		k <- k + 1
 	}
-# 	}
-	newfilename <- paste(filename, ".", ext, sep="")
-	return(newfilename)
+	newfPath <- paste0(fPath, ".", ext)
+	return(newfPath)
 }
 
 
-
-
-
-
-
-
 #------------- COLOR FUNCTIONS -------------------#
-colGPR <- function(pal.name="seismic",n=101,power=1){
+palGPR <- function(colPal="default", n = 101, power = 1, returnNames = FALSE){
+	colPal <- gsub("gray", "grey", x= colPal)
 	tmp <- structure(list(
-		seismic = colorRampPalette(c( "#1C007C", "#1B0086", "#1A0091", "#18009C", "#1600A7", "#1400B2", "#1100C3", "#0E00CF", "#0A00E0", "#0300F5",
+		default = colorRampPalette(c( "#1C007C", "#1B0086", "#1A0091", "#18009C", "#1600A7", "#1400B2", "#1100C3", "#0E00CF", "#0A00E0", "#0300F5",
 			"#0001FF", "#080FFF", "#1521FF", "#2232FF", "#2E42FF", "#3B52FF", "#4862FF", "#5470FF", "#617FFF", "#6E8CFF", "#7F9EFF",
 			"#8CAAFF", "#98B5FF", "#A5C1FF", "#B2CBFF", "#BFD5FF", "#CBDFFF", "#D8E7FF", "#E5F0FF", "#F2F7FF", "#FFFCFB", "#FFF4F0",
 			"#FFECE5", "#FFE3DA", "#FFDACE", "#FFCEC0", "#FFC4B5", "#FFB9AA", "#FFAE9E", "#FF9F90", "#FF9485", "#FF877A", "#FF766B",
@@ -150,70 +139,79 @@ colGPR <- function(pal.name="seismic",n=101,power=1){
 		grey3 = diverge_hcl(n, h = c(300, 1), c = 1, l = c(1, 100), power=power), 
 		grey1 = sequential_hcl(n, h = c(1, 300), c = 0, l = c(10, 100), power=power), # too light
 		grey2 = sequential_hcl(n, h = c(300, 100), c = 0, l = c(120, 10), power=power), #  too dark	
-		grayish = sequential_hcl(n, h = c(190, 1), c = 10, l = c(1, 110), power=power)
+		grey = sequential_hcl(n, h = c(190, 1), c = 10, l = c(1, 110), power=power)
 	))
-	(tmp[[match(pal.name, names(tmp))]])
+	if(returnNames){
+	 return( names(tmp) )
+	}
+	(tmp[[match(colPal, names(tmp))]])
 }
 
 # source: vignette of the R-package "colorspace" (Color Space Manipulation)
 # plot color palette
 # usage: 
-# pal(colGPR("seismic",50))
-# pal(colGPR(n=50))
-pal <- function(col, border = NA){
+# pal(palGPR("seismic",50))
+# pal(palGPR(n=50))
+plotPal <- function(col, border = NA){
 	n <- length(col)
 	plot(0, 0, type="n", xlim = c(0, 1), ylim = c(0, 1), axes = FALSE, xlab = "", ylab = "")
 	rect(0:(n-1)/n, 0, 1:n/n, 1, col = col, border = border)
 }
+
+displayPalGPR <- function(){
+   op <- par(no.readonly=TRUE)
+   par(mai=op$mai + c(0,1,0,0))
+  pNames <- palGPR(returnNames=TRUE)
+  n <- 101
+  plot(0, 0, type="n", xlim = c(0, 1), ylim = c(0, length(pNames)), axes = FALSE, xlab = "", ylab = "")
+  for(i in seq_along(pNames)){
+	myPal  <- palGPR(colPal=pNames[i], n=n)
+	rect(0:(n-1)/n, i-1/3, 1:n/n, i + 1/3, col = myPal, border = NA)
+	mtext(pNames[i], side=2, at=i, adj = 1, las = 1)
+  }
+  title("Colour palettes from RGPR (palGPR)")
+  par(op)
+}
+
+# 
+colFromPal <- function(A , col = palGPR(n=101)){
+	CCY = (A-min(A,na.rm=TRUE))/(max(A,na.rm=TRUE)-min(A,na.rm=TRUE))
+	ClimY <- range(CCY,na.rm=TRUE)
+	ClenY <- ClimY[2] - ClimY[1] + 1
+	return(col[ (CCY)*(length(col)-1)+1 ] )
+}
 #------------- color functions -------------------#
 
 # returns string w/o leading or trailing whitespace
-trim <- function (x) gsub("^\\s+|\\s+$", "", x)
+trimStr <- function (x) gsub("^\\s+|\\s+$", "", x)
 
-.filename <- function(x){
+# return filename without extension
+.fNameWExt <- function(x){
 	unlist(lapply(strsplit(basename(x),"[.]"), head , 1 ))
 }
 
-extension <- function(x){
+# return the file extension.
+.fExt <- function(x){
 # 	cat("with caution... because split \'.\' may not be so good\n")
 	unlist(lapply(strsplit(basename(x),"[.]"), tail , 1 ))
 }
 
-lineDist <- function(loc,last=FALSE){
+posLine <- function(loc,last=FALSE){
   loc <- as.matrix(loc)
   all_dist <- cumsum(c(0,sqrt(apply(diff(loc)^2,1,sum))))
   if(last){
-        return(all_dist[length(all_dist)])
+        return(tail(all_dist,1))
   }else{
         return(as.numeric(all_dist))
   }
 }
-# save your object with saveRDS()
-# example:
-#	saveRDS(mod, "mymodel.rds")
-# 	mod2 <- readRDS("mymodel.rds")
+
 	
-
-#--------------------------------------------#
-#---------------- SETGENERIC ----------------#
-# setGenericVerif <- function(x,y){if(!isGeneric(x)){setGeneric(x,y)}else{cat("setGeneric", x,"already exists!\n")}}
-setGenericVerif <- function(x,y){setGeneric(x,y)}
-
-
-#------------------------------
-setGenericVerif("setCoordref", function(x) standardGeneric("setCoordref"))
-
-
-#------------------------------
-setGenericVerif("getLine", function(x,id) standardGeneric("getLine"))
-
-
-
 # select a box on plot(mySurvey) and return list(xlim,ylim)
 # that can be used in plot3D:
 # 	plot(mySurvey,asp=1)
 # 	bbox <- selectBBox()
-# 	plot3D(mySurvey, add_topo=TRUE,clip=30, xlim=bbox$xlim,ylim=bbox$ylim, add=FALSE)
+# 	plot3D(mySurvey, addTopo=TRUE,clip=30, xlim=bbox$xlim,ylim=bbox$ylim, add=FALSE)
 
 selectBBox <- function(border="red",lwd=2,...){
 	bbox <- locator(type="p",n=2)
@@ -222,60 +220,150 @@ selectBBox <- function(border="red",lwd=2,...){
 	return(list("xlim"=LIM[,"x"], "ylim" =LIM[,"y"]))
 }
 
+# NOT USED!
+# .fidpos <- function(xyz,fid){
+# 	return(xyz[trimStr(fid)!="",,drop=FALSE])
+# }
 
-# fidpos(x@coords[[8]],x@fids[[8]])
-
-fidpos <- function(xyz,fid){
-	return(xyz[trim(fid)!="",,drop=FALSE])
-}
-
-plotLine <- function(xyz,...){
-	# print(list(...))
+.plotLine <- function(xyz,...){
 	lines(xyz[,1:2],...)
-	# arrows(x0=xyz[nrow(xyz)-1,1],y0=xyz[nrow(xyz)-1,2],x1=xyz[nrow(xyz),1],y1=xyz[nrow(xyz),1])
 }
-plotArrows <- function(xyz,col="red",length=0.1,...){
+.plotArrows <- function(xyz,col="red",length=0.1,...){
 	arrows(xyz[nrow(xyz)-1,1],xyz[nrow(xyz)-1,2],xyz[nrow(xyz),1],xyz[nrow(xyz),2],length = length,col=col,...)
-	# arrows(x0=xyz[nrow(xyz)-1,1],y0=xyz[nrow(xyz)-1,2],x1=xyz[nrow(xyz),1],y1=xyz[nrow(xyz),1])
 }
 
 
+.whichMin <- function(x,y){
+	which.min(abs(x-y))
+}
+.which <- function(x,y){
+	which(x==y)
+}
+
+.lengthList <- function(x){
+	if(typeof(x)=="list"){
+		return(length(x))
+		# print(typeof(x))
+	}else{
+		return(1)
+	}
+}
+#--------------------------------------------#
+#---------------- SETGENERIC ----------------#
+# setGenericVerif <- function(x,y){if(!isGeneric(x)){setGeneric(x,y)}else{cat("setGeneric", x,"already exists!\n")}}
+setGenericVerif <- function(x,y){setGeneric(x,y)}
 
 
-setGenericVerif("surveyIntersections", function(x) standardGeneric("surveyIntersections"))
-
+#------------------------------
+setGenericVerif("coordref", function(x) standardGeneric("coordref"))
 
 setGenericVerif("intersections", function(x) standardGeneric("intersections"))
 
+setGenericVerif("filepath", function(x) standardGeneric("filepath"))
+setGenericVerif("filepath<-", function(x, value) standardGeneric("filepath<-"))
 
-# update the GPR FILES!!!
-setGenericVerif("interpTraces", function(x, topo) standardGeneric("interpTraces"))
-
-# already defined!!
-# setGenericVerif("interpTraces", function(x, topo) standardGeneric("interpTraces"))
-
-
-setGenericVerif("coords", function(x) standardGeneric("coords"))
+setGenericVerif("coords", function(x,i) standardGeneric("coords"))
 setGenericVerif("coords<-",function(x,values){standardGeneric("coords<-")})
+
+setGenericVerif("coord", function(x, i, ...) standardGeneric("coord"))
+setGenericVerif("coord<-",function(x,values){standardGeneric("coord<-")})
 
 setGenericVerif("vel", function(x) standardGeneric("vel"))
 setGenericVerif("vel<-",function(x,values){standardGeneric("vel<-")})
 
-setGenericVerif("writeGPR", function(x,filename, format=c("DT1","rds"),overwrite=FALSE){ standardGeneric("writeGPR")})
+setGenericVerif("ann", function(x) standardGeneric("ann"))
+setGenericVerif("ann<-",function(x,values){standardGeneric("ann<-")})
 
-setGenericVerif("writeSurvey", function(x, filename, overwrite=FALSE){ standardGeneric("writeSurvey")})
+setGenericVerif("crs", function(x) standardGeneric("crs"))
+setGenericVerif("crs<-",function(x,value){standardGeneric("crs<-")})
+
+setGenericVerif("time0", function(x) standardGeneric("time0"))
+setGenericVerif("time0<-",function(x,value){standardGeneric("time0<-")})
+
+setGenericVerif("fid", function(x) standardGeneric("fid"))
+setGenericVerif("fid<-",function(x,values){standardGeneric("fid<-")})
+
+setGenericVerif("values", function(x) standardGeneric("values"))
+setGenericVerif("values<-", function(x,value) standardGeneric("values<-"))
 
 
-setGenericVerif("exportCoord",  function(x,filename=NULL,type=c("points","lines"),driver="ESRI Shapefile",...) standardGeneric("exportCoord"))
+setGenericVerif("description", function(x) standardGeneric("description"))
+setGenericVerif("description<-", function(x) standardGeneric("description<-"))
 
-setGenericVerif("exportProc",  function(x,filename=NULL,sep="\t", row.names=FALSE,
+#------------------------------GPR
+setGenericVerif("gethd", function(x,hd=NULL) standardGeneric("gethd"))
+setGenericVerif("plotAmpl", function(x, FUN=mean, add=FALSE, ylim=NULL,xlim=NULL,col=1,all=FALSE,...) standardGeneric("plotAmpl"))
+setGenericVerif("ampl", function(x, FUN=mean, ...) standardGeneric("ampl"))
+
+
+setGenericVerif("interpPos", function(x, topo, ...) standardGeneric("interpPos"))
+setGenericVerif("readGPR", function(fPath,desc="", coordfile=NULL,crs="",intfile=NULL) standardGeneric("readGPR"))
+setGenericVerif("writeGPR", function(x,fPath, format=c("DT1","rds"),overwrite=FALSE){ standardGeneric("writeGPR")})
+setGenericVerif("exportCoord",  function(x,fPath=NULL,type=c("points","lines"),driver="ESRI Shapefile",...) standardGeneric("exportCoord"))
+setGenericVerif("exportFID", function(x,fPath=NULL) standardGeneric("exportFID"))
+setGenericVerif("exportProc",  function(x,fPath=NULL,sep="\t", row.names=FALSE,
 	col.names=FALSE, ...) standardGeneric("exportProc"))
 
-setGeneric("reverse", function(x) standardGeneric("reverse"))
+
+
+setGenericVerif("reverse", function(x) standardGeneric("reverse"))
+setGenericVerif("migration", function(x,type=c("static","kirchhoff"), ...) standardGeneric("migration"))
+setGenericVerif("upsample", function(x,n) standardGeneric("upsample"))
+setGenericVerif("medianFilter", function(x) standardGeneric("medianFilter"))
+setGenericVerif("filter1D", function(x, type = c("median", "hampel"), ...) standardGeneric("filter1D"))
+setGenericVerif("dewow", function(x,type=c("MAD","Gaussian"),... ) standardGeneric("dewow"))
+setGenericVerif("gain", function(x, type=c("power","exp","agc","geospreading"),...) standardGeneric("gain"))
+setGenericVerif("dcshift", function(x, u=1:10, FUN=mean) standardGeneric("dcshift"))
+setGenericVerif("firstBreack", function(x, w = 11, ns = NULL, bet=NULL) standardGeneric("firstBreack"))
+
+setGenericVerif("clip", function(x, Amax=NULL,Amin=NULL) standardGeneric("clip"))
+setGenericVerif("gammaCorrection", function(x, a=1,b=1) standardGeneric("gammaCorrection"))
+setGenericVerif("trScale", function(x, type = c("stat","min-max","95","eq","sum", "rms")) standardGeneric("trScale"))
+
+setGenericVerif("spec", function(x, type=c("f-x","f-k"), returnSpec=FALSE,plotSpec=TRUE, unwrapPhase = TRUE, ...) standardGeneric("spec"))
+setGenericVerif("fFilter", function(x, f=100, type=c('low','high','bandpass'),L=257,plotSpec=FALSE) standardGeneric("fFilter"))
+setGenericVerif("fkFilter", function(x, fk=NULL, L=c(5,5),npad=1) standardGeneric("fkFilter"))
+
+	
+#------------------------------GRPsurvey
+setGenericVerif("getGPR", function(x,id) standardGeneric("getGPR"))
+setGenericVerif("surveyIntersect", function(x) standardGeneric("surveyIntersect"))
+setGenericVerif("writeSurvey", function(x, fPath, overwrite=FALSE){ standardGeneric("writeSurvey")})
+
+
+#------------------------------BOTH
+setGenericVerif("plot3DRGL", function(x,addTopo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,add=TRUE,xlim=NULL,ylim=NULL,zlim=NULL,...) 
+standardGeneric("plot3DRGL"))
 
 
 
- 
+
+setGenericVerif("exportPDF", function(x,fPath=NULL,addTopo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,...) standardGeneric("exportPDF"))
+
+
+
+#---------------------- DELINEATIONS ---------------------#
+
+setGenericVerif("delineate", function(x,name=NULL,type=c("raster","wiggles"),addTopo=FALSE,nupspl=NULL,n=10000,...) standardGeneric("delineate"))
+
+setGenericVerif("rmDelineations<-", function(x,values=NULL) standardGeneric("rmDelineations<-"))
+
+setGenericVerif("delineations", function(x,sel=NULL,...) standardGeneric("delineations"))
+setGenericVerif("addDelineation", function(x,...) standardGeneric("addDelineation"))
+
+setGenericVerif("showDelineations", function(x,sel=NULL,...) standardGeneric("showDelineations"))
+
+setGenericVerif("exportDelineations", function(x, dirpath="") standardGeneric("exportDelineations"))
+
+setGenericVerif("plotDelineations3D", function(x,sel=NULL,col=NULL,add=TRUE,...) standardGeneric("plotDelineations3D"))
+	
+setGenericVerif("plotDelineations", function(x,sel=NULL,col=NULL,...) standardGeneric("plotDelineations"))
+
+setGenericVerif("identifyDelineation", function(x,sel=NULL,...) standardGeneric("identifyDelineation"))
+
+
+
+
 
 timeToDepth <- function(tt, time_0, v=0.1, antsep=1){
 	t0 <- time_0 - antsep/0.299
@@ -289,12 +377,11 @@ depth0 <- function(time_0, v=0.1, antsep=1){
 	time_0 - antsep/0.299 + antsep/v
 }
 
-setGeneric("plot3D", function(x,add_topo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,add=TRUE,xlim=NULL,ylim=NULL,zlim=NULL,...) 
-standardGeneric("plot3D"))
 
 
 
-.plot3D <- function(A,x,y,z,z0,col=colGPR(n=101),back="fill", smooth = TRUE, lit=FALSE, lwd=0,empty=FALSE,...){
+
+.plot3DRGL <- function(A,x,y,z,z0,col=palGPR(n=101),back="fill", smooth = TRUE, lit=FALSE, lwd=0,empty=FALSE,...){
 	nr = nrow(A)
 	nc = ncol(A)
 	if(empty==TRUE){
@@ -322,17 +409,9 @@ standardGeneric("plot3D"))
 	}
 }
 
-# NICHT BENUTZT!!!
-setCol <- function(A , col = colGPR(n=101)){
-	CCY = (A-min(A,na.rm=TRUE))/(max(A,na.rm=TRUE)-min(A,na.rm=TRUE))
-	ClimY <- range(CCY,na.rm=TRUE)
-	ClenY <- ClimY[2] - ClimY[1] + 1
-	# col <- tim.colors(101) # height color lookup table
-	#col = palette(gray(0:101 / 101))
-	col[ (CCY)*100+1 ] 
-}
 
-plot3DSlice <- function(XYZ,slice=c("x","y","z"),section=1,col=colGPR(n=101), sampling = c(0.25,0.25,0.04),rmStripes = TRUE){
+
+.plot3DSlice <- function(XYZ,slice=c("x","y","z"),section=1,col=palGPR(n=101), sampling = c(0.25,0.25,0.04),rmStripes = TRUE){
 	# k=100
 	# j=25
 	# i=40
@@ -391,66 +470,18 @@ plot3DSlice <- function(XYZ,slice=c("x","y","z"),section=1,col=colGPR(n=101), sa
 		Yside_x = matrix(vx[i],nrow=dimXYZ[3],ncol=dimXYZ[2],byrow=TRUE)
 		Yside_y = matrix( vy,nrow=dimXYZ[3],ncol=dimXYZ[2],byrow=TRUE)
 		Yside_z = matrix( max(vz)-vz,nrow=dimXYZ[3],ncol=dimXYZ[2],byrow=FALSE)
-
-		CCY = (Yside-min(Yside))/(max(Yside)-min(Yside))
-		ClimY <- range(CCY)
-		ClenY <- ClimY[2] - ClimY[1] + 1
-		# col <- tim.colors(101) # height color lookup table
-		#col = palette(gray(0:101 / 101))
-		colCY <- col[ (CCY)*100+1 ] 
 		
+# 		CCY = (Yside-min(Yside))/(max(Yside)-min(Yside))
+# 		ClimY <- range(CCY)
+# 		ClenY <- ClimY[2] - ClimY[1] + 1
+# 		colCY <- col[ (CCY)*100+1 ] 
+		colCY <- colFromPal(Yside , col = col )
+
 		surface3d(Yside_x, Yside_z, Yside_y, col= setCol(Yside), lit=FALSE,front="fill",back="fill")#, alpha=0.5)
 	}
 }
 
-
-setGeneric("exportPDF", function(x,filename=NULL,add_topo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,...) standardGeneric("exportPDF"))
-
-
-
-#---------------------- DELINEATIONS ---------------------#
-
-setGeneric("delineate", function(x,name=NULL,type=c("raster","wiggles"),add_topo=FALSE,nupspl=NULL,n=10000,...) standardGeneric("delineate"))
-
-setGeneric("rmDelineations<-", function(x,values=NULL) standardGeneric("rmDelineations<-"))
-
-setGeneric("delineations", function(x,sel=NULL,...) standardGeneric("delineations"))
-setGeneric("addDelineation", function(x,...) standardGeneric("addDelineation"))
-
-setGeneric("showDelineations", function(x,sel=NULL,...) standardGeneric("showDelineations"))
-
-setGeneric("exportDelineations", function(x, dirpath="") standardGeneric("exportDelineations"))
-
-setGeneric("plotDelineations3D", function(x,sel=NULL,col=NULL,add=TRUE,...) standardGeneric("plotDelineations3D"))
-	
-setGeneric("plotDelineations", function(x,sel=NULL,col=NULL,...) standardGeneric("plotDelineations"))
-
-setGeneric("identifyDelineation", function(x,sel=NULL,...) standardGeneric("identifyDelineation"))
-
-myWhichMin <- function(x,y){
-	which.min(abs(x-y))
-}
-myWhich <- function(x,y){
-	which(x==y)
-}
-lengthList <- function(x){
-	if(typeof(x)=="list"){
-		return(length(x))
-		# print(typeof(x))
-	}else{
-		return(1)
-	}
-}
-
-
-#---------------------- MIGRATION ---------------------#
-
-setGeneric("migration", function(x,type=c("static","kirchhoff"), ...) standardGeneric("migration"))
-	
-
-
-
-topoShift <- function(A,topo,dz){
+.topoShift <- function(A,topo,dz){
 	zShift <- (max(topo) - topo)
 	old_t <- seq(0,length.out=nrow(A),by=dz)
 	A_topoShift <- matrix(0,nrow=nrow(A)+floor(max(zShift)/dz),ncol=ncol(A))
@@ -465,12 +496,8 @@ topoShift <- function(A,topo,dz){
 	return(A_topoShift)
 }
 
-#---------------------- INTERPOLATION ---------------------#		
-		
-setGenericVerif("upsample", function(x,n) standardGeneric("upsample"))
 
-
-doubleVector <- function(v,n=2L){
+.doubleVector <- function(v,n=2L){
 	if(n > 1){
 		m <- length(v)
 		dxpos <- rep( diff(v)/n,n-1)
@@ -479,24 +506,28 @@ doubleVector <- function(v,n=2L){
 		xvalues <- xvalues[1:(length(xvalues))]
 	}
 }
-# triangle <- function(x,y,w,...){
-	# polygon(c(x-w/2,w,w/2+x),c(y+1.5*w,y,y+1.5*w),...)
-# }
 
-# plotWig(x@data,x=xvalues, y= -rev(x@depth), main=x@name, xlab=x@posunit, ylab=ylab, topo= topo,
-					# note=x@filename,col="black",time_0=x@time0,antsep=x@antsep, v=vel,fid=x@com,ann=x@ann,
-					# depthunit=x@depthunit,dots)
-plotWig <- function(A, x=NULL, y=NULL, xlim = NULL, ylim=NULL, topo=NULL, main ="", note=NULL,  
-					fid=NULL,annotations = NULL, add_ann=TRUE,pdfName=NULL, ws =1, side=1, dx=0.25, dz=0.4, ratio=1,
-					col=black, time_0=0, antsep=1, v=0.1,depthunit="ns",lwd=0.5,posunit="m",...){
+
+plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
+					time_0 = 0, antsep = 1, v = 0.1,
+					addFid = TRUE, fid = NULL,
+					addAnn = TRUE, annotations = NULL, 
+					depthunit="ns", posunit="m",
+					topo=NULL, 
+					pdfName=NULL, 
+					yaxt = "s", bty = "o",
+					col = "black", lwd = 0.5, ws = 1, side = 1, ratio = 1, 
+					dx = 0.25, dz = 0.4, xlim = NULL, ylim = NULL, relTime0 = TRUE, ...){
+	
+	op <- par(no.readonly = TRUE) 
 	dx <- mean(diff(x)) # estimated x-step
-	A[is.na(A)]=0
-	A =  A/max(abs(A))*dx
+	z[is.na(z)] = 0
+	z <- z/max(abs(z)) * dx
 	# A =  as.matrix(A)/max(abs(A))
 	# v <- ifelse(is.null(v),1,v/2)
-	nr = nrow(A)
-	nc = ncol(A)
-	A <- A[nr:1,]
+	nr <- nrow(z)
+	nc <- ncol(z)
+	z <- z[nr:1,]
 	time_0 <- mean(time_0)
 	if(is.null(y)){
 		y <- -(ncol(GPR):1)
@@ -516,7 +547,7 @@ plotWig <- function(A, x=NULL, y=NULL, xlim = NULL, ylim=NULL, topo=NULL, main =
 		}
 		topo <- topo - max(topo)
 	}
-	if(grepl("[s]$",depthunit)){
+	if(grepl("[s]$",depthunit) && relTime0){
 		y <- y + time_0
 	}else if(grepl("[m]$",depthunit)){
 		depth_0 <- depthToTime(z=0, time_0 , v=v, antsep=antsep) * v/ 2
@@ -540,11 +571,11 @@ plotWig <- function(A, x=NULL, y=NULL, xlim = NULL, ylim=NULL, topo=NULL, main =
 	fac <- 0.2
 	# if the depthunit are "meters"
 	if(grepl("[m]$",depthunit)){
-		mai=c(1,0.8,0.6,0.4)+0.02
+		mai=c(1,0.8,0.6,0.8)+0.02
 		heightPDF <- fac*diff(ylim) + sum(omi[c(1,3)] + mai[c(1,3)])
 		widthPDF <- fac*diff(xlim)*ratio +  sum(omi[c(2,4)]+ mai[c(2,4)])
 	}else{
-		mai=c(1,0.8,0.6,0.8)+0.02 
+		mai=c(1,0.8,0.6,1.0)+0.02 
 		heightPDF <- fac*(ylim[2] - ylim[1])*v/ 2 + sum(omi[c(1,3)] + mai[c(1,3)])
 		widthPDF <- fac*(xlim[2] - xlim[1])*ratio + sum(omi[c(2,4)] + mai[c(2,4)])
 	}
@@ -558,43 +589,26 @@ plotWig <- function(A, x=NULL, y=NULL, xlim = NULL, ylim=NULL, topo=NULL, main =
 			  pointsize=10,
 			  # units = "in",
 			  title = pdfName)	
-	}else{
-	  op <- par(no.readonly=TRUE) 
 	}
+	
 	par(mai=mai,omi=omi,mgp=mgp)
 		  
 	plot(0,0, type="n", xaxs="i", yaxs="i", yaxt="n",
-			xlim=xlim, ylim=ylim, ...)
-# 	title(main,outer=TRUE,line=1)
-# 	if(!is.null(fid) && length(fid)>0 && any(fid!="")){
-# 		pin <- par("pin")
-# 		usr <- par("usr")
-# 		cin <- par()$cin[2]
-# 		posfid <- x[test]
-# 		fid <- fid[test]
-# 		testfid <- (fid != "")
-# 		yr <- diff(usr[3:4])/(pin[2])
-# 		if(sum(testfid)>0){	
-# 			par(xpd=TRUE)
-# 			cst <- yr*cin
-# 			points(posfid[testfid],cst/2*0.75+rep(ylim[2],sum(testfid)),pch=25,col="red",bg="yellow",cex=1)
-# 			text(posfid[testfid],cst+rep(ylim[2],sum(testfid)),fid[testfid],cex=0.6)#,pos=3,offset =0)
-# 			par(xpd=FALSE)
-# 		}
-# 	}
+			xlim=xlim, ylim=ylim, bty = "n", ...)
+	usr <- par("usr")
 	if(side==1){
 		for(i in rev(seq_along(x))){
 			y2 <- y + topo[i]
-			wig = cbind(ws*A[,i]+x[i],y2)
+			wig = cbind(ws*z[,i]+x[i],y2)
 			wig1 = rbind(c(x[i],y2[1]),wig,c(x[i],y2[nr]))
 			polygon(wig1, col = col, border=NA)
 			rect(min(wig1[,1]), ylim[1], x[i], ylim[2],col="white",border=NA)
-			# lines(x[i]+ws*A[,i],y2,lwd=lwd)
+			# lines(x[i]+ws*z[,i],y2,lwd=lwd)
 		}
 	}else{
 		for(i in (seq_along(x))){
 			y2 <- y + topo[i]
-			wig = cbind(ws*A[,i]+x[i],y2)
+			wig = cbind(ws*z[,i]+x[i],y2)
 			wig1 = rbind(c(x[i],y2[1]),wig,c(x[i],y2[nr]))
 			polygon(wig1, col = col, border=NA)
 			rect(max(wig1[,1]), ylim[1], x[i], ylim[2],col="white",border=NA)
@@ -602,19 +616,9 @@ plotWig <- function(A, x=NULL, y=NULL, xlim = NULL, ylim=NULL, topo=NULL, main =
 	}
 	for(i in (seq_along(x))){
 		y2 <- y + topo[i]
-		lines(x[i]+ws*A[,i],y2,lwd=lwd)	
+		lines(x[i]+ws*z[,i],y2,lwd=lwd)	
 	}
-# 	if(add_ann && !is.null(ann) && length(ann)>0){
-# 		posann <- x[test]
-# 		ann <- ann[test]
-# 		testann <- (ann != "")
-# 		ann <- gsub("#","\n",ann)
-# 		if(sum(testann)>0){
-# 			abline(v=posann[testann],col="red",lwd=0.5)
-# 			mtext(ann[testann], side = 3, line = 1.7, at=posann[testann], col="red",cex=0.9)
-# 		}
-# 	}
-	
+
 	# plot fiducial markers
 	if(!is.null(fid) && length(fid) > 0){
 		.plotFid(fid[test], x[test])
@@ -622,12 +626,12 @@ plotWig <- function(A, x=NULL, y=NULL, xlim = NULL, ylim=NULL, topo=NULL, main =
 	
 	# plot annotations
 	testAnn <- FALSE
-	if(add_ann && !is.null(annotations) && length(annotations) > 0){
+	if(addAnn && !is.null(annotations) && length(annotations) > 0){
 		testAnn <- .plotAnn(annotations[test],x[test])
 	}
 	
 	# plot title
-	if(add_ann && testAnn){
+	if(addAnn && testAnn){
 		title(main,outer=TRUE,line=1)
 	}else{
 		title(main)	
@@ -636,28 +640,15 @@ plotWig <- function(A, x=NULL, y=NULL, xlim = NULL, ylim=NULL, topo=NULL, main =
 	# plot axis
 # 	axis(side=2, at=pretty_y + dusr/2, labels= -pretty_y)
 # 	dusr <- dylim/length(y)
-	pretty_y <- pretty(y ,10)
-	axis(side=2, at=pretty_y, labels= -pretty_y)
-	.depthAxis(y, pretty_y, time_0, v, antsep, depthunit, posunit )
+	if( yaxt != "n"){
+	  pretty_y <- pretty(y ,10)
+	  axis(side=2, at=pretty_y, labels= -pretty_y)
+	  .depthAxis(y, pretty_y, time_0, v, antsep, depthunit, posunit )
+	}
 	
-# 	axis(side=1,tck=-0.02)
-# 	if(grepl("[s]$",depthunit)){
-# 		abline(h=-time_0,col="red",lwd=0.5)
-# 		depth <- (seq(0,by=2.5,max(abs(y))*v))
-# 		depth2 <- seq(0.1,by=0.1,0.9)
-# 		depthat <- depthToTime(depth, time_0, v, antsep)
-# 		depthat2 <- depthToTime(depth2,time_0, v, antsep)
-# 		axis(side=4,at=-depthat, labels=depth,tck=-0.02)
-# 		axis(side=4,at=-depthat2, labels=FALSE,tck=-0.01)
-# 		axis(side=4,at= -1* depthToTime(1, time_0, v, antsep), labels=FALSE,tck=-0.02)
-# 		axis(side=2,at=pretty(y)-time_0,labels=-pretty(y),tck=-0.02)
-# 		mtext(paste("depth (m),   v=",v,"m/ns",sep="") ,side=4, line=2)
-# 	}else{
-# 		abline(h=0,col="red",lwd=0.5)
-# 		axis(side=2,at=pretty(y),labels=-pretty(y),tck=-0.02)
-# 		axis(side=4,at=pretty(y),labels=-pretty(y),tck=-0.02)
-# 	}
-	box()
+	if( bty != "n"){
+	  box(bty = bty)
+	}
 	if(!is.null(note) && length(note) > 0){
 		 mtext(note, side = 1, line = 4, cex=0.6)
 	}
@@ -665,22 +656,28 @@ plotWig <- function(A, x=NULL, y=NULL, xlim = NULL, ylim=NULL, topo=NULL, main =
 	if(!is.null(pdfName)){
 		dev.off()
 	}else{
-# 	  par(op)
+		par(op)
+		par("usr" = usr)
 	}
 }
 
 
 # @relTime0 > boolean, y scale relative to time0? 0 <-> time0
 # col, main, xlab, ylab, mar, barscale
-plotRaster <- function(A, x = NULL, y = NULL, rasterImage=TRUE,resfac = 1, barscale=TRUE, add= FALSE, 
-						col=colGPR(n=101),note=NULL, clab="mV",addGrid = FALSE, relTime0=TRUE,
-						main="", time_0=0, antsep=1, v=0.1,annotations=NULL,add_ann=TRUE,fid=NULL,depthunit="ns",
-						posunit="m",...){
+plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
+					   time_0 = 0, antsep = 1, v = 0.1,
+					   addFid =TRUE, fid=NULL,
+					   addAnn = TRUE, annotations = NULL, 
+					   depthunit = "ns", posunit = "m",
+					   rasterImage = TRUE, resfac = 1, clab = "mV",
+					   add = FALSE, barscale = TRUE, addGrid = FALSE, 
+					   col = palGPR(n = 101), yaxt = "s", bty = "o",
+					   relTime0 = TRUE, ...){
 	op <- par(no.readonly=TRUE)
-	GPR =  as.matrix(A)
-	GPR[is.na(GPR)]=0
+	z =  as.matrix(z)
+	z[is.na(z)]=0
 	time_0 <- mean(time_0)
-	zlim = c(-1, 1) * max(abs(GPR))
+	zlim = c(-1, 1) * max(abs(z))
 	xlim <- NULL
 	mai <- op$mai
 	if( length(list(...)) > 0 ){
@@ -694,15 +691,17 @@ plotRaster <- function(A, x = NULL, y = NULL, rasterImage=TRUE,resfac = 1, barsc
 	}
 	if(grepl("[s]$",depthunit)){
 		mai <- op$mai + c(0,0,0,1.5)
+	}else{
+		mai <- op$mai + c(0,0,0,0.9)
 	}
 
-	GPR <- t(GPR[nrow(GPR):1,])
+	z <- t(z[nrow(z):1,])
 
 	if(is.null(x)){
-		x <- (1:nrow(GPR))
+		x <- (1:nrow(z))
 	}	
 	if(is.null(y)){
-		y <- -(ncol(GPR):1)
+		y <- -(ncol(z):1)
 	}
 	if(add == TRUE){ 
 		par(new = TRUE)
@@ -712,12 +711,13 @@ plotRaster <- function(A, x = NULL, y = NULL, rasterImage=TRUE,resfac = 1, barsc
 	if(relTime0){
 		y <- y + time_0
 	}
-#  	image(x,y,GPR,col=col,zlim=zlim,xaxs="i", yaxs="i", yaxt="n",...)	# matlab color
-	image2D(x = x, y = y, z = GPR, zlim=zlim, col = col, xaxs = "i", yaxs = "i", yaxt="n",
-			rasterImage = rasterImage, resfac=resfac,main = "", bty="n",colkey = FALSE, ...)	
+#  	image(x,y,z,col=col,zlim=zlim,xaxs="i", yaxs="i", yaxt="n",...)	# matlab color
+	image2D(x = x, y = y, z = z, zlim = zlim, col = col, xaxs = "i", yaxs = "i", yaxt = "n",
+			rasterImage = rasterImage, resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)	
 	if(barscale){
-		colkey(clim = zlim, clab = clab, width=0.7, dist=0.15, add=TRUE,col = col)
+		colkey(clim = zlim, clab = clab, width = 0.7, dist = 0.15, add = TRUE, col = col)
 	}
+	usr <- par("usr")
 	if(is.null(xlim) ){
 	   test <- rep(TRUE,length(x))
 	}else{
@@ -731,12 +731,12 @@ plotRaster <- function(A, x = NULL, y = NULL, rasterImage=TRUE,resfac = 1, barsc
 	
 	# plot annotations
 	testAnn <- FALSE
-	if(add_ann && !is.null(annotations) && length(annotations) > 0){
+	if(addAnn && !is.null(annotations) && length(annotations) > 0){
 		testAnn <- .plotAnn(annotations[test],x[test])
 	}
 	
 	# plot title
-	if(add_ann && testAnn){
+	if(addAnn && testAnn){
 		title(main,outer=TRUE,line=1)
 	}else{
 		title(main)	
@@ -745,10 +745,11 @@ plotRaster <- function(A, x = NULL, y = NULL, rasterImage=TRUE,resfac = 1, barsc
 	# plot axis
 # 	axis(side=2, at=pretty_y + dusr/2, labels= -pretty_y)
 # 	dusr <- dylim/length(y)
-	pretty_y <- pretty(y,10)
-	axis(side=2, at=pretty_y, labels= -pretty_y)
-	.depthAxis(y, pretty_y, time_0, v, antsep, depthunit, posunit )
-	
+	if( yaxt != "n"){
+	  pretty_y <- pretty(y,10)
+	  axis(side=2, at=pretty_y, labels= -pretty_y)
+	  .depthAxis(y, pretty_y, time_0, v, antsep, depthunit, posunit )
+	}
 	# plot time0
 	abline(h=0,col="red",lwd=0.5)
 	
@@ -761,12 +762,13 @@ plotRaster <- function(A, x = NULL, y = NULL, rasterImage=TRUE,resfac = 1, barsc
 	if(addGrid){
 		grid()
 	}
-	# add barscale
-# 	if(barscale){
-# 		.barScale(zlim, col, collab="mV",collabcex=0.8)
-# 	}
-	box()
-# 	par(op)
+
+	if( bty != "n"){
+	  box(bty = bty)
+	}
+	
+	par(op)
+	par("usr" = usr)
 }
 #---
 
@@ -842,98 +844,39 @@ plotRaster <- function(A, x = NULL, y = NULL, rasterImage=TRUE,resfac = 1, barsc
 		axis(side=4,at=-depthat, labels=depth,tck=-0.02)
 		axis(side=4,at=-depthat2, labels=FALSE,tck=-0.01)
 		axis(side=4,at= -1* depthToTime(1, 0, v, antsep), labels="1",tck=-0.02)
-		mtext(paste0("depth (m),   v = ",v, " ", posunit,"/",depthunit) ,side=4, line=3)
+		mtext(paste0("depth (", depthunit, "),   v = ",v, " ", posunit,"/",depthunit) ,side=4, line=3)
 	}else{
 # 		axis(side=4, at=pretty_y + dusr/2 , labels= -pretty_y)
 		axis(side=4, at=pretty_y, labels= -pretty_y)
+		mtext(paste0("depth (", depthunit, ")") ,side=4, line=3)
 	}
 
 }
 
 
-setGenericVerif("exportFID", function(x,filename=NULL) standardGeneric("exportFID"))
-
-
-
-#---------------------------------
-# Defining the slot getters
-setGenericVerif("gethd", function(x,hd=NULL) standardGeneric("gethd"))
-
-
-
-#setGenericVerif("filepath", function(x) standardGeneric("filepath"))
-setGenericVerif("filepath", function(x) standardGeneric("filepath"))
-
-setGenericVerif("ann", function(x) standardGeneric("ann"))
-
-
-setGenericVerif("ann<-",function(x,values){standardGeneric("ann<-")})
-
-
-
-setGenericVerif("coord", function(x) standardGeneric("coord"))
-
-setGenericVerif("coord<-",function(x,values){standardGeneric("coord<-")})
-
-setGenericVerif("crs", function(x) standardGeneric("crs"))
-
-setGenericVerif("crs<-",function(x,value){standardGeneric("crs<-")})
-
-
-setGenericVerif("time0", function(x) standardGeneric("time0"))
-
-
-setGenericVerif("time0<-",function(x,value){standardGeneric("time0<-")})
-
-
-setGenericVerif("fid<-",function(x,values){standardGeneric("fid<-")})
-
-setGenericVerif("fid", function(x) standardGeneric("fid"))
-
-
-setGenericVerif("getData", function(x) standardGeneric("getData"))
-
-
-setGenericVerif("setData<-", function(x,value) standardGeneric("setData<-"))
-
-
-#==============================#
-#========== DC-SHIFT =========#
-setGenericVerif("dcshift", function(x, u=1:10, FUN=mean) standardGeneric("dcshift"))
-
-
-#==============================#
-#========== FIRST BREAK =========#
-setGenericVerif("firstBreack", function(x,nl=11, ns=NULL, bet=NULL) standardGeneric("firstBreack"))
-
 
 # Jaun I. Sabbione and Danilo Velis (2010). Automatic first-breaks picking: 
 # New strategies and algorithms. Geophysics, 75 (4): v67-v76
 # -> modified Coppens's Method
-# nl = length leading window: about one period of the firs-arrival waveform
+# w = length leading window: about one period of the firs-arrival waveform
 # ns = length eps (edge preserving smoothing) window: good results with ns between one and two signal periods
-#				-> default values ns= 1.5*nl
+#				-> default values ns= 1.5*w
 # bet = stabilisation constant, not critical, set to 0.2*max(amplitude) 
-firstBreackPicking <- function(s, nl=11, ns=23, bet=0.2){
-	# if( (nl%%2)==0) nl <- nl+1
-	# if(is.null(ns)) ns <- round(1.5*nl)
-	# if( ns%%2 == 0) ns<- ns+1
-	# # H <- EMD::hilbert(x)
-	# # A <- Mod(H)
-	# A <- x^2
-	# if(is.null(bet)) bet <- 0.2*max(A)
-	
-	E1 <- c(wapply(s,width=nl,by=1, FUN=sum),rep(0,2*floor(nl/2)))
-	E2 <- cumsum(s)
+.firstBreackPicking <- function(x, w = 11, ns = NULL, bet = 0.2){
+	if(is.null(ns)){
+		ns <- 1.5 * w
+	}
+	E1 <- c(wapply(x, width = w, by = 1, FUN = sum), rep(0, 2*floor(w/2)))
+	E2 <- cumsum(x)
 	Er <- E1/(E2 + bet)
-	Er_fil <- eps(Er,ns=ns)
+	Er_fil <- .eps(Er, ns = ns)
 	first_break <- which.max(abs(diff(Er_fil)))
 	return(first_break)
 }
 
 # edge preserving smoothing
 # luo et al. (2002): Edge preserving smoothing and applications: The Leading edge, 21: 136-158
-eps <- function(x,ns){
+.eps <- function(x,ns){
 	xmean <-  c(rep(0,floor(ns/2)), wapply(x,width=ns,by=1, FUN=mean),rep(0,floor(ns/2)))
 	xsd <- c(rep(0,floor(ns/2)), wapply(x,width=ns,by=1,FUN=sd),rep(0,floor(ns/2)))
 	xtest <- wapply(xsd,width=ns,by=1,FUN=which.min) + (0):(length(xmean)- 2*floor(ns/2)-1)
@@ -947,9 +890,8 @@ eps <- function(x,ns){
 
  
 
-setGenericVerif("medianFilter", function(x) standardGeneric("medianFilter"))
 
-.medianFilter <- function(A){
+.medianFilter3x3 <- function(A){
 	B <- A	# <- matrix(0, 364,364)
 	for(i in 1:(nrow(A)-2)) {
        for(j in 1:(ncol(A)-2) ) {
@@ -960,7 +902,8 @@ setGenericVerif("medianFilter", function(x) standardGeneric("medianFilter"))
 	return(B)
 }
 
-setGenericVerif("medianFilter1D", function(x,w) standardGeneric("medianFilter1D"))
+
+
 
 .medianFilter1D <- function(a,w){
 	b <- a	# <- matrix(0, 364,364)
@@ -971,32 +914,20 @@ setGenericVerif("medianFilter1D", function(x,w) standardGeneric("medianFilter1D"
 	return(b)
 }
 
-setGenericVerif("hampelFilter", function(x, w=10,x0=0.1) standardGeneric("hampelFilter"))
 
 
 
-
-#==============================#
-#========== DEWOW =========#
-
-setGenericVerif("dewow", function(x,type=c("MAD","Gaussian"),... ) standardGeneric("dewow"))
-
-# deprecated !!
-dewow2 <- function(x, sig=100){
-	stop("DEPRECATED!!! USE 'dewow(x,type=\"Gaussian\",sig=100)' instead!\n")
-}
 
 
 #==============================#
 #======= GAIN FUNCTIONS ========#
 
-setGenericVerif("gain", function(x, type=c("power","exp","agc","geospreading"),...) standardGeneric("gain"))
 
 
 
 # CF Yilmaz, p85
-gain_power <- function(A,alpha,d_t,t_0=NULL,t_end=NULL,t_cst=NULL){
-	g <- .gain_power(A[,1],alpha,d_t,t_0,t_end,t_cst)
+.gainPower <- function(A,alpha,d_t,t_0=NULL,t_end=NULL,t_cst=NULL){
+	g <- .gainPower0(A[,1],alpha,d_t,t_0,t_end,t_cst)
 	Anew <- (A)*g
 	# s1 = ((max(A))-(min(A)));	# scale factor
 	# s1 = apply(A,2,max)-apply(A,2,min)	# scale factor
@@ -1008,7 +939,7 @@ gain_power <- function(A,alpha,d_t,t_0=NULL,t_end=NULL,t_cst=NULL){
 	return(Anew/s2*s1 )
 }
 
-.gain_power <- function(d,alpha,d_t,t_0=NULL,t_end=NULL,t_cst=NULL){
+.gainPower0 <- function(d,alpha,d_t,t_0=NULL,t_end=NULL,t_cst=NULL){
 	if(is.null(t_0)) t_0 <-0
 	if(is.null(t_end)) t_end <-(length(d)-1)*d_t
 	if(!is.null(t_cst) && !(t_cst > t_0 && t_cst < t_end)){
@@ -1025,8 +956,8 @@ gain_power <- function(A,alpha,d_t,t_0=NULL,t_end=NULL,t_cst=NULL){
 	# return( d_new)
 }
 
-gain_exp <- function(A,alpha,d_t,t_0=NULL,t_end=NULL){
-	g <- .gain_exp(A[,1],alpha,d_t,t_0,t_end)
+.gainExp <- function(A,alpha,d_t,t_0=NULL,t_end=NULL){
+	g <- .gainExp0(A[,1],alpha,d_t,t_0,t_end)
 	Anew <- (A)*g
 	# s1 = ((max(A))-(min(A)));	# scale factor
 	# s1 = apply(A,2,max)-apply(A,2,min)	# scale factor
@@ -1042,7 +973,7 @@ gain_exp <- function(A,alpha,d_t,t_0=NULL,t_end=NULL){
 	return(	Anew)
 }
 
-.gain_exp <- function(d,alpha,d_t,t_0=NULL,t_end=NULL){
+.gainExp0 <- function(d,alpha,d_t,t_0=NULL,t_end=NULL){
 	if(is.null(t_0) || t_0==0) t_0 <-0
 	if(is.null(t_end)) t_end <-(length(d)-1)*d_t
 	# tx <- seq(0,t_end-t_0,by=d_t)+1/d_t
@@ -1056,16 +987,16 @@ gain_exp <- function(A,alpha,d_t,t_0=NULL,t_end=NULL){
 }
 
 
-gain_agc <- function(A,d_t,sig=10,p=2,r=0.5){
+.gainAgc <- function(A,d_t,sig=10,p=2,r=0.5){
 	sig <- sig/d_t
-	Anew <- apply(A,2,.gain_agc,sig,p,r)
+	Anew <- apply(A,2,.gainAgc0,sig,p,r)
 	s1 = ((max(A))-(min(A)));	# scale factor
 	# s2 = ((quantile(Anew, 0.99))-(quantile(Anew, 0.01)))	# scale factor
 	s2 = ((max(Anew))-(min(Anew)));	# scale factor
 	return(Anew * s1/s2)
 }
 
-.gain_agc <- function(d,sig=10,p=2,r=0.5,plot=FALSE,...){
+.gainAgc0 <- function(d,sig=10,p=2,r=0.5,plot=FALSE,...){
 	# convert NA into 0
 	d[is.na(d)] <- 0
 	# Get local mean by smoothing the image with a Gaussian filter
@@ -1082,21 +1013,10 @@ gain_agc <- function(A,d_t,sig=10,p=2,r=0.5){
 	dnew <- d/dGain
 	return(dnew)
 }
-setGenericVerif("plotAmpl", function(x, FUN=mean, add=FALSE, ylim=NULL,xlim=NULL,col=1,all=FALSE,...) standardGeneric("plotAmpl"))
-
-
-setGenericVerif("getAmpl", function(x, FUN=mean, ...) standardGeneric("getAmpl"))
-
 
 
 #=============================================#
 #======== CLIP/GAMMA/NORMALIZE ================#
-
-setGenericVerif("clip", function(x, Amax=NULL,Amin=NULL) standardGeneric("clip"))
-
-
-setGenericVerif("gammaCorrection", function(x, a=1,b=1) standardGeneric("gammaCorrection"))
-
 
 
 .gammaCorrection <- function(A,a,b){
@@ -1116,8 +1036,9 @@ setGenericVerif("gammaCorrection", function(x, a=1,b=1) standardGeneric("gammaCo
         return(A)
 }
 
+.rms <- function(num) sqrt(sum(num^2)/length(num))
 
-normalize <- function(A,type = c("stat","min-max","95","eq","sum")){
+scaleCol <- function(A,type = c("stat","min-max","95","eq","sum", "rms")){
 	A =  as.matrix(A)
 	type = match.arg(type)
 	if(type == "stat"){
@@ -1132,21 +1053,20 @@ normalize <- function(A,type = c("stat","min-max","95","eq","sum")){
 		A_q95 = (apply((A),2,quantile,0.99,na.rm=TRUE))
 		A_q05 = (apply((A),2,quantile,0.01,na.rm=TRUE))
 		Anorm = (A)/(A_q95-A_q05)
+	}else if(type == "rms"){
+		 A/apply(A ,2, .rms)
 	}else{	# min-max
 		Anorm <- scale(A, center=FALSE, scale=(apply((A),2,max,na.rm=TRUE)) - (apply((A),2,min,na.rm=TRUE)))
 	}
 	return(Anorm)
 }
 
-
+rmsScaling <- function(...){
+  stop("Deprecated! Use instead 'trScale(x,type=\"rms\")'\n")
+}
 
 #=============================================#
 #======== SPECTRAL FUNCTIONS ================#
-setGenericVerif("spec", function(x, type=c("f-x","f-k"), return_spec=FALSE,plot_spec=TRUE, ...) standardGeneric("spec"))
-
-setGenericVerif("freqFilter", function(x, f=100, type=c('low','high','bandpass'),L=257,plot_spec=FALSE) standardGeneric("freqFilter"))
-
-setGenericVerif("fkFilter", function(x, fk=NULL, L=c(5,5),npad=1) standardGeneric("fkFilter"))
 
 
 # @param [matrix]/[vector] 	A 		(each column represent a trace / a trace)
@@ -1155,7 +1075,7 @@ setGenericVerif("fkFilter", function(x, fk=NULL, L=c(5,5),npad=1) standardGeneri
 
 # @return power spectrum (frequency, power, phase)
 # -------------------------------------------
-powSpec <- function(A,T = 0.8, fac = 1000000, plot_spec=TRUE, return_spec=FALSE,title_spec=NULL){
+powSpec <- function(A,T = 0.8, fac = 1000000, plotSpec=TRUE, returnSpec=FALSE,titleSpec=NULL, unwrapPhase = TRUE){
 	A = as.matrix(A)
 	nr = nrow(A)
 	nc = ncol(A)
@@ -1182,9 +1102,11 @@ powSpec <- function(A,T = 0.8, fac = 1000000, plot_spec=TRUE, return_spec=FALSE,
 	# select only first half of vectors
 	pow = pow[1:nfreq,,drop=FALSE] 
 	pow_mean = apply(pow,1, mean, na.rm=TRUE)
-	unwrap_pha <- apply(pha,2, signal::unwrap)
-	pha_mean = apply(unwrap_pha,1, mean, na.rm=TRUE)
-	
+	if(unwrapPhase){
+		pha <- apply(pha,2, signal::unwrap)
+	}
+	pha_mean = apply(pha,1, mean, na.rm=TRUE)
+		
 	# samping interval GPR = 0.8 ns
 	Ts = T*(10^(-9))		# [s] Sample time
 	Fs = 1/Ts			# [Hz] Sampling frequency
@@ -1196,7 +1118,7 @@ powSpec <- function(A,T = 0.8, fac = 1000000, plot_spec=TRUE, return_spec=FALSE,
 	# fre = (0:(length(pow_mean)-1))/(2*length(pow_mean) * Ts)/fac	#[MHz]
 	fre = Fs*seq(0,N/2)/N/fac
 	# plot the power spectrum
-	if(plot_spec){
+	if(plotSpec){
 	  op <- par(no.readonly=TRUE)
 		m = seq(0,10000,by=50)
 		par(mfrow=c(2,1))
@@ -1208,19 +1130,19 @@ powSpec <- function(A,T = 0.8, fac = 1000000, plot_spec=TRUE, return_spec=FALSE,
 			}
 			lines(fre,pow_mean,col="red")
 			Axis(side = 1, tcl = +0.3,  labels=FALSE ,at=m)
-			if(!is.null(title_spec)){
-				title(title_spec)
+			if(!is.null(titleSpec)){
+				title(titleSpec)
 			}
 		par(mar=c(4, 4, 0.3, 2))
-		plot(fre,pha_mean, type="n",xaxt = "n",ylim=range(unwrap_pha), xlab = "frequency MHz", ylab="phase") 
+		plot(fre,pha_mean, type="n",xaxt = "n",ylim=range(pha), xlab = "frequency MHz", ylab="phase") 
 			if(!is.null(dim(A))){
-				nothing <- apply(unwrap_pha,2,lines,x=fre,col=rgb(0.2,0.2,0.2,7/max(ncol(A),7)))
+				nothing <- apply(pha,2,lines,x=fre,col=rgb(0.2,0.2,0.2,7/max(ncol(A),7)))
 			}
 			lines(fre,pha_mean,col="red")
 			Axis(side = 1, tcl = +0.3,  labels=m ,at=m)
 		par(op)
 	}
-	if(return_spec){
+	if(returnSpec){
 		return(list(freq = fre, pow = pow, pha = pha))
 	}
 }
@@ -1232,7 +1154,7 @@ powSpec <- function(A,T = 0.8, fac = 1000000, plot_spec=TRUE, return_spec=FALSE,
 # @return power spectrum (frequency, power, phase)
 # -------------------------------------------
 
-freqFilter1D <- function(A, f=c(100),  type = c('low','high','bandpass'),L=257, T = 0.8, plot_spec = FALSE){
+.fFilter1D <- function(A, f=c(100),  type = c('low','high','bandpass'),L=257, T = 0.8, plotSpec = FALSE){
 	
 	type = match.arg(type)
 	A <- as.matrix(A)
@@ -1324,7 +1246,7 @@ freqFilter1D <- function(A, f=c(100),  type = c('low','high','bandpass'),L=257, 
 	# fre = 1:length(pow_A)/(2*length(pow_A) * T)/1000000	#[MHz]
 	fre = Fs*(0:(Nfft/2))/Nfft/1000000	#[MHz]
 	
-	if(plot_spec == TRUE){
+	if(plotSpec == TRUE){
 		# plot the power spectrum
 		m = seq(0,900,by=50)
 		#par(mfrow=c(2,1), mar=c(5, 4, 4, 6) + 0.1 )
@@ -1400,36 +1322,6 @@ phaseRotation <- function(x,phi){
 	return(Re(xcor))
 }
 
-# # readGPR = read DT1 FORMAT and return object from class "GPR"
-# readGPR <- function(filename,description=""){
-		# A <- readDT1(filename)
-		# name=strsplit(basename(filename),'[.]')[[1]][1]
-		# return(GPR(A,name=name,filename=filename,description=description))
-# }
-
-setGenericVerif("readGPR", function(filename,description="", coordfile=NULL,crs="",intfile=NULL) standardGeneric("readGPR"))
-
-# setGenericVerif("writeGPR", function(x,filename, format=c("DT1","rds")) standardGeneric("writeGPR"))
-
-setGenericVerif("name", function(x) standardGeneric("name"))
-
-setGenericVerif("description", function(x) standardGeneric("description"))
-
-
-# #----------------------------------
-# setGenericVerif("setdata<-",function(object,value){standardGeneric("setdata<-")})
-# setReplaceMethod(
-	# f="setdata",
-	# signature="GPR",
-	# definition=function(object,value){
-	# object@data <- as.matrix(value)
-	# object@ntr <- ncol(object@data)
-	# object@hd$endpos <- (ncol(object@data)-1)*object@dx
-	# object@hd$startpos <- 0
-	# return(object)
-	# }
-# )
-#---------------------------------------
 
 
 # -------------------------------------------
@@ -1453,7 +1345,7 @@ setGenericVerif("description", function(x) standardGeneric("description"))
 # cat('"GPR_readDT1.R" \n')
 # cat('"GPR_gain.R" \n')
 
-# @param [list] 	LINE 			(list containing several filename of the DT1 file)
+# @param [list] 	LINE 			(list containing several fPath of the DT1 file)
 # @param [c(1)] 	col=NULL 	(palette of color)	
 # @param [boolean] 	plotNew=FALSE	(if true, open a new rgl window)
 # @return void
@@ -1463,7 +1355,7 @@ setGenericVerif("description", function(x) standardGeneric("description"))
 
 # plot/add a 2D profile in rgl
 
-# addProfile3D <- function(LINES, col=colGPR(n=101),plotNew=FALSE, normalize=TRUE, v=1, zlim=NULL, AGC=FALSE, sig=10){
+# addProfile3D <- function(LINES, col=palGPR(n=101),plotNew=FALSE, normalize=TRUE, v=1, zlim=NULL, AGC=FALSE, sig=10){
 	# if(plotNew){
 		# # rgl.open()
 		# open3d()
@@ -1532,7 +1424,7 @@ byte2volt <- function ( V=c(-50,50), nBytes = 16) {
 
 
 
-minCommon10 <- function(xmin,xmax){
+.minCommon10 <- function(xmin,xmax){
 	xmin <- as.numeric(xmin)
 	xmax <- as.numeric(xmax)
 	D <- xmax-xmin
@@ -1632,7 +1524,7 @@ convmtx <- function(y, nf){
 # convolution model: y = h*x 
 # h and y are known, x is unknown
 # x ~ H^h * Y / (H^h * H + mu)
-deconvFreq <- function(y,h,mu=0.0001){
+deconvolve <- function(y,h,mu=0.0001){
 	ny <- length(y)
 	nh <- length(h)
 	L  <- ny + ny - 1
@@ -1648,7 +1540,7 @@ deconvFreq <- function(y,h,mu=0.0001){
 # convolution model: y = h*x 
 # h and y are known, x is unknown
 # x ~ H^h * Y / (H^h * H + mu)
-deconv <- function(y,h,nf,mu=0.0001){
+deconvolutionMtx <- function(y,h,nf,mu=0.0001){
 	# ny <- length(y)
 	# nh <- length(h)
 	# L  <- ny + ny - 1
@@ -1660,15 +1552,13 @@ deconv <- function(y,h,nf,mu=0.0001){
 	return(x)
 }
 
-.RMS <- function(num) sqrt(sum(num^2)/length(num))
-
-setGenericVerif("rmsScaling", function(x) standardGeneric("rmsScaling"))
 
 
+# setGenericVerif("rmsScaling", function(x) standardGeneric("rmsScaling"))
 
-setGenericVerif("deconvolution", function(x, method=c("spiking","wavelet","min-phase"),...) standardGeneric("deconvolution"))
 
 
+setGenericVerif("deconv", function(x, method=c("spiking","wavelet","min-phase"),...) standardGeneric("deconv"))
 setGenericVerif("rotatePhase", function(x, phi) standardGeneric("rotatePhase"))
 
 
@@ -1755,7 +1645,7 @@ inPoly <- function(x,y, vertx, verty){
 	return(inPo)
 }
 
-.FKSpectrum <- function(A,dx=0.25,dz=0.8, npad=1, p=0.01,plot_spec=TRUE,return_spec=FALSE){
+.FKSpectrum <- function(A,dx=0.25,dz=0.8, npad=1, p=0.01,plotSpec=TRUE,returnSpec=FALSE){
 	# A <- GPR$data		#[90:1000,]
 	nr <- nrow(A)	# time	
 	nc <- ncol(A)	# x	
@@ -1799,13 +1689,13 @@ inPoly <- function(x,y, vertx, verty){
 	# Note: when plotting spectra (S)  use log(S) or S.^alpha (alpha=0.1-0.3) to
 	#       increase the visibility of small events 
 	# p = 0.05
-	if(plot_spec){
+	if(plotSpec){
 		image((t(A1_fft_pow[1:(nf/2),])^p), yaxt="n", xaxt="n",xlab="wavenumber (1/m)",ylab="frequency MHz")
 		axis(side=1,at=xat, labels=xLabels)
 		axis(side=2,at=yat, labels=yLabels)
 		# image((t(A1_fft_pow[1:(nf/2),])^p), xat=xat, xLabels=xLabels, yat=yat,yLabels=yLabels,xlab="wavenumber (1/m)",ylab="frequency MHz")
 	}
-	if(return_spec){
+	if(returnSpec){
 		return(list(pow=A1_fft_pow[1:(nf/2),], pha=A1_fft_phase[1:(nf/2),]))
 	}
 }
@@ -2096,16 +1986,16 @@ repmat <- function(a,n,m) {kronecker(matrix(1,n,m),a)}
 
 # @date 30.04.2014 08:33
 # @auteur Emanuel Huber
-# @param [text]		filename 			(file path of *.hd or *.dt1 file)
-# @require source("trim.R")
-	# source('trim.R')
-	# cat('> Function(s) loaded: "trim.R" \n')
+# @param [text]		fPath 			(file path of *.hd or *.dt1 file)
+# @require source("trimStr.R")
+	# source('trimStr.R')
+	# cat('> Function(s) loaded: "trimStr.R" \n')
 # @return list((hd = headerHD, dt1hd = headerDT1, data=myData))
 # -------------------------------------------
 
-readDT1 <- function( filename){
-	dirName 	<- dirname(filename)
-	splitBaseName <- unlist(strsplit(basename(filename),'[.]'))
+readDT1 <- function( fPath){
+	dirName 	<- dirname(fPath)
+	splitBaseName <- unlist(strsplit(basename(fPath),'[.]'))
 	baseName 	<- paste(splitBaseName[1:(length(splitBaseName)-1)],sep="")
 	
 	fileNameHD 	<- paste(dirName, "/",baseName,".HD",sep="")
@@ -2118,9 +2008,9 @@ readDT1 <- function( filename){
 		hdline <- strsplit(headHD[i],"=")[[1]]
 		if(length(hdline) < 2){
 			headerHD[i,1] <- ""
-			headerHD[i,2] <- trim(hdline[1])
+			headerHD[i,2] <- trimStr(hdline[1])
 		}else{
-			headerHD[i,1:2] <-  as.character(sapply(hdline[1:2],trim))
+			headerHD[i,1:2] <-  as.character(sapply(hdline[1:2],trimStr))
 		}
 	}
 
@@ -2159,13 +2049,13 @@ readDT1 <- function( filename){
 
 .getHD <- function(A,string,number=TRUE,position=FALSE){
 	if(number){
-		value <- as.numeric(A[trim(A[,1])==string,2])
+		value <- as.numeric(A[trimStr(A[,1])==string,2])
 	}else{
-		value <- A[trim(A[,1])==string,2]
+		value <- A[trimStr(A[,1])==string,2]
 	}
 	if(length(value)>0){
 		if(position){
-			pos <- which((trim(A[,1]) == string ) == TRUE)[1]
+			pos <- which((trimStr(A[,1]) == string ) == TRUE)[1]
 			return(c(value,pos))
 		}else{
 			return(value)
@@ -2186,7 +2076,7 @@ readDT1 <- function( filename){
 # Ryan Grannell
 # website 	twitter.com/RyanGrannell
 # location 	Galway, Ireland
-get_args <- function (return_character=TRUE) {
+getArgs <- function (return_character=TRUE) {
 	arg <- as.list(match.call(def = sys.function( -1 ),
 				   call = sys.call(-1),
 				   expand.dots = TRUE )
@@ -2247,9 +2137,9 @@ wapply <- function(x=NULL, width = NULL, by = NULL, FUN = NULL, ...){
 
 
 
-coord2Line <- function(x){
+xyToLine <- function(x){
 	sp::Line(x[,1:2])
 }
-Line2Lines <- function(i,pp, myNames){
+LineToLines <- function(i,pp, myNames){
 	sp::Lines(pp[i],myNames[i])
 }

@@ -274,6 +274,9 @@ setGenericVerif("vel<-",function(x,values){standardGeneric("vel<-")})
 setGenericVerif("ann", function(x) standardGeneric("ann"))
 setGenericVerif("ann<-",function(x,values){standardGeneric("ann<-")})
 
+setGenericVerif("name", function(x) standardGeneric("name"))
+setGenericVerif("name<-",function(x,value){standardGeneric("name<-")})
+
 setGenericVerif("crs", function(x) standardGeneric("crs"))
 setGenericVerif("crs<-",function(x,value){standardGeneric("crs<-")})
 
@@ -323,6 +326,10 @@ setGenericVerif("trScale", function(x, type = c("stat","min-max","95","eq","sum"
 setGenericVerif("spec", function(x, type=c("f-x","f-k"), returnSpec=FALSE,plotSpec=TRUE, unwrapPhase = TRUE, ...) standardGeneric("spec"))
 setGenericVerif("fFilter", function(x, f=100, type=c('low','high','bandpass'),L=257,plotSpec=FALSE) standardGeneric("fFilter"))
 setGenericVerif("fkFilter", function(x, fk=NULL, L=c(5,5),npad=1) standardGeneric("fkFilter"))
+
+setGenericVerif("traceShift", function(x, fb,kip=10) standardGeneric("traceShift"))
+setGenericVerif("deconv", function(x, method=c("spiking","wavelet","min-phase"),...) standardGeneric("deconv"))
+setGenericVerif("rotatePhase", function(x, phi) standardGeneric("rotatePhase"))
 
 	
 #------------------------------GRPsurvey
@@ -1558,8 +1565,6 @@ deconvolutionMtx <- function(y,h,nf,mu=0.0001){
 
 
 
-setGenericVerif("deconv", function(x, method=c("spiking","wavelet","min-phase"),...) standardGeneric("deconv"))
-setGenericVerif("rotatePhase", function(x, phi) standardGeneric("rotatePhase"))
 
 
 
@@ -1628,7 +1633,6 @@ optPhaseRotation <- function(gpr,rot=0.01,plot=TRUE){
 
 
 
-setGenericVerif("traceShift", function(x, fb,kip=10) standardGeneric("traceShift"))
 
 
 

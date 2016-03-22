@@ -696,6 +696,15 @@ setMethod("name", "GPR", function(x){
   return(x@name)
 } 
 )
+setReplaceMethod(
+	f="name",
+	signature="GPR",
+	definition=function(x,value){
+		value <- as.character(value)[1]
+		name <- value
+		return(x)
+	}
+)
 
 setMethod("description", "GPR", function(x){
   return(x@description)

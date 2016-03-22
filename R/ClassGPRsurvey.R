@@ -173,6 +173,15 @@ setMethod("coordref", "GPRsurvey", function(x){
 	}
 )
 
+setReplaceMethod(
+	f="coordref",
+	signature="GPRsurvey",
+	definition=function(x,value){
+		x@coordref <- value
+		return(x)
+	}
+)
+
 setMethod("crs", "GPRsurvey", function(x){
 		return(x@crs)
 	} 

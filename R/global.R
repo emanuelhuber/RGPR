@@ -256,6 +256,7 @@ setGenericVerif <- function(x,y){setGeneric(x,y)}
 
 #------------------------------
 setGenericVerif("coordref", function(x) standardGeneric("coordref"))
+setGenericVerif("coordref<-", function(x) standardGeneric("coordref<-"))
 
 setGenericVerif("intersections", function(x) standardGeneric("intersections"))
 

@@ -948,8 +948,23 @@ setMethod("dewow", "GPR", function(x, type=c("MAD","Gaussian"),...){
 	return(x) 
 })
 
-
-
+#----------------- 1D-SCALING (GAIN)
+setMethod("gain", "GPR", function(x, type=c("power","exp","agc","geospreading"),...){
+	type <- match.arg(type)
+	if(type=="geospreading"){
+		stop('deprecated! Use type="power" instead.')
+	}else if(type=="power"){
+		x@data <- .gainPower(x@data, d_t=x@dz, ...)
+	}else if(type=="exp"){
+		x@data <- .gainExp(x@data, d_t=x@dz, ...)
+	}else{# if("agc"){
+		x@data <- .gainAgc(x@data, d_t=x@dz, ...)
+	}
+	proc <- getArgs()
+	x@proc <- c(x@proc, proc)
+	return(x)
+	} 
+)
 
 #----------------- 1D-FILTER
 setMethod("filter1D", "GPR", function(x, type = c("median", "hampel"), ...){
@@ -990,33 +1005,12 @@ setMethod("filter1D", "GPR", function(x, type = c("median", "hampel"), ...){
 				# test <- abs(X[i,] - Xmed) > x0 * S0
 				# Y[i,test] <- Xmed[test]
 				Y[i,] <- Xmed
-				
 			}
 			x@data <- Y[(w+1):(n-w),]
 		}
 		proc <- getArgs()
 		x@proc <- c(x@proc, proc)
 		return(x)
-	} 
-)
-
-
-
-#----------------- 1D-SCALING (GAIN)
-setMethod("gain", "GPR", function(x, type=c("power","exp","agc","geospreading"),...){
-	type <- match.arg(type)
-	if(type=="geospreading"){
-		stop('deprecated! Use type="power" instead.')
-	}else if(type=="power"){
-		x@data <- .gainPower(x@data, d_t=x@dz, ...)
-	}else if(type=="exp"){
-		x@data <- .gainExp(x@data, d_t=x@dz, ...)
-	}else{# if("agc"){
-		x@data <- .gainAgc(x@data, d_t=x@dz, ...)
-	}
-	proc <- getArgs()
-	x@proc <- c(x@proc, proc)
-	return(x)
 	} 
 )
 
@@ -1037,8 +1031,12 @@ setMethod("gain", "GPR", function(x, type=c("power","exp","agc","geospreading"),
 #	}
 #)
 
-setMethod("medianFilter", "GPR", function(x){
-		x@data <-  .medianFilter3x3(x@data)
+setMethod("filter2D", "GPR", function(x, type=c("median3x3"), ...){
+		type <- match.arg(type)
+		if(type=="median3x3"){
+			x@data <-  .medianFilter3x3(x@data)
+		}
+		proc <- getArgs()
 		x@proc <- c(x@proc, "median filter 3x3")
 		return(x)
 	} 
@@ -1151,7 +1149,7 @@ setMethod("deconv", "GPR", function(x, method=c("spiking","wavelet","min-phase")
 )
 
 #--------------- DATA EDITING FUNCTIONS
-setMethod("traceShift", "GPR", function(x,  fb,kip=10){
+setMethod("traceShift", "GPR", function(x,  fb, kip=10){
 # traceShift <- function(gpr_mix,fbmix, kip=10){
 		fb <- fbmix/x@dz 
 		if(min(fb) > kip){

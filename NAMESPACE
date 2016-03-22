@@ -2,6 +2,7 @@ exportPattern("^[[:alpha:]]+")
 exportMethods(
     "[",
     "[<-",
+    "ampl",
     "ann",
     "ann<-",
     "apply",
@@ -19,13 +20,17 @@ exportMethods(
     "delineate",
     "delineations",
     "description",
+    "description<-",
     "dewow",
     "dim",
     "exportDelineations",
-    "exportFID",
+    "exportFid",
     "exportPDF",
+    "exportProc",
     "fid",
     "fid<-",
+    "filepath",
+    "filepath<-",
     "firstBreack",
     "fkFilter",
     "fFilter",
@@ -45,6 +50,7 @@ exportMethods(
     "migration",
     "min",
     "name",
+    "name<-",
     "ncol",
     "nrow",
 	"plot",
@@ -68,6 +74,8 @@ exportMethods(
     "upsample",
     "values",
     "values<-",
+    "vel",
+    "vel<-",
     "writeGPR" 
 )
 exportClasses(

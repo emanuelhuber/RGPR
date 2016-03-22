@@ -256,7 +256,7 @@ setGenericVerif <- function(x,y){setGeneric(x,y)}
 
 #------------------------------
 setGenericVerif("coordref", function(x) standardGeneric("coordref"))
-setGenericVerif("coordref<-", function(x) standardGeneric("coordref<-"))
+setGenericVerif("coordref<-", function(x, value) standardGeneric("coordref<-"))
 
 setGenericVerif("intersections", function(x) standardGeneric("intersections"))
 
@@ -304,7 +304,7 @@ setGenericVerif("interpPos", function(x, topo, ...) standardGeneric("interpPos")
 setGenericVerif("readGPR", function(fPath,desc="", coordfile=NULL,crs="",intfile=NULL) standardGeneric("readGPR"))
 setGenericVerif("writeGPR", function(x,fPath, format=c("DT1","rds"),overwrite=FALSE){ standardGeneric("writeGPR")})
 setGenericVerif("exportCoord",  function(x,fPath=NULL,type=c("points","lines"),driver="ESRI Shapefile",...) standardGeneric("exportCoord"))
-setGenericVerif("exportFID", function(x,fPath=NULL) standardGeneric("exportFID"))
+setGenericVerif("exportFid", function(x,fPath=NULL) standardGeneric("exportFid"))
 setGenericVerif("exportProc",  function(x,fPath=NULL,sep="\t", row.names=FALSE,
 	col.names=FALSE, ...) standardGeneric("exportProc"))
 

@@ -2378,7 +2378,7 @@ setMethod("exportPDF", "GPR", function(x,fPath=NULL,addTopo=FALSE,clip=NULL,norm
 	}
 )
 
-setMethod("exportFID", "GPR", function(x,fPath=NULL){
+setMethod("exportFid", "GPR", function(x,fPath=NULL){
 		# Trace	Position	Comment	PNAME
 		if(length(x@com) > 0){
 			tr_start <- 1

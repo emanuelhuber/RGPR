@@ -1056,7 +1056,7 @@ setMethod("filter2D", "GPR", function(x, type=c("median3x3"), ...){
       x@data <-  .medianFilter3x3(x@data)
     }
     proc <- getArgs()
-    x@proc <- c(x@proc, "median filter 3x3")
+    x@proc <- c(x@proc, proc)
     return(x)
   } 
 )

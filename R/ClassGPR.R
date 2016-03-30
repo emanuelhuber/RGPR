@@ -832,11 +832,7 @@ setReplaceMethod(
 #' time0(frenkeLine00)
 #' @seealso \code{\link{firstBreack}} to estimate the first wave break.
 #' @name time0
-#' aliases time0 time0crs-methods}
-\alias{crs,GPR-method}
-\alias{crs<-}
-\alias{crs<--methods}
-\alias{crs<-,GPR-method}
+#' aliases time0crs-methods crs<- crs<--methods
 #' @rdname time0
 #' @export
 setMethod("time0", "GPR", function(x){

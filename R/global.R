@@ -753,9 +753,9 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
     }
   }
   if(grepl("[s]$",depthunit)){
-    mai <- op$mai + c(0,0,0,2.5)
-  }else{
     mai <- op$mai + c(0,0,0,1.5)
+  }else{
+    mai <- op$mai + c(0,0,0,1.0)
   }
 
   z <- t(z[nrow(z):1,])
@@ -779,7 +779,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
           yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
           resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)  
   if(barscale){
-    colkey(clim = zlim, clab = clab, width = 0.7, dist = 0.15, 
+    colkey(clim = zlim, clab = clab, width = 0.7, dist = 0.2, 
           add = TRUE, col = col)
   }
   usr <- par("usr")

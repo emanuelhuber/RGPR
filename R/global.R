@@ -1291,9 +1291,8 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
   fft_A = mvfft(A)    # signal
   fft_h = fft(h_long)        # filter
 
-  #Now we perform cyclic convolution in the time domain using pointwise 
-multiplic
-# ation in the frequency domain:
+  # Now we perform cyclic convolution in the time domain using 
+  # pointwise multiplication in the frequency domain:
   Y = fft_A * fft_h
   if(type == "bandpass"){
     

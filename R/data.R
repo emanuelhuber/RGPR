@@ -8,4 +8,4 @@
 #' @format An object of the class RGPR
 #'
 #' @source University of Basel (Switzerland)
-"line00"
+"frenkeLine00"

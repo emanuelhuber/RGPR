@@ -1,4 +1,9 @@
 
+# Reflection mode, CMP mode 
+# For a given transect, the data consist of a cross-section of 
+# signal amplitudes (intensities) versus location 
+# (along the two-way time axis and the horizontal axis). 
+
 #
 #    CHECK:  http://r-pkgs.had.co.nz/
 #
@@ -305,6 +310,9 @@ setGenericVerif("name<-",function(x,value){standardGeneric("name<-")})
 setGenericVerif("crs", function(x) standardGeneric("crs"))
 setGenericVerif("crs<-",function(x,value){standardGeneric("crs<-")})
 
+#' @name time0
+#' @rdname time0
+#' @export
 setGenericVerif("time0", function(x) standardGeneric("time0"))
 setGenericVerif("time0<-",function(x,value){standardGeneric("time0<-")})
 
@@ -326,8 +334,22 @@ setGenericVerif("plotAmpl", function(x, FUN=mean, add=FALSE, ylim=NULL,
 setGenericVerif("ampl", function(x, FUN=mean, ...) standardGeneric("ampl"))
 
 
-setGenericVerif("interpPos", function(x, topo, ...) standardGeneric("interpPos")
-)
+setGenericVerif("interpPos", function(x, topo, ...) 
+    standardGeneric("interpPos"))
+
+#' Read a GPR data file
+#' 
+#' @param fPath Filepath (character).
+#' @param desc Short description of the file (character).
+#' @param coordfile Filepath of a text file containing the coordinates (x,y,z)
+#'                   of each traces.
+#' @param crs Coordinate reference system (character)
+#' @param intfile Filepath of a text file containing the intersection.
+#' @return The GPR data as object of the class RGPR.
+#' @examples
+#' @name readGPR
+#' @rdname readGPR
+#' @export
 setGenericVerif("readGPR", function(fPath,desc="", coordfile=NULL,
                 crs="", intfile=NULL) standardGeneric("readGPR"))
 setGenericVerif("writeGPR", function(x,fPath, format=c("DT1","rds"),

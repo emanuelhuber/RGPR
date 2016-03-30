@@ -1,5 +1,14 @@
 #------------------------------------------#
 #----------- CLASS DEFINITION -------------#
+
+#' An S4 class to represent a ground-penetrating radar (GPR) data.
+#'
+#' @slot version A length-one character vector indicating the version of RGPR
+#' @slot data A \eqn{m \time n} numeric matrix consiting of a 
+#' cross-section of signal amplitudes as a function of the GPR position. The 
+#' columns of \code{data} correspond to the GPR traces and the row of 
+#' \code{data} to the time/depth samples.
+
 setClass(
   Class="GPR",  
   slots=c(
@@ -216,6 +225,8 @@ setClass(
 
 }
 
+#' @rdname readGPR
+#' @export
 setMethod("readGPR", "character", function(fPath, desc = "", 
           coordfile = NULL, crs = "", intfile = NULL){
     ext <- .fExt(fPath)
@@ -497,6 +508,7 @@ setMethod(
   }
 )
 
+#       ?' @family math functions
 # math group generic functions
 # getGroupMembers("Math")
 setMethod(
@@ -806,6 +818,27 @@ setReplaceMethod(
   }
 )
 
+
+#' 'time-zero' of every traces
+#' 
+#' \code{time0} returns the 'time-zero' of every traces. Generally, 
+#' 'time-zero' corresponds to the first wave arrival (also called first wave
+#' break).
+#' 
+#' @param x An object of the class GPR.
+#' @return A vector containing the time-zero values of each traces.
+#' @examples
+#' data(frenkeLine00)
+#' time0(frenkeLine00)
+#' @seealso \code{\link{firstBreack}} to estimate the first wave break.
+#' @name time0
+#' aliases time0 time0crs-methods}
+\alias{crs,GPR-method}
+\alias{crs<-}
+\alias{crs<--methods}
+\alias{crs<-,GPR-method}
+#' @rdname time0
+#' @export
 setMethod("time0", "GPR", function(x){
     return(x@time0)
   } 

@@ -1,13 +1,37 @@
 Package: RGPR
 Type: Package
-Title: GPR Processing
-Version: 1.0
+Title: GPR processing and visualisation
+Version: 0.0.0
 Date: 2015-05-06
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Authors@R: person("Emanuel", "Huber", email = "emanuel.huber@stanford.edu",
+  role = c("aut", "cre"))
+Description: S4 classes and R functions to read, write, analyse and visualise
+    ground-penetrating radar (GPR) data.
+Depends:
+    methods,
+    graphics
+License: MIT License
+URL: http://stanford.edu/~ehuber/RGPR.html
+BugReports: https://github.com/emanuelhuber/RGPR/issues
 LazyData: true
-Depends: methods, graphics
-Collate: global.R ClassGPR.R ClassGPRsurvey.R
-Imports: methods, graphics, sp, rgdal, rgeos, MASS, signal, colorspace, Cairo, rgl, EMD, mmand, e1071
+Collate:
+	'global.R'    
+	'ClassGPR.R'
+    'ClassGPRsurvey.R'
+    'data.R'
+Imports:
+    methods,
+    graphics,
+    sp,
+    rgdal,
+    rgeos,
+    MASS,
+    signal,
+    colorspace,
+    Cairo,
+    rgl,
+    EMD,
+    mmand,
+    e1071,
+    plot3D
+RoxygenNote: 5.0.1

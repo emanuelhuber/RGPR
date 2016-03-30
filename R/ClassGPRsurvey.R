@@ -74,7 +74,7 @@ GPRsurvey <- function(LINES){
 	
 	x <- new("GPRsurvey",
 				version 		= "0.1",
-				filepaths		= LINES, 				# vector of [n] file names
+				filepaths		= LINES, 			# vector of [n] file names
 				names			= line_names,			# length = [n]
 				descriptions 	= line_descriptions,	# length = [n]
 				surveymodes 	= line_surveymodes,		# length = [n]
@@ -123,40 +123,6 @@ as.SpatialPoints <- function (x, ...){
 	}
 	return(allTopo2)
 }
-		
-	
-	  # type=match.arg(type)
-	# TOPO <- x@coords
-	# Names <- x@names
-	# if(type=="lines"){	
-		# lineList <- lapply(TOPO,xyToLine)
-		# linesList <- lapply(seq_along(lineList), LineToLines, lineList ,Names)
-		# mySpatLines <- SpatialLines(linesList)
-		# if(crs(x) == '' || nchar(crs(x)) == 1){
-			# warning("no CRS defined!\n")
-		# }else{
-			# proj4string(mySpatLines) <- CRS(crs(x))
-		# }
-		
-		# d.f <- data.frame(z=seq_along(mySpatLines), row.names = sapply(slot(mySpatLines, "lines"), 
-			# function(x) slot(x, "ID")))
-
-		# mySpatLinesdf <- SpatialLinesDataFrame(mySpatLines, d.f , match.ID = TRUE)
-
-		# writeOGR(mySpatLinesdf, folder, fPath, driver="ESRI Shapefile")
-	# }else if(type=="points"){	
-		# allTopo <- do.call(rbind,TOPO)	#  N, E, Z
-		# # allNames <- sapply(rep(Names, each=sapply(TOPO, length))
-		# # A <- cbind(allTopo,allNames)
-		# # allTogether <- as.data.frame(cbind(allTopo,allNames))
-		# allTopo2 <- as.data.frame(allTopo)
-		# coordinates(allTopo2) = ~E + N
-		# if(crs(x) == '' || nchar(crs(x)) == 1){
-			# warning("no CRS defined!\n")
-		# }else{
-			# proj4string(allTopo2) <- CRS(crs(x))
-		# }
-		# writeOGR(allTopo2, folder, fPath, driver="ESRI Shapefile")
 
 setMethod("coordref", "GPRsurvey", function(x){
 		if(length(x@coords)>0){
@@ -360,7 +326,9 @@ plot.GPRsurvey <- function(x,y,...){
 				col <- dots$col
 			}
 			if(!is.null(dots$addIntersections)){
-				stop("'addIntersections' no more used! Use instead 'parIntersect' with a vector of arguments for the points function.\n")
+				stop(paste0("'addIntersections' no more used!",
+                      " Use instead 'parIntersect' with a vector",
+                      " of arguments for the points function.\n"))
 				#addIntersections <- dots$addIntersections
 			}
 			#dots$addIntersections <- NULL
@@ -374,7 +342,9 @@ plot.GPRsurvey <- function(x,y,...){
 #stop("safdlkajslkj")
 			}
 			if(!is.null(dots$addFid)){
-				stop("'addFid' no more used! Use instead 'parFid' with a vector of arguments for the points function.\n")
+				stop(paste0("'addFid' no more used! Use instead 'parFid'",
+                      " with a vector of arguments for the points",
+                      "function.\n"))
 			}
 			# dots$addFid <- NULL
 			# dots$add <- NULL
@@ -392,7 +362,8 @@ plot.GPRsurvey <- function(x,y,...){
 		}
 		if(add_shp_files){
 			if(length(shp_files) > 0){
-				BASEName <- unlist(strsplit(basename(shp_files),'[.]'))[seq(from=1,length.out=length(shp_files),by=2)]
+                sel <- seq(from=1,length.out=length(shp_files),by=2)
+				BASEName <- unlist(strsplit(basename(shp_files),'[.]'))[sel]
 				DIRName <- dirname(shp_files)
 				for(i in seq_along(shp_files)){
 					shp <- readOGR(DIRName[i], BASEName[i])
@@ -408,17 +379,18 @@ plot.GPRsurvey <- function(x,y,...){
 		if(!is.null(parFid)){
 			for(i in 1:length(x)){
 # 				fidxyz <- .fidpos(x@coords[[i]],x@fids[[i]])
-				fidxyz <- x@coords[[i]][trimStr(x@fids[[i]]) != "", , drop=FALSE]
+				fidxyz <- x@coords[[i]][trimStr(x@fids[[i]]) != "", , 
+                                    drop=FALSE]
 				if(length(fidxyz)>0){
 					do.call( points, c(list(x=fidxyz[,1:2]),parFid))
 				}
 			}
 		}
-		if(!is.null(parIntersect) && length(x@intersections)>0){ # && addIntersections){
+		if(!is.null(parIntersect) && length(x@intersections)>0){ 
 			for(i in 1:length(x@intersections)){
 				if(!is.null(x@intersections[[i]])){
-					
-					do.call(points , c(list(x=x@intersections[[i]][,1:2]), parIntersect))
+					do.call(points , c(list(x=x@intersections[[i]][,1:2]), 
+					parIntersect))
 				}
 			}
 		}
@@ -444,15 +416,16 @@ setMethod("surveyIntersect", "GPRsurvey", function(x){
 			gtopb <- sp::Lines(list(gtop1), ID=c("b"))
 			Sb = SpatialLines(list(gtopb))
 			pt_int <- gIntersection(Sa,Sb)
-			# lineName <- substr(BASEName[[j]], 6, nchar(BASEName[[j]]))
 			if(!is.null(pt_int)){
 				# cat("intersection!\n")
 			  # for each intersection points
 			  n_int <- 	nrow(coordinates(pt_int))
 			  for(k in 1:n_int){
-				d <- sqrt(apply((top0[,1:2] - matrix(coordinates(pt_int)[k,],nrow=nrow(top0),ncol=2,byrow=TRUE))^2,1,sum))
+				d <- sqrt(apply((top0[,1:2] - matrix(coordinates(pt_int)[k,],
+                            nrow=nrow(top0),ncol=2,byrow=TRUE))^2,1,sum))
 				# if(length(c(coordinates(pt_int),which.min(d)[1],x@names[j]))!=4) stop("lkjlkJ")
-				myTr_int <- rbind(myTr_int ,c(coordinates(pt_int)[k,],which.min(d)[1],x@names[j]))
+				myTr_int <- rbind(myTr_int ,c(coordinates(pt_int)[k,],
+                              which.min(d)[1],x@names[j]))
 			  }
 			}
 		  }
@@ -526,9 +499,9 @@ setReplaceMethod(
 	}
 )
 
-setMethod("plot3DRGL", "GPRsurvey", function(x,addTopo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,add=TRUE,
-		xlim=NULL,ylim=NULL,zlim=NULL,...){
-# plot3D <- function(x,type=c("raster","wiggles"),addTopo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,...){
+setMethod("plot3DRGL", "GPRsurvey", 
+        function(x,addTopo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,
+        add=TRUE,xlim=NULL,ylim=NULL,zlim=NULL,...){
 		add<-add
 		for(i in seq_along(x)){
 			cat("***", i , "***\n")
@@ -539,9 +512,11 @@ setMethod("plot3DRGL", "GPRsurvey", function(x,addTopo=FALSE,clip=NULL,normalize
 				gpr@coordref <- x@coordref
 			}
 			if(length(coord(gpr))==0){
-				cat(gpr@name, ": no coordinates, I cannot plot this line!!\n",sep="")
+				cat(gpr@name, paste0(": no coordinates, I cannot plot",
+                  " this line!!\n",sep=""))
 			}else{
-				plot3DRGL(gpr,addTopo=addTopo,clip=clip,normalize=normalize,nupspl=nupspl,add=add,xlim=xlim,ylim=ylim,zlim=zlim,...)
+				plot3DRGL(gpr, addTopo=addTopo, clip=clip, normalize=normalize, 
+                    nupspl=nupspl,add=add,xlim=xlim, ylim=ylim, zlim=zlim,...)
 			}
 			add <- TRUE
 		}	
@@ -551,7 +526,8 @@ setMethod("plot3DRGL", "GPRsurvey", function(x,addTopo=FALSE,clip=NULL,normalize
 
 
 
-setMethod("plotDelineations3D", "GPRsurvey", function(x,sel=NULL,col=NULL,add=TRUE,...){
+setMethod("plotDelineations3D", "GPRsurvey", 
+          function(x,sel=NULL,col=NULL,add=TRUE,...){
 		add<-add
 		for(i in seq_along(x)){
 			gpr <- readGPR(x@filepaths[[i]])
@@ -561,7 +537,8 @@ setMethod("plotDelineations3D", "GPRsurvey", function(x,sel=NULL,col=NULL,add=TR
 				gpr@coordref <- x@coordref
 			}
 			if(length(coord(gpr))==0){
-				cat(gpr@name, ": no coordinates, I cannot plot this line!!\n",sep="")
+				cat(gpr@name, paste0(": no coordinates, I cannot plot",
+                  " this line!!\n",sep=""))
 			}else if(length(gpr@delineations) == 0){
 				cat(gpr@name, ": no delineations for this line!!\n",sep="")
 			}else{
@@ -593,16 +570,19 @@ setMethod("writeSurvey", "GPRsurvey", function(x, fPath, overwrite=FALSE){
 
 
 
-setMethod("writeGPR", "GPRsurvey", function(x,fPath, format=c("DT1","rds"), overwrite=FALSE){
+setMethod("writeGPR", "GPRsurvey", 
+        function(x,fPath, format=c("DT1","rds"), overwrite=FALSE){
 		type=match.arg(format)
 		mainDir <- dirname(path)
 		if(mainDir =="." || mainDir =="/" ){
 			mainDir <- ""
 		}
 		subDir <- basename(path)
-		if (file.exists(paste(mainDir, subDir, "/", sep = "/", collapse = "/"))) {
+		if (file.exists(paste(mainDir, subDir, "/", sep = "/", 
+            collapse = "/"))) {
 			# cat("subDir exists in mainDir and is a directory")
-		} else 	if (file.exists(paste(mainDir, subDir, sep = "/", collapse = "/"))) {
+		} else 	if (file.exists(paste(mainDir, subDir, sep = "/", 
+            collapse = "/"))) {
 			#subDir <- ""
 			# you will probably want to handle this separately
 		} else {
@@ -618,16 +598,6 @@ setMethod("writeGPR", "GPRsurvey", function(x,fPath, format=c("DT1","rds"), over
 			if(length(x@intersections[[gpr@name]])>0){
 				ann(gpr) <- x@intersections[[gpr@name]][,3:4]
 			}
-
-			# if (file.exists(paste(mainDir, subDir, "/", sep = "/", collapse = "/"))) {
-				# # By this point, the directory either existed or has been successfully created
-				# setwd(file.path(mainDir, subDir))
-			# } else {
-				# cat("subDir does not exist")
-				# # Handle this error as appropriate
-			# }
-			# dir.create(file.path(mainDir, subDir))
-			# setwd(file.path(mainDir, subDir))
 			fPath <- paste(mainDir,"/",subDir,"/",gpr@name,".",type,sep="")
 			writeGPR(gpr, path=fPath,format=type , overwrite=FALSE)
 			cat("File saved:",fPath,"\n")
@@ -647,8 +617,10 @@ setMethod("exportFid", "GPRsurvey", function(x,fPath=NULL){
 	}
 )
 
-setMethod("exportCoord", "GPRsurvey", function(x,fPath=NULL,type=c("points","lines"),driver="ESRI Shapefile",...){
-	type=match.arg(type)
+setMethod("exportCoord", "GPRsurvey", 
+    function(x,fPath=NULL,type=c("points","lines"),
+            driver="ESRI Shapefile",...){
+	type <- match.arg(type)
 	folder <- dirname(fPath)
 	fPath <- basename(fPath)
 	if(type=="lines"){	
@@ -656,7 +628,8 @@ setMethod("exportCoord", "GPRsurvey", function(x,fPath=NULL,type=c("points","lin
 		dfl <- data.frame(z=seq_along(mySpatLines), 
 				row.names = sapply(slot(mySpatLines, "lines"), 
 							function(x) slot(x, "ID")))
-		mySpatLinesdf <- SpatialLinesDataFrame(mySpatLines, dfl , match.ID = TRUE)
+		mySpatLinesdf <- SpatialLinesDataFrame(mySpatLines, dfl , 
+                            match.ID = TRUE)
 		writeOGR(mySpatLinesdf, folder, fPath, driver=driver,...)
 	}else if(type=="points"){	
 		mySpatPoints <- as.SpatialPoints(x)

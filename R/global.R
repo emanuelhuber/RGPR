@@ -931,7 +931,7 @@ posunit,"/",depthunit),
 # -> modified Coppens's Method
 # w = length leading window: about one period of the firs-arrival waveform
 # ns = length eps (edge preserving smoothing) window: good results with ns 
-between one and two signal periods
+# between one and two signal periods
 #        -> default values ns= 1.5*w
 # bet = stabilisation constant, not critical, set to 0.2*max(amplitude) 
 .firstBreackPicking <- function(x, w = 11, ns = NULL, bet = 0.2){
@@ -947,8 +947,8 @@ between one and two signal periods
 }
 
 # edge preserving smoothing
-# luo et al. (2002): Edge preserving smoothing and applications: The Leading 
-edge, 21: 136-158
+# luo et al. (2002): Edge preserving smoothing and applications: 
+# The Leading edge, 21: 136-158
 .eps <- function(x,ns){
   xmean <-  c(rep(0,floor(ns/2)), 
               wapply(x,width=ns,by=1, FUN=mean),rep(0,floor(ns/2)))

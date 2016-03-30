@@ -444,7 +444,7 @@ setMethod("mean", "GPR", function(x, ...) mean(as.vector(x@data)))
 setMethod("median", "GPR", function(x, na.rm = FALSE) 
 median(as.vector(x@data),na.rm = FALSE))
 # setMethod("range", "GPR", function(..., na.rm=FALSE) 
-range(as.matrix(...),na.rm=na.rm))
+# range(as.matrix(...),na.rm=na.rm))
 
 
 setMethod(

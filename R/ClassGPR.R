@@ -845,6 +845,10 @@ setMethod("ampl", "GPR", function(x, FUN=mean, ...){
 	} 
 )
 
+setMethod("processing", "GPR", function(x){
+		return(x@proc)
+	} 
+)
 
 
 

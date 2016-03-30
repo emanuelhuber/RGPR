@@ -3,9 +3,6 @@
 #		CHECK:	http://r-pkgs.had.co.nz/
 #
 
-
-
-	
 #----------- helper functions -------------------#
 # FID <- choose.files(caption = " txt files",filters = c("txt","*.txt"))
 # output = list of data frame (one for each file from FID) 
@@ -51,7 +48,8 @@ plotTopo <- function(NEZ_file, add=TRUE){
 	LINES 	<- agrep("LINE", PCODE) 
 	LINES 	<- LINES[!(agrep("LINE", PCODE) %in% REVERSE)]
 
-	POINTS 	<- which(!(1:length(PCODE) %in% c(LINES,TS,REVERSE,WATER,CROSS, REF)))		# topo
+	POINTS 	<- which(!(1:length(PCODE) %in% c(LINES,TS,REVERSE,WATER,CROSS, REF)))	
+	# topo
 	NOT_REVERSE <- !(1:length(PCODE) %in% agrep("REVERSE", PCODE))
 
 	not_rev <- !(1:nrow(topo) %in% agrep("REVERSE",topo$PCODE))
@@ -87,7 +85,8 @@ plotTopo <- function(NEZ_file, add=TRUE){
 	# for(i in 1:length(LINES)){
 		# lines(topo[topo[,"PCODE"]==PCODE[LINES[i]],c("E","N")],col=i)
 		# points(topo[topo[,"PCODE"]==PCODE[LINES[i]],c("E","N")],col="red",pch=20)
-		# GPRLineDistance <- myDist(topo[topo[,"PCODE"]==PCODE[LINES[i]],c("E","N")],last=TRUE)
+		# GPRLineDistance <- myDist(topo[topo[,"PCODE"]==PCODE[LINES[i]],c("E","N")],
+last=TRUE)
 		# cat(PCODE[LINES[i]], ' : ', round(GPRLineDistance,2)," m\n")
 		# total_GPRLine_distance <- total_GPRLine_distance +GPRLineDistance
 	# }
@@ -114,7 +113,8 @@ safeFPath <- function(fPath = NULL){
 	}
 	fPath_orgi <- fPath
 	k <- 0
-	while(file.exists(paste0(fPath, ".", ext)) || file.exists( paste0(fPath, ".HD"))){
+	while(file.exists(paste0(fPath, ".", ext)) || file.exists( paste0(fPath, ".HD")
+)){
 		fPath <- paste0(fPath_orgi, "_", k)
 		k <- k + 1
 	}
@@ -127,24 +127,40 @@ safeFPath <- function(fPath = NULL){
 palGPR <- function(colPal="default", n = 101, power = 1, returnNames = FALSE){
 	colPal <- gsub("gray", "grey", x= colPal)
 	tmp <- structure(list(
-		default = colorRampPalette(c( "#1C007C", "#1B0086", "#1A0091", "#18009C", "#1600A7", "#1400B2", "#1100C3", "#0E00CF", "#0A00E0", "#0300F5",
-			"#0001FF", "#080FFF", "#1521FF", "#2232FF", "#2E42FF", "#3B52FF", "#4862FF", "#5470FF", "#617FFF", "#6E8CFF", "#7F9EFF",
-			"#8CAAFF", "#98B5FF", "#A5C1FF", "#B2CBFF", "#BFD5FF", "#CBDFFF", "#D8E7FF", "#E5F0FF", "#F2F7FF", "#FFFCFB", "#FFF4F0",
-			"#FFECE5", "#FFE3DA", "#FFDACE", "#FFCEC0", "#FFC4B5", "#FFB9AA", "#FFAE9E", "#FF9F90", "#FF9485", "#FF877A", "#FF766B",
-			"#FF6960", "#FF5B55", "#FF4946", "#FF3B4E", "#FF3045", "#FF253D", "#FF1632", "#FF0B2A", "#FF0022", "#F70023", "#EE0023",
-			"#E50023", "#DC0024", "#D30024", "#CA0024", "#C20024", "#B70023", "#AF0023", "#A70023", "#9C0022"))(n),
+		default = colorRampPalette(c( "#1C007C", "#1B0086", "#1A0091", "#18009C", "#
+1600A7", "#1400B2", "#1100C3", "#0E00CF", "#0A00E0", "#0300F5",
+			"#0001FF", "#080FFF", "#1521FF", "#2232FF", "#2E42FF", "#3B52FF", "#4862FF", 
+"#5470FF", "#617FFF", "#6E8CFF", "#7F9EFF",
+			"#8CAAFF", "#98B5FF", "#A5C1FF", "#B2CBFF", "#BFD5FF", "#CBDFFF", "#D8E7FF", 
+"#E5F0FF", "#F2F7FF", "#FFFCFB", "#FFF4F0",
+			"#FFECE5", "#FFE3DA", "#FFDACE", "#FFCEC0", "#FFC4B5", "#FFB9AA", "#FFAE9E", 
+"#FF9F90", "#FF9485", "#FF877A", "#FF766B",
+			"#FF6960", "#FF5B55", "#FF4946", "#FF3B4E", "#FF3045", "#FF253D", "#FF1632", 
+"#FF0B2A", "#FF0022", "#F70023", "#EE0023",
+			"#E50023", "#DC0024", "#D30024", "#CA0024", "#C20024", "#B70023", "#AF0023", 
+"#A70023", "#9C0022"))(n),
 		hcl_0 = diverge_hcl(n,power=1),
-		hcl_1 = diverge_hcl(n, c = 100, l = c(50, 90), power = power), # blue - white - red (fade)
-		hcl_2 = diverge_hcl(n, h = c(246, 40), c = 96, l = c(65, 90), power=power), # blue - white - orange (fade)
-		hcl_3 = diverge_hcl(n, h = c(130, 43), c = 100, l = c(70, 90), power=power), # green - white- orange (fade)
-		hcl_4 = diverge_hcl(n, h = c(255, 330), l = c(40, 90), power=power), # blue/violet - white - red/violet 
-		hcl_5 = diverge_hcl(n, h = c(20, 200), c = 90, l = c(70, 95), power=power),	# rose - white - turquise (fade)
-		hcl_6 = diverge_hcl(n, h = c(246, 10), c = 120, l = c(30, 90), power=power), # blue - white - red (vivid)
-		hcl_7 = diverge_hcl(n, h = c(220, 10), c = 100, l = c(20, 90), power=power), # blue - white - red (tern)
-		hcl_8 = diverge_hcl(n, h = c(250, 10), c = 150, l = c(30, 90), power=power), # blue - white - red (fade)
+		hcl_1 = diverge_hcl(n, c = 100, l = c(50, 90), power = power), # blue - white 
+- red (fade)
+		hcl_2 = diverge_hcl(n, h = c(246, 40), c = 96, l = c(65, 90), power=power), # 
+blue - white - orange (fade)
+		hcl_3 = diverge_hcl(n, h = c(130, 43), c = 100, l = c(70, 90), power=power), #
+ green - white- orange (fade)
+		hcl_4 = diverge_hcl(n, h = c(255, 330), l = c(40, 90), power=power), # blue/
+violet - white - red/violet 
+		hcl_5 = diverge_hcl(n, h = c(20, 200), c = 90, l = c(70, 95), power=power),	# 
+rose - white - turquise (fade)
+		hcl_6 = diverge_hcl(n, h = c(246, 10), c = 120, l = c(30, 90), power=power), #
+ blue - white - red (vivid)
+		hcl_7 = diverge_hcl(n, h = c(220, 10), c = 100, l = c(20, 90), power=power), #
+ blue - white - red (tern)
+		hcl_8 = diverge_hcl(n, h = c(250, 10), c = 150, l = c(30, 90), power=power), #
+ blue - white - red (fade)
 		grey3 = diverge_hcl(n, h = c(300, 1), c = 1, l = c(1, 100), power=power), 
-		grey1 = sequential_hcl(n, h = c(1, 300), c = 0, l = c(10, 100), power=power), # too light
-		grey2 = sequential_hcl(n, h = c(300, 100), c = 0, l = c(120, 10), power=power), #  too dark	
+		grey1 = sequential_hcl(n, h = c(1, 300), c = 0, l = c(10, 100), power=power), 
+# too light
+		grey2 = sequential_hcl(n, h = c(300, 100), c = 0, l = c(120, 10), power=power)
+, #  too dark	
 		grey = sequential_hcl(n, h = c(190, 1), c = 10, l = c(1, 110), power=power)
 	))
 	if(returnNames){
@@ -160,7 +176,8 @@ palGPR <- function(colPal="default", n = 101, power = 1, returnNames = FALSE){
 # pal(palGPR(n=50))
 plotPal <- function(col, border = NA){
 	n <- length(col)
-	plot(0, 0, type="n", xlim = c(0, 1), ylim = c(0, 1), axes = FALSE, xlab = "", ylab = "")
+	plot(0, 0, type="n", xlim = c(0, 1), ylim = c(0, 1), axes = FALSE, xlab = "", 
+ylab = "")
 	rect(0:(n-1)/n, 0, 1:n/n, 1, col = col, border = border)
 }
 
@@ -169,7 +186,8 @@ displayPalGPR <- function(){
    par(mai=op$mai + c(0,1,0,0))
   pNames <- palGPR(returnNames=TRUE)
   n <- 101
-  plot(0, 0, type="n", xlim = c(0, 1), ylim = c(0, length(pNames)), axes = FALSE, xlab = "", ylab = "")
+  plot(0, 0, type="n", xlim = c(0, 1), ylim = c(0, length(pNames)), axes = 
+FALSE, xlab = "", ylab = "")
   for(i in seq_along(pNames)){
 	myPal  <- palGPR(colPal=pNames[i], n=n)
 	rect(0:(n-1)/n, i-1/3, 1:n/n, i + 1/3, col = myPal, border = NA)
@@ -217,7 +235,8 @@ posLine <- function(loc,last=FALSE){
 # that can be used in plot3D:
 # 	plot(mySurvey,asp=1)
 # 	bbox <- selectBBox()
-# 	plot3D(mySurvey, addTopo=TRUE,clip=30, xlim=bbox$xlim,ylim=bbox$ylim, add=FALSE)
+# 	plot3D(mySurvey, addTopo=TRUE,clip=30, xlim=bbox$xlim,ylim=bbox$ylim, 
+add=FALSE)
 
 selectBBox <- function(border="red",lwd=2,...){
 	bbox <- locator(type="p",n=2)
@@ -235,7 +254,8 @@ selectBBox <- function(border="red",lwd=2,...){
 	lines(xyz[,1:2],...)
 }
 .plotArrows <- function(xyz,col="red",length=0.1,...){
-	arrows(xyz[nrow(xyz)-1,1],xyz[nrow(xyz)-1,2],xyz[nrow(xyz),1],xyz[nrow(xyz),2],length = length,col=col,...)
+	arrows(xyz[nrow(xyz)-1,1],xyz[nrow(xyz)-1,2],xyz[nrow(xyz),1],xyz[nrow(xyz),2],
+length = length,col=col,...)
 }
 
 
@@ -256,7 +276,13 @@ selectBBox <- function(border="red",lwd=2,...){
 }
 #--------------------------------------------#
 #---------------- SETGENERIC ----------------#
-# setGenericVerif <- function(x,y){if(!isGeneric(x)){setGeneric(x,y)}else{cat("setGeneric", x,"already exists!\n")}}
+# setGenericVerif <- function(x,y){
+#   if(!isGeneric(x)){
+#     setGeneric(x,y)
+#   }else{
+#     cat("setGeneric", x,"already exists!\n")
+#   }
+# }
 setGenericVerif <- function(x,y){setGeneric(x,y)}
 
 
@@ -296,76 +322,111 @@ setGenericVerif("fid<-",function(x,values){standardGeneric("fid<-")})
 setGenericVerif("values", function(x) standardGeneric("values"))
 setGenericVerif("values<-", function(x,value) standardGeneric("values<-"))
 
+setGenericVerif("processing", function(x) standardGeneric("processing"))
 
 setGenericVerif("description", function(x) standardGeneric("description"))
 setGenericVerif("description<-", function(x) standardGeneric("description<-"))
 
 #------------------------------GPR
 setGenericVerif("gethd", function(x,hd=NULL) standardGeneric("gethd"))
-setGenericVerif("plotAmpl", function(x, FUN=mean, add=FALSE, ylim=NULL,xlim=NULL,col=1,all=FALSE,...) standardGeneric("plotAmpl"))
+setGenericVerif("plotAmpl", function(x, FUN=mean, add=FALSE, ylim=NULL,
+                xlim=NULL,col=1,all=FALSE,...) standardGeneric("plotAmpl"))
 setGenericVerif("ampl", function(x, FUN=mean, ...) standardGeneric("ampl"))
 
 
-setGenericVerif("interpPos", function(x, topo, ...) standardGeneric("interpPos"))
-setGenericVerif("readGPR", function(fPath,desc="", coordfile=NULL,crs="",intfile=NULL) standardGeneric("readGPR"))
-setGenericVerif("writeGPR", function(x,fPath, format=c("DT1","rds"),overwrite=FALSE){ standardGeneric("writeGPR")})
-setGenericVerif("exportCoord",  function(x,fPath=NULL,type=c("points","lines"),driver="ESRI Shapefile",...) standardGeneric("exportCoord"))
-setGenericVerif("exportFid", function(x,fPath=NULL) standardGeneric("exportFid"))
+setGenericVerif("interpPos", function(x, topo, ...) standardGeneric("interpPos")
+)
+setGenericVerif("readGPR", function(fPath,desc="", coordfile=NULL,
+                crs="", intfile=NULL) standardGeneric("readGPR"))
+setGenericVerif("writeGPR", function(x,fPath, format=c("DT1","rds"),
+                overwrite=FALSE){ standardGeneric("writeGPR")})
+setGenericVerif("exportCoord",  function(x,fPath=NULL,type=c("points","lines"),
+                  driver="ESRI Shapefile",...) standardGeneric("exportCoord"))
+setGenericVerif("exportFid", function(x,fPath=NULL) 
+                  standardGeneric("exportFid"))
 setGenericVerif("exportProc",  function(x,fPath=NULL,sep="\t", row.names=FALSE,
-	col.names=FALSE, ...) standardGeneric("exportProc"))
+              col.names=FALSE, ...) standardGeneric("exportProc"))
 
 
 
 setGenericVerif("reverse", function(x) standardGeneric("reverse"))
-setGenericVerif("migration", function(x,type=c("static","kirchhoff"), ...) standardGeneric("migration"))
+setGenericVerif("migration", function(x,type=c("static","kirchhoff"), ...) 
+standardGeneric("migration"))
 setGenericVerif("upsample", function(x,n) standardGeneric("upsample"))
-setGenericVerif("filter1D", function(x, type = c("median", "hampel"), ...) standardGeneric("filter1D"))
-setGenericVerif("filter2D", function(x, type=c("median3x3"), ...) standardGeneric("filter2D"))
-setGenericVerif("dewow", function(x,type=c("MAD","Gaussian"),... ) standardGeneric("dewow"))
-setGenericVerif("gain", function(x, type=c("power","exp","agc","geospreading"),...) standardGeneric("gain"))
-setGenericVerif("dcshift", function(x, u=1:10, FUN=mean) standardGeneric("dcshift"))
-setGenericVerif("firstBreack", function(x, w = 11, ns = NULL, bet=NULL) standardGeneric("firstBreack"))
+setGenericVerif("filter1D", function(x, type = c("median", "hampel"), ...) 
+standardGeneric("filter1D"))
+setGenericVerif("filter2D", function(x, type=c("median3x3"), ...) 
+                standardGeneric("filter2D"))
+setGenericVerif("dewow", function(x,type=c("MAD","Gaussian"),... ) 
+                standardGeneric("dewow"))
+setGenericVerif("gain", function(x, type=c("power","exp","agc","geospreading"),
+                  ...) standardGeneric("gain"))
+setGenericVerif("dcshift", function(x, u=1:10, FUN=mean) 
+                standardGeneric("dcshift"))
+setGenericVerif("firstBreack", function(x, w = 11, ns = NULL, bet=NULL) 
+                standardGeneric("firstBreack"))
 
-setGenericVerif("clip", function(x, Amax=NULL,Amin=NULL) standardGeneric("clip"))
-setGenericVerif("gammaCorrection", function(x, a=1,b=1) standardGeneric("gammaCorrection"))
-setGenericVerif("trScale", function(x, type = c("stat","min-max","95","eq","sum", "rms")) standardGeneric("trScale"))
+setGenericVerif("clip", function(x, Amax=NULL,Amin=NULL) 
+                standardGeneric("clip"))
+setGenericVerif("gammaCorrection", function(x, a=1,b=1) 
+                standardGeneric("gammaCorrection"))
+setGenericVerif("trScale", function(x, 
+                  type = c("stat","min-max","95","eq","sum", "rms")) 
+                  standardGeneric("trScale"))
 
-setGenericVerif("spec", function(x, type=c("f-x","f-k"), returnSpec=FALSE,plotSpec=TRUE, unwrapPhase = TRUE, ...) standardGeneric("spec"))
-setGenericVerif("fFilter", function(x, f=100, type=c('low','high','bandpass'),L=257,plotSpec=FALSE) standardGeneric("fFilter"))
-setGenericVerif("fkFilter", function(x, fk=NULL, L=c(5,5),npad=1) standardGeneric("fkFilter"))
+setGenericVerif("spec", function(x, type=c("f-x","f-k"), returnSpec=FALSE,
+              plotSpec=TRUE, unwrapPhase = TRUE, ...) standardGeneric("spec"))
+setGenericVerif("fFilter", function(x, f=100, type=c('low','high','bandpass'),
+                L=257,plotSpec=FALSE) standardGeneric("fFilter"))
+setGenericVerif("fkFilter", function(x, fk=NULL, L=c(5,5),npad=1) 
+                standardGeneric("fkFilter"))
 
-setGenericVerif("traceShift", function(x, fb,kip=10) standardGeneric("traceShift"))
-setGenericVerif("deconv", function(x, method=c("spiking","wavelet","min-phase"),...) standardGeneric("deconv"))
+setGenericVerif("traceShift", function(x, fb,kip=10) 
+                standardGeneric("traceShift"))
+setGenericVerif("deconv", function(x, method=c("spiking","wavelet","min-phase"),
+                  ...) standardGeneric("deconv"))
 setGenericVerif("rotatePhase", function(x, phi) standardGeneric("rotatePhase"))
 
 	
 #------------------------------GRPsurvey
 setGenericVerif("getGPR", function(x,id) standardGeneric("getGPR"))
-setGenericVerif("surveyIntersect", function(x) standardGeneric("surveyIntersect"))
-setGenericVerif("writeSurvey", function(x, fPath, overwrite=FALSE){ standardGeneric("writeSurvey")})
+setGenericVerif("surveyIntersect", function(x) 
+                standardGeneric("surveyIntersect"))
+setGenericVerif("writeSurvey", function(x, fPath, overwrite=FALSE){ 
+                standardGeneric("writeSurvey")})
 
 
 #------------------------------BOTH
-setGenericVerif("plot3DRGL", function(x,addTopo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,add=TRUE,xlim=NULL,ylim=NULL,zlim=NULL,...) 
+setGenericVerif("plot3DRGL", function(x,addTopo=FALSE,clip=NULL,normalize=NULL,
+nupspl=NULL,add=TRUE,xlim=NULL,ylim=NULL,zlim=NULL,...) 
 standardGeneric("plot3DRGL"))
 
+setGenericVerif("exportPDF", function(x,fPath=NULL,addTopo=FALSE,clip=NULL,
+normalize=NULL,nupspl=NULL,...) standardGeneric("exportPDF"))
 
-
-
-setGenericVerif("exportPDF", function(x,fPath=NULL,addTopo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,...) standardGeneric("exportPDF"))
-
-
+#setGenericVerif("adimproSmooth", function(x,hmax=2,...) standardGeneric("
+# adimproSmooth"))
 
 #---------------------- DELINEATIONS ---------------------#
-setGenericVerif("delineate", function(x,name=NULL,type=c("raster","wiggles"),addTopo=FALSE,nupspl=NULL,n=10000,...) standardGeneric("delineate"))
-setGenericVerif("rmDelineations<-", function(x,values=NULL) standardGeneric("rmDelineations<-"))
-setGenericVerif("delineations", function(x,sel=NULL,...) standardGeneric("delineations"))
-setGenericVerif("addDelineation", function(x,...) standardGeneric("addDelineation"))
-setGenericVerif("showDelineations", function(x,sel=NULL,...) standardGeneric("showDelineations"))
-setGenericVerif("exportDelineations", function(x, dirpath="") standardGeneric("exportDelineations"))
-setGenericVerif("plotDelineations3D", function(x,sel=NULL,col=NULL,add=TRUE,...) standardGeneric("plotDelineations3D"))
-setGenericVerif("plotDelineations", function(x,sel=NULL,col=NULL,...) standardGeneric("plotDelineations"))
-setGenericVerif("identifyDelineation", function(x,sel=NULL,...) standardGeneric("identifyDelineation"))
+setGenericVerif("delineate", function(x,name=NULL,type=c("raster","wiggles"),
+                  addTopo=FALSE,nupspl=NULL,n=10000,...) 
+                  standardGeneric("delineate"))
+setGenericVerif("rmDelineations<-", function(x,values=NULL) 
+                  standardGeneric("rmDelineations<-"))
+setGenericVerif("delineations", function(x,sel=NULL,...) 
+                  standardGeneric("delineations"))
+setGenericVerif("addDelineation", function(x,...) 
+                  standardGeneric("addDelineation"))
+setGenericVerif("showDelineations", function(x,sel=NULL,...) 
+                  standardGeneric("showDelineations"))
+setGenericVerif("exportDelineations", function(x, dirpath="") 
+                  standardGeneric("exportDelineations"))
+setGenericVerif("plotDelineations3D", function(x,sel=NULL,col=NULL,add=TRUE,...)
+                  standardGeneric("plotDelineations3D"))
+setGenericVerif("plotDelineations", function(x,sel=NULL,col=NULL,...) 
+                  standardGeneric("plotDelineations"))
+setGenericVerif("identifyDelineation", function(x,sel=NULL,...) 
+                  standardGeneric("identifyDelineation"))
 
 timeToDepth <- function(tt, time_0, v=0.1, antsep=1){
 	t0 <- time_0 - antsep/0.299
@@ -379,37 +440,42 @@ depth0 <- function(time_0, v=0.1, antsep=1){
 	time_0 - antsep/0.299 + antsep/v
 }
 
-.plot3DRGL <- function(A,x,y,z,z0,col=palGPR(n=101),back="fill", smooth = TRUE, lit=FALSE, lwd=0,empty=FALSE,...){
+.plot3DRGL <- function(A,x,y,z,z0,col=palGPR(n=101),back="fill", 
+                  smooth = TRUE, lit=FALSE, lwd=0,empty=FALSE,...){
 	nr = nrow(A)
 	nc = ncol(A)
 	if(empty==TRUE){
 		X <- matrix(x, ncol=nc, nrow=2, byrow=TRUE)
 		Y <- matrix(y, ncol=nc, nrow=2, byrow=TRUE)
-		Z <-  matrix(z0, ncol=nc, nrow=2, byrow=TRUE) - matrix(z[c(1,nr)], ncol=nc, nrow=2, byrow=FALSE)
+		Z <-  matrix(z0, ncol=nc, nrow=2, byrow=TRUE) - 
+          matrix(z[c(1,nr)], ncol=nc, nrow=2, byrow=FALSE)
 		colA <- col[1]
 		if(!is.null(list(...)$alpha) && (list(...)$alpha==0 || is.null(col))){
 		
 		}else{
-			rgl.surface(Y, X, Z, color=colA, back=back, smooth = smooth, lit=lit, lwd= lwd,...) 
+			rgl.surface(Y, X, Z, color=colA, back=back, smooth = smooth, 
+                  lit=lit, lwd= lwd,...) 
 		}
 		lines3d(y,z0,x, col="black",alpha=1,lwd=lwd)	 
 		lines3d(y,(z0-z[length(z)]),x, col="black",alpha=1,lwd=lwd)	 
 		lines3d(rep(y[1],2),(z0[1]-z),rep(x[1],2), col="black",alpha=1,lwd=lwd)	 
-		lines3d(rep(y[length(y)],2),(z0[length(z0)]-z),rep(x[length(x)],2), col="black",alpha=1,lwd=lwd)	 
+		lines3d(rep(y[length(y)],2),(z0[length(z0)]-z),rep(x[length(x)],2), 
+            col="black",alpha=1,lwd=lwd)	 
 
 	}else{
 		X <- matrix(x, ncol=nc, nrow=nr, byrow=TRUE)
 		Y <- matrix(y, ncol=nc, nrow=nr, byrow=TRUE)
-		Z <-  matrix(z0, ncol=nc, nrow=nr, byrow=TRUE) - matrix(z, ncol=nc, nrow=nr, byrow=FALSE)
+		Z <-  matrix(z0, ncol=nc, nrow=nr, byrow=TRUE) - 
+          matrix(z, ncol=nc, nrow=nr, byrow=FALSE)
 		A = (A-min(A))/(max(A)-min(A))
 		colA <- col[ (A)*100+1 ] # assign colors to heights for each point 
-		rgl.surface(Y, X, Z, color=colA, back=back, smooth = smooth, lit=lit, lwd= lwd,...) 
+		rgl.surface(Y, X, Z, color=colA, back=back, smooth = smooth, 
+                lit=lit, lwd= lwd,...) 
 	}
 }
 
-
-
-.plot3DSlice <- function(XYZ,slice=c("x","y","z"),section=1,col=palGPR(n=101), sampling = c(0.25,0.25,0.04),rmStripes = TRUE){
+.plot3DSlice <- function(XYZ,slice=c("x","y","z"),section=1,col=palGPR(n=101), 
+                          sampling = c(0.25,0.25,0.04),rmStripes = TRUE){
 	# k=100
 	# j=25
 	# i=40
@@ -445,7 +511,8 @@ depth0 <- function(time_0, v=0.1, antsep=1){
 		#col = palette(gray(0:101 / 101))
 		colCX <- col[ (CCX)*100+1 ] 
 		
-		surface3d(Xside_x, Xside_z, Xside_y, col= setCol(Xside), lit=FALSE,front="fill",back="fill")#, alpha=0.5)
+		surface3d(Xside_x, Xside_z, Xside_y, col= setCol(Xside), lit=FALSE,
+            front="fill",back="fill")#, alpha=0.5)
 	}else if(slice=="z"){
 		if(rmStripes == TRUE){ Zside = (removeStripes(t(XYZ[,,k])))
 		}else{  Zside = ((t(XYZ[,,k])))	}
@@ -460,7 +527,8 @@ depth0 <- function(time_0, v=0.1, antsep=1){
 		#col = palette(gray(0:101 / 101))
 		colCZ <- col[ (CCZ)*100+1 ]
 		
-		surface3d(Zside_x, Zside_z, Zside_y, col= setCol(Zside), lit=FALSE,front="fill",back="fill")#, alpha=0.5)
+		surface3d(Zside_x, Zside_z, Zside_y, col= setCol(Zside), lit=FALSE,
+              front="fill",back="fill")#, alpha=0.5)
 	}else if(slice=="y"){
 		if(rmStripes == TRUE){ Yside = normalizeGPR(removeStripes(t(XYZ[i,,])))
 		}else{  Yside = normalizeGPR((t(XYZ[i,,])))	}
@@ -475,7 +543,8 @@ depth0 <- function(time_0, v=0.1, antsep=1){
 # 		colCY <- col[ (CCY)*100+1 ] 
 		colCY <- colFromPal(Yside , col = col )
 
-		surface3d(Yside_x, Yside_z, Yside_y, col= setCol(Yside), lit=FALSE,front="fill",back="fill")#, alpha=0.5)
+		surface3d(Yside_x, Yside_z, Yside_y, col= setCol(Yside), lit=FALSE,
+              front="fill",back="fill")#, alpha=0.5)
 	}
 }
 
@@ -489,7 +558,9 @@ depth0 <- function(time_0, v=0.1, antsep=1){
 		new_t <- old_t + zShift[i]
 		xit <- seq(ceiling(new_t[1]/dz), ceiling(new_t[nrow(A)-2]/dz))
 		# interpolate
-		A_topoShift[xit+1,i] = signal::interp1(new_t, A[,i], xi = xit*dz, method = "cubic",extrap = TRUE)	# FIX ME! does not work well (not nice interpolation)
+    # FIX ME! does not work well (not nice interpolation)
+		A_topoShift[xit+1,i] = signal::interp1(new_t, A[,i], xi = xit*dz, 
+                                        method = "cubic",extrap = TRUE)	
 	}
 	return(A_topoShift)
 }
@@ -709,11 +780,14 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
 	if(relTime0){
 		y <- y + time_0
 	}
-#  	image(x,y,z,col=col,zlim=zlim,xaxs="i", yaxs="i", yaxt="n",...)	# matlab color
-	image2D(x = x, y = y, z = z, zlim = zlim, col = col, xaxs = "i", yaxs = "i", yaxt = "n",
-			rasterImage = rasterImage, resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)	
+#  	image(x,y,z,col=col,zlim=zlim,xaxs="i", yaxs="i", yaxt="n",...)	# matlab 
+color
+	image2D(x = x, y = y, z = z, zlim = zlim, col = col, xaxs = "i", 
+          yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
+          resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)	
 	if(barscale){
-		colkey(clim = zlim, clab = clab, width = 0.7, dist = 0.15, add = TRUE, col = col)
+		colkey(clim = zlim, clab = clab, width = 0.7, dist = 0.15, 
+          add = TRUE, col = col)
 	}
 	usr <- par("usr")
 	if(is.null(xlim) ){
@@ -777,7 +851,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
 			posann <- x
 			ann <- gsub("#","\n",ann)
 			abline(v=posann[testann],col="red",lwd=1)
-			mtext(ann[testann], side = 3, line = line, at=posann[testann], col="red",cex=0.9)
+			mtext(ann[testann], side = 3, line = line, at=posann[testann], 
+            col="red", cex=0.9)
 		}
 		return(TRUE)
 	}else{
@@ -796,8 +871,10 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
 		if(sum(testfid)>0){	
 			par(xpd=TRUE)
 			cst <- yr*cin
-			points(posfid[testfid],cst/2*0.75+rep(usr[4],sum(testfid)),pch=25,col="red",bg="yellow",cex=1)
-			text(posfid[testfid],cst+rep(usr[4],sum(testfid)),fid[testfid],cex=0.6)#,pos=3,offset =0)
+			points(posfid[testfid],cst/2*0.75+rep(usr[4],sum(testfid)),pch=25,
+            col="red",bg="yellow",cex=1)
+			text(posfid[testfid],cst+rep(usr[4],sum(testfid)),fid[testfid],cex=0.6)#,
+# pos=3,offset =0)
 			par(xpd=FALSE)
 		}
 	}
@@ -827,7 +904,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
 	axis(side=4,las=2, at=pretty_at, labels=pretty_z)
 	print(par("usr"))
 	print(range(xstrip))
-	image(xstrip,ystrip,zstrip,zlim=zlim,add=TRUE, col=col, axes=FALSE, xlab="", ylab="", xaxs="i", yaxs="i")
+	image(xstrip,ystrip,zstrip,zlim=zlim,add=TRUE, col=col, axes=FALSE, 
+        xlab="", ylab="", xaxs="i", yaxs="i")
 	# axis(side=4, las=2)
 	title(collab, cex=0.8)
 	box()
@@ -842,7 +920,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
 		axis(side=4,at=-depthat, labels=depth,tck=-0.02)
 		axis(side=4,at=-depthat2, labels=FALSE,tck=-0.01)
 		axis(side=4,at= -1* depthToTime(1, 0, v, antsep), labels="1",tck=-0.02)
-		mtext(paste0("depth (", depthunit, "),   v = ",v, " ", posunit,"/",depthunit) ,side=4, line=3)
+		mtext(paste0("depth (", depthunit, "),   v = ",v, " ", posunit,"/",depthunit),
+          side=4, line=3)
 	}else{
 # 		axis(side=4, at=pretty_y + dusr/2 , labels= -pretty_y)
 		axis(side=4, at=pretty_y, labels= -pretty_y)
@@ -857,7 +936,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
 # New strategies and algorithms. Geophysics, 75 (4): v67-v76
 # -> modified Coppens's Method
 # w = length leading window: about one period of the firs-arrival waveform
-# ns = length eps (edge preserving smoothing) window: good results with ns between one and two signal periods
+# ns = length eps (edge preserving smoothing) window: good results with ns 
+between one and two signal periods
 #				-> default values ns= 1.5*w
 # bet = stabilisation constant, not critical, set to 0.2*max(amplitude) 
 .firstBreackPicking <- function(x, w = 11, ns = NULL, bet = 0.2){
@@ -873,22 +953,19 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
 }
 
 # edge preserving smoothing
-# luo et al. (2002): Edge preserving smoothing and applications: The Leading edge, 21: 136-158
+# luo et al. (2002): Edge preserving smoothing and applications: The Leading 
+edge, 21: 136-158
 .eps <- function(x,ns){
-	xmean <-  c(rep(0,floor(ns/2)), wapply(x,width=ns,by=1, FUN=mean),rep(0,floor(ns/2)))
+	xmean <-  c(rep(0,floor(ns/2)), 
+              wapply(x,width=ns,by=1, FUN=mean),rep(0,floor(ns/2)))
 	xsd <- c(rep(0,floor(ns/2)), wapply(x,width=ns,by=1,FUN=sd),rep(0,floor(ns/2)))
-	xtest <- wapply(xsd,width=ns,by=1,FUN=which.min) + (0):(length(xmean)- 2*floor(ns/2)-1)
+	xtest <- wapply(xsd,width=ns,by=1,FUN=which.min) + 
+            (0):(length(xmean)- 2*floor(ns/2)-1)
 	return(c(rep(0,floor(ns/2)), xmean[xtest],rep(0,floor(ns/2))))
 }
 
 #==============================#
 #========== SPATIAL FILTER =========#
-
-#setGenericVerif("adimproSmooth", function(x,hmax=2,...) standardGeneric("adimproSmooth"))
-
- 
-
-
 .medianFilter3x3 <- function(A){
 	B <- A	# <- matrix(0, 364,364)
 	for(i in 1:(nrow(A)-2)) {
@@ -900,9 +977,6 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
 	return(B)
 }
 
-
-
-
 .medianFilter1D <- function(a,w){
 	b <- a	# <- matrix(0, 364,364)
 	for(i in (w+1):(length(a)-w-1)){
@@ -912,17 +986,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
 	return(b)
 }
 
-
-
-
-
-
 #==============================#
 #======= GAIN FUNCTIONS ========#
-
-
-
-
 # CF Yilmaz, p85
 .gainPower <- function(A,alpha,d_t,t_0=NULL,t_end=NULL,t_cst=NULL){
 	g <- .gainPower0(A[,1],alpha,d_t,t_0,t_end,t_cst)
@@ -960,7 +1025,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
 	# s1 = ((max(A))-(min(A)));	# scale factor
 	# s1 = apply(A,2,max)-apply(A,2,min)	# scale factor
 	# # s2 = ((quantile(Anew, 0.99))-(quantile(Anew, 0.01)))	# scale factor
-	# s2 =  apply(Anew,2,quantile,0.999)-apply(Anew,2,quantile, 0.001)	# scale factor
+	# s2 =  apply(Anew,2,quantile,0.999)-apply(Anew,2,quantile, 0.001)	# scale 
+factor
 	# # s2 = apply(Anew,2,max)-apply(Anew,2,min)		# scale factor
 	s1 = ((max(A))-(min(A)));	# scale factor
 	# s2 = ((quantile(Anew, 0.99))-(quantile(Anew, 0.01)))	# scale factor
@@ -1040,11 +1106,13 @@ scaleCol <- function(A,type = c("stat","min-max","95","eq","sum", "rms")){
 	A =  as.matrix(A)
 	type = match.arg(type)
 	if(type == "stat"){
-		Anorm <- scale(A, center=.colMeans(A, nrow(A), ncol(A)), scale=apply(A, 2, sd, na.rm = TRUE))
+		Anorm <- scale(A, center=.colMeans(A, nrow(A), ncol(A)), scale=apply(A, 2, sd,
+ na.rm = TRUE))
 	}else if(type == "sum"){
 		Anorm <- scale(A, center=FALSE, scale=colSums(abs(A)))
 	}else if(type == "eq"){
-		# equalize: equalize line such each trace has same value for sqrt(\int (A(t))^2 dt)
+		# equalize: equalize line such each trace has same value for sqrt(\int (A(t))
+^2 dt)
 		amp <- apply((A)^2,2,sum)
 		Anorm <- A * sqrt(amp)/sum(sqrt(amp))
 	}else if(type == "95"){
@@ -1054,7 +1122,8 @@ scaleCol <- function(A,type = c("stat","min-max","95","eq","sum", "rms")){
 	}else if(type == "rms"){
 		 A/apply(A ,2, .rms)
 	}else{	# min-max
-		Anorm <- scale(A, center=FALSE, scale=(apply((A),2,max,na.rm=TRUE)) - (apply((A),2,min,na.rm=TRUE)))
+		Anorm <- scale(A, center=FALSE, scale=(apply((A),2,max,na.rm=TRUE)) - (apply((
+A),2,min,na.rm=TRUE)))
 	}
 	return(Anorm)
 }
@@ -1068,12 +1137,14 @@ rmsScaling <- function(...){
 
 
 # @param [matrix]/[vector] 	A 		(each column represent a trace / a trace)
-# @param [double] 			T 		(sampling time in nanoseconde)	
-# @param [double]			fac		(result multiplied by a factor, e.g. to get MHz instead of Hz)
+# @param [double] 			dT 		(sampling time in nanoseconde)	
+# @param [double]			fac		(result multiplied by a factor, e.g. to get MHz 
+# instead of Hz)
 
 # @return power spectrum (frequency, power, phase)
 # -------------------------------------------
-powSpec <- function(A,T = 0.8, fac = 1000000, plotSpec=TRUE, returnSpec=FALSE,titleSpec=NULL, unwrapPhase = TRUE){
+powSpec <- function(A,dT = 0.8, fac = 1000000, plotSpec=TRUE, returnSpec=FALSE,
+titleSpec=NULL, unwrapPhase = TRUE){
 	A = as.matrix(A)
 	nr = nrow(A)
 	nc = ncol(A)
@@ -1106,7 +1177,7 @@ powSpec <- function(A,T = 0.8, fac = 1000000, plotSpec=TRUE, returnSpec=FALSE,ti
 	pha_mean = apply(pha,1, mean, na.rm=TRUE)
 		
 	# samping interval GPR = 0.8 ns
-	Ts = T*(10^(-9))		# [s] Sample time
+	Ts = dT*(10^(-9))		# [s] Sample time
 	Fs = 1/Ts			# [Hz] Sampling frequency
 	Fc = 1/(2*Ts)		# Nyquist frequency
  
@@ -1132,7 +1203,8 @@ powSpec <- function(A,T = 0.8, fac = 1000000, plotSpec=TRUE, returnSpec=FALSE,ti
 				title(titleSpec)
 			}
 		par(mar=c(4, 4, 0.3, 2))
-		plot(fre,pha_mean, type="n",xaxt = "n",ylim=range(pha), xlab = "frequency MHz", ylab="phase") 
+		plot(fre,pha_mean, type="n",xaxt = "n",ylim=range(pha), xlab = "frequency MHz"
+, ylab="phase") 
 			if(!is.null(dim(A))){
 				nothing <- apply(pha,2,lines,x=fre,col=rgb(0.2,0.2,0.2,7/max(ncol(A),7)))
 			}
@@ -1146,19 +1218,20 @@ powSpec <- function(A,T = 0.8, fac = 1000000, plotSpec=TRUE, returnSpec=FALSE,ti
 }
 
 # @param [matrix]/[vector] 	A 		(each column represent a trace / a trace)
-# @param [double] 			T 		(sampling time in nanoseconde)	
+# @param [double] 			dT 		(sampling time in nanoseconde)	
 
 
 # @return power spectrum (frequency, power, phase)
 # -------------------------------------------
 
-.fFilter1D <- function(A, f=c(100),  type = c('low','high','bandpass'),L=257, T = 0.8, plotSpec = FALSE){
+.fFilter1D <- function(A, f=c(100),  type = c('low','high','bandpass'),L=257, 
+                      dT = 0.8, plotSpec = FALSE){
 	
 	type = match.arg(type)
 	A <- as.matrix(A)
 	M = nrow(A)			# signal length
 	# samping interval GPR = 0.8 ns
-	Ts = T*10^(-9)		# [s] Sample time
+	Ts = dT*10^(-9)		# [s] Sample time
 	Fs = 1/Ts			# [Hz] Sampling frequency
 	# cut-off frequency/ies fc in (MHz)
 	f = sort(f) * 10^6		# cut-off frequency in Hz
@@ -1221,7 +1294,8 @@ powSpec <- function(A,T = 0.8, fac = 1000000, plotSpec=TRUE, returnSpec=FALSE,ti
 	fft_A = mvfft(A)		# signal
 	fft_h = fft(h_long)				# filter
 
-	#Now we perform cyclic convolution in the time domain using pointwise multiplication in the frequency domain:
+	#Now we perform cyclic convolution in the time domain using pointwise multiplic
+# ation in the frequency domain:
 	Y = fft_A * fft_h
 	if(type == "bandpass"){
 		
@@ -1232,8 +1306,8 @@ powSpec <- function(A,T = 0.8, fac = 1000000, plotSpec=TRUE, returnSpec=FALSE,ti
 	pow_y = Mod(Y)
 	# si matrix -> moyenne sur les colonnes
 	if(!is.null(dim(A))){
-		pow_A = apply(pow_A,1, mean, na.rm=T)
-		pow_y = apply(pow_y,1, mean, na.rm=T)
+		pow_A = apply(pow_A,1, mean, na.rm=TRUE)
+		pow_y = apply(pow_y,1, mean, na.rm=TRUE)
 	}
 	# select only first half of vectors
 	pow_A = pow_A[1:(Nfft/2+1)] 
@@ -1260,7 +1334,8 @@ powSpec <- function(A,T = 0.8, fac = 1000000, plotSpec=TRUE, returnSpec=FALSE,ti
 			plot(fre,pow_h,type="l", col="red",
 				yaxt = "n",
 				ylab="")
-				legend("topright",c("input signal","filter","filtered signal"),col = c("black", "red", "blue"), lwd=c(2,1,2),bg = "white")
+				legend("topright",c("input signal","filter","filtered signal"),
+              col = c("black", "red", "blue"), lwd=c(2,1,2),bg = "white")
 			abline(v=f/1000000, col="grey",lty=2)
 			#title("Power spectrum")
 			#title("Power spectrum")
@@ -1274,7 +1349,8 @@ powSpec <- function(A,T = 0.8, fac = 1000000, plotSpec=TRUE, returnSpec=FALSE,ti
 }
 
 winSincKernel <- function(L,f,type=c("low","high")){
-	type = match.arg(type)			# if L is even (because L - filter length - must be odd)
+	type = match.arg(type)	# if L is even (because L - filter length - 
+#                             must be odd)
 	x = (-(L-1)/2):((L-1)/2)
 	# low-pass
 	h = hammingWindow(L) * sincMod(x,2*pi*f)	# h is our filter
@@ -1355,7 +1431,8 @@ phaseRotation <- function(x,phi){
 
 # plot/add a 2D profile in rgl
 
-# addProfile3D <- function(LINES, col=palGPR(n=101),plotNew=FALSE, normalize=TRUE, v=1, zlim=NULL, AGC=FALSE, sig=10){
+# addProfile3D <- function(LINES, col=palGPR(n=101),plotNew=FALSE, normalize=TRU
+# E, v=1, zlim=NULL, AGC=FALSE, sig=10){
 	# if(plotNew){
 		# # rgl.open()
 		# open3d()
@@ -1370,7 +1447,8 @@ phaseRotation <- function(x,phi){
 		# GPR <- readDT1(LINES[[i]])
 		# #------------- read data ------------------#
 
-		# myGPRdZ <- as.numeric(as.character(GPR$hd[7,2]))/as.numeric(as.character(GPR$hd[5,2]))
+		# myGPRdZ <- as.numeric(as.character(GPR$hd[7,2]))/as.numeric(as.character(
+# GPR$hd[5,2]))
 		# HD <- GPR$dt1hd
 		
 		# A <- GPR$data
@@ -1390,7 +1468,8 @@ phaseRotation <- function(x,phi){
 		# nc = ncol(A)
 		# X <- matrix(HD$recx, ncol=nc, nrow=nr, byrow=TRUE)
 		# Y <- matrix(HD$recy, ncol=nc, nrow=nr, byrow=TRUE)
-		# Z <-  matrix(HD$topo, ncol=nc, nrow=nr, byrow=TRUE) - matrix(myGPRdZ*v*(0:(nr-1)), ncol=nc, nrow=nr, byrow=FALSE)
+		# Z <-  matrix(HD$topo, ncol=nc, nrow=nr, byrow=TRUE) - matrix(myGPRdZ*v*(0:(
+# nr-1)), ncol=nc, nrow=nr, byrow=FALSE)
 		# if(all(HD$topo==0)){
 			# warning("No topography \n")
 		# }
@@ -1407,8 +1486,10 @@ phaseRotation <- function(x,phi){
 		# # if(is.null(col)) 		col <- tim.colors(101)	# height color lookup table
 
 		# colA <- col[ (A)*100+1 ] # assign colors to heights for each point 
-		# rgl.surface(X, Y, Z, color=colA, back="fill", smooth = TRUE, lit=FALSE, lwd=0) 
-		# # surface3d(X, Y, Z, color=colA, back="fill", smooth = FALSE, lit=FALSE, lwd=0) 
+		# rgl.surface(X, Y, Z, color=colA, back="fill", smooth = TRUE, lit=FALSE, 
+# lwd=0) 
+		# # surface3d(X, Y, Z, color=colA, back="fill", smooth = FALSE, lit=FALSE, 
+# lwd=0) 
 	# }
 # }
 
@@ -1461,9 +1542,12 @@ byte2volt <- function ( V=c(-50,50), nBytes = 16) {
 		
 		A_fftint <- matrix(0,nrow=n*nf,ncol=n*nk)
 		A_fftint[1:(nf/2),1:(nk/2)] <- A1_fft[1:(nf/2),1:(nk/2)]
-		A_fftint[((n-1)*nf + nf/2+1):(n*nf),((n-1)*nk + nk/2 + 1):(n*nk)] <- A1_fft[(nf/2+1):(nf),(nk/2 + 1):nk]
-		A_fftint[1:(nf/2),((n-1)*nk + nk/2 + 1):(n*nk)]<- A1_fft[1:(nf/2),(nk/2 + 1):nk]
-		A_fftint[((n-1)*nf + nf/2+1):(n*nf),1:(nk/2)] <- A1_fft[(nf/2+1):(nf),1:(nk/2)]
+		A_fftint[((n-1)*nf + nf/2+1):(n*nf),((n-1)*nk + nk/2 + 1):(n*nk)] <- 
+          A1_fft[(nf/2+1):(nf),(nk/2 + 1):nk]
+		A_fftint[1:(nf/2),((n-1)*nk + nk/2 + 1):(n*nk)] <- 
+          A1_fft[1:(nf/2),(nk/2 + 1):nk]
+		A_fftint[((n-1)*nf + nf/2+1):(n*nf),1:(nk/2)] <- 
+          A1_fft[(nf/2+1):(nf),1:(nk/2)]
 		
 		A_int = fft(A_fftint, inverse = TRUE)
 		A_int <- A_int[1:(n*nr),1:(n*nc)]/(nk*nf)
@@ -1502,13 +1586,16 @@ convolution <- function(a,b){
 }
 
 # cf. matlab
-# A convolution matrix is a matrix, formed from a vector, whose product with another vector 
+# A convolution matrix is a matrix, formed from a vector, whose product with 
+another vector 
 # is the convolution of the two vectors.
 
-# A = convmtx(y,nf) returns the convolution matrix, A, such that the product of A and a vector, x, 
+# A = convmtx(y,nf) returns the convolution matrix, A, such that the product of 
+A and a vector, x, 
 # is the convolution of y and x. 
 # If y is a column vector of length m, A is (m+nf-1)-by-nf and the 
-# product of A and a column vector, x, of length n is the convolution of y and x. 
+# product of A and a column vector, x, of length n is the convolution of y and 
+x. 
 convmtx <- function(y, nf){
 	ny <- length(y)
 	L <- nf + ny -1
@@ -1570,7 +1657,8 @@ optPhaseRotation <- function(gpr,rot=0.01,plot=TRUE){
 	for(i in seq_along(pi_seq)){
 		xrot <- phaseRotation(x_dec, pi_seq[i])
 		# xrot_scaled2 <- (xrot - 	mean(xrot))^2
-		# kurt[i] <- ((1/nx) * sum( xrot_scaled2^2)) / ( (1/nx) *sum( xrot_scaled2))^2 
+		# kurt[i] <- ((1/nx) * sum( xrot_scaled2^2)) / ( (1/nx) *sum( xrot_scaled2))
+^2 
 		kurt[i] <- e1071::kurtosis( xrot)
 	}
 	phi_max <- pi_seq[which.max(kurt)]
@@ -1642,7 +1730,8 @@ inPoly <- function(x,y, vertx, verty){
 	return(inPo)
 }
 
-.FKSpectrum <- function(A,dx=0.25,dz=0.8, npad=1, p=0.01,plotSpec=TRUE,returnSpec=FALSE){
+.FKSpectrum <- function(A,dx=0.25,dz=0.8, npad=1, p=0.01,plotSpec=TRUE,
+                          returnSpec=FALSE){
 	# A <- GPR$data		#[90:1000,]
 	nr <- nrow(A)	# time	
 	nc <- ncol(A)	# x	
@@ -1687,10 +1776,12 @@ inPoly <- function(x,y, vertx, verty){
 	#       increase the visibility of small events 
 	# p = 0.05
 	if(plotSpec){
-		image((t(A1_fft_pow[1:(nf/2),])^p), yaxt="n", xaxt="n",xlab="wavenumber (1/m)",ylab="frequency MHz")
+		image((t(A1_fft_pow[1:(nf/2),])^p), yaxt="n", xaxt="n",
+          xlab="wavenumber (1/m)",ylab="frequency MHz")
 		axis(side=1,at=xat, labels=xLabels)
 		axis(side=2,at=yat, labels=yLabels)
-		# image((t(A1_fft_pow[1:(nf/2),])^p), xat=xat, xLabels=xLabels, yat=yat,yLabels=yLabels,xlab="wavenumber (1/m)",ylab="frequency MHz")
+		# image((t(A1_fft_pow[1:(nf/2),])^p), xat=xat, xLabels=xLabels, yat=yat,
+# yLabels=yLabels,xlab="wavenumber (1/m)",ylab="frequency MHz")
 	}
 	if(returnSpec){
 		return(list(pow=A1_fft_pow[1:(nf/2),], pha=A1_fft_phase[1:(nf/2),]))
@@ -1771,9 +1862,12 @@ inPoly <- function(x,y, vertx, verty){
 	# source('convolution2D.R')
 	# cat('> Function(s) loaded: "convolution2D.R" \n')
 
-# @param [matrix] 	A 				(each column represent a trace, each row a time step / depth step)
-# @param [boolean] 	plot=TRUE 		(if false nothing is ploted except the frame and the colorbar)	
-# @param [boolean]	trNorm=FALSE	(if true, each single trace are normalized (tn(i) = t(i)/sum(t(i))))
+# @param [matrix] 	A 				(each column represent a trace, 
+                            # each row a time step / depth step)
+# @param [boolean] 	plot=TRUE 		(if false nothing is ploted 
+                                    # except the frame and the colorbar)	
+# @param [boolean]	trNorm=FALSE	(if true, each single trace are normalized 
+                                   # (tn(i) = t(i)/sum(t(i))))
 # @param [c(2)]		zlim=			(limit for the z-values (min,max))
 # @param [text]		ylab= 			(label of the y-axis)
 # @param [text]		xlab= 			(label of the x-axis)
@@ -1783,7 +1877,8 @@ inPoly <- function(x,y, vertx, verty){
 # @return void
 # -------------------------------------------
 
-localOrientation <- function(P,blksze=c(5,10), thresh=0.1, winEdge=c(7,7), winBlur = c(3,3), winTensor = c(5,10), sdTensor=2, ...){
+localOrientation <- function(P,blksze=c(5,10), thresh=0.1, winEdge=c(7,7), 
+winBlur = c(3,3), winTensor = c(5,10), sdTensor=2, ...){
 	
 	n = nrow(P)
 	m = ncol(P)
@@ -1862,7 +1957,8 @@ localOrientation <- function(P,blksze=c(5,10), thresh=0.1, winEdge=c(7,7), winBl
 	o_lambda1 = (Jxx + Jyy + sqrt((Jxx - Jyy)^2 + 4*(Jxy)^2))/2
 	o_lambda2 = (Jxx + Jyy - sqrt((Jxx - Jyy)^2 + 4*(Jxy)^2))/2
 	
-	return(list(energy = o_alpha, anisotropy = o_beta, orientation = o_theta, lambda1 = o_lambda1, lambda2 = o_lambda2 ))
+	return(list(energy = o_alpha, anisotropy = o_beta, orientation = o_theta, 
+lambda1 = o_lambda1, lambda2 = o_lambda2 ))
 
 }
 #-----------------
@@ -1909,9 +2005,6 @@ dy_gkernel <- function(n,m, sigma=1){
 	g = y*exp(-(x^2+y^2)/(2*sigma^2))
 }
 
-
-
-
 convolution2D <- function(h,k, bias=0){
 	nh = nrow(h)
 	mh = ncol(h)
@@ -1937,7 +2030,8 @@ convolution2D <- function(h,k, bias=0){
 # %Inputs %I - image to pad 
 # %p - size of padding around image 
 # %Output %Ipad - padded image 
-# SOURCE: http://matlabgeeks.com/tips-tutorials/how-to-blur-an-image-with-a-fourier-transform-in-matlab-part-i/
+# SOURCE: http://matlabgeeks.com/tips-tutorials/how-to-blur-an-image-with-a-
+# fourier-transform-in-matlab-part-i/
  # service@matlabgeeks.com i
 paddMatrix <- function(I,p1, p2=NULL){
 	if(is.null(p2)){
@@ -1963,14 +2057,16 @@ paddMatrix <- function(I,p1, p2=NULL){
 }
 
 
-#########################################################################################
+################################################################################
+#########
 # Source:
 # A replication of MatLab repmat function!
 # R FOR OCTAVE USERS
 # version 0.4
 # Copyright (C) 2001 Robin Hankin
 # http://cran.r-project.org/doc/contrib/R-and-octave.txt
-#########################################################################################
+################################################################################
+#########
 repmat <- function(a,n,m) {kronecker(matrix(1,n,m),a)}
 
 
@@ -1998,7 +2094,8 @@ readDT1 <- function( fPath){
 	fileNameHD 	<- paste(dirName, "/",baseName,".HD",sep="")
 	fileNameDT1	<- paste(dirName, "/",baseName,".DT1",sep="")
 	
-	headHD <-  scan(fileNameHD, what=character(),strip.white=TRUE,quiet=TRUE,fill=TRUE,blank.lines.skip=TRUE,flush=TRUE,sep="\n")
+	headHD <-  scan(fileNameHD, what=character(),strip.white=TRUE,quiet=TRUE,
+fill=TRUE,blank.lines.skip=TRUE,flush=TRUE,sep="\n")
 	nHD <- length(headHD)
 	headerHD <- data.frame(nrow=nHD,ncol=2)
 	for(i in seq_along(headHD)){
@@ -2017,33 +2114,36 @@ readDT1 <- function( fPath){
 	#--- READ DT1 ---#
 	dt1 <- file(fileNameDT1 , "rb")
 
-	indexDT1Header=c("traces", "position", "samples","topo", "NA1", "bytes","tracenb", "stack","window","NA2", "NA3",
-				"NA4", "NA5", "NA6", "recx","recy","recz","transx","transy","transz","time0","zeroflag", "NA7", "time","x8",
-				"com")	#,"com1","com2","com3","com4","com5","com6")
+	indexDT1Header=c("traces", "position", "samples","topo", "NA1", "bytes",
+                    "tracenb", "stack","window","NA2", "NA3", "NA4",
+                    "NA5", "NA6", "recx","recy","recz","transx","transy",
+                    "transz","time0","zeroflag", "NA7", "time","x8","com")	
+                    #,"com1","com2","com3","com4","com5","com6")
 	headerDT1 = list()
 	myData = matrix(NA,nrow=nbPt,ncol=nbTraces)
 	for(i in 1:nbTraces){
 		for(j in 1:25){
-			headerDT1[[indexDT1Header[j]]][i] = readBin(dt1, what=numeric(), n = 1L,size=4)
-			# hour of the day: format(as.POSIXct('0001-01-01 00:00:00') + headerDT1$time[1], "%I:%M:%S %p") 
+			headerDT1[[indexDT1Header[j]]][i] = readBin(dt1, what=numeric(), 
+                                                  n = 1L, size=4)
+			# hour of the day: format(as.POSIXct('0001-01-01 00:00:00') + 
+               # headerDT1$time[1], "%I:%M:%S %p") 
 		}
 		# read the 28 characters long comment
 		headerDT1[[indexDT1Header[26]]][i] = readChar(dt1, 28)
 		# read the nbPt * 2 bytes rrace data
 		myData[,i] = readBin(dt1, what=integer(), n = nbPt, size=2)
 	}
-	#headerDT1$time2 <- format(as.POSIXct(paste(as.character(headerHD[2,2]), ' 00:00:00', sep="")) + headerDT1$time, "%d-%m-%Y %I:%M:%S") 
+	#headerDT1$time2 <- format(as.POSIXct(paste(as.character(headerHD[2,2]), 
+            # ' 00:00:00', sep="")) + headerDT1$time, "%d-%m-%Y %I:%M:%S") 
 	close(dt1)
 	return(list(hd = headerHD, dt1hd = headerDT1, data=myData))
 }
 #-----------------
 #-----------------
 
-
 # A = GPR$hd
 # if position = TRUE, return the row number
 # if number = TRUE, try to convert
-
 .getHD <- function(A,string,number=TRUE,position=FALSE){
 	if(number){
 		value <- as.numeric(A[trimStr(A[,1])==string,2])
@@ -2062,14 +2162,9 @@ readDT1 <- function( fPath){
 	}
 }
 
-
-
-
-
 #--------------------------------------
-
-# http://stackoverflow.com/questions/17256834/getting-the-arguments-of-a-parent-function-in-r-with-names
-
+# http://stackoverflow.com/questions/17256834/getting-the-arguments-of-a-parent-
+# function-in-r-with-names
 # Ryan Grannell
 # website 	twitter.com/RyanGrannell
 # location 	Galway, Ireland
@@ -2082,7 +2177,8 @@ getArgs <- function (return_character=TRUE) {
 	if(return_character){
 		if(narg >=3){
 			eval_arg <- sapply(arg[3:narg],eval)
-			paste(arg[[1]],":", paste(names(arg[3:narg]),sapply(eval_arg,pasteArgs,arg[3:narg]),sep="=",collapse="+"),sep="")
+			paste(arg[[1]],":", paste(names(arg[3:narg]),
+          sapply(eval_arg,pasteArgs,arg[3:narg]),sep="=",collapse="+"),sep="")
 		}else{
 			paste(arg[[1]],":",sep="")
 		}
@@ -2090,7 +2186,6 @@ getArgs <- function (return_character=TRUE) {
 		return(arg)
 	}
 }
-
 
 pasteArgs <- function(eval_arg,arg){
 	if(is.numeric(eval_arg) || is.character(eval_arg)){
@@ -2105,7 +2200,8 @@ pasteArgs <- function(eval_arg,arg){
 }
 
 addArg <- function(proc, arg){
-# paste(names(arg[3:narg]),sapply(eval_arg,paste_args,arg[3:narg]),sep="=",collapse="+")
+# paste(names(arg[3:narg]),sapply(eval_arg,paste_args,arg[3:narg]),sep="=",
+# collapse="+")
 	proc_add <- paste(names(arg), sapply(arg,pasteArgs, arg),sep="=",collapse="+")
 	if(substr(proc,nchar(proc),nchar(proc)) == ":"){
 		proc <- paste(proc,proc_add,sep="")
@@ -2118,7 +2214,8 @@ addArg <- function(proc, arg){
 #--------------------------------
 # wapply: A faster (but less functional) "rollapply" for vector setups
 # April 23, 2013
-# By A.N. Spiess, senior scientist at the Department of Andrology at the University Hospital Hamburg-Eppendorf
+# By A.N. Spiess, senior scientist at the Department of Andrology at the 
+# University Hospital Hamburg-Eppendorf
 # This is what turned out (wapply for "window apply")
 wapply <- function(x=NULL, width = NULL, by = NULL, FUN = NULL, ...){
 	FUN <- match.fun(FUN)
@@ -2131,8 +2228,6 @@ wapply <- function(x=NULL, width = NULL, by = NULL, FUN = NULL, ...){
 	OUT <- base:::simplify2array(OUT, higher = TRUE)
 	return(OUT)
 }
-
-
 
 xyToLine <- function(x){
 	sp::Line(x[,1:2])

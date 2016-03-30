@@ -779,7 +779,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
           yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
           resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)  
   if(barscale){
-    colkey(clim = zlim, clab = clab, width = 0.7, dist = 0.2, 
+    colkey(clim = zlim, clab = clab, width = 0.7, dist = 0.1, 
           add = TRUE, col = col)
   }
   usr <- par("usr")

@@ -753,9 +753,9 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
     }
   }
   if(grepl("[s]$",depthunit)){
-    mai <- op$mai + c(0,0,0,1.5)
+    mai <- op$mai + c(0,0,0,2.5)
   }else{
-    mai <- op$mai + c(0,0,0,0.9)
+    mai <- op$mai + c(0,0,0,1.5)
   }
 
   z <- t(z[nrow(z):1,])

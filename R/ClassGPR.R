@@ -1050,9 +1050,9 @@ matrix(0,ncol=ncol(A),nrow=w))
 #  }
 #)
 
-setMethod("filter2D", "GPR", function(x, type=c("median3x3"), ...){
+setMethod("filter2D", "GPR", function(x, type = c("median3x3"), ...){
     type <- match.arg(type)
-    if(type=="median3x3"){
+    if(type == "median3x3"){
       x@data <-  .medianFilter3x3(x@data)
     }
     proc <- getArgs()

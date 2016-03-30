@@ -7,6 +7,7 @@ Author: Who wrote it
 Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: More about what it does (maybe more than one line)
 License: What license is it under?
+LazyData: true
 Depends: methods, graphics
 Collate: global.R ClassGPR.R ClassGPRsurvey.R
 Imports: methods, graphics, sp, rgdal, rgeos, MASS, signal, colorspace, Cairo, rgl, EMD, mmand, e1071

@@ -1138,8 +1138,8 @@ rmsScaling <- function(...){
 
 # @return power spectrum (frequency, power, phase)
 # -------------------------------------------
-powSpec <- function(A,dT = 0.8, fac = 1000000, plotSpec=TRUE, returnSpec=FALSE,
-titleSpec=NULL, unwrapPhase = TRUE){
+powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE, 
+                  returnSpec = FALSE, titleSpec = NULL, unwrapPhase = TRUE){
   A = as.matrix(A)
   nr = nrow(A)
   nc = ncol(A)
@@ -1221,8 +1221,8 @@ titleSpec=NULL, unwrapPhase = TRUE){
 # @return power spectrum (frequency, power, phase)
 # -------------------------------------------
 
-.fFilter1D <- function(A, f=c(100),  type = c('low','high','bandpass'),L=257, 
-                      dT = 0.8, plotSpec = FALSE){
+.fFilter1D <- function(A, f = c(100), type = c('low', 'high', 'bandpass'), 
+                        L = 257, dT = 0.8, plotSpec = FALSE){
   
   type = match.arg(type)
   A <- as.matrix(A)

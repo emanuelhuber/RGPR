@@ -3,7 +3,6 @@
 \docType{methods}
 \name{readGPR}
 \alias{readGPR}
-\alias{readGPR,character-method}
 \title{Read a GPR data file}
 \usage{
 \S4method{readGPR}{character}(fPath, desc = "", coordfile = NULL,
@@ -26,5 +25,8 @@ The GPR data as object of the class RGPR.
 }
 \description{
 Read a GPR data file
+}
+\examples{
+NULL
 }
 

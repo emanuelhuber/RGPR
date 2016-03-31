@@ -3,9 +3,12 @@
 \docType{methods}
 \name{time0}
 \alias{time0}
+\alias{time0<-}
 \title{'time-zero' of every traces}
 \usage{
 \S4method{time0}{GPR}(x)
+
+\S4method{time0}{GPR}(x) <- value
 }
 \arguments{
 \item{x}{An object of the class GPR.}

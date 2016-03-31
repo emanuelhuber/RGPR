@@ -5,44 +5,91 @@
 #'
 #' @slot version A length-one character vector indicating the version of RGPR
 #' @slot data A \eqn{m \time n} numeric matrix consiting of a 
-#' cross-section of signal amplitudes as a function of the GPR position. The 
-#' columns of \code{data} correspond to the GPR traces and the row of 
-#' \code{data} to the time/depth samples.
-
+#'            cross-section of signal amplitudes as a function of the GPR 
+#'            position. The columns of \code{data} correspond to the GPR 
+#'            traces and the row of \code{data} to the time/depth samples.
+#' @slot traces A length-m numeric vector corresponding to the trace number.
+#' @slot depth A length-n numeric vector indicating the sampling time or
+#'              the vertical position of the trace samples.
+#' @slot pos A length-m numeric vector indicating the relative position of
+#'            the trace along the survey profile.
+#' @slot time0 A length-m numeric vector containing the 'time-zero' of every
+#'              trace.
+#' @slot time A length-m numeric vector containing the recording time of 
+#'            every trace.
+#' @slot com A length-m character vector containing fiducial markers associated
+#'           with the traces.
+#' @slot ann A length-m character vector containing annotations associated 
+#'          with the traces.
+#' @slot coord A \eqn{m \time 3} matrix containing the (x, y, z) positions of
+#'             every trace.
+#' @slot rec  A \eqn{m \time 3} matrix containing the (x, y, z) positions of
+#'             the receiver for every trace.
+#' @slot trans A \eqn{m \time 3} matrix containing the (x, y, z) positions of
+#'             the transmitter for every trace.
+#' @slot coordref A length-3 numeric vector containing the coordinates of a
+#'                local reference.
+#' @slot freq A length-one numeric vector corresponding to the GPR antennae
+#'            frequency (in MHz).
+#' @slot dz A length-one numeric vector corresponding to the time or depth
+#'          sampling step.
+#' @slot dx A length-one numeric vector corresponding to the trace step.
+#' @slot antsep A length-one numeric vector corresponding to the antenna
+#'              separation.
+#' @slot name A length-one character vector containing the name of the GPR
+#'            data.
+#' @slot description A length-one character vector containing the description 
+#'                  of the GPR data.
+#' @slot filepath A length-one character vector containing the file path of 
+#'                the original GPR data.
+#' @slot depthunit A length-one character vector corresponding to the 
+#'                  time/depth unit (e.g., "ns", "m").
+#' @slot posunit A length-one character vector corresponding to the 
+#'               (x, y)-unit (e.g., "m").
+#' @slot surveymode A length-one character vector containing the survey mode
+#'                  (e.g., "Reflection", "CMP")
+#' @slot date A length-one character vector containing the date of the survey
+#'            in the format "yyyy-mm-dd".
+#' @slot crs A length-one character vector containing the coordinate 
+#'          reference system following the R notation of proj4string 
+#'          from the PROJ.4 library. 
+#' @slot proc A length-varying character vector whose each element correspond
+#'            to a processing step applied to the data.
+#' @slot vel  A list containing the velocity model.
+#' @slot delineations A list containing delineated structures.
+#' @slot hd A list containing less relevant additional informations.
 setClass(
   Class="GPR",  
   slots=c(
     version = "character",   # version of the class
-    data="matrix",     # one column per trace
-    traces="numeric",  # numbering of each trace (from 1 to ntr)
-    depth="numeric",  # depth position
-    pos="numeric",    # position  of the traces
-    time0="numeric",  # time-zero (first air-wave arrival)
-    time="numeric",   # time of the trace recording
-    com="character",   # fiducial marks
-    ann="character",  # annotation (e.g. intersections)
-    coord="matrix",   # coordinates (x,y,z) of each traces
-    rec="matrix",     # coordinates (x,y,z) of the receiver antenna
-    trans="matrix",   # coordinates (x,y,z) of the transmitter antenna
-    coordref="numeric", # coordinates references
-#     ntr = "numeric",   # number of traces
-#     w = "numeric",     # time window length
-    freq ="numeric",   # antenna frequency
+    data = "matrix",     # one column per trace
+    traces = "numeric",  # numbering of each trace (from 1 to ntr)
+    depth = "numeric",  # depth position
+    pos = "numeric",    # position  of the traces
+    time0 = "numeric",  # time-zero (first air-wave arrival)
+    time = "numeric",   # time of the trace recording
+    com = "character",   # fiducial marks
+    ann = "character",  # annotation (e.g. intersections)
+    coord = "matrix",   # coordinates (x,y,z) of each traces
+    rec = "matrix",     # coordinates (x,y,z) of the receiver antenna
+    trans = "matrix",   # coordinates (x,y,z) of the transmitter antenna
+    coordref = "numeric", # coordinates references
+    freq = "numeric",   # antenna frequency
     dz = "numeric",   # time/depth sampling
-    dx ="numeric",     # spatial trace sampling
-    antsep ="numeric",   # antenna separation
-    name="character",  # name of the profile
-    description ="character",  # description of the pro
-    filepath ="character",  # filepath of the profile
-    depthunit ="character", # time/depth unit
+    dx = "numeric",     # spatial trace sampling
+    antsep = "numeric",   # antenna separation
+    name = "character",  # name of the profile
+    description = "character",  # description of the pro
+    filepath = "character",  # filepath of the profile
+    depthunit = "character", # time/depth unit
     posunit = "character",  # spatial unit
-    surveymode ="character", # survey mode (reflection/CMP)
-    date ="character",    # date of the survey , format %Y-%m-%d
-    crs ="character",  # coordinate reference system of coord
-    proc="character",  # processing steps
-    vel="list",      # velocity model
-    delineations="list",  # delineated lines
-    hd="list"      # header from *.dt1 file
+    surveymode = "character", # survey mode (reflection/CMP)
+    date = "character",    # date of the survey , format %Y-%m-%d
+    crs = "character",  # coordinate reference system of coord
+    proc= "character",  # processing steps
+    vel = "list",      # velocity model
+    delineations = "list",  # delineated lines
+    hd = "list"      # header from *.dt1 file
   )
 )
 
@@ -225,8 +272,20 @@ setClass(
 
 }
 
+#' Read a GPR data file
+#' 
+#' @param fPath Filepath (character).
+#' @param desc Short description of the file (character).
+#' @param coordfile Filepath of a text file containing the coordinates (x,y,z)
+#'                   of each traces.
+#' @param crs Coordinate reference system (character)
+#' @param intfile Filepath of a text file containing the intersection.
+#' @return The GPR data as object of the class RGPR.
+#' @examples
+#' NULL
+#' @name readGPR
 #' @rdname readGPR
-#' @export
+# @aliases readGPR-methods
 setMethod("readGPR", "character", function(fPath, desc = "", 
           coordfile = NULL, crs = "", intfile = NULL){
     ext <- .fExt(fPath)
@@ -442,9 +501,6 @@ as.SpatialPoints <- function (x, ...){
   return(myPoints)
 }
 
-      
-    
-
 setMethod("as.numeric", "GPR",  function(x, ...) as.numeric(x@data))
 setMethod("as.double", "GPR",  function(x, ...) as.double(x@data))
 
@@ -456,7 +512,6 @@ setMethod("median", "GPR", function(x, na.rm = FALSE)
 median(as.vector(x@data),na.rm = FALSE))
 # setMethod("range", "GPR", function(..., na.rm=FALSE) 
 # range(as.matrix(...),na.rm=na.rm))
-
 
 setMethod(
   f="apply", 
@@ -507,9 +562,16 @@ setMethod(
     range(x@data,na.rm=na.rm)
   }
 )
-
-#       ?' @family math functions
-# math group generic functions
+#' Basic mathematical functions
+#'
+#' 
+#' @param x An object of the class RGPR.
+#' @examples
+#' data(frenkeLine00)
+#' A <- frenkeLine00
+#' @name readGPR
+#' @rdname Arith
+# @aliases readGPR-methods
 # getGroupMembers("Math")
 setMethod(
   f="Math",
@@ -715,10 +777,17 @@ setMethod("gethd", "GPR", function(x,hd=NULL){
   } 
 )
 
+#' @name name
+#' @rdname name
+#' @export
 setMethod("name", "GPR", function(x){
   return(x@name)
 } 
 )
+
+#' @name name<-
+#' @rdname name
+#' @export
 setReplaceMethod(
   f="name",
   signature="GPR",
@@ -729,27 +798,56 @@ setReplaceMethod(
   }
 )
 
+#' @name description
+#' @rdname description
+#' @export
 setMethod("description", "GPR", function(x){
   return(x@description)
 } 
 )
+
+#' @name description<-
+#' @rdname description
+#' @export
+setReplaceMethod(
+  f="description",
+  signature="GPR",
+  definition=function(x,value){
+    description <- as.character(value)[1]
+    return(x)
+  }
+)
+#' @name filepath
+#' @rdname filepath
+#' @export
 setMethod("filepath", "GPR", function(x){
     return(x@filepath)
   } 
 )
+
+#' @name filepath<-
+#' @rdname filepath
+#' @export
 setReplaceMethod(
   f="filepath",
   signature="GPR",
   definition=function(x,value){
-    value <- as.character(value)[1]
-    x@filepath <- value
+    x@filepath <- as.character(value)[1]
     return(x)
   }
 )
+
+#' @name ann
+#' @rdname ann
+#' @export
 setMethod("ann", "GPR", function(x){
     return(x@ann)
   } 
 )
+
+#' @name ann<-
+#' @rdname ann
+#' @export
 setReplaceMethod(
   f="ann",
   signature="GPR",
@@ -768,6 +866,10 @@ setReplaceMethod(
     return(x)
   }
 )
+
+#' @name coord
+#' @rdname coord
+#' @export
 setMethod("coord", "GPR", function(x, i, ...){
 #     if(is.integer(i) && i > 0 && i < 4)
     if(length(x@coord) == 0){
@@ -779,6 +881,10 @@ setMethod("coord", "GPR", function(x, i, ...){
     return(x@coord[, i, ...])
   } 
 )
+
+#' @name coord<-
+#' @rdname coord
+#' @export
 setReplaceMethod(
   f="coord",
   signature="GPR",
@@ -792,10 +898,18 @@ setReplaceMethod(
     return(x)
   }
 )
+
+#' @name crs
+#' @rdname crs
+#' @export
 setMethod("crs", "GPR", function(x){
     return(x@crs)
   } 
 )
+
+#' @name crs<-
+#' @rdname crs
+#' @export
 setReplaceMethod(
   f="crs",
   signature="GPR",
@@ -805,10 +919,18 @@ setReplaceMethod(
     return(x)
   }
 )
+
+#' @name vel
+#' @rdname vel
+#' @export
 setMethod("vel", "GPR", function(x){
   return(x@vel)
 } 
 )
+
+#' @name vel<-
+#' @rdname vel
+#' @export
 setReplaceMethod(
   f="vel",
   signature="GPR",
@@ -832,13 +954,17 @@ setReplaceMethod(
 #' time0(frenkeLine00)
 #' @seealso \code{\link{firstBreack}} to estimate the first wave break.
 #' @name time0
-#' aliases time0crs-methods crs<- crs<--methods
 #' @rdname time0
 #' @export
+# @aliases time0-methods time0<- time0<--methods
 setMethod("time0", "GPR", function(x){
     return(x@time0)
   } 
 )
+
+#' @name time0<-
+#' @rdname time0
+#' @export
 setReplaceMethod(
   f="time0",
   signature="GPR",
@@ -852,6 +978,10 @@ setReplaceMethod(
     return(x)
   }
 )
+
+#' @name fid
+#' @rdname fid
+#' @export
 setReplaceMethod(
   f="fid",
   signature="GPR",
@@ -861,15 +991,30 @@ setReplaceMethod(
     return(x)
   }
 )
+
+#' @name fid<-
+#' @rdname fid
+#' @export
 setMethod("fid", "GPR", function(x){
     return(x@com)
   } 
 )
+
+#' @name values
+#' @rdname values
+#' @export
 setMethod("values", "GPR", function(x){
     return(x@data)
   } 
 )
-setMethod("values<-", "GPR", function(x,value){
+
+#' @name values<-
+#' @rdname values
+#' @export
+setReplaceMethod(
+  f="values",
+  signature="GPR",
+  definition=function(x,value){
     if(all(dim(value)==dim(x))){
       x@data <- value
       return(x)
@@ -880,12 +1025,30 @@ setMethod("values<-", "GPR", function(x,value){
   } 
 )
 
+#' @name ampl
+#' @rdname ampl
+#' @export
 setMethod("ampl", "GPR", function(x, FUN=mean, ...){
   AMP <- apply(abs(x@data),1,FUN,...)
     return(AMP)
   } 
 )
 
+#' Processing steps applied to the data
+#' 
+#' \code{processing} returns all the processing steps applied to the data.
+#' 
+#' @param x An object of the class GPR.
+#' @return A character vector whose elements contain the name of the 
+#' processing functions with their arguments applied previously on the
+#' GPR data.
+#' @examples
+#' data(frenkeLine00)
+#' A <- dewow(frenkeLine00, type = "Gaussian")
+#' processing(A)
+#' @name processing
+#' @rdname processing
+#' @export
 setMethod("processing", "GPR", function(x){
     return(x@proc)
   } 
@@ -894,6 +1057,9 @@ setMethod("processing", "GPR", function(x){
 
 #================= PROCESSING ===============#
 #----------------- DC-SHIFT
+#' @name dcshift
+#' @rdname dcshift
+#' @export
 setMethod("dcshift", "GPR", function(x, u, FUN=mean){
     x <-  x - apply(x[u,],2,FUN)
     if(class(FUN)=="function"){
@@ -909,14 +1075,21 @@ setMethod("dcshift", "GPR", function(x, u, FUN=mean){
 )
 
 #----------------- FIRST-BREAK
-# Jaun I. Sabbione and Danilo Velis (2010). Automatic first-breaks picking: 
-# New strategies and algorithms. Geophysics, 75 (4): v67-v76
-# -> modified Coppens's Method
-# nl = length leading window: about one period of the firs-arrival waveform
-# ns = length eps (edge preserving smoothing) window: good results with ns 
-# between one and two signal periods
-#        -> default values ns= 1.5*nl
-# bet = stabilisation constant, not critical, set to 0.2*max(amplitude) 
+#' First wave break
+#'
+#' Compute the first wave break
+#'
+#' Jaun I. Sabbione and Danilo Velis (2010). Automatic first-breaks picking: 
+#' New strategies and algorithms. Geophysics, 75 (4): v67-v76
+#' -> modified Coppens's Method
+#' nl = length leading window: about one period of the firs-arrival waveform
+#' ns = length eps (edge preserving smoothing) window: good results with ns 
+#' between one and two signal periods
+#'        -> default values ns= 1.5*nl
+#' bet = stabilisation constant, not critical, set to 0.2*max(amplitude) 
+#' @name dcshift
+#' @rdname dcshift
+#' @export
 setMethod("firstBreack", "GPR", function(x, w = 11, ns = NULL, bet = NULL){
     w <- round(w / x@dz)
     if( (w %% 2) == 0){
@@ -938,23 +1111,37 @@ setMethod("firstBreack", "GPR", function(x, w = 11, ns = NULL, bet = NULL){
 )
 
 #----------------- DEWOW
-setMethod("dewow", "GPR", function(x, type=c("MAD","Gaussian"),...){
+#' Trace dewowing
+#' 
+#' \code{dewow} remove the low-frequency component (the so-called 'wow') of 
+#' every trace..
+#' 
+#' @param x An object of the class GPR.
+#' @param type A length-one character vector, either \code{MAD} (Median
+#'              Absolute Deviation filter) or \code{Gaussian} (Gaussian
+#'              filter)
+#' @param w A length-one numeric vector equal to the window length 
+#'            of the filter. Per default, the filter length is five times
+#'            the GPR pulse width.
+#' @return An object of the class GPR whose traces are dewowed.
+#' @examples
+#' data(frenkeLine00)
+#' A <- dewow(frenkeLine00, type = "Gaussian")
+#' A
+#' @name dewow
+#' @rdname dewow
+#' @export
+setMethod("dewow", "GPR", function(x, type=c("MAD","Gaussian"),w){
   type <- match.arg(type)
-  if(type=="MAD"){  
-    w = 100  # argument initialization
-    x0 = 0.1  # argument initialization
-    if( length(list(...)) ){
-      dots <- list(...)
-      if( !is.null(dots$w)){
-        w <- dots$w
-      }
-      if( !is.null(dots$x0)){
-        x0 <- dots$x0
-      }
-    }
-#     cat("dewow with ", w,"ns")
+  if(missing(w)){
+    # argument initialization
+    # pulse width in ns, (x@freq is in MHz)
+    pw <- 1/(x@freq * 10^6)/10^-9
+    w <- (5 * pw)/x@dz
+  }else{
     w <- round(w / x@dz)
-#     cat("  (", w,"pts)\n")
+  }
+  if(type=="MAD"){  
     A <- x@data
     if(length(dim(A))<2){
       A <- matrix(A,ncol=1,nrow=length(A))
@@ -964,6 +1151,7 @@ setMethod("dewow", "GPR", function(x, type=c("MAD","Gaussian"),...){
     Y <- X
     for (i in (w + 1):(n - w)) {
       Y[i,] <-  apply( X[(i - w):(i + w),,drop=FALSE],2, median)
+      # x0 = 0.1  # argument initialization
       # S0 <- 1.4826 * apply( abs(X[(i - w):(i + w),,drop=FALSE] - Xmed),
       #  2, median)
       # test <- abs(X[i,] - Xmed) > x0 * S0
@@ -971,14 +1159,6 @@ setMethod("dewow", "GPR", function(x, type=c("MAD","Gaussian"),...){
     }
     x@data <- A - Y[(w+1):(n-w),]
   }else if(type == "Gaussian"){
-    w = 100  # argument initialization
-    if( length(list(...)) ){
-      dots <- list(...)
-      if( !is.null(dots$w)){
-        w <- dots$w
-      }
-    }
-    w <- w * x@dz
     t0 <- round(mean(x@time0)/x@dz)
     A <- x@data
     A[1:t0,] <- 0
@@ -994,6 +1174,9 @@ setMethod("dewow", "GPR", function(x, type=c("MAD","Gaussian"),...){
 })
 
 #----------------- 1D-SCALING (GAIN)
+#' @name gain
+#' @rdname gain
+#' @export
 setMethod("gain", "GPR", function(x, 
 type=c("power","exp","agc","geospreading"),...){
   type <- match.arg(type)
@@ -1013,6 +1196,9 @@ type=c("power","exp","agc","geospreading"),...){
 )
 
 #----------------- 1D-FILTER
+#' @name filter1D
+#' @rdname filter1D
+#' @export
 setMethod("filter1D", "GPR", function(x, type = c("median", "hampel"), ...){
     type <- match.arg(type)
     if(type == "median"){
@@ -1079,6 +1265,9 @@ matrix(0,ncol=ncol(A),nrow=w))
 #  }
 #)
 
+#' @name filter2D
+#' @rdname filter2D
+#' @export
 setMethod("filter2D", "GPR", function(x, type = c("median3x3"), ...){
     type <- match.arg(type)
     if(type == "median3x3"){
@@ -1091,18 +1280,28 @@ setMethod("filter2D", "GPR", function(x, type = c("median3x3"), ...){
 )
 
 #----------------- CLIP/GAMMA/NORMALIZE
+#' @name clip
+#' @rdname clip
+#' @export
 setMethod("clip", "GPR", function(x,Amax=NULL,Amin=NULL){
   x@data <- .clip(x@data,Amax,Amin)
   return(x)
   } 
 )
+
+#' @name gammaCorrection
+#' @rdname gammaCorrection
+#' @export
 setMethod("gammaCorrection", "GPR", function(x,a=1,b=1){
   x@data <- .gammaCorrection(x@data,a,b)
   return(x)
   } 
 )
 
-# scaling of each traces
+#' Trace scaling
+#' @name trScale
+#' @rdname trScale
+#' @export
 setMethod("trScale", "GPR", function(x, type = 
 c("stat","min-max","95","eq","sum", "rms")){
     x@data <- scaleCol(x@data, type=type)
@@ -1110,7 +1309,12 @@ c("stat","min-max","95","eq","sum", "rms")){
     return(x)
   }
 )
+
 #----------------- FREQUENCY FILTERS
+#' Frequency filter
+#' @name fFilter
+#' @rdname fFilter
+#' @export
 setMethod("fFilter", "GPR", function(x, f = 100, type = 
 c('low','high','bandpass'),L = 257, plotSpec = FALSE){
     x@data <- .fFilter1D(x@data, f = f,  type = type, L = L, dT = x@dz, 
@@ -1122,6 +1326,10 @@ c('low','high','bandpass'),L = 257, plotSpec = FALSE){
   } 
 )
 
+#' Frequency-wavenumber filter
+#' @name fkFilter
+#' @rdname fkFilter
+#' @export
 setMethod("fkFilter", "GPR", function(x, fk=NULL, L=c(5,5),npad=1){
     if(is.null(fk)) stop("fk argument has to be specified")
     # if polygon
@@ -1147,6 +1355,10 @@ setMethod("fkFilter", "GPR", function(x, fk=NULL, L=c(5,5),npad=1){
 )
 
 #--------------- DECONVOLUTION
+#' Phase rotation
+#' @name rotatePhase
+#' @rdname rotatePhase
+#' @export
 setMethod("rotatePhase", "GPR", function(x, phi){
   # rotatePhase <- function(x,phi){
     x@data <- apply(x@data,2,phaseRotation,phi)
@@ -1155,7 +1367,10 @@ setMethod("rotatePhase", "GPR", function(x, phi){
     return(x)
   }
 )
-
+#' Deconvolution
+#' @name deconv
+#' @rdname deconv
+#' @export
 setMethod("deconv", "GPR", function(x, 
             method=c("spiking","wavelet","min-phase"),...){
     method <- match.arg(method, c("spiking","wavelet","min-phase"))
@@ -1272,6 +1487,12 @@ print.GPR <- function(x, ...){
   return(invisible(jj))
 }
 # > 3. And finally a call to setMethod():
+#' Show some information on the GPR object
+#'
+#' Identical to print().
+#' @name show
+#' @rdname show
+#' @export
 setMethod("show", "GPR", function(object){print.GPR(object)})   
 
 
@@ -1289,6 +1510,12 @@ lines.GPR <- function(x,...){
   }
 }
 
+#' Plot the GPR object.
+#'
+#' If the GPR object consists of a single trace, wiggle plot is shown.
+#' @name plot
+#' @rdname plot
+#' @export
 # options: type=c(raster,wiggles), addTopo, clip, normalize
 plot.GPR <- function(x,y,...){
   # type=c("raster","wiggles"),addTopo=FALSE,clip=NULL,normalize=NULL,
@@ -1524,15 +1751,35 @@ function(x,addTopo = FALSE, clip = NULL, normalize = NULL,
   }
 )
 
+#' Plot the trace amplitude
+#' 
+#' Plot the amplitude estimated over the whole GPR data as a function of 
+#'  time/depth.
+#' 
+#' @param x An object of the class GPR.
+#' @param FUN A function to be applied on each row of the GPR data to 
+#'            estimate the wave amplitude as a function of time/depth.
+#' @param add A length-one boolean vector. If TRUE the amplitude is plotted
+#'            on the previous plot. If FALSE (default) a new plot is created.
+#' @param all A length-one boolean vector. If TRUE the logarithm of the 
+#'              amplitude of every trace is ploted on the estimate amplitude.
+#'              Default is FALSE.
+#' processing functions with their arguments applied previously on the
+#' GPR data.
+#' @examples
+#' data(frenkeLine00)
+#' plotAmpl(frenkeLine00, FUN = median)
+#' @name plotAmpl
+#' @rdname plotAmpl
+#' @export
 setMethod("plotAmpl", "GPR", function(x, FUN = mean, add = FALSE, 
-            ylim = NULL, xlim = NULL, col = 1, all = FALSE, ...){
+            all = FALSE, ...){
 #   op <- par(no.readonly=TRUE)
   AMP <- apply(abs(x@data),1,FUN,...)
   z <- seq(0,by=x@dz,length.out=length(AMP))
   if(!add){
     par(mar=c(5, 4, 4, 2)+0.1)
-      plot(z, log(AMP), type = "l", xlab = x@depthunit, ylab = "log(mV)", 
-            ylim = ylim, xlim = xlim, col = col)
+      plot(z, log(AMP), type = "l", xlab = x@depthunit, ylab = "log(mV)")
     if(all == TRUE){
       nothing <- apply(log(abs(x@data)), 2, lines, x = z,
                     col = rgb(0.2,0.2,0.2,7/max(ncol(A),7)))
@@ -1550,7 +1797,10 @@ setMethod("plotAmpl", "GPR", function(x, FUN = mean, add = FALSE,
 )
 
 
-
+#' Return the amplitude spectrum of the GPR object.
+#' @name spec
+#' @rdname spec
+#' @export
 setMethod("spec", "GPR", function(x, type = c("f-x","f-k"), 
 returnSpec = FALSE, plotSpec = TRUE, unwrapPhase = TRUE, ...){
     type <- match.arg(type)
@@ -1566,6 +1816,10 @@ plotSpec=plotSpec,returnSpec=returnSpec,...)
   } 
 )
 
+#' Interpolate the trace position.
+#' @name interpPos
+#' @rdname interpPos
+#' @export
 setMethod("interpPos", "GPR", function(x,topo,...){
     # test if any measured points have a reference to a trace of the GPR-line
     if(all(is.na(topo[,"TRACE"]))){
@@ -1659,7 +1913,10 @@ setMethod("interpPos", "GPR", function(x,topo,...){
   }
 )
 
-
+#' Reverse the trace position.
+#' @name reverse
+#' @rdname reverse
+#' @export
 setMethod("reverse", "GPR", function(x){
     xnew <- x
     xnew@data <- x@data[,length(x):1]
@@ -2202,6 +2459,10 @@ setMethod("upsample", "GPR", function(x,n){
 
 
 #----------------------- SAVE/EXPORT ------------------------#
+#' Write the GPR object in a file.
+#' @name writeGPR
+#' @rdname writeGPR
+#' @export
 setMethod("writeGPR", "GPR", function(x,fPath, format=c("DT1","rds"), 
 overwrite=FALSE){
     type <- match.arg(format)
@@ -2449,7 +2710,10 @@ writeLines(paste(as.character(hdName), "=", as.character(x@hd[[hdNames[i]]]),
   return(fPath)
 }
 #-----------------
-
+#' Export a PDF showing the GPR profile.
+#' @name exportPDF
+#' @rdname exportPDF
+#' @export
 setMethod("exportPDF", "GPR", 
 function(x, fPath = NULL, addTopo = FALSE, clip = NULL, normalize = NULL, 
         nupspl = NULL, ...){

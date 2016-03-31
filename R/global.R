@@ -1,4 +1,34 @@
 
+
+#' RGPR: A package for processing and visualising ground-penetrating data 
+#' (GPR).
+#'
+#' The RGPR package provides two classes GPR and GPRsurvey
+#' 
+#' @section Reading/writing/export functions:
+#' \itemize{
+#'   \item \code{readGPR()}: format DT1 (Sensors&Software), rds (R-format)
+#'   \item \code{writeGPR()}: format DT1 (Sensors&Software), rds (R-format)
+#'   \item \code{exportPDF()}
+#'   \item \code{exportDelineations()}
+#'   \item \code{exportFID()}: ASCII-file
+#'   \item \code{exportCoord()}: output either SpatialLines or SpatialPoints
+#'   \item \code{exportProc()}: ASCII-file
+#' }
+#'
+#' @section Plot functions:
+#' \itemize{
+#'   \item \code{plot()}: raster or wiggles.
+#'   \item \code{plot3D()}:
+#'   \item \code{plotAmpl()}
+#'   \item \code{plotDelineations()}
+#' }
+#' @name RGPR
+# @docType package
+NULL
+
+
+
 # Reflection mode, CMP mode 
 # For a given transect, the data consist of a cross-section of 
 # signal amplitudes (intensities) versus location 
@@ -284,69 +314,141 @@ setGenericVerif <- function(x,y){setGeneric(x,y)}
 
 
 #------------------------------
+#' @name coordref
+#' @rdname coordref
+#' @export
 setGenericVerif("coordref", function(x) standardGeneric("coordref"))
+
+#' @name coordref<-
+#' @rdname coordref
+#' @export
 setGenericVerif("coordref<-", function(x, value) standardGeneric("coordref<-"))
 
 setGenericVerif("intersections", function(x) standardGeneric("intersections"))
 
+#' @name filepath
+#' @rdname filepath
+#' @export
 setGenericVerif("filepath", function(x) standardGeneric("filepath"))
+
+#' @name filepath<-
+#' @rdname filepath
+#' @export
 setGenericVerif("filepath<-", function(x, value) standardGeneric("filepath<-"))
 
 setGenericVerif("coords", function(x,i) standardGeneric("coords"))
 setGenericVerif("coords<-",function(x,values){standardGeneric("coords<-")})
 
+#' @name coord
+#' @rdname coord
+#' @export
 setGenericVerif("coord", function(x, i, ...) standardGeneric("coord"))
+
+#' @name coord<-
+#' @rdname coord
+#' @export
 setGenericVerif("coord<-",function(x,values){standardGeneric("coord<-")})
 
+#' @name vel
+#' @rdname vel
+#' @export
 setGenericVerif("vel", function(x) standardGeneric("vel"))
+
+#' @name vel<-
+#' @rdname vel
+#' @export
 setGenericVerif("vel<-",function(x,values){standardGeneric("vel<-")})
 
+#' @name ann
+#' @rdname ann
+#' @export
 setGenericVerif("ann", function(x) standardGeneric("ann"))
+
+#' @name ann<-
+#' @rdname ann
+#' @export
 setGenericVerif("ann<-",function(x,values){standardGeneric("ann<-")})
 
+#' @name name
+#' @rdname name
+#' @export
 setGenericVerif("name", function(x) standardGeneric("name"))
+
+#' @name name<-
+#' @rdname name
+#' @export
 setGenericVerif("name<-",function(x,value){standardGeneric("name<-")})
 
+#' @name crs
+#' @rdname crs
+#' @export
 setGenericVerif("crs", function(x) standardGeneric("crs"))
+
+#' @name crs<-
+#' @rdname crs
+#' @export
 setGenericVerif("crs<-",function(x,value){standardGeneric("crs<-")})
 
 #' @name time0
 #' @rdname time0
 #' @export
 setGenericVerif("time0", function(x) standardGeneric("time0"))
+
+#' @name time0
+#' @rdname time0
+#' @export
 setGenericVerif("time0<-",function(x,value){standardGeneric("time0<-")})
 
+#' @name fid
+#' @rdname fid
+#' @export
 setGenericVerif("fid", function(x) standardGeneric("fid"))
+
+#' @name fid<-
+#' @rdname fid
+#' @export
 setGenericVerif("fid<-",function(x,values){standardGeneric("fid<-")})
 
+#' @name values
+#' @rdname values
+#' @export
 setGenericVerif("values", function(x) standardGeneric("values"))
+
+#' @name values<-
+#' @rdname values
+#' @export
 setGenericVerif("values<-", function(x,value) standardGeneric("values<-"))
 
+#' @name processing
+#' @rdname processing
+#' @export
 setGenericVerif("processing", function(x) standardGeneric("processing"))
 
+#' @name description
+#' @rdname description
+#' @export
 setGenericVerif("description", function(x) standardGeneric("description"))
-setGenericVerif("description<-", function(x) standardGeneric("description<-"))
+
+#' @name description<-
+#' @rdname description
+#' @export
+setGenericVerif("description<-", function(x, value) 
+standardGeneric("description<-"))
 
 #------------------------------GPR
 setGenericVerif("gethd", function(x,hd=NULL) standardGeneric("gethd"))
-setGenericVerif("plotAmpl", function(x, FUN=mean, add=FALSE, ylim=NULL,
-                xlim=NULL,col=1,all=FALSE,...) standardGeneric("plotAmpl"))
+
+#' @name plotAmpl
+#' @rdname plotAmpl
+#' @export
+setGenericVerif("plotAmpl", function(x, FUN = mean, add = FALSE, 
+                all = FALSE,...) standardGeneric("plotAmpl"))
 setGenericVerif("ampl", function(x, FUN=mean, ...) standardGeneric("ampl"))
 
 
 setGenericVerif("interpPos", function(x, topo, ...) 
     standardGeneric("interpPos"))
 
-#' Read a GPR data file
-#' 
-#' @param fPath Filepath (character).
-#' @param desc Short description of the file (character).
-#' @param coordfile Filepath of a text file containing the coordinates (x,y,z)
-#'                   of each traces.
-#' @param crs Coordinate reference system (character)
-#' @param intfile Filepath of a text file containing the intersection.
-#' @return The GPR data as object of the class RGPR.
-#' @examples
 #' @name readGPR
 #' @rdname readGPR
 #' @export
@@ -371,7 +473,7 @@ setGenericVerif("filter1D", function(x, type = c("median", "hampel"), ...)
 standardGeneric("filter1D"))
 setGenericVerif("filter2D", function(x, type=c("median3x3"), ...) 
                 standardGeneric("filter2D"))
-setGenericVerif("dewow", function(x,type=c("MAD","Gaussian"),... ) 
+setGenericVerif("dewow", function(x,type=c("MAD","Gaussian"),w ) 
                 standardGeneric("dewow"))
 setGenericVerif("gain", function(x, type=c("power","exp","agc","geospreading"),
                   ...) standardGeneric("gain"))
@@ -1245,7 +1347,6 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
 
 .fFilter1D <- function(A, f = c(100), type = c('low', 'high', 'bandpass'), 
                         L = 257, dT = 0.8, plotSpec = FALSE){
-  
   type = match.arg(type)
   A <- as.matrix(A)
   M = nrow(A)      # signal length

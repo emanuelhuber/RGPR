@@ -777,6 +777,8 @@ setMethod("gethd", "GPR", function(x,hd=NULL){
   } 
 )
 
+#' Name of the GPR data
+#' 
 #' @name name
 #' @rdname name
 #' @export
@@ -798,6 +800,8 @@ setReplaceMethod(
   }
 )
 
+#' Description of the GPR data
+#' 
 #' @name description
 #' @rdname description
 #' @export
@@ -817,6 +821,9 @@ setReplaceMethod(
     return(x)
   }
 )
+
+#' Filepath of the GPR data
+#' 
 #' @name filepath
 #' @rdname filepath
 #' @export
@@ -837,6 +844,8 @@ setReplaceMethod(
   }
 )
 
+#' Annotations of the GPR data
+#' 
 #' @name ann
 #' @rdname ann
 #' @export
@@ -867,6 +876,8 @@ setReplaceMethod(
   }
 )
 
+#' Coordinates of the GPR data
+#' 
 #' @name coord
 #' @rdname coord
 #' @export
@@ -898,7 +909,8 @@ setReplaceMethod(
     return(x)
   }
 )
-
+#' Coordinate reference system (CRS) of the GPR data
+#' 
 #' @name crs
 #' @rdname crs
 #' @export
@@ -920,6 +932,8 @@ setReplaceMethod(
   }
 )
 
+#' Velocity model of the GPR data
+#' 
 #' @name vel
 #' @rdname vel
 #' @export
@@ -978,7 +992,8 @@ setReplaceMethod(
     return(x)
   }
 )
-
+#' Fiducial markers of the GPR data
+#' 
 #' @name fid
 #' @rdname fid
 #' @export
@@ -1000,6 +1015,8 @@ setMethod("fid", "GPR", function(x){
   } 
 )
 
+#' Values of the GPR data
+#' 
 #' @name values
 #' @rdname values
 #' @export
@@ -1025,6 +1042,8 @@ setReplaceMethod(
   } 
 )
 
+#' Amplitude of the GPR data
+#' 
 #' @name ampl
 #' @rdname ampl
 #' @export
@@ -1057,6 +1076,8 @@ setMethod("processing", "GPR", function(x){
 
 #================= PROCESSING ===============#
 #----------------- DC-SHIFT
+#' Direct-current removal
+#' 
 #' @name dcshift
 #' @rdname dcshift
 #' @export
@@ -1174,6 +1195,8 @@ setMethod("dewow", "GPR", function(x, type=c("MAD","Gaussian"),w){
 })
 
 #----------------- 1D-SCALING (GAIN)
+#' Gain compensation
+#' 
 #' @name gain
 #' @rdname gain
 #' @export
@@ -1196,6 +1219,8 @@ type=c("power","exp","agc","geospreading"),...){
 )
 
 #----------------- 1D-FILTER
+#' One dimensional filters
+#' 
 #' @name filter1D
 #' @rdname filter1D
 #' @export
@@ -1265,6 +1290,8 @@ matrix(0,ncol=ncol(A),nrow=w))
 #  }
 #)
 
+#' Two-dimensional filters
+#' 
 #' @name filter2D
 #' @rdname filter2D
 #' @export
@@ -1280,6 +1307,8 @@ setMethod("filter2D", "GPR", function(x, type = c("median3x3"), ...){
 )
 
 #----------------- CLIP/GAMMA/NORMALIZE
+#' Clip the amplitude
+#' 
 #' @name clip
 #' @rdname clip
 #' @export
@@ -1288,7 +1317,8 @@ setMethod("clip", "GPR", function(x,Amax=NULL,Amin=NULL){
   return(x)
   } 
 )
-
+#' Gamma correction of the amplitude
+#' 
 #' @name gammaCorrection
 #' @rdname gammaCorrection
 #' @export
@@ -1299,6 +1329,7 @@ setMethod("gammaCorrection", "GPR", function(x,a=1,b=1){
 )
 
 #' Trace scaling
+#'
 #' @name trScale
 #' @rdname trScale
 #' @export
@@ -1312,6 +1343,7 @@ c("stat","min-max","95","eq","sum", "rms")){
 
 #----------------- FREQUENCY FILTERS
 #' Frequency filter
+#'
 #' @name fFilter
 #' @rdname fFilter
 #' @export
@@ -1327,6 +1359,7 @@ c('low','high','bandpass'),L = 257, plotSpec = FALSE){
 )
 
 #' Frequency-wavenumber filter
+#'
 #' @name fkFilter
 #' @rdname fkFilter
 #' @export
@@ -1356,6 +1389,7 @@ setMethod("fkFilter", "GPR", function(x, fk=NULL, L=c(5,5),npad=1){
 
 #--------------- DECONVOLUTION
 #' Phase rotation
+#'
 #' @name rotatePhase
 #' @rdname rotatePhase
 #' @export
@@ -1368,6 +1402,7 @@ setMethod("rotatePhase", "GPR", function(x, phi){
   }
 )
 #' Deconvolution
+#'
 #' @name deconv
 #' @rdname deconv
 #' @export
@@ -1798,6 +1833,7 @@ setMethod("plotAmpl", "GPR", function(x, FUN = mean, add = FALSE,
 
 
 #' Return the amplitude spectrum of the GPR object.
+#'
 #' @name spec
 #' @rdname spec
 #' @export
@@ -1817,6 +1853,7 @@ plotSpec=plotSpec,returnSpec=returnSpec,...)
 )
 
 #' Interpolate the trace position.
+#'
 #' @name interpPos
 #' @rdname interpPos
 #' @export
@@ -1914,6 +1951,7 @@ setMethod("interpPos", "GPR", function(x,topo,...){
 )
 
 #' Reverse the trace position.
+#'
 #' @name reverse
 #' @rdname reverse
 #' @export
@@ -2460,6 +2498,7 @@ setMethod("upsample", "GPR", function(x,n){
 
 #----------------------- SAVE/EXPORT ------------------------#
 #' Write the GPR object in a file.
+#'
 #' @name writeGPR
 #' @rdname writeGPR
 #' @export
@@ -2711,6 +2750,7 @@ writeLines(paste(as.character(hdName), "=", as.character(x@hd[[hdNames[i]]]),
 }
 #-----------------
 #' Export a PDF showing the GPR profile.
+#'
 #' @name exportPDF
 #' @rdname exportPDF
 #' @export

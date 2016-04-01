@@ -899,7 +899,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
     y <- y + time_0
   }
 #    image(x,y,z,col=col,zlim=zlim,xaxs="i", yaxs="i", yaxt="n",...)
-  image2D(x = x, y = y, z = z, zlim = zlim, col = col, xaxs = "i", 
+  plot3D::image2D(x = x, y = y, z = z, zlim = zlim, col = col, xaxs = "i", 
           yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
           resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)  
   if(barscale){

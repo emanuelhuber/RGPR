@@ -3,7 +3,11 @@
 \docType{methods}
 \name{gain}
 \alias{gain}
+\title{Gain compensation}
 \usage{
 \S4method{gain}{GPR}(x, type = c("power", "exp", "agc", "geospreading"), ...)
+}
+\description{
+Gain compensation
 }
 

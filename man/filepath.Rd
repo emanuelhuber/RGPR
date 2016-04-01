@@ -4,9 +4,13 @@
 \name{filepath}
 \alias{filepath}
 \alias{filepath<-}
+\title{Filepath of the GPR data}
 \usage{
 \S4method{filepath}{GPR}(x)
 
 \S4method{filepath}{GPR}(x) <- value
+}
+\description{
+Filepath of the GPR data
 }
 

@@ -4,9 +4,13 @@
 \name{ann}
 \alias{ann}
 \alias{ann<-}
+\title{Annotations of the GPR data}
 \usage{
 \S4method{ann}{GPR}(x)
 
 \S4method{ann}{GPR}(x, values) <- value
+}
+\description{
+Annotations of the GPR data
 }
 

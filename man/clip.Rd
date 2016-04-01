@@ -3,7 +3,11 @@
 \docType{methods}
 \name{clip}
 \alias{clip}
+\title{Clip the amplitude}
 \usage{
 \S4method{clip}{GPR}(x, Amax = NULL, Amin = NULL)
+}
+\description{
+Clip the amplitude
 }
 

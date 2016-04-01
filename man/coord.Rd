@@ -4,9 +4,13 @@
 \name{coord}
 \alias{coord}
 \alias{coord<-}
+\title{Coordinates of the GPR data}
 \usage{
 \S4method{coord}{GPR}(x, i, ...)
 
 \S4method{coord}{GPR}(x, values) <- value
+}
+\description{
+Coordinates of the GPR data
 }
 

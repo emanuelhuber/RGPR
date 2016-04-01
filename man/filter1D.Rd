@@ -3,7 +3,11 @@
 \docType{methods}
 \name{filter1D}
 \alias{filter1D}
+\title{One dimensional filters}
 \usage{
 \S4method{filter1D}{GPR}(x, type = c("median", "hampel"), ...)
+}
+\description{
+One dimensional filters
 }
 

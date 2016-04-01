@@ -3,7 +3,11 @@
 \docType{methods}
 \name{ampl}
 \alias{ampl}
+\title{Amplitude of the GPR data}
 \usage{
 \S4method{ampl}{GPR}(x, FUN = mean, ...)
+}
+\description{
+Amplitude of the GPR data
 }
 

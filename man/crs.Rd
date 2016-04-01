@@ -4,9 +4,13 @@
 \name{crs}
 \alias{crs}
 \alias{crs<-}
+\title{Coordinate reference system (CRS) of the GPR data}
 \usage{
 \S4method{crs}{GPR}(x)
 
 \S4method{crs}{GPR}(x) <- value
+}
+\description{
+Coordinate reference system (CRS) of the GPR data
 }
 

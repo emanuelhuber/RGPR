@@ -4,9 +4,13 @@
 \name{fid}
 \alias{fid}
 \alias{fid<-}
+\title{Fiducial markers of the GPR data}
 \usage{
 \S4method{fid}{GPR}(x, values) <- value
 
 \S4method{fid}{GPR}(x)
+}
+\description{
+Fiducial markers of the GPR data
 }
 

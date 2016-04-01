@@ -4,9 +4,13 @@
 \name{name}
 \alias{name}
 \alias{name<-}
+\title{Name of the GPR data}
 \usage{
 \S4method{name}{GPR}(x)
 
 \S4method{name}{GPR}(x) <- value
+}
+\description{
+Name of the GPR data
 }
 

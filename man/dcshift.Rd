@@ -3,13 +3,15 @@
 \docType{methods}
 \name{dcshift}
 \alias{dcshift}
-\title{First wave break}
+\title{Direct-current removal}
 \usage{
 \S4method{dcshift}{GPR}(x, u = 1:10, FUN = mean)
 
 \S4method{firstBreack}{GPR}(x, w = 11, ns = NULL, bet = NULL)
 }
 \description{
+Direct-current removal
+
 Compute the first wave break
 }
 \details{

@@ -3,7 +3,11 @@
 \docType{methods}
 \name{gammaCorrection}
 \alias{gammaCorrection}
+\title{Gamma correction of the amplitude}
 \usage{
 \S4method{gammaCorrection}{GPR}(x, a = 1, b = 1)
+}
+\description{
+Gamma correction of the amplitude
 }
 

@@ -501,18 +501,25 @@ as.SpatialPoints <- function (x, ...){
   return(myPoints)
 }
 
+#' @export
 setMethod("as.numeric", "GPR",  function(x, ...) as.numeric(x@data))
-setMethod("as.double", "GPR",  function(x, ...) as.double(x@data))
 
+setMethod("as.double", "GPR",  function(x, ...) as.double(x@data))
+#' @export
 setMethod("length", "GPR", function(x) ncol(x@data))
+#' @export
 setMethod("summary", "GPR", function(object, ...) 
+#' @export
 summary(as.vector(object@data)))
+#' @export
 setMethod("mean", "GPR", function(x, ...) mean(as.vector(x@data)))
+#' @export
 setMethod("median", "GPR", function(x, na.rm = FALSE) 
-median(as.vector(x@data),na.rm = FALSE))
+        median(as.vector(x@data),na.rm = FALSE))
 # setMethod("range", "GPR", function(..., na.rm=FALSE) 
 # range(as.matrix(...),na.rm=na.rm))
 
+#' @export
 setMethod(
   f="apply", 
   signature="GPR", 
@@ -520,6 +527,7 @@ setMethod(
     apply(X@data,MARGIN,FUN,...)
   }
 )
+#' @export
 setMethod(
   f="nrow", 
   signature="GPR", 
@@ -527,6 +535,7 @@ setMethod(
     nrow(x@data)
   }
 )
+#' @export
 setMethod(
   f="ncol", 
   signature="GPR", 
@@ -534,6 +543,7 @@ setMethod(
     ncol(x@data)
   }
 )
+#' @export
 setMethod(
   f="dim", 
   signature="GPR", 
@@ -541,6 +551,7 @@ setMethod(
     dim(x@data)
   }
 )
+#' @export
 setMethod(
   f="min", 
   signature="GPR", 
@@ -548,6 +559,7 @@ setMethod(
     min(x@data,na.rm=na.rm)
   }
 )
+#' @export
 setMethod(
   f="max", 
   signature="GPR", 
@@ -555,6 +567,7 @@ setMethod(
     max(x@data,na.rm=na.rm)
   }
 )
+#' @export
 setMethod(
   f="range", 
   signature="GPR", 
@@ -568,10 +581,10 @@ setMethod(
 #' @param x An object of the class RGPR.
 #' @examples
 #' data(frenkeLine00)
-#' A <- frenkeLine00
-#' @name readGPR
-#' @rdname Arith
-# @aliases readGPR-methods
+#' A <- exp(frenkeLine00)
+#' @name Math
+#' @rdname Math
+#' @export
 # getGroupMembers("Math")
 setMethod(
   f="Math",
@@ -681,16 +694,36 @@ setMethod(
   )
 }
 
+
+
+#' Basic arithmetical functions
+#'
+#' 
+#' @param e1 An object of the class RGPR.
+#' @param e2 An object of the class RGPR.
+#' @examples
+#' data(frenkeLine00)
+#' A <- exp(frenkeLine00)
+#' B <- A + frenkeLine00
+#' @name Arith
+#' @rdname Arith
+#' @export
 setMethod(
   f= "Arith",
   signature=c(e1="GPR",e2="ANY"), 
   definition=.GPR.arith
 )
+#' @name Arith
+#' @rdname Arith
+#' @export
 setMethod(
   f= "Arith",
   signature=c(e1="GPR",e2="GPR"), 
   definition=.GPR.arith
 )
+#' @name Arith
+#' @rdname Arith
+#' @export
 setMethod(
   f= "Arith",
   signature=c(e1="ANY",e2="GPR"), 
@@ -699,6 +732,7 @@ setMethod(
 
 #------------------------------
 # "["
+#' @export
 setMethod(
   f= "[",
   signature="GPR",
@@ -743,6 +777,7 @@ setMethod(
 
 #-------------------------------
 # "[<-"
+#' @export
 setReplaceMethod(
   f="[",
   signature="GPR",
@@ -761,7 +796,7 @@ setReplaceMethod(
   }
 )
 
-
+#' @export
 setMethod("gethd", "GPR", function(x,hd=NULL){
     if(is.null(hd)){
       return(x@hd)
@@ -1370,7 +1405,16 @@ setMethod("fkFilter", "GPR", function(x, fk=NULL, L=c(5,5),npad=1){
       areaunclosed <- t(do.call("rbind",area))
       nk <- npad*(nextpower2(ncol(x@data)))
       nf <- npad*(nextpower2(nrow(x@data)))
-      fk <- outer((nf:1)-0.5,(1:nk)-0.5,inPoly,
+      # frequency
+      Ts = x@dz*10^(-9)    # [s] Sample time
+      fac = 1000000
+      fre = (1/Ts)*seq(0,nf/2)/nf/fac
+      
+      # wavenumber
+      Ks <- 1/x@dx      # [1/m] Sampling frequency
+      knu <- 1:(nk/2)/(2*(nk/2)) * Ks  #[1/m]
+      knutot <- c(-rev(knu),knu)
+      fk <- outer(fre,knutot,inPoly,
                   vertx=areaunclosed[,2],
                   verty=areaunclosed[,1])
     }else if(!is.matrix(fk)){
@@ -1379,13 +1423,15 @@ setMethod("fkFilter", "GPR", function(x, fk=NULL, L=c(5,5),npad=1){
       cat("# FIXME! function to transform matrix into polygon\n")
     }
     
-    x@data <- .FKFilter(x@data,fk=fk,L=L,npad=npad)
+    x@data <- .FKFilter(x@data,fk=fk, L=L, npad=npad)
     proc <- getArgs()
     x@proc <- c(x@proc, proc)
     return(x)
     
   } 
 )
+
+
 
 #--------------- DECONVOLUTION
 #' Phase rotation
@@ -1814,7 +1860,7 @@ setMethod("plotAmpl", "GPR", function(x, FUN = mean, add = FALSE,
   z <- seq(0,by=x@dz,length.out=length(AMP))
   if(!add){
     par(mar=c(5, 4, 4, 2)+0.1)
-      plot(z, log(AMP), type = "l", xlab = x@depthunit, ylab = "log(mV)")
+      plot(z, log(AMP), type = "l", xlab = x@depthunit, ylab = "log(mV)", ...)
     if(all == TRUE){
       nothing <- apply(log(abs(x@data)), 2, lines, x = z,
                     col = rgb(0.2,0.2,0.2,7/max(ncol(A),7)))
@@ -1825,7 +1871,7 @@ setMethod("plotAmpl", "GPR", function(x, FUN = mean, add = FALSE,
       nothing <- apply(log(abs(x@data)), 2, lines, x = z, 
                         col=rgb(0.2,0.2,0.2,7/max(ncol(A),7)))
     }
-    lines(z,log(AMP),col=col)
+    lines(z, log(AMP), ...)
   }
 #   par(op)
   } 
@@ -1837,18 +1883,17 @@ setMethod("plotAmpl", "GPR", function(x, FUN = mean, add = FALSE,
 #' @name spec
 #' @rdname spec
 #' @export
-setMethod("spec", "GPR", function(x, type = c("f-x","f-k"), 
-returnSpec = FALSE, plotSpec = TRUE, unwrapPhase = TRUE, ...){
+setMethod("spec", "GPR", function(x, type = c("f-x","f-k"), plotSpec = TRUE, 
+        unwrapPhase = TRUE, ...){
     type <- match.arg(type)
     if(type == "f-x"){
       S <- powSpec(x@data, dT = x@dz, fac = 1000000, 
-            plotSpec = plotSpec, returnSpec = returnSpec, 
-            titleSpec = x@name)
+                  plotSpec = plotSpec, titleSpec = x@name)
     }else if(type == "f-k"){
-      S <- .FKSpectrum(x@data,dx=x@dx,dz=x@dz, 
-plotSpec=plotSpec,returnSpec=returnSpec,...)
+      S <- .FKSpectrum(x@data,dx=x@dx,dz=x@dz, plotSpec=plotSpec,...)
     }
-    return(S)
+    invisible(S)
+#     return(S)
   } 
 )
 

@@ -20,7 +20,8 @@ cat("********************\n")
 #	- slot @version added 
 #	- slot @filename renamed as @filepath
 #	- new function: GPRsurvey:: write
-#	- handle two types of dates (readGPR): %Y %m %d and %d %m %Y with any kind of separator
+#	- handle two types of dates (readGPR): %Y %m %d and %d %m %Y with any kind of 
+separator
 
 #---changes v0.0.8.1---#
 #	- GPR::gain -> rename gain_geospreading in power!
@@ -40,7 +41,7 @@ cat("********************\n")
 
 
 ############## RCODE : TO CHECK/THINK ###############
-# THINK: use Roxygen...
+
 
 
 # check lockBinding  (bibliotheque/documents/R/manuel-S4)
@@ -62,29 +63,38 @@ cat("********************\n")
 # read/write SEGy
 
 # FIX ME!
-#	- GPRsurvey > as.SpatialLines & GPR as.SpatialLines > DEUX FOIS LA MEME FONCTION!!!!
-#	- GPRsurvey::plot3D -> use function "inPoly" to plot in 3D only a selection of traces from GPRsurvey
+#- FK-SPECTRUM: use plot3D::image2D!
+#	- GPRsurvey > as.SpatialLines & GPR as.SpatialLines 
+#        > DEUX FOIS LA MEME FONCTION!!!!
+#	- GPRsurvey::plot3D -> use function "inPoly" to plot in 3D only a selection 
+of traces from GPRsurvey
 #						-> add a zlim or a max depth!!!
 #	- GPR::plot3D -> add a zlim or a max depth!!!
-#	- GPR::exportCoord & GPRsurvey::exportCoord -> export as points -> use point.data.frame (add z-information)
-#	- GPR::migration/topoShift -> integrate the function time2depth or depth2time!!!!
+#	- GPR::exportCoord & GPRsurvey::exportCoord -> export as points -> use point.
+data.frame (add z-information)
+#	- GPR::migration/topoShift -> integrate the function time2depth or depth2time!
+!!!
 #	- GPR::delineation -> use the same scheme for both raster and wiggles!
 #	- GPR::fkFilter -> add as argument "slopes"
 #	- GPR::interpTraces -> use a raster to get the v-elevation!
 #	- plot.GPR function
 #   -> use plot3D::image2D !!
-#		-> check if all the "..." parameters corresponds to the possible paramters. If not > error!
-#		-> check option image and use the "raster" option. Check grid with smooth image...
+#		-> check if all the "..." parameters corresponds to the possible paramters. 
+If not > error!
+#		-> check option image and use the "raster" option. Check grid with smooth 
+image...
 #	- GPR::gain -> t0=NULL then t0 <- mean(time0)
 #	- GPR::spec(type "f-t") -> use power and log scale (?)
 #	- GPR::plotAmpl -> option log y-axis
 #	- GPR::exportPDF -> add processing steps!
 #	- scaling after gain!
-# 	- different taper window: cos, triang, hamming, bartlett, limtaper, hann, flattop....
+# 	- different taper window: cos, triang, hamming, bartlett, limtaper, hann, 
+flattop....
 #	- check how time0 is used
 #	- GPR::export(type=PDF) use function plot (wiggles)!
 # 	- global -> optPhaseRotation -> check if 'e1071::kurtosis' is needed.	
-# 	- GPR::interpTraces > rename into "interpTracePos" (the trace position is interpolated)
+# 	- GPR::interpTraces > rename into "interpTracePos" (the trace position is 
+interpolated)
 #	- GPR::Math > add in @proc the name of the mathematical function
 #	- GPR::exportCoord > add option to export txt-file
 
@@ -106,7 +116,8 @@ cat("********************\n")
 # Idea for trace to trace processing:
 # -> list of all function with their argument to use
 # -> use a FUN_WRAP function : apply(GPR$data,2,FUN_WRAP)
-# 		-> FUN_WRAP process each single trace according to the list of function and theirs args.
+# 		-> FUN_WRAP process each single trace according to the list of function and 
+theirs args.
 
 #--- declipping ---#
 # - least-square polynomial interpolation
@@ -114,7 +125,8 @@ cat("********************\n")
 # - PCA/SVD decomposition
 # - DCT (cf. R package)
 # - deconvolution/convolution
-# - interpolation par cubic splines (see bibliotheque/document/courbes de bezier+++ )
+# - interpolation par cubic splines (see bibliotheque/document/courbes de 
+bezier+++ )
 
 #--- gain functions ---#
 # - rms AGC
@@ -152,7 +164,8 @@ cat("********************\n")
 # - mixed-phase
 
 #--- denoising ---#
-# - denoising tensor field based on Riemannian geometry (Mathematical Methods for Signal and Image Analysis and Representation)
+# - denoising tensor field based on Riemannian geometry (Mathematical Methods 
+for Signal and Image Analysis and Representation)
 # - adaptative smoothing
 # - hampel filter
 # - bp_salsa_d
@@ -184,7 +197,8 @@ cat("********************\n")
 # - GPRsurvey -> intersections (also as spatialPoints)
 # - pre-defined color bar with funny names...
 # - GPRsurvey -> add spatial data (e.g. borehole) > closest distance...
-# - time function ->  gpr <- readGPR(file.choose());	as.POSIXct(gpr@time, origin = "1970-01-01")
+# - time function ->  gpr <- readGPR(file.choose());	as.POSIXct(gpr@time, 
+origin = "1970-01-01")
 # - proc(gpr) -> return x@proc
 # - vel(gpr) -> return x@vel
 
@@ -198,7 +212,8 @@ cat("********************\n")
     # case 'cos'
         # taper = (sin(linspace(0,pi/2,tabpZL)).^2)';
         # ACFoutput(1:tabpZL) = ACFoutput(1:tabpZL).*taper;
-        # ACFoutput(end-tabpZL+1:end) = ACFoutput(end-tabpZL+1:end).*flipud(taper);
+        # ACFoutput(end-tabpZL+1:end) = ACFoutput(end-tabpZL+1:end).*flipud(
+taper);
     # case 'triang'
         # taper = triang(2*tabpZL+1);
         # ACFoutput = ACFoutput.*taper;
@@ -231,8 +246,10 @@ cat("********************\n")
 
 # @date 08.11.2012 19:45
 # @auteur Emanuel Huber
-# @source = http://www.r-bloggers.com/loading-andor-installing-packages-programmatically/
-# @param [c(text)] 	package_names 				(each column represent a trace, each row a time step / depth step)
+# @source = http://www.r-bloggers.com/loading-andor-installing-packages-programm
+atically/
+# @param [c(text)] 	package_names 				(each column represent a trace, each row 
+a time step / depth step)
 # @return void
 # -------------------------------------------
 load_install_package <- function(package_names){
@@ -247,7 +264,8 @@ load_install_package <- function(package_names){
 is_installed <- function(mypkg) is.element(mypkg, installed.packages()[,1])
 
 
-requiredPackage = c('base','plot3D','MASS','signal', 'colorspace','Cairo','rgeos','sp','rgl', 'rgdal','EMD','mmand','e1071','adimpro')
+requiredPackage = c('base','plot3D','MASS','signal', 'colorspace','Cairo','
+rgeos','sp','rgl', 'rgdal','EMD','mmand','e1071','adimpro')
 load_install_package(requiredPackage)
 cat('> Package(s) loaded (if...): ',requiredPackage,' \n')
 	

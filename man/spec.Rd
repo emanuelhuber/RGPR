@@ -5,8 +5,8 @@
 \alias{spec}
 \title{Return the amplitude spectrum of the GPR object.}
 \usage{
-\S4method{spec}{GPR}(x, type = c("f-x", "f-k"), returnSpec = FALSE,
-  plotSpec = TRUE, unwrapPhase = TRUE, ...)
+\S4method{spec}{GPR}(x, type = c("f-x", "f-k"), plotSpec = TRUE,
+  unwrapPhase = TRUE, ...)
 }
 \description{
 Return the amplitude spectrum of the GPR object.

@@ -154,39 +154,39 @@ palGPR <- function(colPal="default", n = 101, power = 1, returnNames = FALSE){
                 "#FF1632", "#FF0B2A", "#FF0022", "#F70023", "#EE0023",
                 "#E50023", "#DC0024", "#D30024", "#CA0024", "#C20024",
                 "#B70023", "#AF0023", "#A70023", "#9C0022"))(n),
-    hcl_0 = diverge_hcl(n,power=1),
+    hcl_0 = colorspace::diverge_hcl(n,power=1),
     # blue - white - red (fade)
-    hcl_1 = diverge_hcl(n, c = 100, l = c(50, 90), power = power), 
+    hcl_1 = colorspace::diverge_hcl(n, c = 100, l = c(50, 90), power = power), 
     # blue - white - orange (fade)
-    hcl_2 = diverge_hcl(n, h = c(246, 40), c = 96, 
+    hcl_2 = colorspace::diverge_hcl(n, h = c(246, 40), c = 96, 
                         l = c(65, 90), power=power),
     #  green - white- orange (fade)
-    hcl_3 = diverge_hcl(n, h = c(130, 43), c = 100, 
+    hcl_3 = colorspace::diverge_hcl(n, h = c(130, 43), c = 100, 
                         l = c(70, 90), power=power), 
     # blue/violet - white - red/violet 
-    hcl_4 = diverge_hcl(n, h = c(255, 330), 
+    hcl_4 = colorspace::diverge_hcl(n, h = c(255, 330), 
                         l = c(40, 90), power=power), 
     # rose - white - turquise (fade)
-    hcl_5 = diverge_hcl(n, h = c(20, 200), c = 90, 
+    hcl_5 = colorspace::diverge_hcl(n, h = c(20, 200), c = 90, 
                         l = c(70, 95), power=power),  
     #  blue - white - red (vivid)
-    hcl_6 = diverge_hcl(n, h = c(246, 10), c = 120, 
+    hcl_6 = colorspace::diverge_hcl(n, h = c(246, 10), c = 120, 
                           l = c(30, 90), power=power), 
     # blue - white - red (tern)
-    hcl_7 = diverge_hcl(n, h = c(220, 10), c = 100, 
+    hcl_7 = colorspace::diverge_hcl(n, h = c(220, 10), c = 100, 
                         l = c(20, 90), power=power), 
     # blue - white - red (fade)
-    hcl_8 = diverge_hcl(n, h = c(250, 10), c = 150, 
+    hcl_8 = colorspace::diverge_hcl(n, h = c(250, 10), c = 150, 
                         l = c(30, 90), power=power), 
-    grey3 = diverge_hcl(n, h = c(300, 1), c = 1, 
+    grey3 = colorspace::diverge_hcl(n, h = c(300, 1), c = 1, 
             l = c(1, 100), power=power), 
     # too light
-    grey1 = sequential_hcl(n, h = c(1, 300), c = 0, 
+    grey1 = colorspace::sequential_hcl(n, h = c(1, 300), c = 0, 
                           l = c(10, 100), power=power), 
     #  too dark  
-    grey2 = sequential_hcl(n, h = c(300, 100), c = 0, 
+    grey2 = colorspace::sequential_hcl(n, h = c(300, 100), c = 0, 
               l = c(120, 10), power=power), 
-    grey = sequential_hcl(n, h = c(190, 1), c = 10, 
+    grey = colorspace::sequential_hcl(n, h = c(190, 1), c = 10, 
                           l = c(1, 110), power=power)
   ))
   if(returnNames){
@@ -490,8 +490,8 @@ setGenericVerif("trScale", function(x,
                   type = c("stat","min-max","95","eq","sum", "rms")) 
                   standardGeneric("trScale"))
 
-setGenericVerif("spec", function(x, type=c("f-x","f-k"), returnSpec=FALSE,
-              plotSpec=TRUE, unwrapPhase = TRUE, ...) standardGeneric("spec"))
+setGenericVerif("spec", function(x, type=c("f-x","f-k"), plotSpec=TRUE, 
+                unwrapPhase = TRUE, ...) standardGeneric("spec"))
 setGenericVerif("fFilter", function(x, f=100, type=c('low','high','bandpass'),
                 L=257,plotSpec=FALSE) standardGeneric("fFilter"))
 setGenericVerif("fkFilter", function(x, fk=NULL, L=c(5,5),npad=1) 
@@ -893,7 +893,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   if(add == TRUE){ 
     par(new = TRUE)
   }else{
-    par( mai = mai)
+    par( mai = mai, oma =c(0,0,0,1))
   }
   if(relTime0){
     y <- y + time_0
@@ -903,7 +903,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
           yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
           resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)  
   if(barscale){
-    colkey(clim = zlim, clab = clab, width = 0.7, dist = 0.1, 
+    plot3D::colkey(clim = zlim, clab = clab, width = 0.7, dist = 0.1, 
           add = TRUE, col = col)
   }
   usr <- par("usr")
@@ -1263,7 +1263,7 @@ rmsScaling <- function(...){
 # @return power spectrum (frequency, power, phase)
 # -------------------------------------------
 powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE, 
-                  returnSpec = FALSE, titleSpec = NULL, unwrapPhase = TRUE){
+                   titleSpec = NULL, unwrapPhase = TRUE){
   A = as.matrix(A)
   nr = nrow(A)
   nc = ncol(A)
@@ -1314,8 +1314,8 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
     plot(fre,pow_mean, type="n",xaxt = "n",ylim=c(0,max(pow)),
           ylab="amplitude",xlab="")
       if(!is.null(dim(A))){
-        nothing <- apply(pow,2,lines,x=fre, 
-                col=rgb(0.2,0.2,0.2,7/max(ncol(A),7)))
+        invisible( apply(pow,2,lines,x=fre, 
+                col=rgb(0.2,0.2,0.2,7/max(ncol(A),7))) )
       }
       lines(fre,pow_mean,col="red")
       Axis(side = 1, tcl = +0.3,  labels=FALSE ,at=m)
@@ -1326,16 +1326,14 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
     plot(fre,pha_mean, type="n",xaxt = "n",ylim=range(pha), 
           xlab = "frequency MHz", ylab="phase") 
       if(!is.null(dim(A))){
-        nothing <- apply(pha, 2, lines, x = fre, 
-                  col = rgb(0.2,0.2,0.2,7/max(ncol(A), 7)))
+        invisible(  apply(pha, 2, lines, x = fre, 
+                  col = rgb(0.2,0.2,0.2,7/max(ncol(A), 7))) )
       }
       lines(fre,pha_mean,col="red")
       Axis(side = 1, tcl = +0.3,  labels=m ,at=m)
     par(op)
   }
-  if(returnSpec){
-    return(list(freq = fre, pow = pow, pha = pha))
-  }
+  return(list(freq = fre, pow = pow, pha = pha))
 }
 
 # @param [matrix]/[vector]   A     (each column represent a trace / a trace)
@@ -1392,7 +1390,7 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
     }
     L = max(length(h1),length(h2))
     # if(L %% 2 == 0) L = L + 1
-    cat("lenght max",L,"\n")
+    #cat("lenght max",L,"\n")
     if(length(h2) < L ){
       h2 = c(rep(0,(L-length(h2))/2),h2,rep(0,(L-length(h2))/2))
     }
@@ -1764,11 +1762,6 @@ deconvolutionMtx <- function(y,h,nf,mu=0.0001){
 
 # setGenericVerif("rmsScaling", function(x) standardGeneric("rmsScaling"))
 
-
-
-
-
-
 optPhaseRotation <- function(gpr,rot=0.01,plot=TRUE){
   # x_dec <- as.vector(gpr/apply(as.matrix(gpr),2,RMS))
   x_dec <- as.vector(gpr)
@@ -1839,20 +1832,21 @@ optPhaseRotation <- function(gpr,rot=0.01,plot=TRUE){
 
 
 # version vectoriel!!!!
-inPoly <- function(x,y, vertx, verty){
+inPoly <- function(x, y, vertx, verty){
   inPo <- rep(0L, length(x))
   nvert <- length(vertx)
   for(i in 1:nvert){
     j <- ifelse(i==1, nvert,i-1)
     myTest <- ((verty[i] > y) != (verty[j]>y)) &
-      (x < (vertx[j]-vertx[i]) * (y-verty[i]) / (verty[j]-verty[i]) + vertx[i])
+                (x < (vertx[j]-vertx[i]) * (y-verty[i]) / 
+                (verty[j]-verty[i]) + vertx[i])
     inPo[myTest] <- !inPo[myTest]
   }
   return(inPo)
 }
 
-.FKSpectrum <- function(A,dx=0.25,dz=0.8, npad=1, p=0.01,plotSpec=TRUE,
-                          returnSpec=FALSE){
+.FKSpectrum <- function(A, dx = 0.25, dz = 0.8, npad = 1, 
+                        p = 0.01, plotSpec = TRUE){
   # A <- GPR$data    #[90:1000,]
   nr <- nrow(A)  # time  
   nc <- ncol(A)  # x  
@@ -1872,24 +1866,19 @@ inPoly <- function(x,y, vertx, verty){
   A1_fft_phase <- Arg(A1_fft)
   # plotGPR((A1_fft_phase[1:(nf/2),])^0.05)
 
-  # frequency
-  T = dz*10^(-9)    # [s] Sample time
-  # Fs = 1/T      # [Hz] Sampling frequency
-  # fre <- 1:(nrow(A1_fft_pow)/2)/(2*(nrow(A1_fft_pow)/2) * T)/1000000  #[MHz]
-  # Ts = T*(10^(-9))    # [s] Sample time
-  # Fs = 1/Ts      # [Hz] Sampling frequency
+  # Sampling frequency [Hz] = 1 / Sample time [s]
+  Fs = 1/(dz*10^(-9))
   fac = 1000000
-  fre = (1/T)*seq(0,nf/2)/nf/fac
+  fre = Fs*seq(0,nf/2)/nf/fac
   
   # wavenumber
-  Ks = 1/dx      # [1/m] Sampling frequency
-  knu <- 1:(ncol(A1_fft_pow)/2)/(2*(ncol(A1_fft_pow)/2) * dx)  #[1/m]
+  Ks <- 1/dx      # [1/m] Sampling frequency
+  knu <- 1:(nk/2)/(2*(nk/2)) * Ks  #[1/m]
   knutot <- c(-rev(knu),knu)
 
-  # labels
+  # labels: find a function between "xat" and "xLabels" and use "pretty()"
   xat   <- c(0,nk/2,nk)/nk
   xLabels <- c(min(knutot), 0, max(knutot))
-  cat(fre)
   yat    <- c(0,nf/2,nf)/nf
   yLabels  <- c(0, max(fre)/2, max(fre))
 
@@ -1897,22 +1886,22 @@ inPoly <- function(x,y, vertx, verty){
   #       increase the visibility of small events 
   # p = 0.05
   if(plotSpec){
-    image((t(A1_fft_pow[1:(nf/2),])^p), yaxt="n", xaxt="n",
-          xlab="wavenumber (1/m)",ylab="frequency MHz")
-    axis(side=1,at=xat, labels=xLabels)
-    axis(side=2,at=yat, labels=yLabels)
-    # image((t(A1_fft_pow[1:(nf/2),])^p), xat=xat, xLabels=xLabels, yat=yat,
-# yLabels=yLabels,xlab="wavenumber (1/m)",ylab="frequency MHz")
+    plot3D::image2D(x = knutot, y = fre, z = (t(A1_fft_pow[1:(nf/2),])^p), 
+                xlab="wavenumber (1/m)",
+                ylab="frequency MHz")
+#      axis(side=4, labels=TRUE)
+
   }
-  if(returnSpec){
-    return(list(pow=A1_fft_pow[1:(nf/2),], pha=A1_fft_phase[1:(nf/2),]))
-  }
+   return(list(pow=A1_fft_pow[1:(nf/2),], 
+               pha=A1_fft_phase[1:(nf/2),],
+               fre = fre,
+               wnb = knutot))
 }
 
 
 
 
-.FKFilter <- function(A,fk,L=c(5,5),npad=1){
+.FKFilter <- function(A, fk, L = c(5, 5), npad=1){
   nr <- nrow(A)  # time  
   nc <- ncol(A)  # x  
 
@@ -1946,8 +1935,8 @@ inPoly <- function(x,y, vertx, verty){
   # hamming window
   if(length(L)==1) L <- c(L,L)
   if(all(L!=0)){
-    ham2D = hammingWindow(L[1])%*%t(hammingWindow(L[2]))
-    ham2Dlong = matrix(0,nrow=nf,ncol=nk)
+    ham2D <- hammingWindow(L[1])%*%t(hammingWindow(L[2]))
+    ham2Dlong <- matrix(0,nrow=nf,ncol=nk)
     ham2Dlong[1:L[1],1:L[2]] <- ham2D
     # plotGPR(ham2Dlong)
     FF <-  Re(fft(fft(myFlong) * fft(ham2Dlong),inv=TRUE))

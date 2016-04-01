@@ -302,7 +302,7 @@ setMethod("readGPR", "character", function(fPath, desc = "",
           x@ann <- intGPR
         }
         return(x)
-      }else if(".rds" == tolower(ext)){
+      }else if("rds" == tolower(ext)){
         x <- readRDS(fPath)
         if(class(x)=="GPR"){
           x@filepath <- fPath
@@ -343,6 +343,9 @@ setMethod("readGPR", "character", function(fPath, desc = "",
           y@filepath <- fPath
           return(y)
         }
+      }else{
+        stop(paste0("Problem with the file extension.",
+                    "Should be either '.DT1' or '.rds'\n"))
       }
     }else{
       stop(fPath, "does not exist!")
@@ -2704,7 +2707,7 @@ overwrite=FALSE){
     fPath_orgi <- fPath
     k <- 0
     while(file.exists(paste(fPath,".DT1",sep="")) || 
-file.exists(paste(fPath,".HD",sep=""))){
+            file.exists(paste(fPath,".HD",sep=""))){
       fPath <- paste(fPath_orgi,"_",k,sep="")
       k <- k+1
     }

@@ -2573,7 +2573,7 @@ overwrite=FALSE){
     ext <- tail(splitBaseName,1)
 #     ext <-  tolower(substr(path,start=nchar(path)-3,stop=nchar(path)))
     if(isTRUE(overwrite)){
-      catcat("file may be overwritten\n")
+      cat("file may be overwritten\n")
     }else{
       fPath <- safeFPath(fPath)
     }

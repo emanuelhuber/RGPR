@@ -5,7 +5,7 @@
 \alias{plot.GPR}
 \title{Plot the GPR object.}
 \usage{
-\method{plot}{GPR}(x, y, ...)
+\method{plot}{RGPR}(x, y, ...)
 }
 \description{
 If the GPR object consists of a single trace, wiggle plot is shown.

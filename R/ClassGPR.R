@@ -1561,6 +1561,13 @@ setMethod("traceShift", "GPR", function(x,  fb, kip=10){
   topaste <- c(topaste, paste("****************\n"))
   return(topaste)      
 }    
+
+#' Print GPR
+#'
+#' @method print RGPR 
+#' @name print
+#' @rdname show
+#' @export
 # > 2. S3 function:
 print.GPR <- function(x, ...){
   jj <- .GPR.print(x, ...)
@@ -1576,7 +1583,12 @@ print.GPR <- function(x, ...){
 #' @export
 setMethod("show", "GPR", function(object){print.GPR(object)})   
 
-
+#' Add a GPR trace on a plot
+#'
+#' @method lines RGPR 
+#' @name lines
+#' @rdname lines
+#' @export
 lines.GPR <- function(x,...){
   if(length(x@vel)>0){  
     v <- x@vel[[1]]
@@ -1594,6 +1606,7 @@ lines.GPR <- function(x,...){
 #' Plot the GPR object.
 #'
 #' If the GPR object consists of a single trace, wiggle plot is shown.
+#' @method plot RGPR 
 #' @name plot
 #' @rdname plot
 #' @export

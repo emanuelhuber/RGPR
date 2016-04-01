@@ -917,6 +917,9 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   if(relTime0){
     y <- y + time_0
   }
+  if( length(unique(diff(x))) > 1){
+    rasterImage <- FALSE
+  }
 #    image(x,y,z,col=col,zlim=zlim,xaxs="i", yaxs="i", yaxt="n",...)
   plot3D::image2D(x = x, y = y, z = z, zlim = zlim, col = col, xaxs = "i", 
           yaxs = "i", yaxt = "n", rasterImage = rasterImage, 

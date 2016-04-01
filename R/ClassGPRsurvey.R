@@ -619,12 +619,12 @@ setMethod("writeSurvey", "GPRsurvey", function(x, fPath, overwrite=FALSE){
 #' @export
 setMethod("writeGPR", "GPRsurvey", 
         function(x,fPath, format=c("DT1","rds"), overwrite=FALSE){
-		type=match.arg(format)
-		mainDir <- dirname(path)
+		type <- match.arg(format)
+		mainDir <- dirname(fPath)
 		if(mainDir =="." || mainDir =="/" ){
 			mainDir <- ""
 		}
-		subDir <- basename(path)
+		subDir <- basename(fPath)
 		if (file.exists(paste(mainDir, subDir, "/", sep = "/", 
             collapse = "/"))) {
 			# cat("subDir exists in mainDir and is a directory")
@@ -633,7 +633,7 @@ setMethod("writeGPR", "GPRsurvey",
 			#subDir <- ""
 			# you will probably want to handle this separately
 		} else {
-			warning("directory ", path, " does not exist - creating")
+			warning("directory ", fPath, " does not exist - creating")
 			dir.create(file.path(mainDir, subDir))
 		}
 		for(i in seq_along(x)){
@@ -646,7 +646,7 @@ setMethod("writeGPR", "GPRsurvey",
 				ann(gpr) <- x@intersections[[gpr@name]][,3:4]
 			}
 			fPath <- paste(mainDir,"/",subDir,"/",gpr@name,".",type,sep="")
-			writeGPR(gpr, path=fPath,format=type , overwrite=FALSE)
+			writeGPR(gpr, fPath=fPath,format=type , overwrite=FALSE)
 			cat("File saved:",fPath,"\n")
 		}			
 	

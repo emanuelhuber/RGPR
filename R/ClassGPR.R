@@ -1672,8 +1672,9 @@ plot.GPR <- function(x,y,...){
 #     op <- par(no.readonly=TRUE)
     par(mar=c(5,4,3,2)+0.1,oma=c(0,0,3,0), mgp=c(2, 0.5, 0))
     z <- seq(-x@time0, by = x@dz, length.out = length(x@data))
-    plot(z,x@data,type="n",xlab=paste0("time 
-(",x@depthunit,")"),ylab="mV",xaxt="n")
+    plot(z, x@data, type = "n", 
+          xlab = paste0("time (", x@depthunit, ")"), 
+          ylab = "amplitude (mV)",xaxt = "n")
     x_axis <- pretty(z,10)
     axis(side=1,at=x_axis, labels=x_axis,tck=+0.02)
     depth_0 <- depth0(0, v, antsep=x@antsep)
@@ -1688,7 +1689,7 @@ plot.GPR <- function(x,y,...){
     axis(side=3,at=depthat0, labels="0",tck=+0.02)
     axis(side=3,at=depthat2, labels=FALSE,tck=+0.01)
     axis(side=3,at=depthToTime(1, 0, v, antsep=x@antsep), 
-labels=FALSE,tck=+0.02)
+          labels=FALSE,tck=+0.02)
     abline(h = 0, lty = 3, col = "grey")
     abline(v = 0, col = "red")
     abline(v=depth_0,col="grey",lty=3)

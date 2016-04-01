@@ -124,6 +124,11 @@ as.SpatialPoints <- function (x, ...){
 	return(allTopo2)
 }
 
+#' Define a local reference coordinate
+#' 
+#' @name coordref
+#' @rdname coordref
+#' @export
 setMethod("coordref", "GPRsurvey", function(x){
 		if(length(x@coords)>0){
 			A <- do.call("rbind",x@coords)

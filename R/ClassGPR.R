@@ -1763,20 +1763,20 @@ function(x,addTopo = FALSE, clip = NULL, normalize = NULL,
       }
     }
     if(length(x@coordref)!=3 ){
-      coordref <- apply(coord(x),2,min)
+      refCoord <- apply(coord(x),2,min)
     }else{
-      coordref <-x@coordref
+      refCoord <-x@coordref
     }
-    z0 <- coord(x, 3) - coordref[3]
+    z0 <- coord(x, 3) - refCoord[3]
     if(addTopo){
       x <- migration(x)
-      z0 <- rep(max(coord(x, 3)),length(x)) - coordref[3]
+      z0 <- rep(max(coord(x, 3)),length(x)) - refCoord[3]
     }
-    cat(coordref,max(coord(x, 3)),"\n")
+    cat(refCoord,max(coord(x, 3)),"\n")
     A <-as.matrix(x)
-    # cat(coordref,"\n")
-    xpos <- coord(x, 1) - coordref[1]
-    ypos <- coord(x, 2) - coordref[2]
+    # cat(refCoord,"\n")
+    xpos <- coord(x, 1) - refCoord[1]
+    ypos <- coord(x, 2) - refCoord[2]
     zpos <- x@depth
     if(add==FALSE){
       # rgl.open()

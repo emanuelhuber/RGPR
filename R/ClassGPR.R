@@ -1905,7 +1905,7 @@ setMethod("spec", "GPR", function(x, type = c("f-x","f-k"), plotSpec = TRUE,
 
 #' Interpolate the trace position.
 #'
-#' @name interpPos
+#' @name interpPos<-
 #' @rdname interpPos
 #' @export
 setReplaceMethod(

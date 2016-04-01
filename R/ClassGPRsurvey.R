@@ -487,7 +487,7 @@ setMethod("intersections", "GPRsurvey", function(x){
 	}
 )
 
-#' @name interpPos
+#' @name interpPos<-
 #' @rdname interpPos
 #' @export
 setReplaceMethod(

@@ -63,38 +63,34 @@ separator
 # read/write SEGy
 
 # FIX ME!
-#- FK-SPECTRUM: use plot3D::image2D!
 #	- GPRsurvey > as.SpatialLines & GPR as.SpatialLines 
 #        > DEUX FOIS LA MEME FONCTION!!!!
 #	- GPRsurvey::plot3D -> use function "inPoly" to plot in 3D only a selection 
-of traces from GPRsurvey
+#         of traces from GPRsurvey
 #						-> add a zlim or a max depth!!!
 #	- GPR::plot3D -> add a zlim or a max depth!!!
-#	- GPR::exportCoord & GPRsurvey::exportCoord -> export as points -> use point.
-data.frame (add z-information)
-#	- GPR::migration/topoShift -> integrate the function time2depth or depth2time!
-!!!
+#	- GPR::exportCoord & GPRsurvey::exportCoord -> export as points 
+#         -> use point.data.frame (add z-information)
+#	- GPR::migration/topoShift -> integrate the function time2depth or 
+#       depth2time!!!!
 #	- GPR::delineation -> use the same scheme for both raster and wiggles!
 #	- GPR::fkFilter -> add as argument "slopes"
 #	- GPR::interpTraces -> use a raster to get the v-elevation!
 #	- plot.GPR function
-#   -> use plot3D::image2D !!
 #		-> check if all the "..." parameters corresponds to the possible paramters. 
-If not > error!
-#		-> check option image and use the "raster" option. Check grid with smooth 
-image...
+#           If not > error!
 #	- GPR::gain -> t0=NULL then t0 <- mean(time0)
 #	- GPR::spec(type "f-t") -> use power and log scale (?)
 #	- GPR::plotAmpl -> option log y-axis
 #	- GPR::exportPDF -> add processing steps!
 #	- scaling after gain!
-# 	- different taper window: cos, triang, hamming, bartlett, limtaper, hann, 
-flattop....
+# - different taper window: cos, triang, hamming, bartlett, limtaper, 
+#         hann, flattop....
 #	- check how time0 is used
 #	- GPR::export(type=PDF) use function plot (wiggles)!
 # 	- global -> optPhaseRotation -> check if 'e1071::kurtosis' is needed.	
-# 	- GPR::interpTraces > rename into "interpTracePos" (the trace position is 
-interpolated)
+# 	- GPR::interpTraces > rename into "interpTracePos" (the trace position 
+#         is interpolated)
 #	- GPR::Math > add in @proc the name of the mathematical function
 #	- GPR::exportCoord > add option to export txt-file
 
@@ -116,8 +112,11 @@ interpolated)
 # Idea for trace to trace processing:
 # -> list of all function with their argument to use
 # -> use a FUN_WRAP function : apply(GPR$data,2,FUN_WRAP)
-# 		-> FUN_WRAP process each single trace according to the list of function and 
-theirs args.
+# 		-> FUN_WRAP process each single trace according to the 
+#         list of function and theirs args.
+
+# - SVD image processing
+# - background removal
 
 #--- declipping ---#
 # - least-square polynomial interpolation
@@ -125,8 +124,8 @@ theirs args.
 # - PCA/SVD decomposition
 # - DCT (cf. R package)
 # - deconvolution/convolution
-# - interpolation par cubic splines (see bibliotheque/document/courbes de 
-bezier+++ )
+# - interpolation par cubic splines 
+#         (see bibliotheque/document/courbes de bezier+++ )
 
 #--- gain functions ---#
 # - rms AGC

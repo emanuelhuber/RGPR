@@ -31,7 +31,7 @@ trace.}
 \item{\code{time}}{A length-m numeric vector containing the recording time of 
 every trace.}
 
-\item{\code{com}}{A length-m character vector containing fiducial markers associated
+\item{\code{fid}}{A length-m character vector containing fiducial markers associated
 with the traces.}
 
 \item{\code{ann}}{A length-m character vector containing annotations associated 

@@ -246,15 +246,7 @@ trimStr <- function (x) gsub("^\\s+|\\s+$", "", x)
   unlist(lapply(strsplit(basename(x),"[.]"), tail , 1 ))
 }
 
-posLine <- function(loc,last=FALSE){
-  loc <- as.matrix(loc)
-  all_dist <- cumsum(c(0,sqrt(apply(diff(loc)^2,1,sum))))
-  if(last){
-        return(tail(all_dist,1))
-  }else{
-        return(as.numeric(all_dist))
-  }
-}
+
 
   
 # select a box on plot(mySurvey) and return list(xlim,ylim)
@@ -449,6 +441,12 @@ setGenericVerif("ampl", function(x, FUN=mean, ...) standardGeneric("ampl"))
 setGenericVerif("interpPos", function(x, topo, ...) 
     standardGeneric("interpPos"))
 
+#' @name relPos
+#' @rdname relPos
+#' @export
+setGenericVerif("relPos", function(x) 
+    standardGeneric("relPos"))
+    
 #' @name readGPR
 #' @rdname readGPR
 #' @export
@@ -503,6 +501,17 @@ setGenericVerif("deconv", function(x, method=c("spiking","wavelet","min-phase"),
                   ...) standardGeneric("deconv"))
 setGenericVerif("rotatePhase", function(x, phi) standardGeneric("rotatePhase"))
 
+
+#' @export
+posLine <- function(loc,last=FALSE){
+  loc <- as.matrix(loc)
+  all_dist <- cumsum(c(0,sqrt(apply(diff(loc)^2,1,sum))))
+  if(last){
+        return(tail(all_dist,1))
+  }else{
+        return(as.numeric(all_dist))
+  }
+}
   
 #------------------------------GRPsurvey
 setGenericVerif("getGPR", function(x,id) standardGeneric("getGPR"))

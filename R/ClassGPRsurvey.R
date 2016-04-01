@@ -10,7 +10,7 @@ setClass(
 		descriptions ="character",	# descriptions of the GPR profiles
 		freqs ="numeric", 			# frequencies of the GPR profiles
 		lengths="numeric",			# length in metres of the GPR profiles = [n]
-		surveymodes ="character",	# survey mode of the GPR profiles (reflection/CMP)
+		surveymodes ="character",	# survey mode (reflection/CMP)
 		dates ="character",			# dates  of the GPR profiles
 		antseps ="numeric",			# antenna separation of the GPR profiles
 		posunit = "character",		# position units 
@@ -24,6 +24,7 @@ setClass(
 
 #------------------------------------------#
 #-------------- CONSTRUCTOR ---------------#
+#' @export
 # LINES = list of datapath
 GPRsurvey <- function(LINES){
 	n <- length(LINES)
@@ -69,7 +70,7 @@ GPRsurvey <- function(LINES){
 # 			line_lengths[i]		<- gpr@dx * gpr@ntr
 			line_lengths[i]		<- gpr@dx * ncol(gpr@data)
 		}
-		fids[[line_names[i] ]]		<- trimStr(gpr@com)
+		fids[[line_names[i] ]]		<- trimStr(gpr@fid)
 	}
 	
 	x <- new("GPRsurvey",
@@ -92,9 +93,11 @@ GPRsurvey <- function(LINES){
 	return(x)
 }
 
-
+#' @export
 setAs(from = "GPRsurvey", to = "SpatialLines",
       def = function (from) as.SpatialLines(from))
+      
+#' @export
 setAs(from = "GPRsurvey", to = "SpatialPoints",
       def = function (from) as.SpatialPoints(from))	  
 
@@ -153,11 +156,18 @@ setReplaceMethod(
 	}
 )
 
+#' @name crs
+#' @rdname crs
+#' @export
 setMethod("crs", "GPRsurvey", function(x){
 		return(x@crs)
 	} 
 )
 
+
+#' @name crs
+#' @rdname crs
+#' @export
 setReplaceMethod(
 	f="crs",
 	signature="GPRsurvey",
@@ -169,6 +179,7 @@ setReplaceMethod(
 )
 
 #------------------------------
+#' @export
 # "["
 setMethod(
 	f= "[",
@@ -197,6 +208,7 @@ setMethod(
 )
 
 #------------------------------
+#' @export
 # "[["
 # return an instance of the class GPR!
 # identical to getGPR
@@ -210,6 +222,7 @@ setMethod(
 	}
 )
 
+#' @export
 setMethod("getGPR", "GPRsurvey", function(x,id){
 		if(length(id)>1){
 			warning("Length of id > 1, I take only the first element!\n")
@@ -291,11 +304,14 @@ print.GPRsurvey <- function(x, ...){
 	cat("****************\n")
 	return(invisible(overview))
 }
+#' @export
 # > 3. And finally a call to setMethod():
 setMethod("show", "GPRsurvey", function(object){print.GPRsurvey(object)}) 
 
-setMethod("length", "GPRsurvey", function(x) ncol(x@data))
 
+# setMethod("length", "GPRsurvey", function(x) ncol(x@data))
+
+#' @export
 setMethod(f="length", signature="GPRsurvey", definition=function(x){
 		length(x@filepaths)
 	}
@@ -404,6 +420,7 @@ plot.GPRsurvey <- function(x,y,...){
 	}
 }
 
+#' @export
 setMethod("surveyIntersect", "GPRsurvey", function(x){
 		# intersections <- list()
 		for(i in seq_along(x@coords)){
@@ -445,11 +462,13 @@ setMethod("surveyIntersect", "GPRsurvey", function(x){
 	} 
 )
 
+#' @export
 setMethod("intersections", "GPRsurvey", function(x){
 		return(x@intersections)
 	}
 )
 
+#' @export
 setMethod("interpPos", "GPRsurvey", function(x,topo, ...){
 		for(i in seq_along(x)){
 			gpr <- readGPR(x@filepaths[[i]])
@@ -463,6 +482,7 @@ setMethod("interpPos", "GPRsurvey", function(x,topo, ...){
 	}
 )
 
+#' @export
 setMethod(
 	f="coords",
 	signature="GPRsurvey",
@@ -477,7 +497,7 @@ setMethod(
 		}
 	}
 )
-
+#' @export
 setReplaceMethod(
 	f="coords",
 	signature="GPRsurvey",
@@ -504,7 +524,7 @@ setReplaceMethod(
 		return(x)
 	}
 )
-
+#' @export
 setMethod("plot3DRGL", "GPRsurvey", 
         function(x,addTopo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,
         add=TRUE,xlim=NULL,ylim=NULL,zlim=NULL,...){
@@ -531,7 +551,7 @@ setMethod("plot3DRGL", "GPRsurvey",
 
 
 
-
+#' @export
 setMethod("plotDelineations3D", "GPRsurvey", 
           function(x,sel=NULL,col=NULL,add=TRUE,...){
 		add<-add
@@ -557,6 +577,7 @@ setMethod("plotDelineations3D", "GPRsurvey",
 
 
 #----------------------- EXPORT/SAVE -----------------#
+#' @export
 setMethod("writeSurvey", "GPRsurvey", function(x, fPath, overwrite=FALSE){
 	if(isTRUE(overwrite)){
 		cat("file may be overwritten\n")
@@ -575,7 +596,7 @@ setMethod("writeSurvey", "GPRsurvey", function(x, fPath, overwrite=FALSE){
 })
 
 
-
+#' @export
 setMethod("writeGPR", "GPRsurvey", 
         function(x,fPath, format=c("DT1","rds"), overwrite=FALSE){
 		type=match.arg(format)
@@ -611,7 +632,7 @@ setMethod("writeGPR", "GPRsurvey",
 	
 	}
 )
-
+#' @export
 setMethod("exportFid", "GPRsurvey", function(x,fPath=NULL){
 		for(i in seq_along(x)){
 			gpr <- readGPR(x@filepaths[[i]])
@@ -622,7 +643,7 @@ setMethod("exportFid", "GPRsurvey", function(x,fPath=NULL){
 		}
 	}
 )
-
+#' @export
 setMethod("exportCoord", "GPRsurvey", 
     function(x,fPath=NULL,type=c("points","lines"),
             driver="ESRI Shapefile",...){
@@ -642,7 +663,7 @@ setMethod("exportCoord", "GPRsurvey",
 		writeOGR(mySpatPoints, folder, fPath, driver=driver,...)
 	}
 })
-
+#' @export
 setMethod("exportDelineations", "GPRsurvey", function(x, dirpath=""){
 	for(i in seq_along(x)){
 		exportDelineations(getGPR(x,id=i),path=path)

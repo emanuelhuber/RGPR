@@ -17,7 +17,7 @@
 #'              trace.
 #' @slot time A length-m numeric vector containing the recording time of 
 #'            every trace.
-#' @slot com A length-m character vector containing fiducial markers associated
+#' @slot fid A length-m character vector containing fiducial markers associated
 #'           with the traces.
 #' @slot ann A length-m character vector containing annotations associated 
 #'          with the traces.
@@ -68,7 +68,7 @@ setClass(
     pos = "numeric",    # position  of the traces
     time0 = "numeric",  # time-zero (first air-wave arrival)
     time = "numeric",   # time of the trace recording
-    com = "character",   # fiducial marks
+    fid = "character",   # fiducial marks
     ann = "character",  # annotation (e.g. intersections)
     coord = "matrix",   # coordinates (x,y,z) of each traces
     rec = "matrix",     # coordinates (x,y,z) of the receiver antenna
@@ -220,11 +220,8 @@ setClass(
   }
   
   hd_list <- list("startpos" = startpos[1],   # "STARTING POSITION"
-          "endpos" = endpos[1],
-          "gprdevice" = GPR_device)     # "FINAL POSITION"),
-          # "nstacks" = .getHD(x$hd, "NUMBER OF STACKS"),
-          # "pulservoltage" = .getHD(x$hd, "PULSER VOLTAGE (V)"),
-          # "gprdevice" = GPR_device
+                  "endpos" = endpos[1],       # "FINAL POSITION"
+                  "gprdevice" = GPR_device)
 
   x$hd2 <- x$hd[!pos_used,]
   if(nrow(x$hd2)>0){
@@ -240,34 +237,31 @@ setClass(
   }
   myT <- as.double(as.POSIXct(x$dt1$time, origin = as.Date(d)))
   new("GPR",   version="0.1",
-        data=byte2volt()*x$data,
-        traces=x$dt1$traces,  # x$dt1$traces
-        com=trimStr(x$dt1$com),   # x$dt1$fid    <-> x$dt1$x8
-        coord=coord,   # x$dt1$topo  of the traces
-        pos=x$dt1$pos,    # x$dt1$position  of the traces
-        depth= seq(0,by=dz,length.out=nrow(x$data)),
-        rec=rec_coord,     # x$dt1$recx,x$dt1$recy,x$dt1$recz
-        trans=trans_coord,
-        time0=time_0,  # x$dt1$time0
-        time=myT,     # x$dt1$time
-        proc=character(0),  # processing steps
-        vel=list(0.1),  #m/ns
+        data = byte2volt()*x$data,
+        traces = x$dt1$traces,            # x$dt1$traces
+        fid = trimStr(x$dt1$com),         # x$dt1$fid    <-> x$dt1$x8
+        coord = coord,                    # x$dt1$topo  of the traces
+        pos = x$dt1$pos,                  # x$dt1$position  of the traces
+        depth = seq(0,by=dz,length.out=nrow(x$data)),
+        rec = rec_coord,                  # x$dt1$recx,x$dt1$recy,x$dt1$recz
+        trans = trans_coord,
+        time0 = time_0,                   # x$dt1$time0
+        time = myT,                       # x$dt1$time
+        proc = character(0),              # processing steps
+        vel = list(0.1),                  # m/ns
         name = name,
         description = description,
         filepath = fPath,
-#         ntr = ncol(x$data), 
-#         w = ttw[1],  #  "TOTAL TIME WINDOW"
         dz = dz, 
-        dx = dx[1], # "STEP SIZE USED"
+        dx = dx[1],                       # "STEP SIZE USED"
         depthunit = "ns",
         posunit = posunit[1],
-        freq =freq[1], 
-        antsep =antsep[1], 
-        surveymode =surveymode[1],
+        freq = freq[1], 
+        antsep = antsep[1], 
+        surveymode = surveymode[1],
         date = d,
         crs = character(0),
-        # delineations=list(),
-        hd=hd_list    # header
+        hd = hd_list                      # header
   )
 
 }
@@ -318,19 +312,17 @@ setMethod("readGPR", "character", function(fPath, desc = "",
           y <- new("GPR",
             version = x[['version']],
             data = x[['data']],
-            traces = x[['traces']],  # x$dt1$traces
+            traces = x[['traces']],           # x$dt1$traces
             depth = x[['depth']],
-            pos = x[['pos']],    # x$dt1$position of the traces
-            time0 = x[['time0']],  # x$dt1$time0
-            time = x[['time']],     # x$dt1$time
-            com = trimStr(x[['com']]),   # x$dt1$fid <-> x$dt1$x8
-            ann = trimStr(x[['ann']]),   # x$dt1$fid <-> x$dt1$x8
-            coord = x[['coord']],   # x$dt1$topo  of the traces
-            rec = x[['rec']],     # x$dt1$recx,x$dt1$recy,x$dt1$recz
+            pos = x[['pos']],                 # x$dt1$position of the traces
+            time0 = x[['time0']],             # x$dt1$time0
+            time = x[['time']],               # x$dt1$time
+            fid = trimStr(x[['com']]),        # x$dt1$fid <-> x$dt1$x8
+            ann = trimStr(x[['ann']]),        # x$dt1$fid <-> x$dt1$x8
+            coord = x[['coord']],             # x$dt1$topo  of the traces
+            rec = x[['rec']],                 # x$dt1$recx,x$dt1$recy,x$dt1$recz
             trans = x[['trans']],
-            coordref = x[['coordref']],   # x$dt1$topo of the traces
-#             ntr =  x[['ntr']], 
-#             w = x[['w']], 
+            coordref = x[['coordref']],       # x$dt1$topo of the traces
             freq = x[['freq']], 
             dz = x[['dz']], 
             dx = x[['dx']], 
@@ -343,10 +335,10 @@ setMethod("readGPR", "character", function(fPath, desc = "",
             surveymode = x[['surveymode']],
             date = x[['date']],
             crs = x[['crs']],
-            proc = x[['proc']],  # processing steps
-            vel = x[['vel']],  #m/ns
+            proc = x[['proc']],               # processing steps
+            vel = x[['vel']],                 # m/ns
             delineations = x[['delineations']],
-            hd =  x[['hd']]    # header
+            hd =  x[['hd']]                   # header
           )
           y@filepath <- fPath
           return(y)
@@ -376,22 +368,16 @@ setAs(from = "matrix", to = "GPR", def = function (from) .as.GPR.matrix(from))
   new("GPR", 
     version = "0.1",
     data = x,
-    traces = 1:ncol(x),  # x$dt1$traces
-    # com = x$dt1$com,   # x$dt1$fid    <-> x$dt1$x8
-    # coord = coord,   # x$dt1$topo  of the traces
+    traces = 1:ncol(x),           # x$dt1$traces
     pos = (1:ncol(x) -1)*0.25,    # x$dt1$position  of the traces
     depth = (1:nrow(x) -1)*0.8,
-    # rec = rec_coord,     # x$dt1$recx,x$dt1$recy,x$dt1$recz
-    # trans = trans_coord,
-    time0 = rep(0,ncol(x)),  # x$dt1$time0
-    time = rep(0,ncol(x)),     # x$dt1$time
-    proc = character(0),  # processing steps
-    vel = list(0.1),  #m/ns
+    time0 = rep(0,ncol(x)),       # x$dt1$time0
+    time = rep(0,ncol(x)),        # x$dt1$time
+    proc = character(0),          # processing steps
+    vel = list(0.1),              # m/ns
     name = character(0),
     description = character(0),
     filepath = character(0),
-#     ntr = ncol(x), 
-#     w = nrow(x)*0.8, 
     dz = 0.8, 
     dx = 0.25, 
     depthunit = "ns",
@@ -401,8 +387,7 @@ setAs(from = "matrix", to = "GPR", def = function (from) .as.GPR.matrix(from))
     surveymode = "reflection",
     date = format(Sys.time(), "%d/%m/%Y"),
     crs = character(0),
-    # delineations=list(),
-    hd = list()    # header
+    hd = list()                   # header
   )
 }  
 
@@ -575,6 +560,7 @@ setMethod(
     range(x@data,na.rm=na.rm)
   }
 )
+
 #' Basic mathematical functions
 #'
 #' 
@@ -616,6 +602,8 @@ setMethod(
         # "digamma" "trigamma"
       stop(paste(.Generic, "not allowed on GPR objects"))
     )
+    proc <- getArgs()
+    x@proc <- c(x@proc, proc)
     return(x)
   }
 )
@@ -757,7 +745,7 @@ setMethod(
         x@pos <- x@pos[j]
         x@time0 <- x@time0[j]
         x@time <- x@time[j]
-        x@com <- x@com[j]
+        x@fid <- x@fid[j]
         if(length(x@coord)>0)  x@coord <- x@coord[j,,drop=FALSE]
         if(length(x@rec)>0) x@rec <- x@rec[j,,drop=FALSE]
         if(length(x@trans)>0) x@trans <- x@trans[j,,drop=FALSE]
@@ -1037,7 +1025,7 @@ setReplaceMethod(
   signature="GPR",
   definition=function(x,values){
     values <- as.character(values)
-    x@com <- values
+    x@fid <- values
     return(x)
   }
 )
@@ -1046,7 +1034,7 @@ setReplaceMethod(
 #' @rdname fid
 #' @export
 setMethod("fid", "GPR", function(x){
-    return(x@com)
+    return(x@fid)
   } 
 )
 
@@ -1349,6 +1337,8 @@ setMethod("filter2D", "GPR", function(x, type = c("median3x3"), ...){
 #' @export
 setMethod("clip", "GPR", function(x,Amax=NULL,Amin=NULL){
   x@data <- .clip(x@data,Amax,Amin)
+  proc <- getArgs()
+  x@proc <- c(x@proc, proc)
   return(x)
   } 
 )
@@ -1359,6 +1349,8 @@ setMethod("clip", "GPR", function(x,Amax=NULL,Amin=NULL){
 #' @export
 setMethod("gammaCorrection", "GPR", function(x,a=1,b=1){
   x@data <- .gammaCorrection(x@data,a,b)
+  proc <- getArgs()
+  x@proc <- c(x@proc, proc)
   return(x)
   } 
 )
@@ -1368,10 +1360,11 @@ setMethod("gammaCorrection", "GPR", function(x,a=1,b=1){
 #' @name trScale
 #' @rdname trScale
 #' @export
-setMethod("trScale", "GPR", function(x, type = 
-c("stat","min-max","95","eq","sum", "rms")){
+setMethod("trScale", "GPR", function(x, 
+            type = c("stat","min-max","95","eq","sum", "rms")){
     x@data <- scaleCol(x@data, type=type)
-    x@proc <- c(x@proc, "RMS trace scaling")
+    proc <- getArgs()
+    x@proc <- c(x@proc, proc)
     return(x)
   }
 )
@@ -1389,7 +1382,6 @@ c('low','high','bandpass'),L = 257, plotSpec = FALSE){
     proc <- getArgs()
     x@proc <- c(x@proc, proc)
     return(x)
-    
   } 
 )
 
@@ -1422,7 +1414,6 @@ setMethod("fkFilter", "GPR", function(x, fk=NULL, L=c(5,5),npad=1){
     }else if(is.matrix(fk)){
       cat("# FIXME! function to transform matrix into polygon\n")
     }
-    
     x@data <- .FKFilter(x@data,fk=fk, L=L, npad=npad)
     proc <- getArgs()
     x@proc <- c(x@proc, proc)
@@ -1521,7 +1512,9 @@ setMethod("traceShift", "GPR", function(x,  fb, kip=10){
       Anew[vsp,i] <- A[vs,i]
     }
     x@data <- Anew  
-    x@proc <- c( x@proc, "trace shift")
+#     x@proc <- c( x@proc, "trace shift")
+    proc <- getArgs()
+    x@proc <- c(x@proc, proc)
     return(x)
   }
 )
@@ -1537,7 +1530,7 @@ setMethod("traceShift", "GPR", function(x,  fb, kip=10){
   if(length(x@filepath) > 0){
     topaste <- c(topaste, paste0("filepath = ", x@filepath, "\n"))
   }
-  nbfid <- sum(trimStr(x@com)!= "")
+  nbfid <- sum(trimStr(x@fid)!= "")
   if(nbfid > 0){
     topaste <- c(topaste, paste0(nbfid, " fiducial(s)\n"))
   }
@@ -1721,7 +1714,7 @@ labels=FALSE,tck=+0.02)
       }
     }
     if(addFid == FALSE){
-      x@com <- character(length(x@com))
+      x@fid <- character(length(x@fid))
     }
     type=match.arg(type, c("raster","wiggles"))
     if(type=="raster"){
@@ -1742,7 +1735,7 @@ labels=FALSE,tck=+0.02)
                      main = x@name, 
                      xlab = x@posunit, ylab = ylab, note = x@filepath,
                      time_0 = x@time0, antsep = x@antsep, v = v, 
-                     addFid = addFid, fid = x@com, 
+                     addFid = addFid, fid = x@fid, 
                      addAnn = addAnn, annotations = x@ann,
                      depthunit = x@depthunit, posunit = x@posunit), dots))
     }else if(type=="wiggles"){
@@ -1769,7 +1762,7 @@ labels=FALSE,tck=+0.02)
                     main=x@name, 
                     xlab = x@posunit, ylab = ylab, note = x@filepath, 
                     time_0 = x@time0, antsep = x@antsep, v = v, 
-                    addFid = addFid, fid = x@com,
+                    addFid = addFid, fid = x@fid,
                     addAnn = addAnn, annotations=x@ann,
                     depthunit=x@depthunit, posunit = x@posunit,
                     topo = topo), dots))
@@ -2008,6 +2001,16 @@ setMethod("interpPos", "GPR", function(x,topo,...){
   }
 )
 
+#' Relative trace position on the GPR profile.
+#'
+#' @name relPos
+#' @rdname relPos
+#' @export
+setMethod("relPos", "GPR", function(x){
+    return(posLine(x@coord))
+  } 
+)
+
 #' Reverse the trace position.
 #'
 #' @name reverse
@@ -2021,7 +2024,7 @@ setMethod("reverse", "GPR", function(x){
     # pos="numeric",    # position  of the traces          
     xnew@time0 <- rev(x@time0)
     xnew@time <- rev(x@time)
-    xnew@com <- rev(x@com)
+    xnew@fid <- rev(x@fid)
     xnew@ann <- rev(x@ann)
     if(length(x@coord)>0){
       xnew@coord <- x@coord[nrow(x@coord):1,]
@@ -2032,6 +2035,8 @@ setMethod("reverse", "GPR", function(x){
     if(length(x@trans)>0){
       xnew@trans <- x@trans[nrow(x@trans):1,]
     }
+    proc <- getArgs()
+    x@proc <- c(x@proc, proc)
     return(xnew)
   }
 )
@@ -2525,11 +2530,11 @@ setMethod("upsample", "GPR", function(x,n){
     
     x@traces <- seq.int(1L,by=1L,length.out=ntr)
     #fiducial markers (fid, comments)
-    if(length(x@com) >0 && sum(x@com != "")>0){
-      newfid <- character(length(x@com)*n)
-      newfidPos <- which(x@com!="")
-      newfid[newfidPos*n] <- x@com[newfidPos]
-      x@com <- newfid[1:ntr]
+    if(length(x@fid) >0 && sum(x@fid != "")>0){
+      newfid <- character(length(x@fid)*n)
+      newfidPos <- which(x@fid!="")
+      newfid[newfidPos*n] <- x@fid[newfidPos]
+      x@fid <- newfid[1:ntr]
     }
     #annotations
     if(length(x@ann) >0 && sum(x@ann != "")>0){
@@ -2680,8 +2685,8 @@ overwrite=FALSE){
   myDay <- as.double(as.POSIXct(as.Date(bb), origin="1970-01-01"))
   traces_hd$time <- x@time - myDay
   traces_hd$x8 <- rep.int(0L,ncol(x@data)) 
-  traces_hd$x8[trimStr(x@com)!=""] <- 1L
-  traces_hd$com <- x@com 
+  traces_hd$x8[trimStr(x@fid)!=""] <- 1L
+  traces_hd$com <- x@fid 
   
   # FILE NAMES
   dirName   <- dirname(fPath)
@@ -2828,28 +2833,28 @@ function(x, fPath = NULL, addTopo = FALSE, clip = NULL, normalize = NULL,
 
 setMethod("exportFid", "GPR", function(x,fPath=NULL){
     # Trace  Position  Comment  PNAME
-    if(length(x@com) > 0){
+    if(length(x@fid) > 0){
       tr_start <- 1
       tr_end <- length(x)
       tr <- which(fid(x) != "" & fid(x) != "skip")
-      trcom <- fid(x)[tr]
+      trfid <- fid(x)[tr]
       if(!(tr_start %in% tr)){  
         tr <- c(tr_start,tr)
-        trcom <- c("F0",trcom)
+        trfid <- c("F0",trfid)
       }
       if(!(tr_end %in% tr)){
         tr <- c(tr,tr_end)
-        lastF <-regmatches(trcom[length(trcom)], 
+        lastF <-regmatches(trfid[length(trfid)], 
                         regexpr(pattern="[[:digit:]]+", 
-                        trcom[length(trcom)]))
+                        trfid[length(trfid)]))
         if(length(lastF)>0){
-          trcom <- c(trcom, paste0("F", as.numeric(lastF)+1))
+          trfid <- c(trfid, paste0("F", as.numeric(lastF)+1))
         }else{
-          trcom <- c(trcom,"Fend")
+          trfid <- c(trfid,"Fend")
         }
       }
       trpos <- x@pos[tr]
-      FID <- data.frame("TRACE" = tr,"POSITION" = trpos, "COMMENT" = trcom)
+      FID <- data.frame("TRACE" = tr,"POSITION" = trpos, "COMMENT" = trfid)
       if(is.null(fPath)){
         return(FID)
       }else{

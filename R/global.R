@@ -590,7 +590,7 @@ depth0 <- function(time_0, v=0.1, antsep=1){
     if(!is.null(list(...)$alpha) && (list(...)$alpha==0 || is.null(col))){
 
     }else{
-      rgl.surface(Y, X, Z, color=colA, back=back, smooth = smooth, 
+      rgl::rgl.surface(Y, X, Z, color=colA, back=back, smooth = smooth, 
                   lit=lit, lwd= lwd,...) 
     }
     lines3d(y,z0,x, col="black",alpha=1,lwd=lwd)   
@@ -606,7 +606,7 @@ depth0 <- function(time_0, v=0.1, antsep=1){
           matrix(z, ncol=nc, nrow=nr, byrow=FALSE)
     A = (A-min(A))/(max(A)-min(A))
     colA <- col[ (A)*100+1 ] # assign colors to heights for each point 
-    rgl.surface(Y, X, Z, color=colA, back=back, smooth = smooth, 
+    rgl::rgl.surface(Y, X, Z, color=colA, back=back, smooth = smooth, 
                 lit=lit, lwd= lwd,...) 
   }
 }
@@ -626,9 +626,9 @@ depth0 <- function(time_0, v=0.1, antsep=1){
   vz = seq(0,dimXYZ[3]-1,by=1)*sampling[3]  # dtime / 2 * v
   vx = seq(0,dimXYZ[1]-1,by=1)*sampling[1]
   vy = seq(0,dimXYZ[2]-1,by=1)*sampling[2]
-  if(rgl.cur()==0){  # si la fenêtre rgl est ouverte, on plot dedans...
-    rgl.open()
-    rgl.bg( color=c("white"))
+  if(rgl::rgl.cur()==0){  # si la fenêtre rgl est ouverte, on plot dedans...
+    rgl::rgl.open()
+    rgl::rgl.bg( color=c("white"))
   }
   i = section
   j=i

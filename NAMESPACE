@@ -2,7 +2,9 @@
 
 S3method(lines,GPR)
 S3method(plot,GPR)
+S3method(plot,GPRsurvey)
 S3method(print,GPR)
+S3method(print,GPRsurvey)
 export("ann<-")
 export("coord<-")
 export("coordref<-")

@@ -255,7 +255,13 @@ setMethod("getGPR", "GPRsurvey", function(x,id){
 
 #-------------------------------------------#
 #---------------- SETMETHOD ----------------#
-# Print methods
+#' Print GPR survey
+#'
+#' @method print GPRsurvey
+#' @name print
+#' @rdname show
+#' @export
+# > 2. S3 function:
 # setMethod("print", "GPR", function(x) print.GPR(x))	 
 # > 2. S3 function:
 print.GPRsurvey <- function(x, ...){
@@ -304,6 +310,12 @@ print.GPRsurvey <- function(x, ...){
 	cat("****************\n")
 	return(invisible(overview))
 }
+
+#' Show some information on the GPR object
+#'
+#' Identical to print().
+#' @name show
+#' @rdname show
 #' @export
 # > 3. And finally a call to setMethod():
 setMethod("show", "GPRsurvey", function(object){print.GPRsurvey(object)}) 
@@ -317,6 +329,13 @@ setMethod(f="length", signature="GPRsurvey", definition=function(x){
 	}
 )
 
+#' Plot the GPR object.
+#'
+#' If the GPR object consists of a single trace, wiggle plot is shown.
+#' @method plot GPRsurvey 
+#' @name plot
+#' @rdname plot
+#' @export
 # parameter add=TRUE/FALSE
 # 			addArrows = TRUE/FALSE
 plot.GPRsurvey <- function(x,y,...){

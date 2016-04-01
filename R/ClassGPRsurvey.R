@@ -338,7 +338,7 @@ setMethod(f="length", signature="GPRsurvey", definition=function(x){
 #' @export
 # parameter add=TRUE/FALSE
 # 			addArrows = TRUE/FALSE
-plot.GPRsurvey <- function(x,y,...){
+plot.GPRsurvey <- function(x, y, ...){
 	if(length(x@coords)>0){
 		plotAdd <- FALSE
 		addArrows <- TRUE
@@ -350,6 +350,7 @@ plot.GPRsurvey <- function(x,y,...){
 		lwd=1
 		col <- 1
 		# print(list(...))
+		dots <- c()
 		if( length(list(...)) ){
 			dots <- list(...)
 			if( !is.null(dots$add) && isTRUE(dots$add) ){

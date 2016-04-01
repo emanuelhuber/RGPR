@@ -290,8 +290,8 @@ print.GPRsurvey <- function(x, ...){
 	
 	is_test <- c("NO","YES")
 	cat("- - - - - - - - - - - - - - -\n")
-	overview <- data.frame("name (id)"=.fNameWExt(x@filepaths),
-							"length"=round(x@lengths,2),
+	overview <- data.frame("name" = .fNameWExt(x@filepaths),
+							"length" = round(x@lengths,2),
 							"units" = rep(x@posunit,n),
 							"date" = x@dates,
 							"fequency" = x@freqs,
@@ -487,8 +487,14 @@ setMethod("intersections", "GPRsurvey", function(x){
 	}
 )
 
+#' @name interpPos
+#' @rdname interpPos
 #' @export
-setMethod("interpPos", "GPRsurvey", function(x,topo, ...){
+setReplaceMethod(
+  f="interpPos",
+  signature="GPRsurvey",
+  definition=function(x,topo, ...){
+# setMethod("interpPos", "GPRsurvey", function(x,topo, ...){
 		for(i in seq_along(x)){
 			gpr <- readGPR(x@filepaths[[i]])
 			topoLine <- topo[[i]]

@@ -42,6 +42,7 @@ NULL
 # FID <- choose.files(caption = " txt files",filters = c("txt","*.txt"))
 # output = list of data frame (one for each file from FID) 
 #    with c("E","N","Z","TRACE") structure
+#' @export
 readFID <- function(FID,sep=","){
   myFid <- list() 
   for(i in seq_along(FID)){
@@ -138,6 +139,7 @@ safeFPath <- function(fPath = NULL){
 
 
 #------------- COLOR FUNCTIONS -------------------#
+#' @export
 palGPR <- function(colPal="default", n = 101, power = 1, returnNames = FALSE){
   colPal <- gsub("gray", "grey", x= colPal)
   tmp <- structure(list(
@@ -200,6 +202,7 @@ palGPR <- function(colPal="default", n = 101, power = 1, returnNames = FALSE){
 # usage: 
 # pal(palGPR("seismic",50))
 # pal(palGPR(n=50))
+#' @export
 plotPal <- function(col, border = NA){
   n <- length(col)
   plot(0, 0, type="n", xlim = c(0, 1), ylim = c(0, 1), axes = FALSE, 
@@ -207,6 +210,7 @@ plotPal <- function(col, border = NA){
   rect(0:(n-1)/n, 0, 1:n/n, 1, col = col, border = border)
 }
 
+#' @export
 displayPalGPR <- function(){
    op <- par(no.readonly=TRUE)
    par(mai=op$mai + c(0,1,0,0))
@@ -223,7 +227,8 @@ displayPalGPR <- function(){
   par(op)
 }
 
-# 
+#
+#' @export
 colFromPal <- function(A , col = palGPR(n=101)){
   CCY = (A-min(A,na.rm=TRUE))/(max(A,na.rm=TRUE)-min(A,na.rm=TRUE))
   ClimY <- range(CCY,na.rm=TRUE)
@@ -236,11 +241,14 @@ colFromPal <- function(A , col = palGPR(n=101)){
 trimStr <- function (x) gsub("^\\s+|\\s+$", "", x)
 
 # return filename without extension
+#' @export
 .fNameWExt <- function(x){
   unlist(lapply(strsplit(basename(x),"[.]"), head , 1 ))
 }
 
 # return the file extension.
+
+#' @export
 .fExt <- function(x){
 #   cat("with caution... because split \'.\' may not be so good\n")
   unlist(lapply(strsplit(basename(x),"[.]"), tail , 1 ))
@@ -437,9 +445,11 @@ setGenericVerif("plotAmpl", function(x, FUN = mean, add = FALSE,
                 all = FALSE,...) standardGeneric("plotAmpl"))
 setGenericVerif("ampl", function(x, FUN=mean, ...) standardGeneric("ampl"))
 
-
-setGenericVerif("interpPos", function(x, topo, ...) 
-    standardGeneric("interpPos"))
+#' @name interpPos
+#' @rdname interpPos
+#' @export
+setGenericVerif("interpPos<-", function(x, topo, ...) 
+    standardGeneric("interpPos<-"))
 
 #' @name relPos
 #' @rdname relPos

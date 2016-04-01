@@ -1908,7 +1908,11 @@ setMethod("spec", "GPR", function(x, type = c("f-x","f-k"), plotSpec = TRUE,
 #' @name interpPos
 #' @rdname interpPos
 #' @export
-setMethod("interpPos", "GPR", function(x,topo,...){
+setReplaceMethod(
+  f="interpPos",
+  signature="GPR",
+  definition=function(x,topo, ...){
+# setMethod("interpPos", "GPR", function(x,topo,...){
     # test if any measured points have a reference to a trace of the GPR-line
     if(all(is.na(topo[,"TRACE"]))){
       warning(paste0(x@name, ": no link between the measured points",
@@ -2840,18 +2844,18 @@ setMethod("exportFid", "GPR", function(x,fPath=NULL){
       trfid <- fid(x)[tr]
       if(!(tr_start %in% tr)){  
         tr <- c(tr_start,tr)
-        trfid <- c("F0",trfid)
+        trfid <- c("START",trfid)
       }
       if(!(tr_end %in% tr)){
         tr <- c(tr,tr_end)
-        lastF <-regmatches(trfid[length(trfid)], 
-                        regexpr(pattern="[[:digit:]]+", 
-                        trfid[length(trfid)]))
-        if(length(lastF)>0){
-          trfid <- c(trfid, paste0("F", as.numeric(lastF)+1))
-        }else{
-          trfid <- c(trfid,"Fend")
-        }
+#         lastF <-regmatches(trfid[length(trfid)], 
+#                         regexpr(pattern="[[:digit:]]+", 
+#                         trfid[length(trfid)]))
+#         if(length(lastF)>0){
+#           trfid <- c(trfid, paste0("F", as.numeric(lastF)+1))
+#         }else{
+          trfid <- c(trfid,"END")
+#         }
       }
       trpos <- x@pos[tr]
       FID <- data.frame("TRACE" = tr,"POSITION" = trpos, "COMMENT" = trfid)

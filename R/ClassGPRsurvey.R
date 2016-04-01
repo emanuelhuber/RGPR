@@ -118,7 +118,7 @@ as.SpatialLines <- function (x, ...){
 as.SpatialPoints <- function (x, ...){
 	allTopo <- do.call(rbind,x@coords)	#  N, E, Z
 	allTopo2 <- as.data.frame(allTopo)
-	sp::coordinates(allTopo2) = ~E + N
+	sp::coordinates(allTopo2) = ~ E + N
 	if(crs(x) == '' || nchar(crs(x)) == 1){
 		warning("no CRS defined!\n")
 	}else{
@@ -460,13 +460,13 @@ setMethod("surveyIntersect", "GPRsurvey", function(x){
 			if(!is.null(pt_int)){
 				# cat("intersection!\n")
 			  # for each intersection points
-			  n_int <- 	nrow(coordinates(pt_int))
+			  n_int <- 	nrow(sp::coordinates(pt_int))
 			  for(k in 1:n_int){
-				d <- sqrt(apply((top0[,1:2] - matrix(coordinates(pt_int)[k,],
+				d <- sqrt(apply((top0[,1:2] - matrix(sp::coordinates(pt_int)[k,],
                             nrow=nrow(top0),ncol=2,byrow=TRUE))^2,1,sum))
 				# if(length(c(coordinates(pt_int),which.min(d)[1],x@names[j]))!=4) 
 				#stop("lkjlkJ")
-				myTr_int <- rbind(myTr_int ,c(coordinates(pt_int)[k,],
+				myTr_int <- rbind(myTr_int ,c(sp::coordinates(pt_int)[k,],
                               which.min(d)[1],x@names[j]))
 			  }
 			}

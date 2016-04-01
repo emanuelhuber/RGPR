@@ -16,7 +16,7 @@
     <div class="wrapper">
       <header>
         <h1>Rgpr</h1>
-        <p>S4 classes to process, visualise and interpret ground-penetrating radar data</p>
+        <p>S4 classes to handle ground-penetrating radar data (processing, visualisation, delineation)</p>
 
         <p class="view"><a href="https://github.com/emanuelhuber/RGPR">View the Project on GitHub <small>emanuelhuber/RGPR</small></a></p>
 

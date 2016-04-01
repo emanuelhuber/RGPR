@@ -93,7 +93,8 @@ img {
 <li><a href="#save-and-export"><span class="toc-section-number">5.8</span> Save and export</a></li>
 <li><a href="#read-the-saved-gpr-data"><span class="toc-section-number">5.9</span> Read the saved GPR data</a></li>
 </ul></li>
-<li><a href="#some-final-thoughts"><span class="toc-section-number">6</span> Some final thoughts</a></li>
+<li><a href="#complete-processing-code"><span class="toc-section-number">6</span> Complete processing code</a></li>
+<li><a href="#some-final-thoughts"><span class="toc-section-number">7</span> Some final thoughts</a></li>
 </ul>
 </div>
 
@@ -443,8 +444,50 @@ spec(A7, type = "f-k")
 </div>
 </div>
 </div>
+<div id="complete-processing-code" class="section level1">
+<h1><span class="header-section-number">6</span> Complete processing code</h1>
+<p>Now, your R-script file should look like:</p>
+<pre class="r"><code>library(RGPR)   # load RGPR in the current R session
+library(rChoiceDialogs)
+
+myDir &lt;- &quot;/home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke&quot;
+setwd(myDir)    # set the working directory
+getwd()         # Return the current working directory (just to check)
+
+
+A &lt;- readGPR(fPath = &quot;rawGPR/LINE00.DT1&quot;) 
+
+A1 &lt;- dcshift(A, 1:110)   # new object A1 
+
+A2 &lt;- dewow(A1, type = &quot;MAD&quot;, w = 50)     # dewowing
+
+A3 &lt;- gain(A2, type = &quot;power&quot;, alpha = 1, t_end = 200, t_cst = 100)
+
+A4 &lt;- gain(A3, type = &quot;exp&quot;, alpha = 0.09, t_0 = 50, t_end = 180)
+
+A5 &lt;- fFilter(A4, f = c(5, 15, 150, 260), type = &quot;bandpass&quot;, plotSpec = FALSE)
+
+A6 &lt;- filter2D(A5, type = &quot;median3x3&quot;)
+
+FKSpec &lt;- spec(A6, type = &quot;f-k&quot;)
+area &lt;- list(x = c(0, min(FKSpec$wnb), min(FKSpec$wnb), max(FKSpec$wnb), max(FKSpec$wnb), 0),
+             y = c(max(FKSpec$fre), 800, 0, 0, 800, max(FKSpec$fre) ))
+lines(area, type=&quot;o&quot;)
+A7 &lt;- fkFilter(A6, fk = area)
+
+writeGPR(A7, fPath = file.path(getwd(), &quot;processing&quot;,paste0(name(A7),&quot;.rds&quot;)), 
+         format = &quot;rds&quot;, overwrite = TRUE)
+         
+exportPDF(A7, clip = 30, fPath = file.path(getwd(), 
+          paste0(&quot;processing/&quot;, name(A7))),
+          lwd = 0.5, ws = 1.5)        
+
+procA &lt;- readGPR(fPath = file.path(getwd(), &quot;processing/LINE00.rds&quot;)) 
+
+plot(procA, type = &quot;wiggles&quot;)</code></pre>
+</div>
 <div id="some-final-thoughts" class="section level1">
-<h1><span class="header-section-number">6</span> Some final thoughts</h1>
+<h1><span class="header-section-number">7</span> Some final thoughts</h1>
 <p>Warning: processing can introduce artifact in the data and lead to false interpreations.</p>
 <blockquote>
 <p>What really matters is that the final interpretation is valid, and although processing is important, ultimately, the key to good data interpretation is good data collection in the first place.<br /><em>in Cassidy (2009) Chapter 5 - Ground Penetrating Radar Data Processing, Modelling and Analysis, In Ground Penetrating Radar Theory and Applications, (Eds Harry M. Jol,), Elsevier, Amsterdam, pp: 141-176, ISBN 9780444533487</em>.</p>
@@ -455,52 +498,6 @@ spec(A7, type = "f-k")
 <blockquote>
 <p>Processing of GPR data tends to improve the appearance of data, but rarely does processing substantially change the interpretation.<br /><em>in Daniels et al. (1997) Coincident Antenna Three-Dimensional GPR. Journal of Environmental and Engineering Geophysics, Vol. 2, No.1, pp. 1–9</em>.</p>
 </blockquote>
-<!---
-# Conclusion 
-##  Take stock of your progress
-Now, your R-script file should look like:
-
-```r
-library(RGPR)   # load RGPR in the current R session
-library(rChoiceDialogs)
-
-myDir <- "/home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke"
-setwd(myDir)    # set the working directory
-getwd()         # Return the current working directory (just to check)
-
-
-A <- readGPR(fPath = "rawGPR/LINE00.DT1") 
-
-A1 <- dcshift(A, 1:110)   # new object A1 
-
-A2 <- dewow(A1, type = "MAD", w = 50)     # dewowing
-
-A3 <- gain(A2, type = "power", alpha = 1, t_end = 200, t_cst = 100)
-
-A4 <- gain(A3, type = "exp", alpha = 0.09, t_0 = 50, t_end = 180)
-
-A5 <- fFilter(A4, f = c(5, 15, 150, 260), type = "bandpass", plotSpec = FALSE)
-
-A6 <- filter2D(A5, type = "median3x3")
-
-FKSpec <- spec(A6, type = "f-k")
-area <- list(x = c(0, min(FKSpec$wnb), min(FKSpec$wnb), max(FKSpec$wnb), max(FKSpec$wnb), 0),
-             y = c(max(FKSpec$fre), 800, 0, 0, 800, max(FKSpec$fre) ))
-lines(area, type="o")
-A7 <- fkFilter(A6, fk = area)
-
-writeGPR(A7, fPath = file.path(getwd(), "processing",paste0(name(A7),".rds")), 
-         format = "rds", overwrite = TRUE)
-         
-exportPDF(A7, clip = 30, fPath = file.path(getwd(), 
-          paste0("processing/", name(A7))),
-          lwd = 0.5, ws = 1.5)        
-
-procA <- readGPR(fPath = file.path(getwd(), "processing/LINE00.rds")) 
-
-plot(procA, type = "wiggles")
-```
--->
 <hr />
 <p>Notes</p>
 <ul>

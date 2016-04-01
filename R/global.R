@@ -767,7 +767,7 @@ plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
     widthPDF <- fac*(xlim[2] - xlim[1])*ratio + sum(omi[c(2,4)] + mai[c(2,4)])
   }
   if(!is.null(pdfName)){
-    CairoPDF(file = paste(pdfName,".pdf",sep=""),
+    Cairo::CairoPDF(file = paste(pdfName,".pdf",sep=""),
         # pointsize=10,
         width = widthPDF, 
         height = heightPDF,

@@ -350,8 +350,8 @@ plot.GPRsurvey <- function(x, y, ...){
 		lwd=1
 		col <- 1
 		# print(list(...))
-		dots <- c()
-		if( length(list(...)) ){
+		dots <- list()
+		if( length(list(...)) > 0 ){
 			dots <- list(...)
 			if( !is.null(dots$add) && isTRUE(dots$add) ){
 				plotAdd <- TRUE

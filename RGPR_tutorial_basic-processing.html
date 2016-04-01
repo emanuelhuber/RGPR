@@ -306,7 +306,6 @@ plotAmpl(A2, col = &quot;black&quot;, add = TRUE)   # set add=TRUE to add the am
 </div>
 <div id="exponential-gain" class="section level3">
 <h3><span class="header-section-number">5.3.2</span> Exponential gain</h3>
-<p>+++ explain args!!!</p>
 <p>Ideally, the parameter <span class="math">\[\alpha\]</span> in the exponential gain should be close to the slope of the amplitude decrease. This slope could be estimated by fitting a straight line to the amplitude decrease. We only want to apply the filter between 50 ns (<code>t_0</code>) and (<code>t_end</code>) 200 ns:</p>
 <pre class="r"><code>A4 &lt;- gain(A3, type =&quot;exp&quot;,  alpha = 0.2, t_0 = 50, t_end = 200)
 plotAmpl(A4, col = &quot;green&quot;)</code></pre>
@@ -438,7 +437,7 @@ spec(A7, type = "f-k")
 <h2><span class="header-section-number">5.9</span> Read the saved GPR data</h2>
 <pre class="r"><code>procA &lt;- readGPR(fPath = file.path(getwd(), &quot;processing/LINE00.rds&quot;)) </code></pre>
 <p>Plot to check if everything is ok:</p>
-<pre class="r"><code>plot(procA, type = &quot;wiggles&quot;)</code></pre>
+<pre class="r"><code>plot(procA, clip = 50)</code></pre>
 <div class="figure">
 <img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-42-1.png" />
 </div>
@@ -446,7 +445,7 @@ spec(A7, type = "f-k")
 </div>
 <div id="some-final-thoughts" class="section level1">
 <h1><span class="header-section-number">6</span> Some final thoughts</h1>
-<p>Citation: processing and raw data quality. Too aggressive processing can introduce artifact in the data and lead to false interpreations.</p>
+<p>Warning: processing can introduce artifact in the data and lead to false interpreations.</p>
 <blockquote>
 <p>What really matters is that the final interpretation is valid, and although processing is important, ultimately, the key to good data interpretation is good data collection in the first place.<br /><em>in Cassidy (2009) Chapter 5 - Ground Penetrating Radar Data Processing, Modelling and Analysis, In Ground Penetrating Radar Theory and Applications, (Eds Harry M. Jol,), Elsevier, Amsterdam, pp: 141-176, ISBN 9780444533487</em>.</p>
 </blockquote>

@@ -7,7 +7,7 @@
 \alias{show}
 \title{Print GPR}
 \usage{
-\method{print}{RGPR}(x, ...)
+\method{print}{GPR}(x, ...)
 
 \S4method{show}{GPR}(object)
 }

@@ -5,7 +5,7 @@
 \alias{lines.GPR}
 \title{Add a GPR trace on a plot}
 \usage{
-\method{lines}{RGPR}(x, ...)
+\method{lines}{GPR}(x, ...)
 }
 \description{
 Add a GPR trace on a plot

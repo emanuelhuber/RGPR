@@ -2884,7 +2884,8 @@ function(x,fPath=NULL,folder='.',type=c("SpatialPoints","SpatialLines")){
   if(type=="SpatialLines"){  
     mySpatLines <- as.SpatialLines(x)
     dfl <- data.frame(z=c(1), row.names = x@name)
-    mySpatLinesdf <- SpatialLinesDataFrame(mySpatLines, dfl , match.ID = TRUE)
+    mySpatLinesdf <- sp::SpatialLinesDataFrame(mySpatLines, dfl , 
+                      match.ID = TRUE)
     writeOGR(mySpatLinesdf, folder, fPath, driver="ESRI Shapefile")
   }else if(type=="SpatialPoints"){  
     # allNames <- sapply(rep(Names, each=sapply(TOPO, length))

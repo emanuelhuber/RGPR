@@ -446,7 +446,7 @@ setMethod("surveyIntersect", "GPRsurvey", function(x){
 		  top0 <- x@coords[[i]]
 		  gtop0 <- sp::Line(top0[,1:2])
 		  gtopa <- sp::Lines(list(gtop0), ID=c("a"))
-		  Sa = SpatialLines(list(gtopa))
+		  Sa <- sp::SpatialLines(list(gtopa))
 		  v <- seq_along(x@coords)[-i]
 		  myCo_int <- c()
 		  myTr_int <- c()
@@ -455,8 +455,8 @@ setMethod("surveyIntersect", "GPRsurvey", function(x){
 			top1 <- x@coords[[j]]
 			gtop1 <- sp::Line(top1[,1:2])
 			gtopb <- sp::Lines(list(gtop1), ID=c("b"))
-			Sb = SpatialLines(list(gtopb))
-			pt_int <- gIntersection(Sa,Sb)
+			Sb <- sp::SpatialLines(list(gtopb))
+			pt_int <- rgeos::gIntersection(Sa,Sb)
 			if(!is.null(pt_int)){
 				# cat("intersection!\n")
 			  # for each intersection points
@@ -674,7 +674,7 @@ setMethod("exportCoord", "GPRsurvey",
 		dfl <- data.frame(z=seq_along(mySpatLines), 
 				row.names = sapply(slot(mySpatLines, "lines"), 
 							function(x) slot(x, "ID")))
-		mySpatLinesdf <- SpatialLinesDataFrame(mySpatLines, dfl , 
+		mySpatLinesdf <- sp::SpatialLinesDataFrame(mySpatLines, dfl , 
                             match.ID = TRUE)
 		writeOGR(mySpatLinesdf, folder, fPath, driver=driver,...)
 	}else if(type=="points"){	

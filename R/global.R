@@ -445,11 +445,11 @@ setGenericVerif("plotAmpl", function(x, FUN = mean, add = FALSE,
                 all = FALSE,...) standardGeneric("plotAmpl"))
 setGenericVerif("ampl", function(x, FUN=mean, ...) standardGeneric("ampl"))
 
-#' @name interpPos<-
+#' @name interpPos
 #' @rdname interpPos
 #' @export
-setGenericVerif("interpPos<-", function(x, topo, ...) 
-    standardGeneric("interpPos<-"))
+setGenericVerif("interpPos", function(x, topo, ...) 
+    standardGeneric("interpPos"))
 
 #' @name relPos
 #' @rdname relPos

@@ -487,14 +487,8 @@ setMethod("intersections", "GPRsurvey", function(x){
 	}
 )
 
-#' @name interpPos<-
-#' @rdname interpPos
 #' @export
-setReplaceMethod(
-  f="interpPos",
-  signature="GPRsurvey",
-  definition=function(x,topo, ...){
-# setMethod("interpPos", "GPRsurvey", function(x,topo, ...){
+setMethod("interpPos", "GPRsurvey", function(x,topo, ...){
 		for(i in seq_along(x)){
 			gpr <- readGPR(x@filepaths[[i]])
 			topoLine <- topo[[i]]

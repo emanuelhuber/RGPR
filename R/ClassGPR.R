@@ -1905,14 +1905,10 @@ setMethod("spec", "GPR", function(x, type = c("f-x","f-k"), plotSpec = TRUE,
 
 #' Interpolate the trace position.
 #'
-#' @name interpPos<-
+#' @name interpPos
 #' @rdname interpPos
 #' @export
-setReplaceMethod(
-  f="interpPos",
-  signature="GPR",
-  definition=function(x,topo, ...){
-# setMethod("interpPos", "GPR", function(x,topo,...){
+setMethod("interpPos", "GPR", function(x,topo,...){
     # test if any measured points have a reference to a trace of the GPR-line
     if(all(is.na(topo[,"TRACE"]))){
       warning(paste0(x@name, ": no link between the measured points",

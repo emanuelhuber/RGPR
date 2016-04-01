@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Emanuel Huber (emanuel.huber@stanford.edu)" />
+
+<meta name="date" content="2016-03-30" />
+
+<title>RGPR tutorial - Basic GPR data processing</title>
+
+<script src="RGPR_tutorial_basic-processing_files/jquery-1.11.0/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="RGPR_tutorial_basic-processing_files/bootstrap-3.3.1/css/journal.min.css" rel="stylesheet" />
+<script src="RGPR_tutorial_basic-processing_files/bootstrap-3.3.1/js/bootstrap.min.js"></script>
+<script src="RGPR_tutorial_basic-processing_files/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
+<script src="RGPR_tutorial_basic-processing_files/bootstrap-3.3.1/shim/respond.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<link rel="stylesheet"
+      href="RGPR_tutorial_basic-processing_files/highlight/default.css"
+      type="text/css" />
+<script src="RGPR_tutorial_basic-processing_files/highlight/highlight.js"></script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img { 
+  max-width:100%; 
+  height: auto; 
+}
+</style>
+<div class="container-fluid main-container">
+
+
+<div id="header">
+<h1 class="title">RGPR tutorial - Basic GPR data processing</h1>
+<h4 class="author"><em>Emanuel Huber (<a href="mailto:emanuel.huber@stanford.edu">emanuel.huber@stanford.edu</a>)</em></h4>
+<h4 class="date"><em>March 30, 2016</em></h4>
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#objectives-of-this-tutorial"><span class="toc-section-number">1</span> Objectives of this tutorial</a></li>
+<li><a href="#preliminary"><span class="toc-section-number">2</span> Preliminary</a><ul>
+<li><a href="#file-organisation"><span class="toc-section-number">2.1</span> File organisation</a></li>
+<li><a href="#installload-the-necessary-packages"><span class="toc-section-number">2.2</span> Install/load the necessary packages</a></li>
+<li><a href="#set-the-working-directory"><span class="toc-section-number">2.3</span> Set the working directory</a></li>
+</ul></li>
+<li><a href="#read-gpr-data"><span class="toc-section-number">3</span> Read GPR data</a></li>
+<li><a href="#plot-the-gpr-data"><span class="toc-section-number">4</span> Plot the GPR data</a></li>
+<li><a href="#basic-processing-steps"><span class="toc-section-number">5</span> Basic processing steps</a><ul>
+<li><a href="#dc-shift-removal"><span class="toc-section-number">5.1</span> DC shift removal</a></li>
+<li><a href="#dewow"><span class="toc-section-number">5.2</span> Dewow</a></li>
+<li><a href="#time-gain"><span class="toc-section-number">5.3</span> Time gain</a><ul>
+<li><a href="#power-gain"><span class="toc-section-number">5.3.1</span> Power gain</a></li>
+<li><a href="#exponential-gain"><span class="toc-section-number">5.3.2</span> Exponential gain</a></li>
+</ul></li>
+<li><a href="#frequency-filter"><span class="toc-section-number">5.4</span> Frequency filter</a></li>
+<li><a href="#median-filter-spatial-filter"><span class="toc-section-number">5.5</span> Median filter (spatial filter)</a></li>
+<li><a href="#frequency-wavenumber-filter-fk-filter"><span class="toc-section-number">5.6</span> Frequency-wavenumber filter (fk-filter)</a></li>
+<li><a href="#processing-overview"><span class="toc-section-number">5.7</span> Processing overview</a></li>
+<li><a href="#save-and-export"><span class="toc-section-number">5.8</span> Save and export</a></li>
+<li><a href="#read-the-saved-gpr-data"><span class="toc-section-number">5.9</span> Read the saved GPR data</a></li>
+</ul></li>
+<li><a href="#some-final-thoughts"><span class="toc-section-number">6</span> Some final thoughts</a></li>
+</ul>
+</div>
+
+<p><code>RGPR</code> is a package for <a href="https://cran.r-project.org/">R</a> to read, write, analyse and visualise ground-penetrating radar (GPR) data.</p>
+<blockquote>
+<p>R is a [free] programming language and software environment for statistical computing and graphics supported by the R Foundation for Statistical Computing (<a href="https://en.wikipedia.org/wiki/R_%28programming_language%29">Wikipedia &gt; R</a>).</p>
+</blockquote>
+<p><strong>Note</strong>: This R-package is still in development, and therefore some of the functions may change in a near future. The R-package <code>RGPR</code> is hosted on <a href="https://github.com/">GitHub</a> at <a href="https://github.com/emanuelhuber/RGPR"><a href="https://github.com/emanuelhuber/RGPR" class="uri">https://github.com/emanuelhuber/RGPR</a></a>. You can contribute to the development of <code>RGPR</code>: create an account on <a href="https://github.com/">GitHub</a>, <a href="https://guides.github.com/activities/forking/">fork</a> <code>RGPR</code>, improve it and sumbmit your modifications.</p>
+<p>If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german)</p>
+<blockquote>
+<p><code>emanuel.huber@stanford.edu</code></p>
+</blockquote>
+<div id="objectives-of-this-tutorial" class="section level1">
+<h1><span class="header-section-number">1</span> Objectives of this tutorial</h1>
+<ul>
+<li>Learn some basics of ground-penetrating radar data processing with <code>RGPR</code>.</li>
+<li>Learn how to manipulate objects of the class <code>RGPR</code>.</li>
+</ul>
+<p>However, this tutorial will not explain you the math/algorithms behind the different processing methods.</p>
+<p>In this tutorial the code snippets are in monospaced typewriter font like in the following example:</p>
+<pre class="r"><code>1 + exp(1:10)</code></pre>
+<p>The R output are preceded by a double hash (<code>##</code>). The following R output is from the code snippet above.</p>
+<pre><code>##  [1]     3.718282     8.389056    21.085537    55.598150   149.413159
+##  [6]   404.428793  1097.633158  2981.957987  8104.083928 22027.465795</code></pre>
+<p>Create a text file and save it with the <code>.R</code> extension (the extension for the R-script files). Then copy the code snippets into your R-script file and adapt them to your needs. To run the code in R, copy the code and paste it into the R console. You can also manually enter the code.</p>
+<p>Don’t hesitate to consult the help files and to search for help on the internet. For example, to see the help for the function <code>mean()</code>, enter:</p>
+<pre class="r"><code>?mean    # open the help file related to the function mean()</code></pre>
+</div>
+<div id="preliminary" class="section level1">
+<h1><span class="header-section-number">2</span> Preliminary</h1>
+<ul>
+<li>Read the tutorial “RGPR - Getting started (tutorial 1)”</li>
+<li>Download the data on</li>
+</ul>
+<div id="file-organisation" class="section level2">
+<h2><span class="header-section-number">2.1</span> File organisation</h2>
+<p>I recommand you to first think about the organisation of your files and directories. I suggest to organise them as follows:</p>
+<pre><code>/2014_04_25_frenke
+    /processing      (here you will save the processed GPR files)
+    /rawGPR          (the raw GPR data, never modify them!)
+    RGPR_tutorial.R  (this is you R script for this tutorial)</code></pre>
+</div>
+<div id="installload-the-necessary-packages" class="section level2">
+<h2><span class="header-section-number">2.2</span> Install/load the necessary packages</h2>
+<p>Load the packages <code>RGPR</code> and <code>rChoiceDialogs</code> (<code>rChoiceDialogs</code> provides a collection of portable choice dialog widgets):</p>
+<pre class="r"><code>library(RGPR)   # load RGPR in the current R session
+library(rChoiceDialogs)</code></pre>
+<p>[optionally] If <code>RGPR</code> is not installed, follow the instructions of the tutorial “Getting started” to install it. [optionally] If R answers you <code>there is no package called 'rChoiceDialogs'</code> you need first to install <code>rChoiceDialogs</code>, either through your R software or directly in R with:</p>
+<pre class="r"><code>install.packages(&quot;rChoiceDialogs&quot;)</code></pre>
+<p>The warnings that R shows can be ignored.</p>
+</div>
+<div id="set-the-working-directory" class="section level2">
+<h2><span class="header-section-number">2.3</span> Set the working directory</h2>
+<p>The working directory must be correctly set to use relative filepath. The working directory can be set either in your R-software or in R directly with:</p>
+<pre class="r"><code>myDir &lt;- &quot;/home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke&quot;
+setwd(myDir)    # set the working directory
+getwd()         # Return the current working directory (just to check)</code></pre>
+<pre><code>## [1] &quot;/home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke&quot;</code></pre>
+<p>[optionally] Alternatively, you can use an interactive dialog box from the R-package <code>rChoiceDialogs</code>:</p>
+<pre class="r"><code>myDir &lt;- rchoose.dir(default = &quot;/home/huber/WORK/UNIBAS/RESEARCH/RGPR/&quot;)
+setwd(myDir)    # set the working directory
+getwd()         # Return the current working directory (just to check)</code></pre>
+</div>
+</div>
+<div id="read-gpr-data" class="section level1">
+<h1><span class="header-section-number">3</span> Read GPR data</h1>
+<p>The raw GPR data are located in the directory <code>/rawGPR</code>. The data format is the Sensor &amp; Softwares format. Each GPR data consists of</p>
+<ul>
+<li>a header file (extension <code>.hd</code>) that can be opened with a normal text editor,</li>
+<li>and a binary data file (extension <code>.DT1</code>).</li>
+</ul>
+<p>To read the Sensor &amp; Softwares GPR data, enter</p>
+<pre class="r"><code>A &lt;- readGPR(fPath = &quot;rawGPR/LINE00.DT1&quot;)   # the filepath is case sensitive!</code></pre>
+<p>If the filepath (argument <code>fPath</code>) is not correct compared with the working directory, an error message is thrown.</p>
+<p>More information on the structure of an object of the class <code>RGPR</code> (like <code>A</code>) can be found in the tutorial “RGPR tutorial - <code>RGPR</code> class”</p>
+</div>
+<div id="plot-the-gpr-data" class="section level1">
+<h1><span class="header-section-number">4</span> Plot the GPR data</h1>
+<p>To plot the GPR record as a raster image (default mode), enter</p>
+<pre class="r"><code>plot(A)                                 </code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-9-1.png" />
+</div>
+<p>Plot wiggles</p>
+<pre class="r"><code>plot(A, type = &quot;wiggles&quot;)          </code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-10-1.png" />
+</div>
+<p>A few remarks:</p>
+<ul>
+<li>the horizontal red line indicates first wave arrival time,</li>
+<li>the yellow triangle indicates the position of a fiducial marker that was set during the survey to mark something (a specific object close to the GPR line, a change in morphology/topography/sedimentology, an intersection with another GPR line etc.). These markers are very useful to add topographic elevation to the profile, particularly when they correspond to measured (x,y,z) coordinates on the field.</li>
+</ul>
+<p>Plot a section of the GPR record (like zooming)</p>
+<pre class="r"><code>plot(A[100:300, 15:150])  # plot the 100 to 300 samples for the trace 15 to the trace 150        </code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-11-1.png" />
+</div>
+<p>Plot a signal trace, notice that the signal is clipped to +/- 50 mV (between 0 and 20 ns):</p>
+<pre class="r"><code>plot(A[, 15])      # plot the 15th trace of the GPR-line   </code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-12-1.png" />
+</div>
+<pre class="r"><code>plot(A[1:40, 15])  # plot the first 40 samples of the 15th trace of the GPR-line  </code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-12-2.png" />
+</div>
+</div>
+<div id="basic-processing-steps" class="section level1">
+<h1><span class="header-section-number">5</span> Basic processing steps</h1>
+<div id="dc-shift-removal" class="section level2">
+<h2><span class="header-section-number">5.1</span> DC shift removal</h2>
+<p>The direct current offset (DC-offset) is estimated on trace samples before time-zero. First, determine which samples will be used to estimate the direct current offset, that means which are the samples before the first wave arrival.</p>
+<pre class="r"><code>plot(A[, 15])  # plot the 15th trace of the GPR-line
+# plot a rectangle around the selected samples
+rect(-time0(A[, 15]), -5, -8, 5, border = &quot;red&quot;)</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-13-1.png" />
+</div>
+<p>Notice how the trace samples before the first wave arrival (before t = 0 ns) are slightly shifted below 0 mV? This shift is called direct current shift and you will removed it from the data. Identify the samples before t=0 ns by ploting the first n samples of the traces. For example, for n=110:</p>
+<pre class="r"><code>plot(A[1:110, 15])  # plot the first 110 samples of the 15th trace of the GPR-line</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-14-1.png" />
+</div>
+<pre class="r"><code>                   # they are all before the first wave arrival.</code></pre>
+<p>The DC-shift is estimated by the mean of the trace over the first 110 samples: <code>mean(A[1:110,15]</code> Visualise the DC shift on the whole trace (use <code>abline()</code> add a line to the plot):</p>
+<pre class="r"><code>plot(A[, 15])  # plot the 15th trace of the GPR-line 
+abline(h = mean(A[1:110, 15]), col = &quot;green&quot;)  # horizontal mean value in green</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-15-1.png" />
+</div>
+<p>Substract the DC-shift from the GPR record using the function <code>dcshift()</code>. This function takes as argument the <code>GPR</code> object and the sample index used to estimate the DC shift (in this case, the first 110 samples):</p>
+<pre class="r"><code>A1 &lt;- dcshift(A, 1:110)   # new object A1 </code></pre>
+<p>Have a look at A1 by entring:</p>
+<pre class="r"><code>A1</code></pre>
+<pre><code>## *** Class GPR ***
+##  name = LINE00
+##  filepath = rawGPR/LINE00.DT1
+##  1 fiducial(s)
+##  description = 
+##  survey date =  2014-04-25 
+##  Reflection, 100MHz,Window length=399.6ns, dz=0.4ns
+##  223 traces,55.5m long
+##  &gt; PROCESSING
+##    1. dcshift:1-110+mean
+##  ****************</code></pre>
+<p>Compared with <code>A</code> or <code>print(A)</code>, two additional lines are displayed. The second line shows the applied processing step, <code>dcshift</code>, with the arguments passed to the function. Each time a GPR object is processed with a function, the name of the function as well as some of its arguments are stored in the GPR object. This enables to track the data processing, i.e., to know exactly which processing steps where applied to the data. This is a first step toward reproducible research.</p>
+<p>The processing steps can be extracted with the function <code>processing()</code>:</p>
+<pre class="r"><code>processing(A1)</code></pre>
+<pre><code>## [1] &quot;dcshift:1-110+mean&quot;</code></pre>
+</div>
+<div id="dewow" class="section level2">
+<h2><span class="header-section-number">5.2</span> Dewow</h2>
+<p>Remove the low-frequency components (the so-called “wow”) of the GPR record usind</p>
+<ol style="list-style-type: decimal">
+<li>either a median absolute deviation (MAD) filter (<code>type = &quot;MAD&quot;</code>).</li>
+<li>or a Gaussian filter (<code>type = &quot;Gaussian&quot;</code>). The Gaussian filter is faster than the MAD filter.</li>
+</ol>
+<p>In both cases, the argument <code>w</code> is the length of the filter in time units.</p>
+<pre class="r"><code>A2 &lt;- dewow(A1, type = &quot;MAD&quot;, w = 50)     # dewowing
+plot(A2)                              # plot the result</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-19-1.png" />
+</div>
+<p>Can you see the difference with <code>A1</code>? Plot <code>A2 - A1</code> to see the removed “effect”wow“.</p>
+<pre class="r"><code>plot(A2 - A1)                           # plot the difference</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-20-1.png" />
+</div>
+<p>See the dewowing by comparing the traces before (blue line) and after (red line):</p>
+<pre class="r"><code>plot(A1[,15], col = &quot;blue&quot;)      # before dewowing
+lines(A2[,15], col = &quot;red&quot;)      # after dewowing</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-21-1.png" />
+</div>
+</div>
+<div id="time-gain" class="section level2">
+<h2><span class="header-section-number">5.3</span> Time gain</h2>
+<p>Apply a gain to compensate the signal attenuation. Three types of gain are disponible:</p>
+<ul>
+<li>power gain (<code>type = power</code>): $ A_g(t) = A(t)t^$ with $ = 1 $ per default.</li>
+<li>exponential gain (<code>type = exp</code>): $ A_g(t) = A(t)(t) $.</li>
+<li>Automatic gain control (<code>type = agc</code>): make gain equal to the local root mean squared signal.</li>
+</ul>
+<p>We will first apply a power gain and then a exponential gain. To visualise the amplitude of the GPR signal as a function of time, use the function <code>plotAmpl()</code> as follows:</p>
+<pre class="r"><code>plotAmpl(A2, col = &quot;black&quot;)          # plot amplitude as a function of time</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-22-1.png" />
+</div>
+<p>On the previous plot, there is a sharp amplitude increase at about 50 ns corresponding to the first wave arrival. Then the amplitude decreases until a plateau at about 200 ns. This plateau corresponds to the signal noise. There is little hope to extract some useful information above 200 ns because above 200 ns the signal/noise ratio is much smaller than 1 (i.e., more noise than signal).</p>
+<div id="power-gain" class="section level3">
+<h3><span class="header-section-number">5.3.1</span> Power gain</h3>
+<p>The power gain is set constant until <code>t_cst = 100</code> ns and applied from 100 ns to <code>t_end = 200</code> ns, with <span class="math">\[ \alpha = 1 \]</span>.</p>
+<pre class="r"><code>A3 &lt;- gain(A2, type = &quot;power&quot;, alpha = 1, t_end = 200, t_cst = 100)</code></pre>
+<p>Compare the amplitude before and after the power gain:</p>
+<pre class="r"><code>plotAmpl(A3, col = &quot;red&quot;)
+plotAmpl(A2, col = &quot;black&quot;, add = TRUE)   # set add=TRUE to add the amplitude on the previous plot</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-24-1.png" />
+</div>
+<pre class="r"><code>plot(A3)        # how does it look after the gain?</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-24-2.png" />
+</div>
+<p>Plot the difference (after - before gaining)</p>
+<pre class="r"><code>plot(A3 - A2)</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-25-1.png" />
+</div>
+</div>
+<div id="exponential-gain" class="section level3">
+<h3><span class="header-section-number">5.3.2</span> Exponential gain</h3>
+<p>+++ explain args!!!</p>
+<p>Ideally, the parameter <span class="math">\[\alpha\]</span> in the exponential gain should be close to the slope of the amplitude decrease. This slope could be estimated by fitting a straight line to the amplitude decrease. We only want to apply the filter between 50 ns (<code>t_0</code>) and (<code>t_end</code>) 200 ns:</p>
+<pre class="r"><code>A4 &lt;- gain(A3, type =&quot;exp&quot;,  alpha = 0.2, t_0 = 50, t_end = 200)
+plotAmpl(A4, col = &quot;green&quot;)</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-26-1.png" />
+</div>
+<p>Oops! Set <code>alpha</code> to a smaller value!</p>
+<pre class="r"><code>A4 &lt;- gain(A3, type = &quot;exp&quot;, alpha = 0.09, t_0 = 50, t_end = 180)
+plotAmpl(A4, col = &quot;green&quot;)
+plotAmpl(A3, col = &quot;red&quot;, add = TRUE) 
+plotAmpl(A2, col = &quot;black&quot;, add = TRUE) </code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-27-1.png" />
+</div>
+<pre class="r"><code>plot(A4)    # how does it look after the gain?</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-27-2.png" />
+</div>
+<p>Plot the gained GPR record and clip the amplitude values to 50 mV using the argument <code>clip</code>:</p>
+<pre class="r"><code>plot(A4, clip = 50)    # how does it look after the gain?</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-28-1.png" />
+</div>
+<p>Plot the difference (after - before gaining)</p>
+<pre class="r"><code>plot(A4 - A3, clip = 50)</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-29-1.png" />
+</div>
+</div>
+</div>
+<div id="frequency-filter" class="section level2">
+<h2><span class="header-section-number">5.4</span> Frequency filter</h2>
+<p>Let’s have a look at the amplitude-frequency and phase-frequency plot (the spectrum given by the Fourier decomposition):</p>
+<pre class="r"><code>spec(A4)</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-30-1.png" />
+</div>
+<p>The curve in red is the averaged amplitude/phase over all the trace amplitudes/phases.</p>
+<p>On the first plot, notice</p>
+<ul>
+<li>a sharp decrease of the amplitude between 0 MHz and 10 MHz: these frequency correspond to the slowing-varying part of the signal.</li>
+<li>after a peak at 80 MHz (the returned signal frequency that is lower than the antenna frequency because of frequency-dependent attenuation in the ground), the amplitude decreases.</li>
+<li>at about 200 MHz the amplitude stays constant (plateau): noise frequency.</li>
+</ul>
+<p>Eliminate the low-frequency as well as the high-frequency (noise) component of the GPR record with a bandpass filter. We define as corner frequencies 5 MHz, 15 MHz, 150 MHz and 260 MHz, and set <code>plotSpec = TRUE</code> to plot the spectrum with the signal, the filtered signal and the filter.</p>
+<pre class="r"><code>A5 &lt;- fFilter(A4, f = c(5, 15, 150, 260), type = &quot;bandpass&quot;, plotSpec = TRUE)</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-31-1.png" />
+</div>
+<pre class="r"><code>plot(A5, clip = 50)</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-31-2.png" />
+</div>
+<p>Let see the difference</p>
+<pre class="r"><code>plot(A5 - A4, clip = 50)</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-32-1.png" />
+</div>
+<p>Ideally, the objective of processing is to remove the noise component without deterioring the signal component to improve the signal/noise ratio. When ploting the difference in processing (after - before), one should only observe the noise that is filtered out. However, in practice some part of the signal may be also deteriored when eliminating noise.</p>
+</div>
+<div id="median-filter-spatial-filter" class="section level2">
+<h2><span class="header-section-number">5.5</span> Median filter (spatial filter)</h2>
+<pre class="r"><code>A6 &lt;- filter2D(A5,type=&quot;median3x3&quot;)
+plot(A6 , clip = 50)</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-33-1.png" />
+</div>
+<p>Let see the difference</p>
+<pre class="r"><code>plot(A6 - A5, clip = 50)</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-34-1.png" />
+</div>
+</div>
+<div id="frequency-wavenumber-filter-fk-filter" class="section level2">
+<h2><span class="header-section-number">5.6</span> Frequency-wavenumber filter (fk-filter)</h2>
+<p>The function <code>spec()</code> with the argument <code>type = &quot;f-k</code> returns a list containing the frequencies, the wavenumbers, the amplitude of the GPR data.</p>
+<pre class="r"><code>FKSpec &lt;- spec(A6, type = &quot;f-k&quot;)
+area &lt;- list(x = c(0, min(FKSpec$wnb), min(FKSpec$wnb), max(FKSpec$wnb), max(FKSpec$wnb), 0),
+             y = c(max(FKSpec$fre), 800, 0, 0, 800, max(FKSpec$fre) ))
+lines(area, type=&quot;o&quot;)</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-35-1.png" />
+</div>
+<pre class="r"><code>A7 &lt;- fkFilter(A6, fk = area)</code></pre>
+<p>With the f-k-filter you can successfully remove the artifacts but still the information gained is very small in this case (the quality of the raw GPR data is already bad).</p>
+<pre class="r"><code>plot(A7, clip = 50)</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-36-1.png" />
+</div>
+<pre class="r"><code>spec(A7, type = &quot;f-k&quot;)</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-36-2.png" />
+</div>
+<!---
+By ploting the spectrum of the filtered GPR data you see that some 
+
+```r
+spec(A7, type = "f-k")
+```
+
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-37-1.png) 
+-->
+</div>
+<div id="processing-overview" class="section level2">
+<h2><span class="header-section-number">5.7</span> Processing overview</h2>
+<p>Let review the processing step applied on the GPR record:</p>
+<pre class="r"><code>processing(A6)</code></pre>
+<pre><code>## [1] &quot;dcshift:1-110+mean&quot;                                
+## [2] &quot;dewow:type=MAD+w=50&quot;                               
+## [3] &quot;gain:type=power+alpha=1+t_end=200+t_cst=100&quot;       
+## [4] &quot;gain:type=exp+alpha=0.09+t_0=50+t_end=180&quot;         
+## [5] &quot;fFilter:f=5,15,150,260+type=bandpass+plotSpec=NULL&quot;
+## [6] &quot;filter2D:type=median3x3&quot;</code></pre>
+</div>
+<div id="save-and-export" class="section level2">
+<h2><span class="header-section-number">5.8</span> Save and export</h2>
+<p>Save the processed GPR record into the directory /processing. Use the <code>.rds</code> format (this is a R internal format)</p>
+<pre class="r"><code>writeGPR(A7, fPath = file.path(getwd(), &quot;processing&quot;,paste0(name(A7),&quot;.rds&quot;)), 
+         format = &quot;rds&quot;, overwrite = TRUE)</code></pre>
+<pre><code>## file may be overwritten</code></pre>
+<p>Export a high quality PDF:</p>
+<pre class="r"><code>exportPDF(A7, clip = 30, fPath = file.path(getwd(), 
+          paste0(&quot;processing/&quot;, name(A7))),
+          lwd = 0.5, ws = 1.5)</code></pre>
+<pre><code>## png 
+##   2</code></pre>
+</div>
+<div id="read-the-saved-gpr-data" class="section level2">
+<h2><span class="header-section-number">5.9</span> Read the saved GPR data</h2>
+<pre class="r"><code>procA &lt;- readGPR(fPath = file.path(getwd(), &quot;processing/LINE00.rds&quot;)) </code></pre>
+<p>Plot to check if everything is ok:</p>
+<pre class="r"><code>plot(procA, type = &quot;wiggles&quot;)</code></pre>
+<div class="figure">
+<img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-42-1.png" />
+</div>
+</div>
+</div>
+<div id="some-final-thoughts" class="section level1">
+<h1><span class="header-section-number">6</span> Some final thoughts</h1>
+<p>Citation: processing and raw data quality. Too aggressive processing can introduce artifact in the data and lead to false interpreations.</p>
+<blockquote>
+<p>What really matters is that the final interpretation is valid, and although processing is important, ultimately, the key to good data interpretation is good data collection in the first place.<br /><em>in Cassidy (2009) Chapter 5 - Ground Penetrating Radar Data Processing, Modelling and Analysis, In Ground Penetrating Radar Theory and Applications, (Eds Harry M. Jol,), Elsevier, Amsterdam, pp: 141-176, ISBN 9780444533487</em>.</p>
+</blockquote>
+<blockquote>
+<p>A good practical mantra for most users to adopt is if it cannot be seen in the raw data – is it really there? As such, processing steps should be used to improve the raw-data quality, therefore, making interpretation easier. In practice, this means increasing the signal-to-noise ratio of coherent responses and presenting the data in a format that reflects the subsurface conditions accurately.<br /><em>in Cassidy (2009) Chapter 5 - Ground Penetrating Radar Data Processing, Modelling and Analysis, In Ground Penetrating Radar Theory and Applications, (Eds Harry M. Jol,), Elsevier, Amsterdam, pp: 141-176, ISBN 9780444533487</em>.</p>
+</blockquote>
+<blockquote>
+<p>Processing of GPR data tends to improve the appearance of data, but rarely does processing substantially change the interpretation.<br /><em>in Daniels et al. (1997) Coincident Antenna Three-Dimensional GPR. Journal of Environmental and Engineering Geophysics, Vol. 2, No.1, pp. 1–9</em>.</p>
+</blockquote>
+<!---
+# Conclusion 
+##  Take stock of your progress
+Now, your R-script file should look like:
+
+```r
+library(RGPR)   # load RGPR in the current R session
+library(rChoiceDialogs)
+
+myDir <- "/home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke"
+setwd(myDir)    # set the working directory
+getwd()         # Return the current working directory (just to check)
+
+
+A <- readGPR(fPath = "rawGPR/LINE00.DT1") 
+
+A1 <- dcshift(A, 1:110)   # new object A1 
+
+A2 <- dewow(A1, type = "MAD", w = 50)     # dewowing
+
+A3 <- gain(A2, type = "power", alpha = 1, t_end = 200, t_cst = 100)
+
+A4 <- gain(A3, type = "exp", alpha = 0.09, t_0 = 50, t_end = 180)
+
+A5 <- fFilter(A4, f = c(5, 15, 150, 260), type = "bandpass", plotSpec = FALSE)
+
+A6 <- filter2D(A5, type = "median3x3")
+
+FKSpec <- spec(A6, type = "f-k")
+area <- list(x = c(0, min(FKSpec$wnb), min(FKSpec$wnb), max(FKSpec$wnb), max(FKSpec$wnb), 0),
+             y = c(max(FKSpec$fre), 800, 0, 0, 800, max(FKSpec$fre) ))
+lines(area, type="o")
+A7 <- fkFilter(A6, fk = area)
+
+writeGPR(A7, fPath = file.path(getwd(), "processing",paste0(name(A7),".rds")), 
+         format = "rds", overwrite = TRUE)
+         
+exportPDF(A7, clip = 30, fPath = file.path(getwd(), 
+          paste0("processing/", name(A7))),
+          lwd = 0.5, ws = 1.5)        
+
+procA <- readGPR(fPath = file.path(getwd(), "processing/LINE00.rds")) 
+
+plot(procA, type = "wiggles")
+```
+-->
+<hr />
+<p>Notes</p>
+<ul>
+<li>This document was created with R-markdown and knitr.</li>
+</ul>
+</div>
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

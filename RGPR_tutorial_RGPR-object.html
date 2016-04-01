@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Emanuel Huber (emanuel.huber@stanford.edu)" />
+
+<meta name="date" content="2016-03-30" />
+
+<title>RGPR tutorial - RGPR class</title>
+
+<script src="RGPR_tutorial_RGPR-object_files/jquery-1.11.0/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="RGPR_tutorial_RGPR-object_files/bootstrap-3.3.1/css/journal.min.css" rel="stylesheet" />
+<script src="RGPR_tutorial_RGPR-object_files/bootstrap-3.3.1/js/bootstrap.min.js"></script>
+<script src="RGPR_tutorial_RGPR-object_files/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
+<script src="RGPR_tutorial_RGPR-object_files/bootstrap-3.3.1/shim/respond.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<link rel="stylesheet"
+      href="RGPR_tutorial_RGPR-object_files/highlight/default.css"
+      type="text/css" />
+<script src="RGPR_tutorial_RGPR-object_files/highlight/highlight.js"></script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img { 
+  max-width:100%; 
+  height: auto; 
+}
+</style>
+<div class="container-fluid main-container">
+
+
+<div id="header">
+<h1 class="title">RGPR tutorial - <code>RGPR</code> class</h1>
+<h4 class="author"><em>Emanuel Huber (<a href="mailto:emanuel.huber@stanford.edu">emanuel.huber@stanford.edu</a>)</em></h4>
+<h4 class="date"><em>March 30, 2016</em></h4>
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#objectives-of-this-tutorial"><span class="toc-section-number">1</span> Objectives of this tutorial</a></li>
+<li><a href="#preliminary"><span class="toc-section-number">2</span> Preliminary</a></li>
+<li><a href="#an-object-of-the-class-rgpr"><span class="toc-section-number">3</span> An object of the class <code>RGPR</code></a></li>
+</ul>
+</div>
+
+<p><code>RGPR</code> is a package for <a href="https://cran.r-project.org/">R</a> to read, write, analyse and visualise ground-penetrating radar (GPR) data.</p>
+<blockquote>
+<p>R is a [free] programming language and software environment for statistical computing and graphics supported by the R Foundation for Statistical Computing (<a href="https://en.wikipedia.org/wiki/R_%28programming_language%29">Wikipedia &gt; R</a>).</p>
+</blockquote>
+<p><strong>Note</strong>: This R-package is still in development, and therefore some of the functions may change in a near future. The R-package <code>RGPR</code> is hosted on <a href="https://github.com/">GitHub</a> at <a href="https://github.com/emanuelhuber/RGPR" class="uri">https://github.com/emanuelhuber/RGPR</a>. You can contribute to the development of <code>RGPR</code>: create an account on <a href="https://github.com/">GitHub</a>, <a href="https://guides.github.com/activities/forking/">fork</a> <code>RGPR</code>, improve it and sumbmit your modifications.</p>
+<p>If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german)</p>
+<blockquote>
+<p><code>emanuel.huber@stanford.edu</code></p>
+</blockquote>
+<div id="objectives-of-this-tutorial" class="section level1">
+<h1><span class="header-section-number">1</span> Objectives of this tutorial</h1>
+<ul>
+<li>Learn some basics of ground-penetrating radar processing with <code>RGPR</code>.</li>
+<li>Learn how to manipulate objects of the class <code>RGPR</code>.</li>
+</ul>
+<p>In this tutorial the code snippets are in monospaced typewriter font like in the following example:</p>
+<pre class="r"><code>1 + exp(1:10)</code></pre>
+<p>The R output are preceded by a double hash (<code>##</code>). The following R output is from the code snippet above.</p>
+<pre><code>##  [1]     3.718282     8.389056    21.085537    55.598150   149.413159
+##  [6]   404.428793  1097.633158  2981.957987  8104.083928 22027.465795</code></pre>
+<p>Create a text file and save it with the <code>.R</code> extension (the extension for the R-script files). Then copy the code snippets into your R-script file and adapt them to your needs. To run the code in R, copy the code and paste it into the R console. You can also manually enter the code.</p>
+<p>Don’t hesitate to consult the help files and to search for help on the internet. For example, to see the help for the function <code>mean()</code>, enter:</p>
+<pre class="r"><code>?mean    # open the help file related to the function mean()</code></pre>
+</div>
+<div id="preliminary" class="section level1">
+<h1><span class="header-section-number">2</span> Preliminary</h1>
+<p>Read the tutorial “RGPR - Getting started (tutorial 1)”</p>
+<p>Load the packages <code>RGPR</code> and set the working directory:</p>
+<pre class="r"><code>library(RGPR)   # load RGPR in the current R session
+myDir &lt;- &quot;/home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke&quot;
+setwd(myDir)    # set the working directory
+getwd()         # Return the current working directory (just to check)</code></pre>
+<pre><code>## [1] &quot;/home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke&quot;</code></pre>
+<p>Read the Sensor &amp; Softwares GPR data:</p>
+<pre class="r"><code>A &lt;- readGPR(fPath=&quot;rawGPR/LINE00.DT1&quot;)   # the filepath is case sensitive!</code></pre>
+</div>
+<div id="an-object-of-the-class-rgpr" class="section level1">
+<h1><span class="header-section-number">3</span> An object of the class <code>RGPR</code></h1>
+<p>If you just enter the newly created object <code>A</code> in R (or enter <code>print(A)</code>), R will show you some information on the object A:</p>
+<pre class="r"><code>A                 # let&#39;s have a look at the object A</code></pre>
+<pre><code>## *** Class GPR ***
+##  name = LINE00
+##  filepath = rawGPR/LINE00.DT1
+##  1 fiducial(s)
+##  description = 
+##  survey date = 2014-04-25
+##  Reflection, 100MHz, W=399.6ns, dz=0.4ns
+##  223 traces, 55.5m long
+##  ****************</code></pre>
+<p><code>A</code> is an object of the class <code>GPR</code> with a complex structure that can be visualised with the <code>str()</code> function:</p>
+<pre class="r"><code>str(A)            # let&#39;s have a look at the structure of A</code></pre>
+<pre><code>## Formal class &#39;GPR&#39; [package &quot;RGPR&quot;] with 29 slots
+##   ..@ version     : chr &quot;0.1&quot;
+##   ..@ data        : num [1:1000, 1:223] -1.05 -1.44 -1.48 -1.5 -1.54 ...
+##   ..@ traces      : num [1:223] 1 2 3 4 5 6 7 8 9 10 ...
+##   ..@ depth       : num [1:1000] 0 0.4 0.8 1.2 1.6 2 2.4 2.8 3.2 3.6 ...
+##   ..@ pos         : num [1:223] 0 0.25 0.5 0.75 1 1.25 1.5 1.75 2 2.25 ...
+##   ..@ time0       : num [1:223] 52.2 52.2 52.2 52.2 52.2 ...
+##   ..@ time        : num [1:223] 1.4e+09 1.4e+09 1.4e+09 1.4e+09 1.4e+09 ...
+##   ..@ com         : chr [1:223] &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##   ..@ ann         : chr(0) 
+##   ..@ coord       : logi[0 , 0 ] 
+##   ..@ rec         : logi[0 , 0 ] 
+##   ..@ trans       : logi[0 , 0 ] 
+##   ..@ coordref    : num(0) 
+##   ..@ freq        : num 100
+##   ..@ dz          : num 0.4
+##   ..@ dx          : num 0.25
+##   ..@ antsep      : num 1
+##   ..@ name        : chr &quot;LINE00&quot;
+##   ..@ description : chr &quot;&quot;
+##   ..@ filepath    : chr &quot;rawGPR/LINE00.DT1&quot;
+##   ..@ depthunit   : chr &quot;ns&quot;
+##   ..@ posunit     : chr &quot;m&quot;
+##   ..@ surveymode  : chr &quot;Reflection&quot;
+##   ..@ date        : chr &quot;2014-04-25&quot;
+##   ..@ crs         : chr(0) 
+##   ..@ proc        : chr(0) 
+##   ..@ vel         :List of 1
+##   .. ..$ : num 0.1
+##   ..@ delineations: list()
+##   ..@ hd          :List of 14
+##   .. ..$ startpos          : num 0
+##   .. ..$ endpos            : num 55.5
+##   .. ..$ gprdevice         : chr &quot;Data Collected with pE PRO (2011-00114-00)&quot;
+##   .. ..$ PULSER_VOLTAGE_V  : chr &quot;400&quot;
+##   .. ..$ NUMBER_OF_STACKS  : chr &quot;16&quot;
+##   .. ..$ ODOMETER_CAL_tm   : chr &quot;979.599976&quot;
+##   .. ..$ STACKING_TYPE     : chr &quot;F1, P16, DynaQ OFF&quot;
+##   .. ..$ DVL_Serial        : chr &quot;0051-6870-0001&quot;
+##   .. ..$ Control_Mod_Serial: chr &quot;0022-3009-0014&quot;
+##   .. ..$ Transmitter_Serial: chr &quot;0026-3171-0008&quot;
+##   .. ..$ Receiver_Serial   : chr &quot;0025-3172-0014&quot;
+##   .. ..$ Start_DVL_Battery : chr &quot;12.68V&quot;
+##   .. ..$ Start_Rx_Battery  : chr &quot;12.71V&quot;
+##   .. ..$ Start_Tx_Battery  : chr &quot;12.78V 12.78V&quot;</code></pre>
+<p>The strings after the <code>@</code> are the names of the elements that form <code>A</code>. These elements are called <code>slots</code>. To get the <code>slots</code> names enter:</p>
+<pre class="r"><code>slotNames(A)      # return the slot names</code></pre>
+<pre><code>##  [1] &quot;version&quot;      &quot;data&quot;         &quot;traces&quot;       &quot;depth&quot;       
+##  [5] &quot;pos&quot;          &quot;time0&quot;        &quot;time&quot;         &quot;com&quot;         
+##  [9] &quot;ann&quot;          &quot;coord&quot;        &quot;rec&quot;          &quot;trans&quot;       
+## [13] &quot;coordref&quot;     &quot;freq&quot;         &quot;dz&quot;           &quot;dx&quot;          
+## [17] &quot;antsep&quot;       &quot;name&quot;         &quot;description&quot;  &quot;filepath&quot;    
+## [21] &quot;depthunit&quot;    &quot;posunit&quot;      &quot;surveymode&quot;   &quot;date&quot;        
+## [25] &quot;crs&quot;          &quot;proc&quot;         &quot;vel&quot;          &quot;delineations&quot;
+## [29] &quot;hd&quot;</code></pre>
+<p>A <code>RGPR</code> object consist of: 1. the GPR data (i.e. the measured amplitudes as a function of time for each GPR traces). The data are stored in the slot <code>data</code>. 2. meta-data (e.g. position of the traces on the survey line, time of the trace recording, time/depth of each trace sample, time step, etc.)</p>
+<p>To access the content of a slot, enter <code>@</code> followed by the name of the slot. For example, the <code>slot</code> <code>vel</code> (the estimated radar wave velocity associated with <code>A</code>) is accessed by:</p>
+<pre class="r"><code>A@vel              # the slot &#39;vel&#39; (for velocity)</code></pre>
+<pre><code>## [[1]]
+## [1] 0.1</code></pre>
+<p>Normally you don’t need to access the slots directly because the R-package <code>RGPR</code> provides enough functions to manipulate the <code>GPR</code> object (i.e. to extract the necessary information and to modify the object). For example, the estimated radar wave velocity can be obtained with the function <code>vel()</code>:</p>
+<pre class="r"><code>vel(A)              # access the slot &#39;vel&#39;</code></pre>
+<pre><code>## [[1]]
+## [1] 0.1</code></pre>
+<!---
+`A` is an object of the class `GPR` with a complex structure:
+
+```r
+class(A)          # To which class belong A?
+```
+
+```
+## [1] "GPR"
+## attr(,"package")
+## [1] "RGPR"
+```
+
+To see the structure of `A` enter
+
+```r
+str(A)            # let's have a look at the structure of A
+```
+
+The strings after the `@` are the names of the elements that form `A`. These elements are called `slots`. To get the `slots` names enter:
+
+```r
+slotNames(A)      # return the slot names
+```
+
+To access the content of a slot, enter `@` followed by the name of the slot. For example, the `slot` `vel` (the estimated radar wave velocity) is accessed by:
+
+```r
+A@vel              # the slot 'vel' (for velocity)
+```
+
+```
+## [[1]]
+## [1] 0.1
+```
+-->
+<!---
+What is the velocity unit? The slot `@depthunit` gives the vertical unit (z, time) and `@posunit` the horizontal unit (x-y):
+
+```r
+paste0(A@posunit,"/",A@depthunit)           # the slot 'vel' ('vel' for velocity)
+```
+
+```
+## [1] "m/ns"
+```
+-->
+<!---
+The GPR data are in the slot `@data`. If you enter `A@data` you will notice that `A@data` is a matrix whose columns correspond to the recorded traces and the lines to the time of record. It is not a good practice that the user change the slot contents itself, because some of the slots are related and should not be changed alone. The R-package `RGPR` provides enough function to manipulate the `GPR` object.
+-->
+<p>Note that an object of the class <code>RGPR</code> (e.g. <code>A</code>) can be manipulated as a matrix:</p>
+<pre class="r"><code>dim(A)            # dimension of the data: col x row
+nrow(A)
+ncol(A)
+Aexp &lt;- exp(A)    # Take the exponential of the GPR data
+Asum &lt;- A + Aexp  # Addition
+# etc.</code></pre>
+<pre><code>## [1] 1000  223
+## [1] 1000
+## [1] 223</code></pre>
+<p>Furthermore, it is possible to extract a portion of the GPR data without losing the meta-data contained in the object:</p>
+<pre class="r"><code># Extract a portion of A that only contains
+# the time samples 90 to 200 of the traces 5 to 10
+B &lt;- A[90:200, 5:10]          </code></pre>
+<p>Note that <code>B</code> is also an object of the class <code>RGPR</code> consisting of 6 traces with each 111 time samples:</p>
+<pre class="r"><code>B        </code></pre>
+<pre><code>## *** Class GPR ***
+##  name = LINE00
+##  filepath = rawGPR/LINE00.DT1
+##  description = 
+##  survey date = 2014-04-25
+##  Reflection, 100MHz, W=44ns, dz=0.4ns
+##  6 traces, 1.25m long
+##  ****************</code></pre>
+</div>
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

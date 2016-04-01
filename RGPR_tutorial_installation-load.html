@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Emanuel Huber (emanuel.huber@stanford.edu)" />
+
+<meta name="date" content="2016-03-30" />
+
+<title>RGPR tutorial - Getting started</title>
+
+<script src="RGPR_tutorial_installation-load_files/jquery-1.11.0/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="RGPR_tutorial_installation-load_files/bootstrap-3.3.1/css/journal.min.css" rel="stylesheet" />
+<script src="RGPR_tutorial_installation-load_files/bootstrap-3.3.1/js/bootstrap.min.js"></script>
+<script src="RGPR_tutorial_installation-load_files/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
+<script src="RGPR_tutorial_installation-load_files/bootstrap-3.3.1/shim/respond.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<link rel="stylesheet"
+      href="RGPR_tutorial_installation-load_files/highlight/default.css"
+      type="text/css" />
+<script src="RGPR_tutorial_installation-load_files/highlight/highlight.js"></script>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img { 
+  max-width:100%; 
+  height: auto; 
+}
+</style>
+<div class="container-fluid main-container">
+
+
+<div id="header">
+<h1 class="title">RGPR tutorial - Getting started</h1>
+<h4 class="author"><em>Emanuel Huber (<a href="mailto:emanuel.huber@stanford.edu">emanuel.huber@stanford.edu</a>)</em></h4>
+<h4 class="date"><em>March 30, 2016</em></h4>
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#objectives-of-this-tutorial"><span class="toc-section-number">1</span> Objectives of this tutorial</a></li>
+<li><a href="#software"><span class="toc-section-number">2</span> Software</a></li>
+<li><a href="#how-to-install-rgpr"><span class="toc-section-number">3</span> How to install <code>RGPR</code></a></li>
+<li><a href="#how-to-load-rgpr"><span class="toc-section-number">4</span> How to load <code>RGPR</code></a></li>
+<li><a href="#r-code"><span class="toc-section-number">5</span> R code</a></li>
+</ul>
+</div>
+
+<p><code>RGPR</code> is a package for <a href="https://cran.r-project.org/">R</a> to read, write, analyse and visualise ground-penetrating radar (GPR) data.</p>
+<blockquote>
+<p>R is a [free] programming language and software environment for statistical computing and graphics supported by the R Foundation for Statistical Computing (<a href="https://en.wikipedia.org/wiki/R_%28programming_language%29">Wikipedia &gt; R</a>).</p>
+</blockquote>
+<p><strong>Note</strong>: This R-package is still in development, and therefore some of the functions may change in a near future. The R-package <code>RGPR</code> is hosted on <a href="https://github.com/">GitHub</a> at <a href="https://github.com/emanuelhuber/RGPR" class="uri">https://github.com/emanuelhuber/RGPR</a>. You can contribute to the development of <code>RGPR</code>: create an account on <a href="https://github.com/">GitHub</a>, <a href="https://guides.github.com/activities/forking/">fork</a> <code>RGPR</code>, improve it and sumbmit your modifications.</p>
+<p>If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german)</p>
+<blockquote>
+<p><code>emanuel.huber@stanford.edu</code></p>
+</blockquote>
+<div id="objectives-of-this-tutorial" class="section level1">
+<h1><span class="header-section-number">1</span> Objectives of this tutorial</h1>
+<ul>
+<li>Learn how to install the R-package <code>RGPR</code>.</li>
+<li>Learn how to load the R-package <code>RGPR</code> in your current R session.</li>
+</ul>
+<p>In this tutorial the code snippets are in monospaced typewriter font like in the following example:</p>
+<pre class="r"><code>1 + exp(1:10)</code></pre>
+<p>The R output are preceded by a double hash (<code>##</code>). The following R output is from the code snippet above.</p>
+<pre><code>##  [1]     3.718282     8.389056    21.085537    55.598150   149.413159
+##  [6]   404.428793  1097.633158  2981.957987  8104.083928 22027.465795</code></pre>
+<p>Create a text file and save it with the <code>.R</code> extension (the extension for the R-script files). Then copy the code snippets into your R-script file and adapt them to your needs. To run the code in R, copy the code and paste it into the R console. You can also manually enter the code.</p>
+<p>Don’t hesitate to consult the help files and to search for help on the internet. For example, to see the help for the function <code>mean()</code>, enter:</p>
+<pre class="r"><code>?mean    # open the help file related to the function mean()</code></pre>
+</div>
+<div id="software" class="section level1">
+<h1><span class="header-section-number">2</span> Software</h1>
+<ol style="list-style-type: decimal">
+<li>Download R from the <a href="http://cran.r-project.org">R Cran website</a> and install it.</li>
+<li>Optionally install a R-GUI:</li>
+</ol>
+<ul>
+<li><a href="https://notepad-plus-plus.org/">Notepad++</a> combined with <a href="https://sourceforge.net/projects/npptor/">NppToR</a></li>
+<li><a href="https://www.rstudio.com/">Rstudio</a></li>
+<li><a href="https://rkward.kde.org/">RKward</a></li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li>If necessary, learn some R basics:</li>
+</ol>
+<ul>
+<li><a href="http://tryr.codeschool.com">An interactive introduction to R</a></li>
+<li><a href="http://cran.r-project.org/doc/contrib/Torfs+Brauer-Short-R-Intro.pdf">Short R introduction</a></li>
+<li><a href="http://www.rochester.edu/college/psc/thestarlab/help/rcourse/R-Course.pdf">R course</a></li>
+</ul>
+<p>If you are a R-beginner I recommand you to start with <a href="https://www.rstudio.com/">Rstudio</a> that provide a nice interface for R. With Windows, I prefer to work with <a href="https://notepad-plus-plus.org/">Notepad++</a> (the best text editor I know) combined with <a href="https://sourceforge.net/projects/npptor/">NppToR</a>. With Linux, I work with <a href="https://rkward.kde.org/">RKward</a> (because <a href="https://notepad-plus-plus.org/">Notepad++</a> is not available for linux).</p>
+</div>
+<div id="how-to-install-rgpr" class="section level1">
+<h1><span class="header-section-number">3</span> How to install <code>RGPR</code></h1>
+<p>Start R in the terminal (by entering <code>R</code>) or through a R GUI.</p>
+<p>The R-package <code>RGPR</code> is hosted on GitHub at <a href="https://github.com/emanuelhuber/RGPR" class="uri">https://github.com/emanuelhuber/RGPR</a></p>
+<p>Use the function <code>install_github()</code> from the R-package <code>devtools</code> to install <code>RGPR</code> directly from the GitHub repository. But first you need to install and load <code>devtools</code>. You can install this package through the GUI (RStudio or RKward) or direclty in R by entering:</p>
+<pre class="r"><code>install.packages(&quot;devtools&quot;)     # install &quot;devtools&quot;</code></pre>
+<p>Select your prefered CRAN mirror and let R install <code>&quot;devtools&quot;</code>.</p>
+<p>Note: if necessary, use the <code>lib</code> argument of the function <code>install.packages()</code> to define the library directory where to install the package. For example with Ubuntu: <code>install.packages(&quot;devtools&quot;, lib=&quot;/usr/lib/R/library/&quot;)</code>.</p>
+<p>Once the package is installed, you need to load it into the current R session with the <code>library()</code> function:</p>
+<pre class="r"><code>library(&quot;devtools&quot;)     # load &quot;devtools&quot; into the current R session</code></pre>
+<p>Now, install <code>RGPR</code> from GitHub:</p>
+<pre class="r"><code>devtools::install_github(&quot;emanuelhuber/RGPR&quot;)  # install RGPR</code></pre>
+<p>Note: if necessary, use the <code>lib</code> argument of the function <code>install_github()</code> to define the library directory where to install the package. For example with Ubuntu: <code>devtools::install_github(&quot;username/packagename&quot;, lib=&quot;/usr/lib/R/library/&quot;)</code>.</p>
+</div>
+<div id="how-to-load-rgpr" class="section level1">
+<h1><span class="header-section-number">4</span> How to load <code>RGPR</code></h1>
+<p>The installation of <code>RGPR</code> has to be done only once. But each time you start a R session and want to use <code>RGPR</code>, you must first load it by entering</p>
+<pre class="r"><code>library(RGPR)   # load RGPR in the current R session</code></pre>
+</div>
+<div id="r-code" class="section level1">
+<h1><span class="header-section-number">5</span> R code</h1>
+<p>Here is the complete code listing:</p>
+<pre class="r"><code>install.packages(&quot;devtools&quot;)     # install &quot;devtools&quot;
+library(&quot;devtools&quot;)              # load &quot;devtools&quot; into the current R session
+devtools::install_github(&quot;emanuelhuber/RGPR&quot;)  # install RGPR
+library(RGPR)                    # load RGPR in the current R session</code></pre>
+<!---
+# Suggested file organisation
+```
+/name_of_survey   (put your R-script)
+    /maps         (maps, sketches of the GPR survey)
+    /processing   (the processed files)
+    /rawGPR       (the raw data, never modify these files)
+    /topo         (topographic data)
+        /GPS            (GPS data, converted in shapefiles)
+        /totalStation   (topographic data measured with a total station)
+        /elevationGPR   (if available, 1 file for each GPR file containing
+                         the x,y,z coordinates of every traces)
+```
+-->
+</div>
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

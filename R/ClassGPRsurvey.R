@@ -125,7 +125,7 @@ setMethod("as.SpatialLines", signature(x = "GPRsurvey"), function(x){
 #' @name GPRsurvey.as.SpatialPoints
 #' @rdname GPRsurveycoercion
 #' @export
-setMethod("as.SpatialPoints", signature(x = "GPR"), function(x){
+setMethod("as.SpatialPoints", signature(x = "GPRsurvey"), function(x){
 	allTopo <- do.call(rbind,x@coords)	#  N, E, Z
 	allTopo2 <- as.data.frame(allTopo)
 	sp::coordinates(allTopo2) = ~ E + N

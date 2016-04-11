@@ -355,19 +355,84 @@ setMethod("readGPR", "character", function(fPath, desc = "",
 
 #------------------------------------------#
 #---------------- COERCION ----------------#
-# Coercion
+###--- Coercion from GPR to ...
 setAs(from = "GPR", to = "matrix", def = function(from){ from@data } )
+
+#' Coercion to matrix
+#'
+#' @name as.matrix
+#' @rdname GPRcoercion
+#' @export
 setMethod("as.matrix",signature(x="GPR"),function(x){as(x,"matrix")})
 
 setAs(from = "GPR", to = "vector", def = function(from){ from@data})
+
+#' Coercion to vector
+#'
+#' @name as.vector
+#' @rdname GPRcoercion
+#' @export
 setMethod("as.vector", signature(x="GPR"), 
           function(x,mode="any"){as.vector(x@data)})
-# setAs("as.numeric", "GPR", function(x, ...) as.numeric(x@data))
 
-#------ as(A,"GPR")
-setAs(from = "matrix", to = "GPR", def = function (from) .as.GPR.matrix(from))
 
-.as.GPR.matrix <- function (x, ...){
+setAs(from = "GPR", to = "SpatialLines",
+      def = function (from) as.SpatialLines(from))
+
+#' Coercion to SpatialLines
+#'
+#' @name as.SpatialLines
+#' @rdname GPRcoercion
+#' @export
+as.SpatialLines <- function (x, ...){
+  myLine <- sp::Line(x@coord[,1:2])
+  myLines <- sp::Lines(list(myLine), ID=x@name)
+  mySpatLines <- sp::SpatialLines(list(myLines))
+  if(length(crs(x)) == 0){
+  warning("no CRS defined!\n")
+  }else{
+    sp::proj4string(mySpatLines) <- sp::CRS(crs(x))
+  }
+  return(mySpatLines)
+}
+
+setAs(from = "GPR", to = "SpatialPoints",
+      def = function (from) as.SpatialPoints(from))
+
+#' Coercion to SpatialPoints
+#'
+#' @name as.SpatialPoints
+#' @rdname GPRcoercion
+#' @export
+as.SpatialPoints <- function (x, ...){
+  myPoints <- as.data.frame(x@coord)
+  sp::coordinates(myPoints) = ~E + N
+  if(length(crs(x)) == 0){
+  warning("no CRS defined!\n")
+  }else{
+    sp::proj4string(myPoints) <- sp::CRS(crs(x))
+  }
+  return(myPoints)
+}
+
+#' Coercion to numeric
+#'
+#' @name as.numeric
+#' @rdname GPRcoercion
+#' @export
+setMethod("as.numeric", "GPR",  function(x, ...) as.numeric(x@data))
+
+setMethod("as.double", "GPR",  function(x, ...) as.double(x@data))
+
+###--- Coercion from ... to GPR
+setAs(from = "matrix", to = "GPR", def = function (from) as.GPR.matrix(from))
+
+#' Coercion from matrix to GPR
+#'
+#' @name as.GPR.matrix
+#' @rdname GPRcoercion
+#' @export
+as.GPR.matrix <- function (x, ...){
   new("GPR", 
     version = "0.1",
     data = x,
@@ -392,11 +457,16 @@ setAs(from = "matrix", to = "GPR", def = function (from) .as.GPR.matrix(from))
     crs = character(0),
     hd = list()                   # header
   )
-}  
+}
 
-setAs(from = "list", to = "GPR", def = function (from) .as.GPR.list(from))
+setAs(from = "list", to = "GPR", def = function (from) as.GPR.list(from))
 
-.as.GPR.list <- function (x, ...){
+#' Coercion from list to GPR
+#'
+#' @name as.GPR.list
+#' @rdname GPRcoercion
+#' @export
+as.GPR.list <- function (x, ...){
   # prefix: "d_" for default
   if(any("data" == tolower(names(x))) && is.matrix(x$data)){
     if(is.null(x$pos) && !is.null(x$dx) && is.numeric(x$dx)){
@@ -461,38 +531,7 @@ setAs(from = "list", to = "GPR", def = function (from) .as.GPR.list(from))
   }
 }    
 
-setAs(from = "GPR", to = "SpatialLines",
-      def = function (from) as.SpatialLines(from))
-setAs(from = "GPR", to = "SpatialPoints",
-      def = function (from) as.SpatialPoints(from))
 
-as.SpatialLines <- function (x, ...){
-  myLine <- sp::Line(x@coord[,1:2])
-  myLines <- sp::Lines(list(myLine), ID=x@name)
-  mySpatLines <- sp::SpatialLines(list(myLines))
-  if(length(crs(x)) == 0){
-	warning("no CRS defined!\n")
-  }else{
-    sp::proj4string(mySpatLines) <- sp::CRS(crs(x))
-  }
-  return(mySpatLines)
-}
-
-as.SpatialPoints <- function (x, ...){
-  myPoints <- as.data.frame(x@coord)
-  sp::coordinates(myPoints) = ~E + N
-  if(length(crs(x)) == 0){
-	warning("no CRS defined!\n")
-  }else{
-    sp::proj4string(myPoints) <- sp::CRS(crs(x))
-  }
-  return(myPoints)
-}
-
-#' @export
-setMethod("as.numeric", "GPR",  function(x, ...) as.numeric(x@data))
-
-setMethod("as.double", "GPR",  function(x, ...) as.double(x@data))
 #' @export
 setMethod("length", "GPR", function(x) ncol(x@data))
 #' @export
@@ -2894,10 +2933,9 @@ setMethod("exportFid", "GPR", function(x,fPath=NULL){
 #' @rdname exportCoord
 #' @export
 setMethod("exportCoord", "GPR", 
-function(x, fPath = NULL, folder = NULL,
-	type = c("SpatialPoints", "SpatialLines", "ASCII"),
-	sep = "\t", driver = "ESRI Shapefile",...){
-  type=match.arg(type)
+  function(x, type = c("SpatialPoints", "SpatialLines", "ASCII"),
+  fPath = NULL, folder = NULL,  sep = "\t", driver = "ESRI Shapefile",...){
+  type <- match.arg(type)
   if(is.null(fPath)){
     fPath <- x@name
   }

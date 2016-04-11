@@ -5,7 +5,17 @@
 \alias{interpPos}
 \title{Interpolate the trace position.}
 \usage{
-\S4method{interpPos}{GPR}(x, topo, ...)
+\S4method{interpPos}{GPR}(x, topo, plot = FALSE, ...)
+}
+\arguments{
+\item{x}{An object of the class GPR.}
+
+\item{topo}{A (mx4) numeric matrix, with m the number of traces 
+in x. The columns names of topo must be
+"E", "N", "Z" and "TRACE".}
+
+\item{plot}{A length-one boolean vector. If TRUE some control
+plots are displayed.}
 }
 \description{
 Interpolate the trace position.

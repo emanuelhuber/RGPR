@@ -466,9 +466,10 @@ setGenericVerif("readGPR", function(fPath,desc="", coordfile=NULL,
 setGenericVerif("writeGPR", function(x,fPath, format=c("DT1","rds"),
                 overwrite=FALSE){ standardGeneric("writeGPR")})
 
-setGenericVerif("exportCoord",  function(x, fPath = NULL, folder = NULL, 
-	type = c("SpatialPoints", "SpatialLines", "ASCII"),
-	sep = "\t", driver = "ESRI Shapefile",...) standardGeneric("exportCoord"))
+setGenericVerif("exportCoord",  
+          function(x, type = c("SpatialPoints", "SpatialLines", "ASCII"),
+          fPath = NULL, folder = NULL,  sep = "\t", 
+          driver = "ESRI Shapefile",...) standardGeneric("exportCoord"))
 
 setGenericVerif("exportFid", function(x,fPath=NULL) 
                   standardGeneric("exportFid"))

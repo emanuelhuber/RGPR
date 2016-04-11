@@ -101,13 +101,18 @@ setAs(from = "GPRsurvey", to = "SpatialLines",
 setAs(from = "GPRsurvey", to = "SpatialPoints",
       def = function (from) as.SpatialPoints(from))	  
 
+#' Coerce to SpatialLines
+#'
+#' @name GPRsurvey.as.SpatialLines
+#' @rdname GPRsurveycoercion
+#' @export
 as.SpatialLines <- function (x, ...){
 	TOPO <- x@coords
 	Names <- x@names
 	lineList <- lapply(TOPO,xyToLine)
 	linesList <- lapply(seq_along(lineList), LineToLines, lineList ,Names)
 	mySpatLines <- sp::SpatialLines(linesList)
-	if(crs(x) == '' || nchar(crs(x)) == 1){
+	if(length(x@crs) == 0){
 		warning("no CRS defined!\n")
 	}else{
 		proj4string(mySpatLines) <- CRS(crs(x))
@@ -115,11 +120,16 @@ as.SpatialLines <- function (x, ...){
 	return(mySpatLines)
 }
 
+#' Coerce to SpatialPoints
+#'
+#' @name GPRsurvey.as.SpatialPoints
+#' @rdname GPRsurveycoercion
+#' @export
 as.SpatialPoints <- function (x, ...){
 	allTopo <- do.call(rbind,x@coords)	#  N, E, Z
 	allTopo2 <- as.data.frame(allTopo)
 	sp::coordinates(allTopo2) = ~ E + N
-	if(crs(x) == '' || nchar(crs(x)) == 1){
+	if(length(x@crs) == 0){
 		warning("no CRS defined!\n")
 	}else{
 		sp::proj4string(allTopo2) <- sp::CRS(crs(x))
@@ -663,28 +673,47 @@ setMethod("exportFid", "GPRsurvey", function(x,fPath=NULL){
 		}
 	}
 )
+
 #' @export
 setMethod("exportCoord", "GPRsurvey",
-	function(x, fPath = NULL, folder = NULL,
-	type = c("SpatialPoints", "SpatialLines", "ASCII"),
-	sep = "\t", driver = "ESRI Shapefile",...){
-	type <- match.arg(type)
-	folder <- dirname(fPath)
-	fPath <- basename(fPath)
-	if(type == "lines"){	
+	function(x, type = c("SpatialPoints", "SpatialLines", "ASCII"),
+	fPath = NULL, folder = NULL, 	sep = "\t", driver = "ESRI Shapefile",...){
+	type <- match.arg(type, c("SpatialPoints", "SpatialLines", "ASCII"))
+# 	folder <- dirname(fPath)
+# 	fPath <- basename(fPath)
+	if(type == "SpatialLines"){
+    if(is.null(fPath)){
+      fPath <- x@names[1]
+    }
+    if(is.null(folder)){
+      folder <- dirname(fPath)
+    }
+    fPath <- basename(fPath)
 		mySpatLines <- as.SpatialLines(x)
 		dfl <- data.frame(z=seq_along(mySpatLines), 
 				row.names = sapply(slot(mySpatLines, "lines"), 
 							function(x) slot(x, "ID")))
 		mySpatLinesdf <- sp::SpatialLinesDataFrame(mySpatLines, dfl , 
                             match.ID = TRUE)
-		writeOGR(mySpatLinesdf, folder, fPath, driver=driver,...)
-	}else if(type == "points"){	
+		writeOGR(mySpatLinesdf, folder, fPath, driver = driver,...)
+	}else if(type == "SpatialPoints"){
+    if(is.null(fPath)){
+      fPath <- x@names[1]
+    }
+    if(is.null(folder)){
+      folder <- dirname(fPath)
+    }
+    fPath <- basename(fPath)
 		mySpatPoints <- as.SpatialPoints(x)
 		writeOGR(mySpatPoints, folder, fPath, driver=driver,...)
-	}else if(type == "points"){	
+	}else if(type == "ASCII"){	
+    for( i in seq_along(mySurvey)){
+      exportCoord(mySurvey[[i]], fPath = fPath, folder = folder, 
+                  type="ASCII", sep = sep)
+    }
   }
 })
+
 #' @export
 setMethod("exportDelineations", "GPRsurvey", function(x, dirpath=""){
 	for(i in seq_along(x)){

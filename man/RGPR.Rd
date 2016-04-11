@@ -14,7 +14,7 @@ The RGPR package provides two classes GPR and GPRsurvey
   \item \code{writeGPR()}: format DT1 (Sensors&Software), rds (R-format)
   \item \code{exportPDF()}
   \item \code{exportDelineations()}
-  \item \code{exportFID()}: ASCII-file
+  \item \code{exportFid()}: ASCII-file
   \item \code{exportCoord()}: output either SpatialLines or SpatialPoints
   \item \code{exportProc()}: ASCII-file
 }

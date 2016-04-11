@@ -671,7 +671,7 @@ setMethod("exportCoord", "GPRsurvey",
 	type <- match.arg(type)
 	folder <- dirname(fPath)
 	fPath <- basename(fPath)
-	if(type=="lines"){	
+	if(type == "lines"){	
 		mySpatLines <- as.SpatialLines(x)
 		dfl <- data.frame(z=seq_along(mySpatLines), 
 				row.names = sapply(slot(mySpatLines, "lines"), 
@@ -679,10 +679,11 @@ setMethod("exportCoord", "GPRsurvey",
 		mySpatLinesdf <- sp::SpatialLinesDataFrame(mySpatLines, dfl , 
                             match.ID = TRUE)
 		writeOGR(mySpatLinesdf, folder, fPath, driver=driver,...)
-	}else if(type=="points"){	
+	}else if(type == "points"){	
 		mySpatPoints <- as.SpatialPoints(x)
 		writeOGR(mySpatPoints, folder, fPath, driver=driver,...)
-	}else if(
+	}else if(type == "points"){	
+  }
 })
 #' @export
 setMethod("exportDelineations", "GPRsurvey", function(x, dirpath=""){

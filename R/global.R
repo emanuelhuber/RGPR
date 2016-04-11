@@ -60,7 +60,7 @@ readFID <- function(FID,sep=","){
 readTopo <- function(TOPO,sep=","){
   myTopo <- list() 
   for(i in seq_along(TOPO)){
-    A <- read.table(TOPO[[i]],sep=",",stringsAsFactors=FALSE,header=TRUE)
+    A <- read.table(TOPO[[i]], sep=sep, stringsAsFactors = FALSE, header = TRUE)
     colnames(A) <- toupper(colnames(A))
     if(ncol(A) < 3){
       stop("The headers should be \"E\",\"N\",\"Z\"!\n")

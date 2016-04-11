@@ -10,7 +10,7 @@
 
 <meta name="author" content="Emanuel Huber (emanuel.huber@stanford.edu)" />
 
-<meta name="date" content="2016-03-30" />
+<meta name="date" content="2016-04-11" />
 
 <title>RGPR tutorial - RGPR class</title>
 
@@ -66,7 +66,7 @@ img {
 <div id="header">
 <h1 class="title">RGPR tutorial - <code>RGPR</code> class</h1>
 <h4 class="author"><em>Emanuel Huber (<a href="mailto:emanuel.huber@stanford.edu">emanuel.huber@stanford.edu</a>)</em></h4>
-<h4 class="date"><em>March 30, 2016</em></h4>
+<h4 class="date"><em>11 April 2016</em></h4>
 </div>
 
 <div id="TOC">
@@ -81,7 +81,7 @@ img {
 <blockquote>
 <p>R is a [free] programming language and software environment for statistical computing and graphics supported by the R Foundation for Statistical Computing (<a href="https://en.wikipedia.org/wiki/R_%28programming_language%29">Wikipedia &gt; R</a>).</p>
 </blockquote>
-<p><strong>Note</strong>: This R-package is still in development, and therefore some of the functions may change in a near future. The R-package <code>RGPR</code> is hosted on <a href="https://github.com/">GitHub</a> at <a href="https://github.com/emanuelhuber/RGPR" class="uri">https://github.com/emanuelhuber/RGPR</a>. You can contribute to the development of <code>RGPR</code>: create an account on <a href="https://github.com/">GitHub</a>, <a href="https://guides.github.com/activities/forking/">fork</a> <code>RGPR</code>, improve it and sumbmit your modifications.</p>
+<p><strong>Note</strong>: This R-package is still in development, and therefore some of the functions may change in a near future. The R-package <code>RGPR</code> is hosted on <a href="https://github.com/">GitHub</a> at <a href="https://github.com/emanuelhuber/RGPR"><a href="https://github.com/emanuelhuber/RGPR" class="uri">https://github.com/emanuelhuber/RGPR</a></a>. You can contribute to the development of <code>RGPR</code>: create an account on <a href="https://github.com/">GitHub</a>, <a href="https://guides.github.com/activities/forking/">fork</a> <code>RGPR</code>, improve it and sumbmit your modifications.</p>
 <p>If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german)</p>
 <blockquote>
 <p><code>emanuel.huber@stanford.edu</code></p>
@@ -89,8 +89,7 @@ img {
 <div id="objectives-of-this-tutorial" class="section level1">
 <h1><span class="header-section-number">1</span> Objectives of this tutorial</h1>
 <ul>
-<li>Learn some basics of ground-penetrating radar processing with <code>RGPR</code>.</li>
-<li>Learn how to manipulate objects of the class <code>RGPR</code>.</li>
+<li>Learn what is an object of the class <code>RGPR</code>.</li>
 </ul>
 <p>In this tutorial the code snippets are in monospaced typewriter font like in the following example:</p>
 <pre class="r"><code>1 + exp(1:10)</code></pre>
@@ -103,15 +102,21 @@ img {
 </div>
 <div id="preliminary" class="section level1">
 <h1><span class="header-section-number">2</span> Preliminary</h1>
-<p>Read the tutorial “RGPR - Getting started (tutorial 1)”</p>
-<p>Load the packages <code>RGPR</code> and set the working directory:</p>
+<ul>
+<li><p>Read the tutorial <a href="http://emanuelhuber.github.io/RGPR/RGPR_tutorial_installation-load.html">RGPR - Getting started (tutorial 1)</a></p></li>
+<li><p>Load the packages <code>RGPR</code> and set the working directory:</p></li>
+</ul>
 <pre class="r"><code>library(RGPR)   # load RGPR in the current R session
 myDir &lt;- &quot;/home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke&quot;
 setwd(myDir)    # set the working directory
 getwd()         # Return the current working directory (just to check)</code></pre>
 <pre><code>## [1] &quot;/home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke&quot;</code></pre>
-<p>Read the Sensor &amp; Softwares GPR data:</p>
-<pre class="r"><code>A &lt;- readGPR(fPath=&quot;rawGPR/LINE00.DT1&quot;)   # the filepath is case sensitive!</code></pre>
+<ul>
+<li>Load the GPR data <code>frenkeLine00</code> that is included in the package <code>RGPR</code>:</li>
+</ul>
+<pre class="r"><code>data(&quot;frenkeLine00&quot;)
+# just because it is simplier to enter &#39;A&#39; instead of &#39;frenkeLine00&#39;
+A &lt;- frenkeLine00   </code></pre>
 </div>
 <div id="an-object-of-the-class-rgpr" class="section level1">
 <h1><span class="header-section-number">3</span> An object of the class <code>RGPR</code></h1>
@@ -122,9 +127,9 @@ getwd()         # Return the current working directory (just to check)</code></p
 ##  filepath = rawGPR/LINE00.DT1
 ##  1 fiducial(s)
 ##  description = 
-##  survey date = 2014-04-25
-##  Reflection, 100MHz, W=399.6ns, dz=0.4ns
-##  223 traces, 55.5m long
+##  survey date =  2014-04-25 
+##  Reflection, 100MHz,Window length=399.6ns, dz=0.4ns
+##  223 traces,55.5m long
 ##  ****************</code></pre>
 <p><code>A</code> is an object of the class <code>GPR</code> with a complex structure that can be visualised with the <code>str()</code> function:</p>
 <pre class="r"><code>str(A)            # let&#39;s have a look at the structure of A</code></pre>
@@ -136,7 +141,7 @@ getwd()         # Return the current working directory (just to check)</code></p
 ##   ..@ pos         : num [1:223] 0 0.25 0.5 0.75 1 1.25 1.5 1.75 2 2.25 ...
 ##   ..@ time0       : num [1:223] 52.2 52.2 52.2 52.2 52.2 ...
 ##   ..@ time        : num [1:223] 1.4e+09 1.4e+09 1.4e+09 1.4e+09 1.4e+09 ...
-##   ..@ com         : chr [1:223] &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
+##   ..@ fid         : chr [1:223] &quot;&quot; &quot;&quot; &quot;&quot; &quot;&quot; ...
 ##   ..@ ann         : chr(0) 
 ##   ..@ coord       : logi[0 , 0 ] 
 ##   ..@ rec         : logi[0 , 0 ] 
@@ -176,7 +181,7 @@ getwd()         # Return the current working directory (just to check)</code></p
 <p>The strings after the <code>@</code> are the names of the elements that form <code>A</code>. These elements are called <code>slots</code>. To get the <code>slots</code> names enter:</p>
 <pre class="r"><code>slotNames(A)      # return the slot names</code></pre>
 <pre><code>##  [1] &quot;version&quot;      &quot;data&quot;         &quot;traces&quot;       &quot;depth&quot;       
-##  [5] &quot;pos&quot;          &quot;time0&quot;        &quot;time&quot;         &quot;com&quot;         
+##  [5] &quot;pos&quot;          &quot;time0&quot;        &quot;time&quot;         &quot;fid&quot;         
 ##  [9] &quot;ann&quot;          &quot;coord&quot;        &quot;rec&quot;          &quot;trans&quot;       
 ## [13] &quot;coordref&quot;     &quot;freq&quot;         &quot;dz&quot;           &quot;dx&quot;          
 ## [17] &quot;antsep&quot;       &quot;name&quot;         &quot;description&quot;  &quot;filepath&quot;    
@@ -262,9 +267,9 @@ B &lt;- A[90:200, 5:10]          </code></pre>
 ##  name = LINE00
 ##  filepath = rawGPR/LINE00.DT1
 ##  description = 
-##  survey date = 2014-04-25
-##  Reflection, 100MHz, W=44ns, dz=0.4ns
-##  6 traces, 1.25m long
+##  survey date =  2014-04-25 
+##  Reflection, 100MHz,Window length=44ns, dz=0.4ns
+##  6 traces,1.25m long
 ##  ****************</code></pre>
 </div>
 

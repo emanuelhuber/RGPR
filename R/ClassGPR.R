@@ -470,8 +470,8 @@ as.SpatialLines <- function (x, ...){
   myLine <- sp::Line(x@coord[,1:2])
   myLines <- sp::Lines(list(myLine), ID=x@name)
   mySpatLines <- sp::SpatialLines(list(myLines))
-  if(crs(x) == '' || nchar(crs(x)) == 1){
-    warning("no CRS defined!\n")
+  if(length(crs(x)) == 0){
+	warning("no CRS defined!\n")
   }else{
     sp::proj4string(mySpatLines) <- sp::CRS(crs(x))
   }
@@ -480,11 +480,11 @@ as.SpatialLines <- function (x, ...){
 
 as.SpatialPoints <- function (x, ...){
   myPoints <- as.data.frame(x@coord)
-  coordinates(myPoints) = ~E + N
-  if(crs(x) == '' || nchar(crs(x)) == 1){
-    warning("no CRS defined!\n")
+  sp::coordinates(myPoints) = ~E + N
+  if(length(crs(x)) == 0){
+	warning("no CRS defined!\n")
   }else{
-    proj4string(myPoints) <- CRS(crs(x))
+    sp::proj4string(myPoints) <- sp::CRS(crs(x))
   }
   return(myPoints)
 }
@@ -2888,35 +2888,40 @@ setMethod("exportFid", "GPR", function(x,fPath=NULL){
 )
 
 
+#' Export the trace coordinates.
+#'
+#' @name exportCoord
+#' @rdname exportCoord
+#' @export
 setMethod("exportCoord", "GPR", 
-function(x, fPath = NULL, folder = '.', 
-	type = c("SpatialPoints","SpatialLines", "ASCII"),
-	sep="\t"){
+function(x, fPath = NULL, folder = NULL,
+	type = c("SpatialPoints", "SpatialLines", "ASCII"),
+	sep = "\t", driver = "ESRI Shapefile",...){
   type=match.arg(type)
-  folder <- dirname(fPath)
-  fPath <- basename(fPath)
   if(is.null(fPath)){
     fPath <- x@name
   }
+  if(is.null(folder)){
+  	folder <- dirname(fPath)
+  }
+  fPath <- basename(fPath)
   if(type=="SpatialLines"){  
     mySpatLines <- as.SpatialLines(x)
     dfl <- data.frame(z=c(1), row.names = x@name)
     mySpatLinesdf <- sp::SpatialLinesDataFrame(mySpatLines, dfl , 
                       match.ID = TRUE)
-    writeOGR(mySpatLinesdf, folder, fPath, driver="ESRI Shapefile")
+    rgdal::writeOGR(mySpatLinesdf, folder, fPath, driver="ESRI Shapefile")
   }else if(type=="SpatialPoints"){  
-    # allNames <- sapply(rep(Names, each=sapply(TOPO, length))
-    # A <- cbind(allTopo,allNames)
-    # allTogether <- as.data.frame(cbind(allTopo,allNames))
     mySpatPoints <- as.SpatialPoints(x)
-    writeOGR(mySpatPoints, folder, fPath, driver="ESRI Shapefile")
-  }else if(type=="points"){
+    rgdal::writeOGR(mySpatPoints, folder, fPath, driver="ESRI Shapefile")
+  }else if(type == "points"){
     stop("use type = SpatialPoints instead.\n")
-  }else if(type=="lines"){
+  }else if(type == "lines"){
     stop("use type = SpatialLines instead.\n")
   }else if(type == "ASCII"){
 	xCoord <- x@coord
     colnames(xCoord) <- c("E","N","Z")
+	fPath <- file.path(folder, paste0(.fNameWExt(fPath), ".txt"))
 	write.table(x@coord, fPath, sep = sep, row.names = FALSE, 
                     col.names = TRUE, quote = FALSE)
   }

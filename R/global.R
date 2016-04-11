@@ -462,10 +462,14 @@ setGenericVerif("relPos", function(x)
 #' @export
 setGenericVerif("readGPR", function(fPath,desc="", coordfile=NULL,
                 crs="", intfile=NULL) standardGeneric("readGPR"))
+
 setGenericVerif("writeGPR", function(x,fPath, format=c("DT1","rds"),
                 overwrite=FALSE){ standardGeneric("writeGPR")})
-setGenericVerif("exportCoord",  function(x,fPath=NULL,type=c("points","lines"),
-                  driver="ESRI Shapefile",...) standardGeneric("exportCoord"))
+
+setGenericVerif("exportCoord",  function(x, fPath = NULL, folder = NULL, 
+	type = c("SpatialPoints", "SpatialLines", "ASCII"),
+	sep = "\t", driver = "ESRI Shapefile",...) standardGeneric("exportCoord"))
+
 setGenericVerif("exportFid", function(x,fPath=NULL) 
                   standardGeneric("exportFid"))
 setGenericVerif("exportProc",  function(x,fPath=NULL,sep="\t", row.names=FALSE,

@@ -664,9 +664,10 @@ setMethod("exportFid", "GPRsurvey", function(x,fPath=NULL){
 	}
 )
 #' @export
-setMethod("exportCoord", "GPRsurvey", 
-    function(x,fPath=NULL,type=c("points","lines"),
-            driver="ESRI Shapefile",...){
+setMethod("exportCoord", "GPRsurvey",
+	function(x, fPath = NULL, folder = NULL,
+	type = c("SpatialPoints", "SpatialLines", "ASCII"),
+	sep = "\t", driver = "ESRI Shapefile",...){
 	type <- match.arg(type)
 	folder <- dirname(fPath)
 	fPath <- basename(fPath)
@@ -681,7 +682,7 @@ setMethod("exportCoord", "GPRsurvey",
 	}else if(type=="points"){	
 		mySpatPoints <- as.SpatialPoints(x)
 		writeOGR(mySpatPoints, folder, fPath, driver=driver,...)
-	}
+	}else if(
 })
 #' @export
 setMethod("exportDelineations", "GPRsurvey", function(x, dirpath=""){

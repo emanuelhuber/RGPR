@@ -1986,7 +1986,8 @@ setMethod("interpPos", "GPR", function(x, topo, plot = FALSE,...){
 		        xlim = range(x@pos), ylim=range(posInt), main=paste( x@name))
 		  points(x@pos,posInt,pch=20,col="blue")
 		  plot(posInt, Zint, type = "l", asp = 10, 
-				xlab = "interpolated trace spacing"
+				xlab = "interpolated trace spacing", 
+				ylab="interpolated elevation",
 		        main = paste0(x@name, " min dx=",round(min(diff(posInt)),2), 
 		        "  max dx=",round(max(diff(posInt)),2)))
 		  points(dist3D, topo[,c("Z")],pch=20,col="red")

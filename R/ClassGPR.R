@@ -2889,7 +2889,9 @@ setMethod("exportFid", "GPR", function(x,fPath=NULL){
 
 
 setMethod("exportCoord", "GPR", 
-function(x,fPath=NULL,folder='.',type=c("SpatialPoints","SpatialLines")){
+function(x, fPath = NULL, folder = '.', 
+	type = c("SpatialPoints","SpatialLines", "ASCII"),
+	sep="\t"){
   type=match.arg(type)
   folder <- dirname(fPath)
   fPath <- basename(fPath)
@@ -2907,11 +2909,16 @@ function(x,fPath=NULL,folder='.',type=c("SpatialPoints","SpatialLines")){
     # A <- cbind(allTopo,allNames)
     # allTogether <- as.data.frame(cbind(allTopo,allNames))
     mySpatPoints <- as.SpatialPoints(x)
-    writeOGR(allTopo, folder, fPath, driver="ESRI Shapefile")
+    writeOGR(mySpatPoints, folder, fPath, driver="ESRI Shapefile")
   }else if(type=="points"){
     stop("use type = SpatialPoints instead.\n")
   }else if(type=="lines"){
     stop("use type = SpatialLines instead.\n")
+  }else if(type == "ASCII"){
+	xCoord <- x@coord
+    colnames(xCoord) <- c("E","N","Z")
+	write.table(x@coord, fPath, sep = sep, row.names = FALSE, 
+                    col.names = TRUE, quote = FALSE)
   }
 })
 

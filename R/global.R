@@ -56,7 +56,7 @@ readFID <- function(FID,sep=","){
   }
   return(myFid)
 }
-
+#' @export
 readTopo <- function(TOPO,sep=","){
   myTopo <- list() 
   for(i in seq_along(TOPO)){

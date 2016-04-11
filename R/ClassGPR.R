@@ -1912,8 +1912,9 @@ setMethod("spec", "GPR", function(x, type = c("f-x","f-k"), plotSpec = TRUE,
 #' @name interpPos
 #' @rdname interpPos
 #' @export
-setMethod("interpPos", "GPR", function(x,topo,...){
-    # test if any measured points have a reference to a trace of the GPR-line
+setMethod("interpPos", "GPR", function(x, topo, plot = FALSE,...){
+    # test if any measured points have a reference to a trace 
+	# of the GPR-line
     if(all(is.na(topo[,"TRACE"]))){
       warning(paste0(x@name, ": no link between the measured points",
                     "and the GPR traces!\n"))
@@ -1978,21 +1979,24 @@ setMethod("interpPos", "GPR", function(x,topo,...){
           round(max(diff(posInt)),3))
       cat(myWarning)
       cat("\n")
-      par(mfrow=c(1,3))
-      plot(FIDpos, dist3D, pch = 20, col = "red", cex = 2, asp = 1, 
-            xlim = range(x@pos), ylim=range(posInt), main=paste( x@name))
-      points(x@pos,posInt,pch=20,col="blue")
-      plot(posInt, Zint, type = "l", asp = 10, 
-            main = paste0(x@name, " min dx=",round(min(diff(posInt)),2), 
-            "  max dx=",round(max(diff(posInt)),2)))
-      points(dist3D, topo[,c("Z")],pch=20,col="red")
-      plot(topo[,c("E","N")], col = 1, type = "l", lwd = 2, asp = 1,
-            ylim = range(Nint), xlim = range(Eint), 
-            main = paste0(x@name, " mean dx=", round(mean(diff(posInt)),2)))
-      points(topo[,c("E","N")],col=1,pch=20,cex=2)
-      lines(Eint,Nint,col=2,lwd=2)
-      Sys.sleep(1)
-    
+	  if(plot == TRUE){
+		  par(mfrow=c(1,3))
+		  plot(FIDpos, dist3D, pch = 20, col = "red", cex = 2, asp = 1,
+				xlab = "FID  position", ylab = "trace spacing (3D)",
+		        xlim = range(x@pos), ylim=range(posInt), main=paste( x@name))
+		  points(x@pos,posInt,pch=20,col="blue")
+		  plot(posInt, Zint, type = "l", asp = 10, 
+				xlab = "interpolated trace spacing"
+		        main = paste0(x@name, " min dx=",round(min(diff(posInt)),2), 
+		        "  max dx=",round(max(diff(posInt)),2)))
+		  points(dist3D, topo[,c("Z")],pch=20,col="red")
+		  plot(topo[,c("E","N")], col = 1, type = "l", lwd = 2, asp = 1,
+		        ylim = range(Nint), xlim = range(Eint), 
+		        main = paste0(x@name, " mean dx=", round(mean(diff(posInt)),2)))
+		  points(topo[,c("E","N")],col=1,pch=20,cex=2)
+		  lines(Eint,Nint,col=2,lwd=2)
+		  Sys.sleep(1)
+      }
       A <- matrix(nrow=length(Nint),ncol=3)
       A[,1] <- Eint
       A[,2] <- Nint

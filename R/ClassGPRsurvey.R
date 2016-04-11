@@ -106,26 +106,26 @@ setAs(from = "GPRsurvey", to = "SpatialPoints",
 #' @name GPRsurvey.as.SpatialLines
 #' @rdname GPRsurveycoercion
 #' @export
-as.SpatialLines <- function (x, ...){
+setMethod("as.SpatialLines", signature(x = "GPRsurvey"), function(x){
 	TOPO <- x@coords
 	Names <- x@names
-	lineList <- lapply(TOPO,xyToLine)
+	lineList <- lapply(TOPO, xyToLine)
 	linesList <- lapply(seq_along(lineList), LineToLines, lineList ,Names)
 	mySpatLines <- sp::SpatialLines(linesList)
 	if(length(x@crs) == 0){
 		warning("no CRS defined!\n")
 	}else{
-		proj4string(mySpatLines) <- CRS(crs(x))
+		sp::proj4string(mySpatLines) <- sp::CRS(crs(x))
 	}
 	return(mySpatLines)
-}
+})
 
 #' Coerce to SpatialPoints
 #'
 #' @name GPRsurvey.as.SpatialPoints
 #' @rdname GPRsurveycoercion
 #' @export
-as.SpatialPoints <- function (x, ...){
+setMethod("as.SpatialPoints", signature(x = "GPR"), function(x){
 	allTopo <- do.call(rbind,x@coords)	#  N, E, Z
 	allTopo2 <- as.data.frame(allTopo)
 	sp::coordinates(allTopo2) = ~ E + N
@@ -135,7 +135,7 @@ as.SpatialPoints <- function (x, ...){
 		sp::proj4string(allTopo2) <- sp::CRS(crs(x))
 	}
 	return(allTopo2)
-}
+})
 
 #' Define a local reference coordinate
 #' 
@@ -695,7 +695,7 @@ setMethod("exportCoord", "GPRsurvey",
 							function(x) slot(x, "ID")))
 		mySpatLinesdf <- sp::SpatialLinesDataFrame(mySpatLines, dfl , 
                             match.ID = TRUE)
-		writeOGR(mySpatLinesdf, folder, fPath, driver = driver,...)
+		rgdal::writeOGR(mySpatLinesdf, folder, fPath, driver = driver,...)
 	}else if(type == "SpatialPoints"){
     if(is.null(fPath)){
       fPath <- x@names[1]
@@ -705,7 +705,7 @@ setMethod("exportCoord", "GPRsurvey",
     }
     fPath <- basename(fPath)
 		mySpatPoints <- as.SpatialPoints(x)
-		writeOGR(mySpatPoints, folder, fPath, driver=driver,...)
+		rgdal::writeOGR(mySpatPoints, folder, fPath, driver=driver,...)
 	}else if(type == "ASCII"){	
     for( i in seq_along(mySurvey)){
       exportCoord(mySurvey[[i]], fPath = fPath, folder = folder, 

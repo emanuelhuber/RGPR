@@ -384,7 +384,8 @@ setAs(from = "GPR", to = "SpatialLines",
 #' @name as.SpatialLines
 #' @rdname GPRcoercion
 #' @export
-as.SpatialLines <- function (x, ...){
+# as.SpatialLines <- function (x, ...){
+setMethod("as.SpatialLines", signature(x = "GPR"), function(x){
   myLine <- sp::Line(x@coord[,1:2])
   myLines <- sp::Lines(list(myLine), ID=x@name)
   mySpatLines <- sp::SpatialLines(list(myLines))
@@ -394,7 +395,7 @@ as.SpatialLines <- function (x, ...){
     sp::proj4string(mySpatLines) <- sp::CRS(crs(x))
   }
   return(mySpatLines)
-}
+})
 
 setAs(from = "GPR", to = "SpatialPoints",
       def = function (from) as.SpatialPoints(from))
@@ -404,7 +405,8 @@ setAs(from = "GPR", to = "SpatialPoints",
 #' @name as.SpatialPoints
 #' @rdname GPRcoercion
 #' @export
-as.SpatialPoints <- function (x, ...){
+# as.SpatialPoints <- function (x, ...){
+setMethod("as.SpatialPoints", signature(x = "GPR"), function(x){
   myPoints <- as.data.frame(x@coord)
   sp::coordinates(myPoints) = ~E + N
   if(length(crs(x)) == 0){
@@ -413,7 +415,7 @@ as.SpatialPoints <- function (x, ...){
     sp::proj4string(myPoints) <- sp::CRS(crs(x))
   }
   return(myPoints)
-}
+})
 
 #' Coercion to numeric
 #'

@@ -15,9 +15,9 @@
 
 \S4method{as.vector}{GPR}(x, mode = "any")
 
-as.SpatialLines(x, ...)
+\S4method{as.SpatialLines}{GPR}(x)
 
-as.SpatialPoints(x, ...)
+\S4method{as.SpatialPoints}{GPR}(x)
 
 \S4method{as.numeric}{GPR}(x, ...)
 

@@ -314,6 +314,15 @@ setGenericVerif <- function(x,y){setGeneric(x,y)}
 
 
 #------------------------------
+
+setGenericVerif("as.SpatialPoints", function(x) 
+standardGeneric("as.SpatialPoints"))
+
+setGenericVerif("as.SpatialLines", function(x) 
+standardGeneric("as.SpatialLines"))
+
+
+#------------------------------
 #' @name coordref
 #' @rdname coordref
 #' @export

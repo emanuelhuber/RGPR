@@ -1909,7 +1909,13 @@ setMethod("spec", "GPR", function(x, type = c("f-x","f-k"), plotSpec = TRUE,
 
 #' Interpolate the trace position.
 #'
-#' @name interpPos
+#' @param x An object of the class GPR.
+#' @param topo A (mx4) numeric matrix, with m the number of traces 
+#'				in x. The columns names of topo must be
+#'				"E", "N", "Z" and "TRACE".
+#' @param plot A length-one boolean vector. If TRUE some control
+#'				plots are displayed.
+#' @name interpPos 
 #' @rdname interpPos
 #' @export
 setMethod("interpPos", "GPR", function(x, topo, plot = FALSE,...){

@@ -8,7 +8,7 @@
 \usage{
 \S4method{as.SpatialLines}{GPRsurvey}(x)
 
-\S4method{as.SpatialPoints}{GPR}(x)
+\S4method{as.SpatialPoints}{GPRsurvey}(x)
 }
 \description{
 Coerce to SpatialLines

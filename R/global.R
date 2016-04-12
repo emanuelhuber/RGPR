@@ -12,7 +12,7 @@
 #'   \item \code{exportPDF()}
 #'   \item \code{exportDelineations()}
 #'   \item \code{exportFid()}: ASCII-file
-#'   \item \code{exportCoord()}: output either SpatialLines or SpatialPoints
+#'   \item \code{exportCoord()}: ASCII, SpatialLines or SpatialPoints
 #'   \item \code{exportProc()}: ASCII-file
 #' }
 #'
@@ -23,11 +23,25 @@
 #'   \item \code{plotAmpl()}
 #'   \item \code{plotDelineations()}
 #' }
+#'
+#' @section Coercion:
+#' \itemize{
+#'   \item \code{as.matrix()}:
+#'   \item \code{as.numeric()}:
+#'   \item \code{as.list()}
+#' }
+#'
+#' @section Delineation:
+#' \itemize{
+#'   \item \code{delineate()}:
+#' }
+#'
+#' @references Several books!
 #' @name RGPR
 # @docType package
 NULL
 
-
+# WARNING: type = c("wiggles", "raster") should be the second arguments!!!
 
 # Reflection mode, CMP mode 
 # For a given transect, the data consist of a cross-section of 
@@ -38,7 +52,7 @@ NULL
 #    CHECK:  http://r-pkgs.had.co.nz/
 #
 
-#----------- helper functions -------------------#
+##----------- helper functions -------------------##
 # FID <- choose.files(caption = " txt files",filters = c("txt","*.txt"))
 # output = list of data frame (one for each file from FID) 
 #    with c("E","N","Z","TRACE") structure
@@ -112,8 +126,9 @@ plotTopo <- function(NEZ_file, add=TRUE){
           pch=25,col=3,bg="green")  
 }
 
-#----------- helper functions -------------------#
 
+
+##------------- FILENAME/FILEPATH/EXTENSION -------------------##
 # NAME: safe file path
 # test if the file already exists
 # if yes, add a suffix to the filepath
@@ -137,8 +152,26 @@ safeFPath <- function(fPath = NULL){
   return(newfPath)
 }
 
+# returns string w/o leading or trailing whitespace
+trimStr <- function (x) gsub("^\\s+|\\s+$", "", x)
 
-#------------- COLOR FUNCTIONS -------------------#
+# return filename without extension
+#' @export
+.fNameWExt <- function(x){
+  unlist(lapply(strsplit(basename(x),"[.]"), head , 1 ))
+}
+
+# return the file extension.
+
+#' @export
+.fExt <- function(x){
+#   cat("with caution... because split \'.\' may not be so good\n")
+  unlist(lapply(strsplit(basename(x),"[.]"), tail , 1 ))
+}
+
+##------------- COLOR FUNCTIONS -------------------##
+#' @name palGPR
+#' @rdname palGPR
 #' @export
 palGPR <- function(colPal="default", n = 101, power = 1, returnNames = FALSE){
   colPal <- gsub("gray", "grey", x= colPal)
@@ -202,6 +235,10 @@ palGPR <- function(colPal="default", n = 101, power = 1, returnNames = FALSE){
 # usage: 
 # pal(palGPR("seismic",50))
 # pal(palGPR(n=50))
+
+
+#' @name plotPal
+#' @rdname palGPR
 #' @export
 plotPal <- function(col, border = NA){
   n <- length(col)
@@ -210,6 +247,13 @@ plotPal <- function(col, border = NA){
   rect(0:(n-1)/n, 0, 1:n/n, 1, col = col, border = border)
 }
 
+#' Colour palette
+#'
+#' @examples
+#' displayPalGPR()
+#' plotPal(palGPR("hcl_5"))
+#' @name displayPalGPR
+#' @rdname palGPR
 #' @export
 displayPalGPR <- function(){
    op <- par(no.readonly=TRUE)
@@ -235,24 +279,9 @@ colFromPal <- function(A , col = palGPR(n=101)){
   ClenY <- ClimY[2] - ClimY[1] + 1
   return(col[ (CCY)*(length(col)-1)+1 ] )
 }
-#------------- color functions -------------------#
+#--------------------------------#
 
-# returns string w/o leading or trailing whitespace
-trimStr <- function (x) gsub("^\\s+|\\s+$", "", x)
 
-# return filename without extension
-#' @export
-.fNameWExt <- function(x){
-  unlist(lapply(strsplit(basename(x),"[.]"), head , 1 ))
-}
-
-# return the file extension.
-
-#' @export
-.fExt <- function(x){
-#   cat("with caution... because split \'.\' may not be so good\n")
-  unlist(lapply(strsplit(basename(x),"[.]"), tail , 1 ))
-}
 
 
 
@@ -279,16 +308,16 @@ selectBBox <- function(border="red",lwd=2,...){
 .plotLine <- function(xyz,...){
   lines(xyz[,1:2],...)
 }
-.plotArrows <- function(xyz,col="red",length=0.1,...){
-  
-arrows(xyz[nrow(xyz)-1,1], xyz[nrow(xyz)-1,2], xyz[nrow(xyz),1], 
-      xyz[nrow(xyz),2], length = length,col=col,...)
-}
 
+.plotArrows <- function(xyz,col="red",length=0.1,...){
+  arrows(xyz[nrow(xyz)-1,1], xyz[nrow(xyz)-1,2], xyz[nrow(xyz),1], 
+         xyz[nrow(xyz),2], length = length,col=col,...)
+}
 
 .whichMin <- function(x,y){
   which.min(abs(x-y))
 }
+
 .which <- function(x,y){
   which(x==y)
 }
@@ -301,6 +330,55 @@ arrows(xyz[nrow(xyz)-1,1], xyz[nrow(xyz)-1,2], xyz[nrow(xyz),1],
     return(1)
   }
 }
+
+#' @export
+posLine <- function(loc,last=FALSE){
+  loc <- as.matrix(loc)
+  all_dist <- cumsum(c(0,sqrt(apply(diff(loc)^2,1,sum))))
+  if(last){
+        return(tail(all_dist,1))
+  }else{
+        return(as.numeric(all_dist))
+  }
+}
+  
+.doubleVector <- function(v,n=2L){
+  if(n > 1){
+    m <- length(v)
+    dxpos <- rep( diff(v)/n,n-1)
+    vv <- v[-m] + rep(seq(1,n-1),each=m-1)*dxpos
+    xvalues  <- sort(c(v,vv ,v[m] + cumsum(rep(dxpos[length(dxpos)],n-1))))
+    xvalues <- xvalues[1:(length(xvalues))]
+  }
+}
+
+#--------------------------------
+# wapply: A faster (but less functional) "rollapply" for vector setups
+# April 23, 2013
+# By A.N. Spiess, senior scientist at the Department of Andrology at the 
+# University Hospital Hamburg-Eppendorf
+# This is what turned out (wapply for "window apply")
+wapply <- function(x=NULL, width = NULL, by = NULL, FUN = NULL, ...){
+  FUN <- match.fun(FUN)
+  if (is.null(by)) by <- width
+  lenX <- length(x)
+  SEQ1 <- seq(1, lenX - width + 1, by = by)
+  SEQ2 <- lapply(SEQ1, function(x) x:(x + width - 1))
+   
+  OUT <- lapply(SEQ2, function(a) FUN(x[a], ...))
+  OUT <- base:::simplify2array(OUT, higher = TRUE)
+  return(OUT)
+}
+
+xyToLine <- function(x){
+  sp::Line(x[,1:2])
+}
+
+LineToLines <- function(i,pp, myNames){
+  sp::Lines(pp[i],myNames[i])
+}
+
+
 #--------------------------------------------#
 #---------------- SETGENERIC ----------------#
 # setGenericVerif <- function(x,y){
@@ -475,6 +553,9 @@ setGenericVerif("readGPR", function(fPath,desc="", coordfile=NULL,
 setGenericVerif("writeGPR", function(x,fPath, format=c("DT1","rds"),
                 overwrite=FALSE){ standardGeneric("writeGPR")})
 
+#' @name exportCoord
+#' @rdname exportCoord
+#' @export
 setGenericVerif("exportCoord",  
           function(x, type = c("SpatialPoints", "SpatialLines", "ASCII"),
           fPath = NULL, folder = NULL,  sep = "\t", 
@@ -482,10 +563,9 @@ setGenericVerif("exportCoord",
 
 setGenericVerif("exportFid", function(x,fPath=NULL) 
                   standardGeneric("exportFid"))
+
 setGenericVerif("exportProc",  function(x,fPath=NULL,sep="\t", row.names=FALSE,
               col.names=FALSE, ...) standardGeneric("exportProc"))
-
-
 
 setGenericVerif("reverse", function(x) standardGeneric("reverse"))
 setGenericVerif("migration", function(x,type=c("static","kirchhoff"), ...) 
@@ -497,7 +577,7 @@ setGenericVerif("filter2D", function(x, type=c("median3x3"), ...)
                 standardGeneric("filter2D"))
 setGenericVerif("dewow", function(x,type=c("MAD","Gaussian"),w ) 
                 standardGeneric("dewow"))
-setGenericVerif("gain", function(x, type=c("power","exp","agc","geospreading"),
+setGenericVerif("gain", function(x, type=c("power", "exp", "agc"),
                   ...) standardGeneric("gain"))
 setGenericVerif("dcshift", function(x, u=1:10, FUN=mean) 
                 standardGeneric("dcshift"))
@@ -526,17 +606,6 @@ setGenericVerif("deconv", function(x, method=c("spiking","wavelet","min-phase"),
 setGenericVerif("rotatePhase", function(x, phi) standardGeneric("rotatePhase"))
 
 
-#' @export
-posLine <- function(loc,last=FALSE){
-  loc <- as.matrix(loc)
-  all_dist <- cumsum(c(0,sqrt(apply(diff(loc)^2,1,sum))))
-  if(last){
-        return(tail(all_dist,1))
-  }else{
-        return(as.numeric(all_dist))
-  }
-}
-  
 #------------------------------GRPsurvey
 setGenericVerif("getGPR", function(x,id) standardGeneric("getGPR"))
 setGenericVerif("surveyIntersect", function(x) 
@@ -699,34 +768,24 @@ depth0 <- function(time_0, v=0.1, antsep=1){
   }
 }
 
-.topoShift <- function(A,topo,dz){
+# shift the topography of the GPR profile (to display its topography)
+.topoShift <- function(x, topo, dz){
   zShift <- (max(topo) - topo)
-  old_t <- seq(0,length.out=nrow(A),by=dz)
-  A_topoShift <- matrix(0,nrow=nrow(A)+floor(max(zShift)/dz),ncol=ncol(A))
-  n <- 1:(nrow(A)-2)
-  for(i in 1:ncol(A)){
+  # in fact >> old_t = x@depth
+  old_t <- seq(0, length.out = nrow(x), by = dz)
+  xShifted <- matrix(0, nrow = nrow(x) + floor(max(zShift)/dz), ncol = ncol(x))
+  n <- 1:(nrow(x)-2)
+  for(i in 1:ncol(x)){
     # compute new t-vector for each trace
     new_t <- old_t + zShift[i]
-    xit <- seq(ceiling(new_t[1]/dz), ceiling(new_t[nrow(A)-2]/dz))
+    xit <- seq(ceiling(new_t[1]/dz), ceiling(new_t[nrow(x)-2]/dz))
     # interpolate
     # FIX ME! does not work well (not nice interpolation)
-    A_topoShift[xit+1,i] = signal::interp1(new_t, A[,i], xi = xit*dz, 
+    xShifted[xit+1,i] = signal::interp1(new_t, x[,i], xi = xit*dz, 
                                         method = "cubic",extrap = TRUE)  
   }
-  return(A_topoShift)
+  return(xShifted)
 }
-
-
-.doubleVector <- function(v,n=2L){
-  if(n > 1){
-    m <- length(v)
-    dxpos <- rep( diff(v)/n,n-1)
-    vv <- v[-m] + rep(seq(1,n-1),each=m-1)*dxpos
-    xvalues  <- sort(c(v,vv ,v[m] + cumsum(rep(dxpos[length(dxpos)],n-1))))
-    xvalues <- xvalues[1:(length(xvalues))]
-  }
-}
-
 
 plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
           time_0 = 0, antsep = 1, v = 0.1,
@@ -1143,79 +1202,67 @@ wapply(x,width=ns,by=1,FUN=sd),rep(0,floor(ns/2)))
 
 #==============================#
 #======= GAIN FUNCTIONS ========#
+# dts = sampling time (e.g., 0.8 ns)
+# t0 = starting time to apply the gain scaling
+# te = ending time to apply the gain scaling
+# tcst
 # CF Yilmaz, p85
-.gainPower <- function(A,alpha,d_t,t_0=NULL,t_end=NULL,t_cst=NULL){
-  g <- .gainPower0(A[,1],alpha,d_t,t_0,t_end,t_cst)
+.gainPower <- function(A, alpha, dts, t0 = NULL, te = NULL,
+                       tcst = NULL){
+  g <- .gainPower0(A[,1], alpha, dts, t0, te, tcst)
   Anew <- (A)*g
-  # s1 = ((max(A))-(min(A)));  # scale factor
-  # s1 = apply(A,2,max)-apply(A,2,min)  # scale factor
-  # # s2 = ((quantile(Anew, 0.99))-(quantile(Anew, 0.01)))  # scale factor
-  # s2 = apply(Anew,2,max)-apply(Anew,2,min)    # scale factor
   s1 = ((max(A))-(min(A)));  # scale factor
-  # s2 = ((quantile(Anew, 0.99))-(quantile(Anew, 0.01)))  # scale factor
   s2 = ((max(Anew))-(min(Anew)));  # scale factor
   return(Anew/s2*s1 )
 }
 
-.gainPower0 <- function(d,alpha,d_t,t_0=NULL,t_end=NULL,t_cst=NULL){
-  if(is.null(t_0)) t_0 <-0
-  if(is.null(t_end)) t_end <-(length(d)-1)*d_t
-  if(!is.null(t_cst) && !(t_cst > t_0 && t_cst < t_end)){
-    stop("you need t_cst > t_0 && t_cst < t_end\n")
+.gainPower0 <- function(d, alpha, dts, t0 = NULL, te = NULL, tcst = NULL){
+  if(is.null(t0)) t0 <-0
+  if(is.null(te)) te <-(length(d)-1)*dts
+  if(!is.null(tcst) && !(tcst > t0 && tcst < te)){
+    stop("you need tcst > t0 && tcst < te\n")
   }
-  x <- (seq_along(d) - 1) *d_t
-  test <- x >= t_0 & x <= t_end
+  x <- (seq_along(d) - 1) *dts
+  test <- x >= t0 & x <= te
   g <- rep(1L,length(d))
-  # g[test] <- ((seq_along(d[test])+1/d_t)*d_t + t_0)^alpha
-  g[test] <- 1 + (seq_along(d[test])*d_t )^alpha
-  g[x > t_end] <- max(g)
-  if(!is.null(t_cst) && any(x < t_cst)) g[x < t_cst] <- g[1+round(t_cst/d_t)]
+  g[test] <- 1 + (seq_along(d[test])*dts )^alpha
+  g[x > te] <- max(g)
+  if(!is.null(tcst) && any(x < tcst)) g[x < tcst] <- g[1+round(tcst/dts)]
   return( g)
-  # return( d_new)
 }
 
-.gainExp <- function(A,alpha,d_t,t_0=NULL,t_end=NULL){
-  g <- .gainExp0(A[,1],alpha,d_t,t_0,t_end)
+.gainExp <- function(A, alpha, dts, t0 = NULL, te = NULL){
+  g <- .gainExp0(A[,1], alpha, dts, t0, te)
   Anew <- (A)*g
-  # s1 = ((max(A))-(min(A)));  # scale factor
-  # s1 = apply(A,2,max)-apply(A,2,min)  # scale factor
-  # # s2 = ((quantile(Anew, 0.99))-(quantile(Anew, 0.01)))  # scale factor
-  # s2 =  apply(Anew,2,quantile,0.999)-apply(Anew,2,quantile, 0.001)  # scale 
-factor
-  # # s2 = apply(Anew,2,max)-apply(Anew,2,min)    # scale factor
   s1 = ((max(A))-(min(A)));  # scale factor
-  # s2 = ((quantile(Anew, 0.99))-(quantile(Anew, 0.01)))  # scale factor
   s2 = ((max(Anew))-(min(Anew)));  # scale factor
-  
   s12 <- s1/s2
   A3 <- (Anew * s12)
   return(  Anew)
 }
 
-.gainExp0 <- function(d,alpha,d_t,t_0=NULL,t_end=NULL){
-  if(is.null(t_0) || t_0==0) t_0 <-0
-  if(is.null(t_end)) t_end <-(length(d)-1)*d_t
-  # tx <- seq(0,t_end-t_0,by=d_t)+1/d_t
-  x <- (seq_along(d) - 1) * d_t
-  test <- (x >= t_0 & x <= t_end)
-  test_max <- x > t_end
+.gainExp0 <- function(d, alpha, dts, t0 = NULL, te = NULL){
+  if(is.null(t0) || t0==0) t0 <-0
+  if(is.null(te)) te <-(length(d)-1)*dts
+  x <- (seq_along(d) - 1) * dts
+  test <- (x >= t0 & x <= te)
+  test_max <- x > te
   g <- rep(1L,length(d))
-  g[test] <-  exp((x[test] - t_0) * d_t * alpha)
-  g[test_max] <-  exp(max(x[test] - t_0)*d_t*alpha)
+  g[test] <-  exp((x[test] - t0) * dts * alpha)
+  g[test_max] <-  exp(max(x[test] - t0)*dts*alpha)
   return( g)
 }
 
 
-.gainAgc <- function(A,d_t,sig=10,p=2,r=0.5){
-  sig <- sig/d_t
+.gainAgc <- function(A, dts, sig = 10, p = 2, r = 0.5){
+  sig <- sig/dts
   Anew <- apply(A,2,.gainAgc0,sig,p,r)
   s1 = ((max(A))-(min(A)));  # scale factor
-  # s2 = ((quantile(Anew, 0.99))-(quantile(Anew, 0.01)))  # scale factor
   s2 = ((max(Anew))-(min(Anew)));  # scale factor
   return(Anew * s1/s2)
 }
 
-.gainAgc0 <- function(d,sig=10,p=2,r=0.5,plot=FALSE,...){
+.gainAgc0 <- function(d, sig = 10, p = 2 , r = 0.5){
   # convert NA into 0
   d[is.na(d)] <- 0
   # Get local mean by smoothing the image with a Gaussian filter
@@ -1226,7 +1273,7 @@ factor
   # to power 'r' to obtain the 'gain'.  Typically p = 2 and r = 0.5 which will
   # make gain equal to the local RMS.  The abs() function is used to allow
   # for arbitrary 'p' and 'r'.
-  dGain <- (gaussianSmooth(abs(d-dAmp)^p, sig))^r
+  dGain <- (gaussianSmooth(abs(d - dAmp)^p, sig))^r
   # Apply inverse gain to the difference between the image and the local
   # mean to obtain the final AGC image. 
   dnew <- d/dGain
@@ -1300,73 +1347,68 @@ rmsScaling <- function(...){
 # -------------------------------------------
 powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE, 
                    titleSpec = NULL, unwrapPhase = TRUE){
-  A = as.matrix(A)
-  nr = nrow(A)
-  nc = ncol(A)
-  N = 2^(ceiling(log2(nr)))
-  A = rbind(A,matrix(0,nrow=N-nr,ncol=nc))
+  A   <- as.matrix(A)
+  nr  <- nrow(A)
+  nc  <- ncol(A)
+  N   <- 2^(ceiling(log2(nr)))
+  A   <- rbind(A,matrix(0,nrow=N-nr,ncol=nc))
+
+  # samping interval GPR = 0.8 ns
+  Ts    <- dT*(10^(-9))     # [s] Sample time
+  Fs    <- 1/Ts             # [Hz] Sampling frequency
+  Fc    <- 1/(2*Ts)         # Nyquist frequency
+  nfreq <- N/2 + 1
   
   # if y <- fft(z), then z is 
   # fft(y, inverse = TRUE) / length(y).
-  # By contrast, mvfft takes a real or complex matrix as argument,
-  # and returns a similar shaped matrix, but with each column 
-  # replaced by its discrete Fourier transform. 
-  fft_A = mvfft(A)
-  # extract the power spectrum (power is sometimes referred to as "magnitude")
-  # power=sqrt(Re(fourier)*Re(fourier)+Im(fourier)*Im(fourier))
-  pow = as.matrix(Mod(fft_A))
-  pow = as.matrix(Mod(fft_A))
+  # each column = discrete Fourier transform. 
+  fft_A <- mvfft(A)
+  # extract the power spectrum (sometimes referred to as "magnitude")
+  pow <- as.matrix(Mod(fft_A))
+  pow <- pow[1:nfreq,,drop=FALSE]   # select only first half
   # extract the phase which is atan(Im(fourier)/Re(fourier))
-  pha = as.matrix(Arg(fft_A))
-  # si matrix -> moyenne sur les colonnes
-  
-  nfreq <- N/2 + 1
-  # select only first half of vectors
-  pha = pha[1:nfreq,,drop=FALSE] 
-  # select only first half of vectors
-  pow = pow[1:nfreq,,drop=FALSE] 
-  pow_mean = apply(pow,1, mean, na.rm=TRUE)
+  pha <- as.matrix(Arg(fft_A))
+  pha <- pha[1:nfreq,,drop=FALSE]    # # select only first half
+
+  pow_mean <- apply(pow, 1, mean, na.rm = TRUE)
   if(unwrapPhase){
-    pha <- apply(pha,2, signal::unwrap)
+    pha <- apply(pha, 2, signal::unwrap)
   }
-  pha_mean = apply(pha,1, mean, na.rm=TRUE)
-    
-  # samping interval GPR = 0.8 ns
-  Ts = dT*(10^(-9))    # [s] Sample time
-  Fs = 1/Ts      # [Hz] Sampling frequency
-  Fc = 1/(2*Ts)    # Nyquist frequency
- 
-  # frequence
-  # the Nyquist frequency is fc = 1/(2*d), where d is the sampling
-  # interval in units of time
-  # fre = (0:(length(pow_mean)-1))/(2*length(pow_mean) * Ts)/fac  #[MHz]
-  fre = Fs*seq(0,N/2)/N/fac
+  pha_mean <- apply(pha, 1, mean, na.rm = TRUE)
+
+  # frequenceS
+  fre = Fs*seq(0, N/2)/N/fac
+  
   # plot the power spectrum
   if(plotSpec){
     op <- par(no.readonly=TRUE)
-    m = seq(0,10000,by=50)
+    m = seq(0, 10000, by = 50)
     par(mfrow=c(2,1))
     par(mar=c(0, 4, 4, 2) + 0.1, oma=c(1,1,1,1) )
-    plot(fre,pow_mean, type="n",xaxt = "n",ylim=c(0,max(pow)),
+    plot(fre,pow_mean, type="n",
+#           xaxt = "n",
+          ylim=c(0,max(pow)),
           ylab="amplitude",xlab="")
       if(!is.null(dim(A))){
-        invisible( apply(pow,2,lines,x=fre, 
+        invisible( apply(pow, 2, lines, x = fre, 
                 col=rgb(0.2,0.2,0.2,7/max(ncol(A),7))) )
       }
       lines(fre,pow_mean,col="red")
-      Axis(side = 1, tcl = +0.3,  labels=FALSE ,at=m)
+#       Axis(side = 1, tcl = +0.3,  labels=FALSE ,at=m)
       if(!is.null(titleSpec)){
         title(titleSpec)
       }
     par(mar=c(4, 4, 0.3, 2))
-    plot(fre,pha_mean, type="n",xaxt = "n",ylim=range(pha), 
+    plot(fre,pha_mean, type="n", 
+#           xaxt = "n",
+          ylim=range(pha), 
           xlab = "frequency MHz", ylab="phase") 
       if(!is.null(dim(A))){
         invisible(  apply(pha, 2, lines, x = fre, 
                   col = rgb(0.2,0.2,0.2,7/max(ncol(A), 7))) )
       }
       lines(fre,pha_mean,col="red")
-      Axis(side = 1, tcl = +0.3,  labels=m ,at=m)
+#       Axis(side = 1, tcl = +0.3,  labels=m ,at=m)
     par(op)
   }
   return(list(freq = fre, pow = pow, pha = pha))
@@ -1380,70 +1422,71 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
 # -------------------------------------------
 
 .fFilter1D <- function(A, f = c(100), type = c('low', 'high', 'bandpass'), 
-                        L = 257, dT = 0.8, plotSpec = FALSE){
-  type = match.arg(type)
+                        L = 257, dT = 0.8, plotSpec = FALSE, fac = 1000000){
+  type <- match.arg(type)
   A <- as.matrix(A)
-  M = nrow(A)      # signal length
+  nr <- nrow(A)      # signal length
+
   # samping interval GPR = 0.8 ns
-  Ts = dT*10^(-9)    # [s] Sample time
-  Fs = 1/Ts      # [Hz] Sampling frequency
-  # cut-off frequency/ies fc in (MHz)
-  f = sort(f) * 10^6    # cut-off frequency in Hz
+  Ts    <- dT*(10^(-9))     # [s] Sample time
+  Fs    <- 1/Ts             # [Hz] Sampling frequency
   
+  # cut-off frequency/ies fc in (MHz)
+  f <- sort(f) * 10^6    # cut-off frequency in Hz
+  
+  # FIXME > write a function setFFilter(f, type=..., Fs)
   if(type == "low" || type == "high"){
     # Design the filter using the window method:
     if(length(f)>1) {
-        BW = (f[2] - f[1])/Fs  # bandwidth of the filter
-        fc = f[1] + (f[2] - f[1])/2
-        L = 4 / BW
-        L = round(L)
-        if(L %% 2 == 0) L = L + 1  
-        # cat(paste("filter length ",L,"\n"))
-
+        BW <- (f[2] - f[1])/Fs          # filter bandwidth
+        fc <- f[1] + (f[2] - f[1])/2    # cut frequency
+        L <- round(4 / BW)
+        if(L %% 2 == 0){
+          L <- L + 1  
+        }
     }else if(length(f)==1){
-      fc = f[1]
+      fc <- f[1]
     }
-    h <- winSincKernel(L,fc/Fs,type)
+    h <- winSincKernel(L, fc/Fs, type)
   }else if(type == "bandpass"){
     if(length(f)==2 ) {
-      h1 <- winSincKernel(L,f[1]/Fs,"low")
-      h2 <- winSincKernel(L,f[2]/Fs,"high")
-    }else if(length(f)==4 ){
-      BW = (f[2] - f[1])/Fs  # bandwidth of the filter
-      fc = f[1] + (f[2] - f[1])/2
-      L = 4 / BW
-      L = round(L)
-      if(L %% 2 == 0) L = L + 1
-      # cat(paste("filter length ",L,"\n"))
-      h1 <- winSincKernel(L,fc/Fs,"low")
-      BW = (f[4] - f[3])/Fs  # bandwidth of the filter
-      fc = f[3] + (f[4] - f[3])/2
-      L = 4 / BW
-      L = round(L)
-      if(L %% 2 == 0) L = L + 1
-      # cat(paste("filter length ",L,"\n"))
-      h2 <- winSincKernel(L,fc/Fs,"high")
+      h1 <- winSincKernel(L, f[1]/Fs, "low")
+      h2 <- winSincKernel(L, f[2]/Fs, "high")
+    }else if(length(f) == 4 ){
+      BW <- (f[2] - f[1])/Fs
+      fc <- f[1] + (f[2] - f[1])/2
+      L <- round(4 / BW)
+      if(L %% 2 == 0){
+        L <- L + 1
+      }
+      h1 <- winSincKernel(L, fc/Fs, "low")
+      BW <- (f[4] - f[3])/Fs
+      fc <- f[3] + (f[4] - f[3])/2
+      L <- round(4 / BW)
+      if(L %% 2 == 0){
+        L <- L + 1
+      }
+      h2 <- winSincKernel(L, fc/Fs, "high")
     }
     L = max(length(h1),length(h2))
-    # if(L %% 2 == 0) L = L + 1
-    #cat("lenght max",L,"\n")
     if(length(h2) < L ){
       h2 = c(rep(0,(L-length(h2))/2),h2,rep(0,(L-length(h2))/2))
     }
     if(length(h1) < L ){
       h1 = c(rep(0,(L-length(h1))/2),h1,rep(0,(L-length(h1))/2))
     }
-    
     # change the band-reject filter kernel into a band-pass 
     h = -h1 - h2
     h[(L+1)/2] = h[(L+1)/2] + 1
   }
-
-  # Choose the next power of 2 greater than L+M-1 
-  Nfft = 2^(ceiling(log2(L+M-1)))  # -1)))    # or 2^nextpow2(L+M-1)
+  
+  # L <- length(h)
+  
+  # Choose the next power of 2 greater than L+nr-1 
+  Nfft = 2^(ceiling(log2(L + nr-1)))
   # Zero pad the signal and impulse response:
-  h_long = c( h, rep(0,Nfft-L) )
-  A = rbind(as.matrix(A) , matrix(0,nrow=Nfft-M,ncol=ncol(A)) )
+  h_long = c( h, rep(0, Nfft - L) )
+  A = rbind(as.matrix(A) , matrix(0,nrow=Nfft-nr,ncol=ncol(A)) )
 
   fft_A = mvfft(A)    # signal
   fft_h = fft(h_long)        # filter
@@ -1451,10 +1494,7 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
   # Now we perform cyclic convolution in the time domain using 
   # pointwise multiplication in the frequency domain:
   Y = fft_A * fft_h
-  if(type == "bandpass"){
-    
-  }
-  
+
   pow_A = Mod(fft_A)
   pow_h = Mod(fft_h)
   pow_y = Mod(Y)
@@ -1467,10 +1507,8 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
   pow_A = pow_A[1:(Nfft/2+1)] 
   pow_y = pow_y[1:(Nfft/2+1)] 
   pow_h = pow_h[1:(Nfft/2+1)] 
-  
-  
-  # fre = 1:length(pow_A)/(2*length(pow_A) * T)/1000000  #[MHz]
-  fre = Fs*(0:(Nfft/2))/Nfft/1000000  #[MHz]
+
+  fre = Fs*(0:(Nfft/2))/Nfft/fac  #[MHz]
   
   if(plotSpec == TRUE){
     op <- par(no.readonly=TRUE)
@@ -1478,12 +1516,13 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
     m = seq(0,900,by=50)
     #par(mfrow=c(2,1), mar=c(5, 4, 4, 6) + 0.1 )
     par( mar=c(0, 4, 0.3, 2) + 0.1, oma=c(3,2,1,2) )
-    plot(fre,pow_A, type="l",xaxt = "n",
+    plot(fre,pow_A, type="l",
+#         xaxt = "n",
         #  yaxt = "n", 
           ylim=c(0,max(pow_A,pow_y)),
           ylab="power",lwd=2)
       lines(fre,pow_y, type="l",col="blue",lwd=2)
-      Axis(side = 1, tcl = +0.3,  labels=m ,at=m)
+#       Axis(side = 1, tcl = +0.3,  labels=m ,at=m)
       par(new=TRUE)
       plot(fre,pow_h,type="l", col="red",
         yaxt = "n",
@@ -1491,15 +1530,12 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
         legend("topright",c("input signal","filter","filtered signal"),
               col = c("black", "red", "blue"), lwd=c(2,1,2),bg = "white")
       abline(v=f/1000000, col="grey",lty=2)
-      #title("Power spectrum")
-      #title("Power spectrum")
      par(op)
   }
   a = (L-1)/2
   y = mvfft(Y, inverse = TRUE)
-  y = y[a:(a+M-1),]/nrow(y)
+  y = y[a:(a+nr-1),]/nrow(y)
   return(Re(y))
-  #list(freq = fre, pow = pow, pha = pha)
 }
 
 winSincKernel <- function(L,f,type=c("low","high")){
@@ -2356,27 +2392,4 @@ addArg <- function(proc, arg){
   return(proc)
 }
 
-#--------------------------------
-# wapply: A faster (but less functional) "rollapply" for vector setups
-# April 23, 2013
-# By A.N. Spiess, senior scientist at the Department of Andrology at the 
-# University Hospital Hamburg-Eppendorf
-# This is what turned out (wapply for "window apply")
-wapply <- function(x=NULL, width = NULL, by = NULL, FUN = NULL, ...){
-  FUN <- match.fun(FUN)
-  if (is.null(by)) by <- width
-  lenX <- length(x)
-  SEQ1 <- seq(1, lenX - width + 1, by = by)
-  SEQ2 <- lapply(SEQ1, function(x) x:(x + width - 1))
-   
-  OUT <- lapply(SEQ2, function(a) FUN(x[a], ...))
-  OUT <- base:::simplify2array(OUT, higher = TRUE)
-  return(OUT)
-}
 
-xyToLine <- function(x){
-  sp::Line(x[,1:2])
-}
-LineToLines <- function(i,pp, myNames){
-  sp::Lines(pp[i],myNames[i])
-}

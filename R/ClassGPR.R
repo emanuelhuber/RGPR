@@ -1268,16 +1268,14 @@ setMethod("dewow", "GPR", function(x, type=c("MAD","Gaussian"),w){
 #' @rdname gain
 #' @export
 setMethod("gain", "GPR", function(x, 
-type=c("power","exp","agc","geospreading"),...){
+          type=c("power", "exp", "agc"),...){
   type <- match.arg(type)
-  if(type=="geospreading"){
-    stop('deprecated! Use type="power" instead.')
-  }else if(type=="power"){
-    x@data <- .gainPower(x@data, d_t=x@dz, ...)
+  if(type=="power"){
+    x@data <- .gainPower(x@data, dts = x@dz, ...)
   }else if(type=="exp"){
-    x@data <- .gainExp(x@data, d_t=x@dz, ...)
-  }else{# if("agc"){
-    x@data <- .gainAgc(x@data, d_t=x@dz, ...)
+    x@data <- .gainExp(x@data, dts = x@dz, ...)
+  }else if("agc"){
+    x@data <- .gainAgc(x@data, dts = x@dz, ...)
   }
   proc <- getArgs()
   x@proc <- c(x@proc, proc)
@@ -2950,19 +2948,23 @@ setMethod("exportCoord", "GPR",
     dfl <- data.frame(z=c(1), row.names = x@name)
     mySpatLinesdf <- sp::SpatialLinesDataFrame(mySpatLines, dfl , 
                       match.ID = TRUE)
-    rgdal::writeOGR(mySpatLinesdf, folder, fPath, driver="ESRI Shapefile")
+    rgdal::writeOGR(mySpatLinesdf, folder, fPath, driver = driver,
+                    check_exists = TRUE, overwrite_layer = TRUE,
+                    delete_dsn = TRUE)
   }else if(type=="SpatialPoints"){  
     mySpatPoints <- as.SpatialPoints(x)
-    rgdal::writeOGR(mySpatPoints, folder, fPath, driver="ESRI Shapefile")
+    rgdal::writeOGR(mySpatPoints, folder, fPath, driver = driver,
+                    check_exists = TRUE, overwrite_layer = TRUE,
+                    delete_dsn = TRUE)
   }else if(type == "points"){
     stop("use type = SpatialPoints instead.\n")
   }else if(type == "lines"){
     stop("use type = SpatialLines instead.\n")
   }else if(type == "ASCII"){
-	xCoord <- x@coord
+    xCoord <- x@coord
     colnames(xCoord) <- c("E","N","Z")
-	fPath <- file.path(folder, paste0(.fNameWExt(fPath), ".txt"))
-	write.table(x@coord, fPath, sep = sep, row.names = FALSE, 
+    fPath <- file.path(folder, paste0(.fNameWExt(fPath), ".txt"))
+    write.table(x@coord, fPath, sep = sep, row.names = FALSE, 
                     col.names = TRUE, quote = FALSE)
   }
 })

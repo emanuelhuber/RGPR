@@ -2,7 +2,7 @@
 
 
 cat("******* RGPR *******\n")
-cat("version 0.0.8\n")
+cat("version 0.0.9\n")
 cat("15.03.2015\n")
 cat("Emanuel Huber, emanuel.huber@unibas.ch\n")
 cat("********************\n")
@@ -20,8 +20,8 @@ cat("********************\n")
 #	- slot @version added 
 #	- slot @filename renamed as @filepath
 #	- new function: GPRsurvey:: write
-#	- handle two types of dates (readGPR): %Y %m %d and %d %m %Y with any kind of 
-separator
+#	- handle two types of dates (readGPR): %Y %m %d and %d %m %Y with 
+#     any kind of separator
 
 #---changes v0.0.8.1---#
 #	- GPR::gain -> rename gain_geospreading in power!
@@ -63,22 +63,35 @@ separator
 # read/write SEGy
 
 # FIX ME!
-#	- GPRsurvey > as.SpatialLines & GPR as.SpatialLines 
-#        > DEUX FOIS LA MEME FONCTION!!!!
+# - add filter2D based on SVD!!
+# - CMP: plot + velocity model + normal move-out.
+# - GPR::delineations > create subfunction for the code snippets that are 
+#                       repeated!
+# - create a function for factors for units. For example
+#     unitFac("ns") returns 10^-9
+#     unitFac("nanosecond") returns 10^-9
+#     unitFac("MHz") returns 1000000
+#     unitFac("m") returns 1
+# - global > plotWig & plot Raster -> could be combined...
+#                                  -> check subsurface flow mixing for nice
+#                                       PDFs!!
+#          > combine somehow powSpec and freqFilter1D
+#          > combine FKspectrum and FKfilter
+# - GPR::fFilter -> apply optionally a scaling to compensate for the 
+#                   removed frequency (check spectral theorem)
 #	- GPRsurvey::plot3D -> use function "inPoly" to plot in 3D only a selection 
 #         of traces from GPRsurvey
 #						-> add a zlim or a max depth!!!
-#	- GPR::plot3D -> add a zlim or a max depth!!!
-#	- GPR::exportCoord & GPRsurvey::exportCoord -> export as points 
-#         -> use point.data.frame (add z-information)
 #	- GPR::migration/topoShift -> integrate the function time2depth or 
 #       depth2time!!!!
 #	- GPR::delineation -> use the same scheme for both raster and wiggles!
-#	- GPR::fkFilter -> add as argument "slopes"
-#	- GPR::interpTraces -> use a raster to get the v-elevation!
-#	- plot.GPR function
-#		-> check if all the "..." parameters corresponds to the possible paramters. 
-#           If not > error!
+#	- GPR::fkFilter -> add as argument "slopes" (in fact for slope you only
+#                     need two points...
+#	- GPR::interpTraces -> add as option a raster (DEM) from which the 
+#                        the trace elevation can be extracted
+#	- plot.GPR function -> check if all the "..." parameters corresponds to 
+#                        the possible paramters. 
+#                        If not > error!
 #	- GPR::gain -> t0=NULL then t0 <- mean(time0)
 #	- GPR::spec(type "f-t") -> use power and log scale (?)
 #	- GPR::plotAmpl -> option log y-axis

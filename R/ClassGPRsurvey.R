@@ -695,7 +695,9 @@ setMethod("exportCoord", "GPRsurvey",
 							function(x) slot(x, "ID")))
 		mySpatLinesdf <- sp::SpatialLinesDataFrame(mySpatLines, dfl , 
                             match.ID = TRUE)
-		rgdal::writeOGR(mySpatLinesdf, folder, fPath, driver = driver,...)
+		rgdal::writeOGR(mySpatLinesdf, folder, fPath, driver = driver,
+                    check_exists = TRUE, overwrite_layer = TRUE,
+                    delete_dsn = TRUE)
 	}else if(type == "SpatialPoints"){
     if(is.null(fPath)){
       fPath <- x@names[1]
@@ -705,7 +707,9 @@ setMethod("exportCoord", "GPRsurvey",
     }
     fPath <- basename(fPath)
 		mySpatPoints <- as.SpatialPoints(x)
-		rgdal::writeOGR(mySpatPoints, folder, fPath, driver=driver,...)
+		rgdal::writeOGR(mySpatPoints, folder, fPath, driver=driver,
+                    check_exists = TRUE, overwrite_layer = TRUE,
+                    delete_dsn = TRUE)
 	}else if(type == "ASCII"){	
     for( i in seq_along(mySurvey)){
       exportCoord(mySurvey[[i]], fPath = fPath, folder = folder, 

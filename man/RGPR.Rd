@@ -15,7 +15,7 @@ The RGPR package provides two classes GPR and GPRsurvey
   \item \code{exportPDF()}
   \item \code{exportDelineations()}
   \item \code{exportFid()}: ASCII-file
-  \item \code{exportCoord()}: output either SpatialLines or SpatialPoints
+  \item \code{exportCoord()}: ASCII, SpatialLines or SpatialPoints
   \item \code{exportProc()}: ASCII-file
 }
 }
@@ -28,5 +28,24 @@ The RGPR package provides two classes GPR and GPRsurvey
   \item \code{plotAmpl()}
   \item \code{plotDelineations()}
 }
+}
+
+\section{Coercion}{
+
+\itemize{
+  \item \code{as.matrix()}:
+  \item \code{as.numeric()}:
+  \item \code{as.list()}
+}
+}
+
+\section{Delineation}{
+
+\itemize{
+  \item \code{delineate()}:
+}
+}
+\references{
+Several books!
 }
 

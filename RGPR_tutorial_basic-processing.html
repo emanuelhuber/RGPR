@@ -296,8 +296,8 @@ lines(A2[,15], col = &quot;red&quot;)      # after dewowing</code></pre>
 <p>On the previous plot, there is a sharp amplitude increase at about <span class="math">\(50\,ns\)</span> corresponding to the first wave arrival. Then the amplitude decreases until a plateau at about <span class="math">\(200\,ns\)</span>. This plateau corresponds to the signal noise. There is little hope to extract some useful information above <span class="math">\(200\,ns\)</span> because above <span class="math">\(200\,ns\)</span> the signal/noise ratio is much smaller than <span class="math">\(1\)</span> (i.e., more noise than signal).</p>
 <div id="power-gain" class="section level3">
 <h3><span class="header-section-number">5.3.1</span> Power gain</h3>
-<p>The power gain is set constant until <code>t_cst = 100</code> ns and applied from <span class="math">\(100\,ns\)</span> to <code>t_end = 200</code> ns, with <span class="math">\(\alpha = 1\)</span>.</p>
-<pre class="r"><code>A3 &lt;- gain(A2, type = &quot;power&quot;, alpha = 1, t_end = 200, t_cst = 100)</code></pre>
+<p>The power gain is set constant until <code>tcst = 100</code> ns and applied from <span class="math">\(100\,ns\)</span> to <code>te = 200</code> ns, with <span class="math">\(\alpha = 1\)</span>.</p>
+<pre class="r"><code>A3 &lt;- gain(A2, type = &quot;power&quot;, alpha = 1, te = 200, tcst = 100)</code></pre>
 <p>Compare the amplitude before and after the power gain:</p>
 <pre class="r"><code>plotAmpl(A3, col = &quot;red&quot;)
 # set add=TRUE to add the amplitude on the previous plot
@@ -317,14 +317,14 @@ plotAmpl(A2, col = &quot;black&quot;, add = TRUE)   </code></pre>
 </div>
 <div id="exponential-gain" class="section level3">
 <h3><span class="header-section-number">5.3.2</span> Exponential gain</h3>
-<p>Ideally, the parameter <span class="math">\(\alpha\)</span> in the exponential gain should be close to the slope of the amplitude decrease. This slope could be estimated by fitting a straight line to the amplitude decrease. We only want to apply the filter between <span class="math">\(50\,ns\)</span> (<code>t_0</code>) and <span class="math">\(200\,ns\)</span> (<code>t_end</code>):</p>
-<pre class="r"><code>A4 &lt;- gain(A3, type =&quot;exp&quot;,  alpha = 0.2, t_0 = 50, t_end = 200)
+<p>Ideally, the parameter <span class="math">\(\alpha\)</span> in the exponential gain should be close to the slope of the amplitude decrease. This slope could be estimated by fitting a straight line to the amplitude decrease. We only want to apply the filter between <span class="math">\(50\,ns\)</span> (<code>t0</code>) and <span class="math">\(200\,ns\)</span> (<code>te</code> for <span class="math">\(t_{end}\)</span> ):</p>
+<pre class="r"><code>A4 &lt;- gain(A3, type =&quot;exp&quot;,  alpha = 0.2, t0 = 50, te = 200)
 plotAmpl(A4, col = &quot;green&quot;)</code></pre>
 <div class="figure">
 <img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-27-1.png" />
 </div>
 <p>Oops! Set <code>alpha</code> to a smaller value!</p>
-<pre class="r"><code>A4 &lt;- gain(A3, type = &quot;exp&quot;, alpha = 0.09, t_0 = 50, t_end = 180)
+<pre class="r"><code>A4 &lt;- gain(A3, type = &quot;exp&quot;, alpha = 0.09, t0 = 50, te = 180)
 plotAmpl(A4, col = &quot;green&quot;)
 plotAmpl(A3, col = &quot;red&quot;, add = TRUE) 
 plotAmpl(A2, col = &quot;black&quot;, add = TRUE) </code></pre>
@@ -426,8 +426,8 @@ spec(A7, type = "f-k")
 <pre class="r"><code>processing(A6)</code></pre>
 <pre><code>## [1] &quot;dcshift:1-110+mean&quot;                                
 ## [2] &quot;dewow:type=MAD+w=50&quot;                               
-## [3] &quot;gain:type=power+alpha=1+t_end=200+t_cst=100&quot;       
-## [4] &quot;gain:type=exp+alpha=0.09+t_0=50+t_end=180&quot;         
+## [3] &quot;gain:type=power+alpha=1+te=200+tcst=100&quot;           
+## [4] &quot;gain:type=exp+alpha=0.09+t0=50+te=180&quot;             
 ## [5] &quot;fFilter:f=5,15,150,260+type=bandpass+plotSpec=NULL&quot;
 ## [6] &quot;filter2D:type=median3x3&quot;</code></pre>
 </div>
@@ -472,10 +472,10 @@ A1 &lt;- dcshift(A, 1:110)   # new object A1
 A2 &lt;- dewow(A1, type = &quot;MAD&quot;, w = 50)     # dewowing
 
 # power gain
-A3 &lt;- gain(A2, type = &quot;power&quot;, alpha = 1, t_end = 200, t_cst = 100)
+A3 &lt;- gain(A2, type = &quot;power&quot;, alpha = 1, te = 200, tcst = 100)
 
 # exponential gain
-A4 &lt;- gain(A3, type = &quot;exp&quot;, alpha = 0.09, t_0 = 50, t_end = 180)
+A4 &lt;- gain(A3, type = &quot;exp&quot;, alpha = 0.09, t0 = 50, te = 180)
 
 # frequency filter (bandpass)
 A5 &lt;- fFilter(A4, f = c(5, 15, 150, 260), type = &quot;bandpass&quot;, plotSpec = FALSE)

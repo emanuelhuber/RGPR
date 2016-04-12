@@ -423,9 +423,9 @@ dir.create(file.path(procDir),showWarnings = TRUE)</code></pre>
   A &lt;- mySurvey[[i]]            # get GPR-line no. i
   cat(&quot;processing of line&quot;, name(A),&quot;      &quot;)
   A &lt;- dcshift(A, 1:100)          # DC-shift
-  A &lt;- gain(A, type = &quot;power&quot;, alpha = 1, t_end = 200, t_cst = 100)
+  A &lt;- gain(A, type = &quot;power&quot;, alpha = 1, te = 200, tcst = 100)
   A &lt;- fFilter(A, f= c(150, 200), type = &quot;low&quot;, plotSpec = FALSE)
-  A &lt;- gain(A, type = &quot;exp&quot;, alpha = 0.1, t_0 = 50, t_end = 180)
+  A &lt;- gain(A, type = &quot;exp&quot;, alpha = 0.1, t0 = 50, te = 180)
   A &lt;- dewow(A, type = &quot;MAD&quot;, w = 50)              # dewow
   A &lt;- filter2D(A, type = &quot;median3x3&quot;)
   # export PDF

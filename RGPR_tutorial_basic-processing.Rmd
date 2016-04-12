@@ -271,10 +271,10 @@ because above \(200\,ns\) the signal/noise ratio is much smaller than \(1\)
 (i.e., more noise than signal).
 
 ### Power gain
-The power gain is set constant until `t_cst = 100` ns and applied from 
-\(100\,ns\) to `t_end = 200` ns, with \(\alpha = 1\).
+The power gain is set constant until `tcst = 100` ns and applied from 
+\(100\,ns\) to `te = 200` ns, with \(\alpha = 1\).
 ```{r, echo=TRUE}
-A3 <- gain(A2, type = "power", alpha = 1, t_end = 200, t_cst = 100)
+A3 <- gain(A2, type = "power", alpha = 1, te = 200, tcst = 100)
 ```
 
 Compare the amplitude before and after the power gain:
@@ -296,15 +296,15 @@ plot(A3 - A2)
 Ideally, the parameter \(\alpha\) in the exponential gain should be close to 
 the slope of the amplitude decrease. This slope could be estimated by fitting 
 a straight line to the amplitude decrease. We only want to apply the filter 
-between \(50\,ns\) (`t_0`) and \(200\,ns\) (`t_end`):
+between \(50\,ns\) (`t0`) and \(200\,ns\) (`te` for \(t_{end}\)  ):
 ```{r, echo=TRUE}
-A4 <- gain(A3, type ="exp",  alpha = 0.2, t_0 = 50, t_end = 200)
+A4 <- gain(A3, type ="exp",  alpha = 0.2, t0 = 50, te = 200)
 plotAmpl(A4, col = "green")
 ```
 
 Oops! Set `alpha` to a smaller value!
 ```{r, echo=TRUE}
-A4 <- gain(A3, type = "exp", alpha = 0.09, t_0 = 50, t_end = 180)
+A4 <- gain(A3, type = "exp", alpha = 0.09, t0 = 50, te = 180)
 plotAmpl(A4, col = "green")
 plotAmpl(A3, col = "red", add = TRUE) 
 plotAmpl(A2, col = "black", add = TRUE) 
@@ -456,10 +456,10 @@ A1 <- dcshift(A, 1:110)   # new object A1
 A2 <- dewow(A1, type = "MAD", w = 50)     # dewowing
 
 # power gain
-A3 <- gain(A2, type = "power", alpha = 1, t_end = 200, t_cst = 100)
+A3 <- gain(A2, type = "power", alpha = 1, te = 200, tcst = 100)
 
 # exponential gain
-A4 <- gain(A3, type = "exp", alpha = 0.09, t_0 = 50, t_end = 180)
+A4 <- gain(A3, type = "exp", alpha = 0.09, t0 = 50, te = 180)
 
 # frequency filter (bandpass)
 A5 <- fFilter(A4, f = c(5, 15, 150, 260), type = "bandpass", plotSpec = FALSE)

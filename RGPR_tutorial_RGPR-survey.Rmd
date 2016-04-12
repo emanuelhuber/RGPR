@@ -409,14 +409,14 @@ dir.create(file.path(procDir),showWarnings = TRUE)
 
 Now apply the processing step with a loop to all GPR data indexed by `mySurvey`:
 
-```{r, echo=TRUE, eval = FALSE, results = 'hide'}
+```{r, echo=TRUE, eval = TRUE, results = 'hide'}
 for(i in seq_along(mySurvey)){
   A <- mySurvey[[i]]            # get GPR-line no. i
   cat("processing of line", name(A),"      ")
   A <- dcshift(A, 1:100)    	  # DC-shift
-  A <- gain(A, type = "power", alpha = 1, t_end = 200, t_cst = 100)
+  A <- gain(A, type = "power", alpha = 1, te = 200, tcst = 100)
   A <- fFilter(A, f= c(150, 200), type = "low", plotSpec = FALSE)
-  A <- gain(A, type = "exp", alpha = 0.1, t_0 = 50, t_end = 180)
+  A <- gain(A, type = "exp", alpha = 0.1, t0 = 50, te = 180)
   A <- dewow(A, type = "MAD", w = 50)              # dewow
   A <- filter2D(A, type = "median3x3")
   # export PDF

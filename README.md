@@ -1,6 +1,10 @@
 # RGPR
-S4 classes and R functions to handle ground-penetrating radar data (processing, visualisation, delineation).
-It only reads the "*.dt1" extension of Sensors and Software (for the moment).
+R package to visualise, processe and interpret ground-penetrating radar data.
+
+For the moment:
+
+* only the Sensors & Software files can be read
+* RGPR only support reflection data (no cross-borehole GPR)
 
 Check the companion website for more info, tutorials, etc.
 

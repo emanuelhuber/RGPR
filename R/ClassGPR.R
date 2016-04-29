@@ -1691,6 +1691,7 @@ plot.GPR <- function(x,y,...){
       addTopo <- TRUE
     }
     #dots$col <- NULL
+    dots$addAnn <- NULL
     dots$addFid <- NULL
     dots$addTopo <- NULL
     dots$addArrows <- NULL

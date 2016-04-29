@@ -945,7 +945,7 @@ plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
 # col, main, xlab, ylab, mar, barscale
 plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
              time_0 = 0, antsep = 1, v = 0.1,
-             addFid =TRUE, fid=NULL,
+             addFid = TRUE, fid=NULL,
              addAnn = TRUE, annotations = NULL, 
              depthunit = "ns", posunit = "m",
              rasterImage = TRUE, resfac = 1, clab = "mV",
@@ -1051,8 +1051,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
     box(bty = bty)
   }
   
-  par(op)
-  par("usr" = usr)
+  #par(op)
+  #par("usr" = usr)
 }
 #---
 

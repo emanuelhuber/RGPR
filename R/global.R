@@ -1052,7 +1052,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   }
   
   #par(op)
-  #par("usr" = usr)
+  par("usr" = usr)
 }
 #---
 

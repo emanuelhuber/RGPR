@@ -1490,13 +1490,35 @@ setMethod("deconv", "GPR", function(x,
     method <- match.arg(method, c("spiking","wavelet","min-phase"))
     if(method == "spiking"){
     # deconvSpiking <- function(x,W,wtr,nf,mu){
-      if(missing(W) || missing(wtr) || missing(nf) || missing(mu)){
+      if( length(list(...)) ){
+        dots <- list(...)
+        if(is.null(dots$W)){
+          stop(paste0("W must be defined\n"))
+        }
+        if(is.null(dots$wtr)){
+          stop(paste0("wtr must be defined\n"))
+        }
+        if(is.null(dots$nf)){
+          stop(paste0("nf must be defined\n"))
+        }
+        if(is.null(dots$mu)){
+          stop(paste0("mu must be defined\n"))
+        }
+        if(is.null(dots$shft)){
+          shft <- 1
+        }
+      }else{
         stop(paste0("spiking deconvolution requires the following arguments:",
                     "W,wtr,nf,mu\n"))
       }
-      if(missing(shft)){
-        shft=1
-      }
+      
+      #if(missing(W) || missing(wtr) || missing(nf) || missing(mu)){
+      #  stop(paste0("spiking deconvolution requires the following arguments:",
+       #             "W,wtr,nf,mu\n"))
+      #}
+      #if(missing(shft)){
+       # shft=1
+      #}
       W <- seq(W[1],W[2])
       X <- trScale(x, type="rms")@data
       # X <- X / apply(as.matrix(X),2,RMS)

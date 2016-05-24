@@ -1052,9 +1052,11 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
          yaxs = "i", yaxt = "n", rasterImage = rasterImage, clab = clab,
         resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)  
   if(barscale){
+    op2 <- par(no.readonly=TRUE)
     .barScale(zlim, y, col, collab=clab,collabcex=0.8)
    # plot3D::colkey(clim = zlim, clab = clab, width = 0.7, dist = 0.1, 
   #        add = TRUE, col = col)
+    par(op)
   }
   usr <- par("usr")
   if(is.null(xlim) ){

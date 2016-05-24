@@ -1169,7 +1169,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   image(xstrip, ystrip, zstrip, zlim=zlim, add=TRUE, col=col, axes=FALSE, 
         xlab="", ylab="", xaxs="i", yaxs="i")
   # axis(side=4, las=2)
-  title(main=collab, line =1, cex.sub = 0.8)
+  title(main=collab, line =1, cex.main = 0.7)
   box()
 }
 

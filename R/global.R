@@ -822,7 +822,7 @@ depth0 <- function(time_0, v=0.1, antsep=1){
     # interpolate
     # FIX ME! does not work well (not nice interpolation)
     xShifted[xit+1,i] = signal::interp1(new_t, x[,i], xi = xit*dz, 
-                                        method = "cubic",extrap = TRUE)  
+                                        method = "pchip",extrap = TRUE)  
   }
   return(xShifted)
 }
@@ -1022,6 +1022,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
     oma <- c(0,0,0,0)
   }else{
     mai <- mai + c(0,0,0,1) 
+    oma <- c(0,0,0,1)
   }
 
 

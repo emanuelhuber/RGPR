@@ -28,12 +28,21 @@
 #' \itemize{
 #'   \item \code{as.matrix()}:
 #'   \item \code{as.numeric()}:
-#'   \item \code{as.list()}
+#'   \item \code{as.list()}:
+#'   \item \code{as.SpatialPoints()}:
+#'   \item \code{as.SpatialLines()}:
 #' }
 #'
 #' @section Delineation:
 #' \itemize{
 #'   \item \code{delineate()}:
+#'   \item \code{plotDelineations()}:
+#'   \item \code{delineations()}: list of the delineations
+#'   \item \code{addDelineation}:
+#'   \item \code{rmDelineations}:
+#'   \item \code{exportDelineations}:
+#'   \item \code{plotDelineations3D}:
+#'   \item \code{identifyDelineation}:
 #' }
 #'
 #' @references Several books!
@@ -1169,7 +1178,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   image(xstrip, ystrip, zstrip, zlim=zlim, add=TRUE, col=col, axes=FALSE, 
         xlab="", ylab="", xaxs="i", yaxs="i")
   # axis(side=4, las=2)
-  title(main=collab, line =1, cex.main = 0.7)
+  title(main=collab, line =1, cex.main = 0.8)
   box()
 }
 

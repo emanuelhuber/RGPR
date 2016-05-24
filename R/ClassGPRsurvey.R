@@ -210,6 +210,7 @@ setMethod(
 		y@antseps		<- x@antseps[i] 		# length = [n]
 		# posunit 		= posunit,				# length = 1
 		# crs 			= crs,					# length = 1
+		y@crs       <- x@crs
 		y@coords		<- x@coords[x@names[i]]				# header
 		y@fids			<- x@fids[x@names[i]]
 		y@intersections	<- x@intersections[x@names[i]]

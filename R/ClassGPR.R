@@ -2354,8 +2354,8 @@ setMethod("delineations", "GPR", function(x,sel=NULL,...){
             tracePos <- sapply( deli[[i]][[j]][,1], .which, x@traces)
             xpos <- x_dist[tracePos]
             zpos <- deli[[i]][[j]][,4]
-            cat(it,". length =", round(diff(range(xpos)),2), "; depth =",  
-round(diff(range(zpos)),2),"; number of pts =", length(xpos) ,"\n",sep="")
+            cat(it,". length = ", round(diff(range(xpos)),2), ";  depth = ",  
+round(diff(range(zpos)),2),";  ", length(xpos), " pts" ,"\n",sep="")
             # lines(xpos, zpos,col=col[i],...)
           }
         }else{

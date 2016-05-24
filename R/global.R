@@ -560,19 +560,35 @@ setGenericVerif("exportCoord",
           function(x, type = c("SpatialPoints", "SpatialLines", "ASCII"),
           fPath = NULL, folder = NULL,  sep = "\t", 
           driver = "ESRI Shapefile",...) standardGeneric("exportCoord"))
-
+#' @name exportFid
+#' @rdname exportFid
+#' @export
 setGenericVerif("exportFid", function(x,fPath=NULL) 
                   standardGeneric("exportFid"))
 
+#' @name exportProc
+#' @rdname exportProc
+#' @export
 setGenericVerif("exportProc",  function(x,fPath=NULL,sep="\t", row.names=FALSE,
               col.names=FALSE, ...) standardGeneric("exportProc"))
 
+#' @name reverse
+#' @rdname reverse
+#' @export
 setGenericVerif("reverse", function(x) standardGeneric("reverse"))
 setGenericVerif("migration", function(x,type=c("static","kirchhoff"), ...) 
 standardGeneric("migration"))
 setGenericVerif("upsample", function(x,n) standardGeneric("upsample"))
+
+#' @name filter1D
+#' @rdname filter1D
+#' @export
 setGenericVerif("filter1D", function(x, type = c("median", "hampel"), ...) 
 standardGeneric("filter1D"))
+
+#' @name filter2D
+#' @rdname filter2D
+#' @export
 setGenericVerif("filter2D", function(x, type=c("median3x3"), ...) 
                 standardGeneric("filter2D"))
 setGenericVerif("dewow", function(x,type=c("MAD","Gaussian"),w ) 
@@ -628,23 +644,47 @@ normalize=NULL,nupspl=NULL,...) standardGeneric("exportPDF"))
 # adimproSmooth"))
 
 #---------------------- DELINEATIONS ---------------------#
+#' @name delineate
+#' @rdname delineate
+#' @export
 setGenericVerif("delineate", function(x,name=NULL,type=c("raster","wiggles"),
                   addTopo=FALSE,nupspl=NULL,n=10000,...) 
                   standardGeneric("delineate"))
+#' @name rmDelineations
+#' @rdname delineate
+#' @export
 setGenericVerif("rmDelineations<-", function(x,values=NULL) 
                   standardGeneric("rmDelineations<-"))
+#' @name delineations
+#' @rdname delineate
+#' @export
 setGenericVerif("delineations", function(x,sel=NULL,...) 
                   standardGeneric("delineations"))
+#' @name addDelineation
+#' @rdname delineate
+#' @export
 setGenericVerif("addDelineation", function(x,...) 
                   standardGeneric("addDelineation"))
 setGenericVerif("showDelineations", function(x,sel=NULL,...) 
                   standardGeneric("showDelineations"))
+#' @name exportDelineations
+#' @rdname delineate
+#' @export
 setGenericVerif("exportDelineations", function(x, dirpath="") 
                   standardGeneric("exportDelineations"))
+#' @name plotDelineations3D
+#' @rdname delineate
+#' @export
 setGenericVerif("plotDelineations3D", function(x,sel=NULL,col=NULL,add=TRUE,...)
                   standardGeneric("plotDelineations3D"))
+#' @name plotDelineations
+#' @rdname delineate
+#' @export
 setGenericVerif("plotDelineations", function(x,sel=NULL,col=NULL,...) 
                   standardGeneric("plotDelineations"))
+#' @name identifyDelineation
+#' @rdname delineate
+#' @export
 setGenericVerif("identifyDelineation", function(x,sel=NULL,...) 
                   standardGeneric("identifyDelineation"))
 

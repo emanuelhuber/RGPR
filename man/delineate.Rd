@@ -8,5 +8,5 @@
 \alias{identifyDelineation}
 \alias{plotDelineations}
 \alias{plotDelineations3D}
-\alias{rmDelineations}
+\alias{rmDelineations<-}
 

@@ -650,7 +650,7 @@ normalize=NULL,nupspl=NULL,...) standardGeneric("exportPDF"))
 setGenericVerif("delineate", function(x,name=NULL,type=c("raster","wiggles"),
                   addTopo=FALSE,nupspl=NULL,n=10000,...) 
                   standardGeneric("delineate"))
-#' @name rmDelineations
+#' @name rmDelineations<-
 #' @rdname delineate
 #' @export
 setGenericVerif("rmDelineations<-", function(x,values=NULL) 

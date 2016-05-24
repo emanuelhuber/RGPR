@@ -9,7 +9,7 @@
 \alias{identifyDelineation}
 \alias{plotDelineations}
 \alias{plotDelineations3D}
-\alias{rmDelineations}
+\alias{rmDelineations<-}
 \title{Delineate structure on GPR data}
 \usage{
 \S4method{delineate}{GPR}(x, name = NULL, type = c("raster", "wiggles"),

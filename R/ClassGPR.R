@@ -375,7 +375,7 @@ setAs(from = "GPR", to = "vector", def = function(from){ from@data})
 setMethod("as.vector", signature(x="GPR"), 
           function(x,mode="any"){as.vector(x@data)})
 
-
+#' @importClassesFrom sp SpatialLines
 setAs(from = "GPR", to = "SpatialLines",
       def = function (from) as.SpatialLines(from))
 
@@ -397,6 +397,7 @@ setMethod("as.SpatialLines", signature(x = "GPR"), function(x){
   return(mySpatLines)
 })
 
+#' @importClassesFrom sp SpatialPoints
 setAs(from = "GPR", to = "SpatialPoints",
       def = function (from) as.SpatialPoints(from))
 
@@ -2265,7 +2266,7 @@ name=NULL,type=c("raster","wiggles"),addTopo=FALSE,...){
 
 # Remove manually delineation from the GPR data
 #
-#' @name rmDelineations
+#' @name rmDelineations<-
 #' @rdname delineation
 #' @export
 setReplaceMethod("rmDelineations", "GPR", function(x,values=NULL){

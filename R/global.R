@@ -1173,13 +1173,13 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   dzlim <- zlim[2]-zlim[1] 
   pretty_at <- usr[3] - dylim * (zlim[1] - pretty_z)/dzlim
   axis(side=4,las=2, at=pretty_at, labels=pretty_z)
+  mtext(collab, side = 3, line=2)
   print(par("usr"))
   print(range(xstrip))
   image(xstrip, ystrip, zstrip, zlim=zlim, add=TRUE, col=col, axes=FALSE, 
         xlab="", ylab="", xaxs="i", yaxs="i")
   # axis(side=4, las=2)
   #title(collab, cex.main = 0.8)
-  mtext(collab, side = 3, line=2)
   box()
 }
 

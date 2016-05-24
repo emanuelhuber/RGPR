@@ -2944,6 +2944,8 @@ function(x, fPath = NULL, addTopo = FALSE, clip = NULL, normalize = NULL,
   }
 )
 
+#' Export fiducial markers
+#' 
 #' @name exportFid
 #' @rdname exportFid
 #' @export

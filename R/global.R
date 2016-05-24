@@ -1272,18 +1272,18 @@ wapply(x,width=ns,by=1,FUN=sd),rep(0,floor(ns/2)))
   return(Anew * s1/s2)
 }
 
-.gainAgc0 <- function(d, sig = 10, p = 2 , r = 0.5){
+.gainAgc0 <- function(d, w = 10, p = 2 , r = 0.5){
   # convert NA into 0
   d[is.na(d)] <- 0
   # Get local mean by smoothing the image with a Gaussian filter
-  dAmp   <- gaussianSmooth(d, sig)
+  dAmp   <- mmand::gaussianSmooth(d, w)
   # Subtract image from local mean, raise to power 'p' then apply Gaussian
   # smoothing filter to obtain a local weighted sum. 
   # Finally raise the result
   # to power 'r' to obtain the 'gain'.  Typically p = 2 and r = 0.5 which will
   # make gain equal to the local RMS.  The abs() function is used to allow
   # for arbitrary 'p' and 'r'.
-  dGain <- (gaussianSmooth(abs(d - dAmp)^p, sig))^r
+  dGain <- (mmand::gaussianSmooth(abs(d - dAmp)^p, w))^r
   # Apply inverse gain to the difference between the image and the local
   # mean to obtain the final AGC image. 
   dnew <- d/dGain

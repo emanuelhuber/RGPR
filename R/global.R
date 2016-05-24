@@ -1028,7 +1028,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   if(add == TRUE){ 
     par(new = TRUE)
   }else{
-    par( mai = mai, oma = oma)
+    par( mai = mai)
   }
   #cat("mai :", mai, "\n")
   #cat("oma :", oma, "\n")

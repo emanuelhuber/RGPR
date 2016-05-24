@@ -1010,19 +1010,19 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
     }
   }
   if(grepl("[s]$",depthunit)){
-    mai <- c(1.2, 1.0,1.2,1.6)
+    mai <- c(1.2, 1.0,1.2,1.8)
   }else{
-    mai <- c(1.2, 1.0,1.2,1.0)
+    mai <- c(1.2, 1.0,1.2,1.8)
   }
   colkeyVal <- list(width = 0.7, dist = 0.1)
   oma <- c(0,0,0,1)
   if(barscale == FALSE){
     #colkeyVal <- NULL
     colkeyVal <- FALSE
-    oma <- c(0,0,0,1)
+    oma <- c(0,0,0,0)
   }else{
     mai <- mai + c(0,0,0,1) 
-    oma <- c(0,0,0,1)
+    oma <- c(0,0,0,0)
   }
 
 

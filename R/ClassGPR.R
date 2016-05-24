@@ -2120,7 +2120,11 @@ setMethod("reverse", "GPR", function(x){
 )
 
 #---------------------- DELINEATIONS ---------------------#
-
+#' Delineate structure on GPR data
+#'
+#' @name delineate
+#' @rdname delineation
+#' @export
 setMethod("delineate", "GPR", 
 function(x,name=NULL,type=c("raster","wiggles"),addTopo=FALSE,
         nupspl=NULL,n = 10000, ...){
@@ -2195,6 +2199,12 @@ function(x,name=NULL,type=c("raster","wiggles"),addTopo=FALSE,
 
 # add "manually" delineation to GPR data
 # m - m or m - ns (depends on addTopo = FALSE/TRUE
+
+#' Add manually delineation to the GPR data
+#'
+#' @name addDelineation
+#' @rdname delineation
+#' @export
 setMethod("addDelineation", "GPR", function(x,itp, 
 name=NULL,type=c("raster","wiggles"),addTopo=FALSE,...){
     if(is.null(dev.list())){
@@ -2255,7 +2265,11 @@ name=NULL,type=c("raster","wiggles"),addTopo=FALSE,...){
   }
 )
 
-
+#' Remove manually delineation from the GPR data
+#'
+#' @name rmDelineations
+#' @rdname delineation
+#' @export
 setReplaceMethod("rmDelineations", "GPR", function(x,values=NULL){
     deli <- x@delineations
     n_d <- length(deli)
@@ -2307,7 +2321,11 @@ setReplaceMethod("rmDelineations", "GPR", function(x,values=NULL){
   }
 )
 
-
+#' Show the list of delineation of the GPR data
+#'
+#' @name delineations
+#' @rdname delineation
+#' @export
 setMethod("delineations", "GPR", function(x,sel=NULL,...){
     deli <- x@delineations
     n_d <- length(deli)
@@ -2348,12 +2366,12 @@ round(diff(range(zpos)),2),"; number of pts =", length(xpos) ,"\n",sep="")
     }
   }
 )
-setMethod("showDelineations", "GPR", function(x,sel=NULL,...){
-    stop(paste0("This function is deprecated...\n",
-                "Use \"delineations(x)\"instead of",
-                "\"showDelineations(x)\"\n"))
-  }
-)
+
+#' Export the coordinates of the delineations
+#'
+#' @name exportDelineations
+#' @rdname delineation
+#' @export
 setMethod("exportDelineations", "GPR", function(x, dirpath=""){
     if(length(x@coord) == 0){
       x@coord <- matrix(0,nrow=ncol(x),ncol=3)
@@ -2394,6 +2412,12 @@ setMethod("exportDelineations", "GPR", function(x, dirpath=""){
     }
   }
 )
+
+#' Plot the delineation on RGL
+#'
+#' @name plotDelineations3D
+#' @rdname delineation
+#' @export
 setMethod("plotDelineations3D", "GPR", 
 function(x,sel=NULL,col=NULL,add=TRUE,...){
     deli <- x@delineations
@@ -2431,6 +2455,12 @@ function(x,sel=NULL,col=NULL,add=TRUE,...){
     }
   }
 )
+
+#' Plot the delineation on a 2D plot
+#'
+#' @name plotDelineations
+#' @rdname delineation
+#' @export
 setMethod("plotDelineations", "GPR", function(x,sel=NULL,col=NULL,...){
     if(is.null(dev.list())){
       stop("You must first plot the GPR profile with the function \"plot\"!\n")
@@ -2470,6 +2500,12 @@ setMethod("plotDelineations", "GPR", function(x,sel=NULL,col=NULL,...){
     }
   }
 )
+
+#' Identify  the delineation on a 2D plot
+#'
+#' @name identifyDelineation
+#' @rdname delineation
+#' @export
 setMethod("identifyDelineation", "GPR", function(x,sel=NULL,...){
     if(is.null(dev.list())){
       stop("You must first plot the GPR profile with the function \"plot\"!\n")

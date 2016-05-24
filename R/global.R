@@ -1264,9 +1264,9 @@ wapply(x,width=ns,by=1,FUN=sd),rep(0,floor(ns/2)))
 }
 
 
-.gainAgc <- function(A, dts, sig = 10, p = 2, r = 0.5){
-  sig <- sig/dts
-  Anew <- apply(A,2,.gainAgc0,sig,p,r)
+.gainAgc <- function(A, dts, w = 10, p = 2, r = 0.5){
+  w <- w/dts
+  Anew <- apply(A,2,.gainAgc0,w,p,r)
   s1 = ((max(A))-(min(A)));  # scale factor
   s2 = ((max(Anew))-(min(Anew)));  # scale factor
   return(Anew * s1/s2)

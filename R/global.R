@@ -968,10 +968,16 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
       xlim <- dots$xlim
     }
   }
+    colkeyVal <- FALSE
+  oma <- c(0,0,0,0)
+  if(barscale == FALSE){
+    colkeyVal <- NULL
+    oma <- c(0,0,0,0)
+  }
   if(grepl("[s]$",depthunit)){
-    mai <- op$mai + c(0,0,0,1.5)
+    mai <- c(1.2, 1.2,1.2,1.2)
   }else{
-    mai <- op$mai + c(0,0,0,1.0)
+    mai <- c(1.2, 1.2,1.2,0)
   }
 
   z <- t(z[nrow(z):1,])
@@ -985,7 +991,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   if(add == TRUE){ 
     par(new = TRUE)
   }else{
-    par( mai = mai, oma =c(0,0,0,1))
+    par( mai = mai, oma = oma)
   }
   if(relTime0){
     y <- y + time_0
@@ -993,10 +999,10 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   if( length(unique(diff(x))) > 1){
     rasterImage <- FALSE
   }
-#    image(x,y,z,col=col,zlim=zlim,xaxs="i", yaxs="i", yaxt="n",...)
+  #image(x,y,z,col=col,zlim=zlim,xaxs="i", yaxs="i", yaxt="n",...)
   plot3D::image2D(x = x, y = y, z = z, zlim = zlim, col = col, xaxs = "i", 
-          yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
-          resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)  
+         yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
+        resfac = resfac, main = "", bty = "n", colkey = colkeyVal, ...)  
   if(barscale){
     plot3D::colkey(clim = zlim, clab = clab, width = 0.7, dist = 0.1, 
           add = TRUE, col = col)
@@ -1050,9 +1056,9 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   if( bty != "n"){
     box(bty = bty)
   }
-  
-  #par(op)
-  par("usr" = usr)
+  op$usr <- usr
+  par(op)
+ #par("usr" = usr)
 }
 #---
 
@@ -1577,6 +1583,8 @@ nextpower2 <- function(x){
 }
 
 # shift the phase of signal by phi (in radian)
+      
+#' @export
 phaseRotation <- function(x,phi){
   nf <- length(x)
   X = fft(x)

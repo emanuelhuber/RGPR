@@ -1322,7 +1322,7 @@ scaleCol <- function(A,type = c("stat","min-max","95","eq","sum", "rms")){
     A_q05 = (apply((A),2,quantile,0.01,na.rm=TRUE))
     Anorm = (A)/(A_q95-A_q05)
   }else if(type == "rms"){
-     A/apply(A ,2, .rms)
+     Anorm <- A/apply(A ,2, .rms)
   }else{  # min-max
     Anorm <- scale(A, center=FALSE, scale=(apply((A),2,max,na.rm=TRUE)) - 
                     (apply(( A),2,min,na.rm=TRUE)))

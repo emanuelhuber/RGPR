@@ -943,6 +943,7 @@ plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
 
 # @relTime0 > boolean, y scale relative to time0? 0 <-> time0
 # col, main, xlab, ylab, mar, barscale
+#' @export
 plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
              time_0 = 0, antsep = 1, v = 0.1,
              addFid = TRUE, fid=NULL,
@@ -969,15 +970,15 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
     }
   }
     colkeyVal <- FALSE
-  oma <- c(0,0,0,0)
+  oma <- c(0,0,0,1)
   if(barscale == FALSE){
     #colkeyVal <- NULL
     oma <- c(0,0,0,0)
   }
   if(grepl("[s]$",depthunit)){
-    mai <- c(1.2, 1.2,1.2,1.2)
+    mai <- c(1.2, 1.0,1.2,1.2)
   }else{
-    mai <- c(1.2, 1.2,1.2,0)
+    mai <- c(1.2, 1.0,1.2,0)
   }
 
   z <- t(z[nrow(z):1,])

@@ -2944,6 +2944,9 @@ function(x, fPath = NULL, addTopo = FALSE, clip = NULL, normalize = NULL,
   }
 )
 
+#' @name exportFid
+#' @rdname exportFid
+#' @export
 setMethod("exportFid", "GPR", function(x,fPath=NULL){
     # Trace  Position  Comment  PNAME
     if(length(x@fid) > 0){

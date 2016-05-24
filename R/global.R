@@ -1179,7 +1179,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
         xlab="", ylab="", xaxs="i", yaxs="i")
   # axis(side=4, las=2)
   #title(collab, cex.main = 0.8)
-  mtext(collab, side = 3, line=0)
+  mtext(collab, side = 3, line=2)
   box()
 }
 

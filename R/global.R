@@ -969,17 +969,20 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
       xlim <- dots$xlim
     }
   }
-    colkeyVal <- FALSE
+  if(grepl("[s]$",depthunit)){
+    mai <- c(1.2, 1.0,1.2,1.0)
+  }else{
+    mai <- c(1.2, 1.0,1.2,0)
+  }
+  colkeyVal <- FALSE
   oma <- c(0,0,0,1)
   if(barscale == FALSE){
     #colkeyVal <- NULL
     oma <- c(0,0,0,0)
-  }
-  if(grepl("[s]$",depthunit)){
-    mai <- c(1.2, 1.0,1.2,1.2)
   }else{
-    mai <- c(1.2, 1.0,1.2,0)
+    mai <- mai + c(0,0,0,1) 
   }
+
 
   z <- t(z[nrow(z):1,])
 

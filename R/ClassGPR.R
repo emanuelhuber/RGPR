@@ -1531,7 +1531,7 @@ setMethod("deconv", "GPR", function(x,
         ww <- ww[ww >= 1]
         supertrace <- as.vector(X[W,ww])
         # inverse minimum-phase wavelet estimation # variante 1 (Emanuel)
-        Fmin[,i] <- spikingFilter(supertrace,nf=nf ,mu=mu, shft=shft)
+        Fmin[,i] <- .spikingFilter(supertrace,nf=nf ,mu=mu, shft=shft)
         # Wmin[,i] <- deconv(c(1,rep(0,nf-1)),Fmin[,i], nf=nf,mu=mu)
         Wmin[,i] <- deconvolve(c(1,rep(0,nf-1)),Fmin[,i], mu=mu)
         # minimum-phase deconvolued data

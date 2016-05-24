@@ -1834,6 +1834,7 @@ deconvolutionMtx <- function(y,h,nf,mu=0.0001){
 
 # setGenericVerif("rmsScaling", function(x) standardGeneric("rmsScaling"))
 
+#' @export
 optPhaseRotation <- function(gpr,rot=0.01,plot=TRUE){
   # x_dec <- as.vector(gpr/apply(as.matrix(gpr),2,RMS))
   x_dec <- as.vector(gpr)

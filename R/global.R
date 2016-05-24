@@ -971,7 +971,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
     colkeyVal <- FALSE
   oma <- c(0,0,0,0)
   if(barscale == FALSE){
-    colkeyVal <- NULL
+    #colkeyVal <- NULL
     oma <- c(0,0,0,0)
   }
   if(grepl("[s]$",depthunit)){

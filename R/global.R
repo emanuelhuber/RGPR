@@ -1021,7 +1021,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
     colkeyVal <- FALSE
     oma <- c(0,0,0,0)
   }else{
-    mai <- mai + c(0,0,0,1) 
+    mai <- mai + c(0,0,0,0) 
     oma <- c(0,0,0,0)
   }
 

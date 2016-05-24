@@ -1274,7 +1274,7 @@ setMethod("gain", "GPR", function(x,
     x@data <- .gainPower(x@data, dts = x@dz, ...)
   }else if(type=="exp"){
     x@data <- .gainExp(x@data, dts = x@dz, ...)
-  }else if("agc"){
+  }else if(type=="agc"){
     x@data <- .gainAgc(x@data, dts = x@dz, ...)
   }
   proc <- getArgs()

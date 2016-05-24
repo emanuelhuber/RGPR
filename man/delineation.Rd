@@ -33,19 +33,5 @@
 }
 \description{
 Delineate structure on GPR data
-
-Add manually delineation to the GPR data
-
-Remove manually delineation from the GPR data
-
-Show the list of delineation of the GPR data
-
-Export the coordinates of the delineations
-
-Plot the delineation on RGL
-
-Plot the delineation on a 2D plot
-
-Identify  the delineation on a 2D plot
 }
 

@@ -2200,8 +2200,6 @@ function(x,name=NULL,type=c("raster","wiggles"),addTopo=FALSE,
 # add "manually" delineation to GPR data
 # m - m or m - ns (depends on addTopo = FALSE/TRUE
 
-#' Add manually delineation to the GPR data
-#'
 #' @name addDelineation
 #' @rdname delineation
 #' @export
@@ -2265,8 +2263,8 @@ name=NULL,type=c("raster","wiggles"),addTopo=FALSE,...){
   }
 )
 
-#' Remove manually delineation from the GPR data
-#'
+# Remove manually delineation from the GPR data
+#
 #' @name rmDelineations
 #' @rdname delineation
 #' @export
@@ -2321,8 +2319,8 @@ setReplaceMethod("rmDelineations", "GPR", function(x,values=NULL){
   }
 )
 
-#' Show the list of delineation of the GPR data
-#'
+# Show the list of delineation of the GPR data
+#
 #' @name delineations
 #' @rdname delineation
 #' @export
@@ -2367,8 +2365,8 @@ round(diff(range(zpos)),2),"; number of pts =", length(xpos) ,"\n",sep="")
   }
 )
 
-#' Export the coordinates of the delineations
-#'
+# Export the coordinates of the delineations
+#
 #' @name exportDelineations
 #' @rdname delineation
 #' @export
@@ -2413,8 +2411,8 @@ setMethod("exportDelineations", "GPR", function(x, dirpath=""){
   }
 )
 
-#' Plot the delineation on RGL
-#'
+# Plot the delineation on RGL
+#
 #' @name plotDelineations3D
 #' @rdname delineation
 #' @export
@@ -2456,8 +2454,8 @@ function(x,sel=NULL,col=NULL,add=TRUE,...){
   }
 )
 
-#' Plot the delineation on a 2D plot
-#'
+# Plot the delineation on a 2D plot
+#
 #' @name plotDelineations
 #' @rdname delineation
 #' @export
@@ -2501,8 +2499,8 @@ setMethod("plotDelineations", "GPR", function(x,sel=NULL,col=NULL,...){
   }
 )
 
-#' Identify  the delineation on a 2D plot
-#'
+# Identify the delineation on a 2D plot
+#
 #' @name identifyDelineation
 #' @rdname delineation
 #' @export

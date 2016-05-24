@@ -1737,7 +1737,7 @@ plot.GPR <- function(x,y,...){
 #     op <- par(no.readonly=TRUE)
     par(mar=c(5,4,3,2)+0.1,oma=c(0,0,3,0), mgp=c(2, 0.5, 0))
     z <- seq(-x@time0, by = x@dz, length.out = length(x@data))
-    z <- x@depth
+    z <- x@depth - x@time0
     plot(z, x@data, type = "n", 
           xlab = paste0("time (", x@depthunit, ")"), 
           ylab = "amplitude (mV)",xaxt = "n")

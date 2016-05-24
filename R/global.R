@@ -974,10 +974,12 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   }else{
     mai <- c(1.2, 1.0,1.2,0)
   }
-  colkeyVal <- FALSE
+  colkeyVal <- list(clim = zlim, clab = clab, width = 0.7, dist = 0.1, 
+                    add = TRUE, col = col)
   oma <- c(0,0,0,1)
   if(barscale == FALSE){
     #colkeyVal <- NULL
+    colkeyVal <- FALSE
     oma <- c(0,0,0,0)
   }else{
     mai <- mai + c(0,0,0,1) 
@@ -1007,10 +1009,10 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   plot3D::image2D(x = x, y = y, z = z, zlim = zlim, col = col, xaxs = "i", 
          yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
         resfac = resfac, main = "", bty = "n", colkey = colkeyVal, ...)  
-  if(barscale){
-    plot3D::colkey(clim = zlim, clab = clab, width = 0.7, dist = 0.1, 
-          add = TRUE, col = col)
-  }
+  #if(barscale){
+   # plot3D::colkey(clim = zlim, clab = clab, width = 0.7, dist = 0.1, 
+  #        add = TRUE, col = col)
+  #}
   usr <- par("usr")
   if(is.null(xlim) ){
      test <- rep(TRUE,length(x))
@@ -1060,8 +1062,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   if( bty != "n"){
     box(bty = bty)
   }
-  op$usr <- usr
-  par(op)
+  #op$usr <- usr
+ # par(op)
  #par("usr" = usr)
 }
 #---

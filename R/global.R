@@ -1010,9 +1010,9 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
     }
   }
   if(grepl("[s]$",depthunit)){
-    mai <- c(1.2, 1.0,1.2,1.8)
+    mai <- c(1.2, 1.2,1.2,1.8)
   }else{
-    mai <- c(1.2, 1.0,1.2,1.8)
+    mai <- c(1.2, 1.2,1.2,1.8)
   }
   colkeyVal <- list(width = 0.7, dist = 0.1)
   oma <- c(0,0,0,1)
@@ -1056,7 +1056,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
     .barScale(zlim, y, col, collab=clab,collabcex=0.8)
    # plot3D::colkey(clim = zlim, clab = clab, width = 0.7, dist = 0.1, 
   #        add = TRUE, col = col)
-    par(op)
+    par(op2)
   }
   usr <- par("usr")
   if(is.null(xlim) ){

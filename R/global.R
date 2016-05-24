@@ -1014,7 +1014,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   }else{
     mai <- c(1.2, 1.0,1.2,0)
   }
-  colkeyVal <- list(col.clab = clab, width = 0.7, dist = 0.1)
+  colkeyVal <- list(width = 0.7, dist = 0.1)
   oma <- c(0,0,0,1)
   if(barscale == FALSE){
     #colkeyVal <- NULL
@@ -1046,7 +1046,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   }
   #image(x,y,z,col=col,zlim=zlim,xaxs="i", yaxs="i", yaxt="n",...)
   plot3D::image2D(x = x, y = y, z = z, zlim = zlim, col = col, xaxs = "i", 
-         yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
+         yaxs = "i", yaxt = "n", rasterImage = rasterImage, clab = clab,
         resfac = resfac, main = "", bty = "n", colkey = colkeyVal, ...)  
   #if(barscale){
    # plot3D::colkey(clim = zlim, clab = clab, width = 0.7, dist = 0.1, 

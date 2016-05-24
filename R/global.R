@@ -645,45 +645,45 @@ normalize=NULL,nupspl=NULL,...) standardGeneric("exportPDF"))
 
 #---------------------- DELINEATIONS ---------------------#
 #' @name delineate
-#' @rdname delineate
+#' @rdname delineation
 #' @export
 setGenericVerif("delineate", function(x,name=NULL,type=c("raster","wiggles"),
                   addTopo=FALSE,nupspl=NULL,n=10000,...) 
                   standardGeneric("delineate"))
 #' @name rmDelineations<-
-#' @rdname delineate
+#' @rdname delineation
 #' @export
 setGenericVerif("rmDelineations<-", function(x,values=NULL) 
                   standardGeneric("rmDelineations<-"))
 #' @name delineations
-#' @rdname delineate
+#' @rdname delineation
 #' @export
 setGenericVerif("delineations", function(x,sel=NULL,...) 
                   standardGeneric("delineations"))
 #' @name addDelineation
-#' @rdname delineate
+#' @rdname delineation
 #' @export
 setGenericVerif("addDelineation", function(x,...) 
                   standardGeneric("addDelineation"))
 setGenericVerif("showDelineations", function(x,sel=NULL,...) 
                   standardGeneric("showDelineations"))
 #' @name exportDelineations
-#' @rdname delineate
+#' @rdname delineation
 #' @export
 setGenericVerif("exportDelineations", function(x, dirpath="") 
                   standardGeneric("exportDelineations"))
 #' @name plotDelineations3D
-#' @rdname delineate
+#' @rdname delineation
 #' @export
 setGenericVerif("plotDelineations3D", function(x,sel=NULL,col=NULL,add=TRUE,...)
                   standardGeneric("plotDelineations3D"))
 #' @name plotDelineations
-#' @rdname delineate
+#' @rdname delineation
 #' @export
 setGenericVerif("plotDelineations", function(x,sel=NULL,col=NULL,...) 
                   standardGeneric("plotDelineations"))
 #' @name identifyDelineation
-#' @rdname delineate
+#' @rdname delineation
 #' @export
 setGenericVerif("identifyDelineation", function(x,sel=NULL,...) 
                   standardGeneric("identifyDelineation"))

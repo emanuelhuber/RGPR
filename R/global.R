@@ -1009,25 +1009,16 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
       xlim <- dots$xlim
     }
   }
-  if(grepl("[s]$",depthunit)){
-    mai <- c(1.2, 1.2,1.2,1.8)
-  }else{
-    mai <- c(1.2, 1.2,1.2,1.8)
-  }
-  colkeyVal <- list(width = 0.7, dist = 0.1)
-  oma <- c(0,0,0,1)
+  #if(grepl("[s]$",depthunit)){
+
   if(barscale == FALSE){
     #colkeyVal <- NULL
-    colkeyVal <- FALSE
-    oma <- c(0,0,0,0)
+    mai <- c(1.2, 1.2, 1.2, 1.2)
   }else{
-    mai <- mai + c(0,0,0,0) 
-    oma <- c(0,0,0,0)
+    mai <- c(1.2, 1.2, 1.2, 1.8)
   }
 
-
   z <- t(z[nrow(z):1,])
-
   if(is.null(x)){
     x <- (1:nrow(z))
   }  
@@ -1039,8 +1030,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   }else{
     par( mai = mai, oma = oma)
   }
-  cat("mai :", mai, "\n")
-  cat("oma :", oma, "\n")
+  #cat("mai :", mai, "\n")
+  #cat("oma :", oma, "\n")
   if(relTime0){
     y <- y + time_0
   }
@@ -1173,13 +1164,12 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   dzlim <- zlim[2]-zlim[1] 
   pretty_at <- usr[3] - dylim * (zlim[1] - pretty_z)/dzlim
   axis(side=4,las=2, at=pretty_at, labels=pretty_z)
-  mtext(collab, side = 3, line=2)
-  print(par("usr"))
-  print(range(xstrip))
+ #  print(par("usr"))
+  # print(range(xstrip))
   image(xstrip, ystrip, zstrip, zlim=zlim, add=TRUE, col=col, axes=FALSE, 
         xlab="", ylab="", xaxs="i", yaxs="i")
   # axis(side=4, las=2)
-  #title(collab, cex.main = 0.8)
+  title(sub=collab, cex.sub = 0.8)
   box()
 }
 

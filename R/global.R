@@ -1015,7 +1015,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
     mai <- c(1.2, 1.0,1.2,0)
   }
   colkeyVal <- list(clim = zlim, clab = clab, width = 0.7, dist = 0.1, 
-                    add = TRUE, col = col)
+                    col = col)
   oma <- c(0,0,0,1)
   if(barscale == FALSE){
     #colkeyVal <- NULL

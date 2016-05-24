@@ -1557,6 +1557,11 @@ setMethod("deconv", "GPR", function(x,
 )
 
 #--------------- DATA EDITING FUNCTIONS
+#' Shift the traces
+#'
+#' @name traceShift
+#' @rdname traceShift
+#' @export
 setMethod("traceShift", "GPR", function(x,  fb, kip=10){
 # traceShift <- function(gpr_mix,fbmix, kip=10){
     fb <- fbmix/x@dz 
@@ -1841,7 +1846,11 @@ plot.GPR <- function(x,y,...){
 
 
 
-
+#' Three-dimensional plot of the GPR data with Open-GL
+#'
+#' @name plot3DRGL
+#' @rdname plot3DRGL
+#' @export
 setMethod("plot3DRGL", "GPR", 
 function(x,addTopo = FALSE, clip = NULL, normalize = NULL, 
         nupspl = NULL, add = TRUE, xlim=NULL, ylim=NULL, zlim=NULL,...){
@@ -2550,7 +2559,11 @@ setMethod("identifyDelineation", "GPR", function(x,sel=NULL,...){
 )
 
 #---------------------- MIGRATION ---------------------#
-
+#' Migration of the GPR data
+#'
+#' @name migration
+#' @rdname migration
+#' @export
 setMethod("migration", "GPR", function(x,type=c("static","kirchhoff"),...){
     if(missing(type)){
       type=match.arg(type)
@@ -2597,6 +2610,11 @@ setMethod("migration", "GPR", function(x,type=c("static","kirchhoff"),...){
 )
 
 #---------------------- INTERPOLATION ---------------------#  
+#' Up-sample the GPR data (sinc-interpolation)
+#'
+#' @name upsample
+#' @rdname upsample
+#' @export
 setMethod("upsample", "GPR", function(x,n){
     n <- abs(round(n))
     x@data <- .upsample(x@data, n=n, type=c("DFT"))
@@ -3033,7 +3051,11 @@ setMethod("exportCoord", "GPR",
   }
 })
 
-
+#' Export the process steps.
+#'
+#' @name exportProc
+#' @rdname exportProc
+#' @export
 setMethod("exportProc", "GPR", function(x,fPath=NULL,sep="\t", row.names=FALSE,
   col.names=FALSE, ...){
   write.table(x@proc, file = fPath, row.names = row.names,

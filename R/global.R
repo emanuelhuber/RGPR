@@ -1012,14 +1012,14 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   if(grepl("[s]$",depthunit)){
     mai <- c(1.2, 1.0,1.2,1.0)
   }else{
-    mai <- c(1.2, 1.0,1.2,0)
+    mai <- c(1.2, 1.0,1.2,1.0)
   }
   colkeyVal <- list(width = 0.7, dist = 0.1)
   oma <- c(0,0,0,1)
   if(barscale == FALSE){
     #colkeyVal <- NULL
     colkeyVal <- FALSE
-    oma <- c(0,0,0,0)
+    oma <- c(0,0,0,1)
   }else{
     mai <- mai + c(0,0,0,1) 
     oma <- c(0,0,0,1)
@@ -1039,6 +1039,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   }else{
     par( mai = mai, oma = oma)
   }
+  cat("mai :", mai, "\n")
+  cat("oma :", oma, "\n")
   if(relTime0){
     y <- y + time_0
   }
@@ -1048,11 +1050,12 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   #image(x,y,z,col=col,zlim=zlim,xaxs="i", yaxs="i", yaxt="n",...)
   plot3D::image2D(x = x, y = y, z = z, zlim = zlim, col = col, xaxs = "i", 
          yaxs = "i", yaxt = "n", rasterImage = rasterImage, clab = clab,
-        resfac = resfac, main = "", bty = "n", colkey = colkeyVal, ...)  
-  #if(barscale){
+        resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)  
+  if(barscale){
+    .barScale <- function(zlim, y, col, collab=clab,collabcex=0.8)
    # plot3D::colkey(clim = zlim, clab = clab, width = 0.7, dist = 0.1, 
   #        add = TRUE, col = col)
-  #}
+  }
   usr <- par("usr")
   if(is.null(xlim) ){
      test <- rep(TRUE,length(x))
@@ -1144,10 +1147,12 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   }
 }
 
-.barScale <- function(zlim, col, collab="mV",collabcex=0.8){
-  dxin <- diff(usr[1:2])/(pin[1])
+
+.barScale <- function(zlim, y, col, collab="mV",collabcex=0.8){
   usr <- par()$usr
   pin <- par()$pin  # inch
+  mai <- par()$mai
+  dxin <- diff(usr[1:2])/(pin[1])
   dylim <- diff(usr[3:4])
   fin <- par()$fin
   # par(new=TRUE)
@@ -1168,12 +1173,14 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   axis(side=4,las=2, at=pretty_at, labels=pretty_z)
   print(par("usr"))
   print(range(xstrip))
-  image(xstrip,ystrip,zstrip,zlim=zlim,add=TRUE, col=col, axes=FALSE, 
+  image(xstrip, ystrip, zstrip, zlim=zlim, add=TRUE, col=col, axes=FALSE, 
         xlab="", ylab="", xaxs="i", yaxs="i")
   # axis(side=4, las=2)
   title(collab, cex=0.8)
   box()
 }
+
+
 .depthAxis <- function(y, pretty_y, time_0, v, antsep, depthunit, posunit ){
   if(grepl("[s]$",depthunit)){
 #     depth <- (seq(0,by=2.5,max(abs(y))*v))

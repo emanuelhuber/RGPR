@@ -585,9 +585,11 @@ setGenericVerif("exportProc",  function(x,fPath=NULL,sep="\t", row.names=FALSE,
 #' @rdname reverse
 #' @export
 setGenericVerif("reverse", function(x) standardGeneric("reverse"))
+
 setGenericVerif("migration", function(x,type=c("static","kirchhoff"), ...) 
 standardGeneric("migration"))
 setGenericVerif("upsample", function(x,n) standardGeneric("upsample"))
+setGenericVerif("timeCorOffset", function(x) standardGeneric("timeCorOffset"))
 
 #' @name filter1D
 #' @rdname filter1D

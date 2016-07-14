@@ -2558,7 +2558,7 @@ setMethod("identifyDelineation", "GPR", function(x,sel=NULL,...){
   }
 )
 
-#---------------------- MIGRATION ---------------------#
+#---------------------- MIGRATION & OFFSET CORRECTION---------------------#
 #' Migration of the GPR data
 #'
 #' @name migration
@@ -2608,6 +2608,28 @@ setMethod("migration", "GPR", function(x,type=c("static","kirchhoff"),...){
     return(x)
   } 
 )
+
+#' Constant-offset correction (time) of the GPR data
+#'
+#' Time correction for each time to compensate the offset between transmitter 
+#' and receiver antennae (it converts the trace time of the data acquired with
+#' a bistatic antenna system into trace time data virtually acquiered with 
+#' a monostatic system under the assumption of horizontally layered structure).
+#' @name timeCorOffset
+#' @rdname timeCorOffset
+#' @export
+setMethod("timeCorOffset", "GPR", function(x){
+  t0 <- mean(x@time0)
+  x <- x[floor(t0/x@dz):nrow(x),]
+  tcor2 <- (x@depth - mean(x@time0) + x@antsep/0.299)^2 - 
+                  (x@antsep/x@vel[[1]])^2
+  x <- x[tcor2 > 0,]
+  tcor <- sqrt( tcor2[tcor2 > 0] )
+  x@depth <- tcor
+  x@time0 <- 0
+  return(x)
+})
+
 
 #---------------------- INTERPOLATION ---------------------#  
 #' Up-sample the GPR data (sinc-interpolation)

@@ -2640,12 +2640,15 @@ setMethod("timeCorOffset", "GPR", function(x){
 #' @export
 setMethod("upsample", "GPR", function(x,n){
     n <- abs(round(n))
+    if(length(n) == 1){
+      n <- rep(n,2)
+    }
     x@data <- .upsample(x@data, n=n, type=c("DFT"))
     x@data <- x@data[,1:(ncol(x@data))]
     yvalues <-  (seq(0,by=x@dz,length.out=nrow(x@data)))
     
-    xvalues  <- .doubleVector(x@pos,n=n)
-    yvalues  <- .doubleVector(x@depth,n=n)
+    xvalues  <- .doubleVector(x@pos,n=n[1])
+    yvalues  <- .doubleVector(x@depth,n=n[2])
     #  
     # image(xvalues,yvalues,t(x@data))
 
@@ -2685,14 +2688,14 @@ setMethod("upsample", "GPR", function(x,n){
     x@traces <- seq.int(1L,by=1L,length.out=ntr)
     #fiducial markers (fid, comments)
     if(length(x@fid) >0){ #&& sum(x@fid != "")>0){
-      newfid <- character(length(x@fid)*n)
+      newfid <- character(length(x@fid)*n[1])
       newfidPos <- which(x@fid!="")
-      newfid[newfidPos*n] <- x@fid[newfidPos]
+      newfid[newfidPos*n[1]] <- x@fid[newfidPos]
       x@fid <- newfid[1:ntr]
     }
     #annotations
     if(length(x@ann) >0){ # && sum(x@ann != "")>0){
-      newAnn <- character(length(x@ann)*n)
+      newAnn <- character(length(x@ann)*n[1])
       newAnnPos <- which(x@ann!="")
       newAnn[newAnnPos*n] <- x@ann[newAnnPos]
       x@ann <- newAnn[1:ntr]
@@ -2700,10 +2703,10 @@ setMethod("upsample", "GPR", function(x,n){
     # trace positions
     x@pos <- xvalues
     # depth/time
-    x@depth <- .doubleVector(x@depth,n=n)
+    x@depth <- .doubleVector(x@depth,n=n[1])
 
-    x@dz <- x@dz / n
-    x@dx <- x@dx / n
+    x@dx <- x@dx / n[1]
+    x@dz <- x@dz / n[2]
 #     x@ntr <- ntr
     
     proc <- getArgs()

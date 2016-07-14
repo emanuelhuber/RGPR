@@ -1776,7 +1776,7 @@ byte2volt <- function ( V=c(-50,50), nBytes = 16) {
 
 
  
-.upsample <- function(A, n=2, type=c("DFT","bicubic")){
+.upsample <- function(A, n=c(1,2), type=c("DFT","bicubic")){
   # bi cubic---
   # library(fields)
   # interp2d <- function(old, newx, newy) {

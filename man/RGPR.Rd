@@ -35,7 +35,9 @@ The RGPR package provides two classes GPR and GPRsurvey
 \itemize{
   \item \code{as.matrix()}:
   \item \code{as.numeric()}:
-  \item \code{as.list()}
+  \item \code{as.list()}:
+  \item \code{as.SpatialPoints()}:
+  \item \code{as.SpatialLines()}:
 }
 }
 
@@ -43,6 +45,13 @@ The RGPR package provides two classes GPR and GPRsurvey
 
 \itemize{
   \item \code{delineate()}:
+  \item \code{plotDelineations()}:
+  \item \code{delineations()}: list of the delineations
+  \item \code{addDelineation}:
+  \item \code{rmDelineations}:
+  \item \code{exportDelineations}:
+  \item \code{plotDelineations3D}:
+  \item \code{identifyDelineation}:
 }
 }
 \references{

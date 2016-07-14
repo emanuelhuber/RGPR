@@ -1659,8 +1659,9 @@ lines.GPR <- function(x,...){
     v <- 0
   }
   if(any(dim(x) == 1)){
-    z <- seq(-x@time0,by=x@dz,length.out=length(x@data))
-    lines(z,x@data,...)
+#     z <- seq(-x@time0, by = x@dz, length.out = length(x@data))
+    z <- x@depth - x@time0
+    lines(z, x@data,...)
    }else{
     stop("x must a vector!")
   }
@@ -1742,7 +1743,7 @@ plot.GPR <- function(x,y,...){
   if(any(dim(x) == 1)){
 #     op <- par(no.readonly=TRUE)
     par(mar=c(5,4,3,2)+0.1,oma=c(0,0,3,0), mgp=c(2, 0.5, 0))
-    z <- seq(-x@time0, by = x@dz, length.out = length(x@data))
+#     z <- seq(-x@time0, by = x@dz, length.out = length(x@data))
     z <- x@depth - x@time0
     plot(z, x@data, type = "n", 
           xlab = paste0("time (", x@depthunit, ")"), 
@@ -2626,7 +2627,7 @@ setMethod("timeCorOffset", "GPR", function(x){
   x <- x[tcor2 > 0,]
   tcor <- sqrt( tcor2[tcor2 > 0] )
   x@depth <- tcor
-  x@time0 <- 0
+  x@time0 <- rep(0, ncol(x))
   return(x)
 })
 
@@ -2683,14 +2684,14 @@ setMethod("upsample", "GPR", function(x,n){
     
     x@traces <- seq.int(1L,by=1L,length.out=ntr)
     #fiducial markers (fid, comments)
-    if(length(x@fid) >0 && sum(x@fid != "")>0){
+    if(length(x@fid) >0){ #&& sum(x@fid != "")>0){
       newfid <- character(length(x@fid)*n)
       newfidPos <- which(x@fid!="")
       newfid[newfidPos*n] <- x@fid[newfidPos]
       x@fid <- newfid[1:ntr]
     }
     #annotations
-    if(length(x@ann) >0 && sum(x@ann != "")>0){
+    if(length(x@ann) >0){ # && sum(x@ann != "")>0){
       newAnn <- character(length(x@ann)*n)
       newAnnPos <- which(x@ann!="")
       newAnn[newAnnPos*n] <- x@ann[newAnnPos]

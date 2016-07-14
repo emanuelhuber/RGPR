@@ -1796,17 +1796,20 @@ byte2volt <- function ( V=c(-50,50), nBytes = 16) {
     A1[1:nr,1:nc] <- A
     A1_fft <- fft(A1)
     
-    A_fftint <- matrix(0,nrow=n*nf,ncol=n*nk)
+    A_fftint <- matrix(0,nrow=n[1]*nf,ncol=n[2]*nk)
     A_fftint[1:(nf/2),1:(nk/2)] <- A1_fft[1:(nf/2),1:(nk/2)]
-    A_fftint[((n-1)*nf + nf/2+1):(n*nf),((n-1)*nk + nk/2 + 1):(n*nk)] <- 
-          A1_fft[(nf/2+1):(nf),(nk/2 + 1):nk]
-    A_fftint[1:(nf/2),((n-1)*nk + nk/2 + 1):(n*nk)] <- 
-          A1_fft[1:(nf/2),(nk/2 + 1):nk]
-    A_fftint[((n-1)*nf + nf/2+1):(n*nf),1:(nk/2)] <- 
+    A_fftint[((n[1]-1)*nf + nf/2+1):(n[1]*nf),
+             ((n[2]-1)*nk + nk/2 + 1):(n[2]*nk)] <- 
+                  A1_fft[(nf/2+1):(nf),(nk/2 + 1):nk]
+    A_fftint[1:(nf/2),
+             ((n[2]-1)*nk + nk/2 + 1):(n[2]*nk)] <- 
+                  A1_fft[1:(nf/2),(nk/2 + 1):nk]
+    A_fftint[((n[1]-1)*nf + nf/2+1):(n[1]*nf),
+              1:(nk/2)] <- 
           A1_fft[(nf/2+1):(nf),1:(nk/2)]
     
     A_int = fft(A_fftint, inverse = TRUE)
-    A_int <- A_int[1:(n*nr),1:(n*nc)]/(nk*nf)
+    A_int <- A_int[1:(n[1]*nr),1:(n[2]*nc)]/(nk*nf)
   }else if(is.vector(A)){
     # FTA = fft(A);
     n_A = length(A)
@@ -1819,10 +1822,11 @@ byte2volt <- function ( V=c(-50,50), nBytes = 16) {
     FTA <- fft(A0)
     
     # % now insert enough zeros into the dft to match the desired density 'n'
-    FTA = c(FTA[1:(n_A0/2)], rep.int(0,floor((n-1)*n_A0)), FTA[(n_A0/2+1):n_A0])
+    FTA = c(FTA[1:(n_A0/2)], rep.int(0,floor((n[1]-1)*n_A0)), 
+                                    FTA[(n_A0/2+1):n_A0])
 
     A_int = fft(FTA, inverse = TRUE)
-    A_int <- A_int[1:(n_A * (n))]/n_A0
+    A_int <- A_int[1:(n_A * (n[1]))]/n_A0
   }
   return(Re(A_int))
 }

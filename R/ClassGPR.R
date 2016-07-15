@@ -1336,7 +1336,7 @@ setMethod("filter1D", "GPR", function(x, type = c("median", "hampel",
       }
       x@data <- Y[(w+1):(n-w),]
     }else if(type == "Gaussian"){
-      x@data <- apply(x@data,2, mmand::gaussianSmooth, sigma=w)
+      x@data <- mmand::gaussianSmooth(x@data, sigma)
     }
     proc <- getArgs()
     x@proc <- c(x@proc, proc)

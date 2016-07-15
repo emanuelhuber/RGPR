@@ -1774,35 +1774,44 @@ plot.GPR <- function(x,y,...){
     v <- 0
   }
   if(any(dim(x) == 1)){
-#     op <- par(no.readonly=TRUE)
     par(mar=c(5,4,3,2)+0.1,oma=c(0,0,3,0), mgp=c(2, 0.5, 0))
+    if(grepl("[m]$",x@depthunit)){
+      Xlab <- paste0("depth (",x@depthunit,")")
+      z <- x@depth
+    }else if(grepl("[s]$",x@depthunit)){
+      Xlab <- paste0("two-way travel time (",x@depthunit,")")
+      z <- x@depth - x@time0
+    }
 #     z <- seq(-x@time0, by = x@dz, length.out = length(x@data))
-    z <- x@depth - x@time0
     plot(z, x@data, type = "n", 
-          xlab = paste0("time (", x@depthunit, ")"), 
+          xlab = xlab, 
           ylab = "amplitude (mV)",xaxt = "n")
     x_axis <- pretty(z,10)
-    axis(side=1,at=x_axis, labels=x_axis,tck=+0.02)
-    depth_0 <- depth0(0, v, antsep=x@antsep)
-    depth2 <- seq(0.1,by=0.1,0.9)
-    depthat0 <- depthToTime(0, 0, v, antsep=x@antsep)
-    if(max(z)*v/2 > 1.3){
-      depth <- pretty(seq(1.1,by=0.1,max(z)*v/2 ),10)
-      depthat <- depthToTime(depth, 0, v, antsep=x@antsep)
-      axis(side=3,at=depthat, labels=depth,tck=+0.02)
+      axis(side = 1, at = x_axis, labels = x_axis, tck = +0.02)
+    if(grepl("[m]$",x@depthunit)){
+      axis(side = 3, at = x_axis, labels = x_axis, tck = +0.02)
+    }else if(grepl("[s]$",x@depthunit)){
+      depth_0 <- depth0(0, v, antsep=x@antsep)
+      depth2 <- seq(0.1,by=0.1,0.9)
+      depthat0 <- depthToTime(0, 0, v, antsep=x@antsep)
+      if(max(z)*v/2 > 1.3){
+        depth <- pretty(seq(1.1,by=0.1,max(z)*v/2 ),10)
+        depthat <- depthToTime(depth, 0, v, antsep=x@antsep)
+        axis(side=3,at=depthat, labels=depth,tck=+0.02)
+      }
+      depthat2 <- depthToTime(depth2, 0, v, antsep=x@antsep)
+      axis(side=3,at=depthat0, labels="0",tck=+0.02)
+      axis(side=3,at=depthat2, labels=FALSE,tck=+0.01)
+      axis(side=3,at=depthToTime(1, 0, v, antsep=x@antsep), 
+            labels=FALSE,tck=+0.02)
+      abline(v=depth_0,col="grey",lty=3)
+      mtext(paste0("depth (m),   v=",v,"m/ns") ,side=3, line=2)
     }
-    depthat2 <- depthToTime(depth2, 0, v, antsep=x@antsep)
-    axis(side=3,at=depthat0, labels="0",tck=+0.02)
-    axis(side=3,at=depthat2, labels=FALSE,tck=+0.01)
-    axis(side=3,at=depthToTime(1, 0, v, antsep=x@antsep), 
-          labels=FALSE,tck=+0.02)
     abline(h = 0, lty = 3, col = "grey")
     abline(v = 0, col = "red")
-    abline(v=depth_0,col="grey",lty=3)
-    lines(z,x@data,...)
+    lines(z, x@data,...)
     title(paste0(x@name, ": trace #", x@traces," @",x@pos,x@posunit),
                   outer=TRUE)
-    mtext(paste0("depth (m),   v=",v,"m/ns") ,side=3, line=2)
 #     par(op)
    }else{
     if(!is.null(nupspl)){

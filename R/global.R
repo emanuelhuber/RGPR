@@ -1711,12 +1711,12 @@ nextpower2 <- function(x){
 #' @export
 phaseRotation <- function(x,phi){
   nf <- length(x)
-  X = fft(x)
+  X <- fft(x)
   phi2 <- numeric(nf)
   phi2[2:(nf/2)] <- phi
   phi2[(nf/2+1):(nf)] <- -phi
-  Phase = exp(-complex(imaginary=-1)*phi2)
-  xcor = fft(X*Phase, inverse=TRUE)/nf
+  Phase <- exp(-complex(imaginary=-1)*phi2)
+  xcor <- fft(X*Phase, inverse=TRUE)/nf
   return(Re(xcor))
 }
 

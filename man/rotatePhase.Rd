@@ -7,7 +7,15 @@
 \usage{
 \S4method{rotatePhase}{GPR}(x, phi)
 }
+\arguments{
+\item{x}{A GPR data}
+
+\item{phi}{A length-one numeric vector defining the phase rotation in radian.}
+}
+\value{
+The GPR data with rotated phase.
+}
 \description{
-Phase rotation
+Rotate the phase of the GPR data by a given angle \code{phi}.
 }
 

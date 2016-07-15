@@ -1475,6 +1475,10 @@ setMethod("fkFilter", "GPR", function(x, fk=NULL, L=c(5,5),npad=1){
 #--------------- DECONVOLUTION
 #' Phase rotation
 #'
+#' Rotate the phase of the GPR data by a given angle \code{phi}.
+#' @param x A GPR data
+#' @param phi A length-one numeric vector defining the phase rotation in radian.
+#' @return The GPR data with rotated phase.
 #' @name rotatePhase
 #' @rdname rotatePhase
 #' @export
@@ -1488,6 +1492,32 @@ setMethod("rotatePhase", "GPR", function(x, phi){
 )
 #' Deconvolution
 #'
+#' A generic function to perform different types of convolution
+#' 
+#' @section Spiking and mixed-phase deconvolution:
+#' The required arguments for \code{method = "spiking"} and 
+#' \code{method = "mixed-phase"} are:
+#' \itemize{
+#'   \item \code{W}: A length-two numeric vector defining the time/depth window
+#'                   for which the wavelet is estimated
+#'   \item \code{wtr}: A length-one numeric vector defining the number of 
+#'                     neighorough traces to be combine into a "super trace"
+#'                     (the total number of traces is \code{2*wtr + 1}).
+#'   \item \code{nf} A length-one numeric vector defining the filter length.
+#'   \item \code{mu} A length-one numeric vector defining the amount of noise.
+#' }
+#' @section Wavelet deconvolution:
+#' The required arguments for \code{method = "wavelet"} are:
+#' \itemize{
+#'   \item \code{h}: A numeric vector corresponding to the wavelet used to
+#'                   deconvolve the GPR data.
+#'   \item \code{mu} A length-one numeric vector defining the amount of noise.
+#' }
+#'
+#' @param method Type of deconvolution method.
+#' @param ... additional arguments, see \code{details}.
+#' @return A list containing the deconvolued GPR data (and possibly other
+#' variables.
 #' @name deconv
 #' @rdname deconv
 #' @export
@@ -1565,8 +1595,8 @@ setMethod("deconv", "GPR", function(x,
         stop(paste0("wavelet deconvolution requires the following arguments:",
                     "h, mu\n"))
       }
-      X <- trScale(x, type="rms")@data
-      Xdec <- apply(X,2, deconvolve, h, mu)      
+      x <- trScale(x, type="rms")
+      x@data <- apply(x@data,2, deconvolve, h, mu)      
     }else if(method== "min-phase"){
       stop("min-phase deconvolution has to be first written!!!\n")
     }else if(method== "mixed-phase"){

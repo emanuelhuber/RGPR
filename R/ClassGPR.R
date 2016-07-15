@@ -1497,18 +1497,28 @@ setMethod("deconv", "GPR", function(x,
         dots <- list(...)
         if(is.null(dots$W)){
           stop(paste0("W must be defined\n"))
+        }else{
+          W <- dots$W
         }
         if(is.null(dots$wtr)){
           stop(paste0("wtr must be defined\n"))
+        }else{
+          wtr <- dots$wtr
         }
         if(is.null(dots$nf)){
           stop(paste0("nf must be defined\n"))
+        }else{
+          nf <- dots$nf
         }
         if(is.null(dots$mu)){
           stop(paste0("mu must be defined\n"))
+        }else{
+          mu <- dots$mu
         }
         if(is.null(dots$shft)){
           shft <- 1
+        }else{
+          shft <- dots$shft
         }
       }else{
         stop(paste0("spiking deconvolution requires the following arguments:",

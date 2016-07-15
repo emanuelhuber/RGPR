@@ -1250,12 +1250,13 @@ setMethod("dewow", "GPR", function(x, type=c("MAD","Gaussian"),w){
   }else if(type == "Gaussian"){
     t0 <- round(mean(x@time0)/x@dz)
     A <- x@data
-    A[1:t0,] <- 0
+    before_t0 <- x@depth <= mean(x@time0)
+    A[before_t0,] <- 0
     if(length(dim(A))<2){
       A <- matrix(A,ncol=1,nrow=length(A))
     }
-    x@data[t0:nrow(x),] <- A[t0:nrow(x),] - 
-    mmand::gaussianSmooth(A,w)[t0:nrow(x),]
+    x@data[!before_t0,] <- A[!before_t0,] - 
+    mmand::gaussianSmooth(A,w)[!before_t0,]
   }
   proc <- getArgs()
   x@proc <- c(x@proc, proc)
@@ -1294,7 +1295,7 @@ setMethod("gain", "GPR", function(x,
 setMethod("filter1D", "GPR", function(x, type = c("median", "hampel"), ...){
     type <- match.arg(type)
     if(type == "median"){
-      w = 10    # argument initialization
+      w <- 10    # argument initialization
       if( length(list(...)) ){
         dots <- list(...)
         if( !is.null(dots$w)){
@@ -1529,8 +1530,7 @@ setMethod("deconv", "GPR", function(x,
       Wmin <- matrix(nrow=nf,ncol=ncol(X))
       for(i in 1:ncol(X)){
         ww <- (i-wtr):(i+wtr)
-        ww <- ww[ww <= ncol(X)]
-        ww <- ww[ww >= 1]
+        ww <- ww[ww <= ncol(X) & ww >= 1]
         supertrace <- as.vector(X[W,ww])
         # inverse minimum-phase wavelet estimation # variante 1 (Emanuel)
         Fmin[,i] <- .spikingFilter(supertrace,nf=nf ,mu=mu, shft=shft)

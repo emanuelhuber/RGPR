@@ -857,7 +857,7 @@ depth0 <- function(time_0, v=0.1, antsep=1){
   fdo <- fdo*10^6   # from MHz to Hz
   lambda <- fdo / v * 10^-9
   v2 <- v^2
-  kirTopoGPR <- matrix(NA, nrow = max_depth/dz + 1, ncol = m)
+  kirTopoGPR <- matrix(0, nrow = max_depth/dz + 1, ncol = m)
   for( i in seq_len(m)){
     x_d <- (i-1)*dx   # diffraction
     z_seq <- seq(z[i],max_depth,by=dz)

@@ -5,7 +5,8 @@
 \alias{deconv}
 \title{Deconvolution}
 \usage{
-\S4method{deconv}{GPR}(x, method = c("spiking", "wavelet", "min-phase"), ...)
+\S4method{deconv}{GPR}(x, method = c("spiking", "wavelet", "min-phase",
+  "mixed-phase"), ...)
 }
 \description{
 Deconvolution

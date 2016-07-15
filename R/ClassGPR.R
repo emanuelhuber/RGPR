@@ -1292,7 +1292,8 @@ setMethod("gain", "GPR", function(x,
 #' @name filter1D
 #' @rdname filter1D
 #' @export
-setMethod("filter1D", "GPR", function(x, type = c("median", "hampel"), ...){
+setMethod("filter1D", "GPR", function(x, type = c("median", "hampel", 
+          "Gaussian"), ...){
     type <- match.arg(type)
     if(type == "median"){
       w <- 10    # argument initialization
@@ -1322,7 +1323,7 @@ setMethod("filter1D", "GPR", function(x, type = c("median", "hampel"), ...){
         A <- matrix(A,ncol=1,nrow=length(A))
       }
       X <- rbind(matrix(0,ncol=ncol(A),nrow=w), A, 
-matrix(0,ncol=ncol(A),nrow=w))
+                matrix(0,ncol=ncol(A),nrow=w))
       n <- nrow(X)
       Y <- X
       for (i in (w + 1):(n - w)) {
@@ -1334,6 +1335,8 @@ matrix(0,ncol=ncol(A),nrow=w))
         Y[i,] <- Xmed
       }
       x@data <- Y[(w+1):(n-w),]
+    }else if(type == "Gaussian"){
+      x@data <- apply(x@data,2, mmand::gaussianSmooth, w)
     }
     proc <- getArgs()
     x@proc <- c(x@proc, proc)
@@ -1489,9 +1492,11 @@ setMethod("rotatePhase", "GPR", function(x, phi){
 #' @rdname deconv
 #' @export
 setMethod("deconv", "GPR", function(x, 
-            method=c("spiking","wavelet","min-phase"),...){
-    method <- match.arg(method, c("spiking","wavelet","min-phase"))
-    if(method == "spiking"){
+            method=c("spiking", "wavelet", "min-phase", "mixed-phase"),...){
+    method <- match.arg(method, c("spiking", "wavelet", "min-phase",
+                                  "mixed-phase"))
+    toReturn <- list()
+    if(method == "spiking" || method == "mixed-phase"){
     # deconvSpiking <- function(x,W,wtr,nf,mu){
       if( length(list(...)) ){
         dots <- list(...)
@@ -1549,6 +1554,12 @@ setMethod("deconv", "GPR", function(x,
         # minimum-phase deconvolued data
         Xdec[,i] <- convolution(X[,i],Fmin[,i])[1:nrow(X)]
       }
+      # estimated min-phase wavelet
+      w_0 <- matrix(0, nrow=round(nf/3),ncol=ncol(Wminn))
+      w_min <- list(x = seq(-round(nf/3),to =  nf , by = 1)*gpr11@dz,
+                    y = rbind(w_0, Wmin, rep(0, ncol(Wmin))))
+      x@data <- Xdec
+      toReturn <- list("fmin" = Fmin, "wmin" = w_min)
     }else if(method == "wavelet"){
       if(missing(h) || missing(mu)){
         stop(paste0("wavelet deconvolution requires the following arguments:",
@@ -1558,12 +1569,23 @@ setMethod("deconv", "GPR", function(x,
       Xdec <- apply(X,2, deconvolve, h, mu)      
     }else if(method== "min-phase"){
       stop("min-phase deconvolution has to be first written!!!\n")
+    }else if(method== "mixed-phase"){
+      # optimal phase shift
+      optPhi <- optPhaseRotation(x[W,],rot=0.05,plot=TRUE)
+      # mixed-phase deconvolution
+      x <- rotatePhase(x, phi = optPhi)
+      # mixed phase wavelet
+      w_mix <- w_min
+      w_mix$y <- apply(w_min$y, 2 , phaseRotation, -optPhi)
+      toReturn[["optRot"]] <- optPhi
+      toReturn[["wmix"]] <- w_mix
     }
     # gprdec <- gpr
-    x@data <- Xdec
+#     x@data <- Xdec
+    toReturn[["x"]] <- x
     proc <- getArgs()
     x@proc <- c(x@proc, proc)
-    return(list("dec"=x,"fmin"=Fmin,"wmin"=Wmin))
+    return(toReturn)
   }
 )
 

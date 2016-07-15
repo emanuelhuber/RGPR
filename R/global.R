@@ -597,8 +597,8 @@ setGenericVerif("timeCorOffset", function(x) standardGeneric("timeCorOffset"))
 #' @name filter1D
 #' @rdname filter1D
 #' @export
-setGenericVerif("filter1D", function(x, type = c("median", "hampel"), ...) 
-standardGeneric("filter1D"))
+setGenericVerif("filter1D", function(x, type = c("median", "hampel", 
+                "Gaussian"), ...) standardGeneric("filter1D"))
 
 #' @name filter2D
 #' @rdname filter2D
@@ -631,8 +631,8 @@ setGenericVerif("fkFilter", function(x, fk=NULL, L=c(5,5),npad=1)
 
 setGenericVerif("traceShift", function(x, fb,kip=10) 
                 standardGeneric("traceShift"))
-setGenericVerif("deconv", function(x, method=c("spiking","wavelet","min-phase"),
-                  ...) standardGeneric("deconv"))
+setGenericVerif("deconv", function(x, method=c("spiking", "wavelet",
+                "min-phase", "mixed-phase"), ...) standardGeneric("deconv"))
 setGenericVerif("rotatePhase", function(x, phi) standardGeneric("rotatePhase"))
 
 

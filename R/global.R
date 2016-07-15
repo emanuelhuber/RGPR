@@ -358,6 +358,9 @@ posLine <- function(loc,last=FALSE){
     vv <- v[-m] + rep(seq(1,n-1),each=m-1)*dxpos
     xvalues  <- sort(c(v,vv ,v[m] + cumsum(rep(dxpos[length(dxpos)],n-1))))
     xvalues <- xvalues[1:(length(xvalues))]
+    return(xvalues)
+  }else{
+    return(v)
   }
 }
 
@@ -836,6 +839,70 @@ depth0 <- function(time_0, v=0.1, antsep=1){
                                         method = "pchip",extrap = TRUE)  
   }
   return(xShifted)
+}
+
+# x = data matrix (col = traces)
+# topoGPR = z-coordinate of each trace
+# dx = spatial sampling (trace spacing)
+# dts = temporal sampling
+# v = GPR wave velocity (ns)
+# max_depth = to which depth should the migration be performed
+# dz = vertical resolution of the migrated data
+# fdo = dominant frequency of the GPR signal
+.kirMig <- function(x, topoGPR, dx, dts, v, max_depth = 8, 
+                 dz = 0.025, fdo = 80){
+  n <- nrow(x)
+  m <- ncol(x)
+  z <- max(topoGPR) - topoGPR
+  fdo <- fdo*10^6   # from MHz to Hz
+  lambda <- fdo / v * 10^-9
+  v2 <- v^2
+  kirTopoGPR <- matrix(NA, nrow = max_depth/dz + 1, ncol = m)
+  for( i in seq_len(m)){
+    x_d <- (i-1)*dx   # diffraction
+    z_seq <- seq(z[i],max_depth,by=dz)
+#     mt <- (i - migTpl):(i + migTpl) # migration template
+#     mt <- mt[mt > 0 & mt <= m]
+#     l_migtpl <- length(mt)
+    
+    for(k in seq_along(z_seq)){
+      z_d <- z_seq[k]
+      t_0 <- 2*(z_d - z[i])/v    # = k * dts in reality
+      z_idx <- round(z_d /dz + 1)
+      # Fresnel zone
+      # Pérez-Gracia et al. (2008) Horizontal resolution in a non-destructive
+      # shallow GPR survey: An experimental evaluation. NDT & E International,
+      # 41(8): 611–620.
+      # doi:10.1016/j.ndteint.2008.06.002
+      rf <- 0.5 * sqrt(lambda * 2 * (z_d - z[i]))
+      rf_tr <- round(rf/dx)
+      mt <- (i - rf_tr):(i + rf_tr)
+      mt <- mt[mt > 0 & mt <= m]
+      
+      Ampl <- numeric(length(mt))
+      for(j in mt){
+        x_a <- (j-1)*dx
+        t_top <-  t_0 - 2*(z[j] - z[i])/v
+        t_x <- sqrt( t_top^2 +   4*(x_a - x_d)^2 /v2)
+        t1 <- floor(t_x/dts) + 1 # the largest integers not greater
+        t2 <- ceiling(t_x/dts) + 1 # smallest integers not less
+        if(t2 <= n && t1 > 0 && t_x != 0){
+          w <- ifelse(t1 != t2, abs((t1 - t_x)/(t1 - t2)), 0)
+          # Dujardin & Bano amplitude factor weight: cos(alpha) = t_top/t_x
+          # Ampl[j- mt[1] + 1] <- (t_top/t_x) * 
+          # ((1-w)*A[t1,j] + w*A[t2,j])
+          # http://sepwww.stanford.edu/public/docs/sep87/SEP087.Bevc.pdf
+          Ampl[j- mt[1] + 1] <- (dx/sqrt(2*pi*t_x*v))*
+                                (t_top/t_x) * 
+                                ((1-w)*x[t1,j] + w*x[t2,j])
+        }
+      }
+      kirTopoGPR[z_idx,i] <- sum(Ampl)#/l_migtpl
+    }
+  }
+#   kirTopoGPR2 <- kirTopoGPR
+  
+  return(kirTopoGPR)
 }
 
 plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
@@ -1776,7 +1843,7 @@ byte2volt <- function ( V=c(-50,50), nBytes = 16) {
 
 
  
-.upsample <- function(A, n=c(1,2), type=c("DFT","bicubic")){
+.upsample <- function(A, n=c(2,1), type=c("DFT","bicubic")){
   # bi cubic---
   # library(fields)
   # interp2d <- function(old, newx, newy) {

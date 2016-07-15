@@ -1271,6 +1271,7 @@ setMethod("dewow", "GPR", function(x, type=c("MAD","Gaussian"),w){
 setMethod("gain", "GPR", function(x, 
           type=c("power", "exp", "agc"),...){
   type <- match.arg(type)
+  x@data[is.na(x@data)] <-0
   if(type=="power"){
     x@data <- .gainPower(x@data, dts = x@dz, ...)
   }else if(type=="exp"){
@@ -2560,6 +2561,10 @@ setMethod("identifyDelineation", "GPR", function(x,sel=NULL,...){
 )
 
 #---------------------- MIGRATION & OFFSET CORRECTION---------------------#
+# max_depth = to which depth should the migration be performed
+# dz = vertical resolution of the migrated data
+# fdo = dominant frequency of the GPR signal
+
 #' Migration of the GPR data
 #'
 #' @name migration
@@ -2571,8 +2576,8 @@ setMethod("migration", "GPR", function(x,type=c("static","kirchhoff"),...){
       suppl_args <- list("type"=type)
       # cat(type,"\n")
     }
-    type=match.arg(type)
-    if(type=="static"){  
+    type <- match.arg(type)
+    if(type == "static"){  
       ntr <- ncol(x@data)
       if(ncol(x@coord) == 3 && length(x@coord[,3])>= ntr){
         topo <- x@coord[1:ntr,3]
@@ -2605,6 +2610,33 @@ setMethod("migration", "GPR", function(x,type=c("static","kirchhoff"),...){
       x@vel=list()  # FIX ME!!
       x@time0 <- rep(0L,ncol(x@data))  # FIX ME!!
       x@proc <- c(x@proc, proc)
+    }else if(type == "kirchhoff"){
+      A <- x@data
+      topoGPR <- x@coord[,3]
+      dx <- x@dx
+      dts <- x@dz
+      v <- x@vel[[1]]
+      if( length(list(...)) ){
+        dots <- list(...)
+        if( !is.null(dots$max_depth)){
+          max_depth <- dots$max_depth
+        }else{
+          max_depth <- nrow(x)*x@dx
+        }
+        if( !is.null(dots$dz)){
+          dz <- dots$dz
+        }else{
+          dz <- 0.25*x@dz
+        }
+        if( !is.null(dots$fdo)){
+          fdo <- dots$fdo
+        }else{
+          fdo <- x@freq
+        }
+      }  
+      kirData <- .kirMig(x@data, topoGPR = x@coord[,3], dx = x@dx, dts = x@dz, 
+                        v = x@vel[[1]], max_depth = max_depth, dz = dz, 
+                        fdo = fdo)
     }
     return(x)
   } 
@@ -2647,13 +2679,13 @@ setMethod("upsample", "GPR", function(x,n){
     x@data <- x@data[,1:(ncol(x@data))]
     yvalues <-  (seq(0,by=x@dz,length.out=nrow(x@data)))
     
-    xvalues  <- .doubleVector(x@pos,n=n[1])
-    yvalues  <- .doubleVector(x@depth,n=n[2])
+    xvalues  <- .doubleVector(x@pos,n=n[2])
+    yvalues  <- .doubleVector(x@depth,n=n[1])
     #  
     # image(xvalues,yvalues,t(x@data))
 
     ntr <- ncol(x@data)  # number of traces
-    if(ntr!=length(xvalues)) stop("ntr!=length(xvalues)")
+    if(ntr != length(xvalues)) stop("ntr!=length(xvalues)")
     if(length(x@coord)>0){
       coord_new <- matrix(ncol=3,nrow=ntr)
       coord_new[,1] <- signal::interp1(x@pos, x@coord[,1], xi = xvalues,   
@@ -2688,16 +2720,16 @@ setMethod("upsample", "GPR", function(x,n){
     x@traces <- seq.int(1L,by=1L,length.out=ntr)
     #fiducial markers (fid, comments)
     if(length(x@fid) >0){ #&& sum(x@fid != "")>0){
-      newfid <- character(length(x@fid)*n[1])
+      newfid <- character(length(x@fid)*n[2])
       newfidPos <- which(x@fid!="")
-      newfid[newfidPos*n[1]] <- x@fid[newfidPos]
+      newfid[newfidPos*n[2]] <- x@fid[newfidPos]
       x@fid <- newfid[1:ntr]
     }
     #annotations
     if(length(x@ann) >0){ # && sum(x@ann != "")>0){
-      newAnn <- character(length(x@ann)*n[1])
+      newAnn <- character(length(x@ann)*n[2])
       newAnnPos <- which(x@ann!="")
-      newAnn[newAnnPos*n] <- x@ann[newAnnPos]
+      newAnn[newAnnPos*n[2]] <- x@ann[newAnnPos]
       x@ann <- newAnn[1:ntr]
     }
     # trace positions
@@ -2705,8 +2737,8 @@ setMethod("upsample", "GPR", function(x,n){
     # depth/time
     x@depth <- .doubleVector(x@depth,n=n[1])
 
-    x@dx <- x@dx / n[1]
-    x@dz <- x@dz / n[2]
+    x@dx <- x@dx / n[2]
+    x@dz <- x@dz / n[1]
 #     x@ntr <- ntr
     
     proc <- getArgs()

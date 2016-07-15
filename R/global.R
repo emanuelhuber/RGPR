@@ -618,9 +618,9 @@ setGenericVerif("clip", function(x, Amax=NULL,Amin=NULL)
                 standardGeneric("clip"))
 setGenericVerif("gammaCorrection", function(x, a=1,b=1) 
                 standardGeneric("gammaCorrection"))
-setGenericVerif("trScale", function(x, 
+setGenericVerif("traceScaling", function(x, 
                   type = c("stat","min-max","95","eq","sum", "rms")) 
-                  standardGeneric("trScale"))
+                  standardGeneric("traceScaling"))
 
 setGenericVerif("spec", function(x, type=c("f-x","f-k"), plotSpec=TRUE, 
                 unwrapPhase = TRUE, ...) standardGeneric("spec"))
@@ -629,7 +629,7 @@ setGenericVerif("fFilter", function(x, f=100, type=c('low','high','bandpass'),
 setGenericVerif("fkFilter", function(x, fk=NULL, L=c(5,5),npad=1) 
                 standardGeneric("fkFilter"))
 
-setGenericVerif("traceShift", function(x, fb,kip=10) 
+setGenericVerif("traceShift", function(x, t0, keep=10) 
                 standardGeneric("traceShift"))
 setGenericVerif("deconv", function(x, method=c("spiking", "wavelet",
                 "min-phase", "mixed-phase"), ...) standardGeneric("deconv"))
@@ -1461,7 +1461,7 @@ scaleCol <- function(A,type = c("stat","min-max","95","eq","sum", "rms")){
 }
 
 rmsScaling <- function(...){
-  stop("Deprecated! Use instead 'trScale(x,type=\"rms\")'\n")
+  stop("Deprecated! Use instead 'traceScaling(x,type=\"rms\")'\n")
 }
 
 #=============================================#

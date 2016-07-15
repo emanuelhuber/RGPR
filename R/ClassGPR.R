@@ -1405,10 +1405,10 @@ setMethod("gammaCorrection", "GPR", function(x,a=1,b=1){
 
 #' Trace scaling
 #'
-#' @name trScale
-#' @rdname trScale
+#' @name traceScaling
+#' @rdname traceScaling
 #' @export
-setMethod("trScale", "GPR", function(x, 
+setMethod("traceScaling", "GPR", function(x, 
             type = c("stat","min-max","95","eq","sum", "rms")){
     x@data <- scaleCol(x@data, type=type)
     proc <- getArgs()
@@ -1568,7 +1568,7 @@ setMethod("deconv", "GPR", function(x,
        # shft=1
       #}
       W <- seq(W[1],W[2])
-      X <- trScale(x, type="rms")@data
+      X <- traceScaling(x, type="rms")@data
       # X <- X / apply(as.matrix(X),2,RMS)
       Xdec <- matrix(nrow=nrow(X),ncol=ncol(X))
       Fmin <- matrix(nrow=nf,ncol=ncol(X))
@@ -1595,7 +1595,7 @@ setMethod("deconv", "GPR", function(x,
         stop(paste0("wavelet deconvolution requires the following arguments:",
                     "h, mu\n"))
       }
-      x <- trScale(x, type="rms")
+      x <- traceScaling(x, type="rms")
       x@data <- apply(x@data,2, deconvolve, h, mu)      
     }else if(method== "min-phase"){
       stop("min-phase deconvolution has to be first written!!!\n")
@@ -1625,23 +1625,23 @@ setMethod("deconv", "GPR", function(x,
 #' @name traceShift
 #' @rdname traceShift
 #' @export
-setMethod("traceShift", "GPR", function(x,  fb, kip=10){
-# traceShift <- function(gpr_mix,fbmix, kip=10){
-    fb <- fbmix/x@dz 
-    if(min(fb) > kip){
-      fb <- fb - kip
+setMethod("traceShift", "GPR", function(x,  t0, keep=10){
+# traceShift <- function(x,t0, keep=10){
+    t0 <- t0/x@dz 
+    if(min(t0) > keep){
+      t0 <- t0 - keep
     }else{
-      fb <- fb - min(fb) + 1
+      t0 <- t0 - min(t0) + 1
     }
-    A <- gpr_mix@data
+    A <- x@data
     Anew <- matrix(nrow=nrow(A),ncol=ncol(A))
     
-    minShift <- min(fbmix) - kip
-    maxShift <- max(fbmix) - kip
+    minShift <- min(t0) - keep
+    maxShift <- max(t0) - keep
     
     for(i in seq_along(A[1,])){
-      vs <- seq(fb[i],nrow(A))
-      vsp <- seq(fb[i],nrow(A))-fb[i]+1
+      vs <- seq(t0[i],nrow(A))
+      vsp <- seq(t0[i],nrow(A))-t0[i]+1
       Anew[vsp,i] <- A[vs,i]
     }
     x@data <- Anew  

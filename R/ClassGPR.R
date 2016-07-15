@@ -2616,27 +2616,29 @@ setMethod("migration", "GPR", function(x,type=c("static","kirchhoff"),...){
       dx <- x@dx
       dts <- x@dz
       v <- x@vel[[1]]
+      # initialisation
+      max_depth <- nrow(x)*x@dx
+      dz <- 0.25*x@dz
+      fdo <- x@freq
       if( length(list(...)) ){
         dots <- list(...)
         if( !is.null(dots$max_depth)){
           max_depth <- dots$max_depth
-        }else{
-          max_depth <- nrow(x)*x@dx
         }
         if( !is.null(dots$dz)){
           dz <- dots$dz
-        }else{
-          dz <- 0.25*x@dz
         }
         if( !is.null(dots$fdo)){
           fdo <- dots$fdo
-        }else{
-          fdo <- x@freq
         }
       }  
-      kirData <- .kirMig(x@data, topoGPR = x@coord[,3], dx = x@dx, dts = x@dz, 
+      x@data <- .kirMig(x@data, topoGPR = x@coord[,3], dx = x@dx, dts = x@dz, 
                         v = x@vel[[1]], max_depth = max_depth, dz = dz, 
                         fdo = fdo)
+      x@depth <- seq(0,by=dz, length.out = nrow(x))
+      x@time0 <- rep(0, ncol(x))
+      x@dz <- dz
+      x@depthunit <- "m"
     }
     return(x)
   } 

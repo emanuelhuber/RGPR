@@ -1586,7 +1586,7 @@ setMethod("deconv", "GPR", function(x,
       }
       # estimated min-phase wavelet
       w_0 <- matrix(0, nrow=round(nf/3),ncol=ncol(Wmin))
-      w_min <- list(x = seq(-round(nf/3),to =  nf , by = 1)*gpr11@dz,
+      w_min <- list(x = seq(-round(nf/3),to =  nf , by = 1)*x@dz,
                     y = rbind(w_0, Wmin, rep(0, ncol(Wmin))))
       x@data <- Xdec
       toReturn <- list("fmin" = Fmin, "wmin" = w_min)

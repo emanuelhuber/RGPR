@@ -1778,6 +1778,11 @@ plot.GPR <- function(x,y,...){
       nupspl <- dots$nupspl
       dots$nupspl <- NULL
     }
+    main <- x@name
+    if( !is.null(dots$main) ){
+      main <- dots$main
+      dots$main <- NULL
+    }
     # myCol <- colGPR(n=101)
     # if( !is.null(dots$col) && !isTRUE(dots$col) ){
       # myCol <- dots$col
@@ -1888,7 +1893,7 @@ plot.GPR <- function(x,y,...){
       }
       xvalues <- posLine(x@coord)
       do.call(plotRaster, c(list(z = x@data, x = xvalues, y = -rev(x@depth), 
-                     main = x@name, 
+                     main = main, 
                      xlab = x@posunit, ylab = ylab, note = x@filepath,
                      time_0 = x@time0, antsep = x@antsep, v = v, 
                      addFid = addFid, fid = x@fid, 
@@ -1915,7 +1920,7 @@ plot.GPR <- function(x,y,...){
         xvalues <- x@pos
       }
       do.call(plotWig, c(list(z = x@data, x = xvalues, y = -rev(x@depth), 
-                    main=x@name, 
+                    main=main, 
                     xlab = x@posunit, ylab = ylab, note = x@filepath, 
                     time_0 = x@time0, antsep = x@antsep, v = v, 
                     addFid = addFid, fid = x@fid,

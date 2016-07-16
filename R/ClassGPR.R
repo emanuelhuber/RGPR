@@ -1645,6 +1645,13 @@ setMethod("traceShift", "GPR", function(x,  t0, keep=10){
       Anew[vsp,i] <- A[vs,i]
     }
     x@data <- Anew  
+    test <- apply(abs(Anew),1,sum)
+    firstPos <- which(!rev(test == 0) )[1]
+    if(!is.na(firstPos)){
+      n <- length(test)
+      vsel <- 1:(n-firstPos + 1L)
+      x <- x[vsel,]
+    }
 #     x@proc <- c( x@proc, "trace shift")
     proc <- getArgs()
     x@proc <- c(x@proc, proc)

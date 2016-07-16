@@ -1604,7 +1604,7 @@ setMethod("deconv", "GPR", function(x,
       # optimal phase shift
       phi <- optPhaseRotation(x@data[W,], rot = 0.05, plot=TRUE)
       # phase rotation
-      x <-  apply(x@data, 2, phaseRotation, phi)
+      x@data <-  apply(x@data, 2, phaseRotation, phi)
       # mixed phase wavelet
       w_mix <- w_min
       w_mix$y <- apply(w_min$y, 2 , phaseRotation, - phi)

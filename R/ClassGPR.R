@@ -1585,7 +1585,7 @@ setMethod("deconv", "GPR", function(x,
         Xdec[,i] <- convolution(X[,i],Fmin[,i])[1:nrow(X)]
       }
       # estimated min-phase wavelet
-      w_0 <- matrix(0, nrow=round(nf/3),ncol=ncol(Wminn))
+      w_0 <- matrix(0, nrow=round(nf/3),ncol=ncol(Wmin))
       w_min <- list(x = seq(-round(nf/3),to =  nf , by = 1)*gpr11@dz,
                     y = rbind(w_0, Wmin, rep(0, ncol(Wmin))))
       x@data <- Xdec
@@ -1625,7 +1625,7 @@ setMethod("deconv", "GPR", function(x,
 #' @name traceShift
 #' @rdname traceShift
 #' @export
-setMethod("traceShift", "GPR", function(x,  t0, keep=10){
+setMethod("traceShift", "GPR", function(x,  t0, keep = 10, delete0 = TRUE){
 # traceShift <- function(x,t0, keep=10){
     t0 <- t0/x@dz 
     if(min(t0) > keep){
@@ -1645,12 +1645,14 @@ setMethod("traceShift", "GPR", function(x,  t0, keep=10){
       Anew[vsp,i] <- A[vs,i]
     }
     x@data <- Anew  
-    test <- apply(abs(Anew),1,sum)
-    firstPos <- which(!rev(test == 0) )[1]
-    if(!is.na(firstPos)){
-      n <- length(test)
-      vsel <- 1:(n-firstPos + 1L)
-      x <- x[vsel,]
+    if(delete0 == TRUE){
+      test <- apply(abs(Anew),1,sum)
+      firstPos <- which(!rev(test == 0) )[1]
+      if(!is.na(firstPos)){
+        n <- length(test)
+        vsel <- 1:(n-firstPos + 1L)
+        x <- x[vsel,]
+      }
     }
 #     x@proc <- c( x@proc, "trace shift")
     proc <- getArgs()

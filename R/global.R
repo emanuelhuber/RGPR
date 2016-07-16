@@ -629,7 +629,7 @@ setGenericVerif("fFilter", function(x, f=100, type=c('low','high','bandpass'),
 setGenericVerif("fkFilter", function(x, fk=NULL, L=c(5,5),npad=1) 
                 standardGeneric("fkFilter"))
 
-setGenericVerif("traceShift", function(x, t0, keep=10) 
+setGenericVerif("traceShift", function(x, t0, keep = 10, delete0 = TRUE) 
                 standardGeneric("traceShift"))
 setGenericVerif("deconv", function(x, method=c("spiking", "wavelet",
                 "min-phase", "mixed-phase"), ...) standardGeneric("deconv"))

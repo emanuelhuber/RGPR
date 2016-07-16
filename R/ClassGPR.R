@@ -1599,7 +1599,8 @@ setMethod("deconv", "GPR", function(x,
       x@data <- apply(x@data,2, deconvolve, h, mu)      
     }else if(method== "min-phase"){
       stop("min-phase deconvolution has to be first written!!!\n")
-    }else if(method== "mixed-phase"){
+    }
+    if(method == "mixed-phase"){
       # optimal phase shift
       optPhi <- optPhaseRotation(x[W,],rot=0.05,plot=TRUE)
       # mixed-phase deconvolution

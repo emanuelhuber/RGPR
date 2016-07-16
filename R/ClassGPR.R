@@ -1602,7 +1602,7 @@ setMethod("deconv", "GPR", function(x,
     }
     if(method == "mixed-phase"){
       # optimal phase shift
-      optPhi <- optPhaseRotation(x[W,], rot = 0.05, plot=TRUE)
+      optPhi <- optPhaseRotation(x@data[W,], rot = 0.05, plot=TRUE)
       # mixed-phase deconvolution
       x <- rotatePhase(x, phi = optPhi)
       # mixed phase wavelet

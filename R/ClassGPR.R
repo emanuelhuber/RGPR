@@ -1484,7 +1484,7 @@ setMethod("fkFilter", "GPR", function(x, fk=NULL, L=c(5,5),npad=1){
 #' @export
 setMethod("rotatePhase", "GPR", function(x, phi){
   # rotatePhase <- function(x,phi){
-    x@data <- apply(x@data,2,phaseRotation,phi)
+    x@data <- apply(x@data, 2, phaseRotation, phi)
     proc <- getArgs()
     x@proc <- c(x@proc,proc)
     return(x)
@@ -1602,12 +1602,12 @@ setMethod("deconv", "GPR", function(x,
     }
     if(method == "mixed-phase"){
       # optimal phase shift
-      optPhi <- optPhaseRotation(x[W,],rot=0.05,plot=TRUE)
+      optPhi <- optPhaseRotation(x[W,], rot = 0.05, plot=TRUE)
       # mixed-phase deconvolution
       x <- rotatePhase(x, phi = optPhi)
       # mixed phase wavelet
       w_mix <- w_min
-      w_mix$y <- apply(w_min$y, 2 , phaseRotation, -optPhi)
+      w_mix$y <- apply(w_min$y, 2 , phaseRotation, - optPhi)
       toReturn[["optRot"]] <- optPhi
       toReturn[["wmix"]] <- w_mix
     }

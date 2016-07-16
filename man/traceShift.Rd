@@ -5,7 +5,7 @@
 \alias{traceShift}
 \title{Shift the traces}
 \usage{
-\S4method{traceShift}{GPR}(x, t0, keep = 10)
+\S4method{traceShift}{GPR}(x, t0, keep = 10, delete0 = TRUE)
 }
 \description{
 Shift the traces

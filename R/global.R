@@ -2196,7 +2196,7 @@ inPoly <- function(x, y, vertx, verty){
 #' @rdname strucTensor
 #' @export
 strucTensor <- function(P, winBlur = c(3,3), winEdge=c(7,7), 
-      winTensor = c(5,10), sdTensor=2, ...){
+      winTensor = c(5,10), sdTensor=2, dxy = c(1, 1) ...){
   n <- nrow(P)
   m <- ncol(P)
   
@@ -2224,10 +2224,10 @@ strucTensor <- function(P, winBlur = c(3,3), winEdge=c(7,7),
   # GRADIENT FIELD
   # window size for edge dectection
   if(length(winEdge) == 1){
-      winEdge <- c(winEdge, winEdge)
-    }
-  vx <- convolution2D(P_f, dx_gkernel(winEdge[1], winEdge[2], 1), 0)
-  vy <- convolution2D(P_f, dy_gkernel(winEdge[1], winEdge[2], 1), 0)
+    winEdge <- c(winEdge, winEdge)
+  }
+  vx <- dxy[1]*convolution2D(P_f, dx_gkernel(winEdge[1], winEdge[2], 1), 0)
+  vy <- dxy[2]*convolution2D(P_f, dy_gkernel(winEdge[1], winEdge[2], 1), 0)
 
   # local TENSOR
   Gxx <- vx^2

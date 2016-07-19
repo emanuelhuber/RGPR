@@ -2195,8 +2195,8 @@ inPoly <- function(x, y, vertx, verty){
 #' @name strucTensor
 #' @rdname strucTensor
 #' @export
-strucTensor <- function(P, blksze=c(5,10), thresh=0.1, winEdge=c(7,7), 
-winBlur = c(3,3), winTensor = c(5,10), sdTensor=2, ...){
+strucTensor <- function(P, winBlur = c(3,3), winEdge=c(7,7), 
+      winTensor = c(5,10), sdTensor=2, ...){
   n <- nrow(P)
   m <- ncol(P)
   
@@ -2204,7 +2204,7 @@ winBlur = c(3,3), winTensor = c(5,10), sdTensor=2, ...){
   #- Identify ridge-like regions and normalise image
   #-------------------------------------------------
   # normalization (mean = 0, sd = 1)
-  P <- (P-mean(P))/sd(as.vector(P))
+  P <- (P-mean(P, na.rm=TRUE))/sd(as.vector(P), na.rm=TRUE)
 
   #------------------------------
   #- Determine ridge orientations
@@ -2226,19 +2226,19 @@ winBlur = c(3,3), winTensor = c(5,10), sdTensor=2, ...){
   if(length(winEdge) == 1){
       winEdge <- c(winEdge, winEdge)
     }
-  vx = convolution2D(P_f, dx_gkernel(winEdge[1], winEdge[2], 1), 0)
-  vy = convolution2D(P_f, dy_gkernel(winEdge[1], winEdge[2], 1), 0)
+  vx <- convolution2D(P_f, dx_gkernel(winEdge[1], winEdge[2], 1), 0)
+  vy <- convolution2D(P_f, dy_gkernel(winEdge[1], winEdge[2], 1), 0)
 
   # local TENSOR
-  Gxx = vx^2
-  Gyy = vy^2
-  Gxy = vx*vy 
+  Gxx <- vx^2
+  Gyy <- vy^2
+  Gxy <- vx*vy 
     
   # LOCAL AVERAGED TENSOR
   #sze = 5 *2
-  Jxx  = convolution2D(Gxx, gkernel(winTensor[1],winTensor[2],sdTensor), 0)
-  Jyy  = convolution2D(Gyy, gkernel(winTensor[1],winTensor[2],sdTensor), 0)
-  Jxy  = convolution2D(Gxy, gkernel(winTensor[1],winTensor[2],sdTensor), 0)
+  Jxx  <- convolution2D(Gxx, gkernel(winTensor[1],winTensor[2],sdTensor), 0)
+  Jyy  <- convolution2D(Gyy, gkernel(winTensor[1],winTensor[2],sdTensor), 0)
+  Jxy  <- convolution2D(Gxy, gkernel(winTensor[1],winTensor[2],sdTensor), 0)
 
   # ANALYTIC SOLUTION BASED ON SVD DECOMPOSITION
   A1 <- 0.5 * sqrt((Jxx - Jyy)^2 + 4*(Jxy^2))
@@ -2254,9 +2254,9 @@ winBlur = c(3,3), winTensor = c(5,10), sdTensor=2, ...){
 #   lambda2 = (Jxx + Jyy - sqrt((Jxx - Jyy)^2 + 4*(Jxy)^2))/2
   
   # polar parametrisation
-  o_alpha = Jxx + Jyy                               # energy
-  o_beta  = sqrt((Jxx-Jyy)^2 + 4*(Jxy)^2)/o_alpha   # anisotropy
-  o_theta = 1/2*atan2(2*Jxy,(Jxx - Jyy)) + pi/2     # orientation
+  o_alpha <- Jxx + Jyy                               # energy
+  o_beta  <- sqrt((Jxx-Jyy)^2 + 4*(Jxy)^2)/o_alpha   # anisotropy
+  o_theta <- 1/2*atan2(2*Jxy,(Jxx - Jyy)) + pi/2     # orientation
   
   return(list(tensor  = list("xx" = Jxx,
                              "yy" = Jyy,
@@ -2401,6 +2401,12 @@ dy_gkernel <- function(n,m, sigma=1){
   g = y*exp(-(x^2+y^2)/(2*sigma^2))
 }
 
+#' Two-dimensional convolution
+#' 
+#' The convolution is performed with 2D FFT
+#' @name convolution2D
+#' @rdname convolution2D
+#' @export
 convolution2D <- function(h,k, bias=0){
   nh = nrow(h)
   mh = ncol(h)
@@ -2416,7 +2422,7 @@ convolution2D <- function(h,k, bias=0){
   # h0[(nk-1) + 1:nh, (mk-1) + 1:mh] <- h
   h0[1:nh,  1:mh] <- h
   k0[1:nk, 1:mk] <- k
-  g <- Re(fft(fft(k0)*fft(h0),inverse=TRUE))
+  g <- Re(fft(fft(k0)*fft(h0),inverse=TRUE))/(nL * mL)
   g2 <- g[nk-1 + 1:nh, mk-1 + 1:mh]
   # g2 <- g[nk + 1:nh, mk + 1:mh]
   return(g2)

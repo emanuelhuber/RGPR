@@ -2196,7 +2196,7 @@ inPoly <- function(x, y, vertx, verty){
 #' @rdname strucTensor
 #' @export
 strucTensor <- function(P, winBlur = c(3,3), winEdge=c(7,7), 
-      winTensor = c(5,10), sdTensor=2, dxy = c(1, 1) ...){
+      winTensor = c(5,10), sdTensor=2, dxy = c(1, 1), ...){
   n <- nrow(P)
   m <- ncol(P)
   

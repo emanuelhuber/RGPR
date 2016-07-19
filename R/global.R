@@ -2226,8 +2226,8 @@ strucTensor <- function(P, winBlur = c(3,3), winEdge=c(7,7),
   if(length(winEdge) == 1){
     winEdge <- c(winEdge, winEdge)
   }
-  vx <- dxy[1]*convolution2D(P_f, dx_gkernel(winEdge[1], winEdge[2], 1), 0)
-  vy <- dxy[2]*convolution2D(P_f, dy_gkernel(winEdge[1], winEdge[2], 1), 0)
+  vx <- convolution2D(P_f, dx_gkernel(winEdge[1], winEdge[2], 1), 0)/dxy[1]
+  vy <- convolution2D(P_f, dy_gkernel(winEdge[1], winEdge[2], 1), 0)/dxy[2]
 
   # local TENSOR
   Gxx <- vx^2

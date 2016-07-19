@@ -2241,15 +2241,17 @@ winBlur = c(3,3), winTensor = c(5,10), sdTensor=2, ...){
   Jxy  = convolution2D(Gxy, gkernel(winTensor[1],winTensor[2],sdTensor), 0)
 
   # ANALYTIC SOLUTION BASED ON SVD DECOMPOSITION
-  A1 <- sqrt((Jxx - Jyy)^2 + 4*Jxy^2)
-  A2 <- Jxx - Jyy
+  A1 <- 0.5 * sqrt((Jxx - Jyy)^2 + 4*(Jxy^2))
+  A2 <- 0.5 * (Jxx - Jyy)
   u1x <- A2 + A1
-  u1y <- 2*Jxy
+  u1y <- Jxy
   u2x <- A2 - A1
   u2y <- u1x
   
-  lambda1 = (Jxx + Jyy + sqrt((Jxx - Jyy)^2 + 4*(Jxy)^2))/2
-  lambda2 = (Jxx + Jyy - sqrt((Jxx - Jyy)^2 + 4*(Jxy)^2))/2
+  lambda1 <- 0.5 * (Jxx + Jyy) + A1
+#   lambda1 = (Jxx + Jyy + sqrt((Jxx - Jyy)^2 + 4*(Jxy)^2))/2
+  lambda2 <- 0.5 * (Jxx + Jyy) - A1
+#   lambda2 = (Jxx + Jyy - sqrt((Jxx - Jyy)^2 + 4*(Jxy)^2))/2
   
   # polar parametrisation
   o_alpha = Jxx + Jyy                               # energy

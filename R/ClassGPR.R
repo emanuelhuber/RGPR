@@ -1760,6 +1760,7 @@ plot.GPR <- function(x,y,...){
   dots <- list()
   addAnn <- TRUE
   addFid <- TRUE
+  main <- x@name
   if( length(list(...)) ){
     dots <- list(...)
     if( !is.null(dots$type)){
@@ -1778,7 +1779,6 @@ plot.GPR <- function(x,y,...){
       nupspl <- dots$nupspl
       dots$nupspl <- NULL
     }
-    main <- x@name
     if( !is.null(dots$main) ){
       main <- dots$main
       dots$main <- NULL

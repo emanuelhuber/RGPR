@@ -2246,7 +2246,7 @@ strucTensor <- function(P, winBlur = c(3,3), winEdge=c(7,7),
   u1x <- A2 + A1
   u1y <- Jxy
   u2x <- A2 - A1
-  u2y <- u1x
+  u2y <- u1y
   
   lambda1 <- 0.5 * (Jxx + Jyy) + A1
 #   lambda1 = (Jxx + Jyy + sqrt((Jxx - Jyy)^2 + 4*(Jxy)^2))/2

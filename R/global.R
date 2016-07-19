@@ -2184,22 +2184,93 @@ inPoly <- function(x, y, vertx, verty){
   # source('convolution2D.R')
   # cat('> Function(s) loaded: "convolution2D.R" \n')
 
-# @param [matrix]   A         (each column represent a trace, 
-                            # each row a time step / depth step)
-# @param [boolean]   plot=TRUE     (if false nothing is ploted 
-                                    # except the frame and the colorbar)  
-# @param [boolean]  trNorm=FALSE  (if true, each single trace are normalized 
-                                   # (tn(i) = t(i)/sum(t(i))))
-# @param [c(2)]    zlim=      (limit for the z-values (min,max))
-# @param [text]    ylab=       (label of the y-axis)
-# @param [text]    xlab=       (label of the x-axis)
-# @param [text]    title=       (title of the plot)
-# @param [text]    col=       (color of the plot, can be a colorbar)
-
 # @return void
 # -------------------------------------------
 
-localOrientation <- function(P,blksze=c(5,10), thresh=0.1, winEdge=c(7,7), 
+
+# return structure tensor
+#------------------------------
+#' Structure tensor of GPR data
+#' 
+#' @name strucTensor
+#' @rdname strucTensor
+#' @export
+strucTensor <- function(P, blksze=c(5,10), thresh=0.1, winEdge=c(7,7), 
+winBlur = c(3,3), winTensor = c(5,10), sdTensor=2, ...){
+  n <- nrow(P)
+  m <- ncol(P)
+  
+  #-------------------------------------------------
+  #- Identify ridge-like regions and normalise image
+  #-------------------------------------------------
+  # normalization (mean = 0, sd = 1)
+  P <- (P-mean(P))/sd(as.vector(P))
+
+  #------------------------------
+  #- Determine ridge orientations
+  #------------------------------
+  #  BLURING
+  if(!is.null(winBlur)){
+    if(length(winBlur) == 1){
+      winBlur <- c(winBlur, winBlur)
+    }
+    k = matrix(1, nrow = winBlur[1], ncol = winBlur[2], byrow = TRUE)/
+                (winBlur[1] * winBlur[2])
+    P_f  = convolution2D(P, k , 0)
+  }else{
+    P_f <- P
+  }
+
+  # GRADIENT FIELD
+  # window size for edge dectection
+  if(length(winEdge) == 1){
+      winEdge <- c(winEdge, winEdge)
+    }
+  vx = convolution2D(P_f, dx_gkernel(winEdge[1], winEdge[2], 1), 0)
+  vy = convolution2D(P_f, dy_gkernel(winEdge[1], winEdge[2], 1), 0)
+
+  # local TENSOR
+  Gxx = vx^2
+  Gyy = vy^2
+  Gxy = vx*vy 
+    
+  # LOCAL AVERAGED TENSOR
+  #sze = 5 *2
+  Jxx  = convolution2D(Gxx, gkernel(winTensor[1],winTensor[2],sdTensor), 0)
+  Jyy  = convolution2D(Gyy, gkernel(winTensor[1],winTensor[2],sdTensor), 0)
+  Jxy  = convolution2D(Gxy, gkernel(winTensor[1],winTensor[2],sdTensor), 0)
+
+  # ANALYTIC SOLUTION BASED ON SVD DECOMPOSITION
+  A1 <- sqrt((Jxx - Jyy)^2 + 4*Jxy^2)
+  A2 <- Jxx - Jyy
+  u1x <- A2 + A1
+  u1y <- 2*Jxy
+  u2x <- A2 - A1
+  u2y <- u1x
+  
+  lambda1 = (Jxx + Jyy + sqrt((Jxx - Jyy)^2 + 4*(Jxy)^2))/2
+  lambda2 = (Jxx + Jyy - sqrt((Jxx - Jyy)^2 + 4*(Jxy)^2))/2
+  
+  # polar parametrisation
+  o_alpha = Jxx + Jyy                               # energy
+  o_beta  = sqrt((Jxx-Jyy)^2 + 4*(Jxy)^2)/o_alpha   # anisotropy
+  o_theta = 1/2*atan2(2*Jxy,(Jxx - Jyy)) + pi/2     # orientation
+  
+  return(list(tensor  = list("xx" = Jxx,
+                             "yy" = Jyy,
+                             "xy" = Jxy),
+              vectors = list("u1x" = u1x,
+                             "u1y" = u1y,
+                             "u2x" = u2x,
+                             "u2y" = u2y),
+              values  = list("lambda1" = lambda1,
+                             "lambda2" = lambda2),
+              polar   = list("energy" = o_alpha,
+                             "anisotropy" = o_beta,
+                             "orientation" = o_theta)))
+}
+
+localOrientation <- function(P, blksze=c(5,10), thresh=0.1, winEdge=c(7,7), 
 winBlur = c(3,3), winTensor = c(5,10), sdTensor=2, ...){
   
   n = nrow(P)
@@ -2244,8 +2315,9 @@ winBlur = c(3,3), winTensor = c(5,10), sdTensor=2, ...){
   if(!is.null(winBlur)){
     blurWinX = winBlur[1]
     blurWinY = winBlur[2]
-    k = matrix(1,nrow=blurWinX,ncol=blurWinY,byrow=TRUE)/(blurWinX * blurWinY)
-    P_f  = convolution2D(P,k , 0)
+    k = matrix(1, nrow = blurWinX, ncol = blurWinY, byrow = TRUE)/
+                (blurWinX * blurWinY)
+    P_f  = convolution2D(P, k , 0)
   }else{
     P_f <- P
   }
@@ -2257,8 +2329,8 @@ winBlur = c(3,3), winTensor = c(5,10), sdTensor=2, ...){
   vx = convolution2D(P_f, dx_gkernel(nnx,nny,1), 0)
   vy = convolution2D(P_f, dy_gkernel(nnx,nny,1), 0)
 
-  image(t(vx),col=gray(seq(0,1,len = 250)))  
-  image(t(vy),col=gray(seq(0,1,len = 250)))  
+#   image(t(vx),col=gray(seq(0,1,len = 250)))  
+#   image(t(vy),col=gray(seq(0,1,len = 250)))  
     
   # TENSOR
   Gxx = vx^2

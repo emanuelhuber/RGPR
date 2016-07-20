@@ -1082,6 +1082,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
     dots <- list(...)
     if( !is.null(dots$zlim)){
       zlim <- dots$zlim
+      dots$zlim <- NULL
     }
     if( !is.null(dots$xlim)){
       xlim <- dots$xlim

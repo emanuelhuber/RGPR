@@ -231,7 +231,9 @@ palGPR <- function(colPal="default", n = 101, power = 1, returnNames = FALSE){
     grey2 = colorspace::sequential_hcl(n, h = c(300, 100), c = 0, 
               l = c(120, 10), power=power), 
     grey = colorspace::sequential_hcl(n, h = c(190, 1), c = 10, 
-                          l = c(1, 110), power=power)
+                          l = c(1, 110), power=power),
+    rainbow = colorRampPalette(rainbow(13),interpolate ="spline")(n),
+    rainbow_hcl = colorspace::rainbow_hcl(n,c=100,l=60)
   ))
   if(returnNames){
    return( names(tmp) )

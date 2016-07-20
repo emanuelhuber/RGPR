@@ -1120,7 +1120,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   #image(x,y,z,col=col,zlim=zlim,xaxs="i", yaxs="i", yaxt="n",...)
   plot3D::image2D(x = x, y = y, z = z, zlim = zlim, col = col, xaxs = "i", 
          yaxs = "i", yaxt = "n", rasterImage = rasterImage, clab = clab,
-        resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)  
+        resfac = resfac, main = "", bty = "n", colkey = FALSE, dots)  
   if(barscale){
     op2 <- par(no.readonly=TRUE)
     .barScale(zlim, y, col, collab=clab,collabcex=0.8)

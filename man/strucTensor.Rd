@@ -4,8 +4,8 @@
 \alias{strucTensor}
 \title{Structure tensor of GPR data}
 \usage{
-strucTensor(P, blksze = c(5, 10), thresh = 0.1, winEdge = c(7, 7),
-  winBlur = c(3, 3), winTensor = c(5, 10), sdTensor = 2, ...)
+strucTensor(P, winBlur = c(3, 3), winEdge = c(7, 7), winTensor = c(5, 10),
+  sdTensor = 2, dxy = c(1, 1), ...)
 }
 \description{
 Structure tensor of GPR data

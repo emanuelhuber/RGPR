@@ -1,5 +1,240 @@
 
 
+
+# check lockBinding  (bibliotheque/documents/R/manuel-S4)
+
+# function:
+#   - invisible() > Return a (temporarily) invisible copy of an object.
+#       used in plot function
+# - missing() > check if an arguments is missing
+ 
+# DON'T WANT TO PASS "..."-ARGUMENTS TO A FUNCTION?
+# SOLUTION: use a wrapper function, where the args after ... are the args
+# that you don't want to have in the function. E.G:
+# lPoints <- function(..., log, axes, frame.plot, panel.first, panel.last) {
+#     points(...)
+# }
+
+
+
+# read/write SEGy
+
+# FIX ME!
+# - CMP: plot + velocity model + normal move-out.
+# - GPR::delineations > create subfunction for the code snippets that are 
+#                       repeated!
+# - create a function for factors for units. For example
+#     unitFac("ns") returns 10^-9
+#     unitFac("nanosecond") returns 10^-9
+#     unitFac("MHz") returns 1000000
+#     unitFac("m") returns 1
+# - global > plotWig & plot Raster 
+#                   -> could be combined...
+#                   -> check subsurface flow mixing for nice PDFs!!
+#          > combine somehow powSpec and freqFilter1D
+#          > combine FKspectrum and FKfilter
+# - GPR::fFilter -> apply optionally a scaling to compensate for the 
+#                   removed frequency (check spectral theorem)
+# - GPRsurvey::plot3D -> use function "inPoly" to plot in 3D only a selection 
+#         of traces from GPRsurvey
+#                       -> add a zlim or a max depth!!!
+# - GPR::migration/topoShift -> integrate the function time2depth or 
+#                               depth2time!!!! Check with "timeCorOffset()"
+#                            -> in topographic Kirchhoff add a FUN function
+#                               to compute the sum of the amplitude
+#                               (to use robust measure)
+# - GPR::delineation -> use the same scheme for both raster and wiggles!
+# - GPR::fkFilter -> add as argument "slopes" (in fact for slope you only
+#                     need two points...
+# - GPR::interpTraces -> add as option a raster (DEM) from which the 
+#                        the trace elevation can be extracted
+# - plot.GPR function -> check if all the "..." parameters corresponds to 
+#                        the possible paramters. 
+#                        If not > error!
+# - GPR::gain -> t0=NULL then t0 <- mean(time0)
+# - GPR::spec(type "f-t") -> use power and log scale (?)
+# - GPR::plotAmpl -> option log y-axis
+# - GPR::exportPDF -> add processing steps!
+# - check how time0 is used
+# - GPR::export(type=PDF) use function plot (wiggles)!
+# - global -> optPhaseRotation -> check if 'e1071::kurtosis' is needed.  
+# - GPR::Math > add in @proc the name of the mathematical function
+# - GPR::exportCoord > add option to export txt-file
+
+#--- STRUCTURE ---#
+# - add @vDatum > for vertical geodesic datum
+# (- delete @depthunit, @posunit & replace by @units@depth and @units@pos)
+# - delete @dx > not needed! x@dx <- mean(diff(x@pos))
+# - delete @dz > not needed! x@dz <- mean(diff(x@depth))
+
+# NEW CLASS:    "GPRGrid" > based on survey but for x- and y-lines
+#               2D plot: the lines start from the same position
+#               can cut slices etc.
+
+
+################## GPR PROCESSING ######################3
+
+# check book "Near-surface Geophysics, vol 13"
+
+# Idea for trace to trace processing:
+# -> list of all function with their argument to use
+# -> use a FUN_WRAP function : apply(GPR$data,2,FUN_WRAP)
+#       -> FUN_WRAP process each single trace according to the 
+#         list of function and theirs args.
+
+#--- conv() ---#
+#  add a function "conv()" for 1D convolution
+
+#--- conv2D() ---#
+#  add a function "conv2D()" for 2D convolution
+#  propose a choice of pre-defined kernels
+
+#--- declipping ---#
+# - least-square polynomial interpolation
+# - AR/ARMA model
+# - PCA/SVD decomposition
+# - DCT (cf. R package)
+# - deconvolution/convolution
+# - interpolation par cubic splines 
+#         (see bibliotheque/document/courbes de bezier+++ )
+
+#--- gain() ---#
+# - rms AGC
+# - instantaneous AGC
+# - automatic gain > check MATGPR
+# - tpow gain (frequency-dependent gain, Fowler and Clearbout
+
+#--- filter2D ---#
+# - SVD filter
+# - adaptative smoothing
+# - background removal
+# - Radon transform
+# - sharpening (based on conv2D())
+# - blurring (based on conv2D())
+# - smoothing (based on conv2D())
+
+#--- editing functions ---#
+# - merge (or cbind)
+# - rbind()
+# - align GPR profile with FFT
+
+#--- resolution ---#
+# - bicubique interpolation
+# - L1-DFT-based interpolation (L1 norm, sparsity)
+# - anti-alisasing filter
+
+#--- migration ---#
+# - SAR (cf book with matlab)
+# - f-k migration
+# - phase-shift migration
+
+#--- PEF-filter ---#
+# - f-xy filter
+# - t-x
+# - f-x
+# - ...
+
+#--- deconvolution ---#
+# ALL IN ONE SINGLE FUNCTION!!!!
+# - despiking
+# - wiener
+# - BP
+# - mixed-phase
+
+#--- denoising ---#
+# - denoising tensor field based on Riemannian geometry (Mathematical Methods 
+#               for Signal and Image Analysis and Representation)
+# - hampel filter
+# - bp_salsa_d
+# - n-pt median filter (scalar median filter SMF)
+# - correction for trace-to-trace jitter
+
+#--- local orientation ---#
+# - local orientation
+# - angular unconformity
+
+#--- plot functions ---#
+# - plot3Draster > to plot raster data in 3D with the GPR profiles
+# - plot3D > check alternative to RGL for high-quality figures
+
+#--- attributes ---#
+# - instantaneous (phase, amplitude, cf. Hilbert)
+# - coherency
+# - energy
+
+
+#--- CMP ---#
+# - 
+
+#--- miscs ---#
+# - function to read NMEA-GPS string
+# - GPRsurvey::bbox
+# - GPRsurvey::convexhull
+# - GPRsurvey -> intersections (also as spatialPoints)
+# - pre-defined color bar with funny names...
+# - GPRsurvey -> add spatial data (e.g. borehole) > closest distance...
+# - time function ->  gpr <- readGPR(file.choose());    as.POSIXct(gpr@time, 
+# origin = "1970-01-01")
+# - proc(gpr) -> return x@proc
+# - vel(gpr) -> return x@vel
+
+
+
+# TAPER WINDOWS
+# tapertype = MinPhase.tapertype;
+# tabpZL = nlags;
+
+# switch lower(tapertype)
+    # case 'cos'
+        # taper = (sin(linspace(0,pi/2,tabpZL)).^2)';
+        # ACFoutput(1:tabpZL) = ACFoutput(1:tabpZL).*taper;
+        # ACFoutput(end-tabpZL+1:end) = ACFoutput(end-tabpZL+1:end).*
+#           flipud(taper);
+    # case 'triang'
+        # taper = triang(2*tabpZL+1);
+        # ACFoutput = ACFoutput.*taper;
+    # case 'hamming'
+        # taper = hamming(2*tabpZL+1);
+        # ACFoutput = ACFoutput.*taper;
+    # case 'bartlett'
+        # taper = bartlett(2*tabpZL+1);
+        # ACFoutput = ACFoutput.*taper;
+    # case 'none'
+        # % taper = ones(2*tabpZL+1,1);
+        # % ACFoutput = ACFoutput-ACFoutput(end);
+    # case 'limtaper'
+        # % taper = ones(size(ACFoutput));
+        # % taper = cs_taper(taper,'hann',round(length(ACFoutput)*0.25));
+        # % ACFoutput = cs_taper(ACFoutput,'cos',round(length(ACFoutput)*0.25));
+        # ACFoutput = cs_taper(ACFoutput,'cos',round(length(ACFoutput)*0.05));
+    # case 'hann'
+        # ACFoutput = cs_taper(ACFoutput,'hann');
+    # case 'flattop'
+        # taper = flattopwin(2*tabpZL+1);
+        # ACFoutput = ACFoutput.*taper;
+# end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #' RGPR: A package for processing and visualising ground-penetrating data 
 #' (GPR).
 #'
@@ -1438,27 +1673,30 @@ wapply(x,width=ns,by=1,FUN=sd),rep(0,floor(ns/2)))
 .rms <- function(num) sqrt(sum(num^2)/length(num))
 
 scaleCol <- function(A,type = c("stat","min-max","95","eq","sum", "rms")){
-  A =  as.matrix(A)
-  type = match.arg(type)
-  if(type == "stat"){
-    Anorm <- scale(A, center=.colMeans(A, nrow(A), ncol(A)), 
-              scale = apply(A, 2, sd, na.rm = TRUE))
-  }else if(type == "sum"){
-    Anorm <- scale(A, center=FALSE, scale=colSums(abs(A)))
-  }else if(type == "eq"){
-    # equalize line such each trace has same value for 
-    # sqrt(\int  (A(t))^2 dt)
-    amp <- apply((A)^2,2,sum)
-    Anorm <- A * sqrt(amp)/sum(sqrt(amp))
-  }else if(type == "95"){
-    A_q95 = (apply((A),2,quantile,0.99,na.rm=TRUE))
-    A_q05 = (apply((A),2,quantile,0.01,na.rm=TRUE))
-    Anorm = (A)/(A_q95-A_q05)
-  }else if(type == "rms"){
-     Anorm <- A/apply(A ,2, .rms)
-  }else{  # min-max
-    Anorm <- scale(A, center=FALSE, scale=(apply((A),2,max,na.rm=TRUE)) - 
-                    (apply(( A),2,min,na.rm=TRUE)))
+  A <-  as.matrix(A)
+  test <- suppressWarnings(as.numeric(type))
+  if(!is.na(test) && test >0 && test < 100){
+    A_q95 = apply(A, 2, quantile, test/100, na.rm = TRUE)
+    A_q05 = apply(A, 2, quantile, 1-test/100, na.rm = TRUE)
+    Anorm = A/(A_q95-A_q05)
+  }else{
+    type <- match.arg(type)
+    if(type == "stat"){
+      Anorm <- scale(A, center=.colMeans(A, nrow(A), ncol(A)), 
+                scale = apply(A, 2, sd, na.rm = TRUE))
+    }else if(type == "sum"){
+      Anorm <- scale(A, center=FALSE, scale=colSums(abs(A)))
+    }else if(type == "eq"){
+      # equalize line such each trace has same value for 
+      # sqrt(\int  (A(t))^2 dt)
+      amp <- apply((A)^2,2,sum)
+      Anorm <- A * sqrt(amp)/sum(sqrt(amp))
+    }else if(type == "rms"){
+      Anorm <- A/apply(A ,2, .rms)
+    }else if(type == "min-max"){  # min-max
+      Anorm <- scale(A, center=FALSE, scale=(apply((A),2,max,na.rm=TRUE)) - 
+                      (apply(( A),2,min,na.rm=TRUE)))
+    }
   }
   return(Anorm)
 }
@@ -2190,6 +2428,103 @@ inPoly <- function(x, y, vertx, verty){
 # @return void
 # -------------------------------------------
 
+# return inv(A) %*% B.
+# assume that
+#      | a1  c1 |
+#  A = |        |
+#      | c1  b1 |
+#
+#      | a2  c2 |
+#  B = |        |
+#      | c2  b2 |
+invAxB <- function(a1,b1,c1,a2,b2,c2){
+  D <- a1*b1 - c1*c1
+  return(list( a11 = (a2*b1 - c1*c2)/D,
+               a22 = (a1*b2 - c1*c2)/D,
+               a12 = (b1*c2 - b2*c1)/D,
+               a21 = (a1*c2 - a2*c1)/D))
+}
+
+# eigendecomposition tensor field.
+# assume that
+#      | a   d |
+#  J = |       |
+#      | d   b |
+eigenDecomp2x2SymMatrix <- function(a,b,d){
+  D <- sqrt((a-b)^2 + 4*d^2)
+#   l1 <- 0.5*(a+b + D)
+#   l2 <- 0.5*(a+b - D)
+#   u1x <- 0.5 *(a-b + D)
+#   u1y <- d
+#   u2x <- 0.5 *(a-b - D)
+#   u2y <- d
+  return(list(l1 = 0.5*(a+b + D),
+              l2 = 0.5*(a+b - D),
+              u1x = 0.5 *(a-b + D),
+              u1y = d,
+              u2x = 0.5 *(a-b - D),
+              u2y = d))
+}
+
+# return eigenvalues of A.
+# assume that
+#      | a11  a12 |
+#  A = |          |
+#      | a21  a22 |
+eigenValue2x2Mat <- function(a11,a12,a21,a22){
+  D <- a11*a22 - a21*a12
+  tr <- a11 + a22
+  return(list(l1 = 0.5 * (tr + sqrt(tr^2 - 4*D)),
+              l2 = 0.5 * (tr - sqrt(tr^2 - 4*D))))
+  
+}
+
+# return A^n
+# assume that
+#      | a   d |
+#  A = |       |
+#      | d   b |
+matPow <- function(a, b, d, n){
+  eg <- eigenDecomp2x2SymMatrix(a, b, d)
+  l1 <- eg$l1^n
+  l2 <- eg$l2^n
+  return(list(a11 = eg$u1x^2 * l1 + eg$u2x^2 * l2,
+              a22 = eg$u1y^2 * l1 + eg$u2y^2 * l2,
+              a12 = eg$u1x*eg$u1y * l1 + eg$u2x*eg$u2y * l2,
+              a21 = eg$u1y*eg$u1x * l1 + eg$u2y*eg$u2x * l2))
+}
+
+matProd2x2 <- function(a11, a12, a21, a22, b11, b12, b21, b22){
+  return(list(a11 = a11*b11 + a12*b21,
+              a12 = a11*b12 + a12*b22,
+              a21 = a21*b11 + a22*b21,
+              a22 = a21*b12 + a22*b22))
+}
+
+# geometric-based distance d g that measures the distance between two tensors
+# J1 and J2 in the space of positive definite tensors 
+# (based on Riemannian geometry)
+# assume that
+#       | a1   c1 |
+#  J1 = |         |
+#       | c1   b1 |
+# 
+#       | a2   c2 |
+#  J2 = |         |
+#       | c2   b2 |
+distTensorGeod <- function(a1,b1,c1,a2,b2,c2){
+#   AmB <- invAxB(a1,b1,c1,a2,b2,c2)
+  A <- matPow(a1, b1, c1, -0.5)
+  AB <- matProd2x2(A$a11, A$a12, 
+                             A$a21, A$a22,
+                             a2,c2,c2,b2)
+  ABA <- matProd2x2(AB$a11, AB$a12, 
+                    AB$a21, AB$a22,
+                    A$a11, A$a12, 
+                    A$a21, A$a22)
+  val <- eigenValue2x2Mat(ABA$a11, ABA$a12, ABA$a21, ABA$a22)
+  return(sqrt(log(val$l1)^2 + log(val$l2)^2))
+}
 
 # return structure tensor
 #------------------------------
@@ -2199,15 +2534,48 @@ inPoly <- function(x, y, vertx, verty){
 #' @rdname strucTensor
 #' @export
 strucTensor <- function(P, winBlur = c(3,3), winEdge=c(7,7), 
-      winTensor = c(5,10), sdTensor=2, dxy = c(1, 1), ...){
+      winTensor = c(5,10), sdTensor=2, dxy = c(1, 1), blksze = c(2, 2),
+      thresh=0.1, ...){
   n <- nrow(P)
   m <- ncol(P)
-  
-  #-------------------------------------------------
+  #blksze = 10
+  #thresh = 0.1;
+ 
+ #-------------------------------------------------
   #- Identify ridge-like regions and normalise image
   #-------------------------------------------------
   # normalization (mean = 0, sd = 1)
-  P <- (P-mean(P, na.rm=TRUE))/sd(as.vector(P), na.rm=TRUE)
+
+  # apply standard deviation block-wise
+  if(!is.null(blksze)){
+    blksze2 <- round(blksze/2)
+    Pn <- (P - mean(P, na.rm = TRUE))/sd(as.vector(P), na.rm = TRUE)
+    nseq <- c(seq(1, n, blksze[1]),n)
+#     nseq <- seq(1, n/blksze[1])
+    mseq <- c(seq(1, m, blksze[2]),m)
+#     mseq <- seq(1, m/blksze[2])
+    P_sd <- matrix(NA, nrow = n, ncol = m)
+    for(i in seq_len(n)){
+      for(j in seq_len(m)){
+        nv <- (i - blksze2[1]):(i + blksze2[1])
+        mv <- (j - blksze2[2]):(j + blksze2[2])
+#         nv <- nseq[i]:(nseq[i+1]-1)
+        nv <- nv[nv <= n & nv > 0]
+#         mv <- mseq[j]:(mseq[j+1]-1)
+        mv <- mv[mv <= m & mv > 0]
+#         nv <- c(((i-1)*blksze[1] +1):(i*blksze[1]))
+#         mv <- c(((j-1)*blksze[2] + 1):(j*blksze[2]))
+        std <- sd(array(Pn[nv,mv]),na.rm=TRUE)
+        P_sd[nv,mv] <- std
+      }
+    }
+    mask <- P_sd < thresh
+    P <- (P - mean(P[!mask], na.rm = TRUE))/
+          sd(as.vector(P[!mask]), na.rm = TRUE)
+  }else{
+    mask <- matrix(FALSE, nrow = n, ncol = m)
+    P <- (P - mean(P, na.rm = TRUE))/sd(as.vector(P), na.rm = TRUE)
+  }
 
   #------------------------------
   #- Determine ridge orientations
@@ -2244,32 +2612,49 @@ strucTensor <- function(P, winBlur = c(3,3), winEdge=c(7,7),
   Jxy  <- convolution2D(Gxy, gkernel(winTensor[1],winTensor[2],sdTensor), 0)
 
   # ANALYTIC SOLUTION BASED ON SVD DECOMPOSITION
-  A1 <- 0.5 * sqrt((Jxx - Jyy)^2 + 4*(Jxy^2))
-  A2 <- 0.5 * (Jxx - Jyy)
-  u1x <- A2 + A1
-  u1y <- Jxy
-  u2x <- A2 - A1
-  u2y <- Jxy
+  Jeig <- eigenDecomp2x2SymMatrix(Jxx, Jyy, Jxy)
+  Jeig$u1x[mask] <- 0
+  Jeig$u1y[mask] <- 0
+  Jeig$u2x[mask] <- 0
+  Jeig$u2y[mask] <- 0
+  Jeig$l1[mask] <- 0
+  Jeig$l2[mask] <- 0
   
-  lambda1 <- 0.5 * (Jxx + Jyy) + A1
-#   lambda1 = (Jxx + Jyy + sqrt((Jxx - Jyy)^2 + 4*(Jxy)^2))/2
-  lambda2 <- 0.5 * (Jxx + Jyy) - A1
-#   lambda2 = (Jxx + Jyy - sqrt((Jxx - Jyy)^2 + 4*(Jxy)^2))/2
+#   A1 <- 0.5 * sqrt((Jxx - Jyy)^2 + 4*(Jxy^2))
+#   A2 <- 0.5 * (Jxx - Jyy)
+#   u1x <- A2 + A1
+#   u1y <- Jxy
+#   u2x <- A2 - A1
+#   u2y <- Jxy
+#   u1x[mask] <- 0
+#   u1y[mask] <- 0
+#   u2x[mask] <- 0
+#   u2y[mask] <- 0
+  
+# #   lambda1 = (Jxx + Jyy + sqrt((Jxx - Jyy)^2 + 4*(Jxy)^2))/2
+# #   lambda2 = (Jxx + Jyy - sqrt((Jxx - Jyy)^2 + 4*(Jxy)^2))/2
+#   lambda1 <- 0.5 * (Jxx + Jyy) + A1
+#   lambda2 <- 0.5 * (Jxx + Jyy) - A1
+#   lambda1[mask] <- 0
+#   lambda2[mask] <- 0
   
   # polar parametrisation
   o_alpha <- Jxx + Jyy                               # energy
+  o_alpha[mask] <- 0
   o_beta  <- sqrt((Jxx-Jyy)^2 + 4*(Jxy)^2)/o_alpha   # anisotropy
+  o_beta[mask] <- 0
   o_theta <- 1/2*atan2(2*Jxy,(Jxx - Jyy)) + pi/2     # orientation
+  o_theta[mask] <- 0
   
   return(list(tensor  = list("xx" = Jxx,
                              "yy" = Jyy,
                              "xy" = Jxy),
-              vectors = list("u1x" = u1x,
-                             "u1y" = u1y,
-                             "u2x" = u2x,
-                             "u2y" = u2y),
-              values  = list("lambda1" = lambda1,
-                             "lambda2" = lambda2),
+              vectors = list("u1x" = Jeig$u1x,
+                             "u1y" = Jeig$u1y,
+                             "u2x" = Jeig$u2x,
+                             "u2y" = Jeig$u2y),
+              values  = list("l1" = Jeig$l1,
+                             "l2" = Jeig$l2),
               polar   = list("energy" = o_alpha,
                              "anisotropy" = o_beta,
                              "orientation" = o_theta)))

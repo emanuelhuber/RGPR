@@ -1350,6 +1350,7 @@ setMethod("filter1D", "GPR", function(x, type = c("median", "hampel",
 #     IMG <- (IMG-min(IMG))/(max(IMG)-min(IMG))
 #     adimg <- make.image(IMG)
 #     # img.smooth <- adimpro::awsimage(adimg, hmax = 2)
+#     # img.smooth <- adimpro::awsimage(adimg, hmax = 2)
 #     # img.smooth <- adimpro::awsaniso(adimg, hmax = 2,...)
 #     img.smooth <- adimpro::awspimage(adimg, hmax = 2,...)
 #     AA <- extract.image(img.smooth)
@@ -1367,7 +1368,7 @@ setMethod("filter1D", "GPR", function(x, type = c("median", "hampel",
 #' @rdname filter2D
 #' @export
 setMethod("filter2D", "GPR", function(x, type = c("median3x3"), ...){
-    type <- match.arg(type)
+    type <- match.arg(c("median3x3"))
     if(type == "median3x3"){
       x@data <-  .medianFilter3x3(x@data)
     }
@@ -2748,6 +2749,7 @@ setMethod("timeCorOffset", "GPR", function(x){
   tcor <- sqrt( tcor2[tcor2 > 0] )
   x@depth <- tcor
   x@time0 <- rep(0, ncol(x))
+  x@proc <- c(x@proc, "constant-offset correction")
   return(x)
 })
 

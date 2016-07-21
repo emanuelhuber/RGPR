@@ -224,8 +224,8 @@ origin = "1970-01-01")
     # case 'cos'
         # taper = (sin(linspace(0,pi/2,tabpZL)).^2)';
         # ACFoutput(1:tabpZL) = ACFoutput(1:tabpZL).*taper;
-        # ACFoutput(end-tabpZL+1:end) = ACFoutput(end-tabpZL+1:end).*flipud(
-taper);
+        # ACFoutput(end-tabpZL+1:end) = ACFoutput(end-tabpZL+1:end).*
+#           flipud(taper);
     # case 'triang'
         # taper = triang(2*tabpZL+1);
         # ACFoutput = ACFoutput.*taper;
@@ -258,10 +258,10 @@ taper);
 
 # @date 08.11.2012 19:45
 # @auteur Emanuel Huber
-# @source = http://www.r-bloggers.com/loading-andor-installing-packages-programm
-atically/
-# @param [c(text)] 	package_names 				(each column represent a trace, each row 
-a time step / depth step)
+# @source = http://www.r-bloggers.com/loading-andor-installing-
+# packages-programmatically/
+# @param [c(text)] 	package_names(each column represent a trace, 
+# each row a time step / depth step)
 # @return void
 # -------------------------------------------
 load_install_package <- function(package_names){

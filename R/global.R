@@ -2513,17 +2513,46 @@ matProd2x2 <- function(a11, a12, a21, a22, b11, b12, b21, b22){
 #  J2 = |         |
 #       | c2   b2 |
 distTensorGeod <- function(a1,b1,c1,a2,b2,c2){
-#   AmB <- invAxB(a1,b1,c1,a2,b2,c2)
-  A <- matPow(a1, b1, c1, -0.5)
-  AB <- matProd2x2(A$a11, A$a12, 
-                             A$a21, A$a22,
-                             a2,c2,c2,b2)
-  ABA <- matProd2x2(AB$a11, AB$a12, 
-                    AB$a21, AB$a22,
-                    A$a11, A$a12, 
-                    A$a21, A$a22)
+  ABA <- invAxB(a1,b1,c1,a2,b2,c2)
+#   A <- matPow(a1, b1, c1, -0.5)
+#   AB <- matProd2x2(A$a11, A$a12, 
+#                              A$a21, A$a22,
+#                              a2,c2,c2,b2)
+#   ABA <- matProd2x2(AB$a11, AB$a12, 
+#                     AB$a21, AB$a22,
+#                     A$a11, A$a12, 
+#                     A$a21, A$a22)
   val <- eigenValue2x2Mat(ABA$a11, ABA$a12, ABA$a21, ABA$a22)
+  val$l1[val$l1 < 10^-100] <- 10^-100
+  val$l2[val$l2 < 10^-100] <- 10^-100
   return(sqrt(log(val$l1)^2 + log(val$l2)^2))
+}
+
+# log-Euclidean-based distance between two tensors
+# J1 and J2 in the space of positive definite tensors 
+# (based on Riemannian geometry)
+# assume that
+#       | a1   c1 |
+#  J1 = |         |
+#       | c1   b1 |
+# 
+#       | a2   c2 |
+#  J2 = |         |
+#       | c2   b2 |
+distTensorLogE <- function(a1,b1,c1,a2,b2,c2){
+  a1[a1 < 10^-100] <- 10^-100
+  a2[a2 < 10^-100] <- 10^-100
+  b1[b1 < 10^-100] <- 10^-100
+  b2[b2 < 10^-100] <- 10^-100
+  c1[c1 < 10^-100] <- 10^-100
+  c2[c2 < 10^-100] <- 10^-100
+  a11 <- log(a1) - log(a2)
+  a12 <- log(c1) - log(c2)
+#   a21 <- log(c1) - log(c2)
+  a22 <- log(b1) - log(b2)
+  tr <- a11^2 + 2*a12^2 + a22^2
+  return(sqrt( tr))
+
 }
 
 # return structure tensor
@@ -2559,12 +2588,8 @@ strucTensor <- function(P, winBlur = c(3,3), winEdge=c(7,7),
       for(j in seq_len(m)){
         nv <- (i - blksze2[1]):(i + blksze2[1])
         mv <- (j - blksze2[2]):(j + blksze2[2])
-#         nv <- nseq[i]:(nseq[i+1]-1)
         nv <- nv[nv <= n & nv > 0]
-#         mv <- mseq[j]:(mseq[j+1]-1)
         mv <- mv[mv <= m & mv > 0]
-#         nv <- c(((i-1)*blksze[1] +1):(i*blksze[1]))
-#         mv <- c(((j-1)*blksze[2] + 1):(j*blksze[2]))
         std <- sd(array(Pn[nv,mv]),na.rm=TRUE)
         P_sd[nv,mv] <- std
       }
@@ -2620,24 +2645,6 @@ strucTensor <- function(P, winBlur = c(3,3), winEdge=c(7,7),
   Jeig$l1[mask] <- 0
   Jeig$l2[mask] <- 0
   
-#   A1 <- 0.5 * sqrt((Jxx - Jyy)^2 + 4*(Jxy^2))
-#   A2 <- 0.5 * (Jxx - Jyy)
-#   u1x <- A2 + A1
-#   u1y <- Jxy
-#   u2x <- A2 - A1
-#   u2y <- Jxy
-#   u1x[mask] <- 0
-#   u1y[mask] <- 0
-#   u2x[mask] <- 0
-#   u2y[mask] <- 0
-  
-# #   lambda1 = (Jxx + Jyy + sqrt((Jxx - Jyy)^2 + 4*(Jxy)^2))/2
-# #   lambda2 = (Jxx + Jyy - sqrt((Jxx - Jyy)^2 + 4*(Jxy)^2))/2
-#   lambda1 <- 0.5 * (Jxx + Jyy) + A1
-#   lambda2 <- 0.5 * (Jxx + Jyy) - A1
-#   lambda1[mask] <- 0
-#   lambda2[mask] <- 0
-  
   # polar parametrisation
   o_alpha <- Jxx + Jyy                               # energy
   o_alpha[mask] <- 0
@@ -2660,91 +2667,79 @@ strucTensor <- function(P, winBlur = c(3,3), winEdge=c(7,7),
                              "orientation" = o_theta)))
 }
 
-localOrientation <- function(P, blksze=c(5,10), thresh=0.1, winEdge=c(7,7), 
-winBlur = c(3,3), winTensor = c(5,10), sdTensor=2, ...){
-  
-  n = nrow(P)
-  m = ncol(P)
-  
-  #-------------------------------------------------
-  #- Identify ridge-like regions and normalise image
-  #-------------------------------------------------
-  # normalization (mean = 0, sd = 1)
-  Pn = (P-mean(P))/sd(as.vector(P))
-  
-  #blksze = 10
-  #thresh = 0.1;
+#' Plot structure tensor on GPR data
+#' 
+#' @name plotTensor
+#' @rdname plotTensor
+#' @export
+plotTensor <- function(x, O, type=c("vectors", "ellipses"), normalise=FALSE,
+                      spacing=c(6,4), len=1.9, n=10, ratio=1,...){
+  type <- match.arg(type, c("vectors", "ellipses"))
+  n <- nrow(x)
+  m <- ncol(x)
 
-  # # apply standard deviation block-wise
-  # nseq = seq(1,n/blksze[1])
-  # mseq = seq(1,m/blksze[2])
-  # P_sd = matrix(NA, nrow=n, ncol=m)
-  # for(i in nseq){
-    # for(j in mseq){
-      # nv = c(((i-1)*blksze[1] +1):(i*blksze[1]))
-      # mv = c(((j-1)*blksze[2] + 1):(j*blksze[2]))
-      # std = sd(array(Pn[nv,mv]),na.rm=TRUE)
-      # P_sd[nv,mv] = std
-    # }
-  # }
-  # mask = P_sd > thresh
+  len1 <- len*max(spacing*c(x@dx,x@dz));  # length of orientation lines
   
-  # # normalize the image so that ridge = 0 and sdt = 1 
-  # P = (P-mean(P[mask],na.rm=T))/sd(array(P[mask]),na.rm=T)
+  # Subsample the orientation data according to the specified spacing
+  v_x = seq(spacing[1],(n-spacing[1]),by=spacing[1])
+  v_y = seq(spacing[2],(m-spacing[2]), by=spacing[2])
   
-  P <- Pn
+  angle = O$polar$orientation[v_x, v_y];
+  l1 <- O$values[[1]][v_x, v_y]
+  l2 <- O$values[[2]][v_x, v_y]
+
+  # Determine placement of orientation vectors
+  X = matrix(x@pos[v_y],nrow=length(v_x),ncol=length(v_y),byrow=TRUE)
+  Y = matrix(x@depth[v_x],nrow=length(v_x),ncol=length(v_y),byrow=FALSE)
   
-  #------------------------------
-  #- Determine ridge orientations
-  #------------------------------
-  # reduction of the matrix
-  #P =  P[1:floor(n/nnx)*nnx,1:floor(m/nny)*nny]
+  if(type == "vectors"){
+    #Orientation vectors
+    dx0 <- cos(angle)
+    dy0 <- sin(angle)
+    normdxdy <- 1
+    if(isTRUE(normalise)){
+      normdxdy <- sqrt(dx0^2 + dy0^2)
+    }
+    dx <- len1*dx0/normdxdy/2
+    dy <- len1*dy0/normdxdy/2*ratio
+    segments(X - dx, -(Y - dy), X + dx , -(Y + dy),...)
+  }else if(type == "ellipses"){
   
-  # IMAGE SMOOTHING
-  # Window size for bluring
-  if(!is.null(winBlur)){
-    blurWinX = winBlur[1]
-    blurWinY = winBlur[2]
-    k = matrix(1, nrow = blurWinX, ncol = blurWinY, byrow = TRUE)/
-                (blurWinX * blurWinY)
-    P_f  = convolution2D(P, k , 0)
-  }else{
-    P_f <- P
+    normdxdy <- matrix(max(l1,l2),nrow=length(v_x),ncol=length(v_y))
+    if(isTRUE(normalise)){
+      normdxdy <- l1
+    }
+    for(i in seq_along(v_x)){
+      for(j in seq_along(v_y)){
+        E <- ellipse(saxes = c(l1[i,j], l2[i,j]*ratio)*len1/normdxdy[i,j], 
+                    loc   = c(X[i,j], -Y[i,j]), 
+                    theta = -angle[i,j], n=n)
+        polygon(E,...)
+      }
+    }
   }
-
-  # GRADIENT FIELD
-  # window size for edge dectection
-  nnx = winEdge[1]
-  nny = winEdge[2]
-  vx = convolution2D(P_f, dx_gkernel(nnx,nny,1), 0)
-  vy = convolution2D(P_f, dy_gkernel(nnx,nny,1), 0)
-
-#   image(t(vx),col=gray(seq(0,1,len = 250)))  
-#   image(t(vy),col=gray(seq(0,1,len = 250)))  
-    
-  # TENSOR
-  Gxx = vx^2
-  Gyy = vy^2
-  Gxy = vx*vy 
-    
-  # LOCAL AVERAGED TENSOR
-  #sze = 5 *2
-  Jxx  = convolution2D(Gxx, gkernel(winTensor[1],winTensor[2],sdTensor), 0)
-  Jyy  = convolution2D(Gyy, gkernel(winTensor[1],winTensor[2],sdTensor), 0)
-  Jxy  = convolution2D(Gxy, gkernel(winTensor[1],winTensor[2],sdTensor), 0)
-
-  # ANALYTIC SOLUTION BASED ON SVD DECOMPOSITION
-  # (eigenvalue...)
-  o_alpha = Jxx + Jyy                  # energy
-  o_beta  = sqrt((Jxx-Jyy)^2 + 4*(Jxy)^2)/o_alpha    # anisotropy
-  o_theta = 1/2*atan2(2*Jxy,(Jxx - Jyy)) + pi/2    # orientation
-  o_lambda1 = (Jxx + Jyy + sqrt((Jxx - Jyy)^2 + 4*(Jxy)^2))/2
-  o_lambda2 = (Jxx + Jyy - sqrt((Jxx - Jyy)^2 + 4*(Jxy)^2))/2
-  
-  return(list(energy = o_alpha, anisotropy = o_beta, orientation = o_theta, 
-lambda1 = o_lambda1, lambda2 = o_lambda2 ))
-
+#   image2DN(x@data)
+#    X = matrix(v_y,nrow=length(v_x),ncol=length(v_y),byrow=TRUE)
+#   Y = matrix(v_x,nrow=length(v_x),ncol=length(v_y),byrow=FALSE)
+#   for(i in seq_along(v_x)){
+#     for(j in seq_along(v_y)){
+#       E <- ellipse(saxes = c(l1[i,j], l2[i,j])/max(m,n)/5, 
+#                    loc   = c(X[i,j]/m, 1-Y[i,j]/n), 
+#                    theta = -angle[i,j], n=10)
+#       lines(E, lwd=0.5)
+#     }
+#   }
+#   for(i in seq_along(v_x)){
+#     for(j in seq_along(v_y)){
+#       E <- ellipse(saxes = c(l1[i,j], l2[i,j])/max(l1,l2)*len1, 
+#                    loc   = c(X[i,j], Y[i,j]), 
+#                    theta = -angle[i,j], n=10)
+#       lines(E, lwd=0.5)
+#     }
+#   }
 }
+
+
 #-----------------
 #-----------------
 

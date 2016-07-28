@@ -1319,18 +1319,18 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
              col = palGPR(n = 101), yaxt = "s", bty = "o",
              relTime0 = TRUE, ...){
   op <- par(no.readonly=TRUE)
-  z =  as.matrix(z)
+  z <-  as.matrix(z)
   z[is.na(z)]=0
   time_0 <- mean(time_0)
-  clim = c(-1, 1) * max(abs(z))
+#   clim = c(-1, 1) * max(abs(z))
   xlim <- NULL
   mai <- op$mai
   if( length(list(...)) > 0 ){
     dots <- list(...)
-    if( !is.null(dots$clim)){
-      clim <- dots$clim
-      dots$clim <- NULL
-    }
+#     if( !is.null(dots$clim)){
+#       clim <- dots$clim
+#       dots$clim <- NULL
+#     }
     if( !is.null(dots$xlim)){
       xlim <- dots$xlim
     }
@@ -1366,7 +1366,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   #image(x,y,z,col=col,zlim=clim,xaxs="i", yaxs="i", yaxt="n",...)
   do.call(plot3D::image2D, c(list (x = x, y = y, z = z, zlim = clim, col = col, 
         xaxs = "i", yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
-        clab = clab, resfac = resfac, main = "", bty = "n", colkey = FALSE),
+        resfac = resfac, main = "", bty = "n", colkey = FALSE),
         dots)) 
  
   if(barscale){

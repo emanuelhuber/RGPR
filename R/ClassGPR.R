@@ -1919,18 +1919,18 @@ plot.GPR <- function(x,y,...){
     }
     # warning("First upsample then addTopo. 
 #     Problem: interpolate also coord!!!")
-    if(!is.null(clip) && is.numeric(clip)){
-      if(length(clip)>1){
-        x@data <- .clip(x@data,clip[2],clip[1])
-      }else if(length(clip)==1){
-        x@data <- .clip(x@data,clip[1])
-      }
-    }
+#     if(!is.null(clip) && is.numeric(clip)){
+#       if(length(clip)>1){
+#         x@data <- .clip(x@data,clip[2],clip[1])
+#       }else if(length(clip)==1){
+#         x@data <- .clip(x@data,clip[1])
+#       }
+#     }
     if(addFid == FALSE){
       x@fid <- character(length(x@fid))
     }
-    type=match.arg(type, c("raster","wiggles"))
-    if(type=="raster"){
+    type <- match.arg(type, c("raster","wiggles"))
+    if(type == "raster"){
       if(addTopo){
         x <- migration(x)
       }
@@ -1944,8 +1944,14 @@ plot.GPR <- function(x,y,...){
         x@coord[,1] <- x@pos
       }
       xvalues <- posLine(x@coord)
+      if(is.null(clim)){
+        clim <- c(-1, 1) * max(abs(x@data), na.rm = TRUE)
+      }
+      z <-  as.matrix(z)
+      z[is.na(z)]=0
+      time_0 <- mean(time_0)
       do.call(plotRaster, c(list(z = x@data, x = xvalues, y = -rev(x@depth), 
-                     main = main, 
+                     main = main, zlim = clim,
                      xlab = x@posunit, ylab = ylab, note = x@filepath,
                      time_0 = x@time0, antsep = x@antsep, v = v, 
                      addFid = addFid, fid = x@fid, 

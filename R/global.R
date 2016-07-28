@@ -1365,9 +1365,11 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
     rasterImage <- FALSE
   }
   #image(x,y,z,col=col,zlim=clim,xaxs="i", yaxs="i", yaxt="n",...)
-  plot3D::image2D(x = x, y = y, z = z, zlim = clim, col = col, xaxs = "i", 
-         yaxs = "i", yaxt = "n", rasterImage = rasterImage, clab = clab,
-        resfac = resfac, main = "", bty = "n", colkey = FALSE, dots)  
+  do.call(plot3D::image2D, c(list (x = x, y = y, z = z, zlim = clim, col = col, 
+        xaxs = "i", yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
+        clab = clab, resfac = resfac, main = "", bty = "n", colkey = FALSE=),
+        dots)) 
+ 
   if(barscale){
     op2 <- par(no.readonly=TRUE)
     .barScale(clim, y, col, collab=clab,collabcex=0.8)

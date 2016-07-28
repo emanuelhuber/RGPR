@@ -1811,7 +1811,8 @@ plot.GPR <- function(x,y,...){
   dots <- list()
   addAnn <- TRUE
   addFid <- TRUE
-  clim <- NULL
+#   clim <- NULL
+  clip <- NULL
   main <- x@name
   if( length(list(...)) ){
     dots <- list(...)
@@ -1819,16 +1820,17 @@ plot.GPR <- function(x,y,...){
       type <- dots$type
       dots$type <- NULL
     }
-    if( !is.null(dots$clim)){
-      clim <- dots$clim
-      dots$clim <- NULL
-    }
+#     if( !is.null(dots$clim)){
+#       clim <- dots$clim
+#       dots$clim <- NULL
+#     }
     if( !is.null(dots$clip)){
-      if(!is.null(clim)){
-        cat("You specified both 'clim' and 'clip'. 
-            Now, I only consider 'clip'.\n")
-      }
-      clim <- c(-1, 1) * abs(dots$clip)
+#       if(!is.null(clim)){
+#         cat("You specified both 'clim' and 'clip'. 
+#             Now, I only consider 'clip'.\n")
+#       }
+#       clim <- c(-1, 1) * abs(dots$clip)
+      clip <- dots$clip
       dots$clip <- NULL
     }
     if( !is.null(dots$normalize)){
@@ -1927,13 +1929,13 @@ plot.GPR <- function(x,y,...){
     }
     # warning("First upsample then addTopo. 
 #     Problem: interpolate also coord!!!")
-#     if(!is.null(clip) && is.numeric(clip)){
-#       if(length(clip)>1){
-#         x@data <- .clip(x@data,clip[2],clip[1])
-#       }else if(length(clip)==1){
-#         x@data <- .clip(x@data,clip[1])
-#       }
-#     }
+    if(!is.null(clip) && is.numeric(clip)){
+      if(length(clip) > 1){
+        x@data <- .clip(x@data,clip[2],clip[1])
+      }else if(length(clip)==1){
+        x@data <- .clip(x@data,clip[1])
+      }
+    }
     if(addFid == FALSE){
       x@fid <- character(length(x@fid))
     }
@@ -1952,11 +1954,11 @@ plot.GPR <- function(x,y,...){
         x@coord[,1] <- x@pos
       }
       xvalues <- posLine(x@coord)
-      if(is.null(clim)){
-        clim <- c(-1, 1) * max(abs(x@data), na.rm = TRUE)
-      }
+#       if(is.null(clim)){
+#         clim <- c(-1, 1) * max(abs(x@data), na.rm = TRUE)
+#       }
       do.call(plotRaster, c(list(z = x@data, x = xvalues, y = -rev(x@depth), 
-                     main = main, zlim = clim,
+                     main = main,
                      xlab = x@posunit, ylab = ylab, note = x@filepath,
                      time_0 = x@time0, antsep = x@antsep, v = v, 
                      addFid = addFid, fid = x@fid, 

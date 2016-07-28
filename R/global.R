@@ -1309,7 +1309,7 @@ plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
 # @relTime0 > boolean, y scale relative to time0? 0 <-> time0
 # col, main, xlab, ylab, mar, barscale
 #' @export
-plotRaster <- function(z, x = NULL, y = NULL, zlim = NULL, main = "", 
+plotRaster <- function(z, x = NULL, y = NULL, main = "", 
                       note = NULL, 
              time_0 = 0, antsep = 1, v = 0.1,
              addFid = TRUE, fid=NULL,
@@ -1321,9 +1321,9 @@ plotRaster <- function(z, x = NULL, y = NULL, zlim = NULL, main = "",
              relTime0 = TRUE, ...){
   op <- par(no.readonly=TRUE)
   z <-  as.matrix(z)
-  if(is.null(zlim)){
-      zlim <- c(-1, 1) * max(abs(z), na.rm = TRUE)
-    }
+#   if(is.null(zlim)){
+#       zlim <- c(-1, 1) * max(abs(z), na.rm = TRUE)
+#     }
   time_0 <- mean(time_0)
 #   clim = c(-1, 1) * max(abs(z))
   xlim <- NULL
@@ -1367,14 +1367,14 @@ plotRaster <- function(z, x = NULL, y = NULL, zlim = NULL, main = "",
     rasterImage <- FALSE
   }
   #image(x,y,z,col=col,zlim=clim,xaxs="i", yaxs="i", yaxt="n",...)
-  do.call(plot3D::image2D, c(list (x = x, y = y, z = z, zlim = zlim, col = col, 
+  do.call(plot3D::image2D, c(list (x = x, y = y, z = z, col = col, 
         xaxs = "i", yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
         resfac = resfac, main = "", bty = "n", colkey = FALSE),
         dots)) 
  
   if(barscale){
     op2 <- par(no.readonly=TRUE)
-    .barScale(clim = zlim, y, col, clab = clab, clabcex = 0.8)
+    .barScale(clim = range(z, na.rm = TRUE), y, col, clab = clab, clabcex = 0.8)
    # plot3D::colkey(clim = clim, clab = clab, width = 0.7, dist = 0.1, 
   #        add = TRUE, col = col)
     par(op2)
@@ -1671,17 +1671,17 @@ wapply(x,width=ns,by=1,FUN=sd),rep(0,floor(ns/2)))
   return(a*sign(A)*abs(A)^b)
 }
 
-.clip <- function(A,Amax=NULL,Amin=NULL){
-        if(!is.null(Amin)){
-                A[(A)< Amin] <- Amin
-        }
-        if(!is.null(Amax)){
-                A[(A) > Amax] <- Amax
-        }
-    if(!is.null(Amax) && is.null(Amin)){
-      A[(A)< -Amax] <- -Amax
-    }
-        return(A)
+.clip <- function(A, Amax = NULL, Amin = NULL){
+  if(!is.null(Amin)){
+          A[(A)< Amin] <- Amin
+  }
+  if(!is.null(Amax)){
+          A[(A) > Amax] <- Amax
+  }
+  if(!is.null(Amax) && is.null(Amin)){
+    A[(A)< -Amax] <- -Amax
+  }
+  return(A)
 }
 
 .rms <- function(num) sqrt(sum(num^2)/length(num))

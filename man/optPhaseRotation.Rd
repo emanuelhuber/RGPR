@@ -4,7 +4,16 @@
 \alias{optPhaseRotation}
 \title{Optimum Phase Rotation}
 \usage{
-optPhaseRotation(gpr, rot = 0.01, plot = TRUE)
+optPhaseRotation(x, rot = 0.01, plot = TRUE)
+}
+\arguments{
+\item{x}{any data that can be converted into a numeric vector with 
+as.vector.}
+
+\item{rot}{The phase rotation increment.}
+
+\item{plot}{A lenth-one boolean vector. If TRUE, the kurtosis as a function
+of phase angle is plotet.}
 }
 \description{
 Optimum Phase Rotation

@@ -3,19 +3,32 @@
 \docType{methods}
 \name{rotatePhase}
 \alias{rotatePhase}
-\title{Phase rotation}
+\title{Trace convolution}
 \usage{
+\S4method{conv1D}{GPR}(x, w)
+
 \S4method{rotatePhase}{GPR}(x, phi)
 }
 \arguments{
 \item{x}{A GPR data}
 
+\item{w}{Either a numeric vector corresponding to the wavelet, or a numeric 
+matrix with the number of column as the GPR data (each column 
+beeing a wavelet to convolve with the corresponding trace of
+the GPR data}
+
 \item{phi}{A length-one numeric vector defining the phase rotation in radian.}
+
+\item{x}{A GPR data}
 }
 \value{
 The GPR data with rotated phase.
+
+The GPR data with rotated phase.
 }
 \description{
+Convolve each trace by a wavelet
+
 Rotate the phase of the GPR data by a given angle \code{phi}.
 }
 

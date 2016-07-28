@@ -1473,7 +1473,33 @@ setMethod("fkFilter", "GPR", function(x, fk=NULL, L=c(5,5),npad=1){
 
 
 
-#--------------- DECONVOLUTION
+#--------------- CONVOLUTION/DECONVOLUTION
+
+#' Trace convolution
+#'
+#' Convolve each trace by a wavelet
+#' @param x A GPR data
+#' @param w Either a numeric vector corresponding to the wavelet, or a numeric 
+#'          matrix with the number of column as the GPR data (each column 
+#'          beeing a wavelet to convolve with the corresponding trace of
+#'          the GPR data
+#' @return The GPR data with rotated phase.
+#' @name rotatePhase
+#' @rdname rotatePhase
+#' @export
+setMethod("conv1D", "GPR", function(x, w){
+    if(length(dim(w))){
+      
+    }else if(length(dim(w))==1){
+      apply(x@data, 2, convolution, w)
+    }
+    x@data <- apply(x@data, 2, phaseRotation, phi)
+    proc <- getArgs()
+    x@proc <- c(x@proc,proc)
+    return(x)
+  }
+)
+
 #' Phase rotation
 #'
 #' Rotate the phase of the GPR data by a given angle \code{phi}.
@@ -1491,6 +1517,41 @@ setMethod("rotatePhase", "GPR", function(x, phi){
     return(x)
   }
 )
+
+#' Trace convolution (1D)
+#'
+#' Convolution of the GPR traces with a wavelet
+#' @param x A GPR data
+#' @param w A numeric vector defining a wavelet or a matrix with number of
+#'           columns equal to the number of traces.
+#' @return The convolved GPR data.
+#' @name conv1D
+#' @rdname conv1D
+#' @export
+setMethod("conv1D", "GPR", function(x, w){
+  # rotatePhase <- function(x,phi){
+    x@data <- convolution(x@data, w)
+    x@proc <- c(x@proc,"conv1D")
+    return(x)
+  }
+)
+#' 2D onvolution
+#'
+#' Convolution of the GPR data with a kernel
+#' @param x A GPR data
+#' @param w A numeric matrix with smaller dimension than the GPR data.
+#' @return The convolved GPR data.
+#' @name conv2D
+#' @rdname conv1D
+#' @export
+setMethod("conv2D", "GPR", function(x, w){
+  # rotatePhase <- function(x,phi){
+    x@data <- convolution2D(x@data, w)
+    x@proc <- c(x@proc, "conv2D")
+    return(x)
+  }
+)
+
 #' Deconvolution
 #'
 #' A generic function to perform different types of convolution
@@ -2749,7 +2810,7 @@ setMethod("timeCorOffset", "GPR", function(x){
   tcor <- sqrt( tcor2[tcor2 > 0] )
   x@depth <- tcor
   x@time0 <- rep(0, ncol(x))
-  x@proc <- c(x@proc, "constant-offset correction")
+  x@proc <- c(x@proc, "timeCorOffset")
   return(x)
 })
 

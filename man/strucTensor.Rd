@@ -5,7 +5,7 @@
 \title{Structure tensor of GPR data}
 \usage{
 strucTensor(P, winBlur = c(3, 3), winEdge = c(7, 7), winTensor = c(5, 10),
-  sdTensor = 2, dxy = c(1, 1), ...)
+  sdTensor = 2, dxy = c(1, 1), blksze = c(2, 2), thresh = 0.1, ...)
 }
 \description{
 Structure tensor of GPR data

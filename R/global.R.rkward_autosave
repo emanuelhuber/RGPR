@@ -2857,7 +2857,7 @@ dy_gkernel <- function(n,m, sigma=1){
 #' @name convolution2D
 #' @rdname convolution2D
 #' @export
-convolution2D <- function(A,k, bias=0){
+convolution2D <- function(A,k){
   nA = nrow(A)
   mA = ncol(A)
   nk = nrow(k)

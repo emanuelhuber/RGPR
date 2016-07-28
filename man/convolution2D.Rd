@@ -4,7 +4,7 @@
 \alias{convolution2D}
 \title{Two-dimensional convolution}
 \usage{
-convolution2D(h, k, bias = 0)
+convolution2D(A, k, bias = 0)
 }
 \description{
 The convolution is performed with 2D FFT

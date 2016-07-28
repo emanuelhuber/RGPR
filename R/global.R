@@ -1336,7 +1336,6 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
     }
   }
   #if(grepl("[s]$",depthunit)){
-  print(dots)
   if(barscale == FALSE){
     #colkeyVal <- NULL
     mai <- c(1.2, 1.2, 1.2, 1.2)

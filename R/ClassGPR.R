@@ -1690,6 +1690,9 @@ setMethod("deconv", "GPR", function(x,
 #' @export
 setMethod("traceShift", "GPR", function(x,  t0, keep = 10, delete0 = TRUE){
 # traceShift <- function(x,t0, keep=10){
+    if(length(t0) == 1){
+      t0 <- rep(t0, ncol(x))
+    }
     t0 <- t0/x@dz 
     if(min(t0) > keep){
       t0 <- t0 - keep

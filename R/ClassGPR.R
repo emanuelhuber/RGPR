@@ -1675,9 +1675,9 @@ setMethod("deconv", "GPR", function(x,
     }
     # gprdec <- gpr
 #     x@data <- Xdec
-    toReturn[["x"]] <- x
     proc <- getArgs()
     x@proc <- c(x@proc, proc)
+    toReturn[["x"]] <- x
     return(toReturn)
   }
 )

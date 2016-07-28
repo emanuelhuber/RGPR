@@ -1806,7 +1806,6 @@ plot.GPR <- function(x,y,...){
   # print(list(...))
   type <- "raster"
   addTopo <- FALSE
-  clip <- NULL
   normalize <- NULL
   nupspl <- NULL
   dots <- list()
@@ -1820,13 +1819,17 @@ plot.GPR <- function(x,y,...){
       type <- dots$type
       dots$type <- NULL
     }
-    if( !is.null(dots$clip)){
-      clip <- dots$clip
-      dots$clip <- NULL
-    }
     if( !is.null(dots$clim)){
       clim <- dots$clim
       dots$clim <- NULL
+    }
+    if( !is.null(dots$clip)){
+      if(!is.null(clim)){
+        cat("You specified both 'clim' and 'clip'. 
+            Now, I only consider 'clip'.\n")
+      }
+      clim <- c(-1, 1) * abs(clip)
+      dots$clip <- NULL
     }
     if( !is.null(dots$normalize)){
       normalize <- dots$normalize

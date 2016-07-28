@@ -1952,9 +1952,6 @@ plot.GPR <- function(x,y,...){
       if(is.null(clim)){
         clim <- c(-1, 1) * max(abs(x@data), na.rm = TRUE)
       }
-      z <-  as.matrix(z)
-      z[is.na(z)]=0
-      time_0 <- mean(time_0)
       do.call(plotRaster, c(list(z = x@data, x = xvalues, y = -rev(x@depth), 
                      main = main, zlim = clim,
                      xlab = x@posunit, ylab = ylab, note = x@filepath,

@@ -1469,7 +1469,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
 }
 
 
-.barScale <- function(clim, y, col, collab="mV",collabcex=0.8){
+.barScale <- function(clim, y, col, clab="mV",clabcex=0.8){
   usr <- par()$usr
   pin <- par()$pin  # inch
   mai <- par()$mai
@@ -1494,10 +1494,10 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   axis(side=4,las=2, at=pretty_at, labels=pretty_z)
  #  print(par("usr"))
   # print(range(xstrip))
-  image(xstrip, ystrip, zstrip, clim=clim, add=TRUE, col=col, axes=FALSE, 
+  image(xstrip, ystrip, zstrip, zlim=clim, add=TRUE, col=col, axes=FALSE, 
         xlab="", ylab="", xaxs="i", yaxs="i")
   # axis(side=4, las=2)
-  title(main=collab, line =1, cex.main = 0.8)
+  title(main=clab, line =1, cex.main = clabcex)
   box()
 }
 

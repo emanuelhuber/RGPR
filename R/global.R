@@ -244,7 +244,7 @@
 
 
 #' RGPR: A package for processing and visualising ground-penetrating data 
-#' (GPR).
+#' radar (GPR) data.
 #'
 #' The RGPR package provides two classes GPR and GPRsurvey
 #' 
@@ -623,7 +623,7 @@ wapply <- function(x=NULL, width = NULL, by = NULL, FUN = NULL, ...){
   SEQ2 <- lapply(SEQ1, function(x) x:(x + width - 1))
    
   OUT <- lapply(SEQ2, function(a) FUN(x[a], ...))
-  OUT <- base:::simplify2array(OUT, higher = TRUE)
+  OUT <- base::simplify2array(OUT, higher = TRUE)
   return(OUT)
 }
 
@@ -1367,7 +1367,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   #image(x,y,z,col=col,zlim=clim,xaxs="i", yaxs="i", yaxt="n",...)
   do.call(plot3D::image2D, c(list (x = x, y = y, z = z, zlim = clim, col = col, 
         xaxs = "i", yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
-        clab = clab, resfac = resfac, main = "", bty = "n", colkey = FALSE=),
+        clab = clab, resfac = resfac, main = "", bty = "n", colkey = FALSE),
         dots)) 
  
   if(barscale){

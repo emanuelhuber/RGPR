@@ -4,7 +4,7 @@
 #' An S4 class to represent a ground-penetrating radar (GPR) data.
 #'
 #' @slot version A length-one character vector indicating the version of RGPR
-#' @slot data A \eqn{m \time n} numeric matrix consiting of a 
+#' @slot data A \eqn{m \times n} numeric matrix consiting of a 
 #'            cross-section of signal amplitudes as a function of the GPR 
 #'            position. The columns of \code{data} correspond to the GPR 
 #'            traces and the row of \code{data} to the time/depth samples.
@@ -21,11 +21,11 @@
 #'           with the traces.
 #' @slot ann A length-m character vector containing annotations associated 
 #'          with the traces.
-#' @slot coord A \eqn{m \time 3} matrix containing the (x, y, z) positions of
+#' @slot coord A \eqn{m \times 3} matrix containing the (x, y, z) positions of
 #'             every trace.
-#' @slot rec  A \eqn{m \time 3} matrix containing the (x, y, z) positions of
+#' @slot rec  A \eqn{m \times 3} matrix containing the (x, y, z) positions of
 #'             the receiver for every trace.
-#' @slot trans A \eqn{m \time 3} matrix containing the (x, y, z) positions of
+#' @slot trans A \eqn{m \times 3} matrix containing the (x, y, z) positions of
 #'             the transmitter for every trace.
 #' @slot coordref A length-3 numeric vector containing the coordinates of a
 #'                local reference.
@@ -1529,7 +1529,7 @@ setMethod("conv1D", "GPR", function(x, w){
 #' @param w A numeric matrix with smaller dimension than the GPR data.
 #' @return The convolved GPR data.
 #' @name conv2D
-#' @rdname conv1D
+#' @rdname conv2D
 #' @export
 setMethod("conv2D", "GPR", function(x, w){
   # rotatePhase <- function(x,phi){

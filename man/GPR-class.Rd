@@ -12,7 +12,7 @@ An S4 class to represent a ground-penetrating radar (GPR) data.
 \describe{
 \item{\code{version}}{A length-one character vector indicating the version of RGPR}
 
-\item{\code{data}}{A \eqn{m \time n} numeric matrix consiting of a 
+\item{\code{data}}{A \eqn{m \times n} numeric matrix consiting of a 
 cross-section of signal amplitudes as a function of the GPR 
 position. The columns of \code{data} correspond to the GPR 
 traces and the row of \code{data} to the time/depth samples.}
@@ -37,13 +37,13 @@ with the traces.}
 \item{\code{ann}}{A length-m character vector containing annotations associated 
 with the traces.}
 
-\item{\code{coord}}{A \eqn{m \time 3} matrix containing the (x, y, z) positions of
+\item{\code{coord}}{A \eqn{m \times 3} matrix containing the (x, y, z) positions of
 every trace.}
 
-\item{\code{rec}}{A \eqn{m \time 3} matrix containing the (x, y, z) positions of
+\item{\code{rec}}{A \eqn{m \times 3} matrix containing the (x, y, z) positions of
 the receiver for every trace.}
 
-\item{\code{trans}}{A \eqn{m \time 3} matrix containing the (x, y, z) positions of
+\item{\code{trans}}{A \eqn{m \times 3} matrix containing the (x, y, z) positions of
 the transmitter for every trace.}
 
 \item{\code{coordref}}{A length-3 numeric vector containing the coordinates of a

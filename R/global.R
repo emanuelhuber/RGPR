@@ -1322,21 +1322,21 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   z =  as.matrix(z)
   z[is.na(z)]=0
   time_0 <- mean(time_0)
-  zlim = c(-1, 1) * max(abs(z))
+  clim = c(-1, 1) * max(abs(z))
   xlim <- NULL
   mai <- op$mai
   if( length(list(...)) > 0 ){
     dots <- list(...)
-    if( !is.null(dots$zlim)){
-      zlim <- dots$zlim
-      dots$zlim <- NULL
+    if( !is.null(dots$clim)){
+      clim <- dots$clim
+      dots$clim <- NULL
     }
     if( !is.null(dots$xlim)){
       xlim <- dots$xlim
     }
   }
   #if(grepl("[s]$",depthunit)){
-
+  print(dots)
   if(barscale == FALSE){
     #colkeyVal <- NULL
     mai <- c(1.2, 1.2, 1.2, 1.2)
@@ -1364,14 +1364,14 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   if( length(unique(diff(x))) > 1){
     rasterImage <- FALSE
   }
-  #image(x,y,z,col=col,zlim=zlim,xaxs="i", yaxs="i", yaxt="n",...)
-  plot3D::image2D(x = x, y = y, z = z, zlim = zlim, col = col, xaxs = "i", 
+  #image(x,y,z,col=col,zlim=clim,xaxs="i", yaxs="i", yaxt="n",...)
+  plot3D::image2D(x = x, y = y, z = z, zlim = clim, col = col, xaxs = "i", 
          yaxs = "i", yaxt = "n", rasterImage = rasterImage, clab = clab,
         resfac = resfac, main = "", bty = "n", colkey = FALSE, dots)  
   if(barscale){
     op2 <- par(no.readonly=TRUE)
-    .barScale(zlim, y, col, collab=clab,collabcex=0.8)
-   # plot3D::colkey(clim = zlim, clab = clab, width = 0.7, dist = 0.1, 
+    .barScale(clim, y, col, collab=clab,collabcex=0.8)
+   # plot3D::colkey(clim = clim, clab = clab, width = 0.7, dist = 0.1, 
   #        add = TRUE, col = col)
     par(op2)
   }
@@ -1467,7 +1467,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
 }
 
 
-.barScale <- function(zlim, y, col, collab="mV",collabcex=0.8){
+.barScale <- function(clim, y, col, collab="mV",collabcex=0.8){
   usr <- par()$usr
   pin <- par()$pin  # inch
   mai <- par()$mai
@@ -1481,18 +1481,18 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   fin2 <- par()$fin
   wstrip <- dxin*(fin2[1] - mai2[2] - mai2[4])/2
   xpos <- dxin*(mai2[2] - mai[2])
-  zstrip <- matrix(seq(zlim[1],zlim[2],length.out=length(col)),nrow=1)
+  zstrip <- matrix(seq(clim[1],clim[2],length.out=length(col)),nrow=1)
 #   xstrip <- c( xpos,  xpos + wstrip*dxin)*c(0.97,1.03)
   xstrip <- c( xpos - 2*wstrip,  xpos + 2*wstrip)#*c(0.9, 1.1)
   ystrip <- seq(min(y),max(y),length.out=length(col))
   ystrip <- seq(usr[3],usr[4],length.out=length(col))
   pretty_z <- pretty(as.vector(zstrip))
-  dzlim <- zlim[2]-zlim[1] 
-  pretty_at <- usr[3] - dylim * (zlim[1] - pretty_z)/dzlim
+  dclim <- clim[2]-clim[1] 
+  pretty_at <- usr[3] - dylim * (clim[1] - pretty_z)/dclim
   axis(side=4,las=2, at=pretty_at, labels=pretty_z)
  #  print(par("usr"))
   # print(range(xstrip))
-  image(xstrip, ystrip, zstrip, zlim=zlim, add=TRUE, col=col, axes=FALSE, 
+  image(xstrip, ystrip, zstrip, clim=clim, add=TRUE, col=col, axes=FALSE, 
         xlab="", ylab="", xaxs="i", yaxs="i")
   # axis(side=4, las=2)
   title(main=collab, line =1, cex.main = 0.8)

@@ -1943,6 +1943,7 @@ plot.GPR <- function(x,y,...){
         x@coord <- matrix(0,nrow=ncol(x),ncol=3)
         x@coord[,1] <- x@pos
       }
+       print(dots)
       xvalues <- posLine(x@coord)
       do.call(plotRaster, c(list(z = x@data, x = xvalues, y = -rev(x@depth), 
                      main = main, 

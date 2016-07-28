@@ -795,9 +795,11 @@ setMethod(
         if(length(x@rec)>0) x@rec <- x@rec[j,,drop=FALSE]
         if(length(x@trans)>0) x@trans <- x@trans[j,,drop=FALSE]
 #         x@ntr <- length(j)
-        trpos <- seq(x@hd$startpos, x@hd$endpos,by=x@dx)
-        x@hd$endpos <- trpos[j[length(j)]]
-        x@hd$startpos <- trpos[j[1]]
+        if(!is.null(x@hd$startpos) && !is.null(x@hd$endpos)){
+          trpos <- seq(x@hd$startpos, x@hd$endpos,by=x@dx)
+          x@hd$endpos <- trpos[j[length(j)]]
+          x@hd$startpos <- trpos[j[1]]
+        }
       }
       if(drop && length(rval) == 1){ rval <- c(rval)}
     }else{

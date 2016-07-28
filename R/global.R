@@ -1372,7 +1372,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
  
   if(barscale){
     op2 <- par(no.readonly=TRUE)
-    .barScale(clim, y, col, collab=clab,collabcex=0.8)
+    .barScale(clim, y, col, clab = clab, clabcex = 0.8)
    # plot3D::colkey(clim = clim, clab = clab, width = 0.7, dist = 0.1, 
   #        add = TRUE, col = col)
     par(op2)

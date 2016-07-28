@@ -1309,7 +1309,8 @@ plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
 # @relTime0 > boolean, y scale relative to time0? 0 <-> time0
 # col, main, xlab, ylab, mar, barscale
 #' @export
-plotRaster <- function(z, x = NULL, y = NULL, zlim, main = "", note = NULL,
+plotRaster <- function(z, x = NULL, y = NULL, zlim = NULL, main = "", 
+                      note = NULL, 
              time_0 = 0, antsep = 1, v = 0.1,
              addFid = TRUE, fid=NULL,
              addAnn = TRUE, annotations = NULL, 
@@ -1320,6 +1321,9 @@ plotRaster <- function(z, x = NULL, y = NULL, zlim, main = "", note = NULL,
              relTime0 = TRUE, ...){
   op <- par(no.readonly=TRUE)
   z <-  as.matrix(z)
+  if(is.null(zlim)){
+      zlim <- c(-1, 1) * max(abs(z), na.rm = TRUE)
+    }
   time_0 <- mean(time_0)
 #   clim = c(-1, 1) * max(abs(z))
   xlim <- NULL
@@ -1363,15 +1367,12 @@ plotRaster <- function(z, x = NULL, y = NULL, zlim, main = "", note = NULL,
     rasterImage <- FALSE
   }
   #image(x,y,z,col=col,zlim=clim,xaxs="i", yaxs="i", yaxt="n",...)
-  do.call(plot3D::image2D, c(list (x = x, y = y, z = z, col = col, 
+  do.call(plot3D::image2D, c(list (x = x, y = y, z = z, zlim = zlim, col = col, 
         xaxs = "i", yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
         resfac = resfac, main = "", bty = "n", colkey = FALSE),
         dots)) 
  
   if(barscale){
-    if(!missing(zlim)){
-      zlim <- c(-1, 1) * max(abs(z), na.rm = TRUE)
-    }
     op2 <- par(no.readonly=TRUE)
     .barScale(clim = zlim, y, col, clab = clab, clabcex = 0.8)
    # plot3D::colkey(clim = clim, clab = clab, width = 0.7, dist = 0.1, 

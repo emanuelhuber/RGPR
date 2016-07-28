@@ -3,7 +3,7 @@
 \name{RGPR}
 \alias{RGPR}
 \title{RGPR: A package for processing and visualising ground-penetrating data 
-(GPR).}
+radar (GPR) data.}
 \description{
 The RGPR package provides two classes GPR and GPRsurvey
 }

@@ -1369,6 +1369,9 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
         dots)) 
  
   if(barscale){
+    if(!missing(zlim)){
+      zlim <- c(-1, 1) * max(abs(z), na.rm = TRUE)
+    }
     op2 <- par(no.readonly=TRUE)
     .barScale(clim = zlim, y, col, clab = clab, clabcex = 0.8)
    # plot3D::colkey(clim = clim, clab = clab, width = 0.7, dist = 0.1, 
@@ -1481,7 +1484,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
   fin2 <- par()$fin
   wstrip <- dxin*(fin2[1] - mai2[2] - mai2[4])/2
   xpos <- dxin*(mai2[2] - mai[2])
-  zstrip <- matrix(seq(clim[1],clim[2],length.out=length(col)),nrow=1)
+  zstrip <- matrix(seq(clim[1], clim[2], length.out = length(col)), nrow = 1)
 #   xstrip <- c( xpos,  xpos + wstrip*dxin)*c(0.97,1.03)
   xstrip <- c( xpos - 2*wstrip,  xpos + 2*wstrip)#*c(0.9, 1.1)
   ystrip <- seq(min(y),max(y),length.out=length(col))

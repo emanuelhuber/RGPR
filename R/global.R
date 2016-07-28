@@ -1364,14 +1364,14 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
     rasterImage <- FALSE
   }
   #image(x,y,z,col=col,zlim=clim,xaxs="i", yaxs="i", yaxt="n",...)
-  do.call(plot3D::image2D, c(list (x = x, y = y, z = z, zlim = clim, col = col, 
+  do.call(plot3D::image2D, c(list (x = x, y = y, z = z, zlim = zlim, col = col, 
         xaxs = "i", yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
         resfac = resfac, main = "", bty = "n", colkey = FALSE),
         dots)) 
  
   if(barscale){
     op2 <- par(no.readonly=TRUE)
-    .barScale(clim, y, col, clab = clab, clabcex = 0.8)
+    .barScale(clim = zlim, y, col, clab = clab, clabcex = 0.8)
    # plot3D::colkey(clim = clim, clab = clab, width = 0.7, dist = 0.1, 
   #        add = TRUE, col = col)
     par(op2)

@@ -2,7 +2,11 @@
 % Please edit documentation in R/global.R
 \name{distTensors}
 \alias{distTensors}
+\title{Distance between structure tensors}
 \usage{
 distTensors(a1, b1, c1, a2, b2, c2, method = c("geodesic", "log-Euclidean"))
+}
+\description{
+Distance between structure tensors
 }
 

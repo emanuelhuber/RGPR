@@ -2554,7 +2554,8 @@ matProd2x2 <- function(a11, a12, a21, a22, b11, b12, b21, b22){
               a22 = a21*b12 + a22*b22))
 }
 
-
+#' Distance between structure tensors
+#'
 #' @name distTensors
 #' @rdname distTensors
 #' @export
@@ -2857,7 +2858,7 @@ dy_gkernel <- function(n,m, sigma=1){
 #' @name convolution2D
 #' @rdname convolution2D
 #' @export
-convolution2D <- function(A,k, bias=0){
+convolution2D <- function(A,k){
   nA = nrow(A)
   mA = ncol(A)
   nk = nrow(k)

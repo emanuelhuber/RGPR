@@ -824,7 +824,7 @@ setReplaceMethod(
     }else{
       rval <- rval[i]
     }
-    
+    x@proc <- c(x@proc, "[<-")
     return (x)
   }
 )
@@ -864,6 +864,7 @@ setReplaceMethod(
   definition=function(x,value){
     value <- as.character(value)[1]
     name <- value
+    x@proc <- c(x@proc, "name<-")
     return(x)
   }
 )
@@ -886,6 +887,7 @@ setReplaceMethod(
   signature="GPR",
   definition=function(x,value){
     description <- as.character(value)[1]
+    x@proc <- c(x@proc, "description<-")
     return(x)
   }
 )
@@ -908,6 +910,7 @@ setReplaceMethod(
   signature="GPR",
   definition=function(x,value){
     x@filepath <- as.character(value)[1]
+    x@proc <- c(x@proc, "filepath<-")
     return(x)
   }
 )
@@ -939,6 +942,7 @@ setReplaceMethod(
     test <- unlist(lapply(valuesList,paste,sep="",collapse="#"))
     x@ann <- character(length(x))
     x@ann[as.numeric(names(test))] <- test
+    x@proc <- c(x@proc, "ann<-")
     # FIXME > sapply(test, trimStr)
     return(x)
   }
@@ -971,6 +975,7 @@ setReplaceMethod(
     values <- as.matrix(values)
     if(ncol(x@data) == nrow(values) && ncol(values)==3){
       x@coord <- values
+      x@proc <- c(x@proc, "coord<-")
     }else{
       stop("Dimension problem!!")
     }
@@ -996,6 +1001,7 @@ setReplaceMethod(
   definition=function(x,value){
     value <- as.character(value)[1]
     x@crs <- value
+    x@proc <- c(x@proc, "crs<-")
     return(x)
   }
 )
@@ -1018,6 +1024,7 @@ setReplaceMethod(
   signature="GPR",
   definition=function(x,values){
     x@vel <- values
+    x@proc <- c(x@proc, "vel<-")
     return(x)
   }
 )
@@ -1056,7 +1063,7 @@ setReplaceMethod(
     }else{
       x@time0 <- rep(value[1], length(x@time0))
     }
-    x@proc <- c(x@proc, "set time-zero")
+    x@proc <- c(x@proc, "time0<-")
     return(x)
   }
 )
@@ -1071,6 +1078,7 @@ setReplaceMethod(
   definition=function(x,values){
     values <- as.character(values)
     x@fid <- values
+    x@proc <- c(x@proc, "fid<-")
     return(x)
   }
 )
@@ -1102,6 +1110,7 @@ setReplaceMethod(
   definition=function(x,value){
     if(all(dim(value)==dim(x))){
       x@data <- value
+      x@proc <- c(x@proc, "values<-")
       return(x)
     }else{
       stop("x [",nrow(x),"x",ncol(x),"] and A [",nrow(value),"x",ncol(value),
@@ -1475,30 +1484,6 @@ setMethod("fkFilter", "GPR", function(x, fk=NULL, L=c(5,5),npad=1){
 
 #--------------- CONVOLUTION/DECONVOLUTION
 
-#' Trace convolution
-#'
-#' Convolve each trace by a wavelet
-#' @param x A GPR data
-#' @param w Either a numeric vector corresponding to the wavelet, or a numeric 
-#'          matrix with the number of column as the GPR data (each column 
-#'          beeing a wavelet to convolve with the corresponding trace of
-#'          the GPR data
-#' @return The GPR data with rotated phase.
-#' @name rotatePhase
-#' @rdname rotatePhase
-#' @export
-setMethod("conv1D", "GPR", function(x, w){
-    if(length(dim(w))){
-      
-    }else if(length(dim(w))==1){
-      apply(x@data, 2, convolution, w)
-    }
-    x@data <- apply(x@data, 2, phaseRotation, phi)
-    proc <- getArgs()
-    x@proc <- c(x@proc,proc)
-    return(x)
-  }
-)
 
 #' Phase rotation
 #'
@@ -2236,7 +2221,7 @@ setMethod("interpPos", "GPR", function(x, topo, plot = FALSE,...){
       A[,3] <- Zint
       colnames(A) <- c("E","N","Z")
       x@coord <- A
-      x@proc <- c(x@proc, "coordinates added & traces interpolated")
+      x@proc <- c(x@proc, "interpPos")
     }
     return(x)
   }
@@ -2722,11 +2707,11 @@ setMethod("identifyDelineation", "GPR", function(x,sel=NULL,...){
 #' @rdname migration
 #' @export
 setMethod("migration", "GPR", function(x,type=c("static","kirchhoff"),...){
-    if(missing(type)){
-      type=match.arg(type)
-      suppl_args <- list("type"=type)
-      # cat(type,"\n")
-    }
+#     if(missing(type)){
+#       type=match.arg(type)
+#       suppl_args <- list("type"=type)
+#       # cat(type,"\n")
+#     }
     type <- match.arg(type)
     if(type == "static"){  
       ntr <- ncol(x@data)
@@ -2755,12 +2740,12 @@ setMethod("migration", "GPR", function(x,type=c("static","kirchhoff"),...){
       #x@depth * x@vel[[1]]/ 2
       x@depth <- seq(0,by=x@dz,length.out=nrow(x@data))  
       x@time0 <- rep(0,length(x@time0))
-      proc <- getArgs()
-      proc <- addArg(proc,suppl_args)
-      proc <- paste(proc,"#v=",x@vel[[1]],sep="")
+#       proc <- getArgs()
+#       proc <- addArg(proc,suppl_args)
+#       proc <- paste(proc,"#v=",x@vel[[1]],sep="")
       x@vel=list()  # FIX ME!!
       x@time0 <- rep(0L,ncol(x@data))  # FIX ME!!
-      x@proc <- c(x@proc, proc)
+#       x@proc <- c(x@proc, proc)
     }else if(type == "kirchhoff"){
       A <- x@data
       topoGPR <- x@coord[,3]
@@ -2791,6 +2776,8 @@ setMethod("migration", "GPR", function(x,type=c("static","kirchhoff"),...){
       x@dz <- dz
       x@depthunit <- "m"
     }
+    proc <- getArgs()
+    x@proc <- c(x@proc, proc)
     return(x)
   } 
 )

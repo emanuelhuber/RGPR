@@ -1828,7 +1828,7 @@ plot.GPR <- function(x,y,...){
         cat("You specified both 'clim' and 'clip'. 
             Now, I only consider 'clip'.\n")
       }
-      clim <- c(-1, 1) * abs(clip)
+      clim <- c(-1, 1) * abs(dots$clip)
       dots$clip <- NULL
     }
     if( !is.null(dots$normalize)){

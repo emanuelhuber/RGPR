@@ -1309,7 +1309,7 @@ plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
 # @relTime0 > boolean, y scale relative to time0? 0 <-> time0
 # col, main, xlab, ylab, mar, barscale
 #' @export
-plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
+plotRaster <- function(z, x = NULL, y = NULL, zlim, main = "", note = NULL,
              time_0 = 0, antsep = 1, v = 0.1,
              addFid = TRUE, fid=NULL,
              addAnn = TRUE, annotations = NULL, 

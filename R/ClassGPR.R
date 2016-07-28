@@ -1812,6 +1812,7 @@ plot.GPR <- function(x,y,...){
   dots <- list()
   addAnn <- TRUE
   addFid <- TRUE
+  clim <- NULL
   main <- x@name
   if( length(list(...)) ){
     dots <- list(...)
@@ -1822,6 +1823,10 @@ plot.GPR <- function(x,y,...){
     if( !is.null(dots$clip)){
       clip <- dots$clip
       dots$clip <- NULL
+    }
+    if( !is.null(dots$clim)){
+      clim <- dots$clim
+      dots$clim <- NULL
     }
     if( !is.null(dots$normalize)){
       normalize <- dots$normalize

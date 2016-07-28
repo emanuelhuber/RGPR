@@ -1320,8 +1320,6 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", note = NULL,
              relTime0 = TRUE, ...){
   op <- par(no.readonly=TRUE)
   z <-  as.matrix(z)
-  z[is.na(z)]=0
-  if(is.
   time_0 <- mean(time_0)
 #   clim = c(-1, 1) * max(abs(z))
   xlim <- NULL

@@ -1471,7 +1471,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   axis(side=4,las=2, at=pretty_at, labels=pretty_z)
  #  print(par("usr"))
   # print(range(xstrip))
-  image(x = xstrip, y = ystrip, z = zstrip, xlim = range(xstrip)
+  image(x = xstrip, y = ystrip, z = zstrip, xlim = range(xstrip),
         add = TRUE, col = col, 
         axes = FALSE, xlab = "", ylab = "", xaxs = "i", yaxs = "i")
   # axis(side=4, las=2)

@@ -1825,6 +1825,15 @@ plot.GPR <- function(x,y,...){
       zlim <- dots$zlim
       dots$zlim <- NULL
     }
+    if(!is.null(dots$ylim)){
+      if(!is.null(zlim)){
+        cat("You specified both, 'zlim' and 'ylim'.\n")
+        cat("These have the same meaning, I only consider 'zlim'.\n")
+      }else{
+        zlim <- dots$ylim
+        dots$ylim <- NULL
+      }
+    }
     if( !is.null(dots$clip)){
       clip <- dots$clip
       dots$clip <- NULL

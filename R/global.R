@@ -1380,7 +1380,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "",
   if(is.null(xlim2) ){
      test <- rep(TRUE,length(x))
   }else{
-    test <- ( x >= xlim[1] & x <= xlim[2] )
+    test <- ( x >= xlim2[1] & x <= xlim2[2] )
   }
   
   # plot fiducial markers

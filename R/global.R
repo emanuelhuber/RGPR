@@ -1320,6 +1320,13 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "",
              col = palGPR(n = 101), yaxt = "s", bty = "o",
              relTime0 = TRUE, ...){
   op <- par(no.readonly=TRUE)
+  xlim2 <- NULL
+  if( length(list(...)) > 0 ){
+    dots <- list(...)
+    if( !is.null(dots$xlim)){
+      xlim2 <- dots$xlim
+    }
+  }
   z <-  as.matrix(z)
 #   if(is.null(zlim)){
 #       zlim <- c(-1, 1) * max(abs(z), na.rm = TRUE)
@@ -1369,18 +1376,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "",
     par(op2)
   }
   usr <- par("usr")
-  xlim <- NULL
-  if( length(list(...)) > 0 ){
-    dots <- list(...)
-#     if( !is.null(dots$clim)){
-#       clim <- dots$clim
-#       dots$clim <- NULL
-#     }
-    if( !is.null(dots$xlim)){
-      xlim <- dots$xlim
-    }
-  }
-  if(is.null(xlim) ){
+
+  if(is.null(xlim2) ){
      test <- rep(TRUE,length(x))
   }else{
     test <- ( x >= xlim[1] & x <= xlim[2] )

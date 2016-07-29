@@ -1472,8 +1472,6 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "",
 
 
 .barScale <- function(clim, y, col, clab="mV",clabcex=0.8){
-  print(clim)
-  cat(clim)
   usr <- par()$usr
   pin <- par()$pin  # inch
   mai <- par()$mai
@@ -1501,6 +1499,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "",
   image(xstrip, ystrip, zstrip, add=TRUE, col=col, axes=FALSE, 
         xlab="", ylab="", xaxs="i", yaxs="i")
   # axis(side=4, las=2)
+  print(zstrip)
   title(main=clab, line =1, cex.main = clabcex)
   box()
 }

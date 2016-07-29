@@ -1952,7 +1952,7 @@ plot.GPR <- function(x,y,...){
       }
       yvalues <- -rev(x@depth)
       if(is.null(zlim)){
-        zlim <- range(yvalue)
+        zlim <- range(yvalues)
       }
 #       if(length(x@coord) == 0){
 #         x@coord <- matrix(0,nrow=ncol(x),ncol=3)
@@ -1986,7 +1986,7 @@ plot.GPR <- function(x,y,...){
       }
       yvalues <- -rev(x@depth)
       if(is.null(zlim)){
-        zlim <- range(yvalue)
+        zlim <- range(yvalues)
       }
 #       if(length(x@coord)>0){
 #         xvalues <- posLine(x@coord)

@@ -1355,7 +1355,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
  
   if(barscale){
     op2 <- par(no.readonly=TRUE)
-    .barScale(clim = range(z, na.rm = TRUE), y, col, clab = clab, clabcex = 0.8)
+    .barScale(clim = range(z, na.rm = TRUE), y = y, col = col, clab = clab, 
+              clabcex = 0.8)
    # plot3D::colkey(clim = clim, clab = clab, width = 0.7, dist = 0.1, 
   #        add = TRUE, col = col)
     par(op2)
@@ -1445,7 +1446,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 }
 
 
-.barScale <- function(clim, y, col, clab="mV",clabcex=0.8){
+.barScale <- function(clim, y, col, clab = "mV", clabcex = 0.8){
   usr <- par()$usr
   pin <- par()$pin  # inch
   mai <- par()$mai
@@ -1470,8 +1471,9 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   axis(side=4,las=2, at=pretty_at, labels=pretty_z)
  #  print(par("usr"))
   # print(range(xstrip))
-  image(xstrip, ystrip, zstrip, add=TRUE, col=col, axes=FALSE, 
-        xlab="", ylab="", xaxs="i", yaxs="i")
+  image(x = xstrip, y = ystrip, z = zstrip, xlim = range(xstrip)
+        add = TRUE, col = col, 
+        axes = FALSE, xlab = "", ylab = "", xaxs = "i", yaxs = "i")
   # axis(side=4, las=2)
   title(main=clab, line =1, cex.main = clabcex)
   box()

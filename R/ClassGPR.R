@@ -1804,11 +1804,11 @@ plot.GPR <- function(x,y,...){
   # type=c("raster","wiggles"),addTopo=FALSE,clip=NULL,normalize=NULL,
 #       nupspl=NULL,...){
   # print(list(...))
+  dots <- list()
   type <- "raster"
   addTopo <- FALSE
   normalize <- NULL
   nupspl <- NULL
-  dots <- list()
   addAnn <- TRUE
   addFid <- TRUE
 #   clim <- NULL
@@ -1953,7 +1953,8 @@ plot.GPR <- function(x,y,...){
       xvalues <- posLine(x@coord)
     }else{
       xvalues <- x@pos
-    }    
+    }
+    
     type <- match.arg(type, c("raster","wiggles"))
     if(type == "raster"){
       if(grepl("[s]$",x@depthunit) && addTopo){
@@ -2938,7 +2939,7 @@ setMethod("upsample", "GPR", function(x,n){
 #' @rdname writeGPR
 #' @export
 setMethod("writeGPR", "GPR", function(x,fPath, format=c("DT1","rds"), 
-          overwrite=FALSE){
+          overwrite = FALSE){
     type <- match.arg(tolower(format), tolower(c("DT1","rds")))
     splitBaseName <- unlist(strsplit(basename(fPath),'[.]'))
     ext <- tail(splitBaseName,1)

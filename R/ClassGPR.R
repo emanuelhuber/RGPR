@@ -1813,6 +1813,7 @@ plot.GPR <- function(x,y,...){
   addFid <- TRUE
 #   clim <- NULL
   clip <- NULL
+  zlim <- NULL    # depth 
   main <- x@name
   if( length(list(...)) ){
     dots <- list(...)
@@ -1820,16 +1821,11 @@ plot.GPR <- function(x,y,...){
       type <- dots$type
       dots$type <- NULL
     }
-#     if( !is.null(dots$clim)){
-#       clim <- dots$clim
-#       dots$clim <- NULL
-#     }
+    if( !is.null(dots$zlim)){
+      zlim <- dots$zlim
+      dots$zlim <- NULL
+    }
     if( !is.null(dots$clip)){
-#       if(!is.null(clim)){
-#         cat("You specified both 'clim' and 'clip'. 
-#             Now, I only consider 'clip'.\n")
-#       }
-#       clim <- c(-1, 1) * abs(dots$clip)
       clip <- dots$clip
       dots$clip <- NULL
     }
@@ -1939,6 +1935,11 @@ plot.GPR <- function(x,y,...){
     if(addFid == FALSE){
       x@fid <- character(length(x@fid))
     }
+    if(length(x@coord)>0){
+      xvalues <- posLine(x@coord)
+    }else{
+      xvalues <- x@pos
+    }    
     type <- match.arg(type, c("raster","wiggles"))
     if(type == "raster"){
       if(addTopo){
@@ -1949,16 +1950,20 @@ plot.GPR <- function(x,y,...){
       }else if(grepl("[s]$",x@depthunit)){
         ylab <- paste("two-way travel time (",x@depthunit,")",sep="")
       }
-      if(length(x@coord) == 0){
-        x@coord <- matrix(0,nrow=ncol(x),ncol=3)
-        x@coord[,1] <- x@pos
+      yvalues <- -rev(x@depth)
+      if(is.null(zlim)){
+        zlim <- range(yvalue)
       }
-      xvalues <- posLine(x@coord)
+#       if(length(x@coord) == 0){
+#         x@coord <- matrix(0,nrow=ncol(x),ncol=3)
+#         x@coord[,1] <- x@pos
+#       }
+#       xvalues <- posLine(x@coord)
 #       if(is.null(clim)){
 #         clim <- c(-1, 1) * max(abs(x@data), na.rm = TRUE)
 #       }
-      do.call(plotRaster, c(list(z = x@data, x = xvalues, y = -rev(x@depth), 
-                     main = main,
+      do.call(plotRaster, c(list(z = x@data, x = xvalues, y = yvalues, 
+                     main = main, ylim = zlim,
                      xlab = x@posunit, ylab = ylab, note = x@filepath,
                      time_0 = x@time0, antsep = x@antsep, v = v, 
                      addFid = addFid, fid = x@fid, 
@@ -1979,13 +1984,17 @@ plot.GPR <- function(x,y,...){
           ylab <- paste("two-way travel time (",x@depthunit,")",sep="")
         }
       }
-      if(length(x@coord)>0){
-        xvalues <- posLine(x@coord)
-      }else{
-        xvalues <- x@pos
+      yvalues <- -rev(x@depth)
+      if(is.null(zlim)){
+        zlim <- range(yvalue)
       }
-      do.call(plotWig, c(list(z = x@data, x = xvalues, y = -rev(x@depth), 
-                    main=main, 
+#       if(length(x@coord)>0){
+#         xvalues <- posLine(x@coord)
+#       }else{
+#         xvalues <- x@pos
+#       }
+      do.call(plotWig, c(list(z = x@data, x = xvalues, y = yvalues, 
+                    main=main, ylim = zlim,
                     xlab = x@posunit, ylab = ylab, note = x@filepath, 
                     time_0 = x@time0, antsep = x@antsep, v = v, 
                     addFid = addFid, fid = x@fid,

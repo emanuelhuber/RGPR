@@ -1942,12 +1942,12 @@ plot.GPR <- function(x,y,...){
     }    
     type <- match.arg(type, c("raster","wiggles"))
     if(type == "raster"){
-      if(addTopo){
+      if(grepl("[s]$",x@depthunit) && addTopo){
         x <- migration(x)
       }
       if(grepl("[m]$",x@depthunit)){
         ylab <- paste("depth (",x@depthunit,")",sep="")
-      }else if(grepl("[s]$",x@depthunit)){
+      }else if( grepl("[s]$",x@depthunit) ){
         ylab <- paste("two-way travel time (",x@depthunit,")",sep="")
       }
       yvalues <- -rev(x@depth)

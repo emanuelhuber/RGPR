@@ -1309,7 +1309,7 @@ plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
 # @relTime0 > boolean, y scale relative to time0? 0 <-> time0
 # col, main, xlab, ylab, mar, barscale
 #' @export
-plotRaster <- function(z, x = NULL, y = NULL, main = "", 
+plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
                       note = NULL, 
              time_0 = 0, antsep = 1, v = 0.1,
              addFid = TRUE, fid=NULL,
@@ -1320,12 +1320,9 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "",
              col = palGPR(n = 101), yaxt = "s", bty = "o",
              relTime0 = TRUE, ...){
   op <- par(no.readonly=TRUE)
-  xlim2 <- NULL
+  dots <- list()
   if( length(list(...)) > 0 ){
     dots <- list(...)
-    if( !is.null(dots$xlim)){
-      xlim2 <- dots$xlim
-    }
   }
   z <-  as.matrix(z)
 #   if(is.null(zlim)){
@@ -1363,7 +1360,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "",
     rasterImage <- FALSE
   }
   #image(x,y,z,col=col,zlim=clim,xaxs="i", yaxs="i", yaxt="n",...)
-  do.call(plot3D::image2D, c(list (x = x, y = y, z = z, col = col, 
+  do.call(plot3D::image2D, c(list (x = x, y = y, z = z, col = col, xlim = xlim,
         xaxs = "i", yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
         resfac = resfac, main = "", bty = "n", colkey = FALSE),
         dots)) 
@@ -1377,10 +1374,10 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "",
   }
   usr <- par("usr")
 
-  if(is.null(xlim2) ){
+  if(is.null(xlim) ){
      test <- rep(TRUE,length(x))
   }else{
-    test <- ( x >= xlim2[1] & x <= xlim2[2] )
+    test <- ( x >= xlim[1] & x <= xlim[2] )
   }
   
   # plot fiducial markers

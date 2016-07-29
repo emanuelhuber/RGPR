@@ -1813,6 +1813,7 @@ plot.GPR <- function(x,y,...){
   addFid <- TRUE
 #   clim <- NULL
   clip <- NULL
+  xlim <- NULL
   zlim <- NULL    # depth 
   main <- x@name
   if( length(list(...)) ){
@@ -1824,6 +1825,10 @@ plot.GPR <- function(x,y,...){
     if( !is.null(dots$zlim)){
       zlim <- dots$zlim
       dots$zlim <- NULL
+    }
+    if( !is.null(dots$xlim)){
+      xlim <- dots$xlim
+      dots$xlim <- NULL
     }
     if(!is.null(dots$ylim)){
       if(!is.null(zlim)){
@@ -1972,7 +1977,7 @@ plot.GPR <- function(x,y,...){
 #         clim <- c(-1, 1) * max(abs(x@data), na.rm = TRUE)
 #       }
       do.call(plotRaster, c(list(z = x@data, x = xvalues, y = yvalues, 
-                     main = main, ylim = zlim,
+                     main = main, ylim = zlim, xlim = xlim,
                      xlab = x@posunit, ylab = ylab, note = x@filepath,
                      time_0 = x@time0, antsep = x@antsep, v = v, 
                      addFid = addFid, fid = x@fid, 

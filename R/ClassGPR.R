@@ -2938,8 +2938,8 @@ setMethod("upsample", "GPR", function(x,n){
 #' @rdname writeGPR
 #' @export
 setMethod("writeGPR", "GPR", function(x,fPath, format=c("DT1","rds"), 
-overwrite=FALSE){
-    type <- match.arg(format)
+          overwrite=FALSE){
+    type <- match.arg(tolower(format), tolower(c("DT1","rds")))
     splitBaseName <- unlist(strsplit(basename(fPath),'[.]'))
     ext <- tail(splitBaseName,1)
 #     ext <-  tolower(substr(path,start=nchar(path)-3,stop=nchar(path)))
@@ -2950,12 +2950,12 @@ overwrite=FALSE){
     }
     if(type == "DT1"){
       if("dt1" != ext ){
-        stop("Extension should be '.DT1'")
+        stop("The extension of the filepath should be '.DT1'")
       }
       .writeDT1(x,fPath,overwrite)
     }else if(type == "rds"){
       if("rds" != ext ){
-        stop("Extension should be '.rds'")
+        stop("The extension of the filepath should be '.rds'")
       }
       x@filepath <- as.character(fPath)
       namesSlot <- slotNames(x)
@@ -3048,7 +3048,7 @@ overwrite=FALSE){
     traces_hd$transz <- rep.int(0L,ncol(x@data))
   }
   # traces_hd$time0 <- x@time0 
-  traces_hd$time0 <-1+round(x@time0/x@dz,2)
+  traces_hd$time0 <- 1L + round(x@time0/x@dz,2)
   traces_hd$time0 <- traces_hd$NA1 
   traces_hd$zeroflag <- rep.int(0L,ncol(x@data)) 
   traces_hd$NA7 <- traces_hd$NA1 

@@ -1459,10 +1459,10 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   par(mai=mai2)
   fin2 <- par()$fin
   wstrip <- dxin*(fin2[1] - mai2[2] - mai2[4])/2
-  xpos <- dxin*(mai2[2] - mai[2])
+  xpos <- usr[1] + dxin*(mai2[2] - mai[2])
   zstrip <- matrix(seq(clim[1], clim[2], length.out = length(col)), nrow = 1)
 #   xstrip <- c( xpos,  xpos + wstrip*dxin)*c(0.97,1.03)
-  xstrip <- c( xpos - 2*wstrip,  xpos + 2*wstrip)#*c(0.9, 1.1)
+  xstrip <- c( xpos - 20*wstrip,  xpos + 20*wstrip)#*c(0.9, 1.1)
   ystrip <- seq(min(y),max(y),length.out=length(col))
   ystrip <- seq(usr[3],usr[4],length.out=length(col))
   pretty_z <- pretty(as.vector(zstrip))
@@ -1471,7 +1471,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   axis(side=4,las=2, at=pretty_at, labels=pretty_z)
  #  print(par("usr"))
   # print(range(xstrip))
-  image( y = ystrip, z = zstrip,
+  image(x = xstrip, y = ystrip, z = zstrip,
         add = TRUE, col = col, 
         axes = FALSE, xlab = "", ylab = "", xaxs = "i", yaxs = "i")
   # axis(side=4, las=2)

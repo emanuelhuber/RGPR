@@ -1954,7 +1954,9 @@ plot.GPR <- function(x,y,...){
     }else{
       xvalues <- x@pos
     }
-    
+    if(is.null(xlim)){
+      xlim <- range(xvalues)
+    }
     type <- match.arg(type, c("raster","wiggles"))
     if(type == "raster"){
       if(grepl("[s]$",x@depthunit) && addTopo){

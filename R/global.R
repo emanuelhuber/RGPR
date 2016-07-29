@@ -1326,18 +1326,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "",
 #     }
   time_0 <- mean(time_0)
 #   clim = c(-1, 1) * max(abs(z))
-  xlim <- NULL
   mai <- op$mai
-  if( length(list(...)) > 0 ){
-    dots <- list(...)
-#     if( !is.null(dots$clim)){
-#       clim <- dots$clim
-#       dots$clim <- NULL
-#     }
-    if( !is.null(dots$xlim)){
-      xlim <- dots$xlim
-    }
-  }
   #if(grepl("[s]$",depthunit)){
   if(barscale == FALSE){
     #colkeyVal <- NULL
@@ -1380,6 +1369,17 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "",
     par(op2)
   }
   usr <- par("usr")
+  xlim <- NULL
+  if( length(list(...)) > 0 ){
+    dots <- list(...)
+#     if( !is.null(dots$clim)){
+#       clim <- dots$clim
+#       dots$clim <- NULL
+#     }
+    if( !is.null(dots$xlim)){
+      xlim <- dots$xlim
+    }
+  }
   if(is.null(xlim) ){
      test <- rep(TRUE,length(x))
   }else{

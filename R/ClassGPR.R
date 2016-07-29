@@ -2794,6 +2794,7 @@ setMethod("migration", "GPR", function(x,type=c("static","kirchhoff"),...){
       max_depth <- nrow(x)*x@dx
       dz <- 0.25*x@dz
       fdo <- x@freq
+      FUN <- sum
       if( length(list(...)) ){
         dots <- list(...)
         if( !is.null(dots$max_depth)){
@@ -2805,10 +2806,13 @@ setMethod("migration", "GPR", function(x,type=c("static","kirchhoff"),...){
         if( !is.null(dots$fdo)){
           fdo <- dots$fdo
         }
+        if( !is.null(dots$FUN)){
+          FUN <- dots$FUN
+        }
       }  
       x@data <- .kirMig(x@data, topoGPR = x@coord[,3], dx = x@dx, dts = x@dz, 
                         v = x@vel[[1]], max_depth = max_depth, dz = dz, 
-                        fdo = fdo)
+                        fdo = fdo, FUN = FUN)
       x@depth <- seq(0,by=dz, length.out = nrow(x))
       x@time0 <- rep(0, ncol(x))
       x@dz <- dz

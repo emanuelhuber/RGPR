@@ -1097,7 +1097,7 @@ depth0 <- function(time_0, v=0.1, antsep=1){
 # dz = vertical resolution of the migrated data
 # fdo = dominant frequency of the GPR signal
 .kirMig <- function(x, topoGPR, dx, dts, v, max_depth = 8, 
-                 dz = 0.025, fdo = 80){
+                 dz = 0.025, fdo = 80, FUN = sum){
   n <- nrow(x)
   m <- ncol(x)
   z <- max(topoGPR) - topoGPR
@@ -1126,7 +1126,8 @@ depth0 <- function(time_0, v=0.1, antsep=1){
       mt <- (i - rf_tr):(i + rf_tr)
       mt <- mt[mt > 0 & mt <= m]
       
-      Ampl <- numeric(length(mt))
+      lmt <- length(mt)
+      Ampl <- numeric(lmt)
       for(j in mt){
         x_a <- (j-1)*dx
         t_top <-  t_0 - 2*(z[j] - z[i])/v
@@ -1144,9 +1145,10 @@ depth0 <- function(time_0, v=0.1, antsep=1){
                                 ((1-w)*x[t1,j] + w*x[t2,j])
         }
       }
-      kirTopoGPR[z_idx,i] <- sum(Ampl)#/l_migtpl
+      kirTopoGPR[z_idx,i] <- FUN(Ampl)
     }
   }
+  kirTopoGPR <- kirTopoGPR/max(kirTopoGPR, na.rm=TRUE) * 50
 #   kirTopoGPR2 <- kirTopoGPR
   
   return(kirTopoGPR)
@@ -1320,25 +1322,14 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
              col = palGPR(n = 101), yaxt = "s", bty = "o",
              relTime0 = TRUE, ...){
   op <- par(no.readonly=TRUE)
-  dots <- list()
-  if( length(list(...)) > 0 ){
-    dots <- list(...)
-  }
-  z <-  as.matrix(z)
-#   if(is.null(zlim)){
-#       zlim <- c(-1, 1) * max(abs(z), na.rm = TRUE)
-#     }
-  time_0 <- mean(time_0)
-#   clim = c(-1, 1) * max(abs(z))
+  time_0 <- median(time_0)
   mai <- op$mai
-  #if(grepl("[s]$",depthunit)){
   if(barscale == FALSE){
-    #colkeyVal <- NULL
     mai <- c(1.2, 1.2, 1.2, 1.2)
   }else{
     mai <- c(1.2, 1.2, 1.2, 1.8)
   }
-
+  z <-  as.matrix(z)
   z <- t(z[nrow(z):1,])
   if(is.null(x)){
     x <- (1:nrow(z))
@@ -1351,8 +1342,6 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   }else{
     par( mai = mai)
   }
-  #cat("mai :", mai, "\n")
-  #cat("oma :", oma, "\n")
   if(relTime0){
     y <- y + time_0
   }
@@ -1360,10 +1349,9 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
     rasterImage <- FALSE
   }
   #image(x,y,z,col=col,zlim=clim,xaxs="i", yaxs="i", yaxt="n",...)
-  do.call(plot3D::image2D, c(list (x = x, y = y, z = z, col = col, xlim = xlim,
+  plot3D::image2D(x = x, y = y, z = z, col = col, xlim = xlim,
         xaxs = "i", yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
-        resfac = resfac, main = "", bty = "n", colkey = FALSE),
-        dots)) 
+        resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)
  
   if(barscale){
     op2 <- par(no.readonly=TRUE)
@@ -1373,31 +1361,26 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
     par(op2)
   }
   usr <- par("usr")
-
   if(is.null(xlim) ){
      test <- rep(TRUE,length(x))
   }else{
     test <- ( x >= xlim[1] & x <= xlim[2] )
   }
-  
   # plot fiducial markers
   if(!is.null(fid) && length(fid) > 0){
     .plotFid(fid[test], x[test])
   }
-  
   # plot annotations
   testAnn <- FALSE
   if(addAnn && !is.null(annotations) && length(annotations) > 0){
     testAnn <- .plotAnn(annotations[test],x[test])
   }
-  
   # plot title
   if(addAnn && testAnn){
     title(main,outer=TRUE,line=1)
   }else{
     title(main)  
   }
-  
   # plot axis
 #   axis(side=2, at=pretty_y + dusr/2, labels= -pretty_y)
 #   dusr <- dylim/length(y)
@@ -1408,17 +1391,14 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   }
   # plot time0
   abline(h=0,col="red",lwd=0.5)
-  
   # plot note
   if(!is.null(note) && length(note) > 0){
     mtext(note, side = 1, line = 4, cex=0.6)
   }
-  
   # add grid
   if(addGrid){
     grid()
   }
-
   if( bty != "n"){
     box(bty = bty)
   }

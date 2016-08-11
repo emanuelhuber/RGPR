@@ -1107,21 +1107,20 @@ depth0 <- function(time_0, v=0.1, antsep=1){
   kirTopoGPR <- matrix(0, nrow = max_depth/dz + 1, ncol = m)
   for( i in seq_len(m)){
     x_d <- (i-1)*dx   # diffraction
-    z_seq <- seq(z[i],max_depth,by=dz)
+    z_d <- seq(z[i],max_depth,by=dz)
 #     mt <- (i - migTpl):(i + migTpl) # migration template
 #     mt <- mt[mt > 0 & mt <= m]
 #     l_migtpl <- length(mt)
     
-    for(k in seq_along(z_seq)){
-      z_d <- z_seq[k]
-      t_0 <- 2*(z_d - z[i])/v    # = k * dts in reality
-      z_idx <- round(z_d /dz + 1)
+    for(k in seq_along(z_d)){
+      t_0 <- 2*(z_d[k] - z[i])/v    # = k * dts in reality
+      z_idx <- round(z_d[k] /dz + 1)
       # Fresnel zone
       # Pérez-Gracia et al. (2008) Horizontal resolution in a non-destructive
       # shallow GPR survey: An experimental evaluation. NDT & E International,
       # 41(8): 611–620.
       # doi:10.1016/j.ndteint.2008.06.002
-      rf <- 0.5 * sqrt(lambda * 2 * (z_d - z[i]))
+      rf <- 0.5 * sqrt(lambda * 2 * (z_d[k] - z[i]))
       rf_tr <- round(rf/dx)
       mt <- (i - rf_tr):(i + rf_tr)
       mt <- mt[mt > 0 & mt <= m]
@@ -1320,7 +1319,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
              rasterImage = TRUE, resfac = 1, clab = "mV",
              add = FALSE, barscale = TRUE, addGrid = FALSE, 
              col = palGPR(n = 101), yaxt = "s", bty = "o",
-             relTime0 = TRUE, ...){
+             relTime0 = TRUE, clim = NULL, ...){
   op <- par(no.readonly=TRUE)
   time_0 <- median(time_0)
   mai <- op$mai
@@ -1337,6 +1336,9 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   if(is.null(y)){
     y <- -(ncol(z):1)
   }
+  if(is.null(clim)){
+    clim <- c(-1,1)*max(abs(z),na.rm=TRUE)
+  }
   if(add == TRUE){ 
     par(new = TRUE)
   }else{
@@ -1349,13 +1351,13 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
     rasterImage <- FALSE
   }
   #image(x,y,z,col=col,zlim=clim,xaxs="i", yaxs="i", yaxt="n",...)
-  plot3D::image2D(x = x, y = y, z = z, col = col, xlim = xlim,
+  plot3D::image2D(x = x, y = y, z = z, col = col, xlim = xlim, zlim = clim,
         xaxs = "i", yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
         resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)
  
   if(barscale){
     op2 <- par(no.readonly=TRUE)
-    .barScale(clim = range(z, na.rm = TRUE), y = y, col = col, clab = clab, 
+    .barScale(clim = clim, y = y, col = col, clab = clab, 
               clabcex = 0.8)
    # plot3D::colkey(clim = clim, clab = clab, width = 0.7, dist = 0.1, 
   #        add = TRUE, col = col)

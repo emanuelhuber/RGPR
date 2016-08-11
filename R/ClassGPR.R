@@ -1379,7 +1379,7 @@ setMethod("filter1D", "GPR", function(x, type = c("median", "hampel",
 #' @rdname filter2D
 #' @export
 setMethod("filter2D", "GPR", function(x, type = c("median3x3", "adimpro"), ...){
-    type <- match.arg(c("median3x3"))
+    type <- match.arg(type, c("median3x3", "adimpro"))
     if(type == "median3x3"){
       x@data <-  .medianFilter3x3(x@data)
     }else if( type == "adimpro"){

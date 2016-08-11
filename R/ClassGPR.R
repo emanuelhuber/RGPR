@@ -1378,10 +1378,28 @@ setMethod("filter1D", "GPR", function(x, type = c("median", "hampel",
 #' @name filter2D
 #' @rdname filter2D
 #' @export
-setMethod("filter2D", "GPR", function(x, type = c("median3x3"), ...){
+setMethod("filter2D", "GPR", function(x, type = c("median3x3", "adimpro"), ...){
     type <- match.arg(c("median3x3"))
     if(type == "median3x3"){
       x@data <-  .medianFilter3x3(x@data)
+    }else if( type == "adimpro"){
+      hmax <- 2
+      if( length(dots <- list(...)) ){
+#         dots <- list(...)
+        if( !is.null(dots$hmax)){
+          hmax <- dots$hmax
+        }
+      }
+      IMG <- x@data
+      IMG <- (IMG-min(IMG))/(max(IMG)-min(IMG))
+      adimg <- adimpro::make.image(IMG)
+      # img.smooth <- adimpro::awsimage(adimg, hmax = 2)
+      # img.smooth <- adimpro::awsimage(adimg, hmax = 2)
+      # img.smooth <- adimpro::awsaniso(adimg, hmax = 2,...)
+      img.smooth <- adimpro::awspimage(adimg, hmax = hmax,...)
+      AA <- adimpro::extract.image(img.smooth)
+      AAA <- (2*(AA-min(AA))/(max(AA) - min(AA)) - 1)*range(x@data)
+      x@data <- AAA
     }
     proc <- getArgs()
     x@proc <- c(x@proc, proc)

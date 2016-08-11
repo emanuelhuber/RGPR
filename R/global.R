@@ -848,7 +848,7 @@ setGenericVerif("filter1D", function(x, type = c("median", "hampel",
 #' @name filter2D
 #' @rdname filter2D
 #' @export
-setGenericVerif("filter2D", function(x, type=c("median3x3"), ...) 
+setGenericVerif("filter2D", function(x, type=c("median3x3", "adimpro"), ...) 
                 standardGeneric("filter2D"))
 setGenericVerif("dewow", function(x,type=c("MAD","Gaussian"),w ) 
                 standardGeneric("dewow"))

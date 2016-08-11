@@ -33,5 +33,6 @@ Imports:
     EMD,
     mmand,
     e1071,
-    plot3D
+    plot3D,
+	adimpro
 RoxygenNote: 5.0.1

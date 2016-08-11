@@ -1319,7 +1319,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
              rasterImage = TRUE, resfac = 1, clab = "mV",
              add = FALSE, barscale = TRUE, addGrid = FALSE, 
              col = palGPR(n = 101), yaxt = "s", bty = "o",
-             relTime0 = TRUE, clim = NULL, ...){
+             relTime0 = TRUE, clim = NULL, pdfName = NULL,...){
   op <- par(no.readonly=TRUE)
   time_0 <- median(time_0)
   mai <- op$mai
@@ -1339,21 +1339,45 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   if(is.null(clim)){
     clim <- c(-1,1)*max(abs(z),na.rm=TRUE)
   }
-  if(add == TRUE){ 
-    par(new = TRUE)
-  }else{
-    par( mai = mai)
-  }
   if(relTime0){
     y <- y + time_0
   }
   if( length(unique(diff(x))) > 1){
     rasterImage <- FALSE
   }
+  omi <- c(0,0,0.6,0)
+  mgp <- c(2.5, 0.75, 0)
+  fac <- 0.2
+  # if the depthunit are "meters"
+  if(grepl("[m]$",depthunit)){
+    heightPDF <- fac*diff(ylim) + sum(omi[c(1,3)] + mai[c(1,3)])
+    widthPDF <- fac*diff(xlim)*ratio +  sum(omi[c(2,4)]+ mai[c(2,4)])
+  }else{
+    heightPDF <- fac*(ylim[2] - ylim[1])*v/ 2 + sum(omi[c(1,3)] + mai[c(1,3)])
+    widthPDF <- fac*(xlim[2] - xlim[1])*ratio + sum(omi[c(2,4)] + mai[c(2,4)])
+  }
+  if(!is.null(pdfName)){
+    Cairo::CairoPDF(file = paste(pdfName,".pdf",sep=""),
+        # pointsize=10,
+        width = widthPDF, 
+        height = heightPDF,
+        # dpi=75,  # 75
+        bg = "white",
+        pointsize=10,
+        # units = "in",
+        title = pdfName)  
+  }
+  if(add == TRUE){ 
+    par(new = TRUE)
+  }else{
+    par( mai = mai,omi=omi,mgp=mgp)
+  }
+ 
+  
   #image(x,y,z,col=col,zlim=clim,xaxs="i", yaxs="i", yaxt="n",...)
   plot3D::image2D(x = x, y = y, z = z, col = col, xlim = xlim, zlim = clim,
         xaxs = "i", yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
-        resfac = resfac, main = main, bty = "n", colkey = FALSE, ...)
+        resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)
  
   if(barscale){
     op2 <- par(no.readonly=TRUE)
@@ -1404,6 +1428,9 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   }
   if( bty != "n"){
     box(bty = bty)
+  }
+  if(!is.null(pdfName)){
+    dev.off()
   }
   #op$usr <- usr
  # par(op)

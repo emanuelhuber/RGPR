@@ -1391,7 +1391,7 @@ setMethod("filter2D", "GPR", function(x, type = c("median3x3", "adimpro"), ...){
       # img.smooth <- adimpro::awsaniso(adimg, hmax = 2,...)
       img.smooth <- adimpro::awspimage(adimg,...)
       AA <- adimpro::extract.image(img.smooth)
-      AAA <- (2*(AA-min(AA))/(max(AA) - min(AA)) - 1)*max(abs(x@data))
+      AAA <- ( (AA - mean(AA))/sd(AA) ) * sd(x@data)
       x@data <- AAA
     }
     proc <- getArgs()

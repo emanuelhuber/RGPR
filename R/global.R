@@ -1311,9 +1311,9 @@ plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
 # col, main, xlab, ylab, mar, barscale
 #' @export
 plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
-                      note = NULL, 
+                      note = NULL, ratio = 1,
              time_0 = 0, antsep = 1, v = 0.1,
-             addFid = TRUE, fid=NULL,
+             addFid = TRUE, fid=NULL, ylim = NULL,
              addAnn = TRUE, annotations = NULL, 
              depthunit = "ns", posunit = "m",
              rasterImage = TRUE, resfac = 1, clab = "mV",
@@ -1375,7 +1375,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
  
   
   #image(x,y,z,col=col,zlim=clim,xaxs="i", yaxs="i", yaxt="n",...)
-  plot3D::image2D(x = x, y = y, z = z, col = col, xlim = xlim, zlim = clim,
+  plot3D::image2D(x = x, y = y, z = z, col = col, 
+        xlim = xlim, ylim = ylim, zlim = clim,
         xaxs = "i", yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
         resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)
  

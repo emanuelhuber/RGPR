@@ -2972,6 +2972,16 @@ setMethod("regInterpPos", "GPR", function(x, type = c("linear", "cosine"),
       if( any(abs(xo[k] - xpos) < 10^-3) ){
         xnew@data[, k] <- x@data[,k]
         xnew@time[k] <- x@time[k]
+        xnew@time0[k] <- x@time0[k]
+        if(length(x@coord) > 0){
+          xnew@coord[k,] <- x@coord[k,]
+        }
+        if(length(x@rec) > 0){
+          xnew@rec[k,] <- x@rec[k,]
+        }
+        if(length(x@trans) > 0){
+          xnew@trans[k,] <- x@trans[k,]
+        }
       }else{
         testm <- xpos < xo[k]
         testp <- xpos > xo[k]

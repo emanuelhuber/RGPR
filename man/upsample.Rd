@@ -3,11 +3,11 @@
 \docType{methods}
 \name{upsample}
 \alias{upsample}
-\title{Up-sample the GPR data (sinc-interpolation)}
+\title{Up-sample the GPR data (1D and 2D sinc-interpolation)}
 \usage{
 \S4method{upsample}{GPR}(x, n)
 }
 \description{
-Up-sample the GPR data (sinc-interpolation)
+Up-sample the GPR data (1D and 2D sinc-interpolation)
 }
 

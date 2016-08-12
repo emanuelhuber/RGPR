@@ -795,6 +795,12 @@ setGenericVerif("ampl", function(x, FUN=mean, ...) standardGeneric("ampl"))
 setGenericVerif("interpPos", function(x, topo, ...) 
     standardGeneric("interpPos"))
 
+#' @name regInterpPos
+#' @rdname regInterpPos
+#' @export
+setGenericVerif("regInterpPos", function(x, type = c("linear", "cosine"), 
+          dx = NULL)  standardGeneric("regInterpPos"))
+
 #' @name relPos
 #' @rdname relPos
 #' @export

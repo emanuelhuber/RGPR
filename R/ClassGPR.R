@@ -1085,6 +1085,7 @@ setReplaceMethod(
   }
 )
 
+# CHECK ME : COMPARE FID<- with ANN<- (!!!!!)
 #' @name fid<-
 #' @rdname fid
 #' @export
@@ -1231,8 +1232,8 @@ setMethod("firstBreack", "GPR", function(x, w = 11, ns = NULL, bet = NULL){
 #' @name dewow
 #' @rdname dewow
 #' @export
-setMethod("dewow", "GPR", function(x, type=c("MAD","Gaussian"),w){
-  type <- match.arg(type)
+setMethod("dewow", "GPR", function(x, type = c("MAD", "Gaussian"), w){
+  type <- match.arg(type, c("MAD", "Gaussian"))
   if(missing(w)){
     # argument initialization
     # pulse width in ns, (x@freq is in MHz)
@@ -1281,8 +1282,8 @@ setMethod("dewow", "GPR", function(x, type=c("MAD","Gaussian"),w){
 #' @rdname gain
 #' @export
 setMethod("gain", "GPR", function(x, 
-          type=c("power", "exp", "agc"),...){
-  type <- match.arg(type)
+          type = c("power", "exp", "agc"),...){
+  type <- match.arg(type, c("power", "exp", "agc"))
   x@data[is.na(x@data)] <-0
   if(type=="power"){
     x@data <- .gainPower(x@data, dts = x@dz, ...)
@@ -1305,11 +1306,11 @@ setMethod("gain", "GPR", function(x,
 #' @export
 setMethod("filter1D", "GPR", function(x, type = c("median", "hampel", 
           "Gaussian"), ...){
-    type <- match.arg(type)
+    type <- match.arg(type, c("median", "hampel", "Gaussian"))
+    w <- 50 * x@dz   # argument initialization
     if(type == "median"){
-      w <- 10    # argument initialization
-      if( length(list(...)) ){
-        dots <- list(...)
+      if( length(dots <- list(...)) ){
+#         dots <- list(...)
         if( !is.null(dots$w)){
           w <- dots$w
           w <- round(w / x@dz)
@@ -1321,9 +1322,8 @@ setMethod("filter1D", "GPR", function(x, type = c("median", "hampel",
       w <- (w-1)/2
       x@data <-  apply(x@data,2,.medianFilter1D,w)
     }else if(type == "hampel"){
-      w = 10    # argument initialization
-      if( length(list(...)) ){
-        dots <- list(...)
+      if( length(dots <-  list(...)) ){
+#         dots <- list(...)
         if( !is.null(dots$w)){
           w <- dots$w
           w <- round(w / x@dz)
@@ -1347,7 +1347,13 @@ setMethod("filter1D", "GPR", function(x, type = c("median", "hampel",
       }
       x@data <- Y[(w+1):(n-w),]
     }else if(type == "Gaussian"){
-      x@data <- mmand::gaussianSmooth(x@data, ...)
+      if( length(dots <-  list(...)) ){
+#         dots <- list(...)
+        if( !is.null(dots$w)){
+          w <- dots$w
+        }
+      }
+      x@data <- mmand::gaussianSmooth(x@data, sigma = w)
     }
     proc <- getArgs()
     x@proc <- c(x@proc, proc)
@@ -2158,7 +2164,7 @@ setMethod("plotAmpl", "GPR", function(x, FUN = mean, add = FALSE,
 #' @export
 setMethod("spec", "GPR", function(x, type = c("f-x","f-k"), plotSpec = TRUE, 
         unwrapPhase = TRUE, ...){
-    type <- match.arg(type)
+    type <- match.arg(type, c("f-x","f-k"))
     if(type == "f-x"){
       S <- powSpec(x@data, dT = x@dz, fac = 1000000, 
                   plotSpec = plotSpec, titleSpec = x@name)
@@ -2344,7 +2350,7 @@ function(x,name=NULL,type=c("raster","wiggles"),addTopo=FALSE,
         x <- upsample(x,n=nupspl)
       }
       topo <- rep(0,length(x))
-      type=match.arg(type)
+      type <- match.arg(type, c("raster","wiggles"))
       if(type=="raster"){
         if(addTopo){
           x <- migration(x)
@@ -2411,7 +2417,7 @@ name=NULL,type=c("raster","wiggles"),addTopo=FALSE,...){
     xsave <- x
     # itp <- locator(type="l", n=n)
     topo <- rep(0,length(x))
-    type=match.arg(type)
+    type <- match.arg(type, c("raster","wiggles"))
     if(type=="raster"){
       if(addTopo){
         x <- migration(x)
@@ -2758,13 +2764,13 @@ setMethod("identifyDelineation", "GPR", function(x,sel=NULL,...){
 #' @name migration
 #' @rdname migration
 #' @export
-setMethod("migration", "GPR", function(x,type=c("static","kirchhoff"),...){
+setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
 #     if(missing(type)){
 #       type=match.arg(type)
 #       suppl_args <- list("type"=type)
 #       # cat(type,"\n")
 #     }
-    type <- match.arg(type)
+    type <- match.arg(type, c("static", "kirchhoff"))
     if(type == "static"){  
       ntr <- ncol(x@data)
       if(ncol(x@coord) == 3 && length(x@coord[,3])>= ntr){
@@ -2862,7 +2868,7 @@ setMethod("timeCorOffset", "GPR", function(x){
 
 
 #---------------------- INTERPOLATION ---------------------#  
-#' Up-sample the GPR data (sinc-interpolation)
+#' Up-sample the GPR data (1D and 2D sinc-interpolation)
 #'
 #' @name upsample
 #' @rdname upsample
@@ -2944,6 +2950,76 @@ setMethod("upsample", "GPR", function(x,n){
   } 
 )
 
+#' Trace interpolation at regularly spaced positions 
+#'
+#' @name regInterpPos
+#' @rdname regInterpPos
+#' @export
+setMethod("regInterpPos", "GPR", function(x, type = c("linear", "cosine"), 
+          dx = NULL){
+    type <- match.arg(type, c("linear", "cosine"))
+    if(length(x@coord)>0){
+      xpos <- posLine(x@coord)
+    }else{
+      xpos <- x@pos
+    }
+    if(is.null(dx)){
+      dx <- min(diff(xpos))
+    }
+    xo <- seq(min(xpos), max(xpos), by = dx)
+    xnew <- x[,rep(1, length(xo))]
+    for(k in seq_along(xo)){
+      if( any(abs(xo[k] - xpos) < 10^-3) ){
+        xnew@data[, k] <- x@data[,k]
+        xnew@time[k] <- x@time[k]
+      }else{
+        testm <- xpos < xo[k]
+        testp <- xpos > xo[k]
+        km <- ifelse(any(testm), tail(which(testm),1), 0)
+        kp <- ifelse(any(testm), which(testp)[1], 0)
+        w <- (xpos[kp] - xo[k])/(xpos[kp] - xpos[km])
+  #       wm <- 1/(xo[k] - xpos[km]) 
+  #       wp <- 1/(xpos[kp] - xo[k])
+  #       xnew@data[, k] <- (wm*x@data[,km] + wp*x@data[,kp])/(wm + wp)
+        if(type == "linear"){
+        }else if(type == "cosine"){
+          w <- (1-cos(w*pi))/2
+        }
+        xnew@data[,k] <- w * x@data[,km] + (1 - w) * x@data[,kp]
+        xnew@time[k] <- round( w * x@time[km] + (1 - w) * x@time[kp] )
+        xnew@time0[k] <- w * x@time0[km] + (1 - w) * x@time0[kp]
+        if(length(x@coord) > 0){
+          xnew@coord[k,] <- w * x@coord[km,] + (1 - w) * x@coord[kp,]
+        }
+        if(length(x@rec) > 0){
+          xnew@rec[k,] <- w * x@rec[km,] + (1 - w) * x@rec[kp,]
+        }
+        if(length(x@trans) > 0){
+          xnew@trans[k,] <- w * x@trans[km,] + (1 - w) * x@trans[kp,]
+        }
+      }
+    }
+    xnew@traces <- seq_along(xo)
+    xnew@pos <- xo
+    xnew@fid <- interpFid(xpos, xo, x@fid)
+    xnew@ann <- interpFid(xpos, xo, x@ann)
+    xnew@dx <- round(dx,3)
+    proc <- getArgs()
+    xnew@proc <- c(xnew@proc, proc)
+    return(xnew)
+  }
+)
+
+# interpolate position fiducial/annotation
+  interpFid <- function(xposold, xposnew, fidOld){
+    fidNew <- rep("", length(xposnew))
+    fids <- which(fidOld != "")
+    for(i in seq_along(fids)){
+      fidpos <- which.min(abs(xposold[fids[i]] - xposnew))
+      fidNew[fidpos] <- fidOld[fids[i]]
+    }
+    return(fidNew)
+  }
 
 #----------------------- SAVE/EXPORT ------------------------#
 #' Write the GPR object in a file.
@@ -3272,7 +3348,7 @@ setMethod("exportFid", "GPR", function(x,fPath=NULL){
 setMethod("exportCoord", "GPR", 
   function(x, type = c("SpatialPoints", "SpatialLines", "ASCII"),
   fPath = NULL, folder = NULL,  sep = "\t", driver = "ESRI Shapefile",...){
-  type <- match.arg(type)
+  type <- match.arg(type, c("SpatialPoints", "SpatialLines", "ASCII"))
   if(is.null(fPath)){
     fPath <- x@name
   }

@@ -2964,23 +2964,24 @@ setMethod("regInterpPos", "GPR", function(x, type = c("linear", "cosine"),
       xpos <- x@pos
     }
     if(is.null(dx)){
-      dx <- min(diff(xpos))
+      dx <- min(abs(diff(xpos)))
     }
     xo <- seq(min(xpos), max(xpos), by = dx)
     xnew <- x[,rep(1, length(xo))]
     for(k in seq_along(xo)){
-      if( any(abs(xo[k] - xpos) < 10^-3) ){
-        xnew@data[, k] <- x@data[,k]
-        xnew@time[k] <- x@time[k]
-        xnew@time0[k] <- x@time0[k]
+      if( any(di <- abs(xo[k] - xpos) < 10^-3) ){
+        ki <- which(di)[1]
+        xnew@data[, k] <- x@data[,ki]
+        xnew@time[k] <- x@time[ki]
+        xnew@time0[k] <- x@time0[ki]
         if(length(x@coord) > 0){
-          xnew@coord[k,] <- x@coord[k,]
+          xnew@coord[k,] <- x@coord[ki,]
         }
         if(length(x@rec) > 0){
-          xnew@rec[k,] <- x@rec[k,]
+          xnew@rec[k,] <- x@rec[ki,]
         }
         if(length(x@trans) > 0){
-          xnew@trans[k,] <- x@trans[k,]
+          xnew@trans[k,] <- x@trans[ki,]
         }
       }else{
         testm <- xpos < xo[k]

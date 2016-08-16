@@ -627,6 +627,20 @@ wapply <- function(x=NULL, width = NULL, by = NULL, FUN = NULL, ...){
   return(OUT)
 }
 
+# mod by MANU
+wapplyRow <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, ...){
+  FUN <- match.fun(FUN)
+  if (is.null(by)) by <- width
+  lenX <- nrow(x)
+  SEQ1 <- seq(1, lenX - width + 1, by = by)
+  SEQ2 <- lapply(SEQ1, function(x) x:(x + width - 1))
+   
+  OUT <- lapply(SEQ2, function(a) FUN(x[a,,drop=FALSE], ...))
+  OUT <- base::simplify2array(OUT, higher = TRUE)
+  return(OUT)
+}
+
+
 xyToLine <- function(x){
   sp::Line(x[,1:2])
 }
@@ -1564,9 +1578,11 @@ posunit,"/",depthunit),
 # The Leading edge, 21: 136-158
 .eps <- function(x,ns){
   xmean <-  c(rep(0,floor(ns/2)), 
-              wapply(x,width=ns,by=1, FUN=mean),rep(0,floor(ns/2)))
+              wapply(x,width=ns,by=1, FUN=mean),
+              rep(0,floor(ns/2)))
   xsd <- c(rep(0,floor(ns/2)), 
-wapply(x,width=ns,by=1,FUN=sd),rep(0,floor(ns/2)))
+           wapply(x,width=ns,by=1,FUN=sd),
+           rep(0,floor(ns/2)))
   xtest <- wapply(xsd,width=ns,by=1,FUN=which.min) + 
             (0):(length(xmean)- 2*floor(ns/2)-1)
   return(c(rep(0,floor(ns/2)), xmean[xtest],rep(0,floor(ns/2))))
@@ -2646,13 +2662,13 @@ distTensorLogE <- function(a1,b1,c1,a2,b2,c2){
 #' @name strucTensor
 #' @rdname strucTensor
 #' @export
-strucTensor <- function(P, winBlur = c(3,3), winEdge=c(7,7), 
-      winTensor = c(5,10), sdTensor=2, dxy = c(1, 1), blksze = c(2, 2),
-      thresh=0.1, ...){
+strucTensor <- function(P, dxy = c(1, 1), blksze = c(2, 2),
+                        kBlur   = list(n = 3, m =  3, sd = 1), 
+                        kEdge   = list(n = 7, m =  7, sd = 1), 
+                        kTensor = list(n = 5, m = 10, sd = 2),
+                        thresh=0.1, ...){
   n <- nrow(P)
   m <- ncol(P)
-  #blksze = 10
-  #thresh = 0.1;
  
  #-------------------------------------------------
   #- Identify ridge-like regions and normalise image
@@ -2690,25 +2706,21 @@ strucTensor <- function(P, winBlur = c(3,3), winEdge=c(7,7),
   #- Determine ridge orientations
   #------------------------------
   #  BLURING
-  if(!is.null(winBlur)){
-    if(length(winBlur) == 1){
-      winBlur <- c(winBlur, winBlur)
-    }
-    k = matrix(1, nrow = winBlur[1], ncol = winBlur[2], byrow = TRUE)/
-                (winBlur[1] * winBlur[2])
-    P_f  = convolution2D(P, k , 0)
+  if(!is.null(kBlur)){
+    k <- do.call( gkernel, kBlur)
+    P_f  <- convolution2D(P, k)
   }else{
     P_f <- P
   }
 
   # GRADIENT FIELD
   # window size for edge dectection
-  if(length(winEdge) == 1){
-    winEdge <- c(winEdge, winEdge)
-  }
-  vx <- convolution2D(P_f, dx_gkernel(winEdge[1], winEdge[2], 1), 0)/dxy[1]
-  vy <- convolution2D(P_f, dy_gkernel(winEdge[1], winEdge[2], 1), 0)/dxy[2]
-
+  kdx <- do.call( dx_gkernel, kEdge)
+  kdy <- do.call( dy_gkernel, kEdge)
+  vx <- convolution2D(P_f, kdx)/dxy[1]
+  vy <- convolution2D(P_f, kdy)/dxy[2]
+  image2D(vy)
+  image2D(vx)
   # local TENSOR
   Gxx <- vx^2
   Gyy <- vy^2
@@ -2716,26 +2728,34 @@ strucTensor <- function(P, winBlur = c(3,3), winEdge=c(7,7),
     
   # LOCAL AVERAGED TENSOR
   #sze = 5 *2
-  Jxx  <- convolution2D(Gxx, gkernel(winTensor[1],winTensor[2],sdTensor), 0)
-  Jyy  <- convolution2D(Gyy, gkernel(winTensor[1],winTensor[2],sdTensor), 0)
-  Jxy  <- convolution2D(Gxy, gkernel(winTensor[1],winTensor[2],sdTensor), 0)
+  kg <- do.call(gkernel, kTensor)
+  Jxx  <- convolution2D(Gxx, kg)
+  Jyy  <- convolution2D(Gyy, kg)
+  Jxy  <- convolution2D(Gxy, kg)
+  
+  image2D(Jxx)
+  image2D(Jyy)
+  image2D(Jxy)
+  
+  
+  # polar parametrisation
+  energy <- Jxx + Jyy                               # energy
+  anisot  <- sqrt((Jxx-Jyy)^2 + 4*(Jxy)^2)/energy   # anisotropy
+  orient <- 1/2*atan2(2*Jxy, (Jxx - Jyy) ) + pi/2     # orientation
+  mask2 <- mask | energy < .Machine$double.eps^0.5 | is.infinite(orient)
+  anisot[mask2] <- 0
+  energy[mask2] <- 0
+  orient[mask2] <- 0
+#   anisot[is.infinite(orient)] <- 0
 
   # ANALYTIC SOLUTION BASED ON SVD DECOMPOSITION
   Jeig <- eigenDecomp2x2SymMatrix(Jxx, Jyy, Jxy)
-  Jeig$u1x[mask] <- 0
-  Jeig$u1y[mask] <- 0
-  Jeig$u2x[mask] <- 0
-  Jeig$u2y[mask] <- 0
-  Jeig$l1[mask] <- 0
-  Jeig$l2[mask] <- 0
-  
-  # polar parametrisation
-  o_alpha <- Jxx + Jyy                               # energy
-  o_alpha[mask] <- 0
-  o_beta  <- sqrt((Jxx-Jyy)^2 + 4*(Jxy)^2)/o_alpha   # anisotropy
-  o_beta[mask] <- 0
-  o_theta <- 1/2*atan2(2*Jxy,(Jxx - Jyy)) + pi/2     # orientation
-  o_theta[mask] <- 0
+  Jeig$u1x[mask2] <- 0
+  Jeig$u1y[mask2] <- 0
+  Jeig$u2x[mask2] <- 0
+  Jeig$u2y[mask2] <- 0
+  Jeig$l1[mask2] <- 0
+  Jeig$l2[mask2] <- 0
   
   return(list(tensor  = list("xx" = Jxx,
                              "yy" = Jyy,
@@ -2746,9 +2766,10 @@ strucTensor <- function(P, winBlur = c(3,3), winEdge=c(7,7),
                              "u2y" = Jeig$u2y),
               values  = list("l1" = Jeig$l1,
                              "l2" = Jeig$l2),
-              polar   = list("energy" = o_alpha,
-                             "anisotropy" = o_beta,
-                             "orientation" = o_theta)))
+              polar   = list("energy" = energy,
+                             "anisotropy" = anisot,
+                             "orientation" = orient),
+              mask = mask2))
 }
 
 #' Plot structure tensor on GPR data
@@ -2768,14 +2789,14 @@ plotTensor <- function(x, O, type=c("vectors", "ellipses"), normalise=FALSE,
   v_x = seq(spacing[1],(n-spacing[1]),by=spacing[1])
   v_y = seq(spacing[2],(m-spacing[2]), by=spacing[2])
   
-  angle = O$polar$orientation[v_x, v_y];
-  l1 <- O$values[[1]][v_x, v_y]
-  l2 <- O$values[[2]][v_x, v_y]
-
   # Determine placement of orientation vectors
   X = matrix(x@pos[v_y],nrow=length(v_x),ncol=length(v_y),byrow=TRUE)
   Y = matrix(x@depth[v_x],nrow=length(v_x),ncol=length(v_y),byrow=FALSE)
   
+  angle = O$polar$orientation[v_x, v_y];
+  l1 <- O$values[[1]][v_x, v_y]
+  l2 <- O$values[[2]][v_x, v_y]
+
   if(type == "vectors"){
     #Orientation vectors
     dx0 <- cos(angle)
@@ -2788,20 +2809,96 @@ plotTensor <- function(x, O, type=c("vectors", "ellipses"), normalise=FALSE,
     dy <- len1*dy0/normdxdy/2*ratio
     segments(X - dx, -(Y - dy), X + dx , -(Y + dy),...)
   }else if(type == "ellipses"){
-  
-    normdxdy <- matrix(max(l1,l2),nrow=length(v_x),ncol=length(v_y))
+    a <- 1/sqrt(l1)
+    b <- 1/sqrt(l2)
+    normdxdy <- matrix(max(a,b),nrow=length(v_x),ncol=length(v_y))
     if(isTRUE(normalise)){
-      normdxdy <- l1
+      normdxdy <- a
     }
     for(i in seq_along(v_x)){
       for(j in seq_along(v_y)){
-        E <- ellipse(saxes = c(l1[i,j], l2[i,j]*ratio)*len1/normdxdy[i,j], 
+        E <- ellipse(saxes = c(a[i,j], b[i,j]*ratio)*len1/normdxdy[i,j], 
                     loc   = c(X[i,j], -Y[i,j]), 
                     theta = -angle[i,j], n=n)
         polygon(E,...)
       }
     }
   }
+}
+
+plotTensor0 <- function(O,  dxy = c(1,1), 
+                type=c("vectors", "ellipses"), normalise=FALSE,
+                spacing=c(6,4), len=1.9, n=10, ratio=1,...){
+  type <- match.arg(type, c("vectors", "ellipses"))
+  n <- nrow(O$values[[1]])
+  m <- ncol(O$values[[1]])
+
+  len1 <- len*max(spacing * dxy);  # length of orientation lines
+  
+  # Subsample the orientation data according to the specified spacing
+  v_x = seq(spacing[1],(n-spacing[1]),by=spacing[1])
+  v_y = seq(spacing[2],(m-spacing[2]), by=spacing[2])
+  
+  # Determine placement of orientation vectors
+  xpos <- seq(0, by = dxy[1], length.out = n)
+  ypos <- seq(0, by = dxy[2], length.out = m)
+  X = matrix(xpos[v_x],nrow=length(v_x),ncol=length(v_y),byrow=FALSE)
+  Y = matrix(ypos[v_y],nrow=length(v_x),ncol=length(v_y),byrow=TRUE)
+  
+  angle = O$polar$orientation[v_x, v_y]
+  l1 <- O$values[[1]][v_x, v_y]
+  l2 <- O$values[[2]][v_x, v_y]
+
+  if(type == "vectors"){
+    #Orientation vectors
+    dx0 <- sin(angle)
+    dy0 <- cos(angle)
+    normdxdy <- 1
+    if(isTRUE(normalise)){
+      normdxdy <- sqrt(dx0^2 + dy0^2)
+    }
+    dx <- len1*dx0/normdxdy/2
+    dy <- len1*dy0/normdxdy/2*ratio
+    segments(X - dx, (Y - dy), X + dx , (Y + dy),...)
+  }else if(type == "ellipses"){
+#     l1[l1 < .Machine$double.eps] <- .Machine$double.eps
+#     l2[l2 < .Machine$double.eps] <- .Machine$double.eps
+    l1[l1 < 0] <- 0
+    l2[l2 < 0] <- 0
+    b <- 1/sqrt(l2)
+    a <- 1/sqrt(l1)
+#     normdxdy <- matrix(max(a[is.finite(a)],b[is.finite(b)]),
+    normdxdy <- matrix(max(a[is.finite(a)]),
+                nrow=length(v_x),ncol=length(v_y))
+    if(isTRUE(normalise)){
+      normdxdy <- b
+    }
+    for(i in seq_along(v_x)){
+      for(j in seq_along(v_y)){
+        aij <- ifelse(is.infinite(a[i,j]), 0, a[i,j])
+        bij <- ifelse(is.infinite(b[i,j]), 0, b[i,j])
+        if(isTRUE(normalise)){
+          maxab <- max(aij, bij)
+          if(maxab != 0){
+            aij <- aij/maxab
+            bij <- bij/maxab
+            cat(i,".",j,"  > a =",aij, "  b =", bij, "\n")
+#           normdxdy <- b
+          }
+        }
+        if(!(aij == 0 & bij == 0)){
+          E <- ellipse(saxes = c(aij, bij*ratio)*len1,
+#           /normdxdy[i,j], 
+                      loc   = c(X[i,j], Y[i,j]), 
+                      theta = -angle[i,j], n=n)
+          polygon(E)
+        }
+      }
+    }
+  }
+}
+
+
 #   image2DN(x@data)
 #    X = matrix(v_y,nrow=length(v_x),ncol=length(v_y),byrow=TRUE)
 #   Y = matrix(v_x,nrow=length(v_x),ncol=length(v_y),byrow=FALSE)
@@ -2821,7 +2918,6 @@ plotTensor <- function(x, O, type=c("vectors", "ellipses"), normalise=FALSE,
 #       lines(E, lwd=0.5)
 #     }
 #   }
-}
 
 
 #-----------------
@@ -2832,40 +2928,45 @@ plotTensor <- function(x, O, type=c("vectors", "ellipses"), normalise=FALSE,
 # n = nrow
 # m = mrow
 # sigma = sd
-gkernel <- function(n,m, sigma=1){
-  siz   = (n-1)/2;
-  y = matrix(-siz:siz,n,m)
-  siz   = (m-1)/2;
-  x = matrix(-siz:siz,n,m,byrow=T)
-  g = exp(-(x^2+y^2)/(2*sigma^2))
-  sumg=sum(g)
-  if(sumg!=0){
-    g/sumg
+gkernel <- function(n, m, sd=1){
+  n <- ifelse(n %% 2 == 0, n + 1, n)
+  m <- ifelse(m %% 2 == 0, m + 1, m)
+  siz <- (n - 1)/2;
+  y <- matrix(-siz:siz, nrow = n, ncol = m)
+  siz <- (m - 1)/2;
+  x <- matrix(-siz:siz, nrow = n, ncol = m, byrow = TRUE)
+  g <- exp(-(x^2+y^2)/(2*sd^2))
+  sumg <- sum(g)
+  if(sumg != 0){
+    return( g/sumg )
   }else{
-    g
+    return( g )
   }
-  
 }
 
 # Gaussian x-derivative kernel
 # as edge detector
-dx_gkernel <- function(n,m, sigma=1){
-  siz   = round((n-1)/2);
-  y = matrix(-siz:siz,n,m)
-  siz   = (m-1)/2;
-  x = matrix(-siz:siz,n,m,byrow=T)
-  g = x*exp(-(x^2+y^2)/(2*sigma^2))
+dx_gkernel <- function(n, m, sd=1){
+  n <- ifelse(n %% 2 == 0, n + 1, n)
+  m <- ifelse(m %% 2 == 0, m + 1, m)
+  siz <- (n - 1)/2;
+  y <- matrix(-siz:siz, nrow = n, ncol = m)
+  siz <- (m - 1)/2;
+  x <- matrix(-siz:siz, nrow = n, ncol = m, byrow = TRUE)
+  g = x*exp(-(x^2+y^2)/(2*sd^2))
 
 }
 
 # Gaussian y-derivative kernel
 # as edge detector
-dy_gkernel <- function(n,m, sigma=1){
-  siz   = round((n-1)/2);
-  y = matrix(-siz:siz,n,m)
-  siz   = (m-1)/2;
-  x = matrix(-siz:siz,n,m,byrow=T)
-  g = y*exp(-(x^2+y^2)/(2*sigma^2))
+dy_gkernel <- function(n, m, sd=1){
+  n <- ifelse(n %% 2 == 0, n + 1, n)
+  m <- ifelse(m %% 2 == 0, m + 1, m)
+  siz <- (n - 1)/2;
+  y <- matrix(-siz:siz, nrow = n, ncol = m)
+  siz <- (m - 1)/2;
+  x <- matrix(-siz:siz, nrow = n, ncol = m, byrow = TRUE)
+  g = y*exp(-(x^2+y^2)/(2*sd^2))
 }
 
 #' Two-dimensional convolution
@@ -2882,18 +2983,19 @@ convolution2D <- function(A,k){
   if(nk > nA || mk > mA){
     stop("Kernel 'k' should be smaller than the matrix 'A'\n")
   }
-  A0 <- paddMatrix(A,nk,mk)
+  A0 <- paddMatrix(A, nk, mk)
   nL <- nrow(A0)
   mL <- ncol(A0)
   k0 <- matrix(0, nrow=nL, ncol=mL)
   # h0[(nk-1) + 1:nh, (mk-1) + 1:mh] <- A
-  A0[1:nA,  1:mA] <- A
+#   A0[1:nA,  1:mA] <- A
   k0[1:nk, 1:mk] <- k
   g <- Re(fft(fft(k0)*fft(A0),inverse=TRUE))/(nL * mL)
-  g2 <- g[nk-1 + 1:nA, mk-1 + 1:mA]
+  g2 <- g[nk + nk/2  + (1:nA), mk +mk/2 + (1:mA)]
   # g2 <- g[nk + 1:nh, mk + 1:mh]
   return(g2)
 }
+
 # pads the edges of an image to minimize edge effects 
 # %during convolutions and Fourier transforms. 
 # %Inputs %I - image to pad 
@@ -2902,21 +3004,21 @@ convolution2D <- function(A,k){
 # SOURCE: http://matlabgeeks.com/tips-tutorials/how-to-blur-an-image-with-a-
 # fourier-transform-in-matlab-part-i/
  # service@matlabgeeks.com i
-paddMatrix <- function(I,p1, p2=NULL){
+paddMatrix <- function(I, p1, p2=NULL){
   if(is.null(p2)){
     p2 <- p1
   }
   nI <- nrow(I)
   mI <- ncol(I)
-  Ipad <- matrix(0, nrow=nI+2*p1, ncol=mI + 2*p2)
+  Ipad <- matrix(0, nrow = nI + 2*p1, ncol = mI + 2*p2)
   # middle
   Ipad[(p1+1):(p1+nI),(p2+1):(p2+mI)] <- I
   # top and bottom
-  Ipad[1:p1,(p2+1):(p2+mI)] <- repmat(I[1,], p1, 1)
-  Ipad[(p1+nI+1):(nI+2*p1), (p2+1):(p2+mI)] <- repmat(I[nI,], p1, 1)
+  Ipad[1:p1,(p2+1):(p2+mI)] <- repmat(I[1,,drop=FALSE], p1, 1)
+  Ipad[(p1+nI+1):(nI+2*p1), (p2+1):(p2+mI)] <- repmat(I[nI,,drop=FALSE], p1, 1)
   # left and right
-  Ipad[(p1+1):(p1+nI), 1:p2] <- repmat(I[,1], 1, p2)
-  Ipad[(p1+1):(p1+nI), (p2+mI+1):(mI + 2*p2)] <- repmat(I[,mI],1,p2)
+  Ipad[(p1+1):(p1+nI), 1:p2] <- repmat(I[,1,drop=FALSE], 1, p2)
+  Ipad[(p1+1):(p1+nI), (p2+mI+1):(mI + 2*p2)] <- repmat(I[,mI, drop=FALSE],1,p2)
   # corner
   Ipad[1:p1, 1:p2] <- I[1,1]
   Ipad[1:p1,(p2+mI+1):(mI + 2*p2)] <- I[1,mI]

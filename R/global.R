@@ -2613,7 +2613,7 @@ matProd2x2 <- function(a11, a12, a21, a22, b11, b12, b21, b22){
 #' @export
 distTensors <- function(a1,b1,c1,a2,b2,c2, 
                       method=c("geodesic", "log-Euclidean")){
-  method <- match.arg(c("geodesic", "log-Euclidean"))
+  method <- match.arg(method, c("geodesic", "log-Euclidean"))
   if(method == "geodesic"){
     return(distTensorGeod(a1,b1,c1,a2,b2,c2))
   }else if(method == "log-Euclidean"){
@@ -2752,6 +2752,8 @@ strucTensor <- function(P, dxy = c(1, 1), blksze = c(2, 2),
   Jxx  <- convolution2D(Gxx, kg)
   Jyy  <- convolution2D(Gyy, kg)
   Jxy  <- convolution2D(Gxy, kg)
+  Jxx[Jxx < .Machine$double.eps^0.75] <- 0
+  Jyy[Jyy < .Machine$double.eps^0.75] <- 0
   
 #   image2D(Jxx)
 #   image2D(Jyy)
@@ -2762,7 +2764,7 @@ strucTensor <- function(P, dxy = c(1, 1), blksze = c(2, 2),
   energy <- Jxx + Jyy                               # energy
   anisot  <- sqrt((Jxx-Jyy)^2 + 4*(Jxy)^2)/energy   # anisotropy
   orient <- 1/2*atan2(2*Jxy, (Jxx - Jyy) ) + pi/2     # orientation
-  mask2 <- mask | energy < .Machine$double.eps^0.5 | is.infinite(orient)
+  mask2 <- mask | is.infinite(orient)
   anisot[mask2] <- 0
   energy[mask2] <- 0
   orient[mask2] <- 0

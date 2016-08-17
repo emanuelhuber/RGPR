@@ -1363,7 +1363,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   }else{
     mai <- c(1.2, 1.2, 1.2, 1.8)
   }
-  z <-  as.matrix(as.numeric(z))
+  z <-  as.matrix(z)
   z <- t(z[nrow(z):1,])
   if(is.null(x)){
     x <- (1:nrow(z))
@@ -2776,6 +2776,7 @@ strucTensor <- function(P, dxy = c(1, 1), blksze = c(2, 2),
   Jeig$u2y[mask2] <- 0
   Jeig$l1[mask2] <- 0
   Jeig$l2[mask2] <- 0
+  mode(mask2) <- "integer"
   
   return(list(tensor  = list("xx" = Jxx,
                              "yy" = Jyy,

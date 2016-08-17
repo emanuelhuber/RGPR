@@ -2854,7 +2854,7 @@ plotTensor <- function(x, O, type=c("vectors", "ellipses"), normalise=FALSE,
           if(maxab != 0){
             aij <- aij/maxab
             bij <- bij/maxab
-            cat(i,".",j,"  > a =",aij, "  b =", bij, "\n")
+#             cat(i,".",j,"  > a =",aij, "  b =", bij, "\n")
 #           normdxdy <- b
           }
         }
@@ -2863,7 +2863,7 @@ plotTensor <- function(x, O, type=c("vectors", "ellipses"), normalise=FALSE,
 #           /normdxdy[i,j], 
                       loc   = c(X[i,j], Y[i,j]), 
                       theta = -angle[i,j], n=n)
-          polygon(E)
+          polygon(E, ...)
         }
       }
     }

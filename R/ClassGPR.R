@@ -219,8 +219,8 @@ setClass(
     endpos <- dx[1]*ncol(x$data)
   }
   
-  hd_list <- list("startpos" = startpos[1],   # "STARTING POSITION"
-                  "endpos" = endpos[1],       # "FINAL POSITION"
+  hd_list <- list("startpos" = as.numeric(startpos[1]),   # "STARTING POSITION"
+                  "endpos" = as.numeric(endpos[1]),       # "FINAL POSITION"
                   "gprdevice" = GPR_device)
 
   x$hd2 <- x$hd[!pos_used,]
@@ -796,9 +796,14 @@ setMethod(
         if(length(x@trans)>0) x@trans <- x@trans[j,,drop=FALSE]
 #         x@ntr <- length(j)
         if(!is.null(x@hd$startpos) && !is.null(x@hd$endpos)){
-          trpos <- seq(x@hd$startpos, x@hd$endpos,by=x@dx)
-          x@hd$endpos <- trpos[j[length(j)]]
-          x@hd$startpos <- trpos[j[1]]
+          if( !is.na(x@hd$startpos) && !is.na(x@hd$endpos) ){
+            trpos <- seq(x@hd$startpos, x@hd$endpos,by=x@dx)
+            x@hd$endpos <- trpos[j[length(j)]]
+            x@hd$startpos <- trpos[j[1]]
+          }else{
+            x@hd$startpos <- NULL
+            x@hd$endpos <- NULL
+          }
         }
       }
       if(drop && length(rval) == 1){ rval <- c(rval)}

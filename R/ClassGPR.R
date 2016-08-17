@@ -1162,7 +1162,9 @@ setMethod("processing", "GPR", function(x){
 #' @rdname dcshift
 #' @export
 setMethod("dcshift", "GPR", function(x, u, FUN=mean){
-    x <-  x - apply(x[u,],2,FUN)
+    shift <- matrix(apply(x[u,],2,FUN), nrow = nrow(x), 
+                    ncol=length(xmean), byrow = TRUE)
+    x <-  x - shift
     if(class(FUN)=="function"){
       nameFun <- "FUN"
     }else{
@@ -3031,6 +3033,64 @@ setMethod("regInterpPos", "GPR", function(x, type = c("linear", "cosine"),
     }
     return(fidNew)
   }
+
+  
+#---------------------- STRUCTURE TENSOR ---------------------#
+#' Structure tensor field of GPR data 
+#'
+#' @name strTensor
+#' @rdname strTensor
+#' @export
+setMethod("strTensor", "GPR", function(x,  blksze = c(2, 4),
+                        kBlur   = list(n = 1, m = 1, sd = 1), 
+                        kEdge   = list(n = 5, m = 5, sd = 1), 
+                        kTensor = list(n = 5, m = 5, sd = 1),
+                        thresh = 0.02, what = c("tensor", "mask"), ...){
+    O <- strucTensor(P = x@data, dxy = c(x@dx, x@dz), 
+                blksze = blksze,
+                kBlur   = kBlur, 
+                kEdge   = kEdge, 
+                kTensor = kTensor,
+                thresh = thresh)  
+    output <- list()
+    whatref <- c("tensor","vectors","values","polar","mask")
+    what <- what[what %in% whatref]
+    if(length(what) == 0){
+      stop(paste0("argument 'what' only accepts a character vector composed of",
+          " at least one of the following words:\n",
+          "'tensor', 'vectors', 'values', 'polar', 'mask'"))
+    }
+    if( "orientation" %in% what){ 
+      xOrient <- x
+      xAni <- x
+      xEnergy <- x
+      xOrient@data <- O$polar$orientation
+      xEnergy@data <- O$polar$energy
+      xAni@data <- O$polar$anisotropy
+      output["orientation"] <- list("energy" = xEnergy,
+                                    "anisotropy" = xAni,
+                                    "orientation" = xOrient)
+    }
+    if( "tensor" %in% what){
+      xJxx <- x
+      xJyy <- x
+      xJxy <- x
+      xJxx@data <- O$tensor$xx
+      xJyy@data <- O$tensor$yy
+      xJxy@data <- O$tensor$xy
+      output["tensor"] <- list("xx" = xJxx,
+                               "yy" = xJyy,
+                               "xy" = xJxy)
+    }
+    if( "mask" %in% what){
+      mask <- x
+      mask@data <- O$mask
+      output["mask"] <- mask
+    }
+    return(output)
+  }
+)
+
 
 #----------------------- SAVE/EXPORT ------------------------#
 #' Write the GPR object in a file.

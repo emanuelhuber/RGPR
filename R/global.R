@@ -969,6 +969,24 @@ setGenericVerif("plotDelineations", function(x,sel=NULL,col=NULL,...)
 setGenericVerif("identifyDelineation", function(x,sel=NULL,...) 
                   standardGeneric("identifyDelineation"))
 
+
+#' @name strTensor
+#' @rdname strTensor
+#' @export
+setGenericVerif("strTensor", function(x,  blksze = c(2, 4),
+                        kBlur   = list(n = 1, m = 1, sd = 1), 
+                        kEdge   = list(n = 5, m = 5, sd = 1), 
+                        kTensor = list(n = 5, m = 5, sd = 1),
+                        thresh = 0.02, what = c("tensor", "mask"), ...)
+                        standardGeneric("strTensor"))
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
 timeToDepth <- function(tt, time_0, v=0.1, antsep=1){
   t0 <- time_0 - antsep/0.299
   sqrt(v^2*(tt-t0)- antsep^2)/2
@@ -2786,12 +2804,17 @@ plotTensor <- function(x, O, type=c("vectors", "ellipses"), normalise=FALSE,
   len1 <- len*max(spacing*c(x@dx,x@dz));  # length of orientation lines
   
   # Subsample the orientation data according to the specified spacing
-  v_x = seq(spacing[1],(n-spacing[1]),by=spacing[1])
-  v_y = seq(spacing[2],(m-spacing[2]), by=spacing[2])
+  v_y = seq(spacing[1],(m-spacing[1]),by=spacing[1])
+  v_x = seq(spacing[2],(n-spacing[2]), by=spacing[2])
   
   # Determine placement of orientation vectors
-  X = matrix(x@pos[v_y],nrow=length(v_x),ncol=length(v_y),byrow=TRUE)
-  Y = matrix(x@depth[v_x],nrow=length(v_x),ncol=length(v_y),byrow=FALSE)
+  if(length(x@coord)>0){
+    xvalues <- posLine(x@coord)
+  }else{
+    xvalues <- x@pos
+  }
+  X = matrix(xvalues[v_y],nrow=length(v_x),ncol=length(v_y),byrow=TRUE)
+  Y = matrix(-x@depth[v_x],nrow=length(v_x),ncol=length(v_y),byrow=FALSE)
   
   angle = O$polar$orientation[v_x, v_y];
   l1 <- O$values[[1]][v_x, v_y]
@@ -2807,25 +2830,62 @@ plotTensor <- function(x, O, type=c("vectors", "ellipses"), normalise=FALSE,
     }
     dx <- len1*dx0/normdxdy/2
     dy <- len1*dy0/normdxdy/2*ratio
-    segments(X - dx, -(Y - dy), X + dx , -(Y + dy),...)
+    segments(X - dx, (Y - dy), X + dx , (Y + dy))#,...)
   }else if(type == "ellipses"){
-    a <- 1/sqrt(l1)
-    b <- 1/sqrt(l2)
-    normdxdy <- matrix(max(a,b),nrow=length(v_x),ncol=length(v_y))
+  l1[l1 < 0] <- 0
+    l2[l2 < 0] <- 0
+    a <- 1/sqrt(l2)
+    b <- 1/sqrt(l1)
+#     normdxdy <- matrix(max(a[is.finite(a)],b[is.finite(b)]),
+    normdxdy <- matrix(max(a[is.finite(a)]),
+                nrow=length(v_x),ncol=length(v_y))
     if(isTRUE(normalise)){
-      normdxdy <- a
+      normdxdy <- b
     }
     for(i in seq_along(v_x)){
       for(j in seq_along(v_y)){
-        E <- ellipse(saxes = c(a[i,j], b[i,j]*ratio)*len1/normdxdy[i,j], 
-                    loc   = c(X[i,j], -Y[i,j]), 
-                    theta = -angle[i,j], n=n)
-        polygon(E,...)
+        aij <- ifelse(is.infinite(a[i,j]), 0, a[i,j])
+        bij <- ifelse(is.infinite(b[i,j]), 0, b[i,j])
+        if(isTRUE(normalise)){
+          maxab <- max(aij, bij)
+          if(maxab != 0){
+            aij <- aij/maxab
+            bij <- bij/maxab
+            cat(i,".",j,"  > a =",aij, "  b =", bij, "\n")
+#           normdxdy <- b
+          }
+        }
+        if(!(aij == 0 & bij == 0)){
+          E <- ellipse(saxes = c(aij, bij*ratio)*len1,
+#           /normdxdy[i,j], 
+                      loc   = c(X[i,j], Y[i,j]), 
+                      theta = -angle[i,j], n=n)
+          polygon(E)
+        }
       }
     }
+    #     a <- 1/sqrt(l1)
+    #     b <- 1/sqrt(l2)
+    #     normdxdy <- matrix(max(a,b),nrow=length(v_x),ncol=length(v_y))
+    #     if(isTRUE(normalise)){
+    #       normdxdy <- a
+    #     }
+    #     for(i in seq_along(v_x)){
+    #       for(j in seq_along(v_y)){
+    #         E <- ellipse(saxes = c(a[i,j], b[i,j]*ratio)*len1/normdxdy[i,j], 
+    #                     loc   = c(X[i,j], -Y[i,j]), 
+    #                     theta = -angle[i,j], n=n)
+    #         polygon(E,...)
+    #       }
+    #     }
   }
 }
 
+#' Plot structure tensor on GPR data
+#' 
+#' @name plotTensor0
+#' @rdname plotTensor0
+#' @export
 plotTensor0 <- function(O,  dxy = c(1,1), 
                 type=c("vectors", "ellipses"), normalise=FALSE,
                 spacing=c(6,4), len=1.9, n=10, ratio=1,...){

@@ -6,8 +6,14 @@
 \title{Trace interpolation at regularly spaced positions}
 \usage{
 \S4method{regInterpPos}{GPR}(x, type = c("linear", "cosine"), dx = NULL)
+
+\S4method{strTensor}{GPR}(x, blksze = c(2, 4), kBlur = list(n = 1, m = 1, sd
+  = 1), kEdge = list(n = 5, m = 5, sd = 1), kTensor = list(n = 5, m = 5, sd
+  = 1), thresh = 0.02, what = c("tensor", "mask"), ...)
 }
 \description{
 Trace interpolation at regularly spaced positions
+
+Structure tensor field of GPR data
 }
 

@@ -970,9 +970,6 @@ setGenericVerif("identifyDelineation", function(x,sel=NULL,...)
                   standardGeneric("identifyDelineation"))
 
 
-#' @name strTensor
-#' @rdname strTensor
-#' @export
 setGenericVerif("strTensor", function(x,  blksze = c(2, 4),
                         kBlur   = list(n = 1, m = 1, sd = 1), 
                         kEdge   = list(n = 5, m = 5, sd = 1), 
@@ -2675,7 +2672,7 @@ distTensorLogE <- function(a1,b1,c1,a2,b2,c2){
 
 # return structure tensor
 #------------------------------
-#' Structure tensor of GPR data
+#' Structure tensor field
 #' 
 #' @name strucTensor
 #' @rdname strucTensor

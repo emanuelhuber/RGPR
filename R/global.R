@@ -1447,11 +1447,11 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   # plot axis
 #   axis(side=2, at=pretty_y + dusr/2, labels= -pretty_y)
 #   dusr <- dylim/length(y)
-  if( yaxt != "n"){
+#   if( yaxt != "n"){
     pretty_y <- pretty(y,10)
     axis(side=2, at=pretty_y, labels= -pretty_y)
     .depthAxis(y, pretty_y, time_0, v, antsep, depthunit, posunit )
-  }
+#   }
   # plot time0
   abline(h=0,col="red",lwd=0.5)
   # plot note
@@ -1556,7 +1556,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
     axis(side=4,at=-depthat2, labels=FALSE,tck=-0.01)
     axis(side=4,at= -1* depthToTime(1, 0, v, antsep), labels="1",tck=-0.02)
     mtext(paste0("depth (", depthunit, "),   v = ",v, " ", 
-posunit,"/",depthunit),
+          posunit,"/",depthunit),
           side=4, line=3)
   }else{
 #     axis(side=4, at=pretty_y + dusr/2 , labels= -pretty_y)

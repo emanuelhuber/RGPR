@@ -1415,14 +1415,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
         xaxs = "i", yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
         resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)
  
-  if(barscale){
-    op2 <- par(no.readonly=TRUE)
-    .barScale(clim = clim, y = y, col = col, clab = clab, 
-              clabcex = 0.8)
-   # plot3D::colkey(clim = clim, clab = clab, width = 0.7, dist = 0.1, 
-  #        add = TRUE, col = col)
-    par(op2)
-  }
+
   usr <- par("usr")
   if(is.null(xlim) ){
      test <- rep(TRUE,length(x))
@@ -1465,6 +1458,15 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   if( bty != "n"){
     box(bty = bty)
   }
+    if(barscale){
+    op2 <- par(no.readonly=TRUE)
+    .barScale(clim = clim, y = y, col = col, clab = clab, 
+              clabcex = 0.8)
+   # plot3D::colkey(clim = clim, clab = clab, width = 0.7, dist = 0.1, 
+  #        add = TRUE, col = col)
+    par(op2)
+  }
+  
   if(!is.null(pdfName)){
     dev.off()
   }

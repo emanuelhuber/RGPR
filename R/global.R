@@ -1363,7 +1363,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   }else{
     mai <- c(1.2, 1.2, 1.2, 1.8)
   }
-  z <-  as.matrix(z)
+  z <-  as.matrix(as.numeric(z))
   z <- t(z[nrow(z):1,])
   if(is.null(x)){
     x <- (1:nrow(z))

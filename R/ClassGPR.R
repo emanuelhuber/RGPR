@@ -3067,7 +3067,7 @@ setMethod("strTensor", "GPR", function(x,  blksze = c(2, 4),
       xOrient@data <- O$polar$orientation
       xEnergy@data <- O$polar$energy
       xAni@data <- O$polar$anisotropy
-      output["orientation"] <- list("energy" = xEnergy,
+      output[["orientation"]] <- list("energy" = xEnergy,
                                     "anisotropy" = xAni,
                                     "orientation" = xOrient)
     }
@@ -3078,14 +3078,14 @@ setMethod("strTensor", "GPR", function(x,  blksze = c(2, 4),
       xJxx@data <- O$tensor$xx
       xJyy@data <- O$tensor$yy
       xJxy@data <- O$tensor$xy
-      output["tensor"] <- list("xx" = xJxx,
+      output[["tensor"]] <- list("xx" = xJxx,
                                "yy" = xJyy,
                                "xy" = xJxy)
     }
     if( "mask" %in% what){
       mask <- x
       mask@data <- O$mask
-      output["mask"] <- mask
+      output[["mask"]] <- mask
     }
     return(output)
   }

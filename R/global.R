@@ -2736,8 +2736,8 @@ strucTensor <- function(P, dxy = c(1, 1), blksze = c(2, 2),
   kdy <- do.call( dy_gkernel, kEdge)
   vx <- convolution2D(P_f, kdx)/dxy[1]
   vy <- convolution2D(P_f, kdy)/dxy[2]
-  image2D(vy)
-  image2D(vx)
+#   image2D(vy)
+#   image2D(vx)
   # local TENSOR
   Gxx <- vx^2
   Gyy <- vy^2
@@ -2750,9 +2750,9 @@ strucTensor <- function(P, dxy = c(1, 1), blksze = c(2, 2),
   Jyy  <- convolution2D(Gyy, kg)
   Jxy  <- convolution2D(Gxy, kg)
   
-  image2D(Jxx)
-  image2D(Jyy)
-  image2D(Jxy)
+#   image2D(Jxx)
+#   image2D(Jyy)
+#   image2D(Jxy)
   
   
   # polar parametrisation

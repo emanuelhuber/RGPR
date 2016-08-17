@@ -2248,9 +2248,10 @@ convolution <- function(A,B){
   nA <- nrow(A)
   nB <- nrow(B)
   L <- nA + nB - 1
-  A0 <- rbind(A, matrix(0, nrow = nB - 1, ncol= ncol(A)))
-  B0 <- rbind(B, matrix(0, nrow = nA - 1, ncol= ncol(B)))
-  Y <- Re(mvfft(mvfft(A0) * mvfft(B0), inverse=TRUE))/L
+  L2 <- nextpower2(L)
+  A0 <- rbind(A, matrix(0, nrow = L2 - nA, ncol= ncol(A)))
+  B0 <- rbind(B, matrix(0, nrow = L2 - nB, ncol= ncol(B)))
+  Y <- Re(mvfft(mvfft(A0) * mvfft(B0), inverse=TRUE))/L2
   return(Y[1:(max(nA,nB)), ])
 }
 

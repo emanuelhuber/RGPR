@@ -1168,7 +1168,7 @@ setMethod("processing", "GPR", function(x){
 #' @export
 setMethod("dcshift", "GPR", function(x, u, FUN=mean){
     shift <- matrix(apply(x[u,],2,FUN), nrow = nrow(x), 
-                    ncol=length(xmean), byrow = TRUE)
+                    ncol=ncol(x), byrow = TRUE)
     x <-  x - shift
     if(class(FUN)=="function"){
       nameFun <- "FUN"

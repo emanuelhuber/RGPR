@@ -20,6 +20,9 @@
 # read/write SEGy
 
 # FIX ME!
+# - when subsampling GPR (rows) update gpr@dz
+#       Example: gpr0 <- gpr00[seq(1,by=4,to=nrow(gpr00)),]
+#               gpr0@dz != gpr00@dz * 4 !!!!
 # - CMP: plot + velocity model + normal move-out.
 # - GPR::delineations > create subfunction for the code snippets that are 
 #                       repeated!

@@ -1347,7 +1347,7 @@ plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
 #' @export
 plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
                       note = NULL, ratio = 1,
-             time_0 = 0, antsep = 1, v = 0.1,
+             time_0 = 0, antsep = 1, v = 0.1,surveymode = NULL,
              addFid = TRUE, fid=NULL, ylim = NULL,
              addAnn = TRUE, annotations = NULL, 
              depthunit = "ns", posunit = "m",
@@ -1372,7 +1372,10 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
     y <- -(ncol(z):1)
   }
   if(is.null(clim)){
-    clim <- c(-1,1)*max(abs(z),na.rm=TRUE)
+    clim <- range(z[is.finite(z)], na.rm = TRUE)
+    if(!is.null(surveymode) && tolower(surveymode) %in% c("cmp","reflection")){
+      clim <- c(-1,1)*max(abs(z),na.rm=TRUE)
+    }
   }
   if(relTime0){
     y <- y + time_0

@@ -2002,7 +2002,7 @@ plot.GPR <- function(x,y,...){
                      main = main, ylim = zlim, xlim = xlim,
                      xlab = x@posunit, ylab = ylab, note = x@filepath,
                      time_0 = x@time0, antsep = x@antsep, v = v, 
-                     addFid = addFid, fid = x@fid, 
+                     addFid = addFid, fid = x@fid, surveymode = x@surveymode,
                      addAnn = addAnn, annotations = x@ann,
                      depthunit = x@depthunit, posunit = x@posunit), dots))
     }else if(type=="wiggles"){
@@ -3065,8 +3065,11 @@ setMethod("strTensor", "GPR", function(x,  blksze = c(2, 4),
       xAni <- x
       xEnergy <- x
       xOrient@data <- O$polar$orientation
+      xOrient@surveymode <- "orientation"
       xEnergy@data <- O$polar$energy
+      xEnergy@surveymode <- "energy"
       xAni@data <- O$polar$anisotropy
+      xAni@surveymode <- "anisotropy"
       output[["orientation"]] <- list("energy" = xEnergy,
                                     "anisotropy" = xAni,
                                     "orientation" = xOrient)
@@ -3078,6 +3081,10 @@ setMethod("strTensor", "GPR", function(x,  blksze = c(2, 4),
       xJxx@data <- O$tensor$xx
       xJyy@data <- O$tensor$yy
       xJxy@data <- O$tensor$xy
+      xJxx@surveymode <- "tensorxx"
+      xJyy@surveymode <- "tensoryy"
+      xJxy@surveymode <- "tensorxy"
+      
       output[["tensor"]] <- list("xx" = xJxx,
                                "yy" = xJyy,
                                "xy" = xJxy)
@@ -3085,6 +3092,7 @@ setMethod("strTensor", "GPR", function(x,  blksze = c(2, 4),
     if( "mask" %in% what){
       mask <- x
       mask@data <- O$mask
+      mask@surveymode <- "mask"
       output[["mask"]] <- mask
     }
     return(output)

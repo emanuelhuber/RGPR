@@ -2591,7 +2591,8 @@ plotTensor0 <- function(alpha, l1, l2,  x, y,
   type <- match.arg(type, c("vectors", "ellipses"))
   n <- nrow(O$values[[1]])
   m <- ncol(O$values[[1]])
-
+  
+  dxy <- c(mean(diff(x)), mean(diff(y)))
   len1 <- len*max(spacing * dxy);  # length of orientation lines
   
   # Subsample the orientation data according to the specified spacing

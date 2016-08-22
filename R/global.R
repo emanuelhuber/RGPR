@@ -2770,7 +2770,7 @@ strucTensor <- function(P, dxy = c(1, 1), blksze = c(2, 2),
   energy <- Jxx + Jyy                               # energy
   anisot  <- sqrt((Jxx-Jyy)^2 + 4*(Jxy)^2)/energy   # anisotropy
   orient <- 1/2*atan2(2*Jxy, (Jxx - Jyy) ) + pi/2     # orientation
-  mask2 <- mask | is.infinite(energy)
+  mask2 <- mask | is.infinite(energy) | is.infinite(anisot)
   anisot[mask2] <- 0
   energy[mask2] <- 0
   orient[mask2] <- 0

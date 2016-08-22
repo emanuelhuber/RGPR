@@ -2206,318 +2206,6 @@ byte2volt <- function ( V=c(-50,50), nBytes = 16) {
   return(Re(A_int))
 }
 
-
-#---------------- CONVOLUTION --------------------#
-
-# # linear convolution with fft
-# # a = vector
-# # b = vector
-# convolution <- function(a,b){
-#   na <- length(a)
-#   nb <- length(b)
-#   L <- na + nb - 1
-#   a0 <- c(a,rep(0,nb-1))
-#   b0 <- c(b, rep(0,na-1))
-#   y <- Re(fft(fft(a0)*fft(b0),inverse=TRUE))/L
-#   return(y[1:(max(na,nb))])
-# }
-
-
-#' Linear convolution based on FFT
-#'
-#' If A (or B) is a numeric vector, it is converted into a one-column 
-#' matrix. Then if A and B do not have the same number of column, then the 
-#' first column of the matrix with the smallest number of column is repeated to
-#' match the dimension of the other matrix.
-#' match the dimension of the other matrix.
-#' @param A A numeric vector or matrix.
-#' @param A B numeric vector or matrix.
-#' @name convolution
-#' @rdname convolution
-#' @export
-convolution <- function(A,B){
-  if(is.null(dim(A))){
-    dim(A) <- c(length(A),1)
-  }
-  if(is.null(dim(B))){
-    dim(B) <- c(length(B),1)
-  }
-  if(ncol(B) < ncol(A)){
-    B <- repmat(B[,1, drop = FALSE], 1, ncol(A)) 
-  }else if(ncol(B) > ncol(A)){
-    A <- repmat(A[,1, drop = FALSE], 1, ncol(B)) 
-  }
-  nA <- nrow(A)
-  nB <- nrow(B)
-  L <- nA + nB - 1
-  L2 <- nextpower2(L)
-  A0 <- rbind(A, matrix(0, nrow = L2 - nA, ncol= ncol(A)))
-  B0 <- rbind(B, matrix(0, nrow = L2 - nB, ncol= ncol(B)))
-  Y <- Re(mvfft(mvfft(A0) * mvfft(B0), inverse=TRUE))/L2
-  return(Y[1:(max(nA,nB)), ])
-}
-
-
-# cf. matlab
-# A convolution matrix is a matrix, formed from a vector, 
-# whose product with another vector 
-# is the convolution of the two vectors.
-
-# A = convmtx(y,nf) returns the convolution matrix, A, 
-# such that the product of A and a vector, x, 
-# is the convolution of y and x. 
-# If y is a column vector of length m, A is (m+nf-1)-by-nf and the 
-# product of A and a column vector, x, of length n is the 
-# convolution of y and x. 
-convmtx <- function(y, nf){
-  ny <- length(y)
-  L <- nf + ny -1
-  # convolution matrix Y
-  yext <- rep(c(y,rep(0,L-ny+1)),nf)
-  yext <- yext[1:(L*nf)]
-  return( matrix(yext,nrow=L,ncol=nf))
-}
-
-
-
-#---------------- DECONVOLUTION --------------------#
-# spectral deconvolution with known wavelet
-# convolution model: y = h*x 
-# h and y are known, x is unknown
-# x ~ H^h * Y / (H^h * H + mu)
-deconvolve <- function(y,h,mu=0.0001){
-  ny <- length(y)
-  nh <- length(h)
-  L  <- ny + ny - 1
-  H  <- fft(c(h,rep(0,ny-1)))
-  Y  <- fft(c(y, rep(0,nh-1)))
-  Re(fft( t(Conj(H))*Y/(t(Conj(H))*H + mu) ,inverse=TRUE))[1:ny]/L
-  # Re(fft( Y/(H + mu) ,inverse=TRUE))[1:ny]/L
-}
-
-
-# TO CHECK!!!!
-# deconvolution with known wavelet
-# convolution model: y = h*x 
-# h and y are known, x is unknown
-# x ~ H^h * Y / (H^h * H + mu)
-deconvolutionMtx <- function(y,h,nf,mu=0.0001){
-  # ny <- length(y)
-  # nh <- length(h)
-  # L  <- ny + ny - 1
-  H  <- convmtx(h,nf)
-  y_acf <- as.numeric(acf(y,lag=nf-1,plot=FALSE)[[1]])
-  y_acf[1] <- y_acf[1] + mu
-  HtH <- toeplitz(y_acf)
-  x <-  solve(HtH) %*% (t(H[1:nf,1:nf]) %*% y)
-  return(x)
-}
-
-
-
-# setGenericVerif("rmsScaling", function(x) standardGeneric("rmsScaling"))
-#' Optimum Phase Rotation
-#'
-#' @param x any data that can be converted into a numeric vector with 
-#'          as.vector.
-#' @param rot The phase rotation increment.
-#' @param plot A lenth-one boolean vector. If TRUE, the kurtosis as a function
-#'             of phase angle is plotet.
-#' @name optPhaseRotation
-#' @rdname optPhaseRotation
-#' @export
-optPhaseRotation <- function(x,rot=0.01,plot=TRUE){
-  # x_dec <- as.vector(gpr/apply(as.matrix(gpr),2,RMS))
-  x_dec <- as.vector(x)
-  pi_seq <- seq(0,pi,by=rot)
-  kurt <- numeric(length(pi_seq))
-  nx <- length(x_dec)
-  for(i in seq_along(pi_seq)){
-    xrot <- phaseRotation(x_dec, pi_seq[i])
-    # xrot_scaled2 <- (xrot -   mean(xrot))^2
-    # kurt[i] <- ((1/nx) * sum( xrot_scaled2^2)) / 
-    # ( (1/nx) *sum( xrot_scaled2))^2 
-    kurt[i] <- e1071::kurtosis( xrot)
-  }
-  phi_max <- pi_seq[which.max(kurt)]
-  cat("rotation angle =",phi_max/pi*180, "degree\n",sep="")
-  # dev.off(); windows()
-  if(plot==TRUE){
-    plot(pi_seq/pi*180,kurt,type="l")
-    abline(v=phi_max/pi*180,col="red")
-  }
-  return(phi_max)
-  # x_dec <- phaseRotation(x_dec, phi_max)
-}
-
-# y is the wavelet and we want 
-# a filter f s.t. f*y = d 
-# with d = [0 ... 0 1 0 ...0]
-# 1 at the postion i = shft
-# if shft = NULL, the shift is chosen by the
-#     algorithm and also returned
-# if shift is not NULL, case of wavelet estimation
-#     from the trace via the autocorrelation matrix.
-# mu = percent of pre-whitening
-.spikingFilter <- function(y,nf=32,mu=0.1,shft=1){
-  # R = t(Y)%*%Y = Toepliz matrix of ACF
-  y_acf <- as.numeric(acf(y,lag=nf-1,plot=FALSE)[[1]])
-  taper <- hammingWindow(2*nf)
-  y_acf <- y_acf*taper[(nf+1):(2*nf)] 
-  y_acf[1] <- y_acf[1] + mu
-  YtY <- toeplitz(y_acf)
-  # all the spiking filters
-  if(is.null(shft)){
-    ny <- length(y)
-    L <- nf + ny -1
-    # convolution matrix Y
-    Y <- convmtx(y,nf)
-    H <- solve(YtY) %*% t(Y) 
-    v <- numeric(L)
-    # performance matrix: all spiking filter outputs
-    P <- Y %*% H
-    # optimal delay (smallest error)
-    i <- which.max(diag(P))
-    v[i] <- 1
-    h <- H%*%v
-    return(list("h"=h,"delay"=i))
-  }else{
-    v <- numeric(nf)
-    v[shft] <- 1
-    h <- solve(YtY) %*% v 
-    return(h)
-  }
-}
-
-
-
-
-
-
-
-# version vectoriel!!!!
-inPoly <- function(x, y, vertx, verty){
-  inPo <- rep(0L, length(x))
-  nvert <- length(vertx)
-  for(i in 1:nvert){
-    j <- ifelse(i==1, nvert,i-1)
-    myTest <- ((verty[i] > y) != (verty[j]>y)) &
-                (x < (vertx[j]-vertx[i]) * (y-verty[i]) / 
-                (verty[j]-verty[i]) + vertx[i])
-    inPo[myTest] <- !inPo[myTest]
-  }
-  return(inPo)
-}
-
-.FKSpectrum <- function(A, dx = 0.25, dz = 0.8, npad = 1, 
-                        p = 0.01, plotSpec = TRUE){
-  # A <- GPR$data    #[90:1000,]
-  nr <- nrow(A)  # time  
-  nc <- ncol(A)  # x  
-
-  #============== PLOT F-K SPECTRUM ===============#
-  # padding (try also 2*(2^nextpow2(nc))
-  nk <- npad*(nextpower2(nc))
-  nf <- npad*(nextpower2(nr))
-  A1 <- matrix(0,nrow=nf,ncol=nk)
-  A1[1:nr,1:nc] <- A
-
-  # function to center the spectrum!! (no need of fttshift!)
-  #centres spectrum: Gonzalez & Wintz (1977) Digital Image Processing p.53
-  A1  <- A1 * (-1)^(row(A1) + col(A1))
-  A1_fft <- fft(A1)
-  A1_fft_pow <- Mod(A1_fft)
-  A1_fft_phase <- Arg(A1_fft)
-  # plotGPR((A1_fft_phase[1:(nf/2),])^0.05)
-
-  # Sampling frequency [Hz] = 1 / Sample time [s]
-  Fs = 1/(dz*10^(-9))
-  fac = 1000000
-  fre = Fs*seq(0,nf/2)/nf/fac
-  
-  # wavenumber
-  Ks <- 1/dx      # [1/m] Sampling frequency
-  knu <- 1:(nk/2)/(2*(nk/2)) * Ks  #[1/m]
-  knutot <- c(-rev(knu),knu)
-
-  # labels: find a function between "xat" and "xLabels" and use "pretty()"
-  xat   <- c(0,nk/2,nk)/nk
-  xLabels <- c(min(knutot), 0, max(knutot))
-  yat    <- c(0,nf/2,nf)/nf
-  yLabels  <- c(0, max(fre)/2, max(fre))
-
-  # Note: when plotting spectra (S)  use log(S) or S.^alpha (alpha=0.1-0.3) to
-  #       increase the visibility of small events 
-  # p = 0.05
-  if(plotSpec){
-    plot3D::image2D(x = knutot, y = fre, z = (t(A1_fft_pow[1:(nf/2),])^p), 
-                xlab="wavenumber (1/m)",
-                ylab="frequency MHz")
-#      axis(side=4, labels=TRUE)
-
-  }
-   return(list(pow=A1_fft_pow[1:(nf/2),], 
-               pha=A1_fft_phase[1:(nf/2),],
-               fre = fre,
-               wnb = knutot))
-}
-
-
-
-
-.FKFilter <- function(A, fk, L = c(5, 5), npad=1){
-  nr <- nrow(A)  # time  
-  nc <- ncol(A)  # x  
-
-  #============== PLOT F-K SPECTRUM ===============#
-  # padding (try also 2*(2^nextpow2(nc))
-  nk <- npad*(nextpower2(nc))
-  nf <- npad*(nextpower2(nr))
-  A1 <- matrix(0,nrow=nf,ncol=nk)
-  A1[1:nr,1:nc] <- A
-
-  # function to center the spectrum!! (no need of fttshift!)
-  #centres spectrum: Gonzalez & Wintz (1977) Digital Image Processing p.53
-  # A1  <- A1 * (-1)^(row(A1) + col(A1))
-  A1_fft <- fft(A1)
-  
-  # plotGPR(Mod(A1_fft)^0.05)
-  # plotGPR(Re(fft(A1_fft,inv=TRUE))[1:nr,1:nc])
-  # plotGPR(A)
-  
-  #============== FILTER F-K SPECTRUM ===============#
-  myFlong <- matrix(0,nrow=nf,ncol=nk)
-  myFlong[1:(nf/2),1:(nk/2)] <- fk[(nf/2):1,(nk/2):1]
-  # myFlong  <- myFlong * (-1)^(row(myFlong) + col(myFlong))
-  myFlong[(nf/2+1):(nf),(nk/2 + 1):nk] <- fk[1:(nf/2),1:(nk/2)]
-  myFlong[1:(nf/2),(nk/2 + 1):nk] <- fk[(nf/2):1,(nk):(nk/2 + 1)]
-  # myFlong[(nf/2+1):(nf),1:(nk/2)] <- fk[1:(nf/2),(nk/2 + 1):(nk)]
-  myFlong[(nf/2+1):(nf),1:(nk/2)] <- fk[1:(nf/2),(nk/2 + 1):nk]
-  # plotGPR(myFlong)
-
-
-  # hamming window
-  if(length(L)==1) L <- c(L,L)
-  if(all(L!=0)){
-    ham2D <- hammingWindow(L[1])%*%t(hammingWindow(L[2]))
-    ham2Dlong <- matrix(0,nrow=nf,ncol=nk)
-    ham2Dlong[1:L[1],1:L[2]] <- ham2D
-    # plotGPR(ham2Dlong)
-    FF <-  Re(fft(fft(myFlong) * fft(ham2Dlong),inv=TRUE))
-  }else{
-    FF <- myFlong
-  }
-  FF <- FF/sum(FF)
-  
-  # plotGPR(Re(fft(fft(myFlong) * fft(ham2Dlong),inv=TRUE))[1:nr,1:nc])
-  
-  A_back <- Re(fft(A1_fft * FF,inv=TRUE))[1:nr,1:nc]
-  # plotGPR(A_back)
-  # plotGPR(A_back)
-  # scaling
-  return(A_back/(max(A_back)-min(A_back))*(max(A)-min(A)))
-}
-
 #========================================================#
 #================= LOCAL ORIENTATION ====================#
 #========================================================#
@@ -2897,7 +2585,7 @@ plotTensor <- function(x, O, type=c("vectors", "ellipses"), normalise=FALSE,
 #' @name plotTensor0
 #' @rdname plotTensor0
 #' @export
-plotTensor0 <- function(O,  dxy = c(1,1), 
+plotTensor0 <- function(alpha, l1, l2,  x, y, 
                 type=c("vectors", "ellipses"), normalise=FALSE,
                 spacing=c(6,4), len=1.9, n=10, ratio=1,...){
   type <- match.arg(type, c("vectors", "ellipses"))
@@ -2913,12 +2601,17 @@ plotTensor0 <- function(O,  dxy = c(1,1),
   # Determine placement of orientation vectors
   xpos <- seq(0, by = dxy[1], length.out = n)
   ypos <- seq(0, by = dxy[2], length.out = m)
+  xpos <- x[v_x]
+  ypos <- y[v_y]
   X = matrix(xpos[v_x],nrow=length(v_x),ncol=length(v_y),byrow=FALSE)
   Y = matrix(ypos[v_y],nrow=length(v_x),ncol=length(v_y),byrow=TRUE)
   
-  angle = O$polar$orientation[v_x, v_y]
-  l1 <- O$values[[1]][v_x, v_y]
-  l2 <- O$values[[2]][v_x, v_y]
+#   angle <- O$polar$orientation[v_x, v_y]
+  angle <- alpha[v_x, v_y]
+#   l1 <- O$values[[1]][v_x, v_y]
+  l1 <- l1[v_x, v_y]
+#   l2 <- O$values[[2]][v_x, v_y]
+  l2 <- l1[v_x, v_y]
 
   if(type == "vectors"){
     #Orientation vectors
@@ -3030,7 +2723,8 @@ dx_gkernel <- function(n, m, sd=1){
   y <- matrix(-siz:siz, nrow = n, ncol = m)
   siz <- (m - 1)/2;
   x <- matrix(-siz:siz, nrow = n, ncol = m, byrow = TRUE)
-  g = x*exp(-(x^2+y^2)/(2*sd^2))
+  g <- x*exp(-(x^2+y^2)/(2*sd^2))
+  return(g)
 
 }
 
@@ -3046,7 +2740,8 @@ dy_gkernel <- function(n, m, sd=1){
   y <- matrix(-siz:siz, nrow = n, ncol = m)
   siz <- (m - 1)/2;
   x <- matrix(-siz:siz, nrow = n, ncol = m, byrow = TRUE)
-  g = y*exp(-(x^2+y^2)/(2*sd^2))
+  g <- y*exp(-(x^2+y^2)/(2*sd^2))
+  return(g)
 }
 
 #' Two-dimensional convolution
@@ -3096,14 +2791,17 @@ paddMatrix <- function(I, p1, p2=NULL){
   # top and bottom
   Ipad[1:p1,(p2+1):(p2+mI)] <- repmat(I[1,,drop=FALSE], p1, 1)
   Ipad[(p1+nI+1):(nI+2*p1), (p2+1):(p2+mI)] <- repmat(I[nI,,drop=FALSE], p1, 1)
-  # left and right
-  Ipad[(p1+1):(p1+nI), 1:p2] <- repmat(I[,1,drop=FALSE], 1, p2)
-  Ipad[(p1+1):(p1+nI), (p2+mI+1):(mI + 2*p2)] <- repmat(I[,mI, drop=FALSE],1,p2)
-  # corner
-  Ipad[1:p1, 1:p2] <- I[1,1]
-  Ipad[1:p1,(p2+mI+1):(mI + 2*p2)] <- I[1,mI]
-  Ipad[(p1+nI+1):(nI+2*p1), 1:p2] <- I[nI,1]
-  Ipad[(p1+nI+1):(nI+2*p1), (p2+mI+1):(mI+2*p2)] <- I[nI,mI]
+  if(p2 > 0){
+    # left and right
+    Ipad[(p1+1):(p1+nI), 1:p2] <- repmat(I[,1,drop=FALSE], 1, p2)
+    Ipad[(p1+1):(p1+nI), (p2+mI+1):(mI + 2*p2)] <- 
+                            repmat(I[,mI, drop=FALSE],1,p2)
+    # corner
+    Ipad[1:p1, 1:p2] <- I[1,1]
+    Ipad[(p1+nI+1):(nI+2*p1), (p2+mI+1):(mI+2*p2)] <- I[nI,mI]
+    Ipad[1:p1,(p2+mI+1):(mI + 2*p2)] <- I[1,mI]
+    Ipad[(p1+nI+1):(nI+2*p1), 1:p2] <- I[nI,1]
+  }
   return(Ipad)
 }
 
@@ -3123,6 +2821,320 @@ paddMatrix <- function(I, p1, p2=NULL){
 #' @export
 repmat <- function(A,n,m) {
   kronecker(matrix(1,n,m),A)
+}
+
+
+
+#---------------- CONVOLUTION --------------------#
+
+# # linear convolution with fft
+# # a = vector
+# # b = vector
+# convolution <- function(a,b){
+#   na <- length(a)
+#   nb <- length(b)
+#   L <- na + nb - 1
+#   a0 <- c(a,rep(0,nb-1))
+#   b0 <- c(b, rep(0,na-1))
+#   y <- Re(fft(fft(a0)*fft(b0),inverse=TRUE))/L
+#   return(y[1:(max(na,nb))])
+# }
+
+
+#' Linear convolution based on FFT
+#'
+#' If A (or B) is a numeric vector, it is converted into a one-column 
+#' matrix. Then if A and B do not have the same number of column, then the 
+#' first column of the matrix with the smallest number of column is repeated to
+#' match the dimension of the other matrix.
+#' match the dimension of the other matrix.
+#' @param A A numeric vector or matrix.
+#' @param A B numeric vector or matrix.
+#' @name convolution
+#' @rdname convolution
+#' @export
+convolution <- function(A,k){
+  if(is.null(dim(A))){
+    dim(A) <- c(length(A),1)
+  }
+  if(is.null(dim(k))){
+    dim(k) <- c(length(k),1)
+  }
+  if(ncol(k) < ncol(A)){
+    k <- repmat(k[,1, drop = FALSE], 1, ncol(A)) 
+  }
+#   else if(ncol(B) > ncol(A)){
+#     A <- repmat(A[,1, drop = FALSE], 1, ncol(B)) 
+#   }
+  nA <- nrow(A)
+  nk <- nrow(k)
+  Apad <- paddMatrix(A, nk, 0)
+  k0 <- matrix(0, nrow = nrow(Apad), ncol= ncol(Apad))
+  k0[1:nk, ] <- k
+#   B0 <- rbind(B0, B, B0)
+  Y <- Re(mvfft(mvfft(Apad) * mvfft(k0), inverse=TRUE))/nrow(Apad)
+  return(Y[1:nA + nk + nk/2 + 1, ])
+}
+
+
+# cf. matlab
+# A convolution matrix is a matrix, formed from a vector, 
+# whose product with another vector 
+# is the convolution of the two vectors.
+
+# A = convmtx(y,nf) returns the convolution matrix, A, 
+# such that the product of A and a vector, x, 
+# is the convolution of y and x. 
+# If y is a column vector of length m, A is (m+nf-1)-by-nf and the 
+# product of A and a column vector, x, of length n is the 
+# convolution of y and x. 
+convmtx <- function(y, nf){
+  ny <- length(y)
+  L <- nf + ny -1
+  # convolution matrix Y
+  yext <- rep(c(y,rep(0,L-ny+1)),nf)
+  yext <- yext[1:(L*nf)]
+  return( matrix(yext,nrow=L,ncol=nf))
+}
+
+
+
+#---------------- DECONVOLUTION --------------------#
+# spectral deconvolution with known wavelet
+# convolution model: y = h*x 
+# h and y are known, x is unknown
+# x ~ H^h * Y / (H^h * H + mu)
+deconvolve <- function(y,h,mu=0.0001){
+  ny <- length(y)
+  nh <- length(h)
+  L  <- ny + ny - 1
+  H  <- fft(c(h,rep(0,ny-1)))
+  Y  <- fft(c(y, rep(0,nh-1)))
+  Re(fft( t(Conj(H))*Y/(t(Conj(H))*H + mu) ,inverse=TRUE))[1:ny]/L
+  # Re(fft( Y/(H + mu) ,inverse=TRUE))[1:ny]/L
+}
+
+
+# TO CHECK!!!!
+# deconvolution with known wavelet
+# convolution model: y = h*x 
+# h and y are known, x is unknown
+# x ~ H^h * Y / (H^h * H + mu)
+deconvolutionMtx <- function(y,h,nf,mu=0.0001){
+  # ny <- length(y)
+  # nh <- length(h)
+  # L  <- ny + ny - 1
+  H  <- convmtx(h,nf)
+  y_acf <- as.numeric(acf(y,lag=nf-1,plot=FALSE)[[1]])
+  y_acf[1] <- y_acf[1] + mu
+  HtH <- toeplitz(y_acf)
+  x <-  solve(HtH) %*% (t(H[1:nf,1:nf]) %*% y)
+  return(x)
+}
+
+
+
+# setGenericVerif("rmsScaling", function(x) standardGeneric("rmsScaling"))
+#' Optimum Phase Rotation
+#'
+#' @param x any data that can be converted into a numeric vector with 
+#'          as.vector.
+#' @param rot The phase rotation increment.
+#' @param plot A lenth-one boolean vector. If TRUE, the kurtosis as a function
+#'             of phase angle is plotet.
+#' @name optPhaseRotation
+#' @rdname optPhaseRotation
+#' @export
+optPhaseRotation <- function(x,rot=0.01,plot=TRUE){
+  # x_dec <- as.vector(gpr/apply(as.matrix(gpr),2,RMS))
+  x_dec <- as.vector(x)
+  pi_seq <- seq(0,pi,by=rot)
+  kurt <- numeric(length(pi_seq))
+  nx <- length(x_dec)
+  for(i in seq_along(pi_seq)){
+    xrot <- phaseRotation(x_dec, pi_seq[i])
+    # xrot_scaled2 <- (xrot -   mean(xrot))^2
+    # kurt[i] <- ((1/nx) * sum( xrot_scaled2^2)) / 
+    # ( (1/nx) *sum( xrot_scaled2))^2 
+    kurt[i] <- e1071::kurtosis( xrot)
+  }
+  phi_max <- pi_seq[which.max(kurt)]
+  cat("rotation angle =",phi_max/pi*180, "degree\n",sep="")
+  # dev.off(); windows()
+  if(plot==TRUE){
+    plot(pi_seq/pi*180,kurt,type="l")
+    abline(v=phi_max/pi*180,col="red")
+  }
+  return(phi_max)
+  # x_dec <- phaseRotation(x_dec, phi_max)
+}
+
+# y is the wavelet and we want 
+# a filter f s.t. f*y = d 
+# with d = [0 ... 0 1 0 ...0]
+# 1 at the postion i = shft
+# if shft = NULL, the shift is chosen by the
+#     algorithm and also returned
+# if shift is not NULL, case of wavelet estimation
+#     from the trace via the autocorrelation matrix.
+# mu = percent of pre-whitening
+.spikingFilter <- function(y,nf=32,mu=0.1,shft=1){
+  # R = t(Y)%*%Y = Toepliz matrix of ACF
+  y_acf <- as.numeric(acf(y,lag=nf-1,plot=FALSE)[[1]])
+  taper <- hammingWindow(2*nf)
+  y_acf <- y_acf*taper[(nf+1):(2*nf)] 
+  y_acf[1] <- y_acf[1] + mu
+  YtY <- toeplitz(y_acf)
+  # all the spiking filters
+  if(is.null(shft)){
+    ny <- length(y)
+    L <- nf + ny -1
+    # convolution matrix Y
+    Y <- convmtx(y,nf)
+    H <- solve(YtY) %*% t(Y) 
+    v <- numeric(L)
+    # performance matrix: all spiking filter outputs
+    P <- Y %*% H
+    # optimal delay (smallest error)
+    i <- which.max(diag(P))
+    v[i] <- 1
+    h <- H%*%v
+    return(list("h"=h,"delay"=i))
+  }else{
+    v <- numeric(nf)
+    v[shft] <- 1
+    h <- solve(YtY) %*% v 
+    return(h)
+  }
+}
+
+
+
+
+
+
+
+# version vectoriel!!!!
+inPoly <- function(x, y, vertx, verty){
+  inPo <- rep(0L, length(x))
+  nvert <- length(vertx)
+  for(i in 1:nvert){
+    j <- ifelse(i==1, nvert,i-1)
+    myTest <- ((verty[i] > y) != (verty[j]>y)) &
+                (x < (vertx[j]-vertx[i]) * (y-verty[i]) / 
+                (verty[j]-verty[i]) + vertx[i])
+    inPo[myTest] <- !inPo[myTest]
+  }
+  return(inPo)
+}
+
+.FKSpectrum <- function(A, dx = 0.25, dz = 0.8, npad = 1, 
+                        p = 0.01, plotSpec = TRUE){
+  # A <- GPR$data    #[90:1000,]
+  nr <- nrow(A)  # time  
+  nc <- ncol(A)  # x  
+
+  #============== PLOT F-K SPECTRUM ===============#
+  # padding (try also 2*(2^nextpow2(nc))
+  nk <- npad*(nextpower2(nc))
+  nf <- npad*(nextpower2(nr))
+  A1 <- matrix(0,nrow=nf,ncol=nk)
+  A1[1:nr,1:nc] <- A
+
+  # function to center the spectrum!! (no need of fttshift!)
+  #centres spectrum: Gonzalez & Wintz (1977) Digital Image Processing p.53
+  A1  <- A1 * (-1)^(row(A1) + col(A1))
+  A1_fft <- fft(A1)
+  A1_fft_pow <- Mod(A1_fft)
+  A1_fft_phase <- Arg(A1_fft)
+  # plotGPR((A1_fft_phase[1:(nf/2),])^0.05)
+
+  # Sampling frequency [Hz] = 1 / Sample time [s]
+  Fs = 1/(dz*10^(-9))
+  fac = 1000000
+  fre = Fs*seq(0,nf/2)/nf/fac
+  
+  # wavenumber
+  Ks <- 1/dx      # [1/m] Sampling frequency
+  knu <- 1:(nk/2)/(2*(nk/2)) * Ks  #[1/m]
+  knutot <- c(-rev(knu),knu)
+
+  # labels: find a function between "xat" and "xLabels" and use "pretty()"
+  xat   <- c(0,nk/2,nk)/nk
+  xLabels <- c(min(knutot), 0, max(knutot))
+  yat    <- c(0,nf/2,nf)/nf
+  yLabels  <- c(0, max(fre)/2, max(fre))
+
+  # Note: when plotting spectra (S)  use log(S) or S.^alpha (alpha=0.1-0.3) to
+  #       increase the visibility of small events 
+  # p = 0.05
+  if(plotSpec){
+    plot3D::image2D(x = knutot, y = fre, z = (t(A1_fft_pow[1:(nf/2),])^p), 
+                xlab="wavenumber (1/m)",
+                ylab="frequency MHz")
+#      axis(side=4, labels=TRUE)
+
+  }
+   return(list(pow=A1_fft_pow[1:(nf/2),], 
+               pha=A1_fft_phase[1:(nf/2),],
+               fre = fre,
+               wnb = knutot))
+}
+
+
+
+
+.FKFilter <- function(A, fk, L = c(5, 5), npad=1){
+  nr <- nrow(A)  # time  
+  nc <- ncol(A)  # x  
+
+  #============== PLOT F-K SPECTRUM ===============#
+  # padding (try also 2*(2^nextpow2(nc))
+  nk <- npad*(nextpower2(nc))
+  nf <- npad*(nextpower2(nr))
+  A1 <- matrix(0,nrow=nf,ncol=nk)
+  A1[1:nr,1:nc] <- A
+
+  # function to center the spectrum!! (no need of fttshift!)
+  #centres spectrum: Gonzalez & Wintz (1977) Digital Image Processing p.53
+  # A1  <- A1 * (-1)^(row(A1) + col(A1))
+  A1_fft <- fft(A1)
+  
+  # plotGPR(Mod(A1_fft)^0.05)
+  # plotGPR(Re(fft(A1_fft,inv=TRUE))[1:nr,1:nc])
+  # plotGPR(A)
+  
+  #============== FILTER F-K SPECTRUM ===============#
+  myFlong <- matrix(0,nrow=nf,ncol=nk)
+  myFlong[1:(nf/2),1:(nk/2)] <- fk[(nf/2):1,(nk/2):1]
+  # myFlong  <- myFlong * (-1)^(row(myFlong) + col(myFlong))
+  myFlong[(nf/2+1):(nf),(nk/2 + 1):nk] <- fk[1:(nf/2),1:(nk/2)]
+  myFlong[1:(nf/2),(nk/2 + 1):nk] <- fk[(nf/2):1,(nk):(nk/2 + 1)]
+  # myFlong[(nf/2+1):(nf),1:(nk/2)] <- fk[1:(nf/2),(nk/2 + 1):(nk)]
+  myFlong[(nf/2+1):(nf),1:(nk/2)] <- fk[1:(nf/2),(nk/2 + 1):nk]
+  # plotGPR(myFlong)
+
+
+  # hamming window
+  if(length(L)==1) L <- c(L,L)
+  if(all(L!=0)){
+    ham2D <- hammingWindow(L[1])%*%t(hammingWindow(L[2]))
+    ham2Dlong <- matrix(0,nrow=nf,ncol=nk)
+    ham2Dlong[1:L[1],1:L[2]] <- ham2D
+    # plotGPR(ham2Dlong)
+    FF <-  Re(fft(fft(myFlong) * fft(ham2Dlong),inv=TRUE))
+  }else{
+    FF <- myFlong
+  }
+  FF <- FF/sum(FF)
+  
+  # plotGPR(Re(fft(fft(myFlong) * fft(ham2Dlong),inv=TRUE))[1:nr,1:nc])
+  
+  A_back <- Re(fft(A1_fft * FF,inv=TRUE))[1:nr,1:nc]
+  # plotGPR(A_back)
+  # plotGPR(A_back)
+  # scaling
+  return(A_back/(max(A_back)-min(A_back))*(max(A)-min(A)))
 }
 
 

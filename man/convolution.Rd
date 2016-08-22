@@ -4,7 +4,7 @@
 \alias{convolution}
 \title{Linear convolution based on FFT}
 \usage{
-convolution(A, B)
+convolution(A, k)
 }
 \arguments{
 \item{A}{A numeric vector or matrix.}

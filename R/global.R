@@ -2688,9 +2688,10 @@ plotTensor0 <- function(alpha, l1, l2,  x, y,
 #-----------------
 
 
-# Gaussian 2d-kernel
 # n = nrow
 # m = mrow
+#' Gaussian 2d-kernel
+#'
 # sigma = sd
 #' @name gkernel
 #' @rdname kernels
@@ -2711,8 +2712,8 @@ gkernel <- function(n, m, sd=1){
   }
 }
 
-# Gaussian x-derivative kernel
-# as edge detector
+#' Gaussian x-derivative kernel (edge detector)
+#'
 #' @name dx_gkernel
 #' @rdname kernels
 #' @export
@@ -2728,8 +2729,8 @@ dx_gkernel <- function(n, m, sd=1){
 
 }
 
-# Gaussian y-derivative kernel
-# as edge detector
+#' Gaussian y-derivative kernel (edge detector)
+#'
 #' @name dy_gkernel
 #' @rdname kernels
 #' @export

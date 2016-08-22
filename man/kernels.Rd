@@ -4,11 +4,19 @@
 \alias{dx_gkernel}
 \alias{dy_gkernel}
 \alias{gkernel}
+\title{Gaussian 2d-kernel}
 \usage{
 gkernel(n, m, sd = 1)
 
 dx_gkernel(n, m, sd = 1)
 
 dy_gkernel(n, m, sd = 1)
+}
+\description{
+Gaussian 2d-kernel
+
+Gaussian x-derivative kernel (edge detector)
+
+Gaussian y-derivative kernel (edge detector)
 }
 

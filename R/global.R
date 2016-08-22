@@ -20,6 +20,8 @@
 # read/write SEGy
 
 # FIX ME!
+# - gain/dewow -> apply it only where the signal starts!!!
+#     (after migration, 
 # - when subsampling GPR (rows) update gpr@dz
 #       Example: gpr0 <- gpr00[seq(1,by=4,to=nrow(gpr00)),]
 #               gpr0@dz != gpr00@dz * 4 !!!!
@@ -1689,7 +1691,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 
 .gainAgc <- function(A, dts, w = 10, p = 2, r = 0.5){
   w <- w/dts
-  Anew <- apply(A,2,.gainAgc0,w,p,r)
+  Anew <- apply(A, 2, .gainAgc0, w, p, r)
   s1 = ((max(A))-(min(A)));  # scale factor
   s2 = ((max(Anew))-(min(Anew)));  # scale factor
   return(Anew * s1/s2)
@@ -2768,7 +2770,7 @@ strucTensor <- function(P, dxy = c(1, 1), blksze = c(2, 2),
   energy <- Jxx + Jyy                               # energy
   anisot  <- sqrt((Jxx-Jyy)^2 + 4*(Jxy)^2)/energy   # anisotropy
   orient <- 1/2*atan2(2*Jxy, (Jxx - Jyy) ) + pi/2     # orientation
-  mask2 <- mask | is.infinite(orient)
+  mask2 <- mask | is.infinite(energy)
   anisot[mask2] <- 0
   energy[mask2] <- 0
   orient[mask2] <- 0
@@ -2997,6 +2999,9 @@ plotTensor0 <- function(O,  dxy = c(1,1),
 # n = nrow
 # m = mrow
 # sigma = sd
+#' @name gkernel
+#' @rdname kernels
+#' @export
 gkernel <- function(n, m, sd=1){
   n <- ifelse(n %% 2 == 0, n + 1, n)
   m <- ifelse(m %% 2 == 0, m + 1, m)
@@ -3015,6 +3020,9 @@ gkernel <- function(n, m, sd=1){
 
 # Gaussian x-derivative kernel
 # as edge detector
+#' @name dx_gkernel
+#' @rdname kernels
+#' @export
 dx_gkernel <- function(n, m, sd=1){
   n <- ifelse(n %% 2 == 0, n + 1, n)
   m <- ifelse(m %% 2 == 0, m + 1, m)
@@ -3028,6 +3036,9 @@ dx_gkernel <- function(n, m, sd=1){
 
 # Gaussian y-derivative kernel
 # as edge detector
+#' @name dy_gkernel
+#' @rdname kernels
+#' @export
 dy_gkernel <- function(n, m, sd=1){
   n <- ifelse(n %% 2 == 0, n + 1, n)
   m <- ifelse(m %% 2 == 0, m + 1, m)

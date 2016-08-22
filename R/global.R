@@ -2589,8 +2589,8 @@ plotTensor0 <- function(alpha, l1, l2,  x, y,
                 type=c("vectors", "ellipses"), normalise=FALSE,
                 spacing=c(6,4), len=1.9, n=10, ratio=1,...){
   type <- match.arg(type, c("vectors", "ellipses"))
-  n <- nrow(O$values[[1]])
-  m <- ncol(O$values[[1]])
+  n <- nrow(alpha)
+  m <- ncol(alpha)
   
   dxy <- c(mean(diff(x)), mean(diff(y)))
   len1 <- len*max(spacing * dxy);  # length of orientation lines
@@ -2612,7 +2612,7 @@ plotTensor0 <- function(alpha, l1, l2,  x, y,
 #   l1 <- O$values[[1]][v_x, v_y]
   l1 <- l1[v_x, v_y]
 #   l2 <- O$values[[2]][v_x, v_y]
-  l2 <- l1[v_x, v_y]
+  l2 <- l2[v_x, v_y]
 
   if(type == "vectors"){
     #Orientation vectors

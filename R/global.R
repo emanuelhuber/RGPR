@@ -2589,10 +2589,15 @@ plotTensor0 <- function(alpha, l1, l2,  x, y,
                 type=c("vectors", "ellipses"), normalise=FALSE,
                 spacing=c(6,4), len=1.9, n=10, ratio=1,...){
   type <- match.arg(type, c("vectors", "ellipses"))
+  alpha <- t(alpha[nrow(alpha):1, ])
+  l1 <- t(l1[nrow(l1):1, ])
+  l2 <- t(l2[nrow(l2):1, ])
+  
   n <- nrow(alpha)
   m <- ncol(alpha)
   
   dxy <- c(mean(diff(x)), mean(diff(y)))
+  
   len1 <- len*max(spacing * dxy);  # length of orientation lines
   
   # Subsample the orientation data according to the specified spacing
@@ -2600,12 +2605,12 @@ plotTensor0 <- function(alpha, l1, l2,  x, y,
   v_y = seq(spacing[2],(m-spacing[2]), by=spacing[2])
   
   # Determine placement of orientation vectors
-  xpos <- seq(0, by = dxy[1], length.out = n)
-  ypos <- seq(0, by = dxy[2], length.out = m)
-  xpos <- x[v_x]
-  ypos <- y[v_y]
-  X = matrix(xpos[v_x],nrow=length(v_x),ncol=length(v_y),byrow=FALSE)
-  Y = matrix(ypos[v_y],nrow=length(v_x),ncol=length(v_y),byrow=TRUE)
+#   xpos <- seq(0, by = dxy[1], length.out = n)
+#   ypos <- seq(0, by = dxy[2], length.out = m)
+  xsub <- x[v_x]
+  ysub <- y[v_y]
+  X = matrix(xsub,nrow=length(v_x),ncol=length(v_y),byrow=FALSE)
+  Y = matrix(ysub,nrow=length(v_x),ncol=length(v_y),byrow=TRUE)
   
 #   angle <- O$polar$orientation[v_x, v_y]
   angle <- alpha[v_x, v_y]
@@ -2655,7 +2660,7 @@ plotTensor0 <- function(alpha, l1, l2,  x, y,
           E <- ellipse(saxes = c(aij, bij*ratio)*len1,
 #           /normdxdy[i,j], 
                       loc   = c(X[i,j], Y[i,j]), 
-                      theta = -angle[i,j], n=n)
+                      theta = pi/2 - angle[i,j], n=n)
           polygon(E)
         }
       }

@@ -2305,13 +2305,15 @@ matProd2x2 <- function(a11, a12, a21, a22, b11, b12, b21, b22){
 #' @name distTensors
 #' @rdname distTensors
 #' @export
-distTensors <- function(a1,b1,c1,a2,b2,c2, 
+distTensors <- function(J1,J2, 
                       method=c("geodesic", "log-Euclidean")){
   method <- match.arg(method, c("geodesic", "log-Euclidean"))
   if(method == "geodesic"){
-    return(distTensorGeod(a1,b1,c1,a2,b2,c2))
+    return(distTensorGeod(J1[[1]], J1[[2]], J1[[3]], 
+                          J2[[1]], J2[[2]], J2[[3]]))
   }else if(method == "log-Euclidean"){
-    return(distTensorLogE(a1,b1,c1,a2,b2,c2))
+    return(distTensorLogE(J1[[1]], J1[[2]], J1[[3]], 
+                          J2[[1]], J2[[2]], J2[[3]]))
   }
 }
 
@@ -2376,7 +2378,7 @@ distTensorLogE <- function(a1,b1,c1,a2,b2,c2){
 #' @name strucTensor
 #' @rdname strucTensor
 #' @export
-strucTensor <- function(P, dxy = c(1, 1), blksze = c(2, 2),
+strucTensor <- function(P, dxy = c(1, 1), mask = c(2, 2),
                         kBlur   = list(n = 3, m =  3, sd = 1), 
                         kEdge   = list(n = 7, m =  7, sd = 1), 
                         kTensor = list(n = 5, m = 10, sd = 2),
@@ -2390,27 +2392,30 @@ strucTensor <- function(P, dxy = c(1, 1), blksze = c(2, 2),
   # normalization (mean = 0, sd = 1)
 
   # apply standard deviation block-wise
-  if(!is.null(blksze)){
-    blksze2 <- round(blksze/2)
-    Pn <- (P - mean(P, na.rm = TRUE))/sd(as.vector(P), na.rm = TRUE)
-    nseq <- c(seq(1, n, blksze[1]),n)
-#     nseq <- seq(1, n/blksze[1])
-    mseq <- c(seq(1, m, blksze[2]),m)
-#     mseq <- seq(1, m/blksze[2])
-    P_sd <- matrix(NA, nrow = n, ncol = m)
-    for(i in seq_len(n)){
-      for(j in seq_len(m)){
-        nv <- (i - blksze2[1]):(i + blksze2[1])
-        mv <- (j - blksze2[2]):(j + blksze2[2])
-        nv <- nv[nv <= n & nv > 0]
-        mv <- mv[mv <= m & mv > 0]
-        std <- sd(array(Pn[nv,mv]),na.rm=TRUE)
-        P_sd[nv,mv] <- std
+  if(!is.null(mask)){
+    if(length(mask)==2 && is.null(dim(mask))){
+      blksze2 <- round(mask/2)
+      Pn <- (P - mean(P, na.rm = TRUE))/sd(as.vector(P), na.rm = TRUE)
+      nseq <- c(seq(1, n, mask[1]),n)
+  #     nseq <- seq(1, n/blksze[1])
+      mseq <- c(seq(1, m, mask[2]),m)
+  #     mseq <- seq(1, m/blksze[2])
+      P_sd <- matrix(NA, nrow = n, ncol = m)
+      for(i in seq_len(n)){
+        for(j in seq_len(m)){
+          nv <- (i - blksze2[1]):(i + blksze2[1])
+          mv <- (j - blksze2[2]):(j + blksze2[2])
+          nv <- nv[nv <= n & nv > 0]
+          mv <- mv[mv <= m & mv > 0]
+          std <- sd(array(Pn[nv,mv]),na.rm=TRUE)
+          P_sd[nv,mv] <- std
+        }
       }
-    }
-    mask <- P_sd < thresh
-    P <- (P - mean(P[!mask], na.rm = TRUE))/
+      mask <- P_sd < thresh
+    }else{
+      P <- (P - mean(P[!mask], na.rm = TRUE))/
           sd(as.vector(P[!mask]), na.rm = TRUE)
+    }
   }else{
     mask <- matrix(FALSE, nrow = n, ncol = m)
     P <- (P - mean(P, na.rm = TRUE))/sd(as.vector(P), na.rm = TRUE)

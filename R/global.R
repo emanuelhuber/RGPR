@@ -2305,15 +2305,19 @@ matProd2x2 <- function(a11, a12, a21, a22, b11, b12, b21, b22){
 #' @name distTensors
 #' @rdname distTensors
 #' @export
-distTensors <- function(J1,J2, 
-                      method=c("geodesic", "log-Euclidean")){
-  method <- match.arg(method, c("geodesic", "log-Euclidean"))
+distTensors <- function(J1, J2, method=c("geodesic", "log-Euclidean",
+                        "angular"), ...){
+  method <- match.arg(method, c("geodesic", "log-Euclidean", "angular"))
   if(method == "geodesic"){
     return(distTensorGeod(J1[[1]], J1[[2]], J1[[3]], 
-                          J2[[1]], J2[[2]], J2[[3]]))
+                          J2[[1]], J2[[2]], J2[[3]]), ...)
   }else if(method == "log-Euclidean"){
     return(distTensorLogE(J1[[1]], J1[[2]], J1[[3]], 
                           J2[[1]], J2[[2]], J2[[3]]))
+  }else if(method == "angular"){
+    angle1 <- 1/2*atan2(2*J1[[3]], (J1[[1]] - J1[[2]]) ) + pi/2  
+    angle2 <- 1/2*atan2(2*J2[[3]], (J2[[1]] - J2[[2]]) ) + pi/2
+    return( (angle1 - angle2) %% pi )
   }
 }
 
@@ -2328,7 +2332,17 @@ distTensors <- function(J1,J2,
 #       | a2   c2 |
 #  J2 = |         |
 #       | c2   b2 |
-distTensorGeod <- function(a1,b1,c1,a2,b2,c2){
+distTensorGeod <- function(a1,b1,c1,a2,b2,c2, normalise = TRUE){
+  if(normalise == TRUE){
+    val_1 <- eigenValue2x2Mat(a1, c1, c1, b1)
+    val_2 <- eigenValue2x2Mat(a2, c2, c2, b2)
+    a1 <- a1/val_1$l1
+    b1 <- b1/val_1$l1
+    c1 <- c1/val_1$l1
+    a2 <- a2/val_2$l1
+    b2 <- b2/val_2$l1
+    c2 <- c2/val_2$l1
+  }
   ABA <- invAxB(a1,b1,c1,a2,b2,c2)
 #   A <- matPow(a1, b1, c1, -0.5)
 #   AB <- matProd2x2(A$a11, A$a12, 
@@ -2341,6 +2355,8 @@ distTensorGeod <- function(a1,b1,c1,a2,b2,c2){
   val <- eigenValue2x2Mat(ABA$a11, ABA$a12, ABA$a21, ABA$a22)
   val$l1[val$l1 < 10^-100] <- 10^-100
   val$l2[val$l2 < 10^-100] <- 10^-100
+#   val$l1 <- 1
+#   val$l2 <- val$l2/val$l1
   return(sqrt(log(val$l1)^2 + log(val$l2)^2))
 }
 

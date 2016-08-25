@@ -2310,7 +2310,7 @@ distTensors <- function(J1, J2, method=c("geodesic", "log-Euclidean",
   method <- match.arg(method, c("geodesic", "log-Euclidean", "angular"))
   if(method == "geodesic"){
     return(distTensorGeod(J1[[1]], J1[[2]], J1[[3]], 
-                          J2[[1]], J2[[2]], J2[[3]]), ...)
+                          J2[[1]], J2[[2]], J2[[3]], ...))
   }else if(method == "log-Euclidean"){
     return(distTensorLogE(J1[[1]], J1[[2]], J1[[3]], 
                           J2[[1]], J2[[2]], J2[[3]]))

@@ -2689,7 +2689,7 @@ plotTensor0 <- function(alpha, l1, l2,  x, y, col = NULL ,
 #           /normdxdy[i,j], 
                       loc   = c(X[i,j], Y[i,j]), 
                       theta = pi/2 - angle[i,j], n=n)
-          polygon(E)
+          polygon(E, col=col[lcol[i,j]])
         }
       }
     }

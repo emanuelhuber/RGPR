@@ -2606,7 +2606,7 @@ plotTensor <- function(x, O, type=c("vectors", "ellipses"), normalise=FALSE,
 #' @name plotTensor0
 #' @rdname plotTensor0
 #' @export
-plotTensor0 <- function(alpha, l1, l2,  x, y, 
+plotTensor0 <- function(alpha, l1, l2,  x, y, col = NULL ,
                 type=c("vectors", "ellipses"), normalise=FALSE,
                 spacing=c(6,4), len=1.9, n=10, ratio=1,...){
   type <- match.arg(type, c("vectors", "ellipses"))
@@ -2639,7 +2639,7 @@ plotTensor0 <- function(alpha, l1, l2,  x, y,
   l1 <- l1[v_x, v_y]
 #   l2 <- O$values[[2]][v_x, v_y]
   l2 <- l2[v_x, v_y]
-
+  
   if(type == "vectors"){
     #Orientation vectors
     dx0 <- sin(angle)
@@ -2652,12 +2652,19 @@ plotTensor0 <- function(alpha, l1, l2,  x, y,
     dy <- len1*dy0/normdxdy/2*ratio
     segments(X - dx, (Y - dy), X + dx , (Y + dy),...)
   }else if(type == "ellipses"){
+    if(is.null(col)){
+      col <- colorspace::heat_hcl(101, c = c(80, 30), l = c(30, 90), 
+                                power = c(1/5, 2))
+    }
+    
 #     l1[l1 < .Machine$double.eps] <- .Machine$double.eps
 #     l2[l2 < .Machine$double.eps] <- .Machine$double.eps
     l1[l1 < 0] <- 0
     l2[l2 < 0] <- 0
     b <- 1/sqrt(l2)
     a <- 1/sqrt(l1)
+    lcol <- l1 + l2
+    lcol <- 1+(lcol - min(lcol))/(max(lcol)-min(lcol)) * 100
 #     normdxdy <- matrix(max(a[is.finite(a)],b[is.finite(b)]),
     normdxdy <- matrix(max(a[is.finite(a)]),
                 nrow=length(v_x),ncol=length(v_y))

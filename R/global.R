@@ -2336,12 +2336,12 @@ distTensorGeod <- function(a1,b1,c1,a2,b2,c2, normalise = TRUE){
   if(normalise == TRUE){
     val_1 <- eigenValue2x2Mat(a1, c1, c1, b1)
     val_2 <- eigenValue2x2Mat(a2, c2, c2, b2)
-    a1 <- a1/val_1$l1
-    b1 <- b1/val_1$l1
-    c1 <- c1/val_1$l1
-    a2 <- a2/val_2$l1
-    b2 <- b2/val_2$l1
-    c2 <- c2/val_2$l1
+    a1 <- a1/(val_1$l1 + val_1$l2)
+    b1 <- b1/(val_1$l1 + val_1$l2)
+    c1 <- c1/(val_1$l1 + val_1$l2)
+    a2 <- a2/(val_2$l1 + val_2$l2)
+    b2 <- b2/(val_2$l1 + val_2$l2)
+    c2 <- c2/(val_2$l1 + val_2$l2)
   }
   ABA <- invAxB(a1,b1,c1,a2,b2,c2)
 #   A <- matPow(a1, b1, c1, -0.5)

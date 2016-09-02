@@ -3211,8 +3211,8 @@ fill=TRUE,blank.lines.skip=TRUE,flush=TRUE,sep="\n")
     }
   }
 
-  nbTraces   = as.integer(as.character(headerHD[4,2]))
-  nbPt     = as.integer(as.character(headerHD[5,2]))
+ nbTraces   <- as.integer(as.character(headerHD[which(headerHD[,1]=="NUMBER OF TRACES"),2]))
+nbPt     <- as.integer(as.character(headerHD[which(headerHD[,1]=="NUMBER OF PTS/TRC"),2]))
   #----------------#
   #--- READ DT1 ---#
   dt1 <- file(fileNameDT1 , "rb")

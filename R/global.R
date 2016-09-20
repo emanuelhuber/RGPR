@@ -1451,8 +1451,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 #   dusr <- dylim/length(y)
 #   if( yaxt != "n"){
     pretty_y <- pretty(ylim, 10)
-    axis(side = 2, at = pretty_y, labels = -pretty_y, col = "red")
-    .depthAxis(y, pretty_y, time_0, v, antsep, depthunit, posunit )
+    axis(side = 2, at = pretty_y, labels = -pretty_y)
+    .depthAxis(ylim, pretty_y, time_0, v, antsep, depthunit, posunit )
 #   }
   # plot time0
   abline(h=0,col="red",lwd=0.5)
@@ -1552,7 +1552,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   box()
 }
 
-
+# we use the Sensors & Software method to plot the depth axis
+# when the data are in time domain
 .depthAxis <- function(y, pretty_y, time_0, v, antsep, depthunit, posunit ){
   if(grepl("[s]$",depthunit)){
     depth2 <- seq(0.1, by = 0.1, 0.9)
@@ -1568,8 +1569,9 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
     }else{
       labelsTop <- depth2
     }
-    axis(side = 4, at =-depthat2, labels = labelsTop, tck = -0.01)
-    axis(side = 4, at = -1* depthToTime(1, 0, v, antsep), labels="1",tck=-0.02)
+    axis(side = 4, at = -depthat2, labels = labelsTop, tck = -0.01)
+    axis(side = 4, at = -1*depthToTime(1, 0, v, antsep), 
+         labels = "1", tck = -0.02)
     mtext(paste0("depth (", posunit, "),   v = ",v, " ", posunit, "/", 
                   depthunit), side = 4, line = 3)
   }else{

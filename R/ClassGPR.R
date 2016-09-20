@@ -1345,6 +1345,21 @@ setMethod("processing", "GPR", function(x){
 )
 
 
+#' Add a processing step
+#' 
+#' @name proc
+#' @rdname proc
+#' @export
+setReplaceMethod(
+  f="proc",
+  signature="GPR",
+  definition=function(x,values){
+    values <- as.character(values)
+    x@proc <- c(x@proc, values)
+    return(x)
+  }
+)
+
 #================= PROCESSING ===============#
 #----------------- DC-SHIFT
 #' Direct-current removal
@@ -1353,17 +1368,12 @@ setMethod("processing", "GPR", function(x){
 #' @rdname dcshift
 #' @export
 setMethod("dcshift", "GPR", function(x, u, FUN=mean){
-    shift <- matrix(apply(x[u,],2,FUN), nrow = nrow(x), 
+    shift <- matrix(apply(x[u,],2, FUN), nrow = nrow(x), 
                     ncol=ncol(x), byrow = TRUE)
     x <-  x - shift
-    if(class(FUN)=="function"){
-      nameFun <- "FUN"
-    }else{
-  #  if(isGeneric("FUN")){
-      nameFun0 <- selectMethod(FUN, "numeric")
-      nameFun <-nameFun0@generic[1]
-    }
-    x@proc <- c(x@proc, paste0("dcshift:",head(u,1),"-",tail(u,1),"+",nameFun))
+    funName <- getFunName(FUN)
+    proc(x) <- paste0("dcshift:u=", head(u,1),"-",tail(u,1), "+", 
+                      "FUN=",funName)
     return(x)
   } 
 )
@@ -1381,6 +1391,8 @@ setMethod("dcshift", "GPR", function(x, u, FUN=mean){
 #' between one and two signal periods
 #'        -> default values ns= 1.5*nl
 #' bet = stabilisation constant, not critical, set to 0.2*max(amplitude) 
+#' @seealso \code{\link{time0}} to estimate the first wave break and 
+#'          \code{\link{traceShift}} to shift the traces
 #' @name dcshift
 #' @rdname dcshift
 #' @export

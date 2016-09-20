@@ -817,6 +817,11 @@ setGenericVerif("values<-", function(x,value) standardGeneric("values<-"))
 #' @export
 setGenericVerif("processing", function(x) standardGeneric("processing"))
 
+#' @name proc<-
+#' @rdname proc
+#' @export
+setGenericVerif("proc<-",function(x,values){standardGeneric("proc<-")})
+
 #' @name description
 #' @rdname description
 #' @export
@@ -3401,4 +3406,15 @@ addArg <- function(proc, arg){
   return(proc)
 }
 
+# return a character vector containing the name of the FUN function
+getFunName <- function(FUN){
+  if(class(FUN)=="function"){
+    funName <- "FUN"
+  }else{
+    #  if(isGeneric("FUN")){
+    funName0 <- selectMethod(FUN, "numeric")
+    funName <-funName0@generic[1]
+  }
+  return(funName)
+}
 

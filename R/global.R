@@ -1560,7 +1560,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   if(grepl("[s]$",depthunit)){
     maxDepth <- max( abs(y + 2*time_0) ) * v
     depthAll <- pretty(c(0, maxDepth), 10)
-    depthAllPos <- depthToTime(depth2, 0, v, antsep)
+    depthAllPos <- depthToTime(depthAll, 0, v, antsep)
     axis(side = 4, at = -depthAllPos, labels = depthAll, tck = -0.01)
     mtext(paste0("depth (", posunit, "),   v = ",v, " ", posunit, "/", 
                   depthunit), side = 4, line = 3)

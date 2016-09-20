@@ -97,42 +97,42 @@ setClass(
 #------------------------------------------#
 #-------------- CONSTRUCTOR ---------------#
 # x = classical GPR list
-.gpr <- function(x, name=character(0), description=character(0),
-                 fPath=character(0)){
-  rec_coord <- cbind(x$dt1$recx,x$dt1$recy,x$dt1$recz)
-  trans_coord <- cbind(x$dt1$transx,x$dt1$transy,x$dt1$transz)
-  if(sum(is.na(rec_coord))>0){
+.gpr <- function(x, name = character(0), description = character(0),
+                    fPath = character(0)){
+  rec_coord <- cbind(x$dt1$recx, x$dt1$recy, x$dt1$recz)
+  trans_coord <- cbind(x$dt1$transx, x$dt1$transy, x$dt1$transz)
+  if(sum(is.na(rec_coord)) > 0){
     warning(paste(name,": ",sum(is.na(rec_coord)), 
                 "NA's in the receiver coordinates\n"))
   }
-  if(sum(is.na(trans_coord))>0){
+  if(sum(is.na(trans_coord)) > 0){
     warning(paste(name,": ",sum(is.na(trans_coord)), 
                 "NA's in the transmitter coordinates\n"))
   }
-  if(sum(is.na(x$dt1$topo))>0){
+  if(sum(is.na(x$dt1$topo)) > 0){
     warning(paste(name,": ",sum(is.na(x$dt1$topo)), 
                 "NA's in the topo coordinates\n"))
   }
-  if(sum(abs(rec_coord),na.rm=TRUE) == 0 ){
-    rec_coord <- matrix(nrow=0, ncol=0) 
+  if(sum(abs(rec_coord),na.rm = TRUE) == 0 ){
+    rec_coord <- matrix(nrow = 0, ncol = 0) 
   }
-  if(sum(abs(trans_coord), na.rm=TRUE)== 0){
-    trans_coord <- matrix(nrow=0, ncol=0) 
+  if(sum(abs(trans_coord), na.rm = TRUE)== 0){
+    trans_coord <- matrix(nrow = 0, ncol = 0) 
   }
   if(sum(abs(x$dt1$topo),na.rm=TRUE)== 0){
-    coord <- matrix(nrow=0, ncol=0) 
+    coord <- matrix(nrow = 0, ncol = 0) 
   }else{
-    coord <- matrix(0,nrow=ncol(x$data), ncol=3)
+    coord <- matrix(0, nrow = ncol(x$data), ncol = 3)
     coord[,3] <- x$dt1$topo
   }
   #====== HEADER DATA (FILE *.HD) ======#
   pos_used <- integer(nrow(x$hd))
-  ttw  <- .getHD(x$hd,"TOTAL TIME WINDOW", position=TRUE)
+  ttw  <- .getHD(x$hd,"TOTAL TIME WINDOW", position = TRUE)
   if(!is.null(ttw)){
     dz <- ttw[1]/nrow(x$data)
     pos_used[ttw[2]] <- 1L
   }else{
-    warning("time/depth resolution unknown! I take dz = 0.4!\n")
+    warning("time/depth resolution unknown! I take dz = 0.4 ns!\n")
     dz <- 0.4
     ttw  <- nrow(x$data) * dz
   }
@@ -145,33 +145,12 @@ setClass(
   }else{
     time_0 <- x$dt1$time0
   }
-  surveyDate <- gsub(pattern ="[^0-9]", replacement = "-", x$hd[3,2])
-  # 2014-04-10 (new PulseEkko format)
-  yyyymmdd <- "^([0-9]{4})([^0-9])([0-9]{2})([^0-9])([0-9]{2})"
-  # 10/06/2011 (old PulseEkko format)
-  ddmmyyyy <- "^([0-9]{2})([^0-9])([0-9]{2})([^0-9])([0-9]{4})"
-  if(grepl(yyyymmdd,surveyDate)){
-    d <- as.character(as.Date(surveyDate, "%Y-%m-%d"))
-    pos_used[3] <- 1L
-  }else if(grepl(ddmmyyyy,surveyDate)){
-    d <- as.character(as.Date(surveyDate, "%d-%m-%Y"))
-    pos_used[3] <- 1L
-  }else{
-    warnings("Could not understand the survey date\n")
-    d <- "1970-01-01"
-  }
-  GPR_device <-  paste(x$hd[2,1],x$hd[2,2],sep="")
-  pos_used[2] <- 1L
-  if(!grepl("^(Data.)",GPR_device)){
-    GPR_device <- ""
-  }
   dx <- .getHD(x$hd, "STEP SIZE USED", position=TRUE)
   if(!is.null(dx)){
     pos_used[dx[2]] <- 1L
   }else{
     dx <- mean(diff(x$dt1hd$position))
   }
-  
   posunit = .getHD(x$hd, "POSITION UNITS",number=FALSE, position=TRUE)
   if(!is.null(posunit)){
     pos_used[as.numeric(posunit[2])] <- 1L
@@ -196,7 +175,6 @@ setClass(
   }else{
     surveymode <- "m"
   }
-
   #-------- header: x@hd ----------#
   nop  <- .getHD(x$hd,"NUMBER OF PTS/TRC", position=TRUE)
   if(!is.null(nop)){
@@ -206,23 +184,53 @@ setClass(
   if(!is.null(not)){
     pos_used[not[2]] <- 1L
   }
+  sup_hd <- list()
   startpos <- .getHD(x$hd, "STARTING POSITION", position=TRUE)
   if(!is.null(startpos)){
     pos_used[startpos[2]] <- 1L
+    sup_hd[["startpos"]] <- as.numeric(startpos[1])
   }else{
     startpos <- 0
   }
   endpos <- .getHD(x$hd, "FINAL POSITION", position=TRUE)
   if(!is.null(endpos)){
     pos_used[endpos[2]] <- 1L
+    sup_hd[["startpos"]] <- as.numeric(endpos[1])
   }else{
     endpos <- dx[1]*ncol(x$data)
   }
-  
-  hd_list <- list("startpos" = as.numeric(startpos[1]),   # "STARTING POSITION"
-                  "endpos" = as.numeric(endpos[1]),       # "FINAL POSITION"
-                  "gprdevice" = GPR_device)
-
+  #--- survey date
+  freepos <- which(pos_used[1:5] == 0)
+  # 2014-04-10 (new PulseEkko format)
+  yyyymmdd <- "^([0-9]{4})([^0-9])([0-9]{2})([^0-9])([0-9]{2})"
+  # 10/06/2011 (old PulseEkko format)
+  ddmmyyyy <- "^([0-9]{2})([^0-9])([0-9]{2})([^0-9])([0-9]{4})"
+  surveyDate <- gsub(pattern ="[^0-9]", replacement = "-", 
+                      x$hd[freepos, 2])
+  testDate <- nchar(surveyDate) == 10 & 
+              (grepl(yyyymmdd, surveyDate) | grepl(ddmmyyyy, surveyDate))
+  if(any(testDate)){
+    surveyDate <- surveyDate[testDate][1]
+    if(grepl(yyyymmdd, surveyDate)){
+      d <- as.character(as.Date(surveyDate, "%Y-%m-%d"))
+      pos_used[which(testDate)[1]] <- 1L
+    }else if(grepl(ddmmyyyy, surveyDate)){
+      d <- as.character(as.Date(surveyDate, "%d-%m-%Y"))
+      pos_used[which(testDate)[1]] <- 1L
+    }
+  }else{
+    warnings("Could not understand the survey date\n")
+    d <- "1970-01-01"
+  }
+  #--- device type
+  freepos <- which(pos_used[1:5] == 0)
+#   GPR_device <-  paste(x$hd[2,1],x$hd[2,2],sep="")
+  GPR_device <-  x$hd[freepos, 2]
+  testDevice <- grepl("^(Data.)", GPR_device)
+  if(any(testDevice)){
+    sup_hd[["gprdevice"]] <- GPR_device[testDevice][1]
+    pos_used[which(testDevice)[1]] <- 1L
+  }  
   x$hd2 <- x$hd[!pos_used,]
   if(nrow(x$hd2)>0){
     key <-  trimStr(x$hd2[,1])
@@ -232,10 +240,10 @@ setClass(
     key2 <- gsub(" ",replacement="_",key2)
     nameL <- trimStr(x$hd2[test,2])
     names(nameL) <- as.character(key2)
-    hd_list_supp <- as.list(nameL)
-    hd_list <- c(hd_list,hd_list_supp)
+    sup_hd2 <- as.list(nameL)
+    sup_hd <- c(sup_hd, sup_hd2)
   }
-  myT <- as.double(as.POSIXct(x$dt1$time, origin = as.Date(d)))
+  traceTime <- as.double(as.POSIXct(x$dt1$time, origin = as.Date(d)))
   new("GPR",   version="0.1",
         data = byte2volt()*x$data,
         traces = x$dt1$traces,            # x$dt1$traces
@@ -246,7 +254,7 @@ setClass(
         rec = rec_coord,                  # x$dt1$recx,x$dt1$recy,x$dt1$recz
         trans = trans_coord,
         time0 = time_0,                   # x$dt1$time0
-        time = myT,                       # x$dt1$time
+        time = traceTime,                       # x$dt1$time
         proc = character(0),              # processing steps
         vel = list(0.1),                  # m/ns
         name = name,
@@ -261,10 +269,177 @@ setClass(
         surveymode = surveymode[1],
         date = d,
         crs = character(0),
-        hd = hd_list                      # header
+        hd = sup_hd                      # header
   )
-
 }
+# .gpr <- function(x, name = character(0), description = character(0),
+#                     fPath = character(0)){
+#   rec_coord <- cbind(x$dt1$recx, x$dt1$recy, x$dt1$recz)
+#   trans_coord <- cbind(x$dt1$transx, x$dt1$transy, x$dt1$transz)
+#   if(sum(is.na(rec_coord)) > 0){
+#     warning(paste(name,": ",sum(is.na(rec_coord)), 
+#                 "NA's in the receiver coordinates\n"))
+#   }
+#   if(sum(is.na(trans_coord)) > 0){
+#     warning(paste(name,": ",sum(is.na(trans_coord)), 
+#                 "NA's in the transmitter coordinates\n"))
+#   }
+#   if(sum(is.na(x$dt1$topo)) > 0){
+#     warning(paste(name,": ",sum(is.na(x$dt1$topo)), 
+#                 "NA's in the topo coordinates\n"))
+#   }
+#   if(sum(abs(rec_coord),na.rm = TRUE) == 0 ){
+#     rec_coord <- matrix(nrow = 0, ncol = 0) 
+#   }
+#   if(sum(abs(trans_coord), na.rm = TRUE)== 0){
+#     trans_coord <- matrix(nrow = 0, ncol = 0) 
+#   }
+#   if(sum(abs(x$dt1$topo),na.rm=TRUE)== 0){
+#     coord <- matrix(nrow = 0, ncol = 0) 
+#   }else{
+#     coord <- matrix(0, nrow = ncol(x$data), ncol = 3)
+#     coord[,3] <- x$dt1$topo
+#   }
+#   #====== HEADER DATA (FILE *.HD) ======#
+#   pos_used <- integer(nrow(x$hd))
+#   ttw  <- .getHD(x$hd,"TOTAL TIME WINDOW", position=TRUE)
+#   if(!is.null(ttw)){
+#     dz <- ttw[1]/nrow(x$data)
+#     pos_used[ttw[2]] <- 1L
+#   }else{
+#     warning("time/depth resolution unknown! I take dz = 0.4!\n")
+#     dz <- 0.4
+#     ttw  <- nrow(x$data) * dz
+#   }
+#   tzap <- .getHD(x$hd, "TIMEZERO AT POINT", position=TRUE)
+#   if(sum(abs(x$dt1$time0)) == 0){
+#     if(!is.null(tzap)){
+#       time_0 <- rep(tzap[1]*dz - dz,ncol(x$data))
+#       pos_used[tzap[2]] <- 1L
+#     }
+#   }else{
+#     time_0 <- x$dt1$time0
+#   }
+#   surveyDate <- gsub(pattern ="[^0-9]", replacement = "-", x$hd[3,2])
+#   # 2014-04-10 (new PulseEkko format)
+#   yyyymmdd <- "^([0-9]{4})([^0-9])([0-9]{2})([^0-9])([0-9]{2})"
+#   # 10/06/2011 (old PulseEkko format)
+#   ddmmyyyy <- "^([0-9]{2})([^0-9])([0-9]{2})([^0-9])([0-9]{4})"
+#   if(grepl(yyyymmdd, surveyDate)){
+#     d <- as.character(as.Date(surveyDate, "%Y-%m-%d"))
+#     pos_used[3] <- 1L
+#   }else if(grepl(ddmmyyyy, surveyDate)){
+#     d <- as.character(as.Date(surveyDate, "%d-%m-%Y"))
+#     pos_used[3] <- 1L
+#   }else{
+#     warnings("Could not understand the survey date\n")
+#     d <- "1970-01-01"
+#   }
+#   GPR_device <-  paste(x$hd[2,1],x$hd[2,2],sep="")
+#   pos_used[2] <- 1L
+#   if(!grepl("^(Data.)",GPR_device)){
+#     GPR_device <- ""
+#   }
+#   dx <- .getHD(x$hd, "STEP SIZE USED", position=TRUE)
+#   if(!is.null(dx)){
+#     pos_used[dx[2]] <- 1L
+#   }else{
+#     dx <- mean(diff(x$dt1hd$position))
+#   }
+#   
+#   posunit = .getHD(x$hd, "POSITION UNITS",number=FALSE, position=TRUE)
+#   if(!is.null(posunit)){
+#     pos_used[as.numeric(posunit[2])] <- 1L
+#   }else{
+#     posunit <- "m"
+#   }
+#   freq = .getHD(x$hd, "NOMINAL FREQUENCY", position=TRUE)
+#   if(!is.null(freq)){
+#     pos_used[freq[2]] <- 1L
+#   }else{
+#     freq <- 100
+#   }
+#   antsep = .getHD(x$hd, "ANTENNA SEPARATION", position=TRUE)
+#   if(!is.null(antsep)){
+#     pos_used[antsep[2]] <- 1L
+#   }else{
+#     antsep <- 1.00
+#   }
+#   surveymode = .getHD(x$hd, "SURVEY MODE",number=FALSE, position=TRUE)
+#   if(!is.null(surveymode)){
+#     pos_used[as.numeric(surveymode[2])] <- 1L
+#   }else{
+#     surveymode <- "m"
+#   }
+# 
+#   #-------- header: x@hd ----------#
+#   nop  <- .getHD(x$hd,"NUMBER OF PTS/TRC", position=TRUE)
+#   if(!is.null(nop)){
+#     pos_used[nop[2]] <- 1L
+#   }
+#   not <- .getHD(x$hd, "NUMBER OF TRACES", position=TRUE)
+#   if(!is.null(not)){
+#     pos_used[not[2]] <- 1L
+#   }
+#   startpos <- .getHD(x$hd, "STARTING POSITION", position=TRUE)
+#   if(!is.null(startpos)){
+#     pos_used[startpos[2]] <- 1L
+#   }else{
+#     startpos <- 0
+#   }
+#   endpos <- .getHD(x$hd, "FINAL POSITION", position=TRUE)
+#   if(!is.null(endpos)){
+#     pos_used[endpos[2]] <- 1L
+#   }else{
+#     endpos <- dx[1]*ncol(x$data)
+#   }
+#   
+#   hd_list <- list("startpos" = as.numeric(startpos[1]),   # "STARTING POSITION"
+#                   "endpos" = as.numeric(endpos[1]),       # "FINAL POSITION"
+#                   "gprdevice" = GPR_device)
+# 
+#   x$hd2 <- x$hd[!pos_used,]
+#   if(nrow(x$hd2)>0){
+#     key <-  trimStr(x$hd2[,1])
+#     test <- key!=""
+#     key <- key[test]
+#     key2 <- gsub("[[:punct:]]",replacement="",key)
+#     key2 <- gsub(" ",replacement="_",key2)
+#     nameL <- trimStr(x$hd2[test,2])
+#     names(nameL) <- as.character(key2)
+#     hd_list_supp <- as.list(nameL)
+#     hd_list <- c(hd_list,hd_list_supp)
+#   }
+#   myT <- as.double(as.POSIXct(x$dt1$time, origin = as.Date(d)))
+#   new("GPR",   version="0.1",
+#         data = byte2volt()*x$data,
+#         traces = x$dt1$traces,            # x$dt1$traces
+#         fid = trimStr(x$dt1$com),         # x$dt1$fid    <-> x$dt1$x8
+#         coord = coord,                    # x$dt1$topo  of the traces
+#         pos = x$dt1$pos,                  # x$dt1$position  of the traces
+#         depth = seq(0,by=dz,length.out=nrow(x$data)),
+#         rec = rec_coord,                  # x$dt1$recx,x$dt1$recy,x$dt1$recz
+#         trans = trans_coord,
+#         time0 = time_0,                   # x$dt1$time0
+#         time = myT,                       # x$dt1$time
+#         proc = character(0),              # processing steps
+#         vel = list(0.1),                  # m/ns
+#         name = name,
+#         description = description,
+#         filepath = fPath,
+#         dz = dz, 
+#         dx = dx[1],                       # "STEP SIZE USED"
+#         depthunit = "ns",
+#         posunit = posunit[1],
+#         freq = freq[1], 
+#         antsep = antsep[1], 
+#         surveymode = surveymode[1],
+#         date = d,
+#         crs = character(0),
+#         hd = hd_list                      # header
+#   )
+# 
+# }
 
 #' Read a GPR data file
 #' 

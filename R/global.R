@@ -20,6 +20,7 @@
 # read/write SEGy
 
 # FIX ME!
+# - unless explicitely specified, set velocity to NULL (?)
 # - gain/dewow -> apply it only where the signal starts!!!
 #     (after migration, 
 # - when subsampling GPR (rows) update gpr@dz
@@ -1417,14 +1418,12 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
     par( mai = mai,omi=omi,mgp=mgp)
   }
  
-  
   #image(x,y,z,col=col,zlim=clim,xaxs="i", yaxs="i", yaxt="n",...)
   plot3D::image2D(x = x, y = y, z = z, col = col, 
         xlim = xlim, ylim = ylim, zlim = clim,
         xaxs = "i", yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
         resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)
  
-
   usr <- par("usr")
   if(is.null(xlim) ){
      test <- rep(TRUE,length(x))
@@ -1529,15 +1528,12 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   dxin <- diff(usr[1:2])/(pin[1])
   dylim <- diff(usr[3:4])
   fin <- par()$fin
-  # par(new=TRUE)
-#   mai2 <- c(1, 0.8 + pin[1] + 1, 0.8, 0.8)
   mai2 <- c(par("mai")[1], par("mai")[1] + pin[1] + 1, par("mai")[3], 0.6)
   par(mai=mai2)
   fin2 <- par()$fin
   wstrip <- dxin*(fin2[1] - mai2[2] - mai2[4])/2
   xpos <- usr[1] + dxin*(mai2[2] - mai[2])
   zstrip <- matrix(seq(clim[1], clim[2], length.out = length(col)), nrow = 1)
-#   xstrip <- c( xpos,  xpos + wstrip*dxin)*c(0.97,1.03)
   xstrip <- c( xpos - 20*wstrip,  xpos + 20*wstrip)#*c(0.9, 1.1)
   ystrip <- seq(min(y),max(y),length.out=length(col))
   ystrip <- seq(usr[3],usr[4],length.out=length(col))
@@ -1559,22 +1555,19 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 .depthAxis <- function(y, pretty_y, time_0, v, antsep, depthunit, posunit ){
   if(grepl("[s]$",depthunit)){
 #     depth <- (seq(0,by=2.5,max(abs(y))*v))
-    depth <- pretty(seq(1.1,by=0.1,max(abs(y + 2*time_0))*v),10)
-    depth2 <- seq(0.1,by=0.1,0.9)
+    depth <- pretty(seq(1.1, by = 0.1 ,max( abs(y + 2*time_0) ) * v), 10)
+    depth2 <- seq(0.1, by = 0.1, 0.9)
     depthat <- depthToTime(depth, 0, v, antsep)
     depthat2 <- depthToTime(depth2,0, v, antsep)
-    axis(side=4,at=-depthat, labels=depth,tck=-0.02)
-    axis(side=4,at=-depthat2, labels=FALSE,tck=-0.01)
-    axis(side=4,at= -1* depthToTime(1, 0, v, antsep), labels="1",tck=-0.02)
-    mtext(paste0("depth (", depthunit, "),   v = ",v, " ", 
-          posunit,"/",depthunit),
-          side=4, line=3)
+    axis(side = 4, at =-depthat, labels = depth, tck = -0.02)
+    axis(side = 4, at =-depthat2, labels = FALSE, tck = -0.01)
+    axis(side = 4, at = -1* depthToTime(1, 0, v, antsep), labels="1",tck=-0.02)
+    mtext(paste0("depth (", depthunit, "),   v = ",v, " ", posunit, "/", 
+                  depthunit), side = 4, line = 3)
   }else{
-#     axis(side=4, at=pretty_y + dusr/2 , labels= -pretty_y)
-    axis(side=4, at=pretty_y, labels= -pretty_y)
-    mtext(paste0("depth (", depthunit, ")") ,side=4, line=3)
+    axis(side = 4, at = pretty_y, labels = -pretty_y)
+    mtext(paste0("depth (", depthunit, ")") ,side = 4, line = 3)
   }
-
 }
 
 
@@ -3191,7 +3184,7 @@ inPoly <- function(x, y, vertx, verty){
 # -------------------------------------------
 
 readDT1 <- function( fPath){
-  dirName     <- dirname(fPath)
+   dirName     <- dirname(fPath)
   baseName    <- .fNameWExt(fPath)
   fileNameHD  <- file.path(dirName, paste0(baseName,".HD"))
   fileNameDT1 <- file.path(dirName, paste0(baseName,".DT1"))
@@ -3211,26 +3204,27 @@ readDT1 <- function( fPath){
       hHD[i,1:2] <-  as.character(sapply(hdline[1:2],trimStr))
     }
   }
-  nTr   <- .getHD(hHD, "NUMBER OF TRACES")
-  nPt    <- .getHD(hHD, "NUMBER OF PTS/TRC")
+  nTr <- .getHD(hHD, "NUMBER OF TRACES")
+  nPt <- .getHD(hHD, "NUMBER OF PTS/TRC")
   #--- READ DT1
   tags <- c("traces", "position", "samples","topo", "NA1", "bytes",
             "tracenb", "stack","window","NA2", "NA3", "NA4",
             "NA5", "NA6", "recx","recy","recz","transx","transy",
             "transz","time0","zeroflag", "NA7", "time","x8","com")  
-  hDT1 = list()
-  dataDT1 = matrix(NA, nrow = nPt, ncol = nTr)
+  hDT1 <- list()
+  dataDT1 <- matrix(NA, nrow = nPt, ncol = nTr)
   con <- file(fileNameDT1 , "rb")
   for(i in 1:nTr){
     for(j in 1:25){
       hDT1[[tags[j]]][i] <- readBin(con, what = numeric(), n = 1L, size = 4)
     }
     # read the 28 characters long comment
-    hDT1[[tags[26]]][i] = readChar(con, 28)
+    hDT1[[tags[26]]][i] <- readChar(con, 28)
     # read the nPt * 2 bytes trace data
     dataDT1[,i] <- readBin(con, what=integer(), n = nPt, size = 2)
   }
   close(con)
+  return( list(hd = hHD, dt1hd = hDT1, data = dataDT1) )
   return( list(hd = hHD, dt1hd = hDT1, data = dataDT1) )
 #   dirName   <- dirname(fPath)
 #   splitBaseName <- unlist(strsplit(basename(fPath),'[.]'))

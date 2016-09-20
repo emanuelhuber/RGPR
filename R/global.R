@@ -1555,7 +1555,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 # we use the Sensors & Software method to plot the depth axis
 # when the data are in time domain: because of the offset between
 # transmitter and receiver, there is an offset between time zero and depth,
-# the depth axes is squized.
+# the depth axes is squished.
 .depthAxis <- function(y, pretty_y, time_0, v, antsep, depthunit, posunit ){
   if(grepl("[s]$",depthunit)){
     maxDepth <- max( abs(y + 2*time_0) ) * v

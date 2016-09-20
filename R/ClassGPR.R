@@ -851,6 +851,11 @@ setMethod(
     x <- a
     a <- a@data
   }
+  if(dim(a)[2] == 1 && dim(b)[2] > 1){
+    a <- as.vector(a)
+  }else if(dim(b)[2] == 1 && dim(a)[2] > 1){
+    b <- as.vector(b)
+  }
   x@data <- a - b
   return(x)
 }

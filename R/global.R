@@ -1386,6 +1386,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   }
   if(relTime0){
     y <- y + time_0
+    ylim[1] <- ylim[1] + time_0
   }
   if( length(unique(diff(x))) > 1){
     rasterImage <- FALSE
@@ -1449,8 +1450,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 #   axis(side=2, at=pretty_y + dusr/2, labels= -pretty_y)
 #   dusr <- dylim/length(y)
 #   if( yaxt != "n"){
-    pretty_y <- pretty(y,10)
-    axis(side=2, at=pretty_y, labels= -pretty_y)
+    pretty_y <- pretty(ylim, 10)
+    axis(side = 2, at = pretty_y, labels = -pretty_y, col = "red")
     .depthAxis(y, pretty_y, time_0, v, antsep, depthunit, posunit )
 #   }
   # plot time0
@@ -1554,15 +1555,22 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 
 .depthAxis <- function(y, pretty_y, time_0, v, antsep, depthunit, posunit ){
   if(grepl("[s]$",depthunit)){
-#     depth <- (seq(0,by=2.5,max(abs(y))*v))
-    depth <- pretty(seq(1.1, by = 0.1 ,max( abs(y + 2*time_0) ) * v), 10)
     depth2 <- seq(0.1, by = 0.1, 0.9)
-    depthat <- depthToTime(depth, 0, v, antsep)
-    depthat2 <- depthToTime(depth2,0, v, antsep)
-    axis(side = 4, at =-depthat, labels = depth, tck = -0.02)
-    axis(side = 4, at =-depthat2, labels = FALSE, tck = -0.01)
+    depthat2 <- depthToTime(depth2, 0, v, antsep)
+    
+    maxDepth <- max( abs(y + 2*time_0) ) * v
+    if(maxDepth > 1.1){
+      # depth <- pretty(seq(1.1, by = 0.1 , max( abs(y + 2*time_0) ) * v), 10)
+      depth <- pretty(c(1.1, max( abs(y + 2*time_0) ) * v), 10)
+      depthat <- depthToTime(depth, 0, v, antsep)
+      axis(side = 4, at = -depthat, labels = depth, tck = -0.02)
+      labelsTop <- FALSE
+    }else{
+      labelsTop <- depth2
+    }
+    axis(side = 4, at =-depthat2, labels = labelsTop, tck = -0.01)
     axis(side = 4, at = -1* depthToTime(1, 0, v, antsep), labels="1",tck=-0.02)
-    mtext(paste0("depth (", depthunit, "),   v = ",v, " ", posunit, "/", 
+    mtext(paste0("depth (", posunit, "),   v = ",v, " ", posunit, "/", 
                   depthunit), side = 4, line = 3)
   }else{
     axis(side = 4, at = pretty_y, labels = -pretty_y)

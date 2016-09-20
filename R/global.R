@@ -1553,27 +1553,36 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 }
 
 # we use the Sensors & Software method to plot the depth axis
-# when the data are in time domain
+# when the data are in time domain: because of the offset between
+# transmitter and receiver, there is an offset between time zero and depth,
+# the depth axes is squized.
 .depthAxis <- function(y, pretty_y, time_0, v, antsep, depthunit, posunit ){
   if(grepl("[s]$",depthunit)){
-    depth2 <- seq(0.1, by = 0.1, 0.9)
-    depthat2 <- depthToTime(depth2, 0, v, antsep)
-    
     maxDepth <- max( abs(y + 2*time_0) ) * v
-    if(maxDepth > 1.1){
-      # depth <- pretty(seq(1.1, by = 0.1 , max( abs(y + 2*time_0) ) * v), 10)
-      depth <- pretty(c(1.1, max( abs(y + 2*time_0) ) * v), 10)
-      depthat <- depthToTime(depth, 0, v, antsep)
-      axis(side = 4, at = -depthat, labels = depth, tck = -0.02)
-      labelsTop <- FALSE
-    }else{
-      labelsTop <- depth2
-    }
-    axis(side = 4, at = -depthat2, labels = labelsTop, tck = -0.01)
-    axis(side = 4, at = -1*depthToTime(1, 0, v, antsep), 
-         labels = "1", tck = -0.02)
+    depthAll <- pretty(c(0, maxDepth), 10)
+    depthAllPos <- depthToTime(depth2, 0, v, antsep)
+    axis(side = 4, at = -depthAllPos, labels = depthAll, tck = -0.01)
     mtext(paste0("depth (", posunit, "),   v = ",v, " ", posunit, "/", 
                   depthunit), side = 4, line = 3)
+                  
+#     depth2 <- seq(0.1, by = 0.1, 0.9)
+#     depthat2 <- depthToTime(depth2, 0, v, antsep)
+#     
+#     maxDepth <- max( abs(y + 2*time_0) ) * v
+#     if(maxDepth > 1.1){
+#       # depth <- pretty(seq(1.1, by = 0.1 , max( abs(y + 2*time_0) ) * v), 10)
+#       depth <- pretty(c(1.1, max( abs(y + 2*time_0) ) * v), 10)
+#       depthat <- depthToTime(depth, 0, v, antsep)
+#       axis(side = 4, at = -depthat, labels = depth, tck = -0.02)
+#       labelsTop <- FALSE
+#     }else{
+#       labelsTop <- depth2
+#     }
+#     axis(side = 4, at = -depthat2, labels = labelsTop, tck = -0.01)
+#     axis(side = 4, at = -1*depthToTime(1, 0, v, antsep), 
+#          labels = "1", tck = -0.02)
+#     mtext(paste0("depth (", posunit, "),   v = ",v, " ", posunit, "/", 
+#                   depthunit), side = 4, line = 3)
   }else{
     axis(side = 4, at = pretty_y, labels = -pretty_y)
     mtext(paste0("depth (", depthunit, ")") ,side = 4, line = 3)

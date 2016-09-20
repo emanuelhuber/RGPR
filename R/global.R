@@ -295,8 +295,8 @@
 #'
 #' @references Several books!
 #' @name RGPR
-# @docType package
-NULL
+#' @docType package
+
 
 # WARNING: type = c("wiggles", "raster") should be the second arguments!!!
 
@@ -410,6 +410,7 @@ safeFPath <- function(fPath = NULL){
 }
 
 # returns string w/o leading or trailing whitespace
+#' @export
 trimStr <- function (x) gsub("^\\s+|\\s+$", "", x)
 
 # return filename without extension
@@ -3190,56 +3191,97 @@ inPoly <- function(x, y, vertx, verty){
 # -------------------------------------------
 
 readDT1 <- function( fPath){
-  dirName   <- dirname(fPath)
-  splitBaseName <- unlist(strsplit(basename(fPath),'[.]'))
-  baseName   <- paste(splitBaseName[1:(length(splitBaseName)-1)],sep="")
-  
-  fileNameHD   <- paste(dirName, "/",baseName,".HD",sep="")
-  fileNameDT1  <- paste(dirName, "/",baseName,".DT1",sep="")
-  
-  headHD <-  scan(fileNameHD, what=character(),strip.white=TRUE,quiet=TRUE,
-fill=TRUE,blank.lines.skip=TRUE,flush=TRUE,sep="\n")
+  dirName     <- dirname(fPath)
+  baseName    <- .fNameWExt(fPath)
+  fileNameHD  <- file.path(dirName, paste0(baseName,".HD"))
+  fileNameDT1 <- file.path(dirName, paste0(baseName,".DT1"))
+  #--- read header file
+  headHD <- scan( fileNameHD, what = character(), strip.white = TRUE,
+                  quiet = TRUE, fill = TRUE, blank.lines.skip = TRUE, 
+                  flush = TRUE, sep = "\n")
   nHD <- length(headHD)
-  headerHD <- data.frame(nrow=nHD,ncol=2)
+  hHD <- data.frame( tag = character(), val = character(), 
+                          stringsAsFactors = FALSE)
   for(i in seq_along(headHD)){
-    hdline <- strsplit(headHD[i],"=")[[1]]
+    hdline <- strsplit(headHD[i], "=")[[1]]
     if(length(hdline) < 2){
-      headerHD[i,1] <- ""
-      headerHD[i,2] <- trimStr(hdline[1])
+      hHD[i,1] <- ""
+      hHD[i,2] <- trimStr(hdline[1])
     }else{
-      headerHD[i,1:2] <-  as.character(sapply(hdline[1:2],trimStr))
+      hHD[i,1:2] <-  as.character(sapply(hdline[1:2],trimStr))
     }
   }
-
-  nbTraces   = as.integer(as.character(headerHD[4,2]))
-  nbPt     = as.integer(as.character(headerHD[5,2]))
-  #----------------#
-  #--- READ DT1 ---#
-  dt1 <- file(fileNameDT1 , "rb")
-
-  indexDT1Header=c("traces", "position", "samples","topo", "NA1", "bytes",
-                    "tracenb", "stack","window","NA2", "NA3", "NA4",
-                    "NA5", "NA6", "recx","recy","recz","transx","transy",
-                    "transz","time0","zeroflag", "NA7", "time","x8","com")  
-                    #,"com1","com2","com3","com4","com5","com6")
-  headerDT1 = list()
-  myData = matrix(NA,nrow=nbPt,ncol=nbTraces)
-  for(i in 1:nbTraces){
+  nTr   <- .getHD(hHD, "NUMBER OF TRACES")
+  nPt    <- .getHD(hHD, "NUMBER OF PTS/TRC")
+  #--- READ DT1
+  tags <- c("traces", "position", "samples","topo", "NA1", "bytes",
+            "tracenb", "stack","window","NA2", "NA3", "NA4",
+            "NA5", "NA6", "recx","recy","recz","transx","transy",
+            "transz","time0","zeroflag", "NA7", "time","x8","com")  
+  hDT1 = list()
+  dataDT1 = matrix(NA, nrow = nPt, ncol = nTr)
+  con <- file(fileNameDT1 , "rb")
+  for(i in 1:nTr){
     for(j in 1:25){
-      headerDT1[[indexDT1Header[j]]][i] = readBin(dt1, what=numeric(), 
-                                                  n = 1L, size=4)
-      # hour of the day: format(as.POSIXct('0001-01-01 00:00:00') + 
-               # headerDT1$time[1], "%I:%M:%S %p") 
+      hDT1[[tags[j]]][i] <- readBin(con, what = numeric(), n = 1L, size = 4)
     }
     # read the 28 characters long comment
-    headerDT1[[indexDT1Header[26]]][i] = readChar(dt1, 28)
-    # read the nbPt * 2 bytes rrace data
-    myData[,i] = readBin(dt1, what=integer(), n = nbPt, size=2)
+    hDT1[[tags[26]]][i] = readChar(con, 28)
+    # read the nPt * 2 bytes trace data
+    dataDT1[,i] <- readBin(con, what=integer(), n = nPt, size = 2)
   }
-  #headerDT1$time2 <- format(as.POSIXct(paste(as.character(headerHD[2,2]), 
-            # ' 00:00:00', sep="")) + headerDT1$time, "%d-%m-%Y %I:%M:%S") 
-  close(dt1)
-  return(list(hd = headerHD, dt1hd = headerDT1, data=myData))
+  close(con)
+  return( list(hd = hHD, dt1hd = hDT1, data = dataDT1) )
+#   dirName   <- dirname(fPath)
+#   splitBaseName <- unlist(strsplit(basename(fPath),'[.]'))
+#   baseName   <- paste(splitBaseName[1:(length(splitBaseName)-1)],sep="")
+#   
+#   fileNameHD   <- paste(dirName, "/",baseName,".HD",sep="")
+#   fileNameDT1  <- paste(dirName, "/",baseName,".DT1",sep="")
+#   
+#   headHD <-  scan(fileNameHD, what=character(),strip.white=TRUE,quiet=TRUE,
+# fill=TRUE,blank.lines.skip=TRUE,flush=TRUE,sep="\n")
+#   nHD <- length(headHD)
+#   headerHD <- data.frame(nrow=nHD,ncol=2)
+#   for(i in seq_along(headHD)){
+#     hdline <- strsplit(headHD[i],"=")[[1]]
+#     if(length(hdline) < 2){
+#       headerHD[i,1] <- ""
+#       headerHD[i,2] <- trimStr(hdline[1])
+#     }else{
+#       headerHD[i,1:2] <-  as.character(sapply(hdline[1:2],trimStr))
+#     }
+#   }
+# 
+#   nbTraces   = as.integer(as.character(headerHD[4,2]))
+#   nbPt     = as.integer(as.character(headerHD[5,2]))
+#   #----------------#
+#   #--- READ DT1 ---#
+#   dt1 <- file(fileNameDT1 , "rb")
+# 
+#   indexDT1Header=c("traces", "position", "samples","topo", "NA1", "bytes",
+#                     "tracenb", "stack","window","NA2", "NA3", "NA4",
+#                     "NA5", "NA6", "recx","recy","recz","transx","transy",
+#                     "transz","time0","zeroflag", "NA7", "time","x8","com")  
+#                     #,"com1","com2","com3","com4","com5","com6")
+#   headerDT1 = list()
+#   myData = matrix(NA,nrow=nbPt,ncol=nbTraces)
+#   for(i in 1:nbTraces){
+#     for(j in 1:25){
+#       headerDT1[[indexDT1Header[j]]][i] = readBin(dt1, what=numeric(), 
+#                                                   n = 1L, size=4)
+#       # hour of the day: format(as.POSIXct('0001-01-01 00:00:00') + 
+#                # headerDT1$time[1], "%I:%M:%S %p") 
+#     }
+#     # read the 28 characters long comment
+#     headerDT1[[indexDT1Header[26]]][i] = readChar(dt1, 28)
+#     # read the nbPt * 2 bytes rrace data
+#     myData[,i] = readBin(dt1, what=integer(), n = nbPt, size=2)
+#   }
+#   #headerDT1$time2 <- format(as.POSIXct(paste(as.character(headerHD[2,2]), 
+#             # ' 00:00:00', sep="")) + headerDT1$time, "%d-%m-%Y %I:%M:%S") 
+#   close(dt1)
+#   return(list(hd = headerHD, dt1hd = headerDT1, data=myData))
 }
 #-----------------
 #-----------------
@@ -3249,9 +3291,9 @@ fill=TRUE,blank.lines.skip=TRUE,flush=TRUE,sep="\n")
 # if number = TRUE, try to convert
 .getHD <- function(A,string,number=TRUE,position=FALSE){
   if(number){
-    value <- as.numeric(A[trimStr(A[,1])==string,2])
+    value <- as.numeric(A[trimStr(A[,1]) == string, 2])
   }else{
-    value <- A[trimStr(A[,1])==string,2]
+    value <- A[trimStr(A[,1]) == string,2]
   }
   if(length(value)>0){
     if(position){

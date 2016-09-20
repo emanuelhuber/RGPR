@@ -272,6 +272,8 @@ setClass(
         hd = sup_hd                      # header
   )
 }
+
+
 # .gpr <- function(x, name = character(0), description = character(0),
 #                     fPath = character(0)){
 #   rec_coord <- cbind(x$dt1$recx, x$dt1$recy, x$dt1$recz)
@@ -942,6 +944,10 @@ setMethod(
   signature=c(e1="ANY",e2="GPR"), 
   definition=.GPR.arith
 )
+
+
+
+
 
 #------------------------------
 # "["
@@ -1627,6 +1633,39 @@ setMethod("gammaCorrection", "GPR", function(x,a=1,b=1){
 setMethod("traceScaling", "GPR", function(x, 
             type = c("stat","min-max","95","eq","sum", "rms")){
     x@data <- scaleCol(x@data, type=type)
+    proc <- getArgs()
+    x@proc <- c(x@proc, proc)
+    return(x)
+  }
+)
+
+#' Trace average
+#'
+#' Compute the average trace of a radargram (resulting in a single trace) or
+#' a moving average of the trace.
+#' @param x An object of the class GPR
+#' @param w A window length defining width of the average window. Default value
+#'          is \code{NULL} and with this default value the function returns a 
+#'          single trace that is the average trace of the radargram.
+#' @param FUN A function to compute the average (default is \code{mean})
+#' @param ... Additional parameters for the FUN functions
+#' @name traceAverage
+#' @rdname traceAverage
+#' @export
+setMethod("traceAverage", "GPR", function(x, w = NULL, FUN = mean, ...){
+    FUN <- match.fun(FUN)
+    if(is.null(w)){
+      xdata <- x@data
+      x <- x[,1]
+      x@data <- as.matrix(apply(xdata, 1, mean, ...))
+      x@time0 <- mean(x@time0)
+      x@time <- mean(x@time)
+      x@coord <- matrix(ncol = 0, nrow = 0)
+      x@rec <- matrix(ncol = 0, nrow = 0)
+      x@trans <- matrix(ncol = 0, nrow = 0)
+    }else{
+      x@data <- wapplyMat(x@data, width = w, by = 1, FUN = FUN, MARGIN = 1, ...)
+    }
     proc <- getArgs()
     x@proc <- c(x@proc, proc)
     return(x)

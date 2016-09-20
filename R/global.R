@@ -20,6 +20,7 @@
 # read/write SEGy
 
 # FIX ME!
+# - rename "traceScaling" into "traceScale"
 # - unless explicitely specified, set velocity to NULL (?)
 # - gain/dewow -> apply it only where the signal starts!!!
 #     (after migration, 
@@ -634,19 +635,46 @@ wapply <- function(x=NULL, width = NULL, by = NULL, FUN = NULL, ...){
   return(OUT)
 }
 
-# mod by MANU
-wapplyRow <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, ...){
-  FUN <- match.fun(FUN)
-  if (is.null(by)) by <- width
-  lenX <- nrow(x)
-  SEQ1 <- seq(1, lenX - width + 1, by = by)
-  SEQ2 <- lapply(SEQ1, function(x) x:(x + width - 1))
-   
-  OUT <- lapply(SEQ2, function(a) FUN(x[a,,drop=FALSE], ...))
-  OUT <- base::simplify2array(OUT, higher = TRUE)
-  return(OUT)
-}
+# NOT CURRENTLY USED
+# # mod by MANU
+# wapplyRow <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, ...){
+#   FUN <- match.fun(FUN)
+#   if (is.null(by)) by <- width
+#   lenX <- nrow(x)
+#   SEQ1 <- seq(1, lenX - width + 1, by = by)
+#   SEQ2 <- lapply(SEQ1, function(x) x:(x + width - 1))
+#    
+#   OUT <- lapply(SEQ2, function(a) FUN(x[a,,drop=FALSE], ...))
+#   OUT <- base::simplify2array(OUT, higher = TRUE)
+#   return(OUT)
+# }
 
+# based on wapply and modified by Manu
+# return a matrix of the same dimension than x
+# some border effect at a distance < width/2 at the first and last col/row
+wapplyMat <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, 
+                      MARGIN = 1, ...){
+  FUN <- match.fun(FUN)
+  width <- ifelse(width %% 2 == 0, width + 1, width)
+  if (is.null(by)) by <- width
+  lenX <- ifelse(MARGIN == 1, ncol(x), nrow(x))
+  SEQ1 <- seq(-(width-1)/2 + 1, lenX -(width-1)/2, by = by)
+  SEQ2 <- lapply(SEQ1, function(x){ 
+                  xnew <- x:(x + width - 1)
+                  xnew <- xnew[xnew > 0]
+                  xnew <- xnew[xnew <= lenX]})
+  if(MARGIN == 1){
+    OUT <- lapply(SEQ2, function(a) apply(x[, a, drop = FALSE], MARGIN, FUN))
+  }else if( MARGIN == 2) {
+    OUT <- lapply(SEQ2, function(a) apply(x[a,, drop = FALSE], MARGIN, FUN))
+  }
+  OUT <- base::simplify2array(OUT, higher = TRUE)
+  if(MARGIN == 2){
+    return(t(OUT))
+  }else{
+    return(OUT)
+  }
+}
 
 xyToLine <- function(x){
   sp::Line(x[,1:2])
@@ -903,6 +931,9 @@ setGenericVerif("fkFilter", function(x, fk=NULL, L=c(5,5),npad=1)
 
 setGenericVerif("traceShift", function(x, t0, keep = 10, delete0 = TRUE) 
                 standardGeneric("traceShift"))
+setGenericVerif("traceAverage", function(x, w = NULL, FUN = mean, ...) 
+                standardGeneric("traceAverage"))
+       
 setGenericVerif("deconv", function(x, method=c("spiking", "wavelet",
                 "min-phase", "mixed-phase"), ...) standardGeneric("deconv"))
 setGenericVerif("conv1D", function(x, w) standardGeneric("conv1D"))

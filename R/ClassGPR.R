@@ -1642,13 +1642,18 @@ setMethod("traceScaling", "GPR", function(x,
 #' Trace average
 #'
 #' Compute the average trace of a radargram (resulting in a single trace) or
-#' a moving average of the trace.
+#' a moving average of the traces.
 #' @param x An object of the class GPR
-#' @param w A window length defining width of the average window. Default value
-#'          is \code{NULL} and with this default value the function returns a 
-#'          single trace that is the average trace of the radargram.
+#' @param w A length-one integer vector equal to the window length of the 
+#'          average window. Default value is \code{NULL}.
 #' @param FUN A function to compute the average (default is \code{mean})
 #' @param ... Additional parameters for the FUN functions
+#' @return An object of the class GPR. When \code{w = NULL}, this function 
+#'         returns a GPR object with a single trace corresponding to the 
+#'         average trace of the whole radargram. When \code{w} is equal to a
+#'         strictly positive interger this function returns a GPR object with
+#'         a size identical to x where each trace corresponds to the average
+#'         of the \code{w} neighbouring traces centered on the considered trace.
 #' @examples
 #' data("frenkeLine00")
 #' 

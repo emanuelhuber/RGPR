@@ -3,8 +3,11 @@ Type: Package
 Title: GPR processing and visualisation
 Version: 0.0.0
 Date: 2015-05-06
-Authors@R: person("Emanuel", "Huber", email = "emanuel.huber@stanford.edu",
-  role = c("aut", "cre"))
+Authors@R: c(
+  person("Emanuel", "Huber", email = "emanuel.huber@stanford.edu",
+  role = c("aut", "cre")),
+  person("Guillaume", "Hans", email = "guillaume.hans@fpinnovations.ca", 
+  role = "aut"))
 Description: S4 classes and R functions to read, write, analyse and visualise
     ground-penetrating radar (GPR) data.
 Depends:

@@ -3371,10 +3371,10 @@ getArgs <- function (returnCharacter=TRUE, addArgs = NULL) {
   if(returnCharacter){
     if(narg >=3){
       eval_arg <- sapply(arg[3:narg],eval)
-      argChar <- paste0(arg[[1]],">", paste(names(arg[3:narg]),
+      argChar <- paste0(arg[[1]],"@", paste(names(arg[3:narg]),
           sapply(eval_arg,pasteArgs,arg[3:narg]),sep="=",collapse="+"))
     }else{
-      argChar <- paste0(arg[[1]],">")
+      argChar <- paste0(arg[[1]],"@")
     }
     if(!is.null(addArgs)){
       argChar <- addArg(argChar, addArgs)
@@ -3402,7 +3402,7 @@ addArg <- function(proc, arg){
 # collapse="+")
   proc_add <- paste(names(arg), sapply(arg,pasteArgs, arg),
                   sep = "=", collapse = "+")
-  if(substr(proc,nchar(proc),nchar(proc)) == ">"){
+  if(substr(proc,nchar(proc),nchar(proc)) == "@"){
     proc <- paste(proc, proc_add, sep = "")
   }else{
     proc <- paste(proc, "+", proc_add, sep = "")

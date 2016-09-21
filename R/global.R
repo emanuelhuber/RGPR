@@ -1628,19 +1628,20 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 
 # Threshold method for first breack picking
 .firstBreackThres <- function(x, thr = 0.12, tt){
-  first_breacks <- rep(NA, ncol(x))
-  thres <- thr * max(x)
-  for(j in seq_len(ncol(x))){
-    if( max(x[, j]) > thres){
-      fb <- which(x[, j] > thres)
+#   first_breacks <- rep(NA, ncol(x))
+#   thres <- thr * max(x)
+#   for(j in seq_len(ncol(x))){
+    if( max(x) > thres){
+      fb <- which(x > thres)
       if(length(fb) > 0){
         i <- fb[1]
-        w <- (x[i, j] - thres) / (x[i, j] - x[i-1, j])
-        first_breacks[j] <- w * tt[i-1] + (1- w) * tt[i]
+        w <- (x[i] - thres) / (x[i] - x[i-1])
+        return( w * tt[i-1] + (1- w) * tt[i] )
       }
     }
-  }
-  return(first_breacks)
+#   }
+  return(NA)
+#   return(first_breacks)
 }
 
 # Jaun I. Sabbione and Danilo Velis (2010). Automatic first-breaks picking: 

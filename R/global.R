@@ -81,6 +81,8 @@
 
 ################## GPR PROCESSING ######################3
 
+# Discontinuity Attribute
+
 # check book "Near-surface Geophysics, vol 13"
 
 # Idea for trace to trace processing:
@@ -192,6 +194,15 @@
 # - time function ->  gpr <- readGPR(file.choose());    as.POSIXct(gpr@time, 
 # origin = "1970-01-01")
 
+#--- 3D GPR ---#
+# - zigzag data acquisition can result in staggered noise
+#       shift the lines
+#       processing: median line de-stagger
+# - decoupled gridding (differences between forward and reverse lines results
+#       in noisy horizontal slices) -> staggering noise
+#       Create two separate grid maps of forward and reverse lines and
+#       then apply grid math to add these time slice maps back together
+#       (GPR remote sensing in archaeology)
 
 
 

@@ -1959,41 +1959,69 @@ setMethod("deconv", "GPR", function(x,
 #--------------- DATA EDITING FUNCTIONS
 #' Shift the traces
 #'
+#' @param x A object of the class GPR
+#' @param ts A numeric vector defining the amount of time the traces have to
+#'              shifted
+#' @param keep A length-one numeric vector indicating how much of the trace...
+#' @param crop If TRUE (defaults), remove the rows containing only zero's 
+#'              (no data). If FALSE, 
 #' @name traceShift
 #' @rdname traceShift
 #' @export
-setMethod("traceShift", "GPR", function(x,  t0, keep = 10, delete0 = TRUE){
-# traceShift <- function(x,t0, keep=10){
-    if(length(t0) == 1){
-      t0 <- rep(t0, ncol(x))
-    }
-    t0 <- t0/x@dz 
-    if(min(t0) > keep){
-      t0 <- t0 - keep
-    }else{
-      t0 <- t0 - min(t0) + 1
+setMethod("traceShift", "GPR", function(x,  ts, keep = 0, method = c("linear", 
+                "nearest", "pchip", "cubic", "spline"), crop = TRUE){
+# traceShift <- function(x,ts, keep=10){
+    method <- match.arg(method, c("linear", "nearest", "pchip", "cubic", 
+                                  "spline"))
+    if(length(ts) == 1){
+      ts <- rep(ts, ncol(x))
     }
     A <- x@data
     Anew <- matrix(nrow=nrow(A),ncol=ncol(A))
-    
-    minShift <- min(t0) - keep
-    maxShift <- max(t0) - keep
-    
     for(i in seq_along(A[1,])){
-      vs <- seq(t0[i],nrow(A))
-      vsp <- seq(t0[i],nrow(A))-t0[i]+1
-      Anew[vsp,i] <- A[vs,i]
+      tnew <- x@depth - ts[i] - keep
+      told <- x@depth
+      yold <- A[,i]
+      Anew[,i] <- signal::interp1(told, yold, tnew, method = method, 
+                                  extrap = NA)
     }
-    x@data <- Anew  
-    if(delete0 == TRUE){
+    x@data <- Anew
+    if(crop == TRUE){
       test <- apply(abs(Anew),1,sum)
-      firstPos <- which(!rev(test == 0) )[1]
+      firstPos <- which(!rev(test == NA) )[1]
       if(!is.na(firstPos)){
         n <- length(test)
         vsel <- 1:(n-firstPos + 1L)
         x <- x[vsel,]
       }
     }
+#      ts <- ts/x@dz 
+#     if(min(ts) > keep){
+#       ts <- ts - keep
+#     }else{
+#       ts <- ts - min(ts) + 1
+#     }
+#     A <- x@data
+#     Anew <- matrix(nrow=nrow(A),ncol=ncol(A))
+#     
+#     minShift <- min(ts) - keep
+#     maxShift <- max(ts) - keep
+#     
+#     for(i in seq_along(A[1,])){
+#       vs <- seq(ts[i],nrow(A))
+#       vsp <- seq(ts[i],nrow(A))-ts[i]+1
+#       Anew[vsp,i] <- A[vs,i]
+#     }
+#     x@data <- Anew  
+#     if(crop == TRUE){
+#       test <- apply(abs(Anew),1,sum)
+#       firstPos <- which(!rev(test == 0) )[1]
+#       if(!is.na(firstPos)){
+#         n <- length(test)
+#         vsel <- 1:(n-firstPos + 1L)
+#         x <- x[vsel,]
+#       }
+#     }
 #     x@proc <- c( x@proc, "trace shift")
     proc(x) <- getArgs()
 #     x@proc <- c(x@proc, proc)
@@ -3120,6 +3148,8 @@ setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
 #' and receiver antennae (it converts the trace time of the data acquired with
 #' a bistatic antenna system into trace time data virtually acquiered with 
 #' a monostatic system under the assumption of horizontally layered structure).
+#' Note that this function does not change the trace but only the time (time
+#' scale).
 #' @name timeCorOffset
 #' @rdname timeCorOffset
 #' @export

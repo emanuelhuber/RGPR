@@ -3362,26 +3362,30 @@ readDT1 <- function( fPath){
 # Ryan Grannell
 # website   twitter.com/RyanGrannell
 # location   Galway, Ireland
-getArgs <- function (return_character=TRUE) {
+getArgs <- function (returnCharacter=TRUE, addArgs = NULL) {
   arg <- as.list(match.call(def = sys.function( -1 ),
            call = sys.call(-1),
            expand.dots = TRUE )
            )
   narg <- length(arg)
-  if(return_character){
+  if(returnCharacter){
     if(narg >=3){
       eval_arg <- sapply(arg[3:narg],eval)
-      paste(arg[[1]],":", paste(names(arg[3:narg]),
+      argChar <- paste(arg[[1]],">", paste(names(arg[3:narg]),
           sapply(eval_arg,pasteArgs,arg[3:narg]),sep="=",collapse="+"),sep="")
     }else{
-      paste(arg[[1]],":",sep="")
+      argChar <- paste(arg[[1]],">",sep="")
     }
+    if(!is.null(addArgs)){
+      argChar <- addArg(argChar, addArgs)
+    }
+    return(argChar)
   }else{
     return(arg)
   }
 }
 
-pasteArgs <- function(eval_arg,arg){
+pasteArgs <- function(eval_arg, arg){
   if(is.numeric(eval_arg) || is.character(eval_arg)){
     return(paste(eval_arg,collapse=",",sep=""))
   }else if(is.list(eval_arg)){
@@ -3398,7 +3402,7 @@ addArg <- function(proc, arg){
 # collapse="+")
   proc_add <- paste(names(arg), sapply(arg,pasteArgs, arg),
                   sep = "=", collapse = "+")
-  if(substr(proc,nchar(proc),nchar(proc)) == ":"){
+  if(substr(proc,nchar(proc),nchar(proc)) == ">"){
     proc <- paste(proc, proc_add, sep = "")
   }else{
     proc <- paste(proc, "+", proc_add, sep = "")

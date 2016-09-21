@@ -396,7 +396,7 @@ setClass(
 #     endpos <- dx[1]*ncol(x$data)
 #   }
 #   
-#   hd_list <- list("startpos" = as.numeric(startpos[1]),   # "STARTING POSITION"
+#   hd_list <- list("startpos" = as.numeric(startpos[1]), # "STARTING POSITION"
 #                   "endpos" = as.numeric(endpos[1]),       # "FINAL POSITION"
 #                   "gprdevice" = GPR_device)
 # 
@@ -824,8 +824,8 @@ setMethod(
         # "digamma" "trigamma"
       stop(paste(.Generic, "not allowed on GPR objects"))
     )
-    proc <- getArgs()
-    x@proc <- c(x@proc, proc)
+    proc(x) <- getArgs()
+#     x@proc <- c(x@proc, proc)
     return(x)
   }
 )
@@ -1372,7 +1372,7 @@ setMethod("dcshift", "GPR", function(x, u, FUN=mean){
                     ncol=ncol(x), byrow = TRUE)
     x <-  x - shift
     funName <- getFunName(FUN)
-    proc(x) <- paste0("dcshift:u=", head(u,1),"-",tail(u,1), "+", 
+    proc(x) <- paste0("dcshift>u=", head(u,1),":",tail(u,1), "+", 
                       "FUN=",funName)
     return(x)
   } 
@@ -1475,8 +1475,8 @@ setMethod("dewow", "GPR", function(x, type = c("MAD", "Gaussian"), w){
     x@data[!before_t0,] <- A[!before_t0,] - 
     mmand::gaussianSmooth(A,w)[!before_t0,]
   }
-  proc <- getArgs()
-  x@proc <- c(x@proc, proc)
+  proc(x) <- getArgs()
+#   x@proc <- c(x@proc, proc)
   return(x) 
 })
 
@@ -1497,8 +1497,8 @@ setMethod("gain", "GPR", function(x,
   }else if(type=="agc"){
     x@data <- .gainAgc(x@data, dts = x@dz, ...)
   }
-  proc <- getArgs()
-  x@proc <- c(x@proc, proc)
+  proc(x) <- getArgs()
+#   x@proc <- c(x@proc, proc)
   return(x)
   } 
 )
@@ -1560,8 +1560,8 @@ setMethod("filter1D", "GPR", function(x, type = c("median", "hampel",
       }
       x@data <- mmand::gaussianSmooth(x@data, sigma = w)
     }
-    proc <- getArgs()
-    x@proc <- c(x@proc, proc)
+    proc(x) <- getArgs()
+#     x@proc <- c(x@proc, proc)
     return(x)
   } 
 )
@@ -1605,8 +1605,8 @@ setMethod("filter2D", "GPR", function(x, type = c("median3x3", "adimpro"), ...){
       AAA <- ( (AA - mean(AA))/sd(AA) ) * sd(x@data)
       x@data <- AAA
     }
-    proc <- getArgs()
-    x@proc <- c(x@proc, proc)
+    proc(x) <- getArgs()
+#     x@proc <- c(x@proc, proc)
     return(x)
   } 
 )
@@ -1619,8 +1619,8 @@ setMethod("filter2D", "GPR", function(x, type = c("median3x3", "adimpro"), ...){
 #' @export
 setMethod("clip", "GPR", function(x,Amax=NULL,Amin=NULL){
   x@data <- .clip(x@data,Amax,Amin)
-  proc <- getArgs()
-  x@proc <- c(x@proc, proc)
+  proc(x) <- getArgs()
+#   x@proc <- c(x@proc, proc)
   return(x)
   } 
 )
@@ -1631,8 +1631,8 @@ setMethod("clip", "GPR", function(x,Amax=NULL,Amin=NULL){
 #' @export
 setMethod("gammaCorrection", "GPR", function(x,a=1,b=1){
   x@data <- .gammaCorrection(x@data,a,b)
-  proc <- getArgs()
-  x@proc <- c(x@proc, proc)
+  proc(x) <- getArgs()
+#   x@proc <- c(x@proc, proc)
   return(x)
   } 
 )
@@ -1645,8 +1645,8 @@ setMethod("gammaCorrection", "GPR", function(x,a=1,b=1){
 setMethod("traceScaling", "GPR", function(x, 
             type = c("stat","min-max","95","eq","sum", "rms")){
     x@data <- scaleCol(x@data, type=type)
-    proc <- getArgs()
-    x@proc <- c(x@proc, proc)
+    proc(x) <- getArgs()
+#   x@proc <- c(x@proc, proc)
     return(x)
   }
 )
@@ -1700,8 +1700,8 @@ setMethod("traceAverage", "GPR", function(x, w = NULL, FUN = mean, ...){
     }else{
       x@data <- wapplyMat(x@data, width = w, by = 1, FUN = FUN, MARGIN = 1, ...)
     }
-    proc <- getArgs()
-    x@proc <- c(x@proc, proc)
+    proc(x) <- getArgs()
+#   x@proc <- c(x@proc, proc)
     return(x)
   }
 )
@@ -1716,8 +1716,8 @@ setMethod("fFilter", "GPR", function(x, f = 100, type =
 c('low','high','bandpass'),L = 257, plotSpec = FALSE){
     x@data <- .fFilter1D(x@data, f = f,  type = type, L = L, dT = x@dz, 
                         plotSpec = plotSpec)
-    proc <- getArgs()
-    x@proc <- c(x@proc, proc)
+    proc(x) <- getArgs()
+#   x@proc <- c(x@proc, proc)
     return(x)
   } 
 )
@@ -1752,8 +1752,8 @@ setMethod("fkFilter", "GPR", function(x, fk=NULL, L=c(5,5),npad=1){
       cat("# FIXME! function to transform matrix into polygon\n")
     }
     x@data <- .FKFilter(x@data,fk=fk, L=L, npad=npad)
-    proc <- getArgs()
-    x@proc <- c(x@proc, proc)
+    proc(x) <- getArgs()
+#   x@proc <- c(x@proc, proc)
     return(x)
     
   } 
@@ -1776,8 +1776,8 @@ setMethod("fkFilter", "GPR", function(x, fk=NULL, L=c(5,5),npad=1){
 setMethod("rotatePhase", "GPR", function(x, phi){
   # rotatePhase <- function(x,phi){
     x@data <- apply(x@data, 2, phaseRotation, phi)
-    proc <- getArgs()
-    x@proc <- c(x@proc,proc)
+    proc(x) <- getArgs()
+#   x@proc <- c(x@proc, proc)
     return(x)
   }
 )
@@ -1795,7 +1795,8 @@ setMethod("rotatePhase", "GPR", function(x, phi){
 setMethod("conv1D", "GPR", function(x, w){
   # rotatePhase <- function(x,phi){
     x@data <- convolution(x@data, w)
-    x@proc <- c(x@proc,"conv1D")
+#     x@proc <- c(x@proc,"conv1D")
+    proc(x) <- "conv1D"
     return(x)
   }
 )
@@ -1939,8 +1940,8 @@ setMethod("deconv", "GPR", function(x,
     }
     # gprdec <- gpr
 #     x@data <- Xdec
-    proc <- getArgs()
-    x@proc <- c(x@proc, proc)
+    proc(x) <- getArgs()
+#     x@proc <- c(x@proc, proc)
     toReturn[["x"]] <- x
     return(toReturn)
   }
@@ -1985,8 +1986,8 @@ setMethod("traceShift", "GPR", function(x,  t0, keep = 10, delete0 = TRUE){
       }
     }
 #     x@proc <- c( x@proc, "trace shift")
-    proc <- getArgs()
-    x@proc <- c(x@proc, proc)
+    proc(x) <- getArgs()
+#     x@proc <- c(x@proc, proc)
     return(x)
   }
 )
@@ -2579,8 +2580,8 @@ setMethod("reverse", "GPR", function(x){
     if(length(x@trans)>0){
       xnew@trans <- x@trans[nrow(x@trans):1,]
     }
-    proc <- getArgs()
-    x@proc <- c(x@proc, proc)
+    proc(x) <- getArgs()
+    # x@proc <- c(x@proc, proc)
     return(xnew)
   }
 )
@@ -3098,8 +3099,8 @@ setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
       x@dz <- dz
       x@depthunit <- "m"
     }
-    proc <- getArgs()
-    x@proc <- c(x@proc, proc)
+    pproc(x) <- getArgs()
+    # x@proc <- c(x@proc, proc)
     return(x)
   } 
 )
@@ -3275,8 +3276,8 @@ setMethod("regInterpPos", "GPR", function(x, type = c("linear", "cosine"),
     xnew@fid <- interpFid(xpos, xo, x@fid)
     xnew@ann <- interpFid(xpos, xo, x@ann)
     xnew@dx <- round(dx,3)
-    proc <- getArgs()
-    xnew@proc <- c(xnew@proc, proc)
+    proc(xnew) <- getArgs()
+#     xnew@proc <- c(xnew@proc, proc)
     return(xnew)
   }
 )

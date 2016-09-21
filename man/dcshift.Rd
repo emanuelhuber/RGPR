@@ -24,4 +24,8 @@ between one and two signal periods
        -> default values ns= 1.5*nl
 bet = stabilisation constant, not critical, set to 0.2*max(amplitude)
 }
+\seealso{
+\code{\link{time0}} to estimate the first wave break and 
+         \code{\link{traceShift}} to shift the traces
+}
 

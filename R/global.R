@@ -3371,10 +3371,10 @@ getArgs <- function (returnCharacter=TRUE, addArgs = NULL) {
   if(returnCharacter){
     if(narg >=3){
       eval_arg <- sapply(arg[3:narg],eval)
-      argChar <- paste(arg[[1]],">", paste(names(arg[3:narg]),
-          sapply(eval_arg,pasteArgs,arg[3:narg]),sep="=",collapse="+"),sep="")
+      argChar <- paste0(arg[[1]],">", paste(names(arg[3:narg]),
+          sapply(eval_arg,pasteArgs,arg[3:narg]),sep="=",collapse="+"))
     }else{
-      argChar <- paste(arg[[1]],">",sep="")
+      argChar <- paste0(arg[[1]],">")
     }
     if(!is.null(addArgs)){
       argChar <- addArg(argChar, addArgs)
@@ -3387,9 +3387,9 @@ getArgs <- function (returnCharacter=TRUE, addArgs = NULL) {
 
 pasteArgs <- function(eval_arg, arg){
   if(is.numeric(eval_arg) || is.character(eval_arg)){
-    return(paste(eval_arg,collapse=",",sep=""))
+    return( paste0(eval_arg, collapse = ",") )
   }else if(is.list(eval_arg)){
-    return(paste(names(eval_arg),"<-", (eval_arg),collapse=",",sep=""))
+    return( paste0(names(eval_arg),"<-", (eval_arg), collapse = "," ) )
   }else if(is.matrix(eval_arg)){
     return(paste(arg))
   }else if(any(is.null(eval_arg))){

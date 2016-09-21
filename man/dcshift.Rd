@@ -7,7 +7,8 @@
 \usage{
 \S4method{dcshift}{GPR}(x, u = 1:10, FUN = mean)
 
-\S4method{firstBreack}{GPR}(x, w = 11, ns = NULL, bet = NULL)
+\S4method{firstBreack}{GPR}(x, method = c("coppens", "threshold"),
+  thr = 0.12, w = 11, ns = NULL, bet = NULL)
 }
 \description{
 Direct-current removal

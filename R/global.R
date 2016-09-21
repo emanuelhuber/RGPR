@@ -1434,8 +1434,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
     }
   }
   if(relTime0){
-#     y <- y + time_0
-    y <- y + (time_0 + max(y))
+    y <- y + time_0
+#     y <- y + (time_0 + max(y))
     ylim[1] <- ylim[1] + time_0
 #     ylim[1] <-  ylim[1] + (time_0 + max(y))
   }

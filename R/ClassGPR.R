@@ -1700,7 +1700,8 @@ setMethod("traceAverage", "GPR", function(x, w = NULL, FUN = mean, ...){
     }else{
       x@data <- wapplyMat(x@data, width = w, by = 1, FUN = FUN, MARGIN = 1, ...)
     }
-    proc(x) <- getArgs()
+    funName <- getFunName(FUN)
+    proc(x) <- getArgs( addArgs = c('FUN' = funName))
 #   x@proc <- c(x@proc, proc)
     return(x)
   }

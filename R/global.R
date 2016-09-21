@@ -1434,8 +1434,10 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
     }
   }
   if(relTime0){
-    y <- y + time_0
-    ylim[1] <- ylim[1] + time_0
+#     y <- y + time_0
+    y <- y + (time_0 + min(y))
+#     ylim[1] <- ylim[1] + time_0
+    ylim[1] <-  time_0
   }
   if( length(unique(diff(x))) > 1){
     rasterImage <- FALSE

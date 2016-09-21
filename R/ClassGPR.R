@@ -1396,22 +1396,29 @@ setMethod("dcshift", "GPR", function(x, u, FUN=mean){
 #' @name dcshift
 #' @rdname dcshift
 #' @export
-setMethod("firstBreack", "GPR", function(x, w = 11, ns = NULL, bet = NULL){
-    w <- round(w / x@dz)
-    if( (w %% 2) == 0){
-      w <- w + 1
+setMethod("firstBreack", "GPR", function(x, method = c("coppens", "threshold"), 
+            thr = 0.12, w = 11, ns = NULL, bet = NULL){
+    method <- match.arg(method, c("coppens", "threshold"))
+    if(method == "coppens"){
+      w <- round(w / x@dz)
+      if( (w %% 2) == 0){
+        w <- w + 1
+      }
+      if(is.null(ns)){
+        ns <- round(1.5 * w)
+      }
+      if( ns %% 2 == 0){
+        ns <- ns + 1
+      }
+      xs <- x@data^2
+      if(is.null(bet)){
+        bet <- 0.2 * max(xs)
+      }
+      fb <- apply(xs, 2, .firstBreackModCoppens, w = w, ns = ns, bet = bet)
+      fb <- fb * x@dz
+    }else if(method == "threshold"){
+      fb <- .firstBreackThres(x@data, thr = thr, x@depth)
     }
-    if(is.null(ns)){
-      ns <- round(1.5 * w)
-    }
-    if( ns %% 2 == 0){
-      ns <- ns + 1
-    }
-    xs <- x@data^2
-    if(is.null(bet)){
-      bet <- 0.2 * max(xs)
-    }
-    fb <- apply(xs, 2, .firstBreackPicking, w = w, ns = ns, bet = bet)*x@dz
     return(fb)
   } 
 )

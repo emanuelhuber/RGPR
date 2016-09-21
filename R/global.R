@@ -1625,17 +1625,32 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   }
 }
 
-
+# Threshold method for first breack picking
+.firstBreackThres <- function(x, thr = 0.12, tt){
+  first_breacks <- rep(NA, ncol(x))
+  thres <- thr * max(x)
+  for(j in seq_len(ncol(x))){
+    if( max(x[, j]) > thres){
+      fb <- which(x[, j] > thres)
+      if(length(fb) > 0){
+        i <- fb[1]
+        w <- (x[i, j] - thres) / (x[i, j] - x[i-1, j])
+        first_breacks[j] <- w * tt[i-1] + (1- w) * tt[i]
+      }
+    }
+  }
+  return(first_breacks)
+}
 
 # Jaun I. Sabbione and Danilo Velis (2010). Automatic first-breaks picking: 
 # New strategies and algorithms. Geophysics, 75 (4): v67-v76
 # -> modified Coppens's Method
-# w = length leading window: about one period of the firs-arrival waveform
+# w = length leading window: about one period of the first-arrival waveform
 # ns = length eps (edge preserving smoothing) window: good results with ns 
 # between one and two signal periods
 #        -> default values ns= 1.5*w
 # bet = stabilisation constant, not critical, set to 0.2*max(amplitude) 
-.firstBreackPicking <- function(x, w = 11, ns = NULL, bet = 0.2){
+.firstBreackModCoppens <- function(x, w = 11, ns = NULL, bet = 0.2){
   if(is.null(ns)){
     ns <- 1.5 * w
   }

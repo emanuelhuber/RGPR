@@ -1643,11 +1643,11 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 #   first_breacks <- rep(NA, ncol(x))
 #   thres <- thr * max(x)
 #   for(j in seq_len(ncol(x))){
-    if( max(x) > thres){
-      fb <- which(x > thres)
+    if( max(x) > thr){
+      fb <- which(x > thr)
       if(length(fb) > 0){
         i <- fb[1]
-        w <- (x[i] - thres) / (x[i] - x[i-1])
+        w <- (x[i] - thr) / (x[i] - x[i-1])
         return( w * tt[i-1] + (1- w) * tt[i] )
       }
     }

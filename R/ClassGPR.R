@@ -1968,32 +1968,41 @@ setMethod("deconv", "GPR", function(x,
 #' @name traceShift
 #' @rdname traceShift
 #' @export
-setMethod("traceShift", "GPR", function(x,  ts, keep = 0, method = c("linear", 
-                "nearest", "pchip", "cubic", "spline"), crop = TRUE){
+setMethod("traceShift", "GPR", function(x,  ts, method = c("none", 
+            "linear", "nearest", "pchip", "cubic", "spline"), crop = TRUE){
 # traceShift <- function(x,ts, keep=10){
-    method <- match.arg(method, c("linear", "nearest", "pchip", "cubic", 
-                                  "spline"))
+    method <- match.arg(method, c("none", "linear", "nearest", "pchip", 
+                                  "cubic", "spline"))
     if(length(ts) == 1){
       ts <- rep(ts, ncol(x))
     }
+    ps <- ts/x@dz
     A <- x@data
     Anew <- matrix(nrow=nrow(A),ncol=ncol(A))
-    for(i in seq_along(A[1,])){
-      tnew <- x@depth - ts[i] - keep
-      told <- x@depth
-      yold <- A[,i]
-      Anew[,i] <- signal::interp1(told, yold, tnew, method = method, 
-                                  extrap = NA)
+    v0 <- 1:nrow(A)
+    for(i in seq_len(ncol(A))){
+      relts <- floor(ps[i])*x@dz - ts[i]
+      if(method == "none"){
+        ynew <- A[,i]
+      }else{
+        ynew <- signal::interp1(x@depth, A[,i], x@depth + relts, 
+                                method = method, extrap = NA)
+      }
+      vs <- v0 + floor(ps[i])
+      test <- vs > 0 & vs <= nrow(A)
+      vs <- vs[test]
+      Anew[vs,i] <- ynew[test]
     }
     x@data <- Anew
     if(crop == TRUE){
-      test <- apply(abs(Anew),1,sum)
-      firstPos <- which(!rev(test == NA) )[1]
-      if(!is.na(firstPos)){
-        n <- length(test)
-        vsel <- 1:(n-firstPos + 1L)
-        x <- x[vsel,]
-      }
+      testCrop <- apply(abs(Anew),1,sum)
+      x <- x[!is.na(testCrop),]
+#       firstPos <- which(!rev(test == 0) )[1]
+#       if(!is.na(firstPos)){
+#         n <- length(test)
+#         vsel <- 1:(n-firstPos + 1L)
+#         x <- x[vsel,]
+#       }
     }
 #      ts <- ts/x@dz 
 #     if(min(ts) > keep){

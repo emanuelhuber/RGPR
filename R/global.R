@@ -946,8 +946,8 @@ setGenericVerif("fFilter", function(x, f=100, type=c('low','high','bandpass'),
 setGenericVerif("fkFilter", function(x, fk=NULL, L=c(5,5),npad=1) 
                 standardGeneric("fkFilter"))
 
-setGenericVerif("traceShift", function(x,  ts, keep = 0, method = c("linear", 
-                "nearest", "pchip", "cubic", "spline"), crop = TRUE) 
+setGenericVerif("traceShift", function(x,  ts, method = c("none", 
+            "linear", "nearest", "pchip", "cubic", "spline"), crop = TRUE) 
                 standardGeneric("traceShift"))
 setGenericVerif("traceAverage", function(x, w = NULL, FUN = mean, ...) 
                 standardGeneric("traceAverage"))

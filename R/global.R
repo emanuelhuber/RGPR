@@ -916,7 +916,8 @@ setGenericVerif("gain", function(x, type=c("power", "exp", "agc"),
                   ...) standardGeneric("gain"))
 setGenericVerif("dcshift", function(x, u=1:10, FUN=mean) 
                 standardGeneric("dcshift"))
-setGenericVerif("firstBreack", function(x, w = 11, ns = NULL, bet=NULL) 
+setGenericVerif("firstBreack", function(x, method = c("coppens", "threshold"), 
+                thr = 0.12, w = 11, ns = NULL, bet=NULL) 
                 standardGeneric("firstBreack"))
 
 setGenericVerif("clip", function(x, Amax=NULL,Amin=NULL) 

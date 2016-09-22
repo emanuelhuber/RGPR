@@ -2038,13 +2038,25 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("none",
   }
 )
 
+#' Time zero correction
+#'
+#' \code{time0Cor} shift the traces vertically
+#' @param x A object of the class GPR
+#' @param ts A numeric vector defining the amount of time the traces have to
+#'              shifted
+#' @param keep A length-one numeric vector indicating how much of the trace...
+#' @param crop If TRUE (defaults), remove the rows containing only zero's 
+#'              (no data). If FALSE, 
+#' @name time0Cor
+#' @rdname time0Cor
+#' @export
 setMethod("time0Cor", "GPR", function(x, method = c("none", "linear", 
            "nearest", "pchip", "cubic", "spline"), keep = NULL, 
            crop = TRUE, c0 = 0.299){
     if(is.null(keep)){
       keep <- x@antsep/c0
     }
-    x <- traceShift(x, ts = x@time0 - keep, method = method, crop = crop)
+    x <- traceShift(x, ts = -x@time0 + keep, method = method, crop = crop)
     x@proc <- x@proc[length(x@proc)]
      proc(x) <- getArgs()
 #     x@proc <- c(x@proc, proc)

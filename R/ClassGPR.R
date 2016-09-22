@@ -2055,6 +2055,8 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("none",
 setMethod("time0Cor", "GPR", function(x, method = c("none", "linear", 
            "nearest", "pchip", "cubic", "spline"), keep = NULL, 
            crop = TRUE, c0 = 0.299){
+    method <- match.arg(method, c("none", "linear", "nearest", "pchip", 
+                                  "cubic", "spline"))
     if(is.null(keep)){
       keep <- x@antsep/c0
     }

@@ -1976,23 +1976,24 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("none",
     if(length(ts) == 1){
       ts <- rep(ts, ncol(x))
     }
-    ps <- ts/x@dz
     A <- x@data
-    Anew <- matrix(nrow=nrow(A),ncol=ncol(A))
-    v0 <- 1:nrow(A)
-    for(i in seq_len(ncol(A))){
-      relts <- floor(ps[i])*x@dz - ts[i]
-      if(method == "none"){
-        ynew <- A[,i]
-      }else{
-        ynew <- signal::interp1(x@depth, A[,i], x@depth + relts, 
-                                method = method, extrap = NA)
-      }
-      vs <- v0 + floor(ps[i])
-      test <- vs > 0 & vs <= nrow(A)
-      vs <- vs[test]
-      Anew[vs,i] <- ynew[test]
-    }
+    Anew <- .traceShift(x@data, ts, x@depth, x@dz, method)
+#     ps <- ts/x@dz
+#     Anew <- matrix(nrow=nrow(A),ncol=ncol(A))
+#     v0 <- 1:nrow(A)
+#     for(i in seq_len(ncol(A))){
+#       relts <- floor(ps[i])*x@dz - ts[i]
+#       if(method == "none"){
+#         ynew <- A[,i]
+#       }else{
+#         ynew <- signal::interp1(x@depth, A[,i], x@depth + relts, 
+#                                 method = method, extrap = NA)
+#       }
+#       vs <- v0 + floor(ps[i])
+#       test <- vs > 0 & vs <= nrow(A)
+#       vs <- vs[test]
+#       Anew[vs,i] <- ynew[test]
+#     }
     x@data <- Anew
     if(crop == TRUE){
       testCrop <- apply(abs(Anew),1,sum)
@@ -2004,6 +2005,7 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("none",
 #         x <- x[vsel,]
 #       }
     }
+
 #      ts <- ts/x@dz 
 #     if(min(ts) > keep){
 #       ts <- ts - keep
@@ -2057,9 +2059,15 @@ setMethod("time0Cor", "GPR", function(x, method = c("none", "linear",
       keep <- x@antsep/c0
     }
     ts <- -x@time0 + keep
-    x <- traceShift(x, ts = ts, method = eval(method), crop = eval(crop))
-    x@proc <- x@proc[length(x@proc)]
-     proc(x) <- getArgs()
+    Anew <- .traceShift(x@data, ts, x@depth, x@dz, method)
+    x@data <- Anew
+    if(crop == TRUE){
+      testCrop <- apply(abs(Anew),1,sum)
+      x <- x[!is.na(testCrop),]
+    }
+#     x <- traceShift(x, ts = ts, method = eval(method), crop = eval(crop))
+#     x@proc <- x@proc[length(x@proc)]
+    proc(x) <- getArgs()
 #     x@proc <- c(x@proc, proc)
     return(x)
   }

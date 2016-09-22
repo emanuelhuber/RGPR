@@ -1184,6 +1184,26 @@ depth0 <- function(time_0, v=0.1, antsep=1, c0 = 0.299){
   return(xShifted)
 }
 
+.traceShift <- function(A, ts, tt, dz, method){
+  ps <- ts/dz
+  Anew <- matrix(NA, nrow=nrow(A), ncol=ncol(A))
+  v0 <- 1:nrow(A)
+  for(i in seq_len(ncol(A))){
+    relts <- floor(ps[i])*dz - ts[i]
+    if(method == "none"){
+      ynew <- A[,i]
+    }else{
+      ynew <- signal::interp1(tt, A[,i], tt + relts, 
+                              method = method, extrap = NA)
+    }
+    vs <- v0 + floor(ps[i])
+    test <- vs > 0 & vs <= nrow(A)
+    vs <- vs[test]
+    Anew[vs,i] <- ynew[test]
+  }
+  return(Anew)
+}
+
 # x = data matrix (col = traces)
 # topoGPR = z-coordinate of each trace
 # dx = spatial sampling (trace spacing)

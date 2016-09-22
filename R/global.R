@@ -15,7 +15,9 @@
 #     points(...)
 # }
 
-
+firstBreack <- function(...){
+  stop("USE FUNCTION 'firstBreak()' INSTEAD!\n")
+}
 
 # read/write SEGy
 
@@ -661,6 +663,7 @@ wapply <- function(x=NULL, width = NULL, by = NULL, FUN = NULL, ...){
 # }
 
 # based on wapply and modified by Manu
+# centered moving window
 # return a matrix of the same dimension than x
 # some border effect at a distance < width/2 at the first and last col/row
 wapplyMat <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, 
@@ -674,6 +677,30 @@ wapplyMat <- function(x = NULL, width = NULL, by = NULL, FUN = NULL,
                   xnew <- x:(x + width - 1)
                   xnew <- xnew[xnew > 0]
                   xnew <- xnew[xnew <= lenX]})
+  if(MARGIN == 1){
+    OUT <- lapply(SEQ2, function(a) apply(x[, a, drop = FALSE], MARGIN, FUN))
+  }else if( MARGIN == 2) {
+    OUT <- lapply(SEQ2, function(a) apply(x[a,, drop = FALSE], MARGIN, FUN))
+  }
+  OUT <- base::simplify2array(OUT, higher = TRUE)
+  if(MARGIN == 2){
+    return(t(OUT))
+  }else{
+    return(OUT)
+  }
+}
+
+
+# based on wapply and modified by Manu
+# not centered moving window!
+# return a matrix of with smaller dimension than x (margin - 2*width)
+wapplyMat2 <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, 
+                      MARGIN = 1, ...){
+  FUN <- match.fun(FUN)
+  if (is.null(by)) by <- width
+  lenX <- ifelse(MARGIN == 1, ncol(x), nrow(x))
+  SEQ1 <- seq(1, lenX - width + 1, by = by)
+  SEQ2 <- lapply(SEQ1, function(x) x:(x + width - 1))
   if(MARGIN == 1){
     OUT <- lapply(SEQ2, function(a) apply(x[, a, drop = FALSE], MARGIN, FUN))
   }else if( MARGIN == 2) {
@@ -927,9 +954,9 @@ setGenericVerif("gain", function(x, type=c("power", "exp", "agc"),
                   ...) standardGeneric("gain"))
 setGenericVerif("dcshift", function(x, u=1:10, FUN=mean) 
                 standardGeneric("dcshift"))
-setGenericVerif("firstBreack", function(x, method = c("coppens", "threshold"), 
-                thr = 0.12, w = 11, ns = NULL, bet=NULL) 
-                standardGeneric("firstBreack"))
+setGenericVerif("firstBreak", function(x, method = c("coppens", "coppens2",
+  "threshold",  "MER"), thr = 0.12, w = 11, ns = NULL, bet = NULL)
+                standardGeneric("firstBreak"))
 
 setGenericVerif("clip", function(x, Amax=NULL,Amin=NULL) 
                 standardGeneric("clip"))
@@ -1666,8 +1693,22 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   }
 }
 
+# Modified Energy ratio method
+.firstBreakMER <- function(x, w){
+  E <- wapplyMat2(x, width = w, by = 1, FUN = function(x) sum(x^2), 
+                  MARGIN = 2)
+  v1 <- 1:(nrow(x) - 2*(w-1))
+  v2 <- v1 + (w-1)
+  E1 <- E[v1,]
+  E2 <- E[v2,]
+  ER <- E2/E1
+  MER <- (ER * abs( x[v1 + w-1,]) )^3
+  fb <- apply(MER, 2, function(x) which.max(x)) + (w-1)
+  return(fb)
+}
+
 # Threshold method for first breack picking
-.firstBreackThres <- function(x, thr = 0.12, tt){
+.firstBreakThres <- function(x, thr = 0.12, tt){
 #   first_breacks <- rep(NA, ncol(x))
 #   thres <- thr * max(x)
 #   for(j in seq_len(ncol(x))){
@@ -1692,7 +1733,28 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 # between one and two signal periods
 #        -> default values ns= 1.5*w
 # bet = stabilisation constant, not critical, set to 0.2*max(amplitude) 
-.firstBreackModCoppens <- function(x, w = 11, ns = NULL, bet = 0.2){
+.firstBreakModCoppens2 <- function(x, w = 11, ns = NULL, bet = 0.2){
+  if(is.null(ns)){
+    ns <- 1.5 * w
+  }
+  E1all <- matrix(0, nrow=nrow(x), ncol= ncol(x))
+  E1all[1:(nrow(E1all) - w +1),] <- wapplyMat2(x, width = w, by = 1, 
+                                              FUN = sum, MARGIN=2)
+  E2all <- apply(x, 2, cumsum)
+  Erall <- E1all/(E2all + bet)
+
+  xmeanall <- wapplyMat(Erall, width = ns, by = 1, FUN = mean, MARGIN=2)
+  xsdall <- wapplyMat(Erall, width = ns, by = 1, FUN = sd, MARGIN=2)
+  xtestall <- wapplyMat2(xsdall, width = ns, by = 1, FUN = which.min, MARGIN=2)
+  xtestall <- xtestall + seq_len(nrow(xtestall))
+  meantstall <- matrix(xmeanall[xtestall],nrow=nrow(xtestall), 
+                    ncol=ncol(xmeanall), byrow=FALSE)
+  meantstall2 <- matrix(0, nrow=nrow(x), ncol= ncol(x))
+  meantstall2[seq_len(nrow(meantstall)) + (ns-1)/2,] <- meantstall
+  fb <- apply(meantstall2, 2, function(x) which.max(abs(diff(x))))
+  return(fb)
+}
+.firstBreakModCoppens <- function(x, w = 11, ns = NULL, bet = 0.2){
   if(is.null(ns)){
     ns <- 1.5 * w
   }
@@ -1700,23 +1762,23 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   E2 <- cumsum(x)
   Er <- E1/(E2 + bet)
   Er_fil <- .eps(Er, ns = ns)
-  first_break <- which.max(abs(diff(Er_fil)))
-  return(first_break)
+  fb <- which.max(abs(diff(Er_fil)))
+  return(fb)
 }
 
 # edge preserving smoothing
 # luo et al. (2002): Edge preserving smoothing and applications: 
 # The Leading edge, 21: 136-158
-.eps <- function(x,ns){
-  xmean <-  c(rep(0,floor(ns/2)), 
-              wapply(x,width=ns,by=1, FUN=mean),
-              rep(0,floor(ns/2)))
-  xsd <- c(rep(0,floor(ns/2)), 
-           wapply(x,width=ns,by=1,FUN=sd),
-           rep(0,floor(ns/2)))
-  xtest <- wapply(xsd,width=ns,by=1,FUN=which.min) + 
+.eps <- function(x, ns){
+  xmean <-  c(rep(0, floor(ns/2)), 
+              wapply(x, width = ns, by = 1, FUN = mean),
+              rep(0, floor(ns/2)))
+  xsd <- c(rep(0, floor(ns/2)), 
+           wapply(x, width = ns, by = 1, FUN = sd),
+           rep(0, floor(ns/2)))
+  xtest <- wapply(xsd, width = ns, by = 1, FUN = which.min) + 
             (0):(length(xmean)- 2*floor(ns/2)-1)
-  return(c(rep(0,floor(ns/2)), xmean[xtest],rep(0,floor(ns/2))))
+  return(c(rep(0, floor(ns/2)), xmean[xtest], rep(0, floor(ns/2))))
 }
 
 #==============================#

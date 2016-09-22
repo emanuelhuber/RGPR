@@ -3,7 +3,7 @@
 \docType{methods}
 \name{traceShift}
 \alias{traceShift}
-\title{Shift the traces}
+\title{Shift vertically the traces by an amount of depth units.}
 \usage{
 \S4method{traceShift}{GPR}(x, ts, method = c("none", "linear", "nearest",
   "pchip", "cubic", "spline"), crop = TRUE)
@@ -11,15 +11,26 @@
 \arguments{
 \item{x}{A object of the class GPR}
 
-\item{ts}{A numeric vector defining the amount of time the traces have to
+\item{ts}{A numeric vector defining the amount of depth the traces have to
 shifted}
 
-\item{crop}{If TRUE (defaults), remove the rows containing only zero's 
-(no data). If FALSE,}
+\item{method}{A length-one character vector indicating the interpolation
+method. \code{"none"} means that the trace is shifted by the
+amount of points that is the closest to amount of depth 
+\code{ts}.}
 
-\item{keep}{A length-one numeric vector indicating how much of the trace...}
+\item{crop}{If TRUE (defaults), remove the rows containing only zero's 
+(no data).,}
+}
+\value{
+An object of the class GPR.
 }
 \description{
-Shift the traces
+Shift vertically the traces by an amount of depth units.
+}
+\seealso{
+\code{\link{time0}} to estimate the first wave break and 
+         \code{\link{time0Cor}} to shift the traces such that they start
+         at time zero
 }
 

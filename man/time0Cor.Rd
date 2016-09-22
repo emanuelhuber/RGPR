@@ -11,15 +11,31 @@
 \arguments{
 \item{x}{A object of the class GPR}
 
-\item{keep}{A length-one numeric vector indicating how much of the trace...}
+\item{keep}{A length-one numeric vector indicating in time units how much of 
+the trace has to be kept before time zero.}
 
 \item{crop}{If TRUE (defaults), remove the rows containing only zero's 
-(no data). If FALSE,}
+(no data).}
+
+\item{c0}{Propagation speed of the GPR wave through air (used only when
+\code{keep = NULL}.}
 
 \item{ts}{A numeric vector defining the amount of time the traces have to
 shifted}
 }
+\value{
+An object of the class GPR.
+}
 \description{
-\code{time0Cor} shift the traces vertically
+\code{time0Cor} shift the traces vertically such that they start at
+time zero (time zero of the data can be modified with the function
+}
+\details{
+When \code{keep = NULL} the amount of time kept is equal to
+time taken by the air wave to travel from the transmitter to the
+receiver.
+}
+\seealso{
+\code{\link{time0}} to estimate the first wave break.
 }
 

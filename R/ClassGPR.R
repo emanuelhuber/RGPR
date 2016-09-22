@@ -1234,7 +1234,7 @@ setReplaceMethod(
 #' @examples
 #' data(frenkeLine00)
 #' time0(frenkeLine00)
-#' @seealso \code{\link{firstBreack}} to estimate the first wave break.
+#' @seealso \code{\link{firstBreak}} to estimate the first wave break.
 #' @name time0
 #' @rdname time0
 #' @export
@@ -1381,24 +1381,48 @@ setMethod("dcshift", "GPR", function(x, u, FUN=mean){
 #----------------- FIRST-BREAK
 #' First wave break
 #'
-#' Compute the first wave break
+#' Compute the first wave break.
 #'
-#' Jaun I. Sabbione and Danilo Velis (2010). Automatic first-breaks picking: 
-#' New strategies and algorithms. Geophysics, 75 (4): v67-v76
-#' -> modified Coppens's Method
-#' nl = length leading window: about one period of the firs-arrival waveform
-#' ns = length eps (edge preserving smoothing) window: good results with ns 
-#' between one and two signal periods
-#'        -> default values ns= 1.5*nl
-#' bet = stabilisation constant, not critical, set to 0.2*max(amplitude) 
+#' @param x An object of the class \code{GPR}
+#' @param method A length-one character vector. \code{"coppens"} corresponds to 
+#'              the modified Coppens method, \code{"threshold"} to the 
+#'              threshold method, and \code{"MER"} to the modified energy ratio 
+#'              method.
+#' @param thr A length-one numeric vector defining the threshold  signal 
+#'              amplitude (in \%) at which time zero is picked (only for the
+#'              threshold method).
+#' @param w A length-one numeric vector defining the length of leading window 
+#'          (only for the modified Coppens and modified energy ratio 
+#'          methods). Recommended value: about one period of the first-arrival 
+#'          waveform.
+#' @param ns A length-one numeric vector defining the length of the edge 
+#'           preserving smoothing window (only for the modified Coppens 
+#'           method). Recommended value: between one and two signal periods.
+#'           When \code{ns = NULL} the value of \code{ns} is set to 
+#'           \code{1.5 * w}.
+#' @param bet A length-one numeric vector defining the stabilisation 
+#'            constant (only for the modified Coppens method). Not critical. 
+#'            When \code{bet = NULL} the value of \code{bet} is set to 
+#'            20\% of the maximal signal amplitude. 
 #' @seealso \code{\link{time0}} to estimate the first wave break and 
-#'          \code{\link{traceShift}} to shift the traces
-#' @name dcshift
-#' @rdname dcshift
+#'          \code{\link{time0Cor}} to shift the traces such that they start
+#'          at time zero.
+#' @references
+#' \describe{
+#'   \item{Modified Coppens method}{Sabbione J.I. and Velis D. (2010) 
+#'        Automatic first-breaks picking: New strategies and algorithms. 
+#'        Geophysics, 75(4): 67-76.}
+#'   \item{Modified Energy Ratio (MER) method}{Han L., Wong J., and John C. 
+#'        (2010) Time picking on noisy microseismograms. In: Proceedings of the 
+#'        GeoCanada 2010 Convention - Working with the Earth, Calgary, AB, 
+#'        Canada, p. 4}
+#' }
+#' @name firstBreak
+#' @rdname firstBreak
 #' @export
-setMethod("firstBreack", "GPR", function(x, method = c("coppens", "threshold"), 
-            thr = 0.12, w = 11, ns = NULL, bet = NULL){
-    method <- match.arg(method, c("coppens", "threshold"))
+setMethod("firstBreak", "GPR", function(x, method = c("coppens", "coppens2",
+  "threshold",  "MER"), thr = 0.12, w = 11, ns = NULL, bet = NULL){
+    method <- match.arg(method, c("coppens", "coppens2", "threshold", "MER"))
     if(method == "coppens"){
       w <- round(w / x@dz)
       if( (w %% 2) == 0){
@@ -1414,11 +1438,32 @@ setMethod("firstBreack", "GPR", function(x, method = c("coppens", "threshold"),
       if(is.null(bet)){
         bet <- 0.2 * max(xs)
       }
-      fb <- apply(xs, 2, .firstBreackModCoppens, w = w, ns = ns, bet = bet)
-      fb <- fb * x@dz
+      fb <- apply(xs, 2, .firstBreakModCoppens, w = w, ns = ns, bet = bet)
+      fb <- x@depth(fb) # fb * x@dz
+    }else if(method == "coppens2"){
+      w <- round(w / x@dz)
+      if( (w %% 2) == 0){
+        w <- w + 1
+      }
+      if(is.null(ns)){
+        ns <- round(1.5 * w)
+      }
+      if( ns %% 2 == 0){
+        ns <- ns + 1
+      }
+      xs <- x@data^2
+      if(is.null(bet)){
+        bet <- 0.2 * max(xs)
+      }
+      fb <- .firstBreakModCoppens2(xs, w = w, ns = ns, bet = bet)
+      fb <- x@depth(fb) # fb * x@dz
     }else if(method == "threshold"){
       thres <- thr * max(x)
-      fb <- apply(abs(x@data), 2, .firstBreackThres, thr = thres, x@depth)
+      fb <- apply(abs(x@data), 2, .firstBreakThres, thr = thres, x@depth)
+    }else if(method == "MER"){
+      w <- round(w / x@dz)
+      fb <- .firstBreakMER(x@data, w)
+      fb <- x@depth(fb)
     }
     return(fb)
   } 
@@ -1957,14 +2002,21 @@ setMethod("deconv", "GPR", function(x,
 )
 
 #--------------- DATA EDITING FUNCTIONS
-#' Shift the traces
+#' Shift vertically the traces by an amount of depth units.
 #'
 #' @param x A object of the class GPR
-#' @param ts A numeric vector defining the amount of time the traces have to
+#' @param ts A numeric vector defining the amount of depth the traces have to
 #'              shifted
-#' @param keep A length-one numeric vector indicating how much of the trace...
+#' @param method A length-one character vector indicating the interpolation
+#'               method. \code{"none"} means that the trace is shifted by the
+#'               amount of points that is the closest to amount of depth 
+#'               \code{ts}.
 #' @param crop If TRUE (defaults), remove the rows containing only zero's 
-#'              (no data). If FALSE, 
+#'              (no data).,
+#' @return An object of the class GPR.
+#' @seealso \code{\link{time0}} to estimate the first wave break and 
+#'          \code{\link{time0Cor}} to shift the traces such that they start
+#'          at time zero
 #' @name traceShift
 #' @rdname traceShift
 #' @export
@@ -2042,13 +2094,23 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("none",
 
 #' Time zero correction
 #'
-#' \code{time0Cor} shift the traces vertically
+#' \code{time0Cor} shift the traces vertically such that they start at
+#' time zero (time zero of the data can be modified with the function
+#'
+#' When \code{keep = NULL} the amount of time kept is equal to
+#' time taken by the air wave to travel from the transmitter to the
+#' receiver.
 #' @param x A object of the class GPR
 #' @param ts A numeric vector defining the amount of time the traces have to
 #'              shifted
-#' @param keep A length-one numeric vector indicating how much of the trace...
+#' @param keep A length-one numeric vector indicating in time units how much of 
+#'             the trace has to be kept before time zero.
 #' @param crop If TRUE (defaults), remove the rows containing only zero's 
-#'              (no data). If FALSE, 
+#'              (no data).
+#' @param c0 Propagation speed of the GPR wave through air (used only when
+#'           \code{keep = NULL}.
+#' @return An object of the class GPR.
+#' @seealso \code{\link{time0}} to estimate the first wave break.
 #' @name time0Cor
 #' @rdname time0Cor
 #' @export

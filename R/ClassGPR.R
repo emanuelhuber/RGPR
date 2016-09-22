@@ -2067,6 +2067,7 @@ setMethod("time0Cor", "GPR", function(x, method = c("none", "linear",
       testCrop <- apply(abs(Anew),1,sum)
       x <- x[!is.na(testCrop),]
     }
+    x@time0 <- x@time0 - ts
 #     x <- traceShift(x, ts = ts, method = eval(method), crop = eval(crop))
 #     x@proc <- x@proc[length(x@proc)]
     proc(x) <- getArgs()

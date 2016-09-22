@@ -1040,16 +1040,16 @@ setGenericVerif("strTensor", function(x,  blksze = c(2, 4),
                   
                   
                   
-timeToDepth <- function(tt, time_0, v=0.1, antsep=1){
-  t0 <- time_0 - antsep/0.299
+timeToDepth <- function(tt, time_0, v=0.1, antsep=1, c0 = 0.299){
+  t0 <- time_0 - antsep/c0
   sqrt(v^2*(tt-t0)- antsep^2)/2
 }
-depthToTime <- function(z, time_0, v=0.1, antsep=1){
-  t0 <- time_0 - antsep/0.299
+depthToTime <- function(z, time_0, v=0.1, antsep=1, c0 = 0.299){
+  t0 <- time_0 - antsep/c0
   sqrt((4*z^2 + antsep^2)/(v^2)) + t0
 }
-depth0 <- function(time_0, v=0.1, antsep=1){
-  time_0 - antsep/0.299 + antsep/v
+depth0 <- function(time_0, v=0.1, antsep=1, c0 = 0.299){
+  time_0 - antsep/c0 + antsep/v
 }
 
 .plot3DRGL <- function(A,x,y,z,z0,col=palGPR(n=101),back="fill", 

@@ -97,42 +97,42 @@ setClass(
 #------------------------------------------#
 #-------------- CONSTRUCTOR ---------------#
 # x = classical GPR list
-.gpr <- function(x, name=character(0), description=character(0),
-                 fPath=character(0)){
-  rec_coord <- cbind(x$dt1$recx,x$dt1$recy,x$dt1$recz)
-  trans_coord <- cbind(x$dt1$transx,x$dt1$transy,x$dt1$transz)
-  if(sum(is.na(rec_coord))>0){
+.gpr <- function(x, name = character(0), description = character(0),
+                    fPath = character(0)){
+  rec_coord <- cbind(x$dt1$recx, x$dt1$recy, x$dt1$recz)
+  trans_coord <- cbind(x$dt1$transx, x$dt1$transy, x$dt1$transz)
+  if(sum(is.na(rec_coord)) > 0){
     warning(paste(name,": ",sum(is.na(rec_coord)), 
                 "NA's in the receiver coordinates\n"))
   }
-  if(sum(is.na(trans_coord))>0){
+  if(sum(is.na(trans_coord)) > 0){
     warning(paste(name,": ",sum(is.na(trans_coord)), 
                 "NA's in the transmitter coordinates\n"))
   }
-  if(sum(is.na(x$dt1$topo))>0){
+  if(sum(is.na(x$dt1$topo)) > 0){
     warning(paste(name,": ",sum(is.na(x$dt1$topo)), 
                 "NA's in the topo coordinates\n"))
   }
-  if(sum(abs(rec_coord),na.rm=TRUE) == 0 ){
-    rec_coord <- matrix(nrow=0, ncol=0) 
+  if(sum(abs(rec_coord),na.rm = TRUE) == 0 ){
+    rec_coord <- matrix(nrow = 0, ncol = 0) 
   }
-  if(sum(abs(trans_coord), na.rm=TRUE)== 0){
-    trans_coord <- matrix(nrow=0, ncol=0) 
+  if(sum(abs(trans_coord), na.rm = TRUE)== 0){
+    trans_coord <- matrix(nrow = 0, ncol = 0) 
   }
   if(sum(abs(x$dt1$topo),na.rm=TRUE)== 0){
-    coord <- matrix(nrow=0, ncol=0) 
+    coord <- matrix(nrow = 0, ncol = 0) 
   }else{
-    coord <- matrix(0,nrow=ncol(x$data), ncol=3)
+    coord <- matrix(0, nrow = ncol(x$data), ncol = 3)
     coord[,3] <- x$dt1$topo
   }
   #====== HEADER DATA (FILE *.HD) ======#
   pos_used <- integer(nrow(x$hd))
-  ttw  <- .getHD(x$hd,"TOTAL TIME WINDOW", position=TRUE)
+  ttw  <- .getHD(x$hd,"TOTAL TIME WINDOW", position = TRUE)
   if(!is.null(ttw)){
     dz <- ttw[1]/nrow(x$data)
     pos_used[ttw[2]] <- 1L
   }else{
-    warning("time/depth resolution unknown! I take dz = 0.4!\n")
+    warning("time/depth resolution unknown! I take dz = 0.4 ns!\n")
     dz <- 0.4
     ttw  <- nrow(x$data) * dz
   }
@@ -145,33 +145,12 @@ setClass(
   }else{
     time_0 <- x$dt1$time0
   }
-  surveyDate <- gsub(pattern ="[^0-9]", replacement = "-", x$hd[3,2])
-  # 2014-04-10 (new PulseEkko format)
-  yyyymmdd <- "^([0-9]{4})([^0-9])([0-9]{2})([^0-9])([0-9]{2})"
-  # 10/06/2011 (old PulseEkko format)
-  ddmmyyyy <- "^([0-9]{2})([^0-9])([0-9]{2})([^0-9])([0-9]{4})"
-  if(grepl(yyyymmdd,surveyDate)){
-    d <- as.character(as.Date(surveyDate, "%Y-%m-%d"))
-    pos_used[3] <- 1L
-  }else if(grepl(ddmmyyyy,surveyDate)){
-    d <- as.character(as.Date(surveyDate, "%d-%m-%Y"))
-    pos_used[3] <- 1L
-  }else{
-    warnings("Could not understand the survey date\n")
-    d <- "1970-01-01"
-  }
-  GPR_device <-  paste(x$hd[2,1],x$hd[2,2],sep="")
-  pos_used[2] <- 1L
-  if(!grepl("^(Data.)",GPR_device)){
-    GPR_device <- ""
-  }
   dx <- .getHD(x$hd, "STEP SIZE USED", position=TRUE)
   if(!is.null(dx)){
     pos_used[dx[2]] <- 1L
   }else{
     dx <- mean(diff(x$dt1hd$position))
   }
-  
   posunit = .getHD(x$hd, "POSITION UNITS",number=FALSE, position=TRUE)
   if(!is.null(posunit)){
     pos_used[as.numeric(posunit[2])] <- 1L
@@ -196,7 +175,6 @@ setClass(
   }else{
     surveymode <- "m"
   }
-
   #-------- header: x@hd ----------#
   nop  <- .getHD(x$hd,"NUMBER OF PTS/TRC", position=TRUE)
   if(!is.null(nop)){
@@ -206,23 +184,53 @@ setClass(
   if(!is.null(not)){
     pos_used[not[2]] <- 1L
   }
+  sup_hd <- list()
   startpos <- .getHD(x$hd, "STARTING POSITION", position=TRUE)
   if(!is.null(startpos)){
     pos_used[startpos[2]] <- 1L
+    sup_hd[["startpos"]] <- as.numeric(startpos[1])
   }else{
     startpos <- 0
   }
   endpos <- .getHD(x$hd, "FINAL POSITION", position=TRUE)
   if(!is.null(endpos)){
     pos_used[endpos[2]] <- 1L
+    sup_hd[["startpos"]] <- as.numeric(endpos[1])
   }else{
     endpos <- dx[1]*ncol(x$data)
   }
-  
-  hd_list <- list("startpos" = as.numeric(startpos[1]),   # "STARTING POSITION"
-                  "endpos" = as.numeric(endpos[1]),       # "FINAL POSITION"
-                  "gprdevice" = GPR_device)
-
+  #--- survey date
+  freepos <- which(pos_used[1:5] == 0)
+  # 2014-04-10 (new PulseEkko format)
+  yyyymmdd <- "^([0-9]{4})([^0-9])([0-9]{2})([^0-9])([0-9]{2})"
+  # 10/06/2011 (old PulseEkko format)
+  ddmmyyyy <- "^([0-9]{2})([^0-9])([0-9]{2})([^0-9])([0-9]{4})"
+  surveyDate <- gsub(pattern ="[^0-9]", replacement = "-", 
+                      x$hd[freepos, 2])
+  testDate <- nchar(surveyDate) == 10 & 
+              (grepl(yyyymmdd, surveyDate) | grepl(ddmmyyyy, surveyDate))
+  if(any(testDate)){
+    surveyDate <- surveyDate[testDate][1]
+    if(grepl(yyyymmdd, surveyDate)){
+      d <- as.character(as.Date(surveyDate, "%Y-%m-%d"))
+      pos_used[which(testDate)[1]] <- 1L
+    }else if(grepl(ddmmyyyy, surveyDate)){
+      d <- as.character(as.Date(surveyDate, "%d-%m-%Y"))
+      pos_used[which(testDate)[1]] <- 1L
+    }
+  }else{
+    warnings("Could not understand the survey date\n")
+    d <- "1970-01-01"
+  }
+  #--- device type
+  freepos <- which(pos_used[1:5] == 0)
+#   GPR_device <-  paste(x$hd[2,1],x$hd[2,2],sep="")
+  GPR_device <-  x$hd[freepos, 2]
+  testDevice <- grepl("^(Data.)", GPR_device)
+  if(any(testDevice)){
+    sup_hd[["gprdevice"]] <- GPR_device[testDevice][1]
+    pos_used[which(testDevice)[1]] <- 1L
+  }  
   x$hd2 <- x$hd[!pos_used,]
   if(nrow(x$hd2)>0){
     key <-  trimStr(x$hd2[,1])
@@ -232,10 +240,10 @@ setClass(
     key2 <- gsub(" ",replacement="_",key2)
     nameL <- trimStr(x$hd2[test,2])
     names(nameL) <- as.character(key2)
-    hd_list_supp <- as.list(nameL)
-    hd_list <- c(hd_list,hd_list_supp)
+    sup_hd2 <- as.list(nameL)
+    sup_hd <- c(sup_hd, sup_hd2)
   }
-  myT <- as.double(as.POSIXct(x$dt1$time, origin = as.Date(d)))
+  traceTime <- as.double(as.POSIXct(x$dt1$time, origin = as.Date(d)))
   new("GPR",   version="0.1",
         data = byte2volt()*x$data,
         traces = x$dt1$traces,            # x$dt1$traces
@@ -246,7 +254,7 @@ setClass(
         rec = rec_coord,                  # x$dt1$recx,x$dt1$recy,x$dt1$recz
         trans = trans_coord,
         time0 = time_0,                   # x$dt1$time0
-        time = myT,                       # x$dt1$time
+        time = traceTime,                       # x$dt1$time
         proc = character(0),              # processing steps
         vel = list(0.1),                  # m/ns
         name = name,
@@ -261,10 +269,179 @@ setClass(
         surveymode = surveymode[1],
         date = d,
         crs = character(0),
-        hd = hd_list                      # header
+        hd = sup_hd                      # header
   )
-
 }
+
+
+# .gpr <- function(x, name = character(0), description = character(0),
+#                     fPath = character(0)){
+#   rec_coord <- cbind(x$dt1$recx, x$dt1$recy, x$dt1$recz)
+#   trans_coord <- cbind(x$dt1$transx, x$dt1$transy, x$dt1$transz)
+#   if(sum(is.na(rec_coord)) > 0){
+#     warning(paste(name,": ",sum(is.na(rec_coord)), 
+#                 "NA's in the receiver coordinates\n"))
+#   }
+#   if(sum(is.na(trans_coord)) > 0){
+#     warning(paste(name,": ",sum(is.na(trans_coord)), 
+#                 "NA's in the transmitter coordinates\n"))
+#   }
+#   if(sum(is.na(x$dt1$topo)) > 0){
+#     warning(paste(name,": ",sum(is.na(x$dt1$topo)), 
+#                 "NA's in the topo coordinates\n"))
+#   }
+#   if(sum(abs(rec_coord),na.rm = TRUE) == 0 ){
+#     rec_coord <- matrix(nrow = 0, ncol = 0) 
+#   }
+#   if(sum(abs(trans_coord), na.rm = TRUE)== 0){
+#     trans_coord <- matrix(nrow = 0, ncol = 0) 
+#   }
+#   if(sum(abs(x$dt1$topo),na.rm=TRUE)== 0){
+#     coord <- matrix(nrow = 0, ncol = 0) 
+#   }else{
+#     coord <- matrix(0, nrow = ncol(x$data), ncol = 3)
+#     coord[,3] <- x$dt1$topo
+#   }
+#   #====== HEADER DATA (FILE *.HD) ======#
+#   pos_used <- integer(nrow(x$hd))
+#   ttw  <- .getHD(x$hd,"TOTAL TIME WINDOW", position=TRUE)
+#   if(!is.null(ttw)){
+#     dz <- ttw[1]/nrow(x$data)
+#     pos_used[ttw[2]] <- 1L
+#   }else{
+#     warning("time/depth resolution unknown! I take dz = 0.4!\n")
+#     dz <- 0.4
+#     ttw  <- nrow(x$data) * dz
+#   }
+#   tzap <- .getHD(x$hd, "TIMEZERO AT POINT", position=TRUE)
+#   if(sum(abs(x$dt1$time0)) == 0){
+#     if(!is.null(tzap)){
+#       time_0 <- rep(tzap[1]*dz - dz,ncol(x$data))
+#       pos_used[tzap[2]] <- 1L
+#     }
+#   }else{
+#     time_0 <- x$dt1$time0
+#   }
+#   surveyDate <- gsub(pattern ="[^0-9]", replacement = "-", x$hd[3,2])
+#   # 2014-04-10 (new PulseEkko format)
+#   yyyymmdd <- "^([0-9]{4})([^0-9])([0-9]{2})([^0-9])([0-9]{2})"
+#   # 10/06/2011 (old PulseEkko format)
+#   ddmmyyyy <- "^([0-9]{2})([^0-9])([0-9]{2})([^0-9])([0-9]{4})"
+#   if(grepl(yyyymmdd, surveyDate)){
+#     d <- as.character(as.Date(surveyDate, "%Y-%m-%d"))
+#     pos_used[3] <- 1L
+#   }else if(grepl(ddmmyyyy, surveyDate)){
+#     d <- as.character(as.Date(surveyDate, "%d-%m-%Y"))
+#     pos_used[3] <- 1L
+#   }else{
+#     warnings("Could not understand the survey date\n")
+#     d <- "1970-01-01"
+#   }
+#   GPR_device <-  paste(x$hd[2,1],x$hd[2,2],sep="")
+#   pos_used[2] <- 1L
+#   if(!grepl("^(Data.)",GPR_device)){
+#     GPR_device <- ""
+#   }
+#   dx <- .getHD(x$hd, "STEP SIZE USED", position=TRUE)
+#   if(!is.null(dx)){
+#     pos_used[dx[2]] <- 1L
+#   }else{
+#     dx <- mean(diff(x$dt1hd$position))
+#   }
+#   
+#   posunit = .getHD(x$hd, "POSITION UNITS",number=FALSE, position=TRUE)
+#   if(!is.null(posunit)){
+#     pos_used[as.numeric(posunit[2])] <- 1L
+#   }else{
+#     posunit <- "m"
+#   }
+#   freq = .getHD(x$hd, "NOMINAL FREQUENCY", position=TRUE)
+#   if(!is.null(freq)){
+#     pos_used[freq[2]] <- 1L
+#   }else{
+#     freq <- 100
+#   }
+#   antsep = .getHD(x$hd, "ANTENNA SEPARATION", position=TRUE)
+#   if(!is.null(antsep)){
+#     pos_used[antsep[2]] <- 1L
+#   }else{
+#     antsep <- 1.00
+#   }
+#   surveymode = .getHD(x$hd, "SURVEY MODE",number=FALSE, position=TRUE)
+#   if(!is.null(surveymode)){
+#     pos_used[as.numeric(surveymode[2])] <- 1L
+#   }else{
+#     surveymode <- "m"
+#   }
+# 
+#   #-------- header: x@hd ----------#
+#   nop  <- .getHD(x$hd,"NUMBER OF PTS/TRC", position=TRUE)
+#   if(!is.null(nop)){
+#     pos_used[nop[2]] <- 1L
+#   }
+#   not <- .getHD(x$hd, "NUMBER OF TRACES", position=TRUE)
+#   if(!is.null(not)){
+#     pos_used[not[2]] <- 1L
+#   }
+#   startpos <- .getHD(x$hd, "STARTING POSITION", position=TRUE)
+#   if(!is.null(startpos)){
+#     pos_used[startpos[2]] <- 1L
+#   }else{
+#     startpos <- 0
+#   }
+#   endpos <- .getHD(x$hd, "FINAL POSITION", position=TRUE)
+#   if(!is.null(endpos)){
+#     pos_used[endpos[2]] <- 1L
+#   }else{
+#     endpos <- dx[1]*ncol(x$data)
+#   }
+#   
+#   hd_list <- list("startpos" = as.numeric(startpos[1]), # "STARTING POSITION"
+#                   "endpos" = as.numeric(endpos[1]),       # "FINAL POSITION"
+#                   "gprdevice" = GPR_device)
+# 
+#   x$hd2 <- x$hd[!pos_used,]
+#   if(nrow(x$hd2)>0){
+#     key <-  trimStr(x$hd2[,1])
+#     test <- key!=""
+#     key <- key[test]
+#     key2 <- gsub("[[:punct:]]",replacement="",key)
+#     key2 <- gsub(" ",replacement="_",key2)
+#     nameL <- trimStr(x$hd2[test,2])
+#     names(nameL) <- as.character(key2)
+#     hd_list_supp <- as.list(nameL)
+#     hd_list <- c(hd_list,hd_list_supp)
+#   }
+#   myT <- as.double(as.POSIXct(x$dt1$time, origin = as.Date(d)))
+#   new("GPR",   version="0.1",
+#         data = byte2volt()*x$data,
+#         traces = x$dt1$traces,            # x$dt1$traces
+#         fid = trimStr(x$dt1$com),         # x$dt1$fid    <-> x$dt1$x8
+#         coord = coord,                    # x$dt1$topo  of the traces
+#         pos = x$dt1$pos,                  # x$dt1$position  of the traces
+#         depth = seq(0,by=dz,length.out=nrow(x$data)),
+#         rec = rec_coord,                  # x$dt1$recx,x$dt1$recy,x$dt1$recz
+#         trans = trans_coord,
+#         time0 = time_0,                   # x$dt1$time0
+#         time = myT,                       # x$dt1$time
+#         proc = character(0),              # processing steps
+#         vel = list(0.1),                  # m/ns
+#         name = name,
+#         description = description,
+#         filepath = fPath,
+#         dz = dz, 
+#         dx = dx[1],                       # "STEP SIZE USED"
+#         depthunit = "ns",
+#         posunit = posunit[1],
+#         freq = freq[1], 
+#         antsep = antsep[1], 
+#         surveymode = surveymode[1],
+#         date = d,
+#         crs = character(0),
+#         hd = hd_list                      # header
+#   )
+# 
+# }
 
 #' Read a GPR data file
 #' 
@@ -647,8 +824,8 @@ setMethod(
         # "digamma" "trigamma"
       stop(paste(.Generic, "not allowed on GPR objects"))
     )
-    proc <- getArgs()
-    x@proc <- c(x@proc, proc)
+    proc(x) <- getArgs()
+#     x@proc <- c(x@proc, proc)
     return(x)
   }
 )
@@ -675,6 +852,11 @@ setMethod(
   if(is(a,"GPR")){
     x <- a
     a <- a@data
+  }
+  if(dim(a)[2] == 1 && dim(b)[2] > 1){
+    a <- as.vector(a)
+  }else if(dim(b)[2] == 1 && dim(a)[2] > 1){
+    b <- as.vector(b)
   }
   x@data <- a - b
   return(x)
@@ -762,6 +944,10 @@ setMethod(
   signature=c(e1="ANY",e2="GPR"), 
   definition=.GPR.arith
 )
+
+
+
+
 
 #------------------------------
 # "["
@@ -1159,6 +1345,21 @@ setMethod("processing", "GPR", function(x){
 )
 
 
+#' Add a processing step
+#' 
+#' @name proc
+#' @rdname proc
+#' @export
+setReplaceMethod(
+  f="proc",
+  signature="GPR",
+  definition=function(x,values){
+    values <- as.character(values)
+    x@proc <- c(x@proc, values)
+    return(x)
+  }
+)
+
 #================= PROCESSING ===============#
 #----------------- DC-SHIFT
 #' Direct-current removal
@@ -1167,17 +1368,12 @@ setMethod("processing", "GPR", function(x){
 #' @rdname dcshift
 #' @export
 setMethod("dcshift", "GPR", function(x, u, FUN=mean){
-    shift <- matrix(apply(x[u,],2,FUN), nrow = nrow(x), 
+    shift <- matrix(apply(x[u,],2, FUN), nrow = nrow(x), 
                     ncol=ncol(x), byrow = TRUE)
     x <-  x - shift
-    if(class(FUN)=="function"){
-      nameFun <- "FUN"
-    }else{
-  #  if(isGeneric("FUN")){
-      nameFun0 <- selectMethod(FUN, "numeric")
-      nameFun <-nameFun0@generic[1]
-    }
-    x@proc <- c(x@proc, paste0("dcshift:",head(u,1),"-",tail(u,1),"+",nameFun))
+    funName <- getFunName(FUN)
+    proc(x) <- paste0("dcshift>u=", head(u,1),":",tail(u,1), "+", 
+                      "FUN=",funName)
     return(x)
   } 
 )
@@ -1195,25 +1391,35 @@ setMethod("dcshift", "GPR", function(x, u, FUN=mean){
 #' between one and two signal periods
 #'        -> default values ns= 1.5*nl
 #' bet = stabilisation constant, not critical, set to 0.2*max(amplitude) 
+#' @seealso \code{\link{time0}} to estimate the first wave break and 
+#'          \code{\link{traceShift}} to shift the traces
 #' @name dcshift
 #' @rdname dcshift
 #' @export
-setMethod("firstBreack", "GPR", function(x, w = 11, ns = NULL, bet = NULL){
-    w <- round(w / x@dz)
-    if( (w %% 2) == 0){
-      w <- w + 1
+setMethod("firstBreack", "GPR", function(x, method = c("coppens", "threshold"), 
+            thr = 0.12, w = 11, ns = NULL, bet = NULL){
+    method <- match.arg(method, c("coppens", "threshold"))
+    if(method == "coppens"){
+      w <- round(w / x@dz)
+      if( (w %% 2) == 0){
+        w <- w + 1
+      }
+      if(is.null(ns)){
+        ns <- round(1.5 * w)
+      }
+      if( ns %% 2 == 0){
+        ns <- ns + 1
+      }
+      xs <- x@data^2
+      if(is.null(bet)){
+        bet <- 0.2 * max(xs)
+      }
+      fb <- apply(xs, 2, .firstBreackModCoppens, w = w, ns = ns, bet = bet)
+      fb <- fb * x@dz
+    }else if(method == "threshold"){
+      thres <- thr * max(x)
+      fb <- apply(abs(x@data), 2, .firstBreackThres, thr = thres, x@depth)
     }
-    if(is.null(ns)){
-      ns <- round(1.5 * w)
-    }
-    if( ns %% 2 == 0){
-      ns <- ns + 1
-    }
-    xs <- x@data^2
-    if(is.null(bet)){
-      bet <- 0.2 * max(xs)
-    }
-    fb <- apply(xs, 2, .firstBreackPicking, w = w, ns = ns, bet = bet)*x@dz
     return(fb)
   } 
 )
@@ -1277,8 +1483,8 @@ setMethod("dewow", "GPR", function(x, type = c("MAD", "Gaussian"), w){
     x@data[!before_t0,] <- A[!before_t0,] - 
     mmand::gaussianSmooth(A,w)[!before_t0,]
   }
-  proc <- getArgs()
-  x@proc <- c(x@proc, proc)
+  proc(x) <- getArgs()
+#   x@proc <- c(x@proc, proc)
   return(x) 
 })
 
@@ -1299,8 +1505,8 @@ setMethod("gain", "GPR", function(x,
   }else if(type=="agc"){
     x@data <- .gainAgc(x@data, dts = x@dz, ...)
   }
-  proc <- getArgs()
-  x@proc <- c(x@proc, proc)
+  proc(x) <- getArgs()
+#   x@proc <- c(x@proc, proc)
   return(x)
   } 
 )
@@ -1362,8 +1568,8 @@ setMethod("filter1D", "GPR", function(x, type = c("median", "hampel",
       }
       x@data <- mmand::gaussianSmooth(x@data, sigma = w)
     }
-    proc <- getArgs()
-    x@proc <- c(x@proc, proc)
+    proc(x) <- getArgs()
+#     x@proc <- c(x@proc, proc)
     return(x)
   } 
 )
@@ -1407,8 +1613,8 @@ setMethod("filter2D", "GPR", function(x, type = c("median3x3", "adimpro"), ...){
       AAA <- ( (AA - mean(AA))/sd(AA) ) * sd(x@data)
       x@data <- AAA
     }
-    proc <- getArgs()
-    x@proc <- c(x@proc, proc)
+    proc(x) <- getArgs()
+#     x@proc <- c(x@proc, proc)
     return(x)
   } 
 )
@@ -1421,8 +1627,8 @@ setMethod("filter2D", "GPR", function(x, type = c("median3x3", "adimpro"), ...){
 #' @export
 setMethod("clip", "GPR", function(x,Amax=NULL,Amin=NULL){
   x@data <- .clip(x@data,Amax,Amin)
-  proc <- getArgs()
-  x@proc <- c(x@proc, proc)
+  proc(x) <- getArgs()
+#   x@proc <- c(x@proc, proc)
   return(x)
   } 
 )
@@ -1433,8 +1639,8 @@ setMethod("clip", "GPR", function(x,Amax=NULL,Amin=NULL){
 #' @export
 setMethod("gammaCorrection", "GPR", function(x,a=1,b=1){
   x@data <- .gammaCorrection(x@data,a,b)
-  proc <- getArgs()
-  x@proc <- c(x@proc, proc)
+  proc(x) <- getArgs()
+#   x@proc <- c(x@proc, proc)
   return(x)
   } 
 )
@@ -1447,8 +1653,64 @@ setMethod("gammaCorrection", "GPR", function(x,a=1,b=1){
 setMethod("traceScaling", "GPR", function(x, 
             type = c("stat","min-max","95","eq","sum", "rms")){
     x@data <- scaleCol(x@data, type=type)
-    proc <- getArgs()
-    x@proc <- c(x@proc, proc)
+    proc(x) <- getArgs()
+#   x@proc <- c(x@proc, proc)
+    return(x)
+  }
+)
+
+#' Trace average
+#'
+#' Compute the average trace of a radargram (resulting in a single trace) or
+#' a moving average of the traces.
+#' @param x An object of the class GPR
+#' @param w A length-one integer vector equal to the window length of the 
+#'          average window. Default value is \code{NULL}.
+#' @param FUN A function to compute the average (default is \code{mean})
+#' @param ... Additional parameters for the FUN functions
+#' @return An object of the class GPR. When \code{w = NULL}, this function 
+#'         returns a GPR object with a single trace corresponding to the 
+#'         average trace of the whole radargram. When \code{w} is equal to a
+#'         strictly positive interger this function returns a GPR object with
+#'         a size identical to x where each trace corresponds to the average
+#'         of the \code{w} neighbouring traces centered on the considered trace.
+#' @examples
+#' data("frenkeLine00")
+#' 
+#' f0 <- frenkeLine00
+#' 
+#' f1 <- trAverage(f0)
+#' plot(f1)
+#' # substract the average trace
+#' plot(f0 - f1)
+#' 
+#' f2 <- trAverage(f0, w = 20)
+#' plot(f2)
+#' plot(f0 - f2)
+#' 
+#' f3 <- trAverage(f0, w = 20, FUN = median)
+#' plot(f3)
+#' plot(f0 - f3)
+#' @name traceAverage
+#' @rdname traceAverage
+#' @export
+setMethod("traceAverage", "GPR", function(x, w = NULL, FUN = mean, ...){
+    FUN <- match.fun(FUN)
+    if(is.null(w)){
+      xdata <- x@data
+      x <- x[,1]
+      x@data <- as.matrix(apply(xdata, 1, mean, ...))
+      x@time0 <- mean(x@time0)
+      x@time <- mean(x@time)
+      x@coord <- matrix(ncol = 0, nrow = 0)
+      x@rec <- matrix(ncol = 0, nrow = 0)
+      x@trans <- matrix(ncol = 0, nrow = 0)
+    }else{
+      x@data <- wapplyMat(x@data, width = w, by = 1, FUN = FUN, MARGIN = 1, ...)
+    }
+    funName <- getFunName(FUN)
+    proc(x) <- getArgs( addArgs = c('FUN' = funName))
+#   x@proc <- c(x@proc, proc)
     return(x)
   }
 )
@@ -1463,8 +1725,8 @@ setMethod("fFilter", "GPR", function(x, f = 100, type =
 c('low','high','bandpass'),L = 257, plotSpec = FALSE){
     x@data <- .fFilter1D(x@data, f = f,  type = type, L = L, dT = x@dz, 
                         plotSpec = plotSpec)
-    proc <- getArgs()
-    x@proc <- c(x@proc, proc)
+    proc(x) <- getArgs()
+#   x@proc <- c(x@proc, proc)
     return(x)
   } 
 )
@@ -1499,8 +1761,8 @@ setMethod("fkFilter", "GPR", function(x, fk=NULL, L=c(5,5),npad=1){
       cat("# FIXME! function to transform matrix into polygon\n")
     }
     x@data <- .FKFilter(x@data,fk=fk, L=L, npad=npad)
-    proc <- getArgs()
-    x@proc <- c(x@proc, proc)
+    proc(x) <- getArgs()
+#   x@proc <- c(x@proc, proc)
     return(x)
     
   } 
@@ -1523,8 +1785,8 @@ setMethod("fkFilter", "GPR", function(x, fk=NULL, L=c(5,5),npad=1){
 setMethod("rotatePhase", "GPR", function(x, phi){
   # rotatePhase <- function(x,phi){
     x@data <- apply(x@data, 2, phaseRotation, phi)
-    proc <- getArgs()
-    x@proc <- c(x@proc,proc)
+    proc(x) <- getArgs()
+#   x@proc <- c(x@proc, proc)
     return(x)
   }
 )
@@ -1542,7 +1804,8 @@ setMethod("rotatePhase", "GPR", function(x, phi){
 setMethod("conv1D", "GPR", function(x, w){
   # rotatePhase <- function(x,phi){
     x@data <- convolution(x@data, w)
-    x@proc <- c(x@proc,"conv1D")
+#     x@proc <- c(x@proc,"conv1D")
+    proc(x) <- "conv1D"
     return(x)
   }
 )
@@ -1686,8 +1949,8 @@ setMethod("deconv", "GPR", function(x,
     }
     # gprdec <- gpr
 #     x@data <- Xdec
-    proc <- getArgs()
-    x@proc <- c(x@proc, proc)
+    proc(x) <- getArgs()
+#     x@proc <- c(x@proc, proc)
     toReturn[["x"]] <- x
     return(toReturn)
   }
@@ -1696,44 +1959,81 @@ setMethod("deconv", "GPR", function(x,
 #--------------- DATA EDITING FUNCTIONS
 #' Shift the traces
 #'
+#' @param x A object of the class GPR
+#' @param ts A numeric vector defining the amount of time the traces have to
+#'              shifted
+#' @param keep A length-one numeric vector indicating how much of the trace...
+#' @param crop If TRUE (defaults), remove the rows containing only zero's 
+#'              (no data). If FALSE, 
 #' @name traceShift
 #' @rdname traceShift
 #' @export
-setMethod("traceShift", "GPR", function(x,  t0, keep = 10, delete0 = TRUE){
-# traceShift <- function(x,t0, keep=10){
-    if(length(t0) == 1){
-      t0 <- rep(t0, ncol(x))
+setMethod("traceShift", "GPR", function(x,  ts, method = c("none", 
+            "linear", "nearest", "pchip", "cubic", "spline"), crop = TRUE){
+# traceShift <- function(x,ts, keep=10){
+    method <- match.arg(method, c("none", "linear", "nearest", "pchip", 
+                                  "cubic", "spline"))
+    if(length(ts) == 1){
+      ts <- rep(ts, ncol(x))
     }
-    t0 <- t0/x@dz 
-    if(min(t0) > keep){
-      t0 <- t0 - keep
-    }else{
-      t0 <- t0 - min(t0) + 1
-    }
+    ps <- ts/x@dz
     A <- x@data
     Anew <- matrix(nrow=nrow(A),ncol=ncol(A))
-    
-    minShift <- min(t0) - keep
-    maxShift <- max(t0) - keep
-    
-    for(i in seq_along(A[1,])){
-      vs <- seq(t0[i],nrow(A))
-      vsp <- seq(t0[i],nrow(A))-t0[i]+1
-      Anew[vsp,i] <- A[vs,i]
-    }
-    x@data <- Anew  
-    if(delete0 == TRUE){
-      test <- apply(abs(Anew),1,sum)
-      firstPos <- which(!rev(test == 0) )[1]
-      if(!is.na(firstPos)){
-        n <- length(test)
-        vsel <- 1:(n-firstPos + 1L)
-        x <- x[vsel,]
+    v0 <- 1:nrow(A)
+    for(i in seq_len(ncol(A))){
+      relts <- floor(ps[i])*x@dz - ts[i]
+      if(method == "none"){
+        ynew <- A[,i]
+      }else{
+        ynew <- signal::interp1(x@depth, A[,i], x@depth + relts, 
+                                method = method, extrap = NA)
       }
+      vs <- v0 + floor(ps[i])
+      test <- vs > 0 & vs <= nrow(A)
+      vs <- vs[test]
+      Anew[vs,i] <- ynew[test]
     }
+    x@data <- Anew
+    if(crop == TRUE){
+      testCrop <- apply(abs(Anew),1,sum)
+      x <- x[!is.na(testCrop),]
+#       firstPos <- which(!rev(test == 0) )[1]
+#       if(!is.na(firstPos)){
+#         n <- length(test)
+#         vsel <- 1:(n-firstPos + 1L)
+#         x <- x[vsel,]
+#       }
+    }
+#      ts <- ts/x@dz 
+#     if(min(ts) > keep){
+#       ts <- ts - keep
+#     }else{
+#       ts <- ts - min(ts) + 1
+#     }
+#     A <- x@data
+#     Anew <- matrix(nrow=nrow(A),ncol=ncol(A))
+#     
+#     minShift <- min(ts) - keep
+#     maxShift <- max(ts) - keep
+#     
+#     for(i in seq_along(A[1,])){
+#       vs <- seq(ts[i],nrow(A))
+#       vsp <- seq(ts[i],nrow(A))-ts[i]+1
+#       Anew[vsp,i] <- A[vs,i]
+#     }
+#     x@data <- Anew  
+#     if(crop == TRUE){
+#       test <- apply(abs(Anew),1,sum)
+#       firstPos <- which(!rev(test == 0) )[1]
+#       if(!is.na(firstPos)){
+#         n <- length(test)
+#         vsel <- 1:(n-firstPos + 1L)
+#         x <- x[vsel,]
+#       }
+#     }
 #     x@proc <- c( x@proc, "trace shift")
-    proc <- getArgs()
-    x@proc <- c(x@proc, proc)
+    proc(x) <- getArgs()
+#     x@proc <- c(x@proc, proc)
     return(x)
   }
 )
@@ -2326,8 +2626,8 @@ setMethod("reverse", "GPR", function(x){
     if(length(x@trans)>0){
       xnew@trans <- x@trans[nrow(x@trans):1,]
     }
-    proc <- getArgs()
-    x@proc <- c(x@proc, proc)
+    proc(x) <- getArgs()
+    # x@proc <- c(x@proc, proc)
     return(xnew)
   }
 )
@@ -2845,8 +3145,8 @@ setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
       x@dz <- dz
       x@depthunit <- "m"
     }
-    proc <- getArgs()
-    x@proc <- c(x@proc, proc)
+    pproc(x) <- getArgs()
+    # x@proc <- c(x@proc, proc)
     return(x)
   } 
 )
@@ -2857,6 +3157,8 @@ setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
 #' and receiver antennae (it converts the trace time of the data acquired with
 #' a bistatic antenna system into trace time data virtually acquiered with 
 #' a monostatic system under the assumption of horizontally layered structure).
+#' Note that this function does not change the trace but only the time (time
+#' scale).
 #' @name timeCorOffset
 #' @rdname timeCorOffset
 #' @export
@@ -3022,8 +3324,8 @@ setMethod("regInterpPos", "GPR", function(x, type = c("linear", "cosine"),
     xnew@fid <- interpFid(xpos, xo, x@fid)
     xnew@ann <- interpFid(xpos, xo, x@ann)
     xnew@dx <- round(dx,3)
-    proc <- getArgs()
-    xnew@proc <- c(xnew@proc, proc)
+    proc(xnew) <- getArgs()
+#     xnew@proc <- c(xnew@proc, proc)
     return(xnew)
   }
 )

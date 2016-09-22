@@ -12,5 +12,7 @@ Time correction for each trace to compensate the offset between transmitter
 and receiver antennae (it converts the trace time of the data acquired with
 a bistatic antenna system into trace time data virtually acquiered with 
 a monostatic system under the assumption of horizontally layered structure).
+Note that this function does not change the trace but only the time (time
+scale).
 }
 

@@ -20,6 +20,8 @@
 # read/write SEGy
 
 # FIX ME!
+# - rename "traceScaling" into "traceScale"
+# - unless explicitely specified, set velocity to NULL (?)
 # - gain/dewow -> apply it only where the signal starts!!!
 #     (after migration, 
 # - when subsampling GPR (rows) update gpr@dz
@@ -78,6 +80,8 @@
 
 
 ################## GPR PROCESSING ######################3
+
+# Discontinuity Attribute
 
 # check book "Near-surface Geophysics, vol 13"
 
@@ -190,6 +194,15 @@
 # - time function ->  gpr <- readGPR(file.choose());    as.POSIXct(gpr@time, 
 # origin = "1970-01-01")
 
+#--- 3D GPR ---#
+# - zigzag data acquisition can result in staggered noise
+#       shift the lines
+#       processing: median line de-stagger
+# - decoupled gridding (differences between forward and reverse lines results
+#       in noisy horizontal slices) -> staggering noise
+#       Create two separate grid maps of forward and reverse lines and
+#       then apply grid math to add these time slice maps back together
+#       (GPR remote sensing in archaeology)
 
 
 
@@ -295,8 +308,8 @@
 #'
 #' @references Several books!
 #' @name RGPR
-# @docType package
-NULL
+#' @docType package
+
 
 # WARNING: type = c("wiggles", "raster") should be the second arguments!!!
 
@@ -410,6 +423,7 @@ safeFPath <- function(fPath = NULL){
 }
 
 # returns string w/o leading or trailing whitespace
+#' @export
 trimStr <- function (x) gsub("^\\s+|\\s+$", "", x)
 
 # return filename without extension
@@ -632,19 +646,46 @@ wapply <- function(x=NULL, width = NULL, by = NULL, FUN = NULL, ...){
   return(OUT)
 }
 
-# mod by MANU
-wapplyRow <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, ...){
-  FUN <- match.fun(FUN)
-  if (is.null(by)) by <- width
-  lenX <- nrow(x)
-  SEQ1 <- seq(1, lenX - width + 1, by = by)
-  SEQ2 <- lapply(SEQ1, function(x) x:(x + width - 1))
-   
-  OUT <- lapply(SEQ2, function(a) FUN(x[a,,drop=FALSE], ...))
-  OUT <- base::simplify2array(OUT, higher = TRUE)
-  return(OUT)
-}
+# NOT CURRENTLY USED
+# # mod by MANU
+# wapplyRow <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, ...){
+#   FUN <- match.fun(FUN)
+#   if (is.null(by)) by <- width
+#   lenX <- nrow(x)
+#   SEQ1 <- seq(1, lenX - width + 1, by = by)
+#   SEQ2 <- lapply(SEQ1, function(x) x:(x + width - 1))
+#    
+#   OUT <- lapply(SEQ2, function(a) FUN(x[a,,drop=FALSE], ...))
+#   OUT <- base::simplify2array(OUT, higher = TRUE)
+#   return(OUT)
+# }
 
+# based on wapply and modified by Manu
+# return a matrix of the same dimension than x
+# some border effect at a distance < width/2 at the first and last col/row
+wapplyMat <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, 
+                      MARGIN = 1, ...){
+  FUN <- match.fun(FUN)
+  width <- ifelse(width %% 2 == 0, width + 1, width)
+  if (is.null(by)) by <- width
+  lenX <- ifelse(MARGIN == 1, ncol(x), nrow(x))
+  SEQ1 <- seq(-(width-1)/2 + 1, lenX -(width-1)/2, by = by)
+  SEQ2 <- lapply(SEQ1, function(x){ 
+                  xnew <- x:(x + width - 1)
+                  xnew <- xnew[xnew > 0]
+                  xnew <- xnew[xnew <= lenX]})
+  if(MARGIN == 1){
+    OUT <- lapply(SEQ2, function(a) apply(x[, a, drop = FALSE], MARGIN, FUN))
+  }else if( MARGIN == 2) {
+    OUT <- lapply(SEQ2, function(a) apply(x[a,, drop = FALSE], MARGIN, FUN))
+  }
+  OUT <- base::simplify2array(OUT, higher = TRUE)
+  if(MARGIN == 2){
+    return(t(OUT))
+  }else{
+    return(OUT)
+  }
+}
 
 xyToLine <- function(x){
   sp::Line(x[,1:2])
@@ -787,6 +828,11 @@ setGenericVerif("values<-", function(x,value) standardGeneric("values<-"))
 #' @export
 setGenericVerif("processing", function(x) standardGeneric("processing"))
 
+#' @name proc<-
+#' @rdname proc
+#' @export
+setGenericVerif("proc<-",function(x,values){standardGeneric("proc<-")})
+
 #' @name description
 #' @rdname description
 #' @export
@@ -881,7 +927,8 @@ setGenericVerif("gain", function(x, type=c("power", "exp", "agc"),
                   ...) standardGeneric("gain"))
 setGenericVerif("dcshift", function(x, u=1:10, FUN=mean) 
                 standardGeneric("dcshift"))
-setGenericVerif("firstBreack", function(x, w = 11, ns = NULL, bet=NULL) 
+setGenericVerif("firstBreack", function(x, method = c("coppens", "threshold"), 
+                thr = 0.12, w = 11, ns = NULL, bet=NULL) 
                 standardGeneric("firstBreack"))
 
 setGenericVerif("clip", function(x, Amax=NULL,Amin=NULL) 
@@ -899,8 +946,12 @@ setGenericVerif("fFilter", function(x, f=100, type=c('low','high','bandpass'),
 setGenericVerif("fkFilter", function(x, fk=NULL, L=c(5,5),npad=1) 
                 standardGeneric("fkFilter"))
 
-setGenericVerif("traceShift", function(x, t0, keep = 10, delete0 = TRUE) 
+setGenericVerif("traceShift", function(x,  ts, method = c("none", 
+            "linear", "nearest", "pchip", "cubic", "spline"), crop = TRUE) 
                 standardGeneric("traceShift"))
+setGenericVerif("traceAverage", function(x, w = NULL, FUN = mean, ...) 
+                standardGeneric("traceAverage"))
+       
 setGenericVerif("deconv", function(x, method=c("spiking", "wavelet",
                 "min-phase", "mixed-phase"), ...) standardGeneric("deconv"))
 setGenericVerif("conv1D", function(x, w) standardGeneric("conv1D"))
@@ -1384,6 +1435,10 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   }
   if(relTime0){
     y <- y + time_0
+#     y <- y + (time_0 + max(y))
+    ylim[1] <- ylim[1] + time_0 - ylim[2]
+    ylim[2] <- 0
+#     ylim[1] <-  ylim[1] + (time_0 + max(y))
   }
   if( length(unique(diff(x))) > 1){
     rasterImage <- FALSE
@@ -1416,14 +1471,12 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
     par( mai = mai,omi=omi,mgp=mgp)
   }
  
-  
   #image(x,y,z,col=col,zlim=clim,xaxs="i", yaxs="i", yaxt="n",...)
   plot3D::image2D(x = x, y = y, z = z, col = col, 
         xlim = xlim, ylim = ylim, zlim = clim,
         xaxs = "i", yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
         resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)
  
-
   usr <- par("usr")
   if(is.null(xlim) ){
      test <- rep(TRUE,length(x))
@@ -1449,9 +1502,9 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 #   axis(side=2, at=pretty_y + dusr/2, labels= -pretty_y)
 #   dusr <- dylim/length(y)
 #   if( yaxt != "n"){
-    pretty_y <- pretty(y,10)
-    axis(side=2, at=pretty_y, labels= -pretty_y)
-    .depthAxis(y, pretty_y, time_0, v, antsep, depthunit, posunit )
+    pretty_y <- pretty(ylim, 10)
+    axis(side = 2, at = pretty_y, labels = -pretty_y)
+    .depthAxis(ylim, pretty_y, time_0, v, antsep, depthunit, posunit )
 #   }
   # plot time0
   abline(h=0,col="red",lwd=0.5)
@@ -1528,15 +1581,12 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   dxin <- diff(usr[1:2])/(pin[1])
   dylim <- diff(usr[3:4])
   fin <- par()$fin
-  # par(new=TRUE)
-#   mai2 <- c(1, 0.8 + pin[1] + 1, 0.8, 0.8)
   mai2 <- c(par("mai")[1], par("mai")[1] + pin[1] + 1, par("mai")[3], 0.6)
   par(mai=mai2)
   fin2 <- par()$fin
   wstrip <- dxin*(fin2[1] - mai2[2] - mai2[4])/2
   xpos <- usr[1] + dxin*(mai2[2] - mai[2])
   zstrip <- matrix(seq(clim[1], clim[2], length.out = length(col)), nrow = 1)
-#   xstrip <- c( xpos,  xpos + wstrip*dxin)*c(0.97,1.03)
   xstrip <- c( xpos - 20*wstrip,  xpos + 20*wstrip)#*c(0.9, 1.1)
   ystrip <- seq(min(y),max(y),length.out=length(col))
   ystrip <- seq(usr[3],usr[4],length.out=length(col))
@@ -1554,39 +1604,70 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   box()
 }
 
-
+# we use the Sensors & Software method to plot the depth axis
+# when the data are in time domain: because of the offset between
+# transmitter and receiver, there is an offset between time zero and depth,
+# the depth axes is squished.
 .depthAxis <- function(y, pretty_y, time_0, v, antsep, depthunit, posunit ){
   if(grepl("[s]$",depthunit)){
-#     depth <- (seq(0,by=2.5,max(abs(y))*v))
-    depth <- pretty(seq(1.1,by=0.1,max(abs(y + 2*time_0))*v),10)
-    depth2 <- seq(0.1,by=0.1,0.9)
-    depthat <- depthToTime(depth, 0, v, antsep)
-    depthat2 <- depthToTime(depth2,0, v, antsep)
-    axis(side=4,at=-depthat, labels=depth,tck=-0.02)
-    axis(side=4,at=-depthat2, labels=FALSE,tck=-0.01)
-    axis(side=4,at= -1* depthToTime(1, 0, v, antsep), labels="1",tck=-0.02)
-    mtext(paste0("depth (", depthunit, "),   v = ",v, " ", 
-          posunit,"/",depthunit),
-          side=4, line=3)
+    maxDepth <- max( abs(y + 2*time_0) ) * v
+    depthAll <- pretty(c(0, maxDepth), 10)
+    depthAllPos <- depthToTime(depthAll, 0, v, antsep)
+    axis(side = 4, at = -depthAllPos, labels = depthAll, tck = -0.01)
+    mtext(paste0("depth (", posunit, "),   v = ",v, " ", posunit, "/", 
+                  depthunit), side = 4, line = 3)
+                  
+#     depth2 <- seq(0.1, by = 0.1, 0.9)
+#     depthat2 <- depthToTime(depth2, 0, v, antsep)
+#     
+#     maxDepth <- max( abs(y + 2*time_0) ) * v
+#     if(maxDepth > 1.1){
+#       # depth <- pretty(seq(1.1, by = 0.1 , max( abs(y + 2*time_0) ) * v), 10)
+#       depth <- pretty(c(1.1, max( abs(y + 2*time_0) ) * v), 10)
+#       depthat <- depthToTime(depth, 0, v, antsep)
+#       axis(side = 4, at = -depthat, labels = depth, tck = -0.02)
+#       labelsTop <- FALSE
+#     }else{
+#       labelsTop <- depth2
+#     }
+#     axis(side = 4, at = -depthat2, labels = labelsTop, tck = -0.01)
+#     axis(side = 4, at = -1*depthToTime(1, 0, v, antsep), 
+#          labels = "1", tck = -0.02)
+#     mtext(paste0("depth (", posunit, "),   v = ",v, " ", posunit, "/", 
+#                   depthunit), side = 4, line = 3)
   }else{
-#     axis(side=4, at=pretty_y + dusr/2 , labels= -pretty_y)
-    axis(side=4, at=pretty_y, labels= -pretty_y)
-    mtext(paste0("depth (", depthunit, ")") ,side=4, line=3)
+    axis(side = 4, at = pretty_y, labels = -pretty_y)
+    mtext(paste0("depth (", depthunit, ")") ,side = 4, line = 3)
   }
-
 }
 
-
+# Threshold method for first breack picking
+.firstBreackThres <- function(x, thr = 0.12, tt){
+#   first_breacks <- rep(NA, ncol(x))
+#   thres <- thr * max(x)
+#   for(j in seq_len(ncol(x))){
+    if( max(x) > thr){
+      fb <- which(x > thr)
+      if(length(fb) > 0){
+        i <- fb[1]
+        w <- (x[i] - thr) / (x[i] - x[i-1])
+        return( w * tt[i-1] + (1- w) * tt[i] )
+      }
+    }
+#   }
+  return(NA)
+#   return(first_breacks)
+}
 
 # Jaun I. Sabbione and Danilo Velis (2010). Automatic first-breaks picking: 
 # New strategies and algorithms. Geophysics, 75 (4): v67-v76
 # -> modified Coppens's Method
-# w = length leading window: about one period of the firs-arrival waveform
+# w = length leading window: about one period of the first-arrival waveform
 # ns = length eps (edge preserving smoothing) window: good results with ns 
 # between one and two signal periods
 #        -> default values ns= 1.5*w
 # bet = stabilisation constant, not critical, set to 0.2*max(amplitude) 
-.firstBreackPicking <- function(x, w = 11, ns = NULL, bet = 0.2){
+.firstBreackModCoppens <- function(x, w = 11, ns = NULL, bet = 0.2){
   if(is.null(ns)){
     ns <- 1.5 * w
   }
@@ -3190,26 +3271,27 @@ inPoly <- function(x, y, vertx, verty){
 # -------------------------------------------
 
 readDT1 <- function( fPath){
-  dirName   <- dirname(fPath)
-  splitBaseName <- unlist(strsplit(basename(fPath),'[.]'))
-  baseName   <- paste(splitBaseName[1:(length(splitBaseName)-1)],sep="")
-  
-  fileNameHD   <- paste(dirName, "/",baseName,".HD",sep="")
-  fileNameDT1  <- paste(dirName, "/",baseName,".DT1",sep="")
-  
-  headHD <-  scan(fileNameHD, what=character(),strip.white=TRUE,quiet=TRUE,
-fill=TRUE,blank.lines.skip=TRUE,flush=TRUE,sep="\n")
+   dirName     <- dirname(fPath)
+  baseName    <- .fNameWExt(fPath)
+  fileNameHD  <- file.path(dirName, paste0(baseName,".HD"))
+  fileNameDT1 <- file.path(dirName, paste0(baseName,".DT1"))
+  #--- read header file
+  headHD <- scan( fileNameHD, what = character(), strip.white = TRUE,
+                  quiet = TRUE, fill = TRUE, blank.lines.skip = TRUE, 
+                  flush = TRUE, sep = "\n")
   nHD <- length(headHD)
-  headerHD <- data.frame(nrow=nHD,ncol=2)
+  hHD <- data.frame( tag = character(), val = character(), 
+                          stringsAsFactors = FALSE)
   for(i in seq_along(headHD)){
-    hdline <- strsplit(headHD[i],"=")[[1]]
+    hdline <- strsplit(headHD[i], "=")[[1]]
     if(length(hdline) < 2){
-      headerHD[i,1] <- ""
-      headerHD[i,2] <- trimStr(hdline[1])
+      hHD[i,1] <- ""
+      hHD[i,2] <- trimStr(hdline[1])
     }else{
-      headerHD[i,1:2] <-  as.character(sapply(hdline[1:2],trimStr))
+      hHD[i,1:2] <-  as.character(sapply(hdline[1:2],trimStr))
     }
   }
+<<<<<<< HEAD
 
  nbTraces   <- as.integer(as.character(headerHD[which(headerHD[,1]=="NUMBER OF TRACES"),2]))
 nbPt     <- as.integer(as.character(headerHD[which(headerHD[,1]=="NUMBER OF PTS/TRC"),2]))
@@ -3225,21 +3307,80 @@ nbPt     <- as.integer(as.character(headerHD[which(headerHD[,1]=="NUMBER OF PTS/
   headerDT1 = list()
   myData = matrix(NA,nrow=nbPt,ncol=nbTraces)
   for(i in 1:nbTraces){
+=======
+  nTr <- .getHD(hHD, "NUMBER OF TRACES")
+  nPt <- .getHD(hHD, "NUMBER OF PTS/TRC")
+  #--- READ DT1
+  tags <- c("traces", "position", "samples","topo", "NA1", "bytes",
+            "tracenb", "stack","window","NA2", "NA3", "NA4",
+            "NA5", "NA6", "recx","recy","recz","transx","transy",
+            "transz","time0","zeroflag", "NA7", "time","x8","com")  
+  hDT1 <- list()
+  dataDT1 <- matrix(NA, nrow = nPt, ncol = nTr)
+  con <- file(fileNameDT1 , "rb")
+  for(i in 1:nTr){
+>>>>>>> refs/remotes/emanuelhuber/master
     for(j in 1:25){
-      headerDT1[[indexDT1Header[j]]][i] = readBin(dt1, what=numeric(), 
-                                                  n = 1L, size=4)
-      # hour of the day: format(as.POSIXct('0001-01-01 00:00:00') + 
-               # headerDT1$time[1], "%I:%M:%S %p") 
+      hDT1[[tags[j]]][i] <- readBin(con, what = numeric(), n = 1L, size = 4)
     }
     # read the 28 characters long comment
-    headerDT1[[indexDT1Header[26]]][i] = readChar(dt1, 28)
-    # read the nbPt * 2 bytes rrace data
-    myData[,i] = readBin(dt1, what=integer(), n = nbPt, size=2)
+    hDT1[[tags[26]]][i] <- readChar(con, 28)
+    # read the nPt * 2 bytes trace data
+    dataDT1[,i] <- readBin(con, what=integer(), n = nPt, size = 2)
   }
-  #headerDT1$time2 <- format(as.POSIXct(paste(as.character(headerHD[2,2]), 
-            # ' 00:00:00', sep="")) + headerDT1$time, "%d-%m-%Y %I:%M:%S") 
-  close(dt1)
-  return(list(hd = headerHD, dt1hd = headerDT1, data=myData))
+  close(con)
+  return( list(hd = hHD, dt1hd = hDT1, data = dataDT1) )
+  return( list(hd = hHD, dt1hd = hDT1, data = dataDT1) )
+#   dirName   <- dirname(fPath)
+#   splitBaseName <- unlist(strsplit(basename(fPath),'[.]'))
+#   baseName   <- paste(splitBaseName[1:(length(splitBaseName)-1)],sep="")
+#   
+#   fileNameHD   <- paste(dirName, "/",baseName,".HD",sep="")
+#   fileNameDT1  <- paste(dirName, "/",baseName,".DT1",sep="")
+#   
+#   headHD <-  scan(fileNameHD, what=character(),strip.white=TRUE,quiet=TRUE,
+# fill=TRUE,blank.lines.skip=TRUE,flush=TRUE,sep="\n")
+#   nHD <- length(headHD)
+#   headerHD <- data.frame(nrow=nHD,ncol=2)
+#   for(i in seq_along(headHD)){
+#     hdline <- strsplit(headHD[i],"=")[[1]]
+#     if(length(hdline) < 2){
+#       headerHD[i,1] <- ""
+#       headerHD[i,2] <- trimStr(hdline[1])
+#     }else{
+#       headerHD[i,1:2] <-  as.character(sapply(hdline[1:2],trimStr))
+#     }
+#   }
+# 
+#   nbTraces   = as.integer(as.character(headerHD[4,2]))
+#   nbPt     = as.integer(as.character(headerHD[5,2]))
+#   #----------------#
+#   #--- READ DT1 ---#
+#   dt1 <- file(fileNameDT1 , "rb")
+# 
+#   indexDT1Header=c("traces", "position", "samples","topo", "NA1", "bytes",
+#                     "tracenb", "stack","window","NA2", "NA3", "NA4",
+#                     "NA5", "NA6", "recx","recy","recz","transx","transy",
+#                     "transz","time0","zeroflag", "NA7", "time","x8","com")  
+#                     #,"com1","com2","com3","com4","com5","com6")
+#   headerDT1 = list()
+#   myData = matrix(NA,nrow=nbPt,ncol=nbTraces)
+#   for(i in 1:nbTraces){
+#     for(j in 1:25){
+#       headerDT1[[indexDT1Header[j]]][i] = readBin(dt1, what=numeric(), 
+#                                                   n = 1L, size=4)
+#       # hour of the day: format(as.POSIXct('0001-01-01 00:00:00') + 
+#                # headerDT1$time[1], "%I:%M:%S %p") 
+#     }
+#     # read the 28 characters long comment
+#     headerDT1[[indexDT1Header[26]]][i] = readChar(dt1, 28)
+#     # read the nbPt * 2 bytes rrace data
+#     myData[,i] = readBin(dt1, what=integer(), n = nbPt, size=2)
+#   }
+#   #headerDT1$time2 <- format(as.POSIXct(paste(as.character(headerHD[2,2]), 
+#             # ' 00:00:00', sep="")) + headerDT1$time, "%d-%m-%Y %I:%M:%S") 
+#   close(dt1)
+#   return(list(hd = headerHD, dt1hd = headerDT1, data=myData))
 }
 #-----------------
 #-----------------
@@ -3249,9 +3390,9 @@ nbPt     <- as.integer(as.character(headerHD[which(headerHD[,1]=="NUMBER OF PTS/
 # if number = TRUE, try to convert
 .getHD <- function(A,string,number=TRUE,position=FALSE){
   if(number){
-    value <- as.numeric(A[trimStr(A[,1])==string,2])
+    value <- as.numeric(A[trimStr(A[,1]) == string, 2])
   }else{
-    value <- A[trimStr(A[,1])==string,2]
+    value <- A[trimStr(A[,1]) == string,2]
   }
   if(length(value)>0){
     if(position){
@@ -3271,30 +3412,34 @@ nbPt     <- as.integer(as.character(headerHD[which(headerHD[,1]=="NUMBER OF PTS/
 # Ryan Grannell
 # website   twitter.com/RyanGrannell
 # location   Galway, Ireland
-getArgs <- function (return_character=TRUE) {
+getArgs <- function (returnCharacter=TRUE, addArgs = NULL) {
   arg <- as.list(match.call(def = sys.function( -1 ),
            call = sys.call(-1),
            expand.dots = TRUE )
            )
   narg <- length(arg)
-  if(return_character){
+  if(returnCharacter){
     if(narg >=3){
       eval_arg <- sapply(arg[3:narg],eval)
-      paste(arg[[1]],":", paste(names(arg[3:narg]),
-          sapply(eval_arg,pasteArgs,arg[3:narg]),sep="=",collapse="+"),sep="")
+      argChar <- paste0(arg[[1]],"@", paste(names(arg[3:narg]),
+          sapply(eval_arg,pasteArgs,arg[3:narg]),sep="=",collapse="+"))
     }else{
-      paste(arg[[1]],":",sep="")
+      argChar <- paste0(arg[[1]],"@")
     }
+    if(!is.null(addArgs)){
+      argChar <- addArg(argChar, addArgs)
+    }
+    return(argChar)
   }else{
     return(arg)
   }
 }
 
-pasteArgs <- function(eval_arg,arg){
+pasteArgs <- function(eval_arg, arg){
   if(is.numeric(eval_arg) || is.character(eval_arg)){
-    return(paste(eval_arg,collapse=",",sep=""))
+    return( paste0(eval_arg, collapse = ",") )
   }else if(is.list(eval_arg)){
-    return(paste(names(eval_arg),"<-", (eval_arg),collapse=",",sep=""))
+    return( paste0(names(eval_arg),"<-", (eval_arg), collapse = "," ) )
   }else if(is.matrix(eval_arg)){
     return(paste(arg))
   }else if(any(is.null(eval_arg))){
@@ -3307,7 +3452,7 @@ addArg <- function(proc, arg){
 # collapse="+")
   proc_add <- paste(names(arg), sapply(arg,pasteArgs, arg),
                   sep = "=", collapse = "+")
-  if(substr(proc,nchar(proc),nchar(proc)) == ":"){
+  if(substr(proc,nchar(proc),nchar(proc)) == "@"){
     proc <- paste(proc, proc_add, sep = "")
   }else{
     proc <- paste(proc, "+", proc_add, sep = "")
@@ -3315,4 +3460,15 @@ addArg <- function(proc, arg){
   return(proc)
 }
 
+# return a character vector containing the name of the FUN function
+getFunName <- function(FUN){
+  if(class(FUN)=="function"){
+    funName <- "FUN"
+  }else{
+    #  if(isGeneric("FUN")){
+    funName0 <- selectMethod(FUN, "numeric")
+    funName <-funName0@generic[1]
+  }
+  return(funName)
+}
 

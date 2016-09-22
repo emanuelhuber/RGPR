@@ -7,7 +7,8 @@
 \usage{
 \S4method{dcshift}{GPR}(x, u = 1:10, FUN = mean)
 
-\S4method{firstBreack}{GPR}(x, w = 11, ns = NULL, bet = NULL)
+\S4method{firstBreack}{GPR}(x, method = c("coppens", "threshold"),
+  thr = 0.12, w = 11, ns = NULL, bet = NULL)
 }
 \description{
 Direct-current removal
@@ -23,5 +24,9 @@ ns = length eps (edge preserving smoothing) window: good results with ns
 between one and two signal periods
        -> default values ns= 1.5*nl
 bet = stabilisation constant, not critical, set to 0.2*max(amplitude)
+}
+\seealso{
+\code{\link{time0}} to estimate the first wave break and 
+         \code{\link{traceShift}} to shift the traces
 }
 

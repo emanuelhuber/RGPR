@@ -5,7 +5,19 @@
 \alias{traceShift}
 \title{Shift the traces}
 \usage{
-\S4method{traceShift}{GPR}(x, t0, keep = 10, delete0 = TRUE)
+\S4method{traceShift}{GPR}(x, ts, keep = 0, method = c("linear", "nearest",
+  "pchip", "cubic", "spline"), crop = TRUE)
+}
+\arguments{
+\item{x}{A object of the class GPR}
+
+\item{ts}{A numeric vector defining the amount of time the traces have to
+shifted}
+
+\item{keep}{A length-one numeric vector indicating how much of the trace...}
+
+\item{crop}{If TRUE (defaults), remove the rows containing only zero's 
+(no data). If FALSE,}
 }
 \description{
 Shift the traces

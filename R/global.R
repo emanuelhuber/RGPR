@@ -15,6 +15,7 @@
 #     points(...)
 # }
 
+#' @export
 firstBreack <- function(...){
   stop("USE FUNCTION 'firstBreak()' INSTEAD!\n")
 }

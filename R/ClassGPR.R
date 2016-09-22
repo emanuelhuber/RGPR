@@ -2057,7 +2057,7 @@ setMethod("time0Cor", "GPR", function(x, method = c("none", "linear",
       keep <- x@antsep/c0
     }
     ts <- -x@time0 + keep
-    x <- traceShift(x, ts = ts, method = eval(method), crop = crop)
+    x <- traceShift(x, ts = ts, method = eval(method), crop = eval(crop))
     x@proc <- x@proc[length(x@proc)]
      proc(x) <- getArgs()
 #     x@proc <- c(x@proc, proc)

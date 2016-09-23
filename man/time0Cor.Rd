@@ -18,7 +18,7 @@ the trace has to be kept before time zero.}
 (no data).}
 
 \item{c0}{Propagation speed of the GPR wave through air (used only when
-\code{keep = NULL}.}
+\code{keep = NULL}).}
 
 \item{ts}{A numeric vector defining the amount of time the traces have to
 shifted}
@@ -28,7 +28,7 @@ An object of the class GPR.
 }
 \description{
 \code{time0Cor} shift the traces vertically such that they start at
-time zero (time zero of the data can be modified with the function
+time zero (time zero of the data can be modified with the function)
 }
 \details{
 When \code{keep = NULL} the amount of time kept is equal to

@@ -450,7 +450,8 @@ trimStr <- function (x) gsub("^\\s+|\\s+$", "", x)
 palGPR <- function(colPal="default", n = 101, power = 1, returnNames = FALSE){
   colPal <- gsub("gray", "grey", x= colPal)
   tmp <- structure(list(
-    default = colorRampPalette(c("#1C007C", "#1B0086", "#1A0091", "#18009C",
+    default = grDevices::colorRampPalette(c("#1C007C", "#1B0086", "#1A0091", 
+                "#18009C",
                 "#1600A7", "#1400B2", "#1100C3", "#0E00CF", "#0A00E0",
                 "#0300F5", "#0001FF", "#080FFF", "#1521FF", "#2232FF",
                 "#2E42FF", "#3B52FF", "#4862FF", "#5470FF", "#617FFF",
@@ -497,7 +498,7 @@ palGPR <- function(colPal="default", n = 101, power = 1, returnNames = FALSE){
               l = c(120, 10), power=power), 
     grey = colorspace::sequential_hcl(n, h = c(190, 1), c = 10, 
                           l = c(1, 110), power=power),
-    rainbow = colorRampPalette(rainbow(13),interpolate ="spline")(n),
+    rainbow = grDevices::colorRampPalette(rainbow(13),interpolate ="spline")(n),
     rainbow_hcl = colorspace::rainbow_hcl(n,c=100,l=60)
   ))
   if(returnNames){
@@ -769,7 +770,7 @@ setGenericVerif("filepath", function(x) standardGeneric("filepath"))
 setGenericVerif("filepath<-", function(x, value) standardGeneric("filepath<-"))
 
 setGenericVerif("coords", function(x,i) standardGeneric("coords"))
-setGenericVerif("coords<-",function(x,values){standardGeneric("coords<-")})
+setGenericVerif("coords<-",function(x,value){standardGeneric("coords<-")})
 
 #' @name coord
 #' @rdname coord
@@ -779,7 +780,7 @@ setGenericVerif("coord", function(x, i, ...) standardGeneric("coord"))
 #' @name coord<-
 #' @rdname coord
 #' @export
-setGenericVerif("coord<-",function(x,values){standardGeneric("coord<-")})
+setGenericVerif("coord<-",function(x,value){standardGeneric("coord<-")})
 
 #' @name vel
 #' @rdname vel
@@ -789,7 +790,7 @@ setGenericVerif("vel", function(x) standardGeneric("vel"))
 #' @name vel<-
 #' @rdname vel
 #' @export
-setGenericVerif("vel<-",function(x,values){standardGeneric("vel<-")})
+setGenericVerif("vel<-",function(x,value){standardGeneric("vel<-")})
 
 #' @name ann
 #' @rdname ann
@@ -799,7 +800,7 @@ setGenericVerif("ann", function(x) standardGeneric("ann"))
 #' @name ann<-
 #' @rdname ann
 #' @export
-setGenericVerif("ann<-",function(x,values){standardGeneric("ann<-")})
+setGenericVerif("ann<-",function(x,value){standardGeneric("ann<-")})
 
 #' @name name
 #' @rdname name
@@ -839,7 +840,7 @@ setGenericVerif("fid", function(x) standardGeneric("fid"))
 #' @name fid<-
 #' @rdname fid
 #' @export
-setGenericVerif("fid<-",function(x,values){standardGeneric("fid<-")})
+setGenericVerif("fid<-",function(x,value){standardGeneric("fid<-")})
 
 #' @name values
 #' @rdname values
@@ -859,7 +860,7 @@ setGenericVerif("processing", function(x) standardGeneric("processing"))
 #' @name proc<-
 #' @rdname proc
 #' @export
-setGenericVerif("proc<-",function(x,values){standardGeneric("proc<-")})
+setGenericVerif("proc<-",function(x,value){standardGeneric("proc<-")})
 
 #' @name description
 #' @rdname description
@@ -1023,7 +1024,7 @@ setGenericVerif("delineate", function(x,name=NULL,type=c("raster","wiggles"),
 #' @name rmDelineations<-
 #' @rdname delineation
 #' @export
-setGenericVerif("rmDelineations<-", function(x,values=NULL) 
+setGenericVerif("rmDelineations<-", function(x,value=NULL) 
                   standardGeneric("rmDelineations<-"))
 #' @name delineations
 #' @rdname delineation
@@ -1970,7 +1971,7 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
   # if y <- fft(z), then z is 
   # fft(y, inverse = TRUE) / length(y).
   # each column = discrete Fourier transform. 
-  fft_A <- mvfft(A)
+  fft_A <- stats::mvfft(A)
   # extract the power spectrum (sometimes referred to as "magnitude")
   pow <- as.matrix(Mod(fft_A))
   pow <- pow[1:nfreq,,drop=FALSE]   # select only first half
@@ -2096,8 +2097,8 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
   h_long = c( h, rep(0, Nfft - L) )
   A = rbind(as.matrix(A) , matrix(0,nrow=Nfft-nr,ncol=ncol(A)) )
 
-  fft_A = mvfft(A)    # signal
-  fft_h = fft(h_long)        # filter
+  fft_A = stats::mvfft(A)    # signal
+  fft_h = stats::fft(h_long)        # filter
 
   # Now we perform cyclic convolution in the time domain using 
   # pointwise multiplication in the frequency domain:
@@ -2141,7 +2142,7 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
      par(op)
   }
   a = (L-1)/2
-  y = mvfft(Y, inverse = TRUE)
+  y = stats::mvfft(Y, inverse = TRUE)
   y = y[a:(a+nr-1),]/nrow(y)
   return(Re(y))
 }
@@ -2189,12 +2190,12 @@ nextpower2 <- function(x){
 #' @export
 phaseRotation <- function(x,phi){
   nf <- length(x)
-  X <- fft(x)
+  X <- stats::fft(x)
   phi2 <- numeric(nf)
   phi2[2:(nf/2)] <- phi
   phi2[(nf/2+1):(nf)] <- -phi
   Phase <- exp(-complex(imaginary=-1)*phi2)
-  xcor <- fft(X*Phase, inverse=TRUE)/nf
+  xcor <- stats::fft(X*Phase, inverse=TRUE)/nf
   return(Re(xcor))
 }
 
@@ -2339,7 +2340,7 @@ byte2volt <- function ( V=c(-50,50), nBytes = 16) {
     nf <- (nextpower2(nr))
     A1 <- matrix(0,nrow=nf,ncol=nk)
     A1[1:nr,1:nc] <- A
-    A1_fft <- fft(A1)
+    A1_fft <- stats::fft(A1)
     
     A_fftint <- matrix(0,nrow=n[1]*nf,ncol=n[2]*nk)
     A_fftint[1:(nf/2),1:(nk/2)] <- A1_fft[1:(nf/2),1:(nk/2)]
@@ -2353,7 +2354,7 @@ byte2volt <- function ( V=c(-50,50), nBytes = 16) {
               1:(nk/2)] <- 
           A1_fft[(nf/2+1):(nf),1:(nk/2)]
     
-    A_int = fft(A_fftint, inverse = TRUE)
+    A_int <- stats::fft(A_fftint, inverse = TRUE)
     A_int <- A_int[1:(n[1]*nr),1:(n[2]*nc)]/(nk*nf)
   }else if(is.vector(A)){
     # FTA = fft(A);
@@ -2364,13 +2365,13 @@ byte2volt <- function ( V=c(-50,50), nBytes = 16) {
     A0 = c( A, rep(0,Nfft-n_A) )
     n_A0 <- length(A0)
     
-    FTA <- fft(A0)
+    FTA <- stats::fft(A0)
     
     # % now insert enough zeros into the dft to match the desired density 'n'
     FTA = c(FTA[1:(n_A0/2)], rep.int(0,floor((n[1]-1)*n_A0)), 
                                     FTA[(n_A0/2+1):n_A0])
 
-    A_int = fft(FTA, inverse = TRUE)
+    A_int = stats::fft(FTA, inverse = TRUE)
     A_int <- A_int[1:(n_A * (n[1]))]/n_A0
   }
   return(Re(A_int))
@@ -2970,7 +2971,7 @@ convolution2D <- function(A,k){
   # h0[(nk-1) + 1:nh, (mk-1) + 1:mh] <- A
 #   A0[1:nA,  1:mA] <- A
   k0[1:nk, 1:mk] <- k
-  g <- Re(fft(fft(k0)*fft(A0),inverse=TRUE))/(nL * mL)
+  g <- Re(stats::fft(stats::fft(k0)*stats::fft(A0),inverse=TRUE))/(nL * mL)
   g2 <- g[nk + nk/2  + (1:nA), mk +mk/2 + (1:mA)]
   # g2 <- g[nk + 1:nh, mk + 1:mh]
   return(g2)
@@ -3077,7 +3078,8 @@ convolution <- function(A,k){
   k0 <- matrix(0, nrow = nrow(Apad), ncol= ncol(Apad))
   k0[1:nk, ] <- k
 #   B0 <- rbind(B0, B, B0)
-  Y <- Re(mvfft(mvfft(Apad) * mvfft(k0), inverse=TRUE))/nrow(Apad)
+  Y <- Re(stats::mvfft(stats::mvfft(Apad) * stats::mvfft(k0), 
+          inverse=TRUE))/nrow(Apad)
   return(Y[1:nA + nk + nk/2 + 1, ])
 }
 
@@ -3113,9 +3115,9 @@ deconvolve <- function(y,h,mu=0.0001){
   ny <- length(y)
   nh <- length(h)
   L  <- ny + ny - 1
-  H  <- fft(c(h,rep(0,ny-1)))
-  Y  <- fft(c(y, rep(0,nh-1)))
-  Re(fft( t(Conj(H))*Y/(t(Conj(H))*H + mu) ,inverse=TRUE))[1:ny]/L
+  H  <- stats::fft(c(h,rep(0,ny-1)))
+  Y  <- stats::fft(c(y, rep(0,nh-1)))
+  Re(stats::fft( t(Conj(H))*Y/(t(Conj(H))*H + mu) ,inverse=TRUE))[1:ny]/L
   # Re(fft( Y/(H + mu) ,inverse=TRUE))[1:ny]/L
 }
 
@@ -3249,7 +3251,7 @@ inPoly <- function(x, y, vertx, verty){
   # function to center the spectrum!! (no need of fttshift!)
   #centres spectrum: Gonzalez & Wintz (1977) Digital Image Processing p.53
   A1  <- A1 * (-1)^(row(A1) + col(A1))
-  A1_fft <- fft(A1)
+  A1_fft <- stats::fft(A1)
   A1_fft_pow <- Mod(A1_fft)
   A1_fft_phase <- Arg(A1_fft)
   # plotGPR((A1_fft_phase[1:(nf/2),])^0.05)
@@ -3303,7 +3305,7 @@ inPoly <- function(x, y, vertx, verty){
   # function to center the spectrum!! (no need of fttshift!)
   #centres spectrum: Gonzalez & Wintz (1977) Digital Image Processing p.53
   # A1  <- A1 * (-1)^(row(A1) + col(A1))
-  A1_fft <- fft(A1)
+  A1_fft <- stats::fft(A1)
   
   # plotGPR(Mod(A1_fft)^0.05)
   # plotGPR(Re(fft(A1_fft,inv=TRUE))[1:nr,1:nc])
@@ -3327,7 +3329,7 @@ inPoly <- function(x, y, vertx, verty){
     ham2Dlong <- matrix(0,nrow=nf,ncol=nk)
     ham2Dlong[1:L[1],1:L[2]] <- ham2D
     # plotGPR(ham2Dlong)
-    FF <-  Re(fft(fft(myFlong) * fft(ham2Dlong),inv=TRUE))
+    FF <-  Re(stats::fft(stats::fft(myFlong) * stats::fft(ham2Dlong),inv=TRUE))
   }else{
     FF <- myFlong
   }
@@ -3335,7 +3337,7 @@ inPoly <- function(x, y, vertx, verty){
   
   # plotGPR(Re(fft(fft(myFlong) * fft(ham2Dlong),inv=TRUE))[1:nr,1:nc])
   
-  A_back <- Re(fft(A1_fft * FF,inv=TRUE))[1:nr,1:nc]
+  A_back <- Re(stats::fft(A1_fft * FF,inv=TRUE))[1:nr,1:nc]
   # plotGPR(A_back)
   # plotGPR(A_back)
   # scaling
@@ -3484,7 +3486,7 @@ readDT1 <- function( fPath){
 # website   twitter.com/RyanGrannell
 # location   Galway, Ireland
 getArgs <- function (returnCharacter=TRUE, addArgs = NULL) {
-  arg <- as.list(match.call(def = sys.function( -1 ),
+  arg <- as.list(match.call(definition = sys.function( -1 ),
            call = sys.call(-1),
            expand.dots = TRUE )
            )

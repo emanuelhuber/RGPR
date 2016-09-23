@@ -665,7 +665,7 @@ as.GPR.list <- function (x, ...){
     if(is.null(x$dz)){
       x$dz <- mean(diff(x$depth))
     }
-    myArg <- as.list(match.call(def = sys.function(-2),
+    myArg <- as.list(match.call(definition = sys.function(-2),
            call = sys.call(-2),
            expand.dots = FALSE )
            )
@@ -1124,13 +1124,13 @@ setMethod("ann", "GPR", function(x){
 setReplaceMethod(
   f="ann",
   signature="GPR",
-  definition=function(x,values){
-    vals <- values
-    if(!is.matrix(values)){
-      vals <- matrix(values,nrow=1,ncol=length(values))
+  definition=function(x,value){
+    vals <- value
+    if(!is.matrix(value)){
+      vals <- matrix(value,nrow=1,ncol=length(value))
     }
-    traces <- (values[,1])
-    annnames <- as.character(values[,2])
+    traces <- (value[,1])
+    annnames <- as.character(value[,2])
     valuesList <- (tapply(annnames, traces, identity))
     test <- unlist(lapply(valuesList,paste,sep="",collapse="#"))
     x@ann <- character(length(x))
@@ -1164,10 +1164,10 @@ setMethod("coord", "GPR", function(x, i, ...){
 setReplaceMethod(
   f="coord",
   signature="GPR",
-  definition=function(x,values){
-    values <- as.matrix(values)
-    if(ncol(x@data) == nrow(values) && ncol(values)==3){
-      x@coord <- values
+  definition=function(x,value){
+    value <- as.matrix(value)
+    if(ncol(x@data) == nrow(value) && ncol(value)==3){
+      x@coord <- value
       x@proc <- c(x@proc, "coord<-")
     }else{
       stop("Dimension problem!!")
@@ -1215,8 +1215,8 @@ setMethod("vel", "GPR", function(x){
 setReplaceMethod(
   f="vel",
   signature="GPR",
-  definition=function(x,values){
-    x@vel <- values
+  definition=function(x, value){
+    x@vel <- value
     x@proc <- c(x@proc, "vel<-")
     return(x)
   }
@@ -1268,9 +1268,9 @@ setReplaceMethod(
 setReplaceMethod(
   f="fid",
   signature="GPR",
-  definition=function(x,values){
-    values <- as.character(values)
-    x@fid <- values
+  definition=function(x,value){
+    value <- as.character(value)
+    x@fid <- value
     x@proc <- c(x@proc, "fid<-")
     return(x)
   }
@@ -1353,9 +1353,9 @@ setMethod("processing", "GPR", function(x){
 setReplaceMethod(
   f="proc",
   signature="GPR",
-  definition=function(x,values){
-    values <- as.character(values)
-    x@proc <- c(x@proc, values)
+  definition=function(x,value){
+    value <- as.character(value)
+    x@proc <- c(x@proc, value)
     return(x)
   }
 )
@@ -2094,7 +2094,7 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("none",
 #' Time zero correction
 #'
 #' \code{time0Cor} shift the traces vertically such that they start at
-#' time zero (time zero of the data can be modified with the function
+#' time zero (time zero of the data can be modified with the function)
 #'
 #' When \code{keep = NULL} the amount of time kept is equal to
 #' time taken by the air wave to travel from the transmitter to the
@@ -2107,7 +2107,7 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("none",
 #' @param crop If TRUE (defaults), remove the rows containing only zero's 
 #'              (no data).
 #' @param c0 Propagation speed of the GPR wave through air (used only when
-#'           \code{keep = NULL}.
+#'           \code{keep = NULL}).
 #' @return An object of the class GPR.
 #' @seealso \code{\link{time0}} to set time zero and \code{\link{firstBreak}} 
 #'          to estimate the first wave break.
@@ -2882,21 +2882,21 @@ name=NULL,type=c("raster","wiggles"),addTopo=FALSE,...){
 #' @name rmDelineations<-
 #' @rdname delineation
 #' @export
-setReplaceMethod("rmDelineations", "GPR", function(x,values=NULL){
+setReplaceMethod("rmDelineations", "GPR", function(x,value=NULL){
     deli <- x@delineations
     n_d <- length(deli)
-    if(!is.null(values) && n_d >0 && values!="all"){
+    if(!is.null(value) && n_d >0 && value!="all"){
       n_tot <- sum(sapply(deli, .lengthList))
       it <- 0
-      values <- n_tot - values + 1
+      value <- n_tot - value + 1
       for(i in n_d:1){
         if(typeof(deli[[i]])=="list"){
           n_sub_d <- length(deli[[i]])
           for(j in n_sub_d:1){
             it <- it + 1
             # itdel <- 0
-            if(it %in% values){
-            # if(values==it){
+            if(it %in% value){
+            # if(value==it){
               # x@delineations[[i]][[j]] <- NULL
               # j <- j - itdel
               # cat("---- j=", j,"  ,   j-itdel=",j- itdel,"\n")
@@ -2913,8 +2913,8 @@ setReplaceMethod("rmDelineations", "GPR", function(x,values=NULL){
           }
         }else{
           it <- it + 1
-          if(it %in% values){
-          # if(values==it){
+          if(it %in% value){
+          # if(value==it){
             x@delineations[i] <- NULL
             # i <- i-1
             # break
@@ -2924,9 +2924,9 @@ setReplaceMethod("rmDelineations", "GPR", function(x,values=NULL){
       }
     }else if(n_d <1){
       warning("No delineation to delete\n")
-    }else if(is.null(values)){
+    }else if(is.null(value)){
       stop("You must specified the no of the delineation you want to delete!\n")
-    }else if(values=="all"){
+    }else if(value=="all"){
       x@delineations <- list()
     }
     return(x)

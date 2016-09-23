@@ -6,7 +6,7 @@
 \alias{proc<-}
 \title{Add a processing step}
 \usage{
-\S4method{proc}{GPR}(x, values) <- value
+\S4method{proc}{GPR}(x) <- value
 }
 \description{
 Add a processing step

@@ -36,6 +36,7 @@ time taken by the air wave to travel from the transmitter to the
 receiver.
 }
 \seealso{
-\code{\link{time0}} to estimate the first wave break.
+\code{\link{time0}} to set time zero and \code{\link{firstBreak}} to 
+         estimate the first wave break.
 }
 

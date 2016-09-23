@@ -51,7 +51,7 @@ Compute the first wave break.
 }
 }
 \seealso{
-\code{\link{time0}} to estimate the first wave break and 
+\code{\link{time0}} to set time0 and 
          \code{\link{time0Cor}} to shift the traces such that they start
          at time zero.
 }

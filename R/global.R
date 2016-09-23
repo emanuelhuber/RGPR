@@ -1755,6 +1755,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   fb <- apply(meantstall2, 2, function(x) which.max(abs(diff(x))))
   return(fb)
 }
+
 .firstBreakModCoppens <- function(x, w = 11, ns = NULL, bet = 0.2){
   if(is.null(ns)){
     ns <- 1.5 * w

@@ -1439,7 +1439,7 @@ setMethod("firstBreak", "GPR", function(x, method = c("coppens", "coppens2",
         bet <- 0.2 * max(xs)
       }
       fb <- apply(xs, 2, .firstBreakModCoppens, w = w, ns = ns, bet = bet)
-      fb <- x@depth(fb) # fb * x@dz
+      fb <- x@depth[fb] # fb * x@dz
     }else if(method == "coppens2"){
       w <- round(w / x@dz)
       if( (w %% 2) == 0){
@@ -1456,7 +1456,7 @@ setMethod("firstBreak", "GPR", function(x, method = c("coppens", "coppens2",
         bet <- 0.2 * max(xs)
       }
       fb <- .firstBreakModCoppens2(xs, w = w, ns = ns, bet = bet)
-      fb <- x@depth(fb) # fb * x@dz
+      fb <- x@depth[fb] # fb * x@dz
     }else if(method == "threshold"){
       thres <- thr * max(x)
       fb <- apply(abs(x@data), 2, .firstBreakThres, thr = thres, x@depth)

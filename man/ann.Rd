@@ -8,7 +8,7 @@
 \usage{
 \S4method{ann}{GPR}(x)
 
-\S4method{ann}{GPR}(x, values) <- value
+\S4method{ann}{GPR}(x) <- value
 }
 \description{
 Annotations of the GPR data

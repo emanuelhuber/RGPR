@@ -1,5 +1,17 @@
 
 
+# importFrom("grDevices", "dev.list", "dev.off", "rainbow", "rgb")
+#   importFrom("graphics", "abline", "arrows", "axis", "box", "grid",
+#              "identify", "image", "legend", "lines", "locator", "mtext",
+#              "par", "plot", "points", "polygon", "rect", "segments",
+#              "text", "title")
+#   importFrom("methods", "as", "is", "new", "selectMethod", "setGeneric",
+#              "slot", "slot<-", "slotNames")
+#   importFrom("stats", "acf", "quantile", "sd", "toeplitz")
+#   importFrom("utils", "head", "read.table", "tail", "write.table")
+
+
+
 
 # check lockBinding  (bibliotheque/documents/R/manuel-S4)
 
@@ -15,7 +27,10 @@
 #     points(...)
 # }
 
-
+#' @export
+firstBreack <- function(...){
+  stop("USE FUNCTION 'firstBreak()' INSTEAD!\n")
+}
 
 # read/write SEGy
 
@@ -77,6 +92,7 @@
 # NEW CLASS:    "GPRGrid" > based on survey but for x- and y-lines
 #               2D plot: the lines start from the same position
 #               can cut slices etc.
+# NEW CLASS:    "GPRCube" > GPRGrid converted into a cube...
 
 
 ################## GPR PROCESSING ######################3
@@ -242,75 +258,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#' RGPR: A package for processing and visualising ground-penetrating data 
-#' radar (GPR) data.
-#'
-#' The RGPR package provides two classes GPR and GPRsurvey
-#' 
-#' @section Reading/writing/export functions:
-#' \itemize{
-#'   \item \code{readGPR()}: format DT1 (Sensors&Software), rds (R-format)
-#'   \item \code{writeGPR()}: format DT1 (Sensors&Software), rds (R-format)
-#'   \item \code{exportPDF()}
-#'   \item \code{exportDelineations()}
-#'   \item \code{exportFid()}: ASCII-file
-#'   \item \code{exportCoord()}: ASCII, SpatialLines or SpatialPoints
-#'   \item \code{exportProc()}: ASCII-file
-#' }
-#'
-#' @section Plot functions:
-#' \itemize{
-#'   \item \code{plot()}: raster or wiggles.
-#'   \item \code{plot3D()}:
-#'   \item \code{plotAmpl()}
-#'   \item \code{plotDelineations()}
-#' }
-#'
-#' @section Coercion:
-#' \itemize{
-#'   \item \code{as.matrix()}:
-#'   \item \code{as.numeric()}:
-#'   \item \code{as.list()}:
-#'   \item \code{as.SpatialPoints()}:
-#'   \item \code{as.SpatialLines()}:
-#' }
-#'
-#' @section Delineation:
-#' \itemize{
-#'   \item \code{delineate()}:
-#'   \item \code{plotDelineations()}:
-#'   \item \code{delineations()}: list of the delineations
-#'   \item \code{addDelineation}:
-#'   \item \code{rmDelineations}:
-#'   \item \code{exportDelineations}:
-#'   \item \code{plotDelineations3D}:
-#'   \item \code{identifyDelineation}:
-#' }
-#'
-#' @references Several books!
-#' @name RGPR
-#' @docType package
-
-
 # WARNING: type = c("wiggles", "raster") should be the second arguments!!!
 
 # Reflection mode, CMP mode 
@@ -447,7 +394,8 @@ trimStr <- function (x) gsub("^\\s+|\\s+$", "", x)
 palGPR <- function(colPal="default", n = 101, power = 1, returnNames = FALSE){
   colPal <- gsub("gray", "grey", x= colPal)
   tmp <- structure(list(
-    default = colorRampPalette(c("#1C007C", "#1B0086", "#1A0091", "#18009C",
+    default = grDevices::colorRampPalette(c("#1C007C", "#1B0086", "#1A0091", 
+                "#18009C",
                 "#1600A7", "#1400B2", "#1100C3", "#0E00CF", "#0A00E0",
                 "#0300F5", "#0001FF", "#080FFF", "#1521FF", "#2232FF",
                 "#2E42FF", "#3B52FF", "#4862FF", "#5470FF", "#617FFF",
@@ -494,7 +442,7 @@ palGPR <- function(colPal="default", n = 101, power = 1, returnNames = FALSE){
               l = c(120, 10), power=power), 
     grey = colorspace::sequential_hcl(n, h = c(190, 1), c = 10, 
                           l = c(1, 110), power=power),
-    rainbow = colorRampPalette(rainbow(13),interpolate ="spline")(n),
+    rainbow = grDevices::colorRampPalette(rainbow(13),interpolate ="spline")(n),
     rainbow_hcl = colorspace::rainbow_hcl(n,c=100,l=60)
   ))
   if(returnNames){
@@ -661,6 +609,7 @@ wapply <- function(x=NULL, width = NULL, by = NULL, FUN = NULL, ...){
 # }
 
 # based on wapply and modified by Manu
+# centered moving window
 # return a matrix of the same dimension than x
 # some border effect at a distance < width/2 at the first and last col/row
 wapplyMat <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, 
@@ -674,6 +623,30 @@ wapplyMat <- function(x = NULL, width = NULL, by = NULL, FUN = NULL,
                   xnew <- x:(x + width - 1)
                   xnew <- xnew[xnew > 0]
                   xnew <- xnew[xnew <= lenX]})
+  if(MARGIN == 1){
+    OUT <- lapply(SEQ2, function(a) apply(x[, a, drop = FALSE], MARGIN, FUN))
+  }else if( MARGIN == 2) {
+    OUT <- lapply(SEQ2, function(a) apply(x[a,, drop = FALSE], MARGIN, FUN))
+  }
+  OUT <- base::simplify2array(OUT, higher = TRUE)
+  if(MARGIN == 2){
+    return(t(OUT))
+  }else{
+    return(OUT)
+  }
+}
+
+
+# based on wapply and modified by Manu
+# not centered moving window!
+# return a matrix of with smaller dimension than x (margin - 2*width)
+wapplyMat2 <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, 
+                      MARGIN = 1, ...){
+  FUN <- match.fun(FUN)
+  if (is.null(by)) by <- width
+  lenX <- ifelse(MARGIN == 1, ncol(x), nrow(x))
+  SEQ1 <- seq(1, lenX - width + 1, by = by)
+  SEQ2 <- lapply(SEQ1, function(x) x:(x + width - 1))
   if(MARGIN == 1){
     OUT <- lapply(SEQ2, function(a) apply(x[, a, drop = FALSE], MARGIN, FUN))
   }else if( MARGIN == 2) {
@@ -741,7 +714,7 @@ setGenericVerif("filepath", function(x) standardGeneric("filepath"))
 setGenericVerif("filepath<-", function(x, value) standardGeneric("filepath<-"))
 
 setGenericVerif("coords", function(x,i) standardGeneric("coords"))
-setGenericVerif("coords<-",function(x,values){standardGeneric("coords<-")})
+setGenericVerif("coords<-",function(x,value){standardGeneric("coords<-")})
 
 #' @name coord
 #' @rdname coord
@@ -751,7 +724,7 @@ setGenericVerif("coord", function(x, i, ...) standardGeneric("coord"))
 #' @name coord<-
 #' @rdname coord
 #' @export
-setGenericVerif("coord<-",function(x,values){standardGeneric("coord<-")})
+setGenericVerif("coord<-",function(x,value){standardGeneric("coord<-")})
 
 #' @name vel
 #' @rdname vel
@@ -761,7 +734,7 @@ setGenericVerif("vel", function(x) standardGeneric("vel"))
 #' @name vel<-
 #' @rdname vel
 #' @export
-setGenericVerif("vel<-",function(x,values){standardGeneric("vel<-")})
+setGenericVerif("vel<-",function(x,value){standardGeneric("vel<-")})
 
 #' @name ann
 #' @rdname ann
@@ -771,7 +744,7 @@ setGenericVerif("ann", function(x) standardGeneric("ann"))
 #' @name ann<-
 #' @rdname ann
 #' @export
-setGenericVerif("ann<-",function(x,values){standardGeneric("ann<-")})
+setGenericVerif("ann<-",function(x,value){standardGeneric("ann<-")})
 
 #' @name name
 #' @rdname name
@@ -811,7 +784,7 @@ setGenericVerif("fid", function(x) standardGeneric("fid"))
 #' @name fid<-
 #' @rdname fid
 #' @export
-setGenericVerif("fid<-",function(x,values){standardGeneric("fid<-")})
+setGenericVerif("fid<-",function(x,value){standardGeneric("fid<-")})
 
 #' @name values
 #' @rdname values
@@ -831,7 +804,7 @@ setGenericVerif("processing", function(x) standardGeneric("processing"))
 #' @name proc<-
 #' @rdname proc
 #' @export
-setGenericVerif("proc<-",function(x,values){standardGeneric("proc<-")})
+setGenericVerif("proc<-",function(x,value){standardGeneric("proc<-")})
 
 #' @name description
 #' @rdname description
@@ -927,9 +900,9 @@ setGenericVerif("gain", function(x, type=c("power", "exp", "agc"),
                   ...) standardGeneric("gain"))
 setGenericVerif("dcshift", function(x, u=1:10, FUN=mean) 
                 standardGeneric("dcshift"))
-setGenericVerif("firstBreack", function(x, method = c("coppens", "threshold"), 
-                thr = 0.12, w = 11, ns = NULL, bet=NULL) 
-                standardGeneric("firstBreack"))
+setGenericVerif("firstBreak", function(x, method = c("coppens", "coppens2",
+  "threshold",  "MER"), thr = 0.12, w = 11, ns = NULL, bet = NULL)
+                standardGeneric("firstBreak"))
 
 setGenericVerif("clip", function(x, Amax=NULL,Amin=NULL) 
                 standardGeneric("clip"))
@@ -951,7 +924,12 @@ setGenericVerif("traceShift", function(x,  ts, method = c("none",
                 standardGeneric("traceShift"))
 setGenericVerif("traceAverage", function(x, w = NULL, FUN = mean, ...) 
                 standardGeneric("traceAverage"))
-       
+
+setGenericVerif("time0Cor",  function(x, method = c("none", "linear", 
+           "nearest", "pchip", "cubic", "spline"), keep = NULL, 
+           crop = TRUE, c0 = 0.299) 
+           standardGeneric("time0Cor"))
+
 setGenericVerif("deconv", function(x, method=c("spiking", "wavelet",
                 "min-phase", "mixed-phase"), ...) standardGeneric("deconv"))
 setGenericVerif("conv1D", function(x, w) standardGeneric("conv1D"))
@@ -990,7 +968,7 @@ setGenericVerif("delineate", function(x,name=NULL,type=c("raster","wiggles"),
 #' @name rmDelineations<-
 #' @rdname delineation
 #' @export
-setGenericVerif("rmDelineations<-", function(x,values=NULL) 
+setGenericVerif("rmDelineations<-", function(x,value=NULL) 
                   standardGeneric("rmDelineations<-"))
 #' @name delineations
 #' @rdname delineation
@@ -1040,16 +1018,16 @@ setGenericVerif("strTensor", function(x,  blksze = c(2, 4),
                   
                   
                   
-timeToDepth <- function(tt, time_0, v=0.1, antsep=1){
-  t0 <- time_0 - antsep/0.299
+timeToDepth <- function(tt, time_0, v=0.1, antsep=1, c0 = 0.299){
+  t0 <- time_0 - antsep/c0
   sqrt(v^2*(tt-t0)- antsep^2)/2
 }
-depthToTime <- function(z, time_0, v=0.1, antsep=1){
-  t0 <- time_0 - antsep/0.299
+depthToTime <- function(z, time_0, v=0.1, antsep=1, c0 = 0.299){
+  t0 <- time_0 - antsep/c0
   sqrt((4*z^2 + antsep^2)/(v^2)) + t0
 }
-depth0 <- function(time_0, v=0.1, antsep=1){
-  time_0 - antsep/0.299 + antsep/v
+depth0 <- function(time_0, v=0.1, antsep=1, c0 = 0.299){
+  time_0 - antsep/c0 + antsep/v
 }
 
 .plot3DRGL <- function(A,x,y,z,z0,col=palGPR(n=101),back="fill", 
@@ -1177,6 +1155,26 @@ depth0 <- function(time_0, v=0.1, antsep=1){
                                         method = "pchip",extrap = TRUE)  
   }
   return(xShifted)
+}
+
+.traceShift <- function(A, ts, tt, dz, method){
+  ps <- ts/dz
+  Anew <- matrix(NA, nrow=nrow(A), ncol=ncol(A))
+  v0 <- 1:nrow(A)
+  for(i in seq_len(ncol(A))){
+    relts <- floor(ps[i])*dz - ts[i]
+    if(method == "none"){
+      ynew <- A[,i]
+    }else{
+      ynew <- signal::interp1(tt, A[,i], tt + relts, 
+                              method = method, extrap = NA)
+    }
+    vs <- v0 + floor(ps[i])
+    test <- vs > 0 & vs <= nrow(A)
+    vs <- vs[test]
+    Anew[vs,i] <- ynew[test]
+  }
+  return(Anew)
 }
 
 # x = data matrix (col = traces)
@@ -1641,8 +1639,22 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   }
 }
 
+# Modified Energy ratio method
+.firstBreakMER <- function(x, w){
+  E <- wapplyMat2(x, width = w, by = 1, FUN = function(x) sum(x^2), 
+                  MARGIN = 2)
+  v1 <- 1:(nrow(x) - 2*(w-1))
+  v2 <- v1 + (w-1)
+  E1 <- E[v1,]
+  E2 <- E[v2,]
+  ER <- E2/E1
+  MER <- (ER * abs( x[v1 + w-1,]) )^3
+  fb <- apply(MER, 2, function(x) which.max(x)) + (w-1)
+  return(fb)
+}
+
 # Threshold method for first breack picking
-.firstBreackThres <- function(x, thr = 0.12, tt){
+.firstBreakThres <- function(x, thr = 0.12, tt){
 #   first_breacks <- rep(NA, ncol(x))
 #   thres <- thr * max(x)
 #   for(j in seq_len(ncol(x))){
@@ -1667,7 +1679,29 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 # between one and two signal periods
 #        -> default values ns= 1.5*w
 # bet = stabilisation constant, not critical, set to 0.2*max(amplitude) 
-.firstBreackModCoppens <- function(x, w = 11, ns = NULL, bet = 0.2){
+.firstBreakModCoppens2 <- function(x, w = 11, ns = NULL, bet = 0.2){
+  if(is.null(ns)){
+    ns <- 1.5 * w
+  }
+  E1all <- matrix(0, nrow=nrow(x), ncol= ncol(x))
+  E1all[1:(nrow(E1all) - w +1),] <- wapplyMat2(x, width = w, by = 1, 
+                                              FUN = sum, MARGIN=2)
+  E2all <- apply(x, 2, cumsum)
+  Erall <- E1all/(E2all + bet)
+
+  xmeanall <- wapplyMat(Erall, width = ns, by = 1, FUN = mean, MARGIN=2)
+  xsdall <- wapplyMat(Erall, width = ns, by = 1, FUN = sd, MARGIN=2)
+  xtestall <- wapplyMat2(xsdall, width = ns, by = 1, FUN = which.min, MARGIN=2)
+  xtestall <- xtestall + seq_len(nrow(xtestall))
+  meantstall <- matrix(xmeanall[xtestall],nrow=nrow(xtestall), 
+                    ncol=ncol(xmeanall), byrow=FALSE)
+  meantstall2 <- matrix(0, nrow=nrow(x), ncol= ncol(x))
+  meantstall2[seq_len(nrow(meantstall)) + (ns-1)/2,] <- meantstall
+  fb <- apply(meantstall2, 2, function(x) which.max(abs(diff(x))))
+  return(fb)
+}
+
+.firstBreakModCoppens <- function(x, w = 11, ns = NULL, bet = 0.2){
   if(is.null(ns)){
     ns <- 1.5 * w
   }
@@ -1675,23 +1709,23 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   E2 <- cumsum(x)
   Er <- E1/(E2 + bet)
   Er_fil <- .eps(Er, ns = ns)
-  first_break <- which.max(abs(diff(Er_fil)))
-  return(first_break)
+  fb <- which.max(abs(diff(Er_fil)))
+  return(fb)
 }
 
 # edge preserving smoothing
 # luo et al. (2002): Edge preserving smoothing and applications: 
 # The Leading edge, 21: 136-158
-.eps <- function(x,ns){
-  xmean <-  c(rep(0,floor(ns/2)), 
-              wapply(x,width=ns,by=1, FUN=mean),
-              rep(0,floor(ns/2)))
-  xsd <- c(rep(0,floor(ns/2)), 
-           wapply(x,width=ns,by=1,FUN=sd),
-           rep(0,floor(ns/2)))
-  xtest <- wapply(xsd,width=ns,by=1,FUN=which.min) + 
+.eps <- function(x, ns){
+  xmean <-  c(rep(0, floor(ns/2)), 
+              wapply(x, width = ns, by = 1, FUN = mean),
+              rep(0, floor(ns/2)))
+  xsd <- c(rep(0, floor(ns/2)), 
+           wapply(x, width = ns, by = 1, FUN = sd),
+           rep(0, floor(ns/2)))
+  xtest <- wapply(xsd, width = ns, by = 1, FUN = which.min) + 
             (0):(length(xmean)- 2*floor(ns/2)-1)
-  return(c(rep(0,floor(ns/2)), xmean[xtest],rep(0,floor(ns/2))))
+  return(c(rep(0, floor(ns/2)), xmean[xtest], rep(0, floor(ns/2))))
 }
 
 #==============================#
@@ -1881,7 +1915,7 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
   # if y <- fft(z), then z is 
   # fft(y, inverse = TRUE) / length(y).
   # each column = discrete Fourier transform. 
-  fft_A <- mvfft(A)
+  fft_A <- stats::mvfft(A)
   # extract the power spectrum (sometimes referred to as "magnitude")
   pow <- as.matrix(Mod(fft_A))
   pow <- pow[1:nfreq,,drop=FALSE]   # select only first half
@@ -2007,8 +2041,8 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
   h_long = c( h, rep(0, Nfft - L) )
   A = rbind(as.matrix(A) , matrix(0,nrow=Nfft-nr,ncol=ncol(A)) )
 
-  fft_A = mvfft(A)    # signal
-  fft_h = fft(h_long)        # filter
+  fft_A = stats::mvfft(A)    # signal
+  fft_h = stats::fft(h_long)        # filter
 
   # Now we perform cyclic convolution in the time domain using 
   # pointwise multiplication in the frequency domain:
@@ -2052,7 +2086,7 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
      par(op)
   }
   a = (L-1)/2
-  y = mvfft(Y, inverse = TRUE)
+  y = stats::mvfft(Y, inverse = TRUE)
   y = y[a:(a+nr-1),]/nrow(y)
   return(Re(y))
 }
@@ -2100,12 +2134,12 @@ nextpower2 <- function(x){
 #' @export
 phaseRotation <- function(x,phi){
   nf <- length(x)
-  X <- fft(x)
+  X <- stats::fft(x)
   phi2 <- numeric(nf)
   phi2[2:(nf/2)] <- phi
   phi2[(nf/2+1):(nf)] <- -phi
   Phase <- exp(-complex(imaginary=-1)*phi2)
-  xcor <- fft(X*Phase, inverse=TRUE)/nf
+  xcor <- stats::fft(X*Phase, inverse=TRUE)/nf
   return(Re(xcor))
 }
 
@@ -2250,7 +2284,7 @@ byte2volt <- function ( V=c(-50,50), nBytes = 16) {
     nf <- (nextpower2(nr))
     A1 <- matrix(0,nrow=nf,ncol=nk)
     A1[1:nr,1:nc] <- A
-    A1_fft <- fft(A1)
+    A1_fft <- stats::fft(A1)
     
     A_fftint <- matrix(0,nrow=n[1]*nf,ncol=n[2]*nk)
     A_fftint[1:(nf/2),1:(nk/2)] <- A1_fft[1:(nf/2),1:(nk/2)]
@@ -2264,7 +2298,7 @@ byte2volt <- function ( V=c(-50,50), nBytes = 16) {
               1:(nk/2)] <- 
           A1_fft[(nf/2+1):(nf),1:(nk/2)]
     
-    A_int = fft(A_fftint, inverse = TRUE)
+    A_int <- stats::fft(A_fftint, inverse = TRUE)
     A_int <- A_int[1:(n[1]*nr),1:(n[2]*nc)]/(nk*nf)
   }else if(is.vector(A)){
     # FTA = fft(A);
@@ -2275,13 +2309,13 @@ byte2volt <- function ( V=c(-50,50), nBytes = 16) {
     A0 = c( A, rep(0,Nfft-n_A) )
     n_A0 <- length(A0)
     
-    FTA <- fft(A0)
+    FTA <- stats::fft(A0)
     
     # % now insert enough zeros into the dft to match the desired density 'n'
     FTA = c(FTA[1:(n_A0/2)], rep.int(0,floor((n[1]-1)*n_A0)), 
                                     FTA[(n_A0/2+1):n_A0])
 
-    A_int = fft(FTA, inverse = TRUE)
+    A_int = stats::fft(FTA, inverse = TRUE)
     A_int <- A_int[1:(n_A * (n[1]))]/n_A0
   }
   return(Re(A_int))
@@ -2881,7 +2915,7 @@ convolution2D <- function(A,k){
   # h0[(nk-1) + 1:nh, (mk-1) + 1:mh] <- A
 #   A0[1:nA,  1:mA] <- A
   k0[1:nk, 1:mk] <- k
-  g <- Re(fft(fft(k0)*fft(A0),inverse=TRUE))/(nL * mL)
+  g <- Re(stats::fft(stats::fft(k0)*stats::fft(A0),inverse=TRUE))/(nL * mL)
   g2 <- g[nk + nk/2  + (1:nA), mk +mk/2 + (1:mA)]
   # g2 <- g[nk + 1:nh, mk + 1:mh]
   return(g2)
@@ -2988,7 +3022,8 @@ convolution <- function(A,k){
   k0 <- matrix(0, nrow = nrow(Apad), ncol= ncol(Apad))
   k0[1:nk, ] <- k
 #   B0 <- rbind(B0, B, B0)
-  Y <- Re(mvfft(mvfft(Apad) * mvfft(k0), inverse=TRUE))/nrow(Apad)
+  Y <- Re(stats::mvfft(stats::mvfft(Apad) * stats::mvfft(k0), 
+          inverse=TRUE))/nrow(Apad)
   return(Y[1:nA + nk + nk/2 + 1, ])
 }
 
@@ -3024,9 +3059,9 @@ deconvolve <- function(y,h,mu=0.0001){
   ny <- length(y)
   nh <- length(h)
   L  <- ny + ny - 1
-  H  <- fft(c(h,rep(0,ny-1)))
-  Y  <- fft(c(y, rep(0,nh-1)))
-  Re(fft( t(Conj(H))*Y/(t(Conj(H))*H + mu) ,inverse=TRUE))[1:ny]/L
+  H  <- stats::fft(c(h,rep(0,ny-1)))
+  Y  <- stats::fft(c(y, rep(0,nh-1)))
+  Re(stats::fft( t(Conj(H))*Y/(t(Conj(H))*H + mu) ,inverse=TRUE))[1:ny]/L
   # Re(fft( Y/(H + mu) ,inverse=TRUE))[1:ny]/L
 }
 
@@ -3160,7 +3195,7 @@ inPoly <- function(x, y, vertx, verty){
   # function to center the spectrum!! (no need of fttshift!)
   #centres spectrum: Gonzalez & Wintz (1977) Digital Image Processing p.53
   A1  <- A1 * (-1)^(row(A1) + col(A1))
-  A1_fft <- fft(A1)
+  A1_fft <- stats::fft(A1)
   A1_fft_pow <- Mod(A1_fft)
   A1_fft_phase <- Arg(A1_fft)
   # plotGPR((A1_fft_phase[1:(nf/2),])^0.05)
@@ -3214,7 +3249,7 @@ inPoly <- function(x, y, vertx, verty){
   # function to center the spectrum!! (no need of fttshift!)
   #centres spectrum: Gonzalez & Wintz (1977) Digital Image Processing p.53
   # A1  <- A1 * (-1)^(row(A1) + col(A1))
-  A1_fft <- fft(A1)
+  A1_fft <- stats::fft(A1)
   
   # plotGPR(Mod(A1_fft)^0.05)
   # plotGPR(Re(fft(A1_fft,inv=TRUE))[1:nr,1:nc])
@@ -3238,7 +3273,7 @@ inPoly <- function(x, y, vertx, verty){
     ham2Dlong <- matrix(0,nrow=nf,ncol=nk)
     ham2Dlong[1:L[1],1:L[2]] <- ham2D
     # plotGPR(ham2Dlong)
-    FF <-  Re(fft(fft(myFlong) * fft(ham2Dlong),inv=TRUE))
+    FF <-  Re(stats::fft(stats::fft(myFlong) * stats::fft(ham2Dlong),inv=TRUE))
   }else{
     FF <- myFlong
   }
@@ -3246,7 +3281,7 @@ inPoly <- function(x, y, vertx, verty){
   
   # plotGPR(Re(fft(fft(myFlong) * fft(ham2Dlong),inv=TRUE))[1:nr,1:nc])
   
-  A_back <- Re(fft(A1_fft * FF,inv=TRUE))[1:nr,1:nc]
+  A_back <- Re(stats::fft(A1_fft * FF,inv=TRUE))[1:nr,1:nc]
   # plotGPR(A_back)
   # plotGPR(A_back)
   # scaling
@@ -3413,7 +3448,7 @@ nbPt     <- as.integer(as.character(headerHD[which(headerHD[,1]=="NUMBER OF PTS/
 # website   twitter.com/RyanGrannell
 # location   Galway, Ireland
 getArgs <- function (returnCharacter=TRUE, addArgs = NULL) {
-  arg <- as.list(match.call(def = sys.function( -1 ),
+  arg <- as.list(match.call(definition = sys.function( -1 ),
            call = sys.call(-1),
            expand.dots = TRUE )
            )
@@ -3421,10 +3456,10 @@ getArgs <- function (returnCharacter=TRUE, addArgs = NULL) {
   if(returnCharacter){
     if(narg >=3){
       eval_arg <- sapply(arg[3:narg],eval)
-      argChar <- paste0(arg[[1]],"@", paste(names(arg[3:narg]),
+      argChar <- paste0(arg[[1]],"//", paste(names(arg[3:narg]),
           sapply(eval_arg,pasteArgs,arg[3:narg]),sep="=",collapse="+"))
     }else{
-      argChar <- paste0(arg[[1]],"@")
+      argChar <- paste0(arg[[1]],"//")
     }
     if(!is.null(addArgs)){
       argChar <- addArg(argChar, addArgs)
@@ -3452,7 +3487,7 @@ addArg <- function(proc, arg){
 # collapse="+")
   proc_add <- paste(names(arg), sapply(arg,pasteArgs, arg),
                   sep = "=", collapse = "+")
-  if(substr(proc,nchar(proc),nchar(proc)) == "@"){
+  if(substr(proc,nchar(proc),nchar(proc)) == "//"){
     proc <- paste(proc, proc_add, sep = "")
   }else{
     proc <- paste(proc, "+", proc_add, sep = "")

@@ -18,7 +18,7 @@
 \S4method{addDelineation}{GPR}(x, itp, name = NULL, type = c("raster",
   "wiggles"), addTopo = FALSE, ...)
 
-\S4method{rmDelineations}{GPR}(x, values = NULL) <- value
+\S4method{rmDelineations}{GPR}(x) <- value
 
 \S4method{delineations}{GPR}(x, sel = NULL, ...)
 

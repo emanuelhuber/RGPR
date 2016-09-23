@@ -8,7 +8,7 @@
 \usage{
 \S4method{coord}{GPR}(x, i, ...)
 
-\S4method{coord}{GPR}(x, values) <- value
+\S4method{coord}{GPR}(x) <- value
 }
 \description{
 Coordinates of the GPR data

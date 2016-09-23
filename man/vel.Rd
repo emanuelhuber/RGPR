@@ -8,7 +8,7 @@
 \usage{
 \S4method{vel}{GPR}(x)
 
-\S4method{vel}{GPR}(x, values) <- value
+\S4method{vel}{GPR}(x) <- value
 }
 \description{
 Velocity model of the GPR data

@@ -6,27 +6,8 @@
 \title{Direct-current removal}
 \usage{
 \S4method{dcshift}{GPR}(x, u = 1:10, FUN = mean)
-
-\S4method{firstBreack}{GPR}(x, method = c("coppens", "threshold"),
-  thr = 0.12, w = 11, ns = NULL, bet = NULL)
 }
 \description{
 Direct-current removal
-
-Compute the first wave break
-}
-\details{
-Jaun I. Sabbione and Danilo Velis (2010). Automatic first-breaks picking: 
-New strategies and algorithms. Geophysics, 75 (4): v67-v76
--> modified Coppens's Method
-nl = length leading window: about one period of the firs-arrival waveform
-ns = length eps (edge preserving smoothing) window: good results with ns 
-between one and two signal periods
-       -> default values ns= 1.5*nl
-bet = stabilisation constant, not critical, set to 0.2*max(amplitude)
-}
-\seealso{
-\code{\link{time0}} to estimate the first wave break and 
-         \code{\link{traceShift}} to shift the traces
 }
 

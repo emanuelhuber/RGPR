@@ -26,6 +26,6 @@ data(frenkeLine00)
 time0(frenkeLine00)
 }
 \seealso{
-\code{\link{firstBreack}} to estimate the first wave break.
+\code{\link{firstBreak}} to estimate the first wave break.
 }
 

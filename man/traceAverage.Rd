@@ -34,16 +34,16 @@ data("frenkeLine00")
 
 f0 <- frenkeLine00
 
-f1 <- trAverage(f0)
+f1 <- traceAverage(f0)
 plot(f1)
 # substract the average trace
 plot(f0 - f1)
 
-f2 <- trAverage(f0, w = 20)
+f2 <- traceAverage(f0, w = 20)
 plot(f2)
 plot(f0 - f2)
 
-f3 <- trAverage(f0, w = 20, FUN = median)
+f3 <- traceAverage(f0, w = 20, FUN = median)
 plot(f3)
 plot(f0 - f3)
 }

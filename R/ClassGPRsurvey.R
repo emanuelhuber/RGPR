@@ -532,22 +532,22 @@ setMethod(
 setReplaceMethod(
 	f="coords",
 	signature="GPRsurvey",
-	definition=function(x,values){
-		if(!is.list(values)){
-			stop("values should be a list!!\n")
+	definition=function(x,value){
+		if(!is.list(value)){
+			stop("value should be a list!!\n")
 		}
-		if(length(values)!=length(x)){
+		if(length(value)!=length(x)){
 			stop("number of elements not equal to the number of gpr files!!\n")
 		}
 		for(i in seq_along(x)){
-			if(is.null(colnames(values[[i]]))){
-				x@coords[[x@names[i]]] <- values[[i]]
-			}else if(all(toupper(colnames(values[[i]])) %in% c("E","N","Z"))){
-				x@coords[[x@names[i]]] <- values[[i]][c("E","N","Z")]
+			if(is.null(colnames(value[[i]]))){
+				x@coords[[x@names[i]]] <- value[[i]]
+			}else if(all(toupper(colnames(value[[i]])) %in% c("E","N","Z"))){
+				x@coords[[x@names[i]]] <- value[[i]][c("E","N","Z")]
 			}else{
-				x@coords[[x@names[i]]] <- values[[i]]
+				x@coords[[x@names[i]]] <- value[[i]]
 			}
-			x@lengths[i] <- posLine(values[[i]][,1:2],last=TRUE)
+			x@lengths[i] <- posLine(value[[i]][,1:2],last=TRUE)
 		}
 		# in coordref, the intersection is computed by 
 		#		"x <- surveyIntersect(x)"
@@ -722,6 +722,6 @@ setMethod("exportCoord", "GPRsurvey",
 #' @export
 setMethod("exportDelineations", "GPRsurvey", function(x, dirpath=""){
 	for(i in seq_along(x)){
-		exportDelineations(getGPR(x,id=i),path=path)
+		exportDelineations(getGPR(x, id = i), dirpath = dirpath)
 	}
 })

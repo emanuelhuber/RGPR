@@ -11,20 +11,21 @@ Authors@R: c(
 Description: S4 classes and R functions to read, write, analyse and visualise
     ground-penetrating radar (GPR) data.
 Depends:
+	base,
     methods,
-    graphics
+    graphics,
+	stats
 License: MIT License
 URL: http://stanford.edu/~ehuber/RGPR.html
 BugReports: https://github.com/emanuelhuber/RGPR/issues
 LazyData: true
 Collate:
+	'RGPR.R'
 	'global.R'    
 	'ClassGPR.R'
     'ClassGPRsurvey.R'
     'data.R'
 Imports:
-    methods,
-    graphics,
     sp,
     rgdal,
     rgeos,

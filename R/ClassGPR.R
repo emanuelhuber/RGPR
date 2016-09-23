@@ -465,7 +465,7 @@ setMethod("readGPR", "character", function(fPath, desc = "",
       if("DT1" == toupper(ext)){
         name <- .fNameWExt(fPath)
         A <- readDT1(fPath)
-        x <- .gpr(A,name=name,fPath=fPath,desc=desc)
+        x <- .gpr(A,name=name,fPath=fPath,description=desc)
         if(!is.null(coordfile)){
           cat("coordinates added\n")
           xyzCoord <- as.matrix(read.table(coordfile,sep=",",head=TRUE))
@@ -785,13 +785,19 @@ setMethod(
 
 #' Basic mathematical functions
 #'
-#' 
+#' Methods for the base Math methods \link[methods]{S4groupGeneric}
 #' @param x An object of the class RGPR.
+#' @details Currently implemented methods include:
+#' \itemize{
+#'  \item{"abs", "sign", "sqrt", "ceiling", "floor", "trunc",
+#'        "exp", "expm1", "log", "log10", "log2", "log1p", "cos",
+#'        "cosh", "sin", "sinh", "tan", "tanh"}
+#'  }
 #' @examples
 #' data(frenkeLine00)
 #' A <- exp(frenkeLine00)
-#' @name Math
-#' @rdname Math
+#' @rdname Math-methods
+#' @aliases Math-GPR-method
 #' @export
 # getGroupMembers("Math")
 setMethod(
@@ -921,7 +927,7 @@ setMethod(
 #' A <- exp(frenkeLine00)
 #' B <- A + frenkeLine00
 #' @name Arith
-#' @rdname Arith
+#' @rdname Arith-methods
 #' @export
 setMethod(
   f= "Arith",
@@ -929,7 +935,7 @@ setMethod(
   definition=.GPR.arith
 )
 #' @name Arith
-#' @rdname Arith
+#' @rdname Arith-methods
 #' @export
 setMethod(
   f= "Arith",
@@ -937,7 +943,7 @@ setMethod(
   definition=.GPR.arith
 )
 #' @name Arith
-#' @rdname Arith
+#' @rdname Arith-methods
 #' @export
 setMethod(
   f= "Arith",
@@ -1724,16 +1730,16 @@ setMethod("traceScaling", "GPR", function(x,
 #' 
 #' f0 <- frenkeLine00
 #' 
-#' f1 <- trAverage(f0)
+#' f1 <- traceAverage(f0)
 #' plot(f1)
 #' # substract the average trace
 #' plot(f0 - f1)
 #' 
-#' f2 <- trAverage(f0, w = 20)
+#' f2 <- traceAverage(f0, w = 20)
 #' plot(f2)
 #' plot(f0 - f2)
 #' 
-#' f3 <- trAverage(f0, w = 20, FUN = median)
+#' f3 <- traceAverage(f0, w = 20, FUN = median)
 #' plot(f3)
 #' plot(f0 - f3)
 #' @name traceAverage
@@ -2192,6 +2198,7 @@ print.GPR <- function(x, ...){
 #'
 #' Identical to print().
 #' @name show
+#' @aliases show-method
 #' @rdname show
 #' @export
 setMethod("show", "GPR", function(object){print.GPR(object)})   

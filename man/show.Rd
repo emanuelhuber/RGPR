@@ -6,6 +6,7 @@
 \alias{print.GPR}
 \alias{print.GPRsurvey}
 \alias{show}
+\alias{show-method}
 \title{Print GPR}
 \usage{
 \method{print}{GPR}(x, ...)

@@ -1463,7 +1463,7 @@ setMethod("firstBreak", "GPR", function(x, method = c("coppens", "coppens2",
     }else if(method == "MER"){
       w <- round(w / x@dz)
       fb <- .firstBreakMER(x@data, w)
-      fb <- x@depth(fb)
+      fb <- x@depth[fb]
     }
     return(fb)
   } 

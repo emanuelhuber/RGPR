@@ -722,6 +722,6 @@ setMethod("exportCoord", "GPRsurvey",
 #' @export
 setMethod("exportDelineations", "GPRsurvey", function(x, dirpath=""){
 	for(i in seq_along(x)){
-		exportDelineations(getGPR(x,id=i),path=path)
+		exportDelineations(getGPR(x, id = i), dirpath = dirpath)
 	}
 })

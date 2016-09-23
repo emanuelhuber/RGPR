@@ -1,5 +1,17 @@
 
 
+# importFrom("grDevices", "dev.list", "dev.off", "rainbow", "rgb")
+#   importFrom("graphics", "abline", "arrows", "axis", "box", "grid",
+#              "identify", "image", "legend", "lines", "locator", "mtext",
+#              "par", "plot", "points", "polygon", "rect", "segments",
+#              "text", "title")
+#   importFrom("methods", "as", "is", "new", "selectMethod", "setGeneric",
+#              "slot", "slot<-", "slotNames")
+#   importFrom("stats", "acf", "quantile", "sd", "toeplitz")
+#   importFrom("utils", "head", "read.table", "tail", "write.table")
+
+
+
 
 # check lockBinding  (bibliotheque/documents/R/manuel-S4)
 

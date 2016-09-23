@@ -1404,7 +1404,7 @@ setMethod("dcshift", "GPR", function(x, u, FUN=mean){
 #'            constant (only for the modified Coppens method). Not critical. 
 #'            When \code{bet = NULL} the value of \code{bet} is set to 
 #'            20\% of the maximal signal amplitude. 
-#' @seealso \code{\link{time0}} to set time0 and 
+#' @seealso \code{\link{time0}} to set time zero and 
 #'          \code{\link{time0Cor}} to shift the traces such that they start
 #'          at time zero.
 #' @references
@@ -2109,8 +2109,8 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("none",
 #' @param c0 Propagation speed of the GPR wave through air (used only when
 #'           \code{keep = NULL}.
 #' @return An object of the class GPR.
-#' @seealso \code{\link{time0}} to set time zero and \code{\link{firstBreak}} to 
-#'          estimate the first wave break.
+#' @seealso \code{\link{time0}} to set time zero and \code{\link{firstBreak}} 
+#'          to estimate the first wave break.
 #' @name time0Cor
 #' @rdname time0Cor
 #' @export

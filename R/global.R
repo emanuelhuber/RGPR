@@ -2388,8 +2388,10 @@ eigenDecomp2x2SymMatrix <- function(a,b,d){
 eigenValue2x2Mat <- function(a11,a12,a21,a22){
   D <- a11*a22 - a21*a12
   tr <- a11 + a22
-  return(list(l1 = 0.5 * (tr + sqrt(tr^2 - 4*D)),
-              l2 = 0.5 * (tr - sqrt(tr^2 - 4*D))))
+  tr24d <- tr^2 - 4*D
+  tr24d[abs(tr24d ) < .Machine$double.eps^0.75] <- 0
+  return(list(l1 = 0.5 * (tr + sqrt(tr24d)),
+              l2 = 0.5 * (tr - sqrt(tr24d))))
   
 }
 
@@ -2421,11 +2423,15 @@ matProd2x2 <- function(a11, a12, a21, a22, b11, b12, b21, b22){
 #' @rdname distTensors
 #' @export
 distTensors <- function(J1, J2, method=c("geodesic", "log-Euclidean",
-                        "angular"), ...){
+                        "angular"), normalise=FALSE){
   method <- match.arg(method, c("geodesic", "log-Euclidean", "angular"))
+  if(normalise == TRUE){
+    J1 <- normTensor(J1[[1]], J1[[2]], J1[[3]])
+    J2 <- normTensor(J2[[1]], J2[[2]], J2[[3]])
+  }
   if(method == "geodesic"){
     return(distTensorGeod(J1[[1]], J1[[2]], J1[[3]], 
-                          J2[[1]], J2[[2]], J2[[3]], ...))
+                          J2[[1]], J2[[2]], J2[[3]]))
   }else if(method == "log-Euclidean"){
     return(distTensorLogE(J1[[1]], J1[[2]], J1[[3]], 
                           J2[[1]], J2[[2]], J2[[3]]))
@@ -2434,6 +2440,13 @@ distTensors <- function(J1, J2, method=c("geodesic", "log-Euclidean",
     angle2 <- 1/2*atan2(2*J2[[3]], (J2[[1]] - J2[[2]]) ) + pi/2
     return( (angle1 - angle2) %% pi )
   }
+}
+#
+normTensor <- function(a1,b1,c1){
+  val_1 <- eigenValue2x2Mat(a1, c1, c1, b1)
+#   l1 <- (val_1$l1 + val_1$l2)
+  l1 <- sqrt(val_1$l1^2 + val_1$l2^2)
+  return(list(a1/l1, b1 <- b1/l1, c1 <- c1/l1))
 }
 
 # geometric-based distance d g that measures the distance between two tensors
@@ -2447,17 +2460,7 @@ distTensors <- function(J1, J2, method=c("geodesic", "log-Euclidean",
 #       | a2   c2 |
 #  J2 = |         |
 #       | c2   b2 |
-distTensorGeod <- function(a1,b1,c1,a2,b2,c2, normalise = TRUE){
-  if(normalise == TRUE){
-    val_1 <- eigenValue2x2Mat(a1, c1, c1, b1)
-    val_2 <- eigenValue2x2Mat(a2, c2, c2, b2)
-    a1 <- a1/(val_1$l1 + val_1$l2)
-    b1 <- b1/(val_1$l1 + val_1$l2)
-    c1 <- c1/(val_1$l1 + val_1$l2)
-    a2 <- a2/(val_2$l1 + val_2$l2)
-    b2 <- b2/(val_2$l1 + val_2$l2)
-    c2 <- c2/(val_2$l1 + val_2$l2)
-  }
+distTensorGeod <- function(a1,b1,c1,a2,b2,c2){
   ABA <- invAxB(a1,b1,c1,a2,b2,c2)
 #   A <- matPow(a1, b1, c1, -0.5)
 #   AB <- matProd2x2(A$a11, A$a12, 
@@ -2544,12 +2547,12 @@ strucTensor <- function(P, dxy = c(1, 1), mask = c(2, 2),
       }
       mask <- P_sd < thresh
     }else{
-      P <- (P - mean(P[!mask], na.rm = TRUE))/
-          sd(as.vector(P[!mask]), na.rm = TRUE)
+#       P <- (P - mean(P[!mask], na.rm = TRUE))/
+#           sd(as.vector(P[!mask]), na.rm = TRUE)
     }
   }else{
     mask <- matrix(FALSE, nrow = n, ncol = m)
-    P <- (P - mean(P, na.rm = TRUE))/sd(as.vector(P), na.rm = TRUE)
+#     P <- (P - mean(P, na.rm = TRUE))/sd(as.vector(P), na.rm = TRUE)
   }
 
   #------------------------------
@@ -2920,6 +2923,71 @@ convolution2D <- function(A,k){
   # g2 <- g[nk + 1:nh, mk + 1:mh]
   return(g2)
 }
+#' @export
+displacement <- function(x, y, method=c("phase", "WSSD"), dxy = NULL){
+  nm <- c(max(nrow(x), nrow(y)), max(ncol(x), ncol(y)))
+  #--- weighted sum of squared differences
+  if(method == "WSSD"){
+    nmx <- dim(x)
+    nmy <- (dim(x) + 2*nm - dim(y))/2
+    x0 <- paddMatrix(x, nm[1], nm[2], zero=TRUE)
+    y0 <- paddMatrix(y, nmy[1], nmy[2], zero=TRUE)
+    # weights (zero outside the image range)
+    wx <- matrix(1,nrow=nrow(x),ncol=ncol(x))
+    wx <- paddMatrix(wx, nm[1], nm[2], zero=TRUE)
+    wy <- matrix(1,nrow=nrow(y),ncol=ncol(y))
+    wy <- paddMatrix(wy, nmy[1], nmy[2], zero=TRUE)
+    WX <- fft(wx)
+    WY <- fft(wy)
+    X  <- fft(wx * x0)
+    Y  <- fft(wy * y0)
+    X2  <- fft(wx * x0^2)
+    Y2  <- fft(wy * y0^2)
+    WSSD <- Mod(fft(WX * Conj(Y2) + X2 * Conj(WY) - 2 * X * Conj(Y), 
+                    inverse = TRUE))
+    WSSD <- WSSD[1:nm[1] , 1:nm[2]]
+    d <- which(WSSD == max(WSSD), arr.ind = TRUE)[1,]
+  #--- phase correlation
+  }else if(method == "phase"){
+#     n <- min(nrow(x), nrow(y))
+#     m <- min(ncol(x), ncol(y))
+#     X <- fft(x[1:n, 1:m])
+#     Y <- fft(y[1:n, 1:m])
+    x0 <- padmat(x, n = nm[1], m = nm[2])
+    y0 <- padmat(y, n = nm[1], m = nm[2])
+    X <- fft(x0)
+    Y <- fft(y0)
+    R <- Mod(fft( X * Conj(Y) / (Mod(X*Y)), inverse = TRUE))
+#     R <- R[1:nm[1] , 1:nm[2]]
+    if(!is.null(dxy)){
+      R <- R[c(1:(dxy[1] + 1), (nm[1] - dxy[1]+1):nm[1]), 
+            c(1:(dxy[2] + 1), (nm[2] - dxy[2]+1):nm[2]), drop = FALSE]
+      nm <- 2*dxy
+    }
+    d <- which(R == max(R), arr.ind = TRUE)[1,] - 1
+    if(d[1] > nm[1]/2) d[1] <- d[1] - nm[1]
+    if(d[2] > nm[2]/2) d[2] <- d[2] - nm[2]
+  }
+  return(d)
+}
+#' @export
+shiftmat <- function(x, n, m){
+  xs <- matrix(0,nrow=nrow(x), ncol=ncol(x))
+  vx0 <- 1:nrow(xs) + n
+  vx0 <- vx0[vx0 > 1 & vx0 <= nrow(xs)]
+  vx1 <- vx0 - n
+  vy0 <- 1:ncol(xs) + m
+  vy0 <- vy0[vy0 > 1 & vy0 <= ncol(xs)]
+  vy1 <- vy0 - m
+  xs[vx0, vy0] <- x[vx1, vy1]
+  return(xs)
+}
+#' @export
+padmat <- function(x, n, m, what = 0){
+  x0 <- matrix(what, ncol=m, nrow=n)
+  x0[1:nrow(x),1:ncol(x)] <- x
+  return(x0)
+}
 
 # pads the edges of an image to minimize edge effects 
 # %during convolutions and Fourier transforms. 
@@ -2929,7 +2997,7 @@ convolution2D <- function(A,k){
 # SOURCE: http://matlabgeeks.com/tips-tutorials/how-to-blur-an-image-with-a-
 # fourier-transform-in-matlab-part-i/
  # service@matlabgeeks.com i
-paddMatrix <- function(I, p1, p2=NULL){
+paddMatrix <- function(I, p1, p2=NULL, zero = FALSE){
   if(is.null(p2)){
     p2 <- p1
   }
@@ -2939,9 +3007,12 @@ paddMatrix <- function(I, p1, p2=NULL){
   # middle
   Ipad[(p1+1):(p1+nI),(p2+1):(p2+mI)] <- I
   # top and bottom
-  Ipad[1:p1,(p2+1):(p2+mI)] <- repmat(I[1,,drop=FALSE], p1, 1)
-  Ipad[(p1+nI+1):(nI+2*p1), (p2+1):(p2+mI)] <- repmat(I[nI,,drop=FALSE], p1, 1)
-  if(p2 > 0){
+  if(zero == FALSE){
+    Ipad[1:p1,(p2+1):(p2+mI)] <- repmat(I[1,,drop=FALSE], p1, 1)
+    Ipad[(p1+nI+1):(nI+2*p1), (p2+1):(p2+mI)] <- repmat(I[nI,,drop=FALSE], 
+                                                        p1, 1)
+  }
+  if(p2 > 0 && zero == FALSE){
     # left and right
     Ipad[(p1+1):(p1+nI), 1:p2] <- repmat(I[,1,drop=FALSE], 1, p2)
     Ipad[(p1+1):(p1+nI), (p2+mI+1):(mI + 2*p2)] <- 

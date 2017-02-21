@@ -3470,7 +3470,7 @@ setMethod("strTensor", "GPR", function(x,  blksze = c(2, 4),
                 kTensor = kTensor,
                 thresh = thresh)  
     output <- list()
-    whatref <- c("tensor","vectors","values","polar","mask")
+    whatref <- c("tensor", "vectors", "values", "polar", "mask")
     what <- what[what %in% whatref]
     if(length(what) == 0){
       stop(paste0("argument 'what' only accepts a character vector composed of",
@@ -3479,17 +3479,17 @@ setMethod("strTensor", "GPR", function(x,  blksze = c(2, 4),
     }
     if( "orientation" %in% what){ 
       xOrient <- x
-      xAni <- x
+      xAni    <- x
       xEnergy <- x
-      xOrient@data <- O$polar$orientation
+      xOrient@data       <- O$polar$orientation
       xOrient@surveymode <- "orientation"
-      xEnergy@data <- O$polar$energy
+      xEnergy@data       <- O$polar$energy
       xEnergy@surveymode <- "energy"
-      xAni@data <- O$polar$anisotropy
-      xAni@surveymode <- "anisotropy"
-      output[["orientation"]] <- list("energy" = xEnergy,
-                                    "anisotropy" = xAni,
-                                    "orientation" = xOrient)
+      xAni@data          <- O$polar$anisotropy
+      xAni@surveymode    <- "anisotropy"
+      output[["orientation"]] <- list("energy"      = xEnergy,
+                                      "anisotropy"  = xAni,
+                                      "orientation" = xOrient)
     }
     if( "tensor" %in% what){
       xJxx <- x
@@ -3501,10 +3501,9 @@ setMethod("strTensor", "GPR", function(x,  blksze = c(2, 4),
       xJxx@surveymode <- "tensorxx"
       xJyy@surveymode <- "tensoryy"
       xJxy@surveymode <- "tensorxy"
-      
       output[["tensor"]] <- list("xx" = xJxx,
-                               "yy" = xJyy,
-                               "xy" = xJxy)
+                                 "yy" = xJyy,
+                                 "xy" = xJxy)
     }
     if( "mask" %in% what){
       mask <- x

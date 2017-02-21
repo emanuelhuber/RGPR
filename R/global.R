@@ -2439,9 +2439,13 @@ matProd2x2 <- function(a11, a12, a21, a22, b11, b12, b21, b22){
 #' @rdname distTensors
 #' @export
 distTensors <- function(J1, J2, method=c("geodesic", "log-Euclidean",
-                        "angular"), normalise=FALSE){
-  method <- match.arg(method, c("geodesic", "log-Euclidean", "angular"))
+                        "angular", "L2"), normalise = FALSE){
+  method <- match.arg(method, c("geodesic", "log-Euclidean", 
+                                "angular", "L2"))
   if(normalise == TRUE){
+    # J1[[1]] = J_xx
+    # J1[[2]] = J_yy
+    # J1[[3]] = J_xy
     J1 <- normTensor(J1[[1]], J1[[2]], J1[[3]])
     J2 <- normTensor(J2[[1]], J2[[2]], J2[[3]])
   }
@@ -2455,6 +2459,10 @@ distTensors <- function(J1, J2, method=c("geodesic", "log-Euclidean",
     angle1 <- 1/2*atan2(2*J1[[3]], (J1[[1]] - J1[[2]]) ) + pi/2  
     angle2 <- 1/2*atan2(2*J2[[3]], (J2[[1]] - J2[[2]]) ) + pi/2
     return( (angle1 - angle2) %% pi )
+  }else if(method == "L2"){
+    return(  (J1[[1]] - J2[[1]])^2 + 
+           2*(J1[[3]] - J2[[3]])^2 + 
+             (J1[[2]] - J2[[2]])^2   )
   }
 }
 #

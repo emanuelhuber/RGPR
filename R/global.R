@@ -35,6 +35,7 @@ firstBreack <- function(...){
 # read/write SEGy
 
 # FIX ME!
+# - use trace shift as function of time0 in plot function!!!
 # - rename "traceScaling" into "traceScale"
 # - unless explicitely specified, set velocity to NULL (?)
 # - gain/dewow -> apply it only where the signal starts!!!
@@ -1444,7 +1445,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
       clim <- c(-1,1)*max(abs(z),na.rm=TRUE)
     }
   }
-  if(relTime0){
+  if(relTime0 && ylim[2] > time_0){
+    # truncate the data -> start at time-zero!!
     y <- y + time_0
     # y <- y + (time_0 + max(y))
     ylim[1] <- ylim[1] - ylim[2] + time_0

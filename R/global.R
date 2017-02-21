@@ -2458,7 +2458,7 @@ distTensors <- function(J1, J2, method=c("geodesic", "log-Euclidean",
   }else if(method == "angular"){
     angle1 <- 1/2*atan2(2*J1[[3]], (J1[[1]] - J1[[2]]) ) + pi/2  
     angle2 <- 1/2*atan2(2*J2[[3]], (J2[[1]] - J2[[2]]) ) + pi/2
-    return( (angle1 - angle2) %% pi )
+    return( (angle1 - angle2) )# %% pi )
   }else if(method == "L2"){
     return(  (J1[[1]] - J2[[1]])^2 + 
            2*(J1[[3]] - J2[[3]])^2 + 

@@ -1015,8 +1015,21 @@ setGenericVerif("strTensor", function(x,  blksze = c(2, 4),
                   
                   
                   
-                  
-                  
+# http://stackoverflow.com/questions/6836409/finding-local-maxima-and-minima
+extrema <- function(x, type=c("max","min")){
+  type <- match.arg(type, c("max", "min"))
+  if( type == "min" ){
+    x <- -x
+  }
+  y <- diff(c(-.Machine$integer.max, x)) > 0L
+  y <- cumsum(rle(y)$lengths)
+  y <- y[seq.int(1L, length(y), 2L)]
+  if (x[[1]] == x[[2]]) {
+    y <- y[-1]
+  }
+  return(y)
+}
+
                   
 timeToDepth <- function(tt, time_0, v=0.1, antsep=1, c0 = 0.299){
   t0 <- time_0 - antsep/c0
@@ -1433,10 +1446,10 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   }
   if(relTime0){
     y <- y + time_0
-#     y <- y + (time_0 + max(y))
-    ylim[1] <- ylim[1] + time_0 - ylim[2]
-    ylim[2] <- 0
-#     ylim[1] <-  ylim[1] + (time_0 + max(y))
+    # y <- y + (time_0 + max(y))
+    ylim[1] <- ylim[1] - ylim[2] + time_0
+    ylim[2] <- min(ylim[2] + time_0, 0)
+    # ylim[1] <-  ylim[1] + (time_0 + max(y))
   }
   if( length(unique(diff(x))) > 1){
     rasterImage <- FALSE
@@ -2446,7 +2459,7 @@ normTensor <- function(a1,b1,c1){
   val_1 <- eigenValue2x2Mat(a1, c1, c1, b1)
 #   l1 <- (val_1$l1 + val_1$l2)
   l1 <- sqrt(val_1$l1^2 + val_1$l2^2)
-  return(list(a1/l1, b1 <- b1/l1, c1 <- c1/l1))
+  return(list(a1/l1, b1/l1,  c1/l1))
 }
 
 # geometric-based distance d g that measures the distance between two tensors
@@ -3237,6 +3250,7 @@ optPhaseRotation <- function(x,rot=0.01,plot=TRUE){
 
 
 # version vectoriel!!!!
+#' @export
 inPoly <- function(x, y, vertx, verty){
   inPo <- rep(0L, length(x))
   nvert <- length(vertx)

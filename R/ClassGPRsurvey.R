@@ -582,6 +582,26 @@ setReplaceMethod(
 		return(x)
 	}
 )
+    
+    
+    # rotate survey
+#' @export
+setMethod("rotate", "GPRsurvey", 
+          function(x, alpha, center = NULL, center2 = NULL){
+  if(is.null(center)){
+    center <- centroid(x)
+  }
+  xyz <- lapply(x@coords, georef, alpha = alpha,
+                center = center, center2 = center2)
+  xyz2 <- lapply(x@intersections$coord, georef, alpha = alpha,
+                 center = center, center2 = center2)
+  x@coords <- xyz
+  x@intersections  <- xyz2
+  x <- coordref(x)
+  return(x)
+})
+    
+    
 #' @export
 setMethod("plot3DRGL", "GPRsurvey", 
         function(x,addTopo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,

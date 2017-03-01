@@ -555,6 +555,36 @@ selectBBox <- function(border="red",lwd=2,...){
   }
 }
 
+#' Georeferencing
+#'
+#' Perform on a set of x,y coordinates
+#' (1) a translation by \code{-center}, then
+#' (2) a rotation by \code{alpha} (radian), and (3)
+#' a translation by \code{center2}. If \code{center2}
+#' is \code{NULL}, then \code{center2} is set equal
+#' to \code{center}.
+#' @export
+#' @param x A matrix with the first two columns corresponding
+#'          to the coordinates.
+#' @param alpha A length-one numeric vector corresponding to 
+#'              the rotation angle in radians
+#' @param center A length-two numeric vector.
+#' @param center2 A length-two numeric vector or 
+#'                \code{NULL} (default).
+georef <- function(x, alpha, center = c(0,0), center2 = NULL){
+  x <- as.matrix(x)
+  ROT <- matrix(c( cos(alpha), sin(alpha),
+                  -sin(alpha), cos(alpha)), nrow=2, ncol=2)
+  TRL <-  matrix(center[1:2], nrow=nrow(x), ncol=2, byrow = TRUE)
+  if(is.null(center2)){
+    TRL2 <- TRL
+  }else{
+    TRL <-  matrix(center2[1:2], nrow=nrow(x), ncol=2, byrow = TRUE)
+  }
+  x[,1:2] <- (x[,1:2, drop = FALSE] - TRL) %*% ROT + TRL
+  return(x)
+}
+
 #' @export
 posLine <- function(loc,last=FALSE){
   loc <- as.matrix(loc)
@@ -946,7 +976,8 @@ setGenericVerif("surveyIntersect", function(x)
                 standardGeneric("surveyIntersect"))
 setGenericVerif("writeSurvey", function(x, fPath, overwrite=FALSE){ 
                 standardGeneric("writeSurvey")})
-
+setGenericVerif("rotate", function(x, alpha, center = NULL, center2 = NULL){ 
+                standardGeneric("rotate")})
 
 #------------------------------BOTH
 setGenericVerif("plot3DRGL", 

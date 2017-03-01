@@ -35,6 +35,8 @@ firstBreack <- function(...){
 # read/write SEGy
 
 # FIX ME!
+# - time0 offset correction: first correct all traces 
+#     with time0 using "time0Cor"
 # - use trace shift as function of time0 in plot function!!!
 # - rename "traceScaling" into "traceScale"
 # - unless explicitely specified, set velocity to NULL (?)

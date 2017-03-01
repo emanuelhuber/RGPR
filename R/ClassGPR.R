@@ -3255,7 +3255,7 @@ setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
       x@dz <- dz
       x@depthunit <- "m"
     }
-    pproc(x) <- getArgs()
+    proc(x) <- getArgs()
     # x@proc <- c(x@proc, proc)
     return(x)
   } 
@@ -3272,6 +3272,7 @@ setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
 #' @name timeCorOffset
 #' @rdname timeCorOffset
 #' @export
+# should use time0Cor() !!!!!
 setMethod("timeCorOffset", "GPR", function(x){
   t0 <- mean(x@time0)
   x <- x[floor(t0/x@dz):nrow(x),]

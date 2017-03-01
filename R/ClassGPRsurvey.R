@@ -360,7 +360,9 @@ plot.GPRsurvey <- function(x, y, ...){
 		parIntersect <- list(pch=1,cex=0.8)
 		parFid <- list(pch=21,col="black",bg="red",cex=0.7)
 		#addFid <- TRUE
-		lwd=1
+    xlab <- "E"
+    ylab <- "N"
+		lwd <- 1
 		col <- 1
 		# print(list(...))
 		dots <- list()
@@ -376,6 +378,14 @@ plot.GPRsurvey <- function(x, y, ...){
 			if(!is.null(dots$lwd)){
 				lwd <- dots$lwd
 			}
+			if(!is.null(dots$xlab)){
+				xlab <- dots$xlab
+        dots$xlab <- NULL
+			}
+      if(!is.null(dots$ylab)){
+				ylab <- dots$ylab
+        dots$ylab <- NULL
+			}
 			if(!is.null(dots$col)){
 				col <- dots$col
 			}
@@ -385,15 +395,16 @@ plot.GPRsurvey <- function(x, y, ...){
                       " of arguments for the points function.\n"))
 				#addIntersections <- dots$addIntersections
 			}
-			#dots$addIntersections <- NULL
-			if(!missing(parFid)){
+			
+			if(!missing(parIntersect)){
 			#if(!is.null(dots$parIntersect)){
 				parIntersect <- dots$parIntersect
+        dots$parIntersect <- NULL
 			}
 			if(!missing(parFid)){
 			#if(!is.null(dots$parFid)){
 				parFid <- dots$parFid
-#stop("safdlkajslkj")
+        dots$parFid <- NULL
 			}
 			if(!is.null(dots$addFid)){
 				stop(paste0("'addFid' no more used! Use instead 'parFid'",
@@ -408,7 +419,9 @@ plot.GPRsurvey <- function(x, y, ...){
 			}
 			dots$shp_files <- NULL
 		}
-		dots <- c(dots, list("type"="n"))
+		dots <- c(dots, list(type = "n",
+                         xlab = xlab,
+                         ylab = ylab))
 		# print(dots)
 		# print(dots)
 		if(!plotAdd){

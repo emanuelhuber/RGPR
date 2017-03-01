@@ -1445,7 +1445,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
       clim <- c(-1,1)*max(abs(z),na.rm=TRUE)
     }
   }
-  if(relTime0 && ylim[2] > time_0){
+  # Note that y and ylim are negative and time_0 is positive...
+  if(relTime0 && ylim[2] > -time_0){
     # truncate the data -> start at time-zero!!
     y <- y + time_0
     # y <- y + (time_0 + max(y))

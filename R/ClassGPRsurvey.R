@@ -253,7 +253,9 @@ setMethod("getGPR", "GPRsurvey", function(x,id){
 			coord(gpr) <- x@coords[[gpr@name]]
 		}
 		if(length(x@intersections[[gpr@name]])>0){
-			ann(gpr) <- x@intersections[[gpr@name]][,3:4,drop=FALSE]
+			#ann(gpr) <- x@intersections[[gpr@name]][,3:4,drop=FALSE]
+      ann(gpr) <- cbind(x@intersections[[gpr@name]]$trace,
+                        x@intersections[[gpr@name]]$name)
 		}
 		if(length(x@coordref)>0){
 			gpr@coordref <- x@coordref
@@ -441,7 +443,7 @@ plot.GPRsurvey <- function(x, y, ...){
 		if(!is.null(parIntersect) && length(x@intersections)>0){ 
 			for(i in 1:length(x@intersections)){
 				if(!is.null(x@intersections[[i]])){
-					do.call(points , c(list(x=x@intersections[[i]][,1:2]), 
+					do.call(points , c(list(x=x@intersections[[i]]$coord), 
 					parIntersect))
 				}
 			}
@@ -451,47 +453,59 @@ plot.GPRsurvey <- function(x, y, ...){
 	}
 }
 
+# intersection
+# list
+#     $GPR_NAME
+#         $ coords (x,y)
+#         $ trace
+#         $ name
 #' @export
 setMethod("surveyIntersect", "GPRsurvey", function(x){
-		# intersections <- list()
-		for(i in seq_along(x@coords)){
-		  top0 <- x@coords[[i]]
-		  gtop0 <- sp::Line(top0[,1:2])
-		  gtopa <- sp::Lines(list(gtop0), ID=c("a"))
-		  Sa <- sp::SpatialLines(list(gtopa))
-		  v <- seq_along(x@coords)[-i]
-		  myCo_int <- c()
-		  myTr_int <- c()
-		  for(j in v){
-			# cat(j,"\n")
+  # intersections <- list()
+	for(i in seq_along(x@coords)){
+		top0 <- x@coords[[i]]
+		#gtop0 <- sp::Line(top0[,1:2])
+		#gtopa <- sp::Lines(list(gtop0), ID=c("a"))
+		#Sa <- sp::SpatialLines(list(gtopa))
+    Sa <- as.SpatialLines(x[i])
+		v <- seq_along(x@coords)[-i]
+		int_coords <- c()
+    int_traces <- c()
+    int_names <- c()
+		#myTr_int <- c()
+		for(j in v){
 			top1 <- x@coords[[j]]
-			gtop1 <- sp::Line(top1[,1:2])
-			gtopb <- sp::Lines(list(gtop1), ID=c("b"))
-			Sb <- sp::SpatialLines(list(gtopb))
+			#gtop1 <- sp::Line(top1[,1:2])
+			#gtopb <- sp::Lines(list(gtop1), ID=c("b"))
+			#Sb <- sp::SpatialLines(list(gtopb))
+      Sb <- as.SpatialLines(x[j])
 			pt_int <- rgeos::gIntersection(Sa,Sb)
 			if(!is.null(pt_int)){
 				# cat("intersection!\n")
 			  # for each intersection points
-			  n_int <- 	nrow(sp::coordinates(pt_int))
-			  for(k in 1:n_int){
-				d <- sqrt(apply((top0[,1:2] - matrix(sp::coordinates(pt_int)[k,],
-                            nrow=nrow(top0),ncol=2,byrow=TRUE))^2,1,sum))
-				# if(length(c(coordinates(pt_int),which.min(d)[1],x@names[j]))!=4) 
-				#stop("lkjlkJ")
-				myTr_int <- rbind(myTr_int ,c(sp::coordinates(pt_int)[k,],
-                              which.min(d)[1],x@names[j]))
+			  #n_int <- 	nrow(sp::coordinates(pt_int))
+			  for(k in seq_along(pt_int)){
+				  d <- sqrt(rowSums((top0[,1:2] - 
+                          matrix(sp::coordinates(pt_int)[k,],
+                          nrow = nrow(top0), ncol = 2, byrow = TRUE))^2))
+          int_coords <- rbind(int_coords, sp::coordinates(pt_int)[k,])
+          int_traces <- c(int_traces, which.min(d)[1])
+          int_names  <- c(int_names, x@names[j])
+			  	#myTr_int <- rbind(myTr_int ,c(sp::coordinates(pt_int)[k,],
+          #                      which.min(d)[1],x@names[j]))
 			  }
 			}
-		  }
-		  if(length(myTr_int) > 0){
-			x@intersections[[x@names[i]]] <- myTr_int
-		  }else{
-			x@intersections[[x@names[i]]] <- NULL
-		  }
 		}
-		return(x)
-	} 
-)
+		if(length(int_names) > 0){
+		  x@intersections[[x@names[i]]] <- list(coord = int_coords,
+                                            trace = int_traces,
+                                            name  = int_names)
+		}else{
+	    x@intersections[[x@names[i]]] <- NULL
+	  }
+	}
+	return(x)
+})
 
 #' @export
 setMethod("intersections", "GPRsurvey", function(x){
@@ -654,7 +668,9 @@ setMethod("writeGPR", "GPRsurvey",
 				coord(gpr) <- x@coords[[gpr@name]]
 			}
 			if(length(x@intersections[[gpr@name]])>0){
-				ann(gpr) <- x@intersections[[gpr@name]][,3:4]
+				#ann(gpr) <- x@intersections[[gpr@name]][,3:4]
+        ann(gpr) <- cbind(x@intersections[[gpr@name]]$trace,
+                          x@intersections[[gpr@name]]$name)
 			}
 			fPath <- paste(mainDir,"/",subDir,"/",gpr@name,".",type,sep="")
 			writeGPR(gpr, fPath=fPath,format=type , overwrite=FALSE)

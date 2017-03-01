@@ -1844,9 +1844,10 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   # for arbitrary 'p' and 'r'.
   dGain <- (mmand::gaussianSmooth(abs(d - dAmp)^p, w))^r
   # Apply inverse gain to the difference between the image and the local
-  # mean to obtain the final AGC image. 
-  dnew <- d/dGain
-  return(dnew)
+  # mean to obtain the final AGC image.
+  sel <- dGain > 0
+  d[sel ] <- d[sel ]/dGain[sel ]
+  return(d)
 }
 
 

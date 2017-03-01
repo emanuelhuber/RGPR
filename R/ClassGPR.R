@@ -2361,8 +2361,8 @@ plot.GPR <- function(x,y,...){
     abline(h = 0, lty = 3, col = "grey")
     abline(v = 0, col = "red")
     lines(z, x@data,...)
-    title(paste0(x@name, ": trace #", x@traces," @",x@pos,x@posunit),
-                  outer=TRUE)
+    title(paste0(x@name, ": trace #", x@traces," @", round(x@pos,2), 
+                 x@posunit), outer=TRUE)
 #     par(op)
    }else{
     if(!is.null(nupspl)){

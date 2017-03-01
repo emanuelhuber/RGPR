@@ -584,7 +584,7 @@ setReplaceMethod(
 )
     
     
-    # rotate survey
+#' Rotate coordinates of the GPR traces
 #' @export
 setMethod("rotate", "GPRsurvey", 
           function(x, alpha, center = NULL, center2 = NULL){

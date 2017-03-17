@@ -965,16 +965,16 @@ setMethod(
   signature="GPR",
   definition=function(x,i,j,drop){
     rval <- x@data
-    n <- nrow(rval)
-    if(missing(i)) i <- 1:n
+    if(missing(i) || length(i) == 0) i <- seq_len(nrow(rval))
     if(length(dim(rval)) == 2) {
       # drop. <- ifelse(length(i) == 1, FALSE, drop)
       drop <- FALSE
-      if(missing(j) && length(i) > 0){
+      if(missing(j)){
         # rval <- rval[i, , drop = drop.]
         rval <- rval[i, , drop = drop]
         x@depth <- x@depth[i]
-      } else if(length(j) > 0 && length(i) > 0){ 
+      }else { 
+        if(length(j) == 0) j <- seq_len(ncol(rval))
         # rval <- rval[i, j, drop = drop.]
         rval <- rval[i, j, drop = drop]
         x@depth <- x@depth[i]

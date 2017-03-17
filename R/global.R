@@ -1818,17 +1818,21 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 }
 
 .gainPower0 <- function(d, alpha, dts, t0 = NULL, te = NULL, tcst = NULL){
-  if(is.null(t0)) t0 <-0
-  if(is.null(te)) te <-(length(d)-1)*dts
+  if(is.null(t0)) t0 <- 0
+  if(is.null(te)) te <- (length(d) - 1) * dts
   if(!is.null(tcst) && !(tcst > t0 && tcst < te)){
     stop("you need tcst > t0 && tcst < te\n")
   }
+  ## FIX ME > instead of "(seq_along(d) - 1) *dts" use directly
+  ## x <- gpr@depth !!!  
   x <- (seq_along(d) - 1) *dts
   test <- x >= t0 & x <= te
-  g <- rep(1L,length(d))
+  g <- rep(1, length(d))
   g[test] <- 1 + (seq_along(d[test])*dts )^alpha
   g[x > te] <- max(g)
-  if(!is.null(tcst) && any(x < tcst)) g[x < tcst] <- g[1+round(tcst/dts)]
+  if(!is.null(tcst) && any(x < tcst)){
+    g[x < tcst] <- g[1 + floor(tcst/dts)]
+  }
   return( g)
 }
 
@@ -1845,6 +1849,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 .gainExp0 <- function(d, alpha, dts, t0 = NULL, te = NULL){
   if(is.null(t0) || t0==0) t0 <-0
   if(is.null(te)) te <-(length(d)-1)*dts
+  ## FIX ME > instead of "(seq_along(d) - 1) *dts" use directly
+  ## x <- gpr@depth !!! 
   x <- (seq_along(d) - 1) * dts
   test <- (x >= t0 & x <= te)
   test_max <- x > te
@@ -1907,13 +1913,15 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 
 .rms <- function(num) sqrt(sum(num^2)/length(num))
 
-scaleCol <- function(A,type = c("stat","min-max","95","eq","sum", "rms")){
+scaleCol <- function(A, type = c("stat", "min-max", "95",
+                                 "eq", "sum", "rms")){
   A <-  as.matrix(A)
   test <- suppressWarnings(as.numeric(type))
   if(!is.na(test) && test >0 && test < 100){
-    A_q95 = apply(A, 2, quantile, test/100, na.rm = TRUE)
-    A_q05 = apply(A, 2, quantile, 1-test/100, na.rm = TRUE)
-    Anorm = A/(A_q95-A_q05)
+    A_q95 <- apply(A, 2, quantile, test/100, na.rm = TRUE)
+    A_q05 <- apply(A, 2, quantile, 1 - test/100, na.rm = TRUE)
+    Ascl <- matrix(A_q95 - A_q05, nrow = nrow(A), ncol = ncol(A), byrow=TRUE)
+    Anorm <- A/Ascl
   }else{
     type <- match.arg(type)
     if(type == "stat"){
@@ -1924,10 +1932,13 @@ scaleCol <- function(A,type = c("stat","min-max","95","eq","sum", "rms")){
     }else if(type == "eq"){
       # equalize line such each trace has same value for 
       # sqrt(\int  (A(t))^2 dt)
-      amp <- apply((A)^2,2,sum)
-      Anorm <- A * sqrt(amp)/sum(sqrt(amp))
+      Aamp <- matrix(apply((A)^2,2,sum), nrow = nrow(A), 
+                     ncol = ncol(A), byrow=TRUE)
+      Anorm <- A * sqrt(Aamp)/sum(sqrt(Aamp))
     }else if(type == "rms"){
-      Anorm <- A/apply(A ,2, .rms)
+      Ascl <- matrix(apply(A ,2, .rms), nrow = nrow(A), 
+                     ncol = ncol(A), byrow=TRUE)
+      Anorm <- A/Ascl
     }else if(type == "min-max"){  # min-max
       Anorm <- scale(A, center=FALSE, scale=(apply((A),2,max,na.rm=TRUE)) - 
                       (apply(( A),2,min,na.rm=TRUE)))

@@ -600,7 +600,35 @@ setMethod("rotate", "GPRsurvey",
   x <- coordref(x)
   return(x)
 })
-    
+
+
+#' @export
+setMethod("shiftEst", "GPRsurvey", function(x, y = NULL, 
+          method=c("phase", "WSSD"), dxy = NULL, ...){
+  Dshift <- matrix(ncol = 2, nrow = length(x) - 1)
+  xa <- x[[1]]
+  nxa <- nrow(xa)
+  mxa <- ncol(xa)
+  i <- seq_len(nxa)
+  j <- seq_len(mxa)
+  if( length(list(...)) ){
+    dots <- list(...)
+    if( !is.null(dots$i)){
+      i <- dots$i
+    }
+    if( !is.null(dots$i)){
+      i <- dots$i
+    }
+  }
+  for(k in seq_len(length(x)-1)){
+    ya <- x[[ k + 1]]
+    Dshift[i,] <- shiftEst(xa[i, j], ya[i, j], 
+                          method = method, dxy = dxy)
+    xa <- ya
+  }
+
+  return( Dshift )
+})    
     
 #' @export
 setMethod("plot3DRGL", "GPRsurvey", 

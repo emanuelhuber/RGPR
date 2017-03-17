@@ -2739,6 +2739,16 @@ setMethod("reverse", "GPR", function(x){
   }
 )
 
+#' Shift estimation between two GPR profiles.
+#'
+#' @name shiftEst
+#' @rdname shiftEst
+#' @export
+setMethod("shiftEst", "GPR", function(x, y = NULL, 
+          method=c("phase", "WSSD"), dxy = NULL, ...){
+  return( displacement(x@data, y@data, method=method, dxy = dxy) )
+})
+
 #---------------------- DELINEATIONS ---------------------#
 #' Delineate structure on GPR data
 #'

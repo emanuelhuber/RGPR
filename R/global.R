@@ -910,6 +910,13 @@ setGenericVerif("exportProc",  function(x,fPath=NULL,sep="\t", row.names=FALSE,
 #' @rdname reverse
 #' @export
 setGenericVerif("reverse", function(x) standardGeneric("reverse"))
+  
+#' @name shiftEst
+#' @rdname shiftEst
+#' @export
+setGenericVerif("shiftEst", function(x, y = NULL, 
+                method=c("phase", "WSSD"), dxy = NULL, ...) 
+                standardGeneric("shiftEst"))
 
 setGenericVerif("migration", function(x,type=c("static","kirchhoff"), ...) 
 standardGeneric("migration"))
@@ -3042,6 +3049,7 @@ displacement <- function(x, y, method=c("phase", "WSSD"), dxy = NULL){
   }
   return(d)
 }
+    
 #' @export
 shiftmat <- function(x, n, m){
   xs <- matrix(0,nrow=nrow(x), ncol=ncol(x))

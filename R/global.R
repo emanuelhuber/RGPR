@@ -1810,10 +1810,11 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 .gainPower <- function(A, alpha, dts, t0 = NULL, te = NULL,
                        tcst = NULL){
   g <- .gainPower0(A[,1], alpha, dts, t0, te, tcst)
-  Anew <- (A)*g
-  s1 = ((max(A))-(min(A)));  # scale factor
-  s2 = ((max(Anew))-(min(Anew)));  # scale factor
-  return(Anew/s2*s1 )
+  # Anew <- (A)*g
+  #s1 = ((max(A))-(min(A)));  # scale factor
+  #s2 = ((max(Anew))-(min(Anew)));  # scale factor
+  #return(Anew/s2*s1 )
+  return( A * g )
 }
 
 .gainPower0 <- function(d, alpha, dts, t0 = NULL, te = NULL, tcst = NULL){
@@ -1833,12 +1834,12 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 
 .gainExp <- function(A, alpha, dts, t0 = NULL, te = NULL){
   g <- .gainExp0(A[,1], alpha, dts, t0, te)
-  Anew <- (A)*g
-  s1 = ((max(A))-(min(A)));  # scale factor
-  s2 = ((max(Anew))-(min(Anew)));  # scale factor
-  s12 <- s1/s2
-  A3 <- (Anew * s12)
-  return(  Anew)
+  Anew <- A * g
+  #s1 = ((max(A))-(min(A)));  # scale factor
+  #s2 = ((max(Anew))-(min(Anew)));  # scale factor
+  #s12 <- s1/s2
+  #A3 <- (Anew * s12)
+  return( A * g )
 }
 
 .gainExp0 <- function(d, alpha, dts, t0 = NULL, te = NULL){
@@ -1857,9 +1858,10 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 .gainAgc <- function(A, dts, w = 10, p = 2, r = 0.5){
   w <- w/dts
   Anew <- apply(A, 2, .gainAgc0, w, p, r)
-  s1 = ((max(A))-(min(A)));  # scale factor
-  s2 = ((max(Anew))-(min(Anew)));  # scale factor
-  return(Anew * s1/s2)
+  #s1 = ((max(A))-(min(A)));  # scale factor
+  #s2 = ((max(Anew))-(min(Anew)));  # scale factor
+  #return(Anew * s1/s2)
+  return(Anew)
 }
 
 .gainAgc0 <- function(d, w = 10, p = 2 , r = 0.5){

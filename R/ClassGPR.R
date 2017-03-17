@@ -970,15 +970,13 @@ setMethod(
     if(length(dim(rval)) == 2) {
       # drop. <- ifelse(length(i) == 1, FALSE, drop)
       drop <- FALSE
-      if(missing(j)){
+      if(missing(j) && length(i) > 0){
         # rval <- rval[i, , drop = drop.]
         rval <- rval[i, , drop = drop]
-#         x@w <- length(i)*x@dz
         x@depth <- x@depth[i]
-      } else{ 
+      } else if(length(j) > 0 && length(i) > 0){ 
         # rval <- rval[i, j, drop = drop.]
         rval <- rval[i, j, drop = drop]
-#         x@w <- length(i)*x@dz
         x@depth <- x@depth[i]
         x@traces <- x@traces[j]
         x@pos <- x@pos[j]
@@ -988,7 +986,6 @@ setMethod(
         if(length(x@coord)>0)  x@coord <- x@coord[j,,drop=FALSE]
         if(length(x@rec)>0) x@rec <- x@rec[j,,drop=FALSE]
         if(length(x@trans)>0) x@trans <- x@trans[j,,drop=FALSE]
-#         x@ntr <- length(j)
         if(!is.null(x@hd$startpos) && !is.null(x@hd$endpos)){
           if( !is.na(x@hd$startpos) && !is.na(x@hd$endpos) ){
             trpos <- seq(x@hd$startpos, x@hd$endpos,by=x@dx)
@@ -1001,7 +998,7 @@ setMethod(
         }
       }
       if(drop && length(rval) == 1){ rval <- c(rval)}
-    }else{
+    }else if(length(i) > 0){
       rval <- rval[i]
     }
     x@data <- rval

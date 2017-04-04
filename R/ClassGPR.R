@@ -3825,6 +3825,11 @@ setMethod("exportFid", "GPR", function(x,fPath=NULL){
       }
       trpos <- x@pos[tr]
       FID <- data.frame("TRACE" = tr,"POSITION" = trpos, "COMMENT" = trfid)
+      if(length(x@coord) > 0 && ncol(x@coord) == 3){
+        FID$E <- x@coord[,1]
+        FID$N <- x@coord[,2]
+        FID$Z <- x@coord[,3]
+      }
       if(is.null(fPath)){
         return(FID)
       }else{
@@ -3880,7 +3885,7 @@ setMethod("exportCoord", "GPR",
     xCoord <- x@coord
     colnames(xCoord) <- c("E","N","Z")
     fPath <- file.path(folder, paste0(.fNameWExt(fPath), ".txt"))
-    write.table(x@coord, fPath, sep = sep, row.names = FALSE, 
+    write.table(xCoord, fPath, sep = sep, row.names = FALSE, 
                     col.names = TRUE, quote = FALSE)
   }
 })

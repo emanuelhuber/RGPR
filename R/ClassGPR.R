@@ -3826,9 +3826,9 @@ setMethod("exportFid", "GPR", function(x,fPath=NULL){
       trpos <- x@pos[tr]
       FID <- data.frame("TRACE" = tr,"POSITION" = trpos, "COMMENT" = trfid)
       if(length(x@coord) > 0 && ncol(x@coord) == 3){
-        FID$E <- x@coord[,1]
-        FID$N <- x@coord[,2]
-        FID$Z <- x@coord[,3]
+        FID$E <- x@coord[tr,1]
+        FID$N <- x@coord[tr,2]
+        FID$Z <- x@coord[tr,3]
       }
       if(is.null(fPath)){
         return(FID)

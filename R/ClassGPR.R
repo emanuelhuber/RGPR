@@ -3673,7 +3673,7 @@ setMethod("exportCoord", "GPR",
     xCoord <- x@coord
     colnames(xCoord) <- c("E","N","Z")
     fPath <- paste0(fPath, ".txt")
-    write.table(xCoord, fPath, sep = sep, row.names = FALSE, 
+    write.table(xCoord, fPath, row.names = FALSE, 
                     col.names = TRUE, quote = FALSE, ...)
   }
 })

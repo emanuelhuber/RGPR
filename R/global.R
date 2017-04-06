@@ -901,7 +901,7 @@ setGenericVerif("exportCoord",
 #' @name exportFid
 #' @rdname exportFid
 #' @export
-setGenericVerif("exportFid", function(x,fPath=NULL) 
+setGenericVerif("exportFid", function(x, fPath = NULL) 
                   standardGeneric("exportFid"))
 
 #' @name exportProc

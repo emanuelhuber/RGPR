@@ -2493,7 +2493,7 @@ function(x,addTopo = FALSE, clip = NULL, normalize = NULL,
       x@data <- normalize(x@data,type=normalize)
     }
     # warning("First upsample then addTopo. 
-#     Problem: interpolate also coord!!!")
+    # Problem: interpolate also coord!!!")
     if(!is.null(clip) && is.numeric(clip)){
       if(length(clip)>1){
         x@data <- .clip(x@data,clip[2],clip[1])
@@ -2509,7 +2509,7 @@ function(x,addTopo = FALSE, clip = NULL, normalize = NULL,
     z0 <- coord(x, 3) - refCoord[3]
     if(addTopo){
       x <- migration(x)
-      z0 <- rep(max(coord(x, 3)),length(x)) - refCoord[3]
+      z0 <- rep(max(coord(x, 3)), length(x)) - refCoord[3]
     }
     cat(refCoord,max(coord(x, 3)),"\n")
     A <-as.matrix(x)
@@ -3189,11 +3189,6 @@ setMethod("identifyDelineation", "GPR", function(x,sel=NULL,...){
 #' @rdname migration
 #' @export
 setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
-#     if(missing(type)){
-#       type=match.arg(type)
-#       suppl_args <- list("type"=type)
-#       # cat(type,"\n")
-#     }
     type <- match.arg(type, c("static", "kirchhoff"))
     if(type == "static"){  
       ntr <- ncol(x@data)
@@ -3220,7 +3215,7 @@ setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
       }
       x@data <- .topoShift(x@data,topo,dz = x@dz)
       #x@depth * x@vel[[1]]/ 2
-      x@depth <- seq(0,by=x@dz,length.out=nrow(x@data))  
+      x@depth <- seq(0, by = x@dz, length.out = nrow(x@data))  
       x@time0 <- rep(0,length(x@time0))
 #       proc <- getArgs()
 #       proc <- addArg(proc,suppl_args)
@@ -3564,7 +3559,8 @@ setMethod("writeGPR", "GPR", function(x, fPath = NULL,
                       colnames(xyzv) <- c("x", "y", "z", "v")
                       xyzv[, 4]  <- as.vector(as.matrix(x))
                       xyzv[,1:3] <-  kronecker(x@coord, matrix(1,nrow(x),1))
-                      xyzv[,3]   <- xyzv[,3] - rep(x@depth, times = ncol(x))
+                      xyzv[,3]   <- rep(max(xyzv[,3]), ncol(x)) - 
+                                        rep(x@depth, times = ncol(x))
                       write.table(xyzv, file = fPath, quote = FALSE, 
                       col.names = TRUE, row.names = FALSE)})
   } 

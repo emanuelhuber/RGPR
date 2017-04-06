@@ -1209,8 +1209,8 @@ depth0 <- function(time_0, v=0.1, antsep=1, c0 = 0.299){
     xit <- seq(ceiling(new_t[1]/dz), ceiling(new_t[nrow(x)-2]/dz))
     # interpolate
     # FIX ME! does not work well (not nice interpolation)
-    xShifted[xit+1,i] = signal::interp1(new_t, x[,i], xi = xit*dz, 
-                                        method = "pchip",extrap = TRUE)  
+    xShifted[xit + 1, i] = signal::interp1(new_t, x[,i], xi = xit * dz, 
+                                           method = "pchip",extrap = TRUE)  
   }
   return(xShifted)
 }

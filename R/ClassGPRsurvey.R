@@ -704,8 +704,11 @@ setMethod("writeSurvey", "GPRsurvey", function(x, fPath, overwrite=FALSE){
 
 #' @export
 setMethod("writeGPR", "GPRsurvey", 
-        function(x,fPath, format=c("DT1","rds"), overwrite=FALSE){
-		type <- match.arg(format)
+        function(x, fPath = NULL, type = c("DT1", "rds", "ASCII", "xyzv"),
+                 overwrite = FALSE){
+    #setMethod("writeGPR", "GPRsurvey", 
+    #    function(x,fPath, format=c("DT1","rds"), overwrite=FALSE){
+		type <- match.arg(type, c("DT1", "rds", "ASCII", "xyzv"))
 		mainDir <- dirname(fPath)
 		if(mainDir =="." || mainDir =="/" ){
 			mainDir <- ""
@@ -733,11 +736,10 @@ setMethod("writeGPR", "GPRsurvey",
         ann(gpr) <- cbind(x@intersections[[gpr@name]]$trace,
                           x@intersections[[gpr@name]]$name)
 			}
-			fPath <- paste(mainDir,"/",subDir,"/",gpr@name,".",type,sep="")
-			writeGPR(gpr, fPath=fPath,format=type , overwrite=FALSE)
+			fPath <- paste(mainDir,"/",subDir,"/",gpr@name, sep = "")
+			writeGPR(gpr, fPath = fPath,type = type , overwrite = overwrite)
 			cat("File saved:",fPath,"\n")
 		}			
-	
 	}
 )
 #' @export

@@ -3530,36 +3530,43 @@ setMethod("strTensor", "GPR", function(x,  blksze = c(2, 4),
 #' @name writeGPR
 #' @rdname writeGPR
 #' @export
-setMethod("writeGPR", "GPR", function(x,fPath, format=c("DT1","rds"), 
-          overwrite = FALSE){
-    type <- match.arg(tolower(format), tolower(c("DT1","rds")))
-    splitBaseName <- unlist(strsplit(basename(fPath),'[.]'))
-    ext <- tail(splitBaseName,1)
-#     ext <-  tolower(substr(path,start=nchar(path)-3,stop=nchar(path)))
+setMethod("writeGPR", "GPR", function(x, fPath = NULL, 
+		  type = c("DT1", "rds", "ASCII", "xyzv"),
+		  overwrite = FALSE){
+    type <- match.arg(tolower(type), c("dt1", "rds", "ascii", "xyzv"))
+    fPath <- ifelse(is.null(fPath), x@name, .fNameWExt(fPath))
+    ext <- switch(type,
+                  "dt1" = ".dt1",
+                  "rds" = ".rds",
+                  "ascii" = ".txt",
+                  "xyzv" = ".txt")
+    fPath <- paste0(fPath, ext)
+    testFile <- file.exists(fPath)
     if(isTRUE(overwrite)){
-      cat("file may be overwritten\n")
-    }else{
-      fPath <- safeFPath(fPath)
+      if(testFile) cat("File overwritten\n")
+    }else if(testFile){
+      stop("File already exists. Cannot overwrite!\n")
     }
-    if(type == "DT1"){
-      if("dt1" != ext ){
-        stop("The extension of the filepath should be '.DT1'")
-      }
-      .writeDT1(x,fPath,overwrite)
-    }else if(type == "rds"){
-      if("rds" != ext ){
-        stop("The extension of the filepath should be '.rds'")
-      }
-      x@filepath <- as.character(fPath)
-      namesSlot <- slotNames(x)
-      xList <- list()
-#       xList[["version"]] <- "0.1"
-      for(i in seq_along(namesSlot)){
-        xList[[namesSlot[i]]] <- slot(x, namesSlot[i])
-      }
-      saveRDS(xList, fPath)
-    }
-    #   mod2 <- readRDS("mymodel.rds")
+    switch(type,
+           "dt1" = {.writeDT1(x, fPath)},
+           "rds" = {x@filepath <- as.character(fPath)
+                    namesSlot <- slotNames(x)
+                    xList <- list()
+                    # xList[["version"]] <- "0.1"
+                    for(i in seq_along(namesSlot)){
+                      xList[[namesSlot[i]]] <- slot(x, namesSlot[i])
+                    }
+                    saveRDS(xList, fPath)},
+            # idea: add header data
+            "ascii" = {write.table(as.matrix(x), file = fPath, 
+                       quote = FALSE, col.names = x@pos, row.names = x@depth)},
+            "xyzv" = {xyzv <- matrix(nrow=prod(dim(x)), ncol = 4)
+                      colnames(xyzv) <- c("x", "y", "z", "v")
+                      xyzv[, 4]  <- as.vector(as.matrix(x))
+                      xyzv[,1:3] <-  kronecker(x@coord, matrix(1,nrow(x),1))
+                      xyzv[,3]   <- xyzv[,3] - rep(x@depth, times = ncol(x))
+                      write.table(xyzv, file = fPath, quote = FALSE, 
+                      col.names = TRUE, row.names = FALSE)})
   } 
 )
 
@@ -3580,7 +3587,7 @@ setMethod("writeGPR", "GPR", function(x,fPath, format=c("DT1","rds"),
 # @return list((hd = headerHD, dt1hd = headerDT1, data=myData))
 # -------------------------------------------
 
-.writeDT1 <- function(x, fPath, overwrite=FALSE){
+.writeDT1 <- function(x, fPath){
   #-------------------------
   # DT1 FILE: traces
   traceData <- x@data  # should ranges between -32768 and 32767
@@ -3662,17 +3669,17 @@ setMethod("writeGPR", "GPR", function(x,fPath, format=c("DT1","rds"),
   }else{
     fPath <- paste(dirName,'/',baseName,sep="")
   }
-  if(isTRUE(overwrite)){
-    cat("file may be overwritten\n")
-  }else{
-    fPath_orgi <- fPath
-    k <- 0
-    while(file.exists(paste(fPath,".DT1",sep="")) || 
-            file.exists(paste(fPath,".HD",sep=""))){
-      fPath <- paste(fPath_orgi,"_",k,sep="")
-      k <- k+1
-    }
-  }
+  # if(isTRUE(overwrite)){
+    # cat("file may be overwritten\n")
+  # }else{
+    # fPath_orgi <- fPath
+    # k <- 0
+    # while(file.exists(paste(fPath,".DT1",sep="")) || 
+            # file.exists(paste(fPath,".HD",sep=""))){
+      # fPath <- paste(fPath_orgi,"_",k,sep="")
+      # k <- k+1
+    # }
+  # }
   
   
   # WRITE DT1 FILE

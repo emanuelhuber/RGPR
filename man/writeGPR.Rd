@@ -5,8 +5,8 @@
 \alias{writeGPR}
 \title{Write the GPR object in a file.}
 \usage{
-\S4method{writeGPR}{GPR}(x, fPath, format = c("DT1", "rds"),
-  overwrite = FALSE)
+\S4method{writeGPR}{GPR}(x, fPath = NULL, type = c("DT1", "rds", "ASCII",
+  "xyzv"), overwrite = FALSE)
 }
 \description{
 Write the GPR object in a file.

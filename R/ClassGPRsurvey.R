@@ -714,19 +714,11 @@ setMethod("writeGPR", "GPRsurvey",
 			mainDir <- ""
 		}
 		subDir <- basename(fPath)
-		if (file.exists(paste(mainDir, subDir, "/", sep = "/", 
-            collapse = "/"))) {
-			# cat("subDir exists in mainDir and is a directory")
-		} else 	if (file.exists(paste(mainDir, subDir, sep = "/", 
-            collapse = "/"))) {
-			#subDir <- ""
-			# you will probably want to handle this separately
-		} else {
-			warning("directory ", fPath, " does not exist - creating")
+		if ( !dir.exists( file.path(mainDir, subDir) )) {
+			warning("Create new director ", subDir, " in ", mainDir, "\n")
 			dir.create(file.path(mainDir, subDir))
 		}
 		for(i in seq_along(x)){
-			# gpr <- readGPR(x@fPaths[[i]])
 			gpr <- x[[i]]
 			if(length(x@coords[[gpr@name]])>0){
 				coord(gpr) <- x@coords[[gpr@name]]

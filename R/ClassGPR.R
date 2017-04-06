@@ -3583,7 +3583,6 @@ setMethod("writeGPR", "GPR", function(x, fPath = NULL,
 
 # @return list((hd = headerHD, dt1hd = headerDT1, data=myData))
 # -------------------------------------------
-
 .writeDT1 <- function(x, fPath){
   #-------------------------
   # DT1 FILE: traces

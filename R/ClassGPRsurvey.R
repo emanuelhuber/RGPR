@@ -708,7 +708,7 @@ setMethod("writeGPR", "GPRsurvey",
                  overwrite = FALSE){
     #setMethod("writeGPR", "GPRsurvey", 
     #    function(x,fPath, format=c("DT1","rds"), overwrite=FALSE){
-		type <- match.arg(type, c("DT1", "rds", "ASCII", "xyzv"))
+		type <- match.arg(tolower(type), c("dt1", "rds", "ascii", "xyzv"))
 		mainDir <- dirname(fPath)
 		if(mainDir =="." || mainDir =="/" ){
 			mainDir <- ""

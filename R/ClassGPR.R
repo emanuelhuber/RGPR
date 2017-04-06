@@ -3529,7 +3529,8 @@ setMethod("writeGPR", "GPR", function(x, fPath = NULL,
 		  type = c("DT1", "rds", "ASCII", "xyzv"),
 		  overwrite = FALSE){
     type <- match.arg(tolower(type), c("dt1", "rds", "ascii", "xyzv"))
-    fPath <- ifelse(is.null(fPath), x@name, .fNameWExt(fPath))
+    fPath <- ifelse(is.null(fPath), x@name, 
+                    file.path(dirname(fPath), .fNameWExt(fPath)))
     ext <- switch(type,
                   "dt1" = ".dt1",
                   "rds" = ".rds",

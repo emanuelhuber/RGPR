@@ -728,17 +728,17 @@ setMethod("writeGPR", "GPRsurvey",
         ann(gpr) <- cbind(x@intersections[[gpr@name]]$trace,
                           x@intersections[[gpr@name]]$name)
 			}
-			fPath <- paste(mainDir,"/",subDir,"/",gpr@name, sep = "")
-			writeGPR(gpr, fPath = fPath,type = type , overwrite = overwrite)
-			cat("File saved:",fPath,"\n")
+			fPath <- file.path(mainDir, subDir, gpr@name)
+			writeGPR(gpr, fPath = fPath, type = type , overwrite = overwrite)
+			cat("File saved:", fPath ,"\n")
 		}			
 	}
 )
 #' @export
-setMethod("exportFid", "GPRsurvey", function(x,fPath=NULL){
+setMethod("exportFid", "GPRsurvey", function(x, fPath = NULL){
 		for(i in seq_along(x)){
 			gpr <- readGPR(x@filepaths[[i]])
-			file_name <- paste(fPath,gpr@name,".txt",sep="")
+			file_name <- file.path(fPath, gpr@name, ".txt")
 			exportFid(gpr,file_name)
 			cat("File \"",file_name,"\" created!\n",sep="")
 			# x@coords[[gpr@name]] <- gpr@coord

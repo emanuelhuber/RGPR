@@ -783,8 +783,7 @@ setMethod("exportCoord", "GPRsurvey",
     for( i in seq_along(x)){
       gpr <- x[[i]]
       fPath <- file.path(mainDir, subDir, gpr@name)
-      exportCoord(gpr, fPath = fPath, layer = NULL, 
-                  type = "ASCII", ...)
+      exportCoord(gpr, fPath = fPath, type = "ASCII", ...)
     }
   }
 })

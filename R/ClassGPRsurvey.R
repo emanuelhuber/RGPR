@@ -128,7 +128,8 @@ setMethod("as.SpatialLines", signature(x = "GPRsurvey"), function(x){
 setMethod("as.SpatialPoints", signature(x = "GPRsurvey"), function(x){
 	allTopo <- do.call(rbind,x@coords)	#  N, E, Z
 	allTopo2 <- as.data.frame(allTopo)
-	sp::coordinates(allTopo2) = ~ E + N
+  names(allTopo2) <- c("E", "N", "Z")
+	sp::coordinates(allTopo2) <- ~ E + N
 	if(length(x@crs) == 0){
 		warning("no CRS defined!\n")
 	}else{

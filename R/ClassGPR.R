@@ -586,6 +586,7 @@ setAs(from = "GPR", to = "SpatialPoints",
 # as.SpatialPoints <- function (x, ...){
 setMethod("as.SpatialPoints", signature(x = "GPR"), function(x){
   myPoints <- as.data.frame(x@coord)
+  names(myPoints) <- c("E", "N", "Z")
   sp::coordinates(myPoints) = ~E + N
   if(length(crs(x)) == 0){
   warning("no CRS defined!\n")

@@ -705,7 +705,7 @@ setMethod("writeSurvey", "GPRsurvey", function(x, fPath, overwrite=FALSE){
 #' @export
 setMethod("writeGPR", "GPRsurvey", 
         function(x, fPath = NULL, type = c("DT1", "rds", "ASCII", "xyzv"),
-                 overwrite = FALSE){
+                 overwrite = FALSE, ...){
     #setMethod("writeGPR", "GPRsurvey", 
     #    function(x,fPath, format=c("DT1","rds"), overwrite=FALSE){
 		type <- match.arg(tolower(type), c("dt1", "rds", "ascii", "xyzv"))
@@ -729,7 +729,7 @@ setMethod("writeGPR", "GPRsurvey",
                           x@intersections[[gpr@name]]$name)
 			}
 			fPath <- file.path(mainDir, subDir, gpr@name)
-			writeGPR(gpr, fPath = fPath, type = type , overwrite = overwrite)
+			writeGPR(gpr, fPath = fPath, type = type , overwrite = overwrite, ...)
 			cat("File saved:", fPath ,"\n")
 		}			
 	}
@@ -749,43 +749,42 @@ setMethod("exportFid", "GPRsurvey", function(x, fPath = NULL){
 #' @export
 setMethod("exportCoord", "GPRsurvey",
 	function(x, type = c("SpatialPoints", "SpatialLines", "ASCII"),
-	fPath = NULL, folder = NULL, 	sep = "\t", driver = "ESRI Shapefile",...){
+  fPath = NULL, driver = "ESRI Shapefile", ...){
 	type <- match.arg(type, c("SpatialPoints", "SpatialLines", "ASCII"))
-# 	folder <- dirname(fPath)
-# 	fPath <- basename(fPath)
 	if(type == "SpatialLines"){
-    if(is.null(fPath)){
-      fPath <- x@names[1]
-    }
-    if(is.null(folder)){
-      folder <- dirname(fPath)
-    }
-    fPath <- basename(fPath)
+    fPath <- ifelse(is.null(fPath), x@names[1], 
+                    file.path(dirname(fPath), .fNameWExt(fPath))) 
 		mySpatLines <- as.SpatialLines(x)
 		dfl <- data.frame(z=seq_along(mySpatLines), 
-				row.names = sapply(slot(mySpatLines, "lines"), 
-							function(x) slot(x, "ID")))
-		mySpatLinesdf <- sp::SpatialLinesDataFrame(mySpatLines, dfl , 
+                      row.names = sapply(slot(mySpatLines, "lines"), 
+                      function(x) slot(x, "ID")))
+		spldf <- sp::SpatialLinesDataFrame(mySpatLines, dfl , 
                             match.ID = TRUE)
-		rgdal::writeOGR(mySpatLinesdf, folder, fPath, driver = driver,
-                    check_exists = TRUE, overwrite_layer = TRUE,
-                    delete_dsn = TRUE)
+		rgdal::writeOGR(obj = spldf, dsn = dirname(fPath), layer = basename(fPath), 
+                    driver = driver, check_exists = TRUE, 
+                    overwrite_layer = TRUE, delete_dsn = TRUE)
 	}else if(type == "SpatialPoints"){
-    if(is.null(fPath)){
-      fPath <- x@names[1]
-    }
-    if(is.null(folder)){
-      folder <- dirname(fPath)
-    }
-    fPath <- basename(fPath)
-		mySpatPoints <- as.SpatialPoints(x)
-		rgdal::writeOGR(mySpatPoints, folder, fPath, driver=driver,
-                    check_exists = TRUE, overwrite_layer = TRUE,
-                    delete_dsn = TRUE)
-	}else if(type == "ASCII"){	
-    for( i in seq_along(mySurvey)){
-      exportCoord(mySurvey[[i]], fPath = fPath, folder = folder, 
-                  type="ASCII", sep = sep)
+    fPath <- ifelse(is.null(fPath), x@names[1], 
+                    file.path(dirname(fPath), .fNameWExt(fPath))) 
+		spp <- as.SpatialPoints(x)
+		rgdal::writeOGR(spp, dsn = dirname(fPath), layer = basename(fPath),
+                    driver = driver, check_exists = TRUE,
+                    overwrite_layer = TRUE, delete_dsn = TRUE)
+	}else if(type == "ASCII"){
+    mainDir <- dirname(fPath)
+		if(mainDir =="." || mainDir =="/" ){
+			mainDir <- ""
+		}
+		subDir <- basename(fPath)
+		if ( !dir.exists( file.path(mainDir, subDir) )) {
+			warning("Create new director ", subDir, " in ", mainDir, "\n")
+			dir.create(file.path(mainDir, subDir))
+		}
+    for( i in seq_along(x)){
+      gpr <- x[[i]]
+      fPath <- file.path(mainDir, subDir, gpr@name)
+      exportCoord(gpr, fPath = fPath, layer = NULL, 
+                  type = "ASCII", ...)
     }
   }
 })

@@ -4,7 +4,7 @@
 \alias{displayPalGPR}
 \alias{palGPR}
 \alias{plotPal}
-\title{Colour palette}
+\title{Plot single colour palette}
 \usage{
 palGPR(colPal = "default", n = 101, power = 1, returnNames = FALSE)
 
@@ -13,10 +13,12 @@ plotPal(col, border = NA)
 displayPalGPR()
 }
 \description{
+source: vignette of the R-package "colorspace" (Color Space Manipulation)
+
 Colour palette
 }
 \examples{
-displayPalGPR()
 plotPal(palGPR("hcl_5"))
+displayPalGPR()
 }
 

@@ -5,7 +5,7 @@
 \alias{interpPos}
 \title{Interpolate the trace position.}
 \usage{
-\S4method{interpPos}{GPR}(x, topo, plot = FALSE, ...)
+\S4method{interpPos}{GPR}(x, topo, plot = FALSE, r = NULL, ...)
 }
 \arguments{
 \item{x}{An object of the class GPR.}

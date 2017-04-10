@@ -6,10 +6,10 @@
 \title{Write the GPR object in a file.}
 \usage{
 writeGPR(x, fPath = NULL, type = c("DT1", "rds", "ASCII", "xyzv"),
-  overwrite = FALSE)
+  overwrite = FALSE, ...)
 
 \S4method{writeGPR}{GPR}(x, fPath = NULL, type = c("DT1", "rds", "ASCII",
-  "xyzv"), overwrite = FALSE)
+  "xyzv"), overwrite = FALSE, ...)
 }
 \description{
 Write the GPR object in a file.

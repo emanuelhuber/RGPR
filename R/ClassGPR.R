@@ -2602,7 +2602,7 @@ setMethod("spec", "GPR", function(x, type = c("f-x","f-k"), plotSpec = TRUE,
 #' @name interpPos 
 #' @rdname interpPos
 #' @export
-setMethod("interpPos", "GPR", function(x, topo, plot = FALSE,...){
+setMethod("interpPos", "GPR", function(x, topo, plot = FALSE, r = NULL, ...){
     # test if any measured points have a reference to a trace 
 	# of the GPR-line
     if(all(is.na(topo[,"TRACE"]))){

@@ -632,7 +632,7 @@ setGenericVerif("ampl", function(x, FUN=mean, ...) standardGeneric("ampl"))
 #' @rdname interpPos
 #' @export
 setGenericVerif("interpPos", function(x, topo, plot = FALSE,
-                                      r = NULL...) 
+                                      r = NULL, ...) 
     standardGeneric("interpPos"))
 
 #' @name regInterpPos

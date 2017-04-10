@@ -2595,110 +2595,120 @@ setMethod("spec", "GPR", function(x, type = c("f-x","f-k"), plotSpec = TRUE,
 #'
 #' @param x An object of the class GPR.
 #' @param topo A (mx4) numeric matrix, with m the number of traces 
-#'				in x. The columns names of topo must be
-#'				"E", "N", "Z" and "TRACE".
+#'        in x. The columns names of topo must be
+#'        "E", "N", "Z" and "TRACE".
 #' @param plot A length-one boolean vector. If TRUE some control
-#'				plots are displayed.
+#'        plots are displayed.
 #' @name interpPos 
 #' @rdname interpPos
 #' @export
 setMethod("interpPos", "GPR", function(x, topo, plot = FALSE, r = NULL, ...){
-    # test if any measured points have a reference to a trace 
-	# of the GPR-line
-    if(all(is.na(topo[,"TRACE"]))){
-      warning(paste0(x@name, ": no link between the measured points",
-                    "and the GPR traces!\n"))
-    }else{
-      # if we have measured some points before the line start or 
-      # after the end of the GPR Line, we delete them
-      test <- !is.na(topo[,"TRACE"])
-      trueEnd <- max(which(test==TRUE))
-      trueBeg <- min(which(test==TRUE))
-      topo <- topo[trueBeg:trueEnd,]
-      #--- 3D topo Distance ---#
+  # test if any measured points have a reference to a trace 
+  # of the GPR-line
+  if(all(is.na(topo[,"TRACE"]))){
+    warning(paste0(x@name, ": no link between the measured points",
+                   "and the GPR traces!\n"))
+  }else{
+    # if we have measured some points before the line start or 
+    # after the end of the GPR Line, we delete them
+    test <- !is.na(topo[,"TRACE"])
+    trueEnd <- max(which(test))
+    trueBeg <- min(which(test))
+    topo <- topo[trueBeg:trueEnd,]
+    #--- 3D topo Distance ---#
+    if(is.null(r)){
       dist3D <- posLine(topo[,c("N","E","Z")], last=FALSE)
-      #--- INTERPOLATION GPR POSITION FROM TOTAL STATION ---#
-      # if there are points measured with the total station
-      # that do not have an fiducial (FID) > interpolate them!
-      myWarning <- ""
-      if(!all(test[trueBeg:trueEnd])){
-        # dist3D[topo$PNAME %in% FID$PNAME] > distance for the points 
-        # also recorded in FID
-        myWarning <- "  points total station without fiducials"
-        # cat("  points total station without fiducials")
-        test <- !is.na(topo[,"TRACE"])
-        if(sum(test)>2){
-          interp_method <- "linear"
-        }else{
-          interp_method <- "linear"
-        }
-        FIDpos <- signal::interp1(x = dist3D[test], 
-                                  y = x@pos[topo[test,"TRACE"]], 
-                                  xi = dist3D,
-                                  method = interp_method,
-                                  extrap=TRUE)
-      }else{
-        FIDpos   <- x@pos[topo[test,"TRACE"]]
-      }
-      # now: FIDpos <=> topo
-
-      #--- INTERPOLATION N,E,Z ---#
-      posInt   <- signal::interp1(FIDpos,dist3D, x@pos, 
-                      method ="linear" , extrap=TRUE)
-      # 'pchip': piecewise cubic hermite interpolating polynomial 
-      Nint   <- signal::interp1(dist3D,topo$N, posInt, 
-                      method ="linear" , extrap=TRUE)
-      Eint   <- signal::interp1(dist3D,topo$E, posInt, 
-                      method ="linear", extrap=TRUE)
-      if(length(dist3D)<= 2){
-        Zint <-  signal::interp1(dist3D,topo$Z, posInt, 
-                      method ="linear", extrap=NA)
-      }else{
-        Zint <-  signal::interp1(dist3D,topo$Z, posInt, 
-                      method ="pchip", extrap=NA)
-      }
-
-      lastNA  <- max(which(!is.na(Zint)))
-      firstNA <- min(which(!is.na(Zint)))
-      if(firstNA > 1)  Zint[1:(firstNA-1)] <- Zint[firstNA]
-      if(lastNA < length(Zint)){
-        Zint[(lastNA+1):length(Zint)] <- Zint[lastNA]
-      }
-      cat(x@name,": mean dx=", round(mean(diff(posInt)),3), 
-          "  range dx=",round(min(diff(posInt)),3),"-", 
-          round(max(diff(posInt)),3))
-      cat(myWarning)
-      cat("\n")
-	  if(plot == TRUE){
-		  par(mfrow=c(1,3))
-		  plot(FIDpos, dist3D, pch = 20, col = "red", cex = 2, asp = 1,
-				xlab = "FID  position", ylab = "trace spacing (3D)",
-		        xlim = range(x@pos), ylim=range(posInt), main=paste( x@name))
-		  points(x@pos,posInt,pch=20,col="blue")
-		  plot(posInt, Zint, type = "l", asp = 10, 
-				xlab = "interpolated trace spacing", 
-				ylab="interpolated elevation",
-		        main = paste0(x@name, " min dx=",round(min(diff(posInt)),2), 
-		        "  max dx=",round(max(diff(posInt)),2)))
-		  points(dist3D, topo[,c("Z")],pch=20,col="red")
-		  plot(topo[,c("E","N")], col = 1, type = "l", lwd = 2, asp = 1,
-		        ylim = range(Nint), xlim = range(Eint), 
-		        main = paste0(x@name, " mean dx=", round(mean(diff(posInt)),2)))
-		  points(topo[,c("E","N")],col=1,pch=20,cex=2)
-		  lines(Eint,Nint,col=2,lwd=2)
-		  Sys.sleep(1)
-      }
-      A <- matrix(nrow=length(Nint),ncol=3)
-      A[,1] <- Eint
-      A[,2] <- Nint
-      A[,3] <- Zint
-      colnames(A) <- c("E","N","Z")
-      x@coord <- A
-      x@proc <- c(x@proc, "interpPos")
+    }else{
+      topo[,"Z"] <- extract(r, topo[,c("E","N")], method = "bilinear")
+      dist3D <- posLine(topo[,c("N","E","Z")], last=FALSE)
+      #myLine <- sp::Line(topo[,c("E","N")])
+      #myLines <- sp::Lines(list(myLine), ID="1")
+      #spl <- sp::SpatialLines(list(myLines))
+      #plot(r)
+      #lines(spl, col = "red")
+      #splz <- extract(r, spl, method = "bilinear")
+      #plot(splz[[1]], type = "l")
     }
-    return(x)
+    #--- INTERPOLATION GPR POSITION FROM TOTAL STATION ---#
+    # if there are points measured with the total station
+    # that do not have an fiducial (FID) > interpolate them!
+    myWarning <- ""
+    if(!all(test[trueBeg:trueEnd])){
+      # dist3D[topo$PNAME %in% FID$PNAME] > distance for the points 
+      # also recorded in FID
+      myWarning <- "  points total station without fiducials"
+      # cat("  points total station without fiducials")
+      test <- !is.na(topo[,"TRACE"])
+      if(sum(test)>2){
+        interp_method <- "linear"
+      }else{
+        interp_method <- "linear"
+      }
+      FIDpos <- signal::interp1(x = dist3D[test], 
+                                y = x@pos[topo[test,"TRACE"]], 
+                                xi = dist3D,
+                                method = interp_method,
+                                extrap=TRUE)
+    }else{
+      FIDpos   <- x@pos[topo[test,"TRACE"]]
+    }
+    #--- INTERPOLATION N,E,Z ---#
+    intMeth <- ifelse(length(dist3D) > 2, "pchip", "linear")
+    posInt   <- signal::interp1(FIDpos, dist3D, x@pos, 
+                                method = intMeth , extrap=TRUE)
+    # 'pchip': piecewise cubic hermite interpolating polynomial 
+    Nint   <- signal::interp1(dist3D,topo$N, posInt, 
+                              method ="linear" , extrap=TRUE)
+    Eint   <- signal::interp1(dist3D,topo$E, posInt, 
+                              method ="linear", extrap=TRUE)
+    if(is.null(r)){
+      Zint <-  signal::interp1(dist3D, topo$Z, posInt, 
+                                method = intMeth, extrap = NA)
+    }else{
+      Zint <- extract(r, cbind(Eint, Nint), method = "bilinear")
+    } 
+    lastNA  <- max(which(!is.na(Zint)))
+    firstNA <- min(which(!is.na(Zint)))
+    if(firstNA > 1)  Zint[1:(firstNA-1)] <- Zint[firstNA]
+    if(lastNA < length(Zint)){
+      Zint[(lastNA+1):length(Zint)] <- Zint[lastNA]
+    }
+    cat(x@name,": mean dx=", round(mean(diff(posInt)),3), 
+        "  range dx=",round(min(diff(posInt)),3),"-", 
+        round(max(diff(posInt)),3))
+    cat(myWarning)
+    cat("\n")
+    if(plot == TRUE){
+      par(mfrow=c(1,3))
+      plot(FIDpos, dist3D, pch = 20, col = "red", cex = 2, asp = 1,
+           xlab = "FID  position", ylab = "trace spacing (3D)",
+           xlim = range(x@pos), ylim=range(posInt), main=paste( x@name))
+      points(x@pos,posInt,pch=20,col="blue")
+      plot(posInt, Zint, type = "l", asp = 10, 
+           xlab = "interpolated trace spacing", 
+           ylab="interpolated elevation",
+           main = paste0(x@name, " min dx=",round(min(diff(posInt)),2), 
+                         "  max dx=",round(max(diff(posInt)),2)))
+      points(dist3D, topo[,c("Z")],pch=20,col="red")
+      plot(topo[,c("E","N")], col = 1, type = "l", lwd = 2, asp = 1,
+           ylim = range(Nint), xlim = range(Eint), 
+           main = paste0(x@name, " mean dx=", round(mean(diff(posInt)),2)))
+      points(topo[,c("E","N")],col=1,pch=20,cex=2)
+      lines(Eint,Nint,col=2,lwd=2)
+      Sys.sleep(1)
+    }
+    A <- matrix(nrow=length(Nint),ncol=3)
+    A[,1] <- Eint
+    A[,2] <- Nint
+    A[,3] <- Zint
+    colnames(A) <- c("E","N","Z")
+    x@coord <- A
+    x@proc <- c(x@proc, "interpPos")
   }
+  return(x)
+}
 )
+
 
 #' Relative trace position on the GPR profile.
 #'
@@ -2720,7 +2730,7 @@ setMethod("reverse", "GPR", function(x){
     xnew@data <- x@data[,length(x):1]
     # traces="numeric",  # trace number
     # depth="numeric",  # depth position
-    # pos="numeric",    # position  of the traces          
+    # pos="numeric",    # position  of the traces
     xnew@time0 <- rev(x@time0)
     xnew@time <- rev(x@time)
     xnew@fid <- rev(x@fid)
@@ -3527,8 +3537,8 @@ setMethod("strTensor", "GPR", function(x,  blksze = c(2, 4),
 #' @rdname writeGPR
 #' @export
 setMethod("writeGPR", "GPR", function(x, fPath = NULL, 
-		  type = c("DT1", "rds", "ASCII", "xyzv"),
-		  overwrite = FALSE, ...){
+      type = c("DT1", "rds", "ASCII", "xyzv"),
+      overwrite = FALSE, ...){
     type <- match.arg(tolower(type), c("dt1", "rds", "ascii", "xyzv"))
     fPath <- ifelse(is.null(fPath), x@name, 
                     file.path(dirname(fPath), .fNameWExt(fPath)))

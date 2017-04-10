@@ -528,7 +528,8 @@ setMethod("intersections", "GPRsurvey", function(x){
 )
 
 #' @export
-setMethod("interpPos", "GPRsurvey", function(x,topo, ...){
+setMethod("interpPos", "GPRsurvey", function(x,topo, plot = FALSE,
+                                      r = NULL...){
 		for(i in seq_along(x)){
 			gpr <- readGPR(x@filepaths[[i]])
 			topoLine <- topo[[i]]

@@ -1,228 +1,11 @@
 
 
-# importFrom("grDevices", "dev.list", "dev.off", "rainbow", "rgb")
-#   importFrom("graphics", "abline", "arrows", "axis", "box", "grid",
-#              "identify", "image", "legend", "lines", "locator", "mtext",
-#              "par", "plot", "points", "polygon", "rect", "segments",
-#              "text", "title")
-#   importFrom("methods", "as", "is", "new", "selectMethod", "setGeneric",
-#              "slot", "slot<-", "slotNames")
-#   importFrom("stats", "acf", "quantile", "sd", "toeplitz")
-#   importFrom("utils", "head", "read.table", "tail", "write.table")
-
-
 
 
 # check lockBinding  (bibliotheque/documents/R/manuel-S4)
 
-# function:
-#   - invisible() > Return a (temporarily) invisible copy of an object.
-#       used in plot function
-# - missing() > check if an arguments is missing
- 
-# DON'T WANT TO PASS "..."-ARGUMENTS TO A FUNCTION?
-# SOLUTION: use a wrapper function, where the args after ... are the args
-# that you don't want to have in the function. E.G:
-# lPoints <- function(..., log, axes, frame.plot, panel.first, panel.last) {
-#     points(...)
-# }
-
-#' @export
-firstBreack <- function(...){
-  stop("USE FUNCTION 'firstBreak()' INSTEAD!\n")
-}
-
-# read/write SEGy
-
-# FIX ME!
-# - time0 offset correction: first correct all traces 
-#     with time0 using "time0Cor"
-# - use trace shift as function of time0 in plot function!!!
-# - rename "traceScaling" into "traceScale"
-# - unless explicitely specified, set velocity to NULL (?)
-# - gain/dewow -> apply it only where the signal starts!!!
-#     (after migration, 
-# - when subsampling GPR (rows) update gpr@dz
-#       Example: gpr0 <- gpr00[seq(1,by=4,to=nrow(gpr00)),]
-#               gpr0@dz != gpr00@dz * 4 !!!!
-# - CMP: plot + velocity model + normal move-out.
-# - GPR::delineations > create subfunction for the code snippets that are 
-#                       repeated!
-# - create a function for factors for units. For example
-#     unitFac("ns") returns 10^-9
-#     unitFac("nanosecond") returns 10^-9
-#     unitFac("MHz") returns 1000000
-#     unitFac("m") returns 1
-# - global > plotWig & plot Raster 
-#                   -> could be combined...
-#                   -> check subsurface flow mixing for nice PDFs!!
-#          > combine somehow powSpec and freqFilter1D
-#          > combine FKspectrum and FKfilter
-# - GPR::fFilter -> apply optionally a scaling to compensate for the 
-#                   removed frequency (check spectral theorem)
-# - GPRsurvey::plot3D -> use function "inPoly" to plot in 3D only a selection 
-#         of traces from GPRsurvey
-#                       -> add a zlim or a max depth!!!
-# - GPR::migration/topoShift -> integrate the function time2depth or 
-#                               depth2time!!!! Check with "timeCorOffset()"
-#                            -> in topographic Kirchhoff add a FUN function
-#                               to compute the sum of the amplitude
-#                               (to use robust measure)
-# - GPR::delineation -> use the same scheme for both raster and wiggles!
-# - GPR::fkFilter -> add as argument "slopes" (in fact for slope you only
-#                     need two points...
-# - GPR::interpTraces -> add as option a raster (DEM) from which the 
-#                        the trace elevation can be extracted
-# - plot.GPR function -> check if all the "..." parameters corresponds to 
-#                        the possible paramters. 
-#                        If not > error!
-# - GPR::gain -> t0=NULL then t0 <- mean(time0)
-# - GPR::spec(type "f-t") -> use power and log scale (?)
-# - GPR::plotAmpl -> option log y-axis
-# - GPR::exportPDF -> add processing steps!
-# - check how time0 is used
-# - GPR::export(type=PDF) use function plot (wiggles)!
-# - global -> optPhaseRotation -> check if 'e1071::kurtosis' is needed.  
-# - GPR::Math > add in @proc the name of the mathematical function
-# - GPR::exportCoord > add option to export txt-file
-
-#--- STRUCTURE ---#
-# - add @vDatum > for vertical geodesic datum
-# (- delete @depthunit, @posunit & replace by @units@depth and @units@pos)
-# - delete @dx > not needed! x@dx <- mean(diff(x@pos))
-# - delete @dz > not needed! x@dz <- mean(diff(x@depth))
-
-# NEW CLASS:    "GPRGrid" > based on survey but for x- and y-lines
-#               2D plot: the lines start from the same position
-#               can cut slices etc.
-# NEW CLASS:    "GPRCube" > GPRGrid converted into a cube...
-
 
 ################## GPR PROCESSING ######################3
-
-# Discontinuity Attribute
-
-# check book "Near-surface Geophysics, vol 13"
-
-# Idea for trace to trace processing:
-# -> list of all function with their argument to use
-# -> use a FUN_WRAP function : apply(GPR$data,2,FUN_WRAP)
-#       -> FUN_WRAP process each single trace according to the 
-#         list of function and theirs args.
-
-#--- conv() ---#
-#  add a function "conv()" for 1D convolution
-
-#--- conv2D() ---#
-#  add a function "conv2D()" for 2D convolution
-#  propose a choice of pre-defined kernels
-
-#--- declipping ---#
-# - least-square polynomial interpolation
-# - AR/ARMA model
-# - PCA/SVD decomposition
-# - DCT (cf. R package)
-# - deconvolution/convolution
-# - interpolation par cubic splines 
-#         (see bibliotheque/document/courbes de bezier+++ )
-
-#--- gain() ---#
-# - rms AGC
-# - instantaneous AGC
-# - automatic gain > check MATGPR
-# - tpow gain (frequency-dependent gain, Fowler and Clearbout
-
-
-#--- filter1D ---#
-# - add the possibility to add a "fun" function
-#     Example: filter1D(x, method="FUN", FUN)
-
-
-#--- filter2D ---#
-# - SVD filter
-# - adaptative smoothing
-# - background removal
-# - Radon transform
-# - sharpening (based on conv2D())
-# - blurring (based on conv2D())
-# - smoothing (based on conv2D())
-# - add the possibility to add a "fun" function
-#     Example: filter2D(x, method="FUN", FUN)
-
-#--- editing functions ---#
-# - merge (or cbind)
-# - rbind()
-# - align GPR profile with FFT
-
-#--- resolution ---#
-# - bicubique interpolation
-# - L1-DFT-based interpolation (L1 norm, sparsity)
-# - anti-alisasing filter
-
-#--- migration ---#
-# - SAR (cf book with matlab)
-# - f-k migration
-# - phase-shift migration
-
-#--- PEF-filter ---#
-# - f-xy filter
-# - t-x
-# - f-x
-# - ...
-
-#--- deconvolution ---#
-# ALL IN ONE SINGLE FUNCTION!!!!
-# - despiking
-# - wiener
-# - BP
-# - mixed-phase
-
-#--- denoising ---#
-# - denoising tensor field based on Riemannian geometry (Mathematical Methods 
-#               for Signal and Image Analysis and Representation)
-# - hampel filter
-# - bp_salsa_d
-# - n-pt median filter (scalar median filter SMF)
-# - correction for trace-to-trace jitter
-
-#--- local orientation ---#
-# - local orientation
-# - angular unconformity
-
-#--- plot functions ---#
-# - plot3Draster > to plot raster data in 3D with the GPR profiles
-# - plot3D > check alternative to RGL for high-quality figures
-
-#--- attributes ---#
-# - instantaneous (phase, amplitude, cf. Hilbert)
-# - coherency
-# - energy
-
-
-#--- CMP ---#
-# - 
-
-#--- miscs ---#
-# - function fresnelZone()
-# - function to read NMEA-GPS string
-# - GPRsurvey::bbox
-# - GPRsurvey::convexhull
-# - GPRsurvey -> intersections (also as spatialPoints)
-# - pre-defined color bar with funny names...
-# - GPRsurvey -> add spatial data (e.g. borehole) > closest distance...
-# - time function ->  gpr <- readGPR(file.choose());    as.POSIXct(gpr@time, 
-# origin = "1970-01-01")
-
-#--- 3D GPR ---#
-# - zigzag data acquisition can result in staggered noise
-#       shift the lines
-#       processing: median line de-stagger
-# - decoupled gridding (differences between forward and reverse lines results
-#       in noisy horizontal slices) -> staggering noise
-#       Create two separate grid maps of forward and reverse lines and
-#       then apply grid math to add these time slice maps back together
-#       (GPR remote sensing in archaeology)
-
 
 
 # TAPER WINDOWS
@@ -259,18 +42,6 @@ firstBreack <- function(...){
         # ACFoutput = ACFoutput.*taper;
 # end
 
-
-
-# WARNING: type = c("wiggles", "raster") should be the second arguments!!!
-
-# Reflection mode, CMP mode 
-# For a given transect, the data consist of a cross-section of 
-# signal amplitudes (intensities) versus location 
-# (along the two-way time axis and the horizontal axis). 
-
-#
-#    CHECK:  http://r-pkgs.had.co.nz/
-#
 
 ##----------- helper functions -------------------##
 # FID <- choose.files(caption = " txt files",filters = c("txt","*.txt"))
@@ -454,13 +225,11 @@ palGPR <- function(colPal="default", n = 101, power = 1, returnNames = FALSE){
   (tmp[[match(colPal, names(tmp))]])
 }
 
-# source: vignette of the R-package "colorspace" (Color Space Manipulation)
-# plot color palette
-# usage: 
-# pal(palGPR("seismic",50))
-# pal(palGPR(n=50))
-
-
+#' Plot single colour palette
+#' 
+#' source: vignette of the R-package "colorspace" (Color Space Manipulation) 
+#' @examples
+#' plotPal(palGPR("hcl_5"))
 #' @name plotPal
 #' @rdname palGPR
 #' @export
@@ -475,7 +244,6 @@ plotPal <- function(col, border = NA){
 #'
 #' @examples
 #' displayPalGPR()
-#' plotPal(palGPR("hcl_5"))
 #' @name displayPalGPR
 #' @rdname palGPR
 #' @export
@@ -863,7 +631,8 @@ setGenericVerif("ampl", function(x, FUN=mean, ...) standardGeneric("ampl"))
 #' @name interpPos
 #' @rdname interpPos
 #' @export
-setGenericVerif("interpPos", function(x, topo, ...) 
+setGenericVerif("interpPos", function(x, topo, plot = FALSE,
+                                      r = NULL...) 
     standardGeneric("interpPos"))
 
 #' @name regInterpPos
@@ -955,7 +724,7 @@ setGenericVerif("traceScaling", function(x,
                   type = c("stat","min-max","95","eq","sum", "rms")) 
                   standardGeneric("traceScaling"))
 
-setGenericVerif("spec", function(x, type=c("f-x","f-k"), plotSpec=TRUE, 
+setGenericVerif("spec", function(x, type=c("f-x", "f-k"), plotSpec=TRUE, 
                 unwrapPhase = TRUE, ...) standardGeneric("spec"))
 setGenericVerif("fFilter", function(x, f=100, type=c('low','high','bandpass'),
                 L=257,plotSpec=FALSE) standardGeneric("fFilter"))

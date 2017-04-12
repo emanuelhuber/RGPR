@@ -532,10 +532,11 @@ setMethod("interpPos", "GPRsurvey", function(x,topo, plot = FALSE,
                                       r = NULL, ...){
     for(i in seq_along(x)){
       gpr <- readGPR(x@filepaths[[i]])
-      topoLine <- topo[[i]]
-      gpr <- interpPos(gpr,topoLine, ...)
+      # topoLine <- topo[[i]]
+      # gpr <- interpPos(gpr,topoLine, ...)
+      gpr <- interpPos(gpr, topo[[i]], plot = plot, r = r, ...)
       x@coords[[gpr@name]] <- gpr@coord
-      x@lengths[i] <- posLine(gpr@coord[,1:2],last=TRUE)
+      x@lengths[i] <- posLine(gpr@coord[ ,1:2], last = TRUE)
     }      
     x <- coordref(x)
     return(x)

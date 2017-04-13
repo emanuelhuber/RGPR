@@ -400,20 +400,14 @@ plot.GPRsurvey <- function(x, y, ...){
       if(!is.null(dots$col)){
         col <- dots$col
       }
-      if(!is.null(dots$addIntersections)){
-        stop(paste0("'addIntersections' no more used!",
-                      " Use instead 'parIntersect' with a vector",
-                      " of arguments for the points function.\n"))
-        #addIntersections <- dots$addIntersections
-      }
-      
-      if(!is.null(parIntersect)){
+
+      if(!is.null(dots$parIntersect)){
         message("not missing parIntersect")
       #if(!is.null(dots$parIntersect)){
         parIntersect <- dots$parIntersect
         dots$parIntersect <- NULL
       }
-      if(!is.null(parFid)){
+      if(!is.null(dots$parFid)){
       #if(!is.null(dots$parFid)){
         parFid <- dots$parFid
         dots$parFid <- NULL

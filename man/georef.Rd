@@ -4,7 +4,8 @@
 \alias{georef}
 \title{Georeferencing}
 \usage{
-georef(x, alpha, center = c(0, 0), center2 = NULL)
+georef(x, alpha = NULL, cloc = c(0, 0), creg = NULL, ploc = NULL,
+  preg = NULL, FUN = mean)
 }
 \arguments{
 \item{x}{A matrix with the first two columns corresponding
@@ -13,17 +14,17 @@ to the coordinates.}
 \item{alpha}{A length-one numeric vector corresponding to 
 the rotation angle in radians}
 
-\item{center}{A length-two numeric vector.}
+\item{cloc}{A length-two numeric vector.}
 
-\item{center2}{A length-two numeric vector or 
+\item{creg}{A length-two numeric vector or 
 \code{NULL} (default).}
 }
 \description{
 Perform on a set of x,y coordinates
-(1) a translation by \code{-center}, then
+(1) a translation by \code{-cloc}, then
 (2) a rotation by \code{alpha} (radian), and (3)
-a translation by \code{center2}. If \code{center2}
-is \code{NULL}, then \code{center2} is set equal
-to \code{center}.
+a translation by \code{creg}. If \code{creg}
+is \code{NULL}, then \code{creg} is set equal
+to \code{cloc}.
 }
 

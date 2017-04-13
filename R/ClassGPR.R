@@ -2223,6 +2223,27 @@ lines.GPR <- function(x,...){
     stop("x must a vector!")
   }
 }
+      
+#' Add a GPR trace points on a plot
+#'
+#' @method points GPR 
+#' @name points
+#' @rdname points
+#' @export
+points.GPR <- function(x,...){
+  if(length(x@vel)>0){  
+    v <- x@vel[[1]]
+  }else{
+    v <- 0
+  }
+  if(any(dim(x) == 1)){
+#     z <- seq(-x@time0, by = x@dz, length.out = length(x@data))
+    z <- x@depth - x@time0
+    points(z, x@data,...)
+   }else{
+    stop("x must a vector!")
+  }
+}
 
 #' Plot the GPR object.
 #'

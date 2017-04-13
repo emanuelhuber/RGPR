@@ -117,17 +117,24 @@ setAs(from = "GPRsurvey", to = "SpatialPoints",
 #' @rdname GPRsurveycoercion
 #' @export
 setMethod("as.SpatialLines", signature(x = "GPRsurvey"), function(x){
-  TOPO <- x@coords
-  Names <- x@names
-  lineList <- lapply(TOPO, xyToLine)
-  linesList <- lapply(seq_along(lineList), LineToLines, lineList ,Names)
-  mySpatLines <- sp::SpatialLines(linesList)
-  if(length(x@crs) == 0){
-    warning("no CRS defined!\n")
+  # remove NULL from list
+  isNotNull <- !sapply(x@coords, is.null)
+  if(any(isNotNull)){
+    xyz <- x@coords[isNotNull]
+    lineList <- lapply(xyz, xyToLine)
+    linesList <- lapply(seq_along(lineList), LineToLines, lineList, 
+                        names(xyz))
+    mySpatLines <- sp::SpatialLines(linesList)
+    if(length(x@crs) == 0){
+      warning("no CRS defined!\n")
+    }else{
+      sp::proj4string(mySpatLines) <- sp::CRS(crs(x))
+    }
+    return(mySpatLines)
   }else{
-    sp::proj4string(mySpatLines) <- sp::CRS(crs(x))
+    warning("no coordinates!")
+    return(NULL)   
   }
-  return(mySpatLines)
 })
 
 #' Coerce to SpatialPoints
@@ -136,7 +143,7 @@ setMethod("as.SpatialLines", signature(x = "GPRsurvey"), function(x){
 #' @rdname GPRsurveycoercion
 #' @export
 setMethod("as.SpatialPoints", signature(x = "GPRsurvey"), function(x){
-  allTopo <- do.call(rbind,x@coords)  #  N, E, Z
+  allTopo <- do.call(rbind, x@coords)  #  N, E, Z
   allTopo2 <- as.data.frame(allTopo)
   names(allTopo2) <- c("E", "N", "Z")
   sp::coordinates(allTopo2) <- ~ E + N
@@ -154,8 +161,8 @@ setMethod("as.SpatialPoints", signature(x = "GPRsurvey"), function(x){
 #' @rdname coordref
 #' @export
 setMethod("coordref", "GPRsurvey", function(x){
-    if(length(x@coords)>0){
-      A <- do.call("rbind",x@coords)
+    if(length(x@coords) > 0){
+      A <- do.call("rbind", x@coords)
       A <- apply(round(A),2,range)
       Evalue <- .minCommon10(A[1,1],A[2,1])
       Nvalue <- .minCommon10(A[1,2],A[2,2])
@@ -211,19 +218,17 @@ setMethod(
     # cat(j,"\n")
     # i <- as.numeric(i)
     y <- x
-    y@filepaths    <- x@filepaths[i]    # vector of [n] file names
-    y@names      <- x@names[i]      # length = [n]
-    y@descriptions  <- x@descriptions[i]   # length = [n]
-    y@surveymodes   <- x@surveymodes[i]    # length = [n]
-    y@dates      <- x@dates[i]      # length = [n]
-    y@freqs      <- x@freqs[i]       # length = [n]
-    y@lengths    <- x@lengths[i]     # length = [n]
-    y@antseps    <- x@antseps[i]     # length = [n]
-    # posunit     = posunit,        # length = 1
-    # crs       = crs,          # length = 1
-    y@crs       <- x@crs
-    y@coords    <- x@coords[x@names[i]]        # header
-    y@fids      <- x@fids[x@names[i]]
+    y@filepaths      <- x@filepaths[i]
+    y@names          <- x@names[i]
+    y@descriptions   <- x@descriptions[i]
+    y@surveymodes    <- x@surveymodes[i]
+    y@dates          <- x@dates[i]
+    y@freqs          <- x@freqs[i]
+    y@lengths        <- x@lengths[i]
+    y@antseps        <- x@antseps[i]
+    y@crs            <- x@crs
+    y@coords         <- x@coords[x@names[i]]
+    y@fids           <- x@fids[x@names[i]]
     y@intersections  <- x@intersections[x@names[i]]
     return(y)
   }
@@ -240,7 +245,59 @@ setMethod(
   signature="GPRsurvey",
   definition=function (x, i, j, ...){
     if(missing(i)) i <- j
-    return(getGPR(x,id=i))
+    return(getGPR(x, id = i))
+  }
+)
+    
+#-------------------------------
+# "[[<-"
+#' @export
+setReplaceMethod(
+  f = "[[",
+  signature = "GPRsurvey",
+  definition = function(x, i, value){
+    if(class(x[[1]]) != "GPR"){
+      stop("'value' must be of class 'GPR'!")
+    }
+    if(missing(i)){
+      stop("missing index")  
+    }
+    i <- as.integer(i[1])
+    oldName <- x@names[i]
+    x@filepaths[[i]] <- value@filepath
+    ng <- x@names[-i]
+    newName <- value@name
+    it <- 1
+    while(newName %in% ng){
+      newName <- paste0(value@name, it)
+      it <- it + 1
+    }
+    x@names[i] <- newName
+    x@descriptions[i] <- value@description
+    x@freqs[i] <- value@freq
+    x@lengths[i] <- posLine(value@coord[,1:2], last = TRUE)
+    x@surveymodes[i] <- value@surveymode
+    x@dates[i] <-  value@date
+    x@antseps[i] <- value@antsep
+    if(length(x@coords) > 0){
+      x@coords[[oldName]] <- value@coord
+      names(x@coords)[i] <- newName
+    }else if(length(value@coord) > 0){
+      x@coords <- vector(mode = "list", length = length(x))
+      x@coords[[i]] <- value@coord
+      names(x@coords) <- x@names
+    }
+    if(length(x@fids) > 0){
+      x@fids[[oldName]] <- value@fid
+      names(x@fids)[i] <- newName
+    }else if(length(value@fid) > 0){
+      x@fids <- vector(mode = "list", length = length(x))
+      x@fids[[i]] <- value@fid
+      names(x@fids) <- x@names
+    }
+    x@intersections <- list()
+    x <- coordref(x)
+    return (x)
   }
 )
 
@@ -297,10 +354,10 @@ print.GPRsurvey <- function(x, ...){
   }else{
     cat("One directory among others:", dirNames[1],"\n")
   }
-  testCoords <- rep(0,n)
+  testCoords <- rep(0, n)
   names(testCoords) <- x@names
-  if(length(x@coords)>0){
-    testLength <- sapply(x@coords,length)
+  if(length(x@coords) > 0){
+    testLength <- sapply(x@coords, length)
     testCoords[names(testLength)] <- testLength
   }
   testCoords <- as.numeric(testCoords > 0)+1
@@ -314,13 +371,15 @@ print.GPRsurvey <- function(x, ...){
   
   is_test <- c("NO","YES")
   cat("- - - - - - - - - - - - - - -\n")
-  overview <- data.frame("name" = .fNameWExt(x@filepaths),
+  #overview <- data.frame("name" = .fNameWExt(x@filepaths),
+  overview <- data.frame("name" = x@names,
               "length" = round(x@lengths,2),
-              "units" = rep(x@posunit,n),
+              "units" = rep(x@posunit, n),
               "date" = x@dates,
-              "fequency" = x@freqs,
-              "coordinates" = is_test[testCoords],
-              "intersections" = is_test[testIntersecs])
+              "freq" = x@freqs,
+              "coord" = is_test[testCoords],
+              "int" = is_test[testIntersecs],
+              "filename" = basename(x@filepaths))
   print(overview)
   if(length(x@coords)>0 ){
     cat("- - - - - - - - - - - - - - -\n")
@@ -363,29 +422,35 @@ setMethod(f="length", signature="GPRsurvey", definition=function(x){
 # parameter add=TRUE/FALSE
 #       addArrows = TRUE/FALSE
 plot.GPRsurvey <- function(x, y, ...){
-  if(length(x@coords)>0){
-    plotAdd <- FALSE
-    addArrows <- TRUE
+  if(length(x@coords) > 0){
+    isNotNull <- which(!sapply(x@coords, is.null))
+    x <- x[isNotNull]
+    add <- FALSE
     add_shp_files <- FALSE
+    parArrows <- list(col = "red", length = 0.1)
     parIntersect <- list(pch=1,cex=0.8)
     parFid <- list(pch=21,col="black",bg="red",cex=0.7)
     xlab <- "E"
     ylab <- "N"
+    main <- ""
+    asp <- 1
     lwd <- 1
     col <- 1
     # print(list(...))
     dots <- list()
     if( length(list(...)) > 0 ){
       dots <- list(...)
+      uN <- table(names(dots))
+      if(any(uN > 1)){
+        idx <- which(uN > 1)
+        stop("Arguments '", names(uN[idx]), "' is not unique!")  
+      }
       if( !is.null(dots$add) && isTRUE(dots$add) ){
-        plotAdd <- TRUE
+        add <- TRUE
       }
-      if( !is.null(dots$addArrows) && isTRUE(!dots$addArrows) ){
-        addArrows <- FALSE
-      }
-      dots$addArrows <- NULL
-      if(!is.null(dots$lwd)){
-        lwd <- dots$lwd
+      if(!is.null(dots$main)){
+        main <- dots$main
+        dots$main <- NULL
       }
       if(!is.null(dots$xlab)){
         xlab <- dots$xlab
@@ -395,20 +460,24 @@ plot.GPRsurvey <- function(x, y, ...){
         ylab <- dots$ylab
         dots$ylab <- NULL
       }
+      if(!is.null(dots$asp)){
+        asp <- dots$asp
+        dots$asp <- NULL
+      }
       if(!is.null(dots$col)){
         col <- dots$col
       }
-
+      if("parArrows" %in% names(dots)){
+      #if(!is.null(dots$lwd)){
+        parArrows <- dots$parArrows
+        dots$parArrows <- NULL
+      }
       if("parIntersect" %in% names(dots)){
       #if(!is.null(dots$parIntersect)){
         parIntersect <- dots$parIntersect
         dots$parIntersect <- NULL
       }
-      ## FIXME
-      # if arg parFid = NULL, it does not work!
-      # solution: test the names!
       if("parFid" %in% names(dots)){
-      # if(!is.null(dots$parFid)){
         parFid <- dots$parFid
         dots$parFid <- NULL
       }
@@ -425,13 +494,18 @@ plot.GPRsurvey <- function(x, y, ...){
       }
       dots$shp_files <- NULL
     }
-    dots <- c(dots, list(type = "n",
-                         xlab = xlab,
-                         ylab = ylab))
+    #dots <- c(dots, list(type = "n",
+    #                     xlab = xlab,
+    #                     ylab = ylab))
     # print(dots)
-    # print(dots)
-    if(!plotAdd){
-      do.call("plot", c(list((do.call(rbind,x@coords))[,1:2]),dots))
+    if(!add){
+      xlim <- c(min(sapply(x@coords, function(y) min(y[,1]))),
+                max(sapply(x@coords, function(y) max(y[,1]))))
+      ylim <- c(min(sapply(x@coords, function(y) min(y[,2]))),
+                max(sapply(x@coords, function(y) max(y[,2]))))
+      #do.call("plot", c(list((do.call(rbind, x@coords))[,1:2]), dots))
+      plot(0,0, type = "n", xlim = xlim, ylim = ylim, xlab = xlab,
+                         ylab = ylab, main = main, asp = asp)
     }
     if(add_shp_files){
       if(length(shp_files) > 0){
@@ -441,17 +515,28 @@ plot.GPRsurvey <- function(x, y, ...){
         for(i in seq_along(shp_files)){
           shp <- readOGR(DIRName[i], BASEName[i])
           cat(DIRName[i], BASEName[i],"\n",sep="")
-          plot(shp, add=TRUE,pch=13,col="darkblue")
+          plot(shp, add = TRUE,pch=13,col="darkblue")
         }
       }
     }
-    niet <- lapply(x@coords, .plotLine, lwd=lwd, col=col )
-    if(addArrows){
-      niet <- lapply(x@coords, .plotArrows, lwd=lwd)
+    for(i in 1:length(x)){
+      xy <- unname(x@coords[[i]][,1:2])
+      dots$x <- xy[,1]
+      dots$y <- xy[,2]
+      do.call(lines, dots)
+    }
+    #niet <- lapply(x@coords, .plotLine, lwd = lwd, col = col )
+    if(!is.null(parArrows)){
+      for(i in 1:length(x)){
+        xyz <- unname(x@coords[[i]])
+        do.call(arrows, c(xyz[nrow(xyz)-1,1], xyz[nrow(xyz)-1,2], 
+                          x1 = xyz[nrow(xyz),1],   y1 = xyz[nrow(xyz),2], 
+                          parArrows))
+      }
+      #niet <- lapply(x@coords, .plotArrows, parArrows)
     }
     if(!is.null(parFid)){
       for(i in 1:length(x)){
-#         fidxyz <- .fidpos(x@coords[[i]],x@fids[[i]])
         fidxyz <- x@coords[[i]][trimStr(x@fids[[i]]) != "", , 
                                     drop=FALSE]
         if(length(fidxyz)>0){
@@ -468,7 +553,7 @@ plot.GPRsurvey <- function(x, y, ...){
       }
     }
   }else{
-    warning("no coordinates")
+    stop("no coordinates")
   }
 }
 
@@ -482,45 +567,38 @@ plot.GPRsurvey <- function(x, y, ...){
 setMethod("surveyIntersect", "GPRsurvey", function(x){
   # intersections <- list()
   for(i in seq_along(x@coords)){
-    top0 <- x@coords[[i]]
-    #gtop0 <- sp::Line(top0[,1:2])
-    #gtopa <- sp::Lines(list(gtop0), ID=c("a"))
-    #Sa <- sp::SpatialLines(list(gtopa))
-    Sa <- as.SpatialLines(x[i])
-    v <- seq_along(x@coords)[-i]
-    int_coords <- c()
-    int_traces <- c()
-    int_names <- c()
-    #myTr_int <- c()
-    for(j in v){
-      top1 <- x@coords[[j]]
-      #gtop1 <- sp::Line(top1[,1:2])
-      #gtopb <- sp::Lines(list(gtop1), ID=c("b"))
-      #Sb <- sp::SpatialLines(list(gtopb))
-      Sb <- as.SpatialLines(x[j])
-      pt_int <- rgeos::gIntersection(Sa,Sb)
-      if(!is.null(pt_int)){
-        # cat("intersection!\n")
-        # for each intersection points
-        #n_int <-   nrow(sp::coordinates(pt_int))
-        for(k in seq_along(pt_int)){
-          d <- sqrt(rowSums((top0[,1:2] - 
-                          matrix(sp::coordinates(pt_int)[k,],
-                          nrow = nrow(top0), ncol = 2, byrow = TRUE))^2))
-          int_coords <- rbind(int_coords, sp::coordinates(pt_int)[k,])
-          int_traces <- c(int_traces, which.min(d)[1])
-          int_names  <- c(int_names, x@names[j])
-          #myTr_int <- rbind(myTr_int ,c(sp::coordinates(pt_int)[k,],
-          #                      which.min(d)[1],x@names[j]))
+    if(!is.null(x@coords[[i]])){
+      top0 <- x@coords[[i]]
+      Sa <- as.SpatialLines(x[i])
+      v <- seq_along(x@coords)[-i]
+      int_coords <- c()
+      int_traces <- c()
+      int_names <- c()
+      for(j in v){
+        if(!is.null(x@coords[[j]])){
+          top1 <- x@coords[[j]]
+          Sb <- as.SpatialLines(x[j])
+          pt_int <- rgeos::gIntersection(Sa,Sb)
+          if(!is.null(pt_int)){
+            # for each intersection points
+            for(k in seq_along(pt_int)){
+              d <- sqrt(rowSums((top0[,1:2] - 
+                              matrix(sp::coordinates(pt_int)[k,],
+                              nrow = nrow(top0), ncol = 2, byrow = TRUE))^2))
+              int_coords <- rbind(int_coords, sp::coordinates(pt_int)[k,])
+              int_traces <- c(int_traces, which.min(d)[1])
+              int_names  <- c(int_names, x@names[j])
+            }
+          }
         }
       }
-    }
-    if(length(int_names) > 0){
-      x@intersections[[x@names[i]]] <- list(coord = int_coords,
-                                            trace = int_traces,
-                                            name  = int_names)
-    }else{
-      x@intersections[[x@names[i]]] <- NULL
+      if(length(int_names) > 0){
+        x@intersections[[x@names[i]]] <- list(coord = int_coords,
+                                              trace = int_traces,
+                                              name  = int_names)
+      }else{
+        x@intersections[[x@names[i]]] <- NULL
+      }
     }
   }
   return(x)

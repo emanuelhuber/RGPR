@@ -301,9 +301,9 @@ selectBBox <- function(border="red",lwd=2,...){
   lines(xyz[,1:2],...)
 }
 
-.plotArrows <- function(xyz,col="red",length=0.1,...){
+.plotArrows <- function(xyz, ...){
   arrows(xyz[nrow(xyz)-1,1], xyz[nrow(xyz)-1,2], xyz[nrow(xyz),1], 
-         xyz[nrow(xyz),2], length = length,col=col,...)
+         xyz[nrow(xyz),2], ...)
 }
 
 .whichMin <- function(x,y){

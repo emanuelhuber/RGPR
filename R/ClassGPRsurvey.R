@@ -268,10 +268,11 @@ setReplaceMethod(
     ng <- x@names[-i]
     it <- 1
     while(newName %in% ng){
-      newName <- paste0(value@name, it)
+      newName <- paste0(value@name, "_", it)
       it <- it + 1
     }
     tmpf <- tempfile(newName)
+    value@name <- newName
     writeGPR(value, type = "rds", overwrite = FALSE,
            fPath = tmpf)
     x@names[i] <- newName
@@ -572,7 +573,7 @@ setMethod("surveyIntersect", "GPRsurvey", function(x){
   for(i in seq_along(x@coords)){
     if(!is.null(x@coords[[i]])){
       top0 <- x@coords[[i]]
-      Sa <- as.SpatialLines(x[i])
+      Sa <- suppressWarnings(as.SpatialLines(x[i]))
       v <- seq_along(x@coords)[-i]
       int_coords <- c()
       int_traces <- c()
@@ -580,7 +581,7 @@ setMethod("surveyIntersect", "GPRsurvey", function(x){
       for(j in seq_along(v)){
         if(!is.null(x@coords[[v[j]]])){
           top1 <- x@coords[[v[j]]]
-          Sb <- as.SpatialLines(x[v[j]])
+          Sb <- suppressWarnings(as.SpatialLines(x[v[j]]))
           pt_int <- rgeos::gIntersection(Sa,Sb)
           if(!is.null(pt_int) && class(pt_int) == "SpatialPoints"){
             # for each intersection points
@@ -843,7 +844,7 @@ setMethod("exportCoord", "GPRsurvey",
   if(type == "SpatialLines"){
     fPath <- ifelse(is.null(fPath), x@names[1], 
                     file.path(dirname(fPath), .fNameWExt(fPath))) 
-    mySpatLines <- as.SpatialLines(x)
+    mySpatLines <- suppressWarnings(as.SpatialLines(x))
     dfl <- data.frame(z=seq_along(mySpatLines), 
                       row.names = sapply(slot(mySpatLines, "lines"), 
                       function(x) slot(x, "ID")))

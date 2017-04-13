@@ -397,12 +397,13 @@ plot.GPRsurvey <- function(x, y, ...){
         #addIntersections <- dots$addIntersections
       }
       
-      if(!missing(parIntersect)){
+      if(!is.null(parIntersect)){
+        message("not missing parIntersect")
       #if(!is.null(dots$parIntersect)){
         parIntersect <- dots$parIntersect
         dots$parIntersect <- NULL
       }
-      if(!missing(parFid)){
+      if(!is.null(parFid)){
       #if(!is.null(dots$parFid)){
         parFid <- dots$parFid
         dots$parFid <- NULL

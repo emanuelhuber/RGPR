@@ -326,31 +326,44 @@ selectBBox <- function(border="red",lwd=2,...){
 #' Georeferencing
 #'
 #' Perform on a set of x,y coordinates
-#' (1) a translation by \code{-center}, then
+#' (1) a translation by \code{-cloc}, then
 #' (2) a rotation by \code{alpha} (radian), and (3)
-#' a translation by \code{center2}. If \code{center2}
-#' is \code{NULL}, then \code{center2} is set equal
-#' to \code{center}.
+#' a translation by \code{creg}. If \code{creg}
+#' is \code{NULL}, then \code{creg} is set equal
+#' to \code{cloc}.
 #' @export
 #' @param x A matrix with the first two columns corresponding
 #'          to the coordinates.
 #' @param alpha A length-one numeric vector corresponding to 
 #'              the rotation angle in radians
-#' @param center A length-two numeric vector.
-#' @param center2 A length-two numeric vector or 
+#' @param cloc A length-two numeric vector.
+#' @param creg A length-two numeric vector or 
 #'                \code{NULL} (default).
-georef <- function(x, alpha, center = c(0,0), center2 = NULL){
+georef <- function(x, alpha = NULL, cloc = c(0,0), creg = NULL,
+                   ploc = NULL, preg = NULL, FUN = mean){
   x0 <- as.matrix(unname(x[,1:2, drop = FALSE]))
+  if(is.null(alpha)){
+    cloc <- as.double(cloc)
+    creg <- as.double(creg)
+    ploc <- as.matrix(ploc)
+    preg <- as.matrix(preg)
+    alphaloc <- atan2(ploc[,1] - cloc[1], ploc[,2] - cloc[2])
+    alphareg <- atan2(preg[,1] - creg[1], preg[,2] - creg[2])
+    alpha <- alphareg - alphaloc
+    message(paste0("rotation angles: ", 
+                   paste0(round(alpha,4), collapse = ", "), "."))
+    alpha <- FUN(alpha)
+  }
   ROT <- matrix(c( cos(alpha), sin(alpha),
                   -sin(alpha), cos(alpha)), nrow=2, ncol=2)
-  TRL <-  matrix(as.double(center[1:2]), nrow = nrow(x0), 
+  TRL <-  matrix(as.double(cloc[1:2]), nrow = nrow(x0), 
                  ncol = 2, byrow = TRUE)
-  if(is.null(center2)){
+  if(is.null(creg)){
     TRL2 <- TRL
   }else{
-    TRL <-  matrix(center2[1:2], nrow = nrow(x0), ncol = 2, byrow = TRUE)
+    TRL2 <-  matrix(creg[1:2], nrow = nrow(x0), ncol = 2, byrow = TRUE)
   }
-  x[,1:2] <- (x0 - TRL) %*% ROT + TRL
+  x[,1:2] <- (x0 - TRL) %*% ROT + TRL2
   return(x)
 }
 

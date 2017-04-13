@@ -256,7 +256,7 @@ setReplaceMethod(
   f = "[[",
   signature = "GPRsurvey",
   definition = function(x, i, value){
-    if(class(x[[1]]) != "GPR"){
+    if(class(value) != "GPR"){
       stop("'value' must be of class 'GPR'!")
     }
     if(missing(i)){
@@ -264,15 +264,18 @@ setReplaceMethod(
     }
     i <- as.integer(i[1])
     oldName <- x@names[i]
-    x@filepaths[[i]] <- value@filepath
-    ng <- x@names[-i]
     newName <- value@name
+    ng <- x@names[-i]
     it <- 1
     while(newName %in% ng){
       newName <- paste0(value@name, it)
       it <- it + 1
     }
+    tmpf <- tempfile(newName)
+    writeGPR(value, type = "rds", overwrite = FALSE,
+           fPath = tmpf)
     x@names[i] <- newName
+    x@filepaths[[i]] <- paste0(tmpf, ".rds")
     x@descriptions[i] <- value@description
     x@freqs[i] <- value@freq
     x@lengths[i] <- posLine(value@coord[,1:2], last = TRUE)
@@ -574,12 +577,12 @@ setMethod("surveyIntersect", "GPRsurvey", function(x){
       int_coords <- c()
       int_traces <- c()
       int_names <- c()
-      for(j in v){
-        if(!is.null(x@coords[[j]])){
-          top1 <- x@coords[[j]]
-          Sb <- as.SpatialLines(x[j])
+      for(j in seq_along(v)){
+        if(!is.null(x@coords[[v[j]]])){
+          top1 <- x@coords[[v[j]]]
+          Sb <- as.SpatialLines(x[v[j]])
           pt_int <- rgeos::gIntersection(Sa,Sb)
-          if(!is.null(pt_int)){
+          if(!is.null(pt_int) && class(pt_int) == "SpatialPoints"){
             # for each intersection points
             for(k in seq_along(pt_int)){
               d <- sqrt(rowSums((top0[,1:2] - 
@@ -587,7 +590,7 @@ setMethod("surveyIntersect", "GPRsurvey", function(x){
                               nrow = nrow(top0), ncol = 2, byrow = TRUE))^2))
               int_coords <- rbind(int_coords, sp::coordinates(pt_int)[k,])
               int_traces <- c(int_traces, which.min(d)[1])
-              int_names  <- c(int_names, x@names[j])
+              int_names  <- c(int_names, x@names[v[j]])
             }
           }
         }

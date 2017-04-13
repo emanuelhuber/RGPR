@@ -68,7 +68,8 @@ GPRsurvey <- function(LINES){
     fids[[line_names[i] ]]    <- trimStr(gpr@fid)
   }
   if(length(unique(posunit)) == 1){
-    postunit <- posunit[1]  
+    posunit <- posunit[1]  
+    if(posunit == "") posunit <- character(0)
   }else{
     stop("Unit positions are not the same: \n",
          paste0(unique(posunit), collaspe = ", "),
@@ -76,6 +77,7 @@ GPRsurvey <- function(LINES){
   }
   if(length(unique(crs)) == 1){
     crs <- crs[1]  
+    if(crs == "") crs <- character(0)
   }else{
     crs <- names(which.max(table(crs))[1])
     warning("Not all the coordinate reference systems are identical!",

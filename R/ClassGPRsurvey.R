@@ -367,10 +367,8 @@ plot.GPRsurvey <- function(x, y, ...){
     plotAdd <- FALSE
     addArrows <- TRUE
     add_shp_files <- FALSE
-    # addIntersections <- TRUE
     parIntersect <- list(pch=1,cex=0.8)
     parFid <- list(pch=21,col="black",bg="red",cex=0.7)
-    #addFid <- TRUE
     xlab <- "E"
     ylab <- "N"
     lwd <- 1
@@ -401,14 +399,16 @@ plot.GPRsurvey <- function(x, y, ...){
         col <- dots$col
       }
 
-      if(!is.null(dots$parIntersect)){
-        message("not missing parIntersect")
+      if("parIntersect" %in% names(dots)){
       #if(!is.null(dots$parIntersect)){
         parIntersect <- dots$parIntersect
         dots$parIntersect <- NULL
       }
-      if(!is.null(dots$parFid)){
-      #if(!is.null(dots$parFid)){
+      ## FIXME
+      # if arg parFid = NULL, it does not work!
+      # solution: test the names!
+      if("parFid" %in% names(dots)){
+      # if(!is.null(dots$parFid)){
         parFid <- dots$parFid
         dots$parFid <- NULL
       }

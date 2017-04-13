@@ -35,24 +35,22 @@ GPRsurvey <- function(LINES){
   line_freq <- numeric(n)
   line_antsep <- numeric(n)
   line_lengths <- numeric(n)
-  posunit <- character(1)
-  crs <- character(1)
+  posunit <- character(n)
+  crs <- character(n)
   xyzCoords <- list()
   fids <- list()
   for(i in seq_along(LINES)){
     gpr <- readGPR(LINES[[i]])
-    # FIX ME! SHOULD BE OK!
+    # FIX ME!
     #  > check if name(gpr) is unique
-    #   > check if "crs" is unique
-    #   > check if "posunit" is unique
-    line_names[i]       <- name(gpr)[1]
-    line_descriptions[i]   <- description(gpr)
-    line_surveymodes[i]   <- gpr@surveymode
-    line_dates[i]       <- gpr@date
-    line_freq[i]       <- gpr@freq
+    line_names[i]        <- name(gpr)[1]
+    line_descriptions[i] <- description(gpr)
+    line_surveymodes[i]  <- gpr@surveymode
+    line_dates[i]        <- gpr@date
+    line_freq[i]         <- gpr@freq
     line_antsep[i]       <- gpr@antsep
-    posunit         <- gpr@posunit[1]
-    crs           <- gpr@crs[1]
+    posunit[i]           <- gpr@posunit[1]
+    crs[i] <- ifelse(length(gpr@crs) > 0, gpr@crs[1], character(1))
     if(length(gpr@coord)>0){
       if(is.null(colnames(gpr@coord))){
         xyzCoords[[line_names[i] ]] <- gpr@coord
@@ -63,16 +61,26 @@ GPRsurvey <- function(LINES){
       }else{
         xyzCoords[[line_names[i] ]] <- gpr@coord
       }
-      # xyzCoords[[line_names[i] ]]   <- gpr@coord
       line_lengths[i]      <- posLine(gpr@coord[,1:2],last=TRUE)
     }else{
-      # xyzCoords[[line_names[i]]]   <- NULL
-#       line_lengths[i]    <- gpr@dx * gpr@ntr
       line_lengths[i]    <- gpr@dx * ncol(gpr@data)
     }
     fids[[line_names[i] ]]    <- trimStr(gpr@fid)
   }
-  
+  if(length(unique(posunit)) == 1){
+    postunit <- posunit[1]  
+  }else{
+    stop("Unit positions are not the same: \n",
+         paste0(unique(posunit), collaspe = ", "),
+         "!!\n")
+  }
+  if(length(unique(crs)) == 1){
+    crs <- crs[1]  
+  }else{
+    crs <- names(which.max(table(crs))[1])
+    warning("Not all the coordinate reference systems are identical!",
+            "I take ", crs , "!\n")
+  }
   x <- new("GPRsurvey",
         version     = "0.1",
         filepaths    = LINES,       # vector of [n] file names

@@ -274,7 +274,17 @@ colFromPal <- function(A , col = palGPR(n=101)){
 #--------------------------------#
 
 
+# Compute the orientation angle of GPR profile
+gprAngle <- function(x){
+  dEN <- x@coord[1,1:2] - tail(x@coord[,1:2],1)
+  return(atan2(dEN[2], dEN[1]))
+}
 
+# is angle b between aref - 1/2*atol and aref + 1/2*atol?
+inBetAngle <- function(aref, b, atol = pi/10){
+  dot <- cos(b)*cos(aref) + sin(b) * sin(aref)
+  return(acos(dot) <= atol)
+}
 
 
   

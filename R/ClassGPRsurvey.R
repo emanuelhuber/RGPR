@@ -828,7 +828,7 @@ setMethod("writeGPR", "GPRsurvey",
 setMethod("exportFid", "GPRsurvey", function(x, fPath = NULL){
     for(i in seq_along(x)){
       gpr <- readGPR(x@filepaths[[i]])
-      file_name <- file.path(fPath, gpr@name, ".txt")
+      file_name <- file.path(fPath, paste0(gpr@name, ".txt"))
       exportFid(gpr,file_name)
       cat("File \"",file_name,"\" created!\n",sep="")
       # x@coords[[gpr@name]] <- gpr@coord

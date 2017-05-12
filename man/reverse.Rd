@@ -9,7 +9,7 @@
 \usage{
 \S4method{reverse}{GPR}(x)
 
-\S4method{reverse}{GPR}(x)
+\S4method{reverse}{GPRsurvey}(x)
 }
 \description{
 Reverse the trace position.

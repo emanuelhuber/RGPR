@@ -649,6 +649,7 @@ setMethod("reverse", "GPRsurvey", function(x){
       angi <- gprAngle(y) 
       if(!isTRUE(inBetAngle( angRef[typeNo], angi, atol = pi/10))){
         y <- reverse(y)
+        revTRUE[i] <- TRUE
         message(y@name, " > reverse!")
         tmpf <- tempfile(y@name)
         writeGPR(y, type = "rds", overwrite = FALSE, fPath = tmpf)

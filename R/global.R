@@ -74,50 +74,200 @@ readTopo <- function(TOPO,sep=","){
   }
   return(myTopo)
 }
-   
-plotTopo <- function(NEZ_file, add=TRUE){
-  topo <- read.table(NEZ_file, header=TRUE, sep=",", stringsAsFactors = FALSE)
-  # topo$N <- -topo$N
 
-  PCODE <- unique(topo$PCODE)
-
-  TS     <- agrep("TS" , PCODE)    # TOTAL STATION
-  REF   <- agrep("REF" , PCODE)    # TOTAL STATION
-  WATER   <- agrep("WATER" , PCODE)    # TOTAL STATION
-  CROSS   <- which("CROSS" == PCODE)    # TOTAL STATION
-  REVERSE  <- agrep("REVERSE", PCODE)  # 180° hor, ver
-  LINES   <- agrep("LINE", PCODE) 
-  LINES   <- LINES[!(agrep("LINE", PCODE) %in% REVERSE)]
-
-  POINTS <- which(!(1:length(PCODE) %in% 
-            c(LINES,TS,REVERSE,WATER,CROSS, REF)))  
-  # topo
-  NOT_REVERSE <- !(1:length(PCODE) %in% agrep("REVERSE", PCODE))
-
-  not_rev <- !(1:nrow(topo) %in% agrep("REVERSE",topo$PCODE))
-
-  #----------------------------------------------------
-  if(add==FALSE){
-    plot(topo[not_rev,c("E","N")],type="n", asp=1)
+# P = Position (topo)
+# F = fiducials
+rmDuplicates <- function(xyz, fid){
+  dn <- nrow(xyz) - nrow(fid)
+  if(dn > 0){
+    dd <- as.matrix(dist(xyz[, 1:2]))
+    diag(dd) <- NA
+    dd[upper.tri(dd)] <- NA
+    ij <- which(dd <= min(sort(dd)[dn], 0.1), arr.ind = TRUE)
+    # handle "duplicate"
+    if(length(ij) > 0){
+      A <- list()
+      it <- 1
+      for(k in 1:nrow(xyz)){
+        ik <- apply(ij, 1, function(x, k0 = k) any(x %in% k0))
+        if(sum(ik) > 0){
+          A[[it]] <- unname(ij[ik,])
+          ij <- ij[-ik,]
+          it <- it + 1
+        }else if( !(k %in% unlist(A))){
+          A[[it]] <- k
+          it <- it + 1
+        }
+      }
+      ##TODO ##FIXME
+      if(length(A) != nrow(fid)) stop("case to be implemented!!")
+      ##TODO ##FIXME
+      nL <- sapply(A, length)
+      B <- matrix(ncol = length(A), nrow = prod(nL))
+      for(k in 1:length(A)){
+        B[,k] <- rep(A[[k]], prod(nL[-k]))
+      }
+      regres <- numeric(nrow(B))
+      for(k in 1:nrow(B)){
+        posTopo <- posLine(xyz[B[k,], 1:2])
+        reg <- lm(fid$POSITION ~ posTopo)
+        regres[k] <- summary(reg)$r.squared
+      }
+      iOK <- which.max(regres)
+      xyz <- xyz[B[iOK,], ]
+    }
   }
-  # reverse
-  for(i in 1:length(REVERSE)){
-    points( - topo[topo[,"PCODE"]==PCODE[REVERSE[i]],c("E","N")],
-              pch=20,col=1)
-  }
-  # Water
-  points( topo[topo[,"PCODE"] %in% PCODE[WATER],c("E","N")],pch=10,col=1)
-  # points
-  for(i in 1:length(POINTS)){
-    points(topo[topo[,"PCODE"]==PCODE[POINTS[i]],c("E","N")],
-                pch=3,col=1,cex=0.7)
-  }
-  # ref
-  points(topo[topo[,"PCODE"]%in% PCODE[REF],c("E","N")],
-          pch=25,col=3,bg="green")  
+  return(xyz)
 }
 
+# tt = x@time
+# pos = x@pos
+# xyz <- TOp
+# fid <- fi
+# fidx = x@fid
+addFid <- function(xyz, fid, tt, pos, fidx){
+  dn <- nrow(xyz) - nrow(fid)
+  if(dn > 0){
+    dtime  <- c(0, diff(tt))
+    sel    <- pos %in% fid$POSITION
+    idtime <- which(dtime > 1.5 * sd(dtime[!sel]) & !sel)
+    dn <- nrow(xyz) - nrow(fid)
+    if(length(idtime) > 0){
+      # en fait il faudrait regarder au cas par cas pour chaque
+      # coordonnée auquelle il manque un fiducial
+      if(length(idtime) >= dn){ 
+        posTopo <- posLine(xyz[, 1:2])
+        vx <- combn(seq_along(idtime), dn)
+        regres <- numeric(ncol(vx))
+        for(k in seq_len(ncol(vx))){
+          dxt <- sort(c(idtime[vx[,k]], which(sel)))
+          reg <- lm( pos[dxt] ~ posTopo)
+          regres[k] <- summary(reg)$r.squared
+        }
+        iOK <- which.max(regres)
+        dxt <- sort(c(idtime[vx[,iOK]], which(sel)))
+        ffid <- fidx[dxt]
+        ffid[1] <- "START"
+        ffid[length(ffid)] <- "END"
+        if(length(ffid) > 2){
+          ffid[2:(length(ffid)-1)] <- paste0("FID", seq_len(length(ffid)-2))
+        }
+      }else{
+        stop("TO BE IMPLEMENTED")
+      }
+      fid <- data.frame(TRACE    = dxt, 
+                      POSITION = pos[dxt], 
+                      COMMENT  = ffid)
+      com <- paste0("  find ", dn," new FIDs!")
+    }
+  }
+  return(fid)
+}
 
+rmxyz <- function(xyz, fid){
+  dn <- nrow(xyz) - nrow(fid)
+  if(dn > 0){
+    vx <- combn(1:nrow(xyz), nrow(fid))
+    regres <- numeric(ncol(vx))
+    coeff <- numeric(ncol(vx))
+    for(k in 1:ncol(vx)){
+      posTopo <- posLine(xyz[vx[,k], 1:2])
+      reg <- lm(fid$POSITION ~ posTopo)
+      regres[k] <- summary(reg)$r.squared
+      coeff[k] <- reg$coef[2]
+    }
+    if(nrow(fid) == 2){
+      iOK <- which.min(abs(coeff - 1))
+    }else{
+      iOK <- which.max(regres)
+    }
+    #com <- "   remove a coord!"
+    xyz <- xyz[vx[,iOK],]
+  }
+  return(xyz)
+}
+
+rmfid <- function(xyz, fid){
+  dn <- nrow(xyz) - nrow(fid)
+  if(dn < 0){
+    # remove fiducials!!
+    vx <- combn(1:nrow(fid), nrow(xyz))
+    regres <- numeric(ncol(vx))
+    coeff <- numeric(ncol(vx))
+    posTopo <- posLine(xyz[, 1:2])
+    for(k in 1:ncol(vx)){
+      reg <- lm(fid$POSITION[vx[,k]] ~ posTopo)
+      regres[k] <- summary(reg)$r.squared
+      coeff[k] <- reg$coef[2]
+    }
+    if(nrow(fid) == 2){
+      iOK <- which.min(abs(coeff - 1))
+    }else{
+      iOK <- which.max(regres)
+    }
+    com <- "   remove a fiducial!"
+    fid <- fid[vx[,iOK],]
+  }
+  return(fid)
+}
+
+#' Link coordinates to fiducial marker
+#'
+#' To interpolate topo
+#' @param y object of class GPSsurvey
+#' @param xyz matrix of coordinates
+#' @param pcode character vector (length(pcode) = nrow(xyz)) indicating which
+#'              coordinates to which GPR data belongs
+#' @export
+linkCoordFid <- function(y, xyz, pcode ){
+  FIDs <- list()
+  sn <- names(y)
+  for(i in seq_along(y)){
+    tp <- grep(sn[i], pcode)
+    x <- y[[i]]
+    fi <- exportFid(x)
+    xyzp <- xyz[tp,]
+    xyzp <- rmDuplicates(xyz = xyzp, fid = fi)
+    fi <- addFid(xyz = xyzp, fid = fi, tt = x@time, pos = x@pos, fidx = x@fid)
+    xyzp <- rmxyz(xyz = xyzp, fid = fi)
+    fi <- rmfid(xyz = xyzp, fid = fi)
+    if( nrow(fi) == nrow(xyzp)){
+      fi$E <- xyzp[, "E" ]
+      fi$N <- xyzp[, "N" ]
+      fi$Z <- xyzp[, "Z" ]
+      FIDs[[i]] <- fi
+    }
+  }
+  return(FIDs)
+}
+# # 1. too much coordinates  n(coord) > n(fid)
+# #   a. remove duplicates
+# #     i. n(coord) = n(fid) -> OK
+# #     ii. too much coordinates  n(coord) > n(fid)
+# #       > maybe a fiducial is missing
+# #         find potential fiducials
+# #         make all possible combination fiducials - coords
+# #         * n(coord) = n(fid) -> OK
+# #         * ii. too much coordinates  n(coord) > n(fid)
+# #           - remove a fiducial
+ # fids <- linkCoordFid(y = SU, xyz = TO[, c("E", "N", "Z")], pcode = TO$PCODE)
+# which(sapply(fids, is.null))
+
+# for(i in seq_along(SU)){
+  # posTopo <- posLine(fids[[i]][, c("E", "N")])
+  # reg <- lm(fids[[i]]$POSITION ~ posTopo)
+  # plot(posTopo, fids[[i]]$POSITION, main = SU@names[i], asp = 1)
+  # abline(reg, col = "red")
+  # title(sub = summary(reg)$r.squared)
+  # Sys.sleep(0.5)
+  # if(max(reg$res) < 1.5 | summary(reg)$r.squared > 0.99){
+    # title("\n\nOK!")
+    # Sys.sleep(1.5)
+  # }else{
+    # message(SU@names[i])
+  # }
+# }
+  
 
 ##------------- FILENAME/FILEPATH/EXTENSION -------------------##
 # NAME: safe file path

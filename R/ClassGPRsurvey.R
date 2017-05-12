@@ -635,7 +635,7 @@ setMethod("interpPos", "GPRsurvey", function(x,topo, plot = FALSE,
 #' @name reverse
 #' @rdname reverse
 #' @export
-setMethod("reverse", "GPR", function(x){
+setMethod("reverse", "GPRsurvey", function(x){
   lnTypes <- gsub("[0-9]*$", "", basename(x@names))
   lnTypeUniq <- unique(lnTypes)
   angRef <- rep(NA, length = length(lnTypeUniq))

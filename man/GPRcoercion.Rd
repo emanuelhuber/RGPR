@@ -2,13 +2,13 @@
 % Please edit documentation in R/ClassGPR.R
 \docType{methods}
 \name{as.matrix}
-\alias{as.GPR.list}
-\alias{as.GPR.matrix}
+\alias{as.matrix}
+\alias{as.vector}
 \alias{as.SpatialLines}
 \alias{as.SpatialPoints}
-\alias{as.matrix}
 \alias{as.numeric}
-\alias{as.vector}
+\alias{as.GPR.matrix}
+\alias{as.GPR.list}
 \title{Coercion to matrix}
 \usage{
 \S4method{as.matrix}{GPR}(x)
@@ -40,4 +40,3 @@ Coercion from matrix to GPR
 
 Coercion from list to GPR
 }
-

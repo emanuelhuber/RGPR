@@ -15,4 +15,3 @@ a monostatic system under the assumption of horizontally layered structure).
 Note that this function does not change the trace but only the time (time
 scale).
 }
-

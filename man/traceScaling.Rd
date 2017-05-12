@@ -11,4 +11,3 @@
 \description{
 Trace scaling
 }
-

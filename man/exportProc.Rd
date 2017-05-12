@@ -3,6 +3,7 @@
 \docType{methods}
 \name{exportProc}
 \alias{exportProc}
+\alias{exportProc}
 \title{Export the process steps.}
 \usage{
 \S4method{exportProc}{GPR}(x, fPath = NULL, sep = "\\t",
@@ -11,4 +12,3 @@
 \description{
 Export the process steps.
 }
-

@@ -12,4 +12,3 @@
 \description{
 Three-dimensional plot of the GPR data with Open-GL
 }
-

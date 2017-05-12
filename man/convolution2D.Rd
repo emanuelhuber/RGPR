@@ -9,4 +9,3 @@ convolution2D(A, k)
 \description{
 The convolution is performed with 2D FFT
 }
-

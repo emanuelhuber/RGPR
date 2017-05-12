@@ -3,6 +3,7 @@
 \docType{methods}
 \name{processing}
 \alias{processing}
+\alias{processing}
 \title{Processing steps applied to the data}
 \usage{
 \S4method{processing}{GPR}(x)
@@ -23,4 +24,3 @@ data(frenkeLine00)
 A <- dewow(frenkeLine00, type = "Gaussian")
 processing(A)
 }
-

@@ -32,4 +32,3 @@ Shift vertically the traces by an amount of depth units.
 \code{\link{time0Cor}} to shift the traces such that they start
          at time zero.
 }
-

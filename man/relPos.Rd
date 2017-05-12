@@ -3,6 +3,7 @@
 \docType{methods}
 \name{relPos}
 \alias{relPos}
+\alias{relPos}
 \title{Relative trace position on the GPR profile.}
 \usage{
 \S4method{relPos}{GPR}(x)
@@ -10,4 +11,3 @@
 \description{
 Relative trace position on the GPR profile.
 }
-

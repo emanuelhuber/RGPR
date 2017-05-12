@@ -11,4 +11,3 @@ strucTensor(P, dxy = c(1, 1), mask = c(2, 2), kBlur = list(n = 3, m = 3,
 \description{
 Structure tensor field
 }
-

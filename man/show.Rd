@@ -4,9 +4,11 @@
 \name{print}
 \alias{print}
 \alias{print.GPR}
-\alias{print.GPRsurvey}
 \alias{show}
 \alias{show-method}
+\alias{print}
+\alias{print.GPRsurvey}
+\alias{show}
 \title{Print GPR}
 \usage{
 \method{print}{GPR}(x, ...)
@@ -26,4 +28,3 @@ Print GPR survey
 
 Identical to print().
 }
-

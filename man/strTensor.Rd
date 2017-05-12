@@ -12,4 +12,3 @@
 \description{
 Structure tensor field of GPR data
 }
-

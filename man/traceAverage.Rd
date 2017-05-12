@@ -47,4 +47,3 @@ f3 <- traceAverage(f0, w = 20, FUN = median)
 plot(f3)
 plot(f0 - f3)
 }
-

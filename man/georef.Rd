@@ -27,4 +27,3 @@ a translation by \code{creg}. If \code{creg}
 is \code{NULL}, then \code{creg} is set equal
 to \code{cloc}.
 }
-

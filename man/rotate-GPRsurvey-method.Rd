@@ -10,4 +10,3 @@
 \description{
 Rotate coordinates of the GPR traces
 }
-

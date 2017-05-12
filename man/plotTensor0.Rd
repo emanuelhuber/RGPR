@@ -11,4 +11,3 @@ plotTensor0(alpha, l1, l2, x, y, col = NULL, type = c("vectors",
 \description{
 Plot structure tensor on GPR data
 }
-

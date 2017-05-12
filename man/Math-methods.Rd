@@ -26,4 +26,3 @@ Currently implemented methods include:
 data(frenkeLine00)
 A <- exp(frenkeLine00)
 }
-

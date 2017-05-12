@@ -2,8 +2,8 @@
 % Please edit documentation in R/global.R, R/ClassGPR.R
 \docType{methods}
 \name{proc<-}
-\alias{proc}
 \alias{proc<-}
+\alias{proc}
 \title{Add a processing step}
 \usage{
 \S4method{proc}{GPR}(x) <- value
@@ -11,4 +11,3 @@
 \description{
 Add a processing step
 }
-

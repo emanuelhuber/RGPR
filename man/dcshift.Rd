@@ -10,4 +10,3 @@
 \description{
 Direct-current removal
 }
-

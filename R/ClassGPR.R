@@ -2749,9 +2749,6 @@ setMethod("relPos", "GPR", function(x){
 setMethod("reverse", "GPR", function(x){
     xnew <- x
     xnew@data <- x@data[,length(x):1]
-    # traces="numeric",  # trace number
-    # depth="numeric",  # depth position
-    # pos="numeric",    # position  of the traces
     xnew@time0 <- rev(x@time0)
     xnew@time <- rev(x@time)
     xnew@fid <- rev(x@fid)
@@ -2765,8 +2762,7 @@ setMethod("reverse", "GPR", function(x){
     if(length(x@trans)>0){
       xnew@trans <- x@trans[nrow(x@trans):1,]
     }
-    proc(x) <- getArgs()
-    # x@proc <- c(x@proc, proc)
+    proc(xnew) <- getArgs()
     return(xnew)
   }
 )

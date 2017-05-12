@@ -19,4 +19,3 @@ The convolved GPR data.
 \description{
 Convolution of the GPR traces with a wavelet
 }
-

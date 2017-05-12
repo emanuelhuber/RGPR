@@ -3,6 +3,7 @@
 \docType{methods}
 \name{plotAmpl}
 \alias{plotAmpl}
+\alias{plotAmpl}
 \title{Plot the trace amplitude}
 \usage{
 \S4method{plotAmpl}{GPR}(x, FUN = mean, add = FALSE, all = FALSE, ...)
@@ -30,4 +31,3 @@ Plot the amplitude estimated over the whole GPR data as a function of
 data(frenkeLine00)
 plotAmpl(frenkeLine00, FUN = median)
 }
-

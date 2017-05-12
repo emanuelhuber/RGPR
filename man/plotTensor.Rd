@@ -10,4 +10,3 @@ plotTensor(x, O, type = c("vectors", "ellipses"), normalise = FALSE,
 \description{
 Plot structure tensor on GPR data
 }
-

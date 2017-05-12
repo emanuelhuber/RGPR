@@ -3,6 +3,7 @@
 \docType{methods}
 \name{shiftEst}
 \alias{shiftEst}
+\alias{shiftEst}
 \title{Shift estimation between two GPR profiles.}
 \usage{
 \S4method{shiftEst}{GPR}(x, y = NULL, method = c("phase", "WSSD"),
@@ -11,4 +12,3 @@
 \description{
 Shift estimation between two GPR profiles.
 }
-

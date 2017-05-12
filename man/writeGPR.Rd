@@ -3,6 +3,7 @@
 \docType{methods}
 \name{writeGPR}
 \alias{writeGPR}
+\alias{writeGPR}
 \title{Write the GPR object in a file.}
 \usage{
 writeGPR(x, fPath = NULL, type = c("DT1", "rds", "ASCII", "xyzv"),
@@ -14,4 +15,3 @@ writeGPR(x, fPath = NULL, type = c("DT1", "rds", "ASCII", "xyzv"),
 \description{
 Write the GPR object in a file.
 }
-

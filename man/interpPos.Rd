@@ -3,6 +3,7 @@
 \docType{methods}
 \name{interpPos}
 \alias{interpPos}
+\alias{interpPos}
 \title{Interpolate the trace position.}
 \usage{
 \S4method{interpPos}{GPR}(x, topo, plot = FALSE, r = NULL, ...)
@@ -20,4 +21,3 @@ plots are displayed.}
 \description{
 Interpolate the trace position.
 }
-

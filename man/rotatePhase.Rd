@@ -18,4 +18,3 @@ The GPR data with rotated phase.
 \description{
 Rotate the phase of the GPR data by a given angle \code{phi}.
 }
-

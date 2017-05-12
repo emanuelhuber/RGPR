@@ -4,6 +4,8 @@
 \name{values}
 \alias{values}
 \alias{values<-}
+\alias{values}
+\alias{values<-}
 \title{Values of the GPR data}
 \usage{
 \S4method{values}{GPR}(x)
@@ -13,4 +15,3 @@
 \description{
 Values of the GPR data
 }
-

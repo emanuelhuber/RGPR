@@ -55,4 +55,3 @@ Compute the first wave break.
          \code{\link{time0Cor}} to shift the traces such that they start
          at time zero.
 }
-

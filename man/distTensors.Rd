@@ -10,4 +10,3 @@ distTensors(J1, J2, method = c("geodesic", "log-Euclidean", "angular", "L2"),
 \description{
 Distance between structure tensors
 }
-

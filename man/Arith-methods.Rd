@@ -3,6 +3,8 @@
 \docType{methods}
 \name{Arith}
 \alias{Arith}
+\alias{Arith}
+\alias{Arith}
 \title{Basic arithmetical functions}
 \usage{
 \S4method{Arith}{GPR,ANY}(e1, e2)
@@ -24,4 +26,3 @@ data(frenkeLine00)
 A <- exp(frenkeLine00)
 B <- A + frenkeLine00
 }
-

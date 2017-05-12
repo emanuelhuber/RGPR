@@ -10,4 +10,3 @@
 \description{
 Add a GPR trace on a plot
 }
-

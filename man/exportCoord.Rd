@@ -3,6 +3,7 @@
 \docType{methods}
 \name{exportCoord}
 \alias{exportCoord}
+\alias{exportCoord}
 \title{Export the trace coordinates.}
 \usage{
 \S4method{exportCoord}{GPR}(x, type = c("SpatialPoints", "SpatialLines",
@@ -11,4 +12,3 @@
 \description{
 Export the trace coordinates.
 }
-

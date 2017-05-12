@@ -35,9 +35,8 @@ Imports:
     colorspace,
     Cairo,
     rgl,
-    EMD,
     mmand,
     e1071,
     plot3D,
 	adimpro
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

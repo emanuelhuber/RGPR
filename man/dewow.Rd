@@ -30,4 +30,3 @@ data(frenkeLine00)
 A <- dewow(frenkeLine00, type = "Gaussian")
 A
 }
-

@@ -10,4 +10,3 @@
 \description{
 Clip the amplitude
 }
-

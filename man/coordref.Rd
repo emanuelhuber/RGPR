@@ -4,6 +4,7 @@
 \name{coordref}
 \alias{coordref}
 \alias{coordref<-}
+\alias{coordref}
 \title{Define a local reference coordinate}
 \usage{
 \S4method{coordref}{GPRsurvey}(x)
@@ -11,4 +12,3 @@
 \description{
 Define a local reference coordinate
 }
-

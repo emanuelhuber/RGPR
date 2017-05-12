@@ -39,4 +39,3 @@ receiver.
 \code{\link{time0}} to set time zero and \code{\link{firstBreak}} 
          to estimate the first wave break.
 }
-

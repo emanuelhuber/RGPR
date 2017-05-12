@@ -56,7 +56,24 @@ The RGPR package provides two classes GPR and GPRsurvey
   \item \code{identifyDelineation}:
 }
 }
+
 \references{
 Several books!
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{http://stanford.edu/~ehuber/RGPR.html}
+  \item Report bugs at \url{https://github.com/emanuelhuber/RGPR/issues}
+}
 
+}
+\author{
+\strong{Maintainer}: Emanuel Huber \email{emanuel.huber@stanford.edu}
+
+Authors:
+\itemize{
+  \item Guillaume Hans \email{guillaume.hans@fpinnovations.ca}
+}
+
+}

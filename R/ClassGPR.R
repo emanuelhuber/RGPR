@@ -2657,7 +2657,7 @@ setMethod("interpPos", "GPR", function(x, topo, plot = FALSE, r = NULL, ...){
     if(!all(test[trueBeg:trueEnd])){
       # dist3D[topo$PNAME %in% FID$PNAME] > distance for the points 
       # also recorded in FID
-      myWarning <- "  points total station without fiducials"
+      myWarning <- "\npoints total station without fiducials"
       # cat("  points total station without fiducials")
       test <- !is.na(topo[,"TRACE"])
       if(sum(test)>2){
@@ -2694,10 +2694,9 @@ setMethod("interpPos", "GPR", function(x, topo, plot = FALSE, r = NULL, ...){
     if(lastNA < length(Zint)){
       Zint[(lastNA+1):length(Zint)] <- Zint[lastNA]
     }
-    message(x@name,": mean dx=", round(mean(diff(posInt)),3), 
+    message(x@name, ": mean dx=", round(mean(diff(posInt)),3), 
         "  range dx=",round(min(diff(posInt)),3),"-", 
-        round(max(diff(posInt)),3))
-    message(myWarning)
+        round(max(diff(posInt)),3), myWarning)
     if(plot == TRUE){
       par(mfrow=c(1,3))
       plot(FIDpos, dist3D, pch = 20, col = "red", cex = 2, asp = 1,
@@ -2745,7 +2744,7 @@ setMethod("relPos", "GPR", function(x){
 #' @name reverse
 #' @rdname reverse
 #' @export
-setMethod("reverse", "GPR", function(x){
+setMethod("reverse", "GPR", function(x, id = NULL,  tol = 0.3){
     xnew <- x
     xnew@data <- x@data[,length(x):1]
     xnew@time0 <- rev(x@time0)

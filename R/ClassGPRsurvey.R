@@ -635,34 +635,54 @@ setMethod("interpPos", "GPRsurvey", function(x,topo, plot = FALSE,
 #' @name reverse
 #' @rdname reverse
 #' @export
-setMethod("reverse", "GPRsurvey", function(x){
-  lnTypes <- gsub("[0-9]*$", "", basename(x@names))
-  lnTypeUniq <- unique(lnTypes)
-  angRef <- rep(NA, length = length(lnTypeUniq))
-  revTRUE <- rep(FALSE, length = length(x))
-  for(i in seq_along(x)){
-    y <- x[[i]]
-    typeNo <- which(lnTypeUniq %in% lnTypes[[i]] )
-    if(is.na(angRef[typeNo])){
-      angRef[typeNo] <- gprAngle(y)
-    }else{
-      angi <- gprAngle(y) 
-      if(!isTRUE(inBetAngle( angRef[typeNo], angi, atol = pi/10))){
-        y <- reverse(y)
-        revTRUE[i] <- TRUE
-        message(y@name, " > reverse!")
-        tmpf <- tempfile(y@name)
-        writeGPR(y, type = "rds", overwrite = FALSE, fPath = tmpf)
-        x@filepaths[[i]]     <- paste0(tmpf, ".rds")
-        x@coords[[y@name]]   <- y@coord
-        x@fids[[y@name]]      <- y@fid
+setMethod("reverse", "GPRsurvey", function(x, id = NULL, tol = 0.3){
+  if(is.null(id)){
+    lnTypes <- gsub("[0-9]*$", "", basename(x@names))
+    lnTypeUniq <- unique(lnTypes)
+    angRef <- rep(NA, length = length(lnTypeUniq))
+    # revTRUE <- rep(FALSE, length = length(x))
+    for(i in seq_along(x)){
+      y <- x[[i]]
+      typeNo <- which(lnTypeUniq %in% lnTypes[[i]] )
+      if(is.na(angRef[typeNo])){
+        angRef[typeNo] <- gprAngle(y)
+      }else{
+        angi <- gprAngle(y) 
+        if(!isTRUE(inBetAngle( angRef[typeNo], angi, atol = tol))){
+          y <- reverse(y)
+          # revTRUE[i] <- TRUE
+          message(y@name, " > reverse!")
+          # tmpf <- tempfile(y@name)
+          # writeGPR(y, type = "rds", overwrite = FALSE, fPath = tmpf)
+          # x@filepaths[[i]]     <- paste0(tmpf, ".rds")
+          x@filepaths[[i]]     <- .saveTempFile(y)
+          x@coords[[y@name]]   <- y@coord
+          x@fids[[y@name]]      <- y@fid
+        }
       }
     }
+    x@intersections <- list()
+    x <- coordref(x)
+    return(x)
+  }else{
+    for(i in seq_along(id)){
+      y <- getGPR(x, id = id[i])
+      y <- reverse(y)
+      x@filepaths[[i]]     <- .saveTempFile(y)
+      x@coords[[y@name]]   <- y@coord
+      x@fids[[y@name]]      <- y@fid
+    }
+    x@intersections <- list()
+    x <- coordref(x)
+    return(x) 
   }
-  x@intersections <- list()
-  x <- coordref(x)
-  return(x)
 })
+
+.saveTempFile <- function(x){
+  tmpf <- tempfile(x@name)
+  writeGPR(x, type = "rds", overwrite = FALSE, fPath = tmpf)
+  return(paste0(tmpf, ".rds"))
+}
 
 #' @export
 setMethod(

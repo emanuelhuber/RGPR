@@ -855,7 +855,8 @@ setGenericVerif("exportProc",  function(x,fPath=NULL,sep="\t", row.names=FALSE,
 #' @name reverse
 #' @rdname reverse
 #' @export
-setGenericVerif("reverse", function(x) standardGeneric("reverse"))
+setGenericVerif("reverse", function(x, id = NULL,  tol = 0.3) 
+                standardGeneric("reverse"))
   
 #' @name shiftEst
 #' @rdname shiftEst

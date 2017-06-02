@@ -932,7 +932,8 @@ setGenericVerif("writeSurvey", function(x, fPath, overwrite=FALSE){
                 standardGeneric("writeSurvey")})
 setGenericVerif("rotate", function(x, alpha, center = NULL, center2 = NULL){ 
                 standardGeneric("rotate")})
-
+				
+				
 #------------------------------BOTH
 setGenericVerif("plot3DRGL", 
           function(x, addTopo = FALSE, clip = NULL, normalize = NULL, 

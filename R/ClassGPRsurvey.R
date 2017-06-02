@@ -318,7 +318,7 @@ setMethod("getGPR", "GPRsurvey", function(x,id){
       if(length(no > 0)){
         gpr <- readGPR(x@filepaths[[no]])
       }else{
-        stop("No GPR lines with name", trimStr(id),"\n")
+        stop("There is no GPR lines with name '", trimStr(id),"'\n")
       }
     }
     if(length(x@coords[[gpr@name]])>0){
@@ -733,7 +733,7 @@ setReplaceMethod(
 setMethod("rotate", "GPRsurvey", 
           function(x, alpha, center = NULL, center2 = NULL){
   if(is.null(center)){
-    center <- centroid(x)
+    center <- .centroid(x)
   }
   xyz <- lapply(x@coords, georef, alpha = alpha,
                 center = center, center2 = center2)
@@ -745,6 +745,10 @@ setMethod("rotate", "GPRsurvey",
   return(x)
 })
 
+.centroid <- function(x){
+  pos <- do.call(rbind, x@coords)
+  return(colMeans(pos))
+}
 
 #' @export
 setMethod("shiftEst", "GPRsurvey", function(x, y = NULL, 

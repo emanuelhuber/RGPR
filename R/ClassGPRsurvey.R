@@ -736,9 +736,9 @@ setMethod("rotate", "GPRsurvey",
     center <- .centroid(x)
   }
   xyz <- lapply(x@coords, georef, alpha = alpha,
-                center = center, center2 = center2)
+                cloc = center, creg = center2)
   xyz2 <- lapply(x@intersections$coord, georef, alpha = alpha,
-                 center = center, center2 = center2)
+                 cloc = center, creg = center2)
   x@coords <- xyz
   x@intersections  <- xyz2
   x <- coordref(x)

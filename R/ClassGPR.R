@@ -2694,11 +2694,10 @@ setMethod("interpPos", "GPR", function(x, topo, plot = FALSE, r = NULL, ...){
     if(lastNA < length(Zint)){
       Zint[(lastNA+1):length(Zint)] <- Zint[lastNA]
     }
-    cat(x@name,": mean dx=", round(mean(diff(posInt)),3), 
+    message(x@name,": mean dx=", round(mean(diff(posInt)),3), 
         "  range dx=",round(min(diff(posInt)),3),"-", 
         round(max(diff(posInt)),3))
-    cat(myWarning)
-    cat("\n")
+    message(myWarning)
     if(plot == TRUE){
       par(mfrow=c(1,3))
       plot(FIDpos, dist3D, pch = 20, col = "red", cex = 2, asp = 1,

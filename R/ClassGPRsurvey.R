@@ -760,23 +760,31 @@ setMethod("shiftEst", "GPRsurvey", function(x, y = NULL,
   y <- x[[1]]
   ny <- nrow(y)
   my <- ncol(y)
-  i <- NULL
-  j <- NULL
+  i0 <- NULL
+  j0 <- NULL
   if( length(list(...)) ){
     dots <- list(...)
     if( !is.null(dots$i)){
-      i <- dots$i
+      i0 <- dots$i
     }
     if( !is.null(dots$j)){
-      j <- dots$j
+      j0 <- dots$j
     }
   }
   for(k in seq_len(length(x)-1)){
     z <- x[[k + 1]]
     nz <- nrow(z)
     mz <- ncol(z)
-    if(is.null(i)) i <- seq_len(min(nz, ny))
-    if(is.null(j)) j <- seq_len(min(mz, my))
+    if(is.null(i0)){
+      i <- seq_len(min(nz, ny))
+    }else{
+      i <- i0
+    }
+    if(is.null(j0)){
+      j <- seq_len(min(mz, my))
+    }else{
+      j <- j0
+    }
     Dshift[k,] <- displacement(y@data[i, j], z@data[i,j], 
                           method = "phase", dxy = dxy)
     y <- z

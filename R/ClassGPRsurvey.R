@@ -975,7 +975,7 @@ setMethod("trAmplCor", "GPRsurvey", function(x,
   type <- match.arg(type, c("power", "exp", "agc"))
   for(i in seq_along(x)){
     y <- x[[i]]
-    y@data[is.na(x@data)] <-0
+    y@data[is.na(y@data)] <-0
     if(type=="power"){
       y@data <- .gainPower(y@data, dts = y@dz, ...)
     }else if(type=="exp"){

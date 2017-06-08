@@ -885,6 +885,8 @@ setGenericVerif("dewow", function(x,type=c("MAD","Gaussian"),w )
                 standardGeneric("dewow"))
 setGenericVerif("gain", function(x, type=c("power", "exp", "agc"),
                   ...) standardGeneric("gain"))
+setGenericVerif("trAmplCor", function(x, type=c("power", "exp", "agc"),
+                  ...) standardGeneric("trAmplCor"))
 setGenericVerif("dcshift", function(x, u=1:10, FUN=mean) 
                 standardGeneric("dcshift"))
 setGenericVerif("firstBreak", function(x, method = c("coppens", "coppens2",

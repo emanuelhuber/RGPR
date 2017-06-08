@@ -271,12 +271,13 @@ setReplaceMethod(
       newName <- paste0(value@name, "_", it)
       it <- it + 1
     }
-    tmpf <- tempfile(newName)
+    #tmpf <- tempfile(newName)
     value@name <- newName
-    writeGPR(value, type = "rds", overwrite = FALSE,
-           fPath = tmpf)
+    #writeGPR(value, type = "rds", overwrite = FALSE,
+    #       fPath = tmpf)
     x@names[i] <- newName
-    x@filepaths[[i]] <- paste0(tmpf, ".rds")
+    # x@filepaths[[i]] <- paste0(tmpf, ".rds")
+    x@filepaths[[i]] <- .saveTempFile(value)
     x@descriptions[i] <- value@description
     x@freqs[i] <- value@freq
     x@lengths[i] <- posLine(value@coord[,1:2], last = TRUE)
@@ -959,3 +960,33 @@ setMethod("exportDelineations", "GPRsurvey", function(x, dirpath=""){
     exportDelineations(getGPR(x, id = i), dirpath = dirpath)
   }
 })
+
+
+
+
+#----------------- 1D-SCALING (GAIN)
+#' Gain compensation
+#' 
+#' @name trAmplCor
+#' @rdname trAmplCor
+#' @export
+setMethod("trAmplCor", "GPR", function(x, 
+          type = c("power", "exp", "agc"),...){
+  type <- match.arg(type, c("power", "exp", "agc"))
+  for(i in seq_along(x)){
+    y <- x[[i]]
+    y@data[is.na(x@data)] <-0
+    if(type=="power"){
+      y@data <- .gainPower(y@data, dts = y@dz, ...)
+    }else if(type=="exp"){
+      y@data <- .gainExp(y@data, dts = y@dz, ...)
+    }else if(type=="agc"){
+      y@data <- .gainAgc(y@data, dts = y@dz, ...)
+    }
+    proc(y) <- getArgs()
+    x@filepaths[[i]] <- .saveTempFile(y)
+  #   x@proc <- c(x@proc, proc)
+  }
+  return(x)
+  } 
+)

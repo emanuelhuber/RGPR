@@ -7,9 +7,9 @@
 \alias{reverse}
 \title{Reverse the trace position.}
 \usage{
-\S4method{reverse}{GPR}(x)
+\S4method{reverse}{GPR}(x, id = NULL, tol = 0.3)
 
-\S4method{reverse}{GPRsurvey}(x)
+\S4method{reverse}{GPRsurvey}(x, id = NULL, tol = 0.3)
 }
 \description{
 Reverse the trace position.

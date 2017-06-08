@@ -753,26 +753,35 @@ setMethod("rotate", "GPRsurvey",
 #' @export
 setMethod("shiftEst", "GPRsurvey", function(x, y = NULL, 
           method=c("phase", "WSSD"), dxy = NULL, ...){
+  if(!is.null(dxy) && length(dxy) != 2){
+    stop("dxy is either NULL or a length-two vector")
+  }
   Dshift <- matrix(ncol = 2, nrow = length(x) - 1)
-  xa <- x[[1]]
-  nxa <- nrow(xa)
-  mxa <- ncol(xa)
-  i <- seq_len(nxa)
-  j <- seq_len(mxa)
+  y <- x[[1]]
+  ny <- nrow(y)
+  my <- ncol(y)
+  i <- NULL
+  j <- NULL
   if( length(list(...)) ){
     dots <- list(...)
     if( !is.null(dots$i)){
       i <- dots$i
     }
-    if( !is.null(dots$i)){
-      i <- dots$i
+    if( !is.null(dots$j)){
+      j <- dots$j
     }
   }
   for(k in seq_len(length(x)-1)){
-    ya <- x[[ k + 1]]
-    Dshift[i,] <- shiftEst(xa[i, j], ya[i, j], 
-                          method = method, dxy = dxy)
-    xa <- ya
+    z <- x[[k + 1]]
+    nz <- nrow(z)
+    mz <- ncol(z)
+    if(is.null(i)) i <- seq_len(min(nz, ny))
+    if(is.null(j)) j <- seq_len(min(mz, my))
+    Dshift[k,] <- displacement(y@data[i, j], z@data[i,j], 
+                          method = "phase", dxy = dxy)
+    y <- z
+    ny <- nz
+    my <- mz
   }
 
   return( Dshift )

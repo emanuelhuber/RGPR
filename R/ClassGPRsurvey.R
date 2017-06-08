@@ -970,7 +970,7 @@ setMethod("exportDelineations", "GPRsurvey", function(x, dirpath=""){
 #' @name trAmplCor
 #' @rdname trAmplCor
 #' @export
-setMethod("trAmplCor", "GPR", function(x, 
+setMethod("trAmplCor", "GPRsurvey", function(x, 
           type = c("power", "exp", "agc"),...){
   type <- match.arg(type, c("power", "exp", "agc"))
   for(i in seq_along(x)){

@@ -5,7 +5,7 @@
 \alias{trAmplCor}
 \title{Gain compensation}
 \usage{
-\S4method{trAmplCor}{GPR}(x, type = c("power", "exp", "agc"), ...)
+\S4method{trAmplCor}{GPRsurvey}(x, type = c("power", "exp", "agc"), ...)
 }
 \description{
 Gain compensation

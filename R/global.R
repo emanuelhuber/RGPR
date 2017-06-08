@@ -791,7 +791,10 @@ setGenericVerif("description", function(x) standardGeneric("description"))
 #' @export
 setGenericVerif("description<-", function(x, value) 
 standardGeneric("description<-"))
-
+#####
+setGenericVerif("papply", function(x, prc = NULL) standardGeneric("papply"))
+##########
+                  
 #------------------------------GPR
 setGenericVerif("gethd", function(x,hd=NULL) standardGeneric("gethd"))
 
@@ -885,7 +888,7 @@ setGenericVerif("dewow", function(x,type=c("MAD","Gaussian"),w )
                 standardGeneric("dewow"))
 setGenericVerif("gain", function(x, type=c("power", "exp", "agc"),
                   ...) standardGeneric("gain"))
-setGenericVerif("trAmplCor", function(x, type=c("power", "exp", "agc"),
+                  setGenericVerif("trAmplCor", function(x, type=c("power", "exp", "agc"),
                   ...) standardGeneric("trAmplCor"))
 setGenericVerif("dcshift", function(x, u=1:10, FUN=mean) 
                 standardGeneric("dcshift"))

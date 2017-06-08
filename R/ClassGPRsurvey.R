@@ -990,3 +990,29 @@ setMethod("trAmplCor", "GPRsurvey", function(x,
   return(x)
   } 
 )
+
+
+#' Apply processing to GPRsurvey object
+#' 
+#' @name papply
+#' @rdname papply
+#' @export
+setMethod("papply", "GPRsurvey", function(x, prc = NULL){
+  if(typeof(prc) != "list") stop("'prc' must be a list")
+  for(i in seq_along(x)){
+    y <- x[[i]]
+    np <- names(prc)
+    for(k in seq_along(prc)){
+      prck <- prc[[np[k]]]
+      prck$x <- y
+      y <- do.call(np[k], prck)
+    }
+    x@filepaths[[i]] <- .saveTempFile(y)
+  }
+  return(x)
+  } 
+)
+
+
+
+

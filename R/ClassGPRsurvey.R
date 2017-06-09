@@ -1001,7 +1001,7 @@ setMethod("papply", "GPRsurvey", function(x, prc = NULL){
   if(typeof(prc) != "list") stop("'prc' must be a list")
   for(i in seq_along(x)){
     y <- x[[i]]
-    message('Processing ', y@name, ' ...', appendLF = FALSE)
+    message('Processing ', y@name, '...', appendLF = FALSE)
     for(k in seq_along(prc)){
       y <- do.call(names(prc[k]), c(x = y,  prc[[k]]))
       x@coords[[y@name]] <- y@coord

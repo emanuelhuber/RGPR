@@ -1898,7 +1898,8 @@ scaleCol <- function(A, type = c("stat", "min-max", "95",
     }else if(type == "rms"){
       Ascl <- matrix(apply(A ,2, .rms), nrow = nrow(A), 
                      ncol = ncol(A), byrow=TRUE)
-      Anorm <- A/Ascl
+      test <-  (Ascl[1,] < .Machine$double.eps^0.75)
+      Anorm[,test] <- A[,test]/Ascl[,test]
     }else if(type == "min-max"){  # min-max
       Anorm <- scale(A, center=FALSE, scale=(apply((A),2,max,na.rm=TRUE)) - 
                       (apply(( A),2,min,na.rm=TRUE)))

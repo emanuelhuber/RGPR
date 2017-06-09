@@ -1909,7 +1909,7 @@ scaleCol <- function(A, type = c("stat", "min-max", "95",
                     scale = apply(z, 2, mad))
     }
   }
-  test <-  (Ascl[1,] < .Machine$double.eps^0.75)
+  test <- (!is.na(Ascl[1,] ) & abs(Ascl[1,]) > .Machine$double.eps^0.75) 
   A[,test] <- Ascl[,test]
   return(A)
 }

@@ -1871,41 +1871,47 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   return(A)
 }
 
-.rms <- function(num) sqrt(sum(num^2)/length(num))
+#.rms <- function(num) sqrt(sum(num^2)/length(num))
 
 scaleCol <- function(A, type = c("stat", "min-max", "95",
-                                 "eq", "sum", "rms")){
+                                 "eq", "sum", "rms", "mad")){
   A <-  as.matrix(A)
   test <- suppressWarnings(as.numeric(type))
   if(!is.na(test) && test >0 && test < 100){
     A_q95 <- apply(A, 2, quantile, test/100, na.rm = TRUE)
     A_q05 <- apply(A, 2, quantile, 1 - test/100, na.rm = TRUE)
     Ascl <- matrix(A_q95 - A_q05, nrow = nrow(A), ncol = ncol(A), byrow=TRUE)
-    Anorm <- A/Ascl
+    #A <- A/Ascl
   }else{
     type <- match.arg(type)
     if(type == "stat"){
-      Anorm <- scale(A, center=.colMeans(A, nrow(A), ncol(A)), 
-                scale = apply(A, 2, sd, na.rm = TRUE))
+      # A <- scale(A, center=.colMeans(A, nrow(A), ncol(A)), 
+      #            scale = apply(A, 2, sd, na.rm = TRUE))
+      Ascl <- scale(A)
     }else if(type == "sum"){
-      Anorm <- scale(A, center=FALSE, scale=colSums(abs(A)))
+      Ascl <- scale(A, center=FALSE, scale = colSums(abs(A)))
     }else if(type == "eq"){
       # equalize line such each trace has same value for 
       # sqrt(\int  (A(t))^2 dt)
       Aamp <- matrix(apply((A)^2,2,sum), nrow = nrow(A), 
                      ncol = ncol(A), byrow=TRUE)
-      Anorm <- A * sqrt(Aamp)/sum(sqrt(Aamp))
+      Ascl <- sqrt(Aamp)/sum(sqrt(Aamp))
     }else if(type == "rms"){
-      Ascl <- matrix(apply(A ,2, .rms), nrow = nrow(A), 
-                     ncol = ncol(A), byrow=TRUE)
-      test <-  (Ascl[1,] < .Machine$double.eps^0.75)
-      Anorm[,test] <- A[,test]/Ascl[,test]
+      Ascl <- scale(A, center = FALSE)
+      # Ascl <- matrix(apply(A ,2, .rms), nrow = nrow(A), 
+      #                ncol = ncol(A), byrow=TRUE)
     }else if(type == "min-max"){  # min-max
-      Anorm <- scale(A, center=FALSE, scale=(apply((A),2,max,na.rm=TRUE)) - 
-                      (apply(( A),2,min,na.rm=TRUE)))
+      Ascl <- scale(A, center = FALSE, 
+                    scale = apply(A, 2, max,na.rm = TRUE) - 
+                            apply(( A),2,min,na.rm=TRUE))
+    }else if(type == "mad"){  # mad
+      Ascl <- scale(A, center = apply(z, 2, median), 
+                    scale = apply(z, 2, mad))
     }
   }
-  return(Anorm)
+  test <-  (Ascl[1,] < .Machine$double.eps^0.75)
+  A[,test] <- Ascl[,test]
+  return(A)
 }
 
 rmsScaling <- function(...){

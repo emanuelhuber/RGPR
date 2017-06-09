@@ -1003,9 +1003,7 @@ setMethod("papply", "GPRsurvey", function(x, prc = NULL){
     y <- x[[i]]
     np <- names(prc)
     for(k in seq_along(prc)){
-      prck <- prc[[np[k]]]
-      prck$x <- y
-      y <- do.call(np[k], prck)
+      y <- do.call(np[k], c(x = y,  prc[[np[k]]]))
     }
     x@filepaths[[i]] <- .saveTempFile(y)
   }

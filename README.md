@@ -2,9 +2,9 @@
 R package to visualise, processe and interpret *ground-penetrating radar* (GPR) data.
 
 ## Note
-For the moment:
+Currently:
 
-* the only supported binary format is the Sensors & Software files format (.DT1)
+* the only supported binary formats are the Sensors & Software file format (.DT1)
 * RGPR only support reflection data such as surface-based GPR data (no support for cross-borehole GPR data)
 * the documentation is still incomplete (but check the tutorials)
 
@@ -25,3 +25,4 @@ library(RGPR)
 ```r
 ?RGPR
 ```
+

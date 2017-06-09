@@ -901,7 +901,7 @@ setGenericVerif("clip", function(x, Amax=NULL,Amin=NULL)
 setGenericVerif("gammaCorrection", function(x, a=1,b=1) 
                 standardGeneric("gammaCorrection"))
 setGenericVerif("traceScaling", function(x, 
-                  type = c("stat","min-max","95","eq","sum", "rms")) 
+                  type = c("stat","min-max","95","eq","sum", "rms", "mad")) 
                   standardGeneric("traceScaling"))
 
 setGenericVerif("spec", function(x, type=c("f-x", "f-k"), plotSpec=TRUE, 

@@ -3248,6 +3248,7 @@ setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
 #       proc <- paste(proc,"#v=",x@vel[[1]],sep="")
       x@vel=list()  # FIX ME!!
       x@time0 <- rep(0L,ncol(x@data))  # FIX ME!!
+      x@coord[,3] <- max(x@coord[,3])
 #       x@proc <- c(x@proc, proc)
     }else if(type == "kirchhoff"){
       A <- x@data
@@ -3282,6 +3283,7 @@ setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
       x@time0 <- rep(0, ncol(x))
       x@dz <- dz
       x@depthunit <- "m"
+      x@coord[,3] <- max(x@coord[,3])
     }
     proc(x) <- getArgs()
     # x@proc <- c(x@proc, proc)

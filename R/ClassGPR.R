@@ -3571,7 +3571,7 @@ setMethod("writeGPR", "GPR", function(x, fPath = NULL,
     }else if(testFile){
       stop("File already exists. Cannot overwrite!\n")
     }
-    x@filepath <- as.character(fPath)
+    x@filepath <- fPath
     switch(type,
            "dt1" = {.writeDT1(x, fPath)},
            "rds" = {namesSlot <- slotNames(x)

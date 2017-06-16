@@ -895,7 +895,7 @@ setMethod("writeGPR", "GPRsurvey",
                           x@intersections[[gpr@name]]$name)
       }
       fPath <- file.path(mainDir, subDir, gpr@name)
-      x@filepaths[[i]] <- fPath
+      x@filepaths[[i]] <- paste0(fPath, ".", tolower(type))
       writeGPR(gpr, fPath = fPath, type = type , overwrite = overwrite, ...)
       message("Saved: ", fPath )
     } 

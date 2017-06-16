@@ -898,8 +898,8 @@ setMethod("writeGPR", "GPRsurvey",
       x@filepaths[[i]] <- fPath
       writeGPR(gpr, fPath = fPath, type = type , overwrite = overwrite, ...)
       message("Saved: ", fPath )
-      invisible(return(x))
-    }      
+    } 
+    invisible(return(x))
   }
 )
 #' @export

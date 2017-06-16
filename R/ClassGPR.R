@@ -3571,10 +3571,10 @@ setMethod("writeGPR", "GPR", function(x, fPath = NULL,
     }else if(testFile){
       stop("File already exists. Cannot overwrite!\n")
     }
+    x@filepath <- as.character(fPath)
     switch(type,
            "dt1" = {.writeDT1(x, fPath)},
-           "rds" = {x@filepath <- as.character(fPath)
-                    namesSlot <- slotNames(x)
+           "rds" = {namesSlot <- slotNames(x)
                     xList <- list()
                     # xList[["version"]] <- "0.1"
                     for(i in seq_along(namesSlot)){
@@ -3592,7 +3592,9 @@ setMethod("writeGPR", "GPR", function(x, fPath = NULL,
                       xyzv[,3]   <- rep(max(xyzv[,3]), ncol(x)) - 
                                         rep(x@depth, times = ncol(x))
                       write.table(xyzv, file = fPath, quote = FALSE, 
-                      col.names = TRUE, row.names = FALSE, ...)})
+                      col.names = TRUE, row.names = FALSE, ...)}
+          )
+    invisible(return(x))
   } 
 )
 

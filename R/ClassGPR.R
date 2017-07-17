@@ -1138,7 +1138,7 @@ setReplaceMethod(
     traces <- (value[,1])
     annnames <- as.character(value[,2])
     valuesList <- (tapply(annnames, traces, identity))
-    test <- unlist(lapply(valuesList,paste,sep="",collapse="#"))
+    test <- unlist(lapply(valuesList,paste,sep="",collapse="#"), use.names = FALSE)
     x@ann <- character(length(x))
     x@ann[as.numeric(names(test))] <- test
     x@proc <- c(x@proc, "ann<-")
@@ -2945,7 +2945,7 @@ setReplaceMethod("rmDelineations", "GPR", function(x,value=NULL){
               x@delineations[[i]][j] <- NULL
               # itdel <- itdel + 1
               if(length(x@delineations[[i]])==0 || 
-                  is.null(unlist(x@delineations[[i]]))){
+                  is.null(unlist(x@delineations[[i]], use.names = FALSE))){
                 x@delineations[i] <- NULL
                 # i<-i-1
                 break

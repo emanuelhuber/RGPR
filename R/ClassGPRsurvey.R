@@ -515,7 +515,7 @@ plot.GPRsurvey <- function(x, y, ...){
     if(add_shp_files){
       if(length(shp_files) > 0){
                 sel <- seq(from=1,length.out=length(shp_files),by=2)
-        BASEName <- unlist(strsplit(basename(shp_files),'[.]'))[sel]
+        BASEName <- unlist(strsplit(basename(shp_files),'[.]'), use.names = FALSE)[sel]
         DIRName <- dirname(shp_files)
         for(i in seq_along(shp_files)){
           shp <- readOGR(DIRName[i], BASEName[i])

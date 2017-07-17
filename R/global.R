@@ -94,7 +94,7 @@ rmDuplicates <- function(xyz, fid){
           A[[it]] <- unname(ij[ik,])
           ij <- ij[-ik,]
           it <- it + 1
-        }else if( !(k %in% unlist(A))){
+        }else if( !(k %in% unlist(A, use.names = FALSE))){
           A[[it]] <- k
           it <- it + 1
         }
@@ -300,7 +300,7 @@ trimStr <- function (x) gsub("^\\s+|\\s+$", "", x)
 # return filename without extension
 #' @export
 .fNameWExt <- function(x){
-  unlist(lapply(strsplit(basename(x),"[.]"), head , 1 ))
+  unlist(lapply(strsplit(basename(x),"[.]"), head , 1 ), use.names = FALSE)
 }
 
 # return the file extension.
@@ -308,7 +308,7 @@ trimStr <- function (x) gsub("^\\s+|\\s+$", "", x)
 #' @export
 .fExt <- function(x){
 #   cat("with caution... because split \'.\' may not be so good\n")
-  unlist(lapply(strsplit(basename(x),"[.]"), tail , 1 ))
+  unlist(lapply(strsplit(basename(x),"[.]"), tail , 1 ), use.names = FALSE)
 }
 
 ##------------- COLOR FUNCTIONS -------------------##
@@ -3694,7 +3694,7 @@ getFunName <- function(FUN){
   
   # FILE NAMES
   dirName   <- dirname(fPath)
-  splitBaseName <- unlist(strsplit(basename(fPath),'[.]'))
+  splitBaseName <- unlist(strsplit(basename(fPath),'[.]'), use.names = FALSE)
   baseName   <- paste(splitBaseName[1:(length(splitBaseName)-1)],sep="")
   if(dirName == '.'){
     fPath <- baseName

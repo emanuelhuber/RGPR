@@ -1811,11 +1811,11 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 .gainPower <- function(A, alpha, dts, t0 = NULL, te = NULL,
                        tcst = NULL){
   g <- .gainPower0(A[,1], alpha, dts, t0, te, tcst)
-  # Anew <- (A)*g
+  Anew <- A * g
   #s1 = ((max(A))-(min(A)));  # scale factor
   #s2 = ((max(Anew))-(min(Anew)));  # scale factor
   #return(Anew/s2*s1 )
-  return( A * g )
+  return( Anew / sd(Anew) * sd(A))
 }
 
 .gainPower0 <- function(d, alpha, dts, t0 = NULL, te = NULL, tcst = NULL){

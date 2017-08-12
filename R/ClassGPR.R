@@ -1062,8 +1062,56 @@ setReplaceMethod(
   signature="GPR",
   definition=function(x,value){
     value <- as.character(value)[1]
-    name <- value
+    x@name <- value
     x@proc <- c(x@proc, "name<-")
+    return(x)
+  }
+)
+
+#' Depth unit of the GPR data
+#' 
+#' @name depthunit
+#' @rdname depthunit
+#' @export
+setMethod("depthunit", "GPR", function(x){
+  return(x@depthunit)
+} 
+)
+
+#' @name depthunit<-
+#' @rdname depthunit
+#' @export
+setReplaceMethod(
+  f="depthunit",
+  signature="GPR",
+  definition=function(x,value){
+    value <- as.character(value)[1]
+    x@depthunit <- value
+    x@proc <- c(x@proc, "depthunit<-")
+    return(x)
+  }
+)
+
+#' Position unit of the GPR data
+#' 
+#' @name posunit
+#' @rdname posunit
+#' @export
+setMethod("posunit", "GPR", function(x){
+  return(x@posunit)
+} 
+)
+
+#' @name posunit<-
+#' @rdname posunit
+#' @export
+setReplaceMethod(
+  f="posunit",
+  signature="GPR",
+  definition=function(x,value){
+    value <- as.character(value)[1]
+    x@posunit <- value
+    x@proc <- c(x@proc, "posunit<-")
     return(x)
   }
 )
@@ -1084,8 +1132,8 @@ setMethod("description", "GPR", function(x){
 setReplaceMethod(
   f="description",
   signature="GPR",
-  definition=function(x,value){
-    description <- as.character(value)[1]
+  definition=function(x, value){
+    x@description <- as.character(value)[1]
     x@proc <- c(x@proc, "description<-")
     return(x)
   }
@@ -1266,9 +1314,37 @@ setReplaceMethod(
     return(x)
   }
 )
+
+#' Depth/time of the GPR data
+#' 
+#' @name depth
+#' @rdname depth
+#' @export
+setMethod("depth", "GPR", function(x){
+  return(x@depth)
+} 
+)
+#' @name depth<-
+#' @rdname depth
+#' @export
+setReplaceMethod(
+  f = "depth",
+  signature = "GPR",
+  definition = function(x, value){
+    if(length(value) == length(x@depth)){
+      x@depth <- value
+    }else{
+      stop("length(value) != length(x@depth)")
+    }
+    x@proc <- c(x@proc, "depth<-")
+    return(x)
+  }
+)
+
+
 #' Fiducial markers of the GPR data
 #' 
-#' @name fid
+#' @name fid<-
 #' @rdname fid
 #' @export
 setReplaceMethod(
@@ -1283,7 +1359,7 @@ setReplaceMethod(
 )
 
 # CHECK ME : COMPARE FID<- with ANN<- (!!!!!)
-#' @name fid<-
+#' @name fid
 #' @rdname fid
 #' @export
 setMethod("fid", "GPR", function(x){

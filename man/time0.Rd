@@ -3,7 +3,7 @@
 \docType{methods}
 \name{time0}
 \alias{time0}
-\alias{time0}
+\alias{time0<-}
 \alias{time0}
 \alias{time0<-}
 \title{'time-zero' of every traces}

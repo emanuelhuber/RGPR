@@ -731,6 +731,26 @@ setGenericVerif("name", function(x) standardGeneric("name"))
 #' @export
 setGenericVerif("name<-",function(x,value){standardGeneric("name<-")})
 
+#' @name depthunit
+#' @rdname depthunit
+#' @export
+setGenericVerif("depthunit", function(x) standardGeneric("depthunit"))
+
+#' @name depthunit<-
+#' @rdname depthunit
+#' @export
+setGenericVerif("depthunit<-",function(x,value){standardGeneric("depthunit<-")})
+
+#' @name posunit
+#' @rdname posunit
+#' @export
+setGenericVerif("posunit", function(x) standardGeneric("posunit"))
+
+#' @name posunit<-
+#' @rdname posunit
+#' @export
+setGenericVerif("posunit<-",function(x,value){standardGeneric("posunit<-")})
+
 #' @name crs
 #' @rdname crs
 #' @export
@@ -741,12 +761,22 @@ setGenericVerif("crs", function(x) standardGeneric("crs"))
 #' @export
 setGenericVerif("crs<-",function(x,value){standardGeneric("crs<-")})
 
+#' @name depth
+#' @rdname depth
+#' @export
+setGenericVerif("depth", function(x) standardGeneric("depth"))
+
+#' @name depth<-
+#' @rdname depth
+#' @export
+setGenericVerif("depth<-", function(x,value) standardGeneric("depth<-"))
+
 #' @name time0
 #' @rdname time0
 #' @export
 setGenericVerif("time0", function(x) standardGeneric("time0"))
 
-#' @name time0
+#' @name time0<-
 #' @rdname time0
 #' @export
 setGenericVerif("time0<-",function(x,value){standardGeneric("time0<-")})

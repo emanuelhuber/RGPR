@@ -1341,6 +1341,35 @@ setReplaceMethod(
   }
 )
 
+#' Position of the GPR traces
+#' 
+#' @name pos
+#' @rdname pos
+#' @export
+setMethod("pos", "GPR", function(x){
+  return(x@pos)
+} 
+)
+#' @name pos<-
+#' @rdname pos
+#' @export
+setReplaceMethod(
+  f = "pos",
+  signature = "GPR",
+  definition = function(x, value){
+    if( length(x@coord) > 0 ){
+      warning(c("'pos' will not be used for display because ",
+                "'coord' already exists"))
+    }
+    if(length(value) == length(x@pos)){
+      x@pos <- value
+    }else{
+      stop("length(value) != length(x@depth)")
+    }
+    x@proc <- c(x@proc, "pos<-")
+    return(x)
+  }
+)
 
 #' Fiducial markers of the GPR data
 #' 

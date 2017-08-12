@@ -771,6 +771,16 @@ setGenericVerif("depth", function(x) standardGeneric("depth"))
 #' @export
 setGenericVerif("depth<-", function(x,value) standardGeneric("depth<-"))
 
+#' @name pos
+#' @rdname pos
+#' @export
+setGenericVerif("pos", function(x) standardGeneric("pos"))
+
+#' @name pos<-
+#' @rdname pos
+#' @export
+setGenericVerif("pos<-", function(x,value) standardGeneric("pos<-"))
+
 #' @name time0
 #' @rdname time0
 #' @export

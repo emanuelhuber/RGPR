@@ -958,7 +958,7 @@ setGenericVerif("traceShift", function(x,  ts, method = c("none",
 setGenericVerif("traceAverage", function(x, w = NULL, FUN = mean, ...) 
                 standardGeneric("traceAverage"))
 
-setGenericVerif("time0Cor",  function(x, method = c("none", "linear", 
+setGenericVerif("time0Cor",  function(x, t0 = NULL, method = c("none", "linear", 
            "nearest", "pchip", "cubic", "spline"), keep = NULL, 
            crop = TRUE, c0 = 0.299) 
            standardGeneric("time0Cor"))

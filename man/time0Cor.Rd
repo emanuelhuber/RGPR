@@ -5,11 +5,23 @@
 \alias{time0Cor}
 \title{Time zero correction}
 \usage{
-\S4method{time0Cor}{GPR}(x, method = c("none", "linear", "nearest", "pchip",
-  "cubic", "spline"), keep = NULL, crop = TRUE, c0 = 0.299)
+\S4method{time0Cor}{GPR}(x, t0 = NULL, method = c("none", "linear",
+  "nearest", "pchip", "cubic", "spline"), keep = NULL, crop = TRUE,
+  c0 = 0.299)
 }
 \arguments{
 \item{x}{A object of the class GPR}
+
+\item{t0}{A numeric vector with length equal either to \code{NULL}, or one 
+or to the number traces.
+The traces will be shifted to \code{t0}. 
+If \code{t0 = NULL} `time0(x)` will be use instead. If \code{t0} is
+the time-zero, set \code{keep = 0}. If \code{t0} is
+the first wave break, set \code{keep = NULL} to account for the 
+air wave travel time between transmitter and receiver.}
+
+\item{method}{A length-one character vector defining the interpolation method 
+that are from the function 'interp1' from the 'signal' package.}
 
 \item{keep}{A length-one numeric vector indicating in time units how much of 
 the trace has to be kept before time zero.}
@@ -19,9 +31,6 @@ the trace has to be kept before time zero.}
 
 \item{c0}{Propagation speed of the GPR wave through air (used only when
 \code{keep = NULL}).}
-
-\item{ts}{A numeric vector defining the amount of time the traces have to
-shifted}
 }
 \value{
 An object of the class GPR.

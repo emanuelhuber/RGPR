@@ -2217,8 +2217,15 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("none",
 #' time taken by the air wave to travel from the transmitter to the
 #' receiver.
 #' @param x A object of the class GPR
-#' @param ts A numeric vector defining the amount of time the traces have to
-#'              shifted
+#' @param t0 A numeric vector with length equal either to \code{NULL}, or one 
+#'           or to the number traces.
+#'           The traces will be shifted to \code{t0}. 
+#'           If \code{t0 = NULL} `time0(x)` will be use instead. If \code{t0} is
+#'           the time-zero, set \code{keep = 0}. If \code{t0} is
+#'           the first wave break, set \code{keep = NULL} to account for the 
+#'           air wave travel time between transmitter and receiver.
+#' @param method A length-one character vector defining the interpolation method 
+#'               that are from the function 'interp1' from the 'signal' package.
 #' @param keep A length-one numeric vector indicating in time units how much of 
 #'             the trace has to be kept before time zero.
 #' @param crop If TRUE (defaults), remove the rows containing only zero's 
@@ -2231,15 +2238,22 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("none",
 #' @name time0Cor
 #' @rdname time0Cor
 #' @export
-setMethod("time0Cor", "GPR", function(x, method = c("none", "linear", 
-           "nearest", "pchip", "cubic", "spline"), keep = NULL, 
+setMethod("time0Cor", "GPR", function(x, t0 = NULL,  method = c("none", 
+           "linear", "nearest", "pchip", "cubic", "spline"), keep = NULL, 
            crop = TRUE, c0 = 0.299){
     method <- match.arg(method, c("none", "linear", "nearest", "pchip", 
                                   "cubic", "spline"))
     if(is.null(keep)){
       keep <- x@antsep/c0
     }
-    ts <- -x@time0 + keep
+    if(is.null(t0)){
+      ts <- -x@time0 + keep
+    }else{
+      if(length(t0) == 1){
+        t0 <- rep(t0, length(x@time0))
+      }
+      ts <- -t0 + keep
+    }
     Anew <- .traceShift(x@data, ts, x@depth, x@dz, method)
     x@data <- Anew
     if(crop == TRUE){

@@ -941,8 +941,8 @@ setGenericVerif("clip", function(x, Amax=NULL,Amin=NULL)
 setGenericVerif("gammaCorrection", function(x, a=1,b=1) 
                 standardGeneric("gammaCorrection"))
 setGenericVerif("traceScaling", function(x, 
-                  type = c("Gaussian", "stat","min-max","95","eq","sum", "rms", 
-                           "mad")) 
+                  type = c("stat","min-max","95","eq","sum", "rms", 
+                           "mad", "invNormal")) 
                   standardGeneric("traceScaling"))
 
 setGenericVerif("spec", function(x, type=c("f-x", "f-k"), plotSpec=TRUE, 
@@ -1946,8 +1946,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 
 #.rms <- function(num) sqrt(sum(num^2)/length(num))
 
-scaleCol <- function(A, type = c("Gaussian", "stat", "min-max", "95",
-                                 "eq", "sum", "rms", "mad")){
+scaleCol <- function(A, type = c("stat", "min-max", "95",
+                                 "eq", "sum", "rms", "mad", "invNormal")){
   A <-  as.matrix(A)
   test <- suppressWarnings(as.numeric(type))
   if(!is.na(test) && test >0 && test < 100){
@@ -1958,7 +1958,7 @@ scaleCol <- function(A, type = c("Gaussian", "stat", "min-max", "95",
     #A <- A/Ascl
   }else{
     type <- match.arg(type)
-    if( type == "Gaussian"){
+    if( type == "invNormal"){
       Ascl <- apply( A, 2, .nScoreTrans)
     }
     else if(type == "stat"){

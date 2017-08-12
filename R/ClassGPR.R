@@ -1812,8 +1812,8 @@ setMethod("gammaCorrection", "GPR", function(x,a=1,b=1){
 #' @rdname traceScaling
 #' @export
 setMethod("traceScaling", "GPR", function(x, 
-            type = c("Gaussian", "stat","min-max","95","eq","sum", "rms", 
-                     "mad")){
+            type = c("stat","min-max","95","eq","sum", "rms", 
+                     "mad", "invNormal")){
     x@data <- scaleCol(x@data, type = type)
     proc(x) <- getArgs()
 #   x@proc <- c(x@proc, proc)

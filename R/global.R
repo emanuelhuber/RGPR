@@ -1840,10 +1840,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 .gainExp <- function(A, alpha, dts, t0 = NULL, te = NULL){
   g <- .gainExp0(A[,1], alpha, dts, t0, te)
   Anew <- A * g
-  s1 = sd(A)  # scale factor
-  s2 = sd(Anew)  # scale factor
-  #A3 <- (Anew * s12)
-  return( Anew * s1 / s2)
+  return( Anew / sd(Anew) * sd(A))
 }
 
 .gainExp0 <- function(d, alpha, dts, t0 = NULL, te = NULL){

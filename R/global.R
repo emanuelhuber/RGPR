@@ -1922,7 +1922,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
       tbl <- data.frame(x = x1, nscore = y)
     }
     y_n <- approx(x1, y, xout = x, rule = 2)$y
-    return(list(x = y_n, table = tbl))
+    #return(list(x = y_n, table = tbl))
+    return(y_n)
   }
 }
 

@@ -959,13 +959,18 @@ setMethod(
 
 
 #------------------------------
+
 # "["
+# modify code to get for x[] as.vector(x@data)
 #' @export
 setMethod(
   f= "[",
   signature="GPR",
   definition=function(x,i,j,drop){
     rval <- x@data
+    if(missing(i) && missing(j)){
+      return(as.vector(x@data))
+    }
     if(missing(i) || length(i) == 0) i <- seq_len(nrow(rval))
     if(length(dim(rval)) == 2) {
       # drop. <- ifelse(length(i) == 1, FALSE, drop)

@@ -1082,7 +1082,7 @@ depth0 <- function(time_0, v=0.1, antsep=1, c0 = 0.299){
 }
 #' @export
 firstBreakToTime0 <- function(fb, x, c0 = 0.299){
-  fb + x@antsep/c0
+  fb - x@antsep/c0
 }
 
 .plot3DRGL <- function(A,x,y,z,z0,col=palGPR(n=101),back="fill", 

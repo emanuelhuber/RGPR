@@ -2220,10 +2220,8 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("none",
 #' @param t0 A numeric vector with length equal either to \code{NULL}, or one 
 #'           or to the number traces.
 #'           The traces will be shifted to \code{t0}. 
-#'           If \code{t0 = NULL} `time0(x)` will be use instead. If \code{t0} is
-#'           the time-zero, set \code{keep = 0}. If \code{t0} is
-#'           the first wave break, set \code{keep = NULL} to account for the 
-#'           air wave travel time between transmitter and receiver.
+#'           If \code{t0 = NULL} `time0(x)` will be used instead. If \code{t0} is
+#'           the time-zero, set \code{keep = 0}.
 #' @param method A length-one character vector defining the interpolation method 
 #'               that are from the function 'interp1' from the 'signal' package.
 #' @param keep A length-one numeric vector indicating in time units how much of 
@@ -2235,17 +2233,19 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("none",
 #' @return An object of the class GPR.
 #' @seealso \code{\link{time0}} to set time zero and \code{\link{firstBreak}} 
 #'          to estimate the first wave break.
+#'          \code{\link{firstBreakToTime0}} to convert the first wave break
+#'          into time zero.
 #' @name time0Cor
 #' @rdname time0Cor
 #' @export
 setMethod("time0Cor", "GPR", function(x, t0 = NULL,  method = c("none", 
-           "linear", "nearest", "pchip", "cubic", "spline"), keep = NULL, 
+           "linear", "nearest", "pchip", "cubic", "spline"), keep = 0, 
            crop = TRUE, c0 = 0.299){
     method <- match.arg(method, c("none", "linear", "nearest", "pchip", 
                                   "cubic", "spline"))
-    if(is.null(keep)){
-      keep <- x@antsep/c0
-    }
+    #if(is.null(keep)){
+      #keep <- x@antsep/c0
+    #}
     if(is.null(t0)){
       ts <- -x@time0 + keep
     }else{
@@ -3424,15 +3424,32 @@ setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
 #' a monostatic system under the assumption of horizontally layered structure).
 #' Note that this function does not change the trace but only the time (time
 #' scale).
+#' @param x A object of the class GPR
+#' @param t0 A numeric vector with length equal either to \code{NULL}, or one 
+#'           or to the number traces.
+#'           If \code{t0 = NULL} `time0(x)` will be used.
+#' @param c0 Propagation speed of the GPR wave through air (used only when
+#'           \code{keep = NULL}).
+#' @seealso \code{\link{time0}} to set time zero and 
+#'          \code{\link{firstBreakToTime0}} to convert the first wave break
+#'          into time zero.
 #' @name timeCorOffset
 #' @rdname timeCorOffset
 #' @export
 # should use time0Cor() !!!!!
-setMethod("timeCorOffset", "GPR", function(x){
-  t0 <- mean(x@time0)
+setMethod("timeCorOffset", "GPR", function(x, t0 = NULL, c0 = 0.299){
+  # t0 <- mean(x@time0)
+  if(is.null(t0)){
+    t0 <- x@time0
+  }
+  if(length(t0) == 1){
+    t0 <- rep(t0, length(x@time0))
+  }
   x <- x[floor(t0/x@dz):nrow(x),]
-  tcor2 <- (x@depth - mean(x@time0) + x@antsep/0.299)^2 - 
-                  (x@antsep/x@vel[[1]])^2
+  tcor2 <- (x@depth - t0)^2 - 
+    (x@antsep/x@vel[[1]])^2
+  #tcor2 <- (x@depth - mean(x@time0) + x@antsep/0.299)^2 - 
+  #                (x@antsep/x@vel[[1]])^2
   x <- x[tcor2 > 0,]
   tcor <- sqrt( tcor2[tcor2 > 0] )
   x@depth <- tcor
@@ -3440,7 +3457,6 @@ setMethod("timeCorOffset", "GPR", function(x){
   x@proc <- c(x@proc, "timeCorOffset")
   return(x)
 })
-
 
 #---------------------- INTERPOLATION ---------------------#  
 #' Up-sample the GPR data (1D and 2D sinc-interpolation)
@@ -3692,7 +3708,7 @@ setMethod("writeGPR", "GPR", function(x, fPath = NULL,
     fPath <- paste0(fPath, ext)
     testFile <- file.exists(fPath)
     if(isTRUE(overwrite)){
-      if(testFile) cat("File overwritten\n")
+      if(testFile) message("File overwritten\n")
     }else if(testFile){
       stop("File already exists. Cannot overwrite!\n")
     }

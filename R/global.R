@@ -959,7 +959,7 @@ setGenericVerif("traceAverage", function(x, w = NULL, FUN = mean, ...)
                 standardGeneric("traceAverage"))
 
 setGenericVerif("time0Cor",  function(x, t0 = NULL, method = c("none", "linear", 
-           "nearest", "pchip", "cubic", "spline"), keep = NULL, 
+           "nearest", "pchip", "cubic", "spline"), keep = 0, 
            crop = TRUE, c0 = 0.299) 
            standardGeneric("time0Cor"))
 
@@ -1065,17 +1065,23 @@ extrema <- function(x, type=c("max","min")){
   return(y)
 }
 
-                  
+#' @export                  
 timeToDepth <- function(tt, time_0, v=0.1, antsep=1, c0 = 0.299){
   t0 <- time_0 - antsep/c0
   sqrt(v^2*(tt-t0)- antsep^2)/2
 }
+#' @export
 depthToTime <- function(z, time_0, v=0.1, antsep=1, c0 = 0.299){
   t0 <- time_0 - antsep/c0
   sqrt((4*z^2 + antsep^2)/(v^2)) + t0
 }
+#' @export
 depth0 <- function(time_0, v=0.1, antsep=1, c0 = 0.299){
   time_0 - antsep/c0 + antsep/v
+}
+#' @export
+firstBreakToTime0 <- function(fb, x, c0 = 0.299){
+  fb + x@antsep/c0
 }
 
 .plot3DRGL <- function(A,x,y,z,z0,col=palGPR(n=101),back="fill", 

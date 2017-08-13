@@ -911,7 +911,7 @@ setGenericVerif("shiftEst", function(x, y = NULL,
 setGenericVerif("migration", function(x,type=c("static","kirchhoff"), ...) 
 standardGeneric("migration"))
 setGenericVerif("upsample", function(x,n) standardGeneric("upsample"))
-setGenericVerif("timeCorOffset", function(x, t0, c0 = 0.299) 
+setGenericVerif("timeCorOffset", function(x, t0 = NULL, c0 = 0.299) 
   standardGeneric("timeCorOffset"))
 
 #' @name filter1D

@@ -2144,7 +2144,8 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("none",
       ts <- rep(ts, ncol(x))
     }
     xshift <- upsample(x, n = c(2,1))
-    xshift@data <- .traceShift(xshift@data, ts, x@depth, x@dz, method)
+    xshift@data <- .traceShift(xshift@data, ts = ts, tt = xshift@depth, 
+                               dz = xshift@dz, method = method)
     x@data <- xshift@data[seq(1, length.out = nrow(A), by = 2), ]
     if(crop == TRUE){
       testCrop <- apply(abs(x@data),1,sum)
@@ -2202,13 +2203,15 @@ setMethod("time0Cor", "GPR", function(x, t0 = NULL,  method = c("none",
       }
       ts <- -t0 + keep
     }
-    xshift <- upsample(x, n = c(2,1))
-    xshift@data <- .traceShift(xshift@data, ts, x@depth, x@dz, method)
-    x@data <- xshift@data[seq(1, length.out = nrow(A), by = 2), ]
-    if(crop == TRUE){
-      testCrop <- apply(abs(Anew),1,sum)
-      x <- x[!is.na(testCrop),]
-    }
+    xshift <- traceShift(x,  ts = ts, method = method, crop = TRUE)
+    # xshift <- upsample(x, n = c(2,1))
+    # xshift@data <- .traceShift(xshift@data, ts, x@depth, x@dz, method)
+    # x@data <- xshift@data[seq(1, length.out = nrow(A), by = 2), ]
+    # if(crop == TRUE){
+    #   testCrop <- apply(abs(Anew),1,sum)
+    #   x <- x[!is.na(testCrop),]
+    # }
+    x@data <-xshift@data
     x@time0 <- x@time0 + ts
 #     x <- traceShift(x, ts = ts, method = eval(method), crop = eval(crop))
 #     x@proc <- x@proc[length(x@proc)]

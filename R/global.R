@@ -1212,7 +1212,7 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
   return(xShifted)
 }
 
-.traceShift <- function(A, ts, tt, dz, method){
+.traceShift <- function(A, ts=0, tt=NULL, dz=0.4, method = "linear"){
   ps <- ts/dz
   Anew <- matrix(NA, nrow=nrow(A), ncol=ncol(A))
   v0 <- 1:nrow(A)

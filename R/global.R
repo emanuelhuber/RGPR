@@ -3660,7 +3660,7 @@ pasteArgs <- function(eval_arg, arg){
   if(is.numeric(eval_arg) || is.character(eval_arg)){
     return( paste0(eval_arg, collapse = ",") )
   }else if(is.list(eval_arg)){
-    return( paste0(names(eval_arg),"<-", (eval_arg), collapse = "," ) )
+    return( paste0(names(eval_arg), "<-", (eval_arg), collapse = "," ) )
   }else if(is.matrix(eval_arg)){
     return(paste(arg))
   }else if(any(is.null(eval_arg))){

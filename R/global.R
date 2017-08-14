@@ -1526,7 +1526,14 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   }else{
     par( mai = mai,omi=omi,mgp=mgp)
   }
- 
+  if(isTRUE(rasterImage)){
+    dy <- diff(y)
+    tol <- sqrt(.Machine$double.eps)
+    # all not equal
+    if(abs(max(dy) - min(dy)) > tol){
+      rasterImage <- FALSE
+    }
+  }
   #image(x,y,z,col=col,zlim=clim,xaxs="i", yaxs="i", yaxt="n",...)
   plot3D::image2D(x = x, y = y, z = z, col = col, 
         xlim = xlim, ylim = ylim, zlim = clim,

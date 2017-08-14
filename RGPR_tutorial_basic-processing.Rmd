@@ -69,6 +69,8 @@ I recommand you to first think about the organisation of your files and director
 ## Install/load the necessary packages
 Load the packages `RGPR` and `rChoiceDialogs` (`rChoiceDialogs` provides a collection of portable choice dialog widgets):
 ```{r, warning=FALSE, message=FALSE}
+library(devtools)
+devtools::install_github("emanuelhuber/RGPR")
 library(RGPR)   # load RGPR in the current R session
 library(rChoiceDialogs)
 ```
@@ -261,31 +263,40 @@ processing(A1)
 
 ## First wave break estimation and time-zero correction
 
+Maybe is time-zero not correctly set. To get the time-zero for each traces of
+`A1` use the function `time0()`:
+```{r, eval=FALSE}
+time0(A1)
+```
+
 The first wave break is estimated for each traces
 ```{r, eval=TRUE}
-time0est <- firstBreak(A1)   # take some time
-plot(pos(A1), time0est, pch = 20, ylab = "first wave break", 
+tfb <- firstBreak(A1)   # take some time
+plot(pos(A1), tfb, pch = 20, ylab = "first wave break", 
      xlab = "position (m)")
 ```
+Convert the first wave break time into time-zero with `firstBreakToTime0()`. Here we define [time-zero] = [first wave break] - [air wave travel time between 
+transmitter and receiver]. 
+```{r, echo=TRUE}
+t0 <- firstBreakToTime0(tfb, A1)
+time0(A1) <- t0     # set time0 to A1
+```
+
 
 Check the first wave break on a trace plot
 ```{r, echo=TRUE}
 plot(A1[, 15])  # plot the 15th trace of the GPR-line
-abline( v = time0est[15] - time0(A1)[15], col = "green", lwd = 2)
 ```
 
-Here we define [time-zero] = [first wave break] - [air wave travel time between 
-transmitter and receiver]. 
-To shift the traces to time-zero, use the function `time0Cor` and set 
-`keep = NULL` to account for the air wave travel time between transmitter and 
-receiver.
+
+To shift the traces to time-zero, use the function `time0Cor`.
 
 ```{r, eval=TRUE}
-A2 <- time0Cor(A1, t0 = time0est, method = "pchip", keep = NULL)
+A2 <- time0Cor(A1, method = "pchip")
 ```
 
 
-Note that if `time0est` is too noisy, you can set `t0 = mean(time0est)`.
+Note that if `tbf` is too noisy, you can set `t0 = mean(tbf)`.
 
 ```{r, eval=TRUE}
 plot(A2)
@@ -294,7 +305,7 @@ plot(A2)
 
 ## Dewow
 Remove the low-frequency components (the so-called "wow") of the GPR record 
-usind 
+using:
 
 1. either a median absolute deviation (MAD) filter (`type = "MAD"`).
 2. or a Gaussian filter (`type = "Gaussian"`). The Gaussian filter is faster 
@@ -502,6 +513,13 @@ spec(A7, type = "f-k")
 Let review the processing step applied on the GPR record:
 ```{r, echo=TRUE}
 processing(A9)
+```
+
+## Other processing functions
+### Trace average removal
+Check the help page for the function `traceAverage`
+```{r, echo=TRUE, eval = FALSE}
+?traceAverage
 ```
 
 

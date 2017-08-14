@@ -1,6 +1,6 @@
 ---
 title: "RGPR tutorial - RGPRsurvey, adding coordinates & processing"
-author: "Emanuel Huber (emanuel.huber@stanford.edu)"
+author: "Emanuel Huber (emanuel.huber@alumni.ethz.ch)"
 date: "11 April 2016"
 output: 
   html_document: 

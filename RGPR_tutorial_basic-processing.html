@@ -149,8 +149,11 @@ $(document).ready(function () {
 <li><a href="#median-filter-spatial-filter"><span class="toc-section-number">5.7</span> Median filter (spatial filter)</a></li>
 <li><a href="#frequency-wavenumber-filter-f-k-filter"><span class="toc-section-number">5.8</span> Frequency-wavenumber filter (f-k-filter)</a></li>
 <li><a href="#processing-overview"><span class="toc-section-number">5.9</span> Processing overview</a></li>
-<li><a href="#save-and-export"><span class="toc-section-number">5.10</span> Save and export</a></li>
-<li><a href="#read-the-saved-gpr-data"><span class="toc-section-number">5.11</span> Read the saved GPR data</a></li>
+<li><a href="#other-processing-functions"><span class="toc-section-number">5.10</span> Other processing functions</a><ul>
+<li><a href="#trace-average-removal"><span class="toc-section-number">5.10.1</span> Trace average removal</a></li>
+</ul></li>
+<li><a href="#save-and-export"><span class="toc-section-number">5.11</span> Save and export</a></li>
+<li><a href="#read-the-saved-gpr-data"><span class="toc-section-number">5.12</span> Read the saved GPR data</a></li>
 </ul></li>
 <li><a href="#some-final-thoughts"><span class="toc-section-number">6</span> Some final thoughts</a></li>
 </ul>
@@ -500,8 +503,16 @@ spec(A7, type = "f-k")
 ## [8] &quot;filter2D//type=median3x3&quot;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
 ## [9] &quot;fkFilter//fk=0,-2,-2,2,2,0+fk=1250,800,0,0,800,1250&quot;</code></pre>
 </div>
+<div id="other-processing-functions" class="section level2">
+<h2><span class="header-section-number">5.10</span> Other processing functions</h2>
+<div id="trace-average-removal" class="section level3">
+<h3><span class="header-section-number">5.10.1</span> Trace average removal</h3>
+<p>Check the help page for the function <code>traceAverage</code></p>
+<pre class="r"><code>?traceAverage</code></pre>
+</div>
+</div>
 <div id="save-and-export" class="section level2">
-<h2><span class="header-section-number">5.10</span> Save and export</h2>
+<h2><span class="header-section-number">5.11</span> Save and export</h2>
 <p>Save the processed GPR record into the directory /processing. Use the <code>.rds</code> format (this is a R internal format)</p>
 <pre class="r"><code>writeGPR(A9, fPath = file.path(getwd(), &quot;processing&quot;, paste0(name(A9), &quot;.rds&quot;)), 
          format = &quot;rds&quot;, overwrite = TRUE)</code></pre>
@@ -529,7 +540,7 @@ spec(A7, type = "f-k")
           lwd = 0.5, ws = 1.5)</code></pre>
 </div>
 <div id="read-the-saved-gpr-data" class="section level2">
-<h2><span class="header-section-number">5.11</span> Read the saved GPR data</h2>
+<h2><span class="header-section-number">5.12</span> Read the saved GPR data</h2>
 <pre class="r"><code>procA &lt;- readGPR(fPath = file.path(getwd(), &quot;processing&quot;, paste0(name(A9), &quot;.rds&quot;))) </code></pre>
 </div>
 </div>

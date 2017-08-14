@@ -690,6 +690,14 @@ processing(A9)
 ## [9] "fkFilter//fk=0,-2,-2,2,2,0+fk=1250,800,0,0,800,1250"
 ```
 
+## Other processing functions
+### Trace average removal
+Check the help page for the function `traceAverage`
+
+```r
+?traceAverage
+```
+
 
 ## Save and export
 

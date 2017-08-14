@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Emanuel Huber (emanuel.huber@alumni.ethz.ch)" />
+
+<meta name="date" content="2017-08-14" />
+
+<title>RGPR tutorial - GPR data migration</title>
+
+<script src="RGPR_tutorial_migration_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="RGPR_tutorial_migration_files/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
+<script src="RGPR_tutorial_migration_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="RGPR_tutorial_migration_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="RGPR_tutorial_migration_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="RGPR_tutorial_migration_files/navigation-1.1/tabsets.js"></script>
+<link href="RGPR_tutorial_migration_files/highlightjs-1.1/default.css" rel="stylesheet" />
+<script src="RGPR_tutorial_migration_files/highlightjs-1.1/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">RGPR tutorial - GPR data migration</h1>
+<h4 class="author"><em>Emanuel Huber (<a href="mailto:emanuel.huber@alumni.ethz.ch">emanuel.huber@alumni.ethz.ch</a>)</em></h4>
+<h4 class="date"><em>14 August 2017</em></h4>
+
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#objectives-of-this-tutorial"><span class="toc-section-number">1</span> Objectives of this tutorial</a></li>
+<li><a href="#preliminary"><span class="toc-section-number">2</span> Preliminary</a><ul>
+<li><a href="#file-organisation"><span class="toc-section-number">2.1</span> File organisation</a></li>
+<li><a href="#installload-the-necessary-packages-and-et-the-working-directory"><span class="toc-section-number">2.2</span> Install/load the necessary packages and et the working directory</a></li>
+</ul></li>
+<li><a href="#read-gpr-data"><span class="toc-section-number">3</span> Read GPR data</a></li>
+<li><a href="#pre-processing"><span class="toc-section-number">4</span> Pre-processing</a><ul>
+<li><a href="#add-topographic-data-coordinates"><span class="toc-section-number">4.1</span> Add topographic data (coordinates)</a></li>
+<li><a href="#dc-shift-removal"><span class="toc-section-number">4.2</span> DC shift removal</a></li>
+<li><a href="#first-wave-break-estimation-and-set-time-zero"><span class="toc-section-number">4.3</span> First wave break estimation and set time-zero</a></li>
+<li><a href="#dewow"><span class="toc-section-number">4.4</span> Dewow</a></li>
+<li><a href="#frequency-filter"><span class="toc-section-number">4.5</span> Frequency filter</a></li>
+<li><a href="#time-gain"><span class="toc-section-number">4.6</span> Time gain</a></li>
+<li><a href="#constant-offset-correction"><span class="toc-section-number">4.7</span> Constant offset correction</a></li>
+</ul></li>
+<li><a href="#topographic-kirchhoff-migration"><span class="toc-section-number">5</span> Topographic Kirchhoff migration</a></li>
+<li><a href="#post-processing"><span class="toc-section-number">6</span> Post-processing</a></li>
+<li><a href="#comparison-beforeafter-migration"><span class="toc-section-number">7</span> Comparison before/after migration</a></li>
+</ul>
+</div>
+
+<p><code>RGPR</code> is a package for <a href="https://cran.r-project.org/">R</a> to read, write, analyse and visualise ground-penetrating radar (GPR) data.</p>
+<blockquote>
+<p>R is a [free] programming language and software environment for statistical computing and graphics supported by the R Foundation for Statistical Computing (<a href="https://en.wikipedia.org/wiki/R_%28programming_language%29">Wikipedia &gt; R</a>).</p>
+</blockquote>
+<p><strong>Note</strong>: This R-package is still in development, and therefore some of the functions may change in a near future. The R-package <code>RGPR</code> is hosted on <a href="https://github.com/">GitHub</a> at <a href="https://github.com/emanuelhuber/RGPR" class="uri">https://github.com/emanuelhuber/RGPR</a>. You can contribute to the development of <code>RGPR</code>: create an account on <a href="https://github.com/">GitHub</a>, <a href="https://guides.github.com/activities/forking/">fork</a> <code>RGPR</code>, improve it and sumbmit your modifications.</p>
+<p>If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german)</p>
+<blockquote>
+<p><code>emanuel.huber@alumni.ethz.ch</code></p>
+</blockquote>
+<div id="objectives-of-this-tutorial" class="section level1">
+<h1><span class="header-section-number">1</span> Objectives of this tutorial</h1>
+<p>Learn how to migrate GPR data</p>
+<p>Note that his tutorial will not explain you the math/algorithms behind the different processing methods.</p>
+<p>In this tutorial the code snippets are in monospaced typewriter font like in the following example:</p>
+<pre class="r"><code>1 + exp(1:10)</code></pre>
+<p>The R output are preceded by a double hash (<code>##</code>). The following R output is from the code snippet above.</p>
+<pre><code>##  [1]     3.718282     8.389056    21.085537    55.598150   149.413159
+##  [6]   404.428793  1097.633158  2981.957987  8104.083928 22027.465795</code></pre>
+<p>Create a text file and save it with the <code>.R</code> extension (the extension for the R-script files). Then copy the code snippets into your R-script file and adapt them to your needs. To run the code in R, copy the code and paste it into the R console. You can also manually enter the code.</p>
+<p>Don’t hesitate to consult the help files and to search for help on the internet. For example, to see the help for the function <code>mean()</code>, enter:</p>
+<pre class="r"><code>?mean    # open the help file related to the function mean()</code></pre>
+</div>
+<div id="preliminary" class="section level1">
+<h1><span class="header-section-number">2</span> Preliminary</h1>
+<ul>
+<li>Read the tutorial <a href="http://emanuelhuber.github.io/RGPR/RGPR_tutorial_installation-load.html">RGPR - Getting started (tutorial 1)</a></li>
+<li>Read the tutorial <a href="http://emanuelhuber.github.io/RGPR/RGPR_tutorial_basic-processing.html">Basic GPR data processing (tutorial 2)</a></li>
+<li>Read the tutorial <a href="http://emanuelhuber.github.io/RGPR/RGPR_tutorial_RGPR-survey.html">Add coordinates to the GPR data (tutorial 3)</a></li>
+<li>Download the data <a href="http://emanuelhuber.github.io/RGPR/2014_04_25_frenke.zip">2014_04_25_frenke.zip</a></li>
+</ul>
+<div id="file-organisation" class="section level2">
+<h2><span class="header-section-number">2.1</span> File organisation</h2>
+<p>I recommand you to first think about the organisation of your files and directories. I suggest to organise them as follows:</p>
+<pre><code>/2014_04_25_frenke   (project directory with date and location)
+    /processing      (here you will save the processed GPR files)
+    /rawGPR          (the raw GPR data, never modify them!)
+    RGPR_tutorial.R  (this is you R script for this tutorial)</code></pre>
+</div>
+<div id="installload-the-necessary-packages-and-et-the-working-directory" class="section level2">
+<h2><span class="header-section-number">2.2</span> Install/load the necessary packages and et the working directory</h2>
+<p>Load the packages <code>RGPR</code> and <code>rChoiceDialogs</code> (<code>rChoiceDialogs</code> provides a collection of portable choice dialog widgets):</p>
+<pre class="r"><code>library(devtools)
+devtools::install_github(&quot;emanuelhuber/RGPR&quot;)
+library(RGPR)   # load RGPR in the current R session
+library(rChoiceDialogs)
+myDir &lt;- &quot;/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke&quot;
+setwd(myDir)    # set the working directory
+getwd()         # Return the current working directory (just to check)</code></pre>
+<pre><code>## [1] &quot;/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke&quot;</code></pre>
+</div>
+</div>
+<div id="read-gpr-data" class="section level1">
+<h1><span class="header-section-number">3</span> Read GPR data</h1>
+<pre class="r"><code>A &lt;- readGPR(fPath = &quot;rawGPR/LINE00.DT1&quot;)   # the filepath is case sensitive!</code></pre>
+</div>
+<div id="pre-processing" class="section level1">
+<h1><span class="header-section-number">4</span> Pre-processing</h1>
+<div id="add-topographic-data-coordinates" class="section level2">
+<h2><span class="header-section-number">4.1</span> Add topographic data (coordinates)</h2>
+<p>We assume that for each GPR record there is a file containing the (x, y, z) coordinates of every traces. The header of these files is “E”, “N”, “Z” instead of “x”, “y”, “z” because in topography “x” sometimes designates the North (“N”) and not the East (“E”) as we would expect. The designation “E”, “N”, “Z” is less prone to confusion and therefore we chose it!</p>
+<ol style="list-style-type: decimal">
+<li>Define the filepaths to the topo files:</li>
+</ol>
+<pre class="r"><code>TOPO &lt;- file.path(getwd(), &quot;coord/topo/LINE00.txt&quot;)</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Read all the files with the funciton <code>readTopo()</code> that creates a list whose elements correspond to the GPR record and contain all the trace coordinates:</li>
+</ol>
+<pre class="r"><code>TOPOList &lt;- readTopo(TOPO, sep = &quot;\t&quot;)</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Set the list of coordinates as the new coordinates to the GPRsurvey object:</li>
+</ol>
+<pre class="r"><code>coord(A) &lt;- TOPOList[[1]]</code></pre>
+</div>
+<div id="dc-shift-removal" class="section level2">
+<h2><span class="header-section-number">4.2</span> DC shift removal</h2>
+<p>Remove the DC-offset estimated on the first n samples usind the function <code>dcshift()</code>. This function takes as argument the <code>GPR</code> object and the sample index used to estimate the DC shift (in this case, the first <span class="math inline">\(110\)</span> samples):</p>
+<pre class="r"><code>A1 &lt;- dcshift(A, 1:110)   # new object A1 </code></pre>
+</div>
+<div id="first-wave-break-estimation-and-set-time-zero" class="section level2">
+<h2><span class="header-section-number">4.3</span> First wave break estimation and set time-zero</h2>
+<p>The first wave break is estimated for each traces</p>
+<pre class="r"><code>tfb &lt;- firstBreak(A1)   # take some time</code></pre>
+<p>Convert the first wave break time into time-zero with <code>firstBreakToTime0()</code>. Here we define [time-zero] = [first wave break] - [air wave travel time between transmitter and receiver].</p>
+<pre class="r"><code>t0 &lt;- firstBreakToTime0(tfb, A1)
+time0(A1) &lt;- t0     # set time0 to A1</code></pre>
+<p>To shift the traces to time-zero, use the function <code>time0Cor</code>.</p>
+<pre class="r"><code>A2 &lt;- time0Cor(A1, method = &quot;spline&quot;)</code></pre>
+</div>
+<div id="dewow" class="section level2">
+<h2><span class="header-section-number">4.4</span> Dewow</h2>
+<p>Remove the low-frequency components (the so-called “wow”) of the GPR record with:</p>
+<pre class="r"><code>A3 &lt;- dewow(A2, type = &quot;MAD&quot;, w = 50)     # dewowing: take some time</code></pre>
+</div>
+<div id="frequency-filter" class="section level2">
+<h2><span class="header-section-number">4.5</span> Frequency filter</h2>
+<p>Eliminate the high-frequency (noise) component of the GPR record with a bandpass filter. We define as corner frequencies at <span class="math inline">\(150\,MHz\)</span> and <span class="math inline">\(260\,MHz\)</span>, and set <code>plotSpec = TRUE</code> to plot the spectrum with the signal, the filtered signal and the filter.</p>
+<pre class="r"><code>A4 &lt;- fFilter(A3, f = c(150, 260), type = &quot;low&quot;, plotSpec = TRUE)</code></pre>
+<p><img src="RGPR_tutorial_migration_files/figure-html/unnamed-chunk-14-1.png" /><!-- --></p>
+</div>
+<div id="time-gain" class="section level2">
+<h2><span class="header-section-number">4.6</span> Time gain</h2>
+<p>Apply a power gain and a spherical gain to compensate for geometric wave spreading and attenuation (Kruse and Jol, 2003; Grimm et al., 2006).</p>
+<pre class="r"><code>A5 &lt;- gain(A4, type = &quot;power&quot;, alpha = 1, te = 150, tcst = 20)
+A6 &lt;- gain(A5, type = &quot;exp&quot;, alpha = 0.11, t0 = 0, te = 125)</code></pre>
+</div>
+<div id="constant-offset-correction" class="section level2">
+<h2><span class="header-section-number">4.7</span> Constant offset correction</h2>
+<p>Time correction for each trace to compensate the offset between transmitter and receiver antennae (it converts the trace time of the data acquired with a bistatic antenna system into trace time data virtually acquiered with a monostatic system)</p>
+<pre class="r"><code>A7 &lt;- timeCorOffset(A6)
+plot(A7)</code></pre>
+<p><img src="RGPR_tutorial_migration_files/figure-html/unnamed-chunk-16-1.png" /><!-- --></p>
+</div>
+</div>
+<div id="topographic-kirchhoff-migration" class="section level1">
+<h1><span class="header-section-number">5</span> Topographic Kirchhoff migration</h1>
+<p>See Dujardin &amp; Bano (2013, Topographic migration of GPR data: Examples from Chad and Mongolia, Comptes Rendus Géoscience, 345(2):73-80. Doi : 10.1016/j.crte.2013.01.003)</p>
+<p>Time upsampling (sinc-interpolation) of the GPR data to reduce the aliasing risk.</p>
+<pre class="r"><code>A8 &lt;- upsample(A7, n = c(3,1))</code></pre>
+<p>Topographic Kirchhoff migration.</p>
+<p>Vertical resolution of the migrated data: <code>dz = 0.01</code>m.</p>
+<p>Dominant frequency: <code>fdo = 80</code> MHz (used to estimate the Fresnel zone)</p>
+<pre class="r"><code>A9 &lt;- migration(A8, type=&quot;kirchhoff&quot;, max_depth = 10, 
+                 dz = 0.01, fdo = 80)
+plot(A9)</code></pre>
+<p><img src="RGPR_tutorial_migration_files/figure-html/unnamed-chunk-18-1.png" /><!-- --></p>
+<p>You don’t see so much: we need some post-processing!</p>
+</div>
+<div id="post-processing" class="section level1">
+<h1><span class="header-section-number">6</span> Post-processing</h1>
+<p>Trace smoothing with a Gaussian filter</p>
+<pre class="r"><code>A10 &lt;- filter1D(A9, type=&quot;Gaussian&quot;, sigma=2.5) </code></pre>
+<p>Automatic gain control</p>
+<pre class="r"><code>A11 &lt;- gain(A10, type=&quot;agc&quot;, w=0.55) </code></pre>
+<p>inverse normal transformations</p>
+<pre class="r"><code>A12 &lt;- traceScaling(A11, type = &quot;invNormal&quot;)</code></pre>
+</div>
+<div id="comparison-beforeafter-migration" class="section level1">
+<h1><span class="header-section-number">7</span> Comparison before/after migration</h1>
+<p>Before migration</p>
+<pre class="r"><code>plot(traceScaling(A8, type = &quot;invNormal&quot;))</code></pre>
+<p><img src="RGPR_tutorial_migration_files/figure-html/unnamed-chunk-22-1.png" /><!-- --></p>
+<p>After migration</p>
+<pre class="r"><code>plot(A12)</code></pre>
+<p><img src="RGPR_tutorial_migration_files/figure-html/unnamed-chunk-23-1.png" /><!-- --></p>
+<hr />
+<p>Notes</p>
+<ul>
+<li>This document was created with R-markdown and knitr.</li>
+</ul>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

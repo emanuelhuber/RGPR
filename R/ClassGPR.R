@@ -2136,10 +2136,10 @@ setMethod("deconv", "GPR", function(x,
 #' @name traceShift
 #' @rdname traceShift
 #' @export
-setMethod("traceShift", "GPR", function(x,  ts, method = c("none", 
-            "linear", "nearest", "pchip", "cubic", "spline"), crop = TRUE){
-    method <- match.arg(method, c("none", "linear", "nearest", "pchip", 
-                                  "cubic", "spline"))
+setMethod("traceShift", "GPR", function(x,  ts, method = c("spline", 
+            "linear", "nearest", "pchip", "cubic", "none"), crop = TRUE){
+    method <- match.arg(method, c("spline", "linear", "nearest", "pchip", 
+                                  "cubic", "none"))
     if(length(ts) == 1){
       ts <- rep(ts, ncol(x))
     }
@@ -2187,11 +2187,12 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("none",
 #' @name time0Cor
 #' @rdname time0Cor
 #' @export
-setMethod("time0Cor", "GPR", function(x, t0 = NULL,  method = c("none", 
-           "linear", "nearest", "pchip", "cubic", "spline"), keep = 0, 
-           crop = TRUE, c0 = 0.299){
-    method <- match.arg(method, c("none", "linear", "nearest", "pchip", 
-                                  "cubic", "spline"))
+setMethod("time0Cor", "GPR", function(x, t0 = NULL,  method = c("spline", 
+                      "linear", "nearest", "pchip", "cubic", "none"), 
+                      crop = TRUE, keep = 0,){
+    method <- match.arg(method, c("spline", 
+                                  "linear", "nearest", "pchip", "cubic", 
+                                  "none"))
     #if(is.null(keep)){
       #keep <- x@antsep/c0
     #}
@@ -2214,6 +2215,7 @@ setMethod("time0Cor", "GPR", function(x, t0 = NULL,  method = c("none",
     # x@data <-xshift@data
     x <- traceShift(x,  ts = ts, method = method, crop = TRUE)
     x@time0 <- x@time0 + ts
+    x@proc <- x@proc[-length(x@proc)] # remove proc from traceShift()
     proc(x) <- getArgs()
     return(x)
   }
@@ -3372,8 +3374,10 @@ setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
 #' and receiver antennae (it converts the trace time of the data acquired with
 #' a bistatic antenna system into trace time data virtually acquiered with 
 #' a monostatic system under the assumption of horizontally layered structure).
-#' Note that this function does not change the trace but only the time (time
-#' scale).
+#' If all the traces have the same time-zero, this function does not change the 
+#' trace but only the time (time scale). If the traces have different
+#' time-zero, the traces are first aligned to have the same time-zero 
+#' (spline interpolation)
 #' @param x A object of the class GPR
 #' @param t0 A numeric vector with length equal either to \code{NULL}, or one 
 #'           or to the number traces.
@@ -3387,7 +3391,7 @@ setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
 #' @rdname timeCorOffset
 #' @export
 # should use time0Cor() !!!!!
-setMethod("timeCorOffset", "GPR", function(x, t0 = NULL, c0 = 0.299){
+setMethod("timeCorOffset", "GPR", function(x, t0 = NULL){
   # t0 <- mean(x@time0)
   if(is.null(t0)){
     t0 <- x@time0
@@ -3399,9 +3403,9 @@ setMethod("timeCorOffset", "GPR", function(x, t0 = NULL, c0 = 0.299){
   # all not equal
   if(abs(max(t0) - min(t0)) > tol){
     tshift <- min(t0) - t0
-    xs <- traceShift(x, ts = tshift, method = "spline")
-    x@time0 <- t0 - tshift
-    t0 <- x@time0
+    x <- traceShift(x, ts = tshift, method = "spline")
+    x@time0 <- min(t0)
+    t0 <- min(t0)
   }
   x <- x[floor(t0/x@dz):nrow(x),]
   tcor2 <- (x@depth - t0)^2 - 
@@ -3412,6 +3416,7 @@ setMethod("timeCorOffset", "GPR", function(x, t0 = NULL, c0 = 0.299){
   tcor <- sqrt( tcor2[tcor2 > 0] )
   x@depth <- tcor
   x@time0 <- rep(0, ncol(x))
+  x@proc <- x@proc[-length(x@proc)] # remove proc from traceShift()
   x@proc <- c(x@proc, "timeCorOffset")
   return(x)
 })

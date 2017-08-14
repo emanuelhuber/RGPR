@@ -2203,7 +2203,6 @@ setMethod("time0Cor", "GPR", function(x, t0 = NULL,  method = c("none",
       }
       ts <- -t0 + keep
     }
-    xshift <- traceShift(x,  ts = ts, method = method, crop = TRUE)
     # xshift <- upsample(x, n = c(2,1))
     # xshift@data <- .traceShift(xshift@data, ts, x@depth, x@dz, method)
     # x@data <- xshift@data[seq(1, length.out = nrow(A), by = 2), ]
@@ -2211,12 +2210,11 @@ setMethod("time0Cor", "GPR", function(x, t0 = NULL,  method = c("none",
     #   testCrop <- apply(abs(Anew),1,sum)
     #   x <- x[!is.na(testCrop),]
     # }
-    x@data <-xshift@data
+    # xshift <- traceShift(x,  ts = ts, method = method, crop = TRUE)
+    # x@data <-xshift@data
+    x <- traceShift(x,  ts = ts, method = method, crop = TRUE)
     x@time0 <- x@time0 + ts
-#     x <- traceShift(x, ts = ts, method = eval(method), crop = eval(crop))
-#     x@proc <- x@proc[length(x@proc)]
     proc(x) <- getArgs()
-#     x@proc <- c(x@proc, proc)
     return(x)
   }
 )
@@ -3400,7 +3398,10 @@ setMethod("timeCorOffset", "GPR", function(x, t0 = NULL, c0 = 0.299){
   tol <- sqrt(.Machine$double.eps)
   # all not equal
   if(abs(max(t0) - min(t0)) > tol){
-    x <- traceShift(x, ts = t0, method = "spline")
+    tshift <- min(t0) - t0
+    xs <- traceShift(x, ts = tshift, method = "spline")
+    x@time0 <- t0 - tshift
+    t0 <- x@time0
   }
   x <- x[floor(t0/x@dz):nrow(x),]
   tcor2 <- (x@depth - t0)^2 - 

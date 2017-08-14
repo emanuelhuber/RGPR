@@ -1207,7 +1207,7 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
     # interpolate
     # FIX ME! does not work well (not nice interpolation)
     xShifted[xit + 1, i] = signal::interp1(new_t, x[,i], xi = xit * dz, 
-                                           method = "pchip",extrap = TRUE)  
+                                           method = "spline",extrap = TRUE)  
   }
   return(xShifted)
 }

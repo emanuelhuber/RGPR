@@ -2138,72 +2138,20 @@ setMethod("deconv", "GPR", function(x,
 #' @export
 setMethod("traceShift", "GPR", function(x,  ts, method = c("none", 
             "linear", "nearest", "pchip", "cubic", "spline"), crop = TRUE){
-# traceShift <- function(x,ts, keep=10){
     method <- match.arg(method, c("none", "linear", "nearest", "pchip", 
                                   "cubic", "spline"))
     if(length(ts) == 1){
       ts <- rep(ts, ncol(x))
     }
-    A <- x@data
-    Anew <- .traceShift(x@data, ts, x@depth, x@dz, method)
-#     ps <- ts/x@dz
-#     Anew <- matrix(nrow=nrow(A),ncol=ncol(A))
-#     v0 <- 1:nrow(A)
-#     for(i in seq_len(ncol(A))){
-#       relts <- floor(ps[i])*x@dz - ts[i]
-#       if(method == "none"){
-#         ynew <- A[,i]
-#       }else{
-#         ynew <- signal::interp1(x@depth, A[,i], x@depth + relts, 
-#                                 method = method, extrap = NA)
-#       }
-#       vs <- v0 + floor(ps[i])
-#       test <- vs > 0 & vs <= nrow(A)
-#       vs <- vs[test]
-#       Anew[vs,i] <- ynew[test]
-#     }
-    x@data <- Anew
+    xshift <- upsample(x, n = c(2,1))
+    xshift@data <- .traceShift(xshift@data, ts, x@depth, x@dz, method)
+    x@data <- xshift@data[seq(1, length.out = nrow(A), by = 2), ]
     if(crop == TRUE){
       testCrop <- apply(abs(Anew),1,sum)
       x <- x[!is.na(testCrop),]
-#       firstPos <- which(!rev(test == 0) )[1]
-#       if(!is.na(firstPos)){
-#         n <- length(test)
-#         vsel <- 1:(n-firstPos + 1L)
-#         x <- x[vsel,]
-#       }
     }
-
-#      ts <- ts/x@dz 
-#     if(min(ts) > keep){
-#       ts <- ts - keep
-#     }else{
-#       ts <- ts - min(ts) + 1
-#     }
-#     A <- x@data
-#     Anew <- matrix(nrow=nrow(A),ncol=ncol(A))
-#     
-#     minShift <- min(ts) - keep
-#     maxShift <- max(ts) - keep
-#     
-#     for(i in seq_along(A[1,])){
-#       vs <- seq(ts[i],nrow(A))
-#       vsp <- seq(ts[i],nrow(A))-ts[i]+1
-#       Anew[vsp,i] <- A[vs,i]
-#     }
-#     x@data <- Anew  
-#     if(crop == TRUE){
-#       test <- apply(abs(Anew),1,sum)
-#       firstPos <- which(!rev(test == 0) )[1]
-#       if(!is.na(firstPos)){
-#         n <- length(test)
-#         vsel <- 1:(n-firstPos + 1L)
-#         x <- x[vsel,]
-#       }
-#     }
-#     x@proc <- c( x@proc, "trace shift")
     proc(x) <- getArgs()
-#     x@proc <- c(x@proc, proc)
+    # x@proc <- c(x@proc, proc)
     return(x)
   }
 )
@@ -2254,8 +2202,9 @@ setMethod("time0Cor", "GPR", function(x, t0 = NULL,  method = c("none",
       }
       ts <- -t0 + keep
     }
-    Anew <- .traceShift(x@data, ts, x@depth, x@dz, method)
-    x@data <- Anew
+    xshift <- upsample(x, n = c(2,1))
+    xshift@data <- .traceShift(xshift@data, ts, x@depth, x@dz, method)
+    x@data <- xshift@data[seq(1, length.out = nrow(A), by = 2), ]
     if(crop == TRUE){
       testCrop <- apply(abs(Anew),1,sum)
       x <- x[!is.na(testCrop),]
@@ -3444,6 +3393,11 @@ setMethod("timeCorOffset", "GPR", function(x, t0 = NULL, c0 = 0.299){
   }
   if(length(t0) == 1){
     t0 <- rep(t0, length(x@time0))
+  }
+  tol <- sqrt(.Machine$double.eps)
+  # all not equal
+  if(abs(max(t0) - min(t0)) > tol){
+    x <- traceShift(x, ts = t0, method = "spline")
   }
   x <- x[floor(t0/x@dz):nrow(x),]
   tcor2 <- (x@depth - t0)^2 - 

@@ -3392,22 +3392,22 @@ setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
 #' @export
 # should use time0Cor() !!!!!
 setMethod("timeCorOffset", "GPR", function(x, t0 = NULL){
-  # t0 <- mean(x@time0)
   if(is.null(t0)){
-    t0 <- x@time0
-  }
-  if(length(t0) == 1){
-    t0 <- rep(t0, length(x@time0))
-  }
-  tol <- sqrt(.Machine$double.eps)
-  # all not equal
-  if(abs(max(t0) - min(t0)) > tol){
-    #tshift <- min(t0) - t0
-    #x <- traceShift(x, ts = tshift, method = "spline")
-    #x@time0 <- min(t0)
-    #t0 <- min(t0)
-    x <- time0Cor(x, method = "spline")
+    tol <- sqrt(.Machine$double.eps)
+    # all not equal
+    if(abs(max(x@time0) - min(x@time0)) > tol){
+      #tshift <- min(t0) - t0
+      #x <- traceShift(x, ts = tshift, method = "spline")
+      #x@time0 <- min(t0)
+      #t0 <- min(t0)
+      x <- time0Cor(x, method = "spline")
+    }
     t0 <- mean(x@time0)
+  }else{
+    if(length(t0) > 1){
+      t0 <- mean(t0)
+      warning("'length(t0)' should be equal to 1! I take the mean of 't0'!")
+    }
   }
   x <- x[floor(t0/x@dz):nrow(x),]
   tcor2 <- (x@depth - t0)^2 - 

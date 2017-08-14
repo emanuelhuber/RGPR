@@ -2146,7 +2146,7 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("none",
     xshift <- upsample(x, n = c(2,1))
     xshift@data <- .traceShift(xshift@data, ts = ts, tt = xshift@depth, 
                                dz = xshift@dz, method = method)
-    x@data <- xshift@data[seq(1, length.out = nrow(A), by = 2), ]
+    x@data <- xshift@data[seq(1, length.out = nrow(x), by = 2), ]
     if(crop == TRUE){
       testCrop <- apply(abs(x@data),1,sum)
       x <- x[!is.na(testCrop),]

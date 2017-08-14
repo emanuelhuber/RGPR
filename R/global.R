@@ -960,7 +960,7 @@ setGenericVerif("traceAverage", function(x, w = NULL, FUN = mean, ...)
                 standardGeneric("traceAverage"))
 
 setGenericVerif("time0Cor",  function(x, t0 = NULL, method = c("spline", "linear", 
-           "nearest", "pchip", "cubic", "none"), crop = TRUE, keep = 0,) 
+           "nearest", "pchip", "cubic", "none"), crop = TRUE, keep = 0) 
            standardGeneric("time0Cor"))
 
 setGenericVerif("deconv", function(x, method=c("spiking", "wavelet",

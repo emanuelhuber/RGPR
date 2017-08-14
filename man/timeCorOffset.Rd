@@ -5,7 +5,7 @@
 \alias{timeCorOffset}
 \title{Constant-offset correction (time) of the GPR data}
 \usage{
-\S4method{timeCorOffset}{GPR}(x, t0 = NULL, c0 = 0.299)
+\S4method{timeCorOffset}{GPR}(x, t0 = NULL)
 }
 \arguments{
 \item{x}{A object of the class GPR}
@@ -22,8 +22,10 @@ Time correction for each trace to compensate the offset between transmitter
 and receiver antennae (it converts the trace time of the data acquired with
 a bistatic antenna system into trace time data virtually acquiered with 
 a monostatic system under the assumption of horizontally layered structure).
-Note that this function does not change the trace but only the time (time
-scale).
+If all the traces have the same time-zero, this function does not change the 
+trace but only the time (time scale). If the traces have different
+time-zero, the traces are first aligned to have the same time-zero 
+(spline interpolation)
 }
 \seealso{
 \code{\link{time0}} to set time zero and 

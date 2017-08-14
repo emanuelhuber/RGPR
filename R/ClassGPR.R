@@ -2189,7 +2189,7 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("spline",
 #' @export
 setMethod("time0Cor", "GPR", function(x, t0 = NULL,  method = c("spline", 
                       "linear", "nearest", "pchip", "cubic", "none"), 
-                      crop = TRUE, keep = 0,){
+                      crop = TRUE, keep = 0){
     method <- match.arg(method, c("spline", 
                                   "linear", "nearest", "pchip", "cubic", 
                                   "none"))

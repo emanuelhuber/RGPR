@@ -1264,7 +1264,11 @@ setReplaceMethod(
 #' @rdname vel
 #' @export
 setMethod("vel", "GPR", function(x){
-  return(x@vel)
+  if(length(x@vel) == 1){
+    return(x@vel[[1]])
+  }else{
+    return(x@vel)
+  }
 } 
 )
 
@@ -1275,6 +1279,9 @@ setReplaceMethod(
   f="vel",
   signature="GPR",
   definition=function(x, value){
+    if(typeof(value) != "list"){
+      value <- list(as.numeric(value))
+    }
     x@vel <- value
     x@proc <- c(x@proc, "vel<-")
     return(x)

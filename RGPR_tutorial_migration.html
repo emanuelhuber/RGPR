@@ -138,11 +138,16 @@ $(document).ready(function () {
 <li><a href="#dewow"><span class="toc-section-number">4.4</span> Dewow</a></li>
 <li><a href="#frequency-filter"><span class="toc-section-number">4.5</span> Frequency filter</a></li>
 <li><a href="#time-gain"><span class="toc-section-number">4.6</span> Time gain</a></li>
-<li><a href="#constant-offset-correction"><span class="toc-section-number">4.7</span> Constant offset correction</a></li>
 </ul></li>
-<li><a href="#topographic-kirchhoff-migration"><span class="toc-section-number">5</span> Topographic Kirchhoff migration</a></li>
-<li><a href="#post-processing"><span class="toc-section-number">6</span> Post-processing</a></li>
-<li><a href="#comparison-beforeafter-migration"><span class="toc-section-number">7</span> Comparison before/after migration</a></li>
+<li><a href="#topographic-kirchhoff-migration"><span class="toc-section-number">5</span> Topographic Kirchhoff migration</a><ul>
+<li><a href="#pre-processing-1"><span class="toc-section-number">5.1</span> Pre-processing</a><ul>
+<li><a href="#constant-offset-correction"><span class="toc-section-number">5.1.1</span> Constant offset correction</a></li>
+<li><a href="#time-upsampling-sinc-interpolation-of-the-gpr-data-to-reduce-the-aliasing-risk."><span class="toc-section-number">5.1.2</span> Time upsampling (sinc-interpolation) of the GPR data to reduce the aliasing risk.</a></li>
+</ul></li>
+<li><a href="#topographic-kirchhoff-migration."><span class="toc-section-number">5.2</span> Topographic Kirchhoff migration.</a></li>
+<li><a href="#post-processing"><span class="toc-section-number">5.3</span> Post-processing</a></li>
+<li><a href="#comparison-beforeafter-migration"><span class="toc-section-number">5.4</span> Comparison before/after migration</a></li>
+</ul></li>
 </ul>
 </div>
 
@@ -157,7 +162,7 @@ $(document).ready(function () {
 </blockquote>
 <div id="objectives-of-this-tutorial" class="section level1">
 <h1><span class="header-section-number">1</span> Objectives of this tutorial</h1>
-<p>Learn how to migrate GPR data</p>
+<p><strong>Learn how to migrate GPR data.</strong></p>
 <p>Note that his tutorial will not explain you the math/algorithms behind the different processing methods.</p>
 <p>In this tutorial the code snippets are in monospaced typewriter font like in the following example:</p>
 <pre class="r"><code>1 + exp(1:10)</code></pre>
@@ -251,30 +256,43 @@ time0(A1) &lt;- t0     # set time0 to A1</code></pre>
 <pre class="r"><code>A5 &lt;- gain(A4, type = &quot;power&quot;, alpha = 1, te = 150, tcst = 20)
 A6 &lt;- gain(A5, type = &quot;exp&quot;, alpha = 0.11, t0 = 0, te = 125)</code></pre>
 </div>
-<div id="constant-offset-correction" class="section level2">
-<h2><span class="header-section-number">4.7</span> Constant offset correction</h2>
+</div>
+<div id="topographic-kirchhoff-migration" class="section level1">
+<h1><span class="header-section-number">5</span> Topographic Kirchhoff migration</h1>
+<p>See <em>Dujardin &amp; Bano (2013, Topographic migration of GPR data: Examples from Chad and Mongolia, Comptes Rendus Géoscience, 345(2):73-80. Doi : 10.1016/j.crte.2013.01.003)</em></p>
+<div id="pre-processing-1" class="section level2">
+<h2><span class="header-section-number">5.1</span> Pre-processing</h2>
+<div id="constant-offset-correction" class="section level3">
+<h3><span class="header-section-number">5.1.1</span> Constant offset correction</h3>
 <p>Time correction for each trace to compensate the offset between transmitter and receiver antennae (it converts the trace time of the data acquired with a bistatic antenna system into trace time data virtually acquiered with a monostatic system)</p>
 <pre class="r"><code>A7 &lt;- timeCorOffset(A6)
 plot(A7)</code></pre>
 <p><img src="RGPR_tutorial_migration_files/figure-html/unnamed-chunk-16-1.png" /><!-- --></p>
 </div>
-</div>
-<div id="topographic-kirchhoff-migration" class="section level1">
-<h1><span class="header-section-number">5</span> Topographic Kirchhoff migration</h1>
-<p>See Dujardin &amp; Bano (2013, Topographic migration of GPR data: Examples from Chad and Mongolia, Comptes Rendus Géoscience, 345(2):73-80. Doi : 10.1016/j.crte.2013.01.003)</p>
-<p>Time upsampling (sinc-interpolation) of the GPR data to reduce the aliasing risk.</p>
+<div id="time-upsampling-sinc-interpolation-of-the-gpr-data-to-reduce-the-aliasing-risk." class="section level3">
+<h3><span class="header-section-number">5.1.2</span> Time upsampling (sinc-interpolation) of the GPR data to reduce the aliasing risk.</h3>
 <pre class="r"><code>A8 &lt;- upsample(A7, n = c(3,1))</code></pre>
-<p>Topographic Kirchhoff migration.</p>
+</div>
+</div>
+<div id="topographic-kirchhoff-migration." class="section level2">
+<h2><span class="header-section-number">5.2</span> Topographic Kirchhoff migration.</h2>
 <p>Vertical resolution of the migrated data: <code>dz = 0.01</code>m.</p>
-<p>Dominant frequency: <code>fdo = 80</code> MHz (used to estimate the Fresnel zone)</p>
+<p>Dominant frequency from <code>spec(A9)</code>: <code>fdo = 80</code> MHz (used to estimate the Fresnel zone).</p>
+<p>For the moment the algorithm works <strong>only with a constant radar wave velocity</strong>. In this example the velocity is:</p>
+<pre class="r"><code>vel(A8)         # velocity</code></pre>
+<pre><code>## [1] 0.1</code></pre>
+<pre class="r"><code>depthunit(A8)   # units: nano-second (ns)</code></pre>
+<pre><code>## [1] &quot;ns&quot;</code></pre>
+<p>To change the velocity, simply do:</p>
+<pre class="r"><code>vel(A8)  &lt;- 0.09        # velocity in ns</code></pre>
 <pre class="r"><code>A9 &lt;- migration(A8, type=&quot;kirchhoff&quot;, max_depth = 10, 
                  dz = 0.01, fdo = 80)
 plot(A9)</code></pre>
-<p><img src="RGPR_tutorial_migration_files/figure-html/unnamed-chunk-18-1.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_migration_files/figure-html/unnamed-chunk-20-1.png" /><!-- --></p>
 <p>You don’t see so much: we need some post-processing!</p>
 </div>
-<div id="post-processing" class="section level1">
-<h1><span class="header-section-number">6</span> Post-processing</h1>
+<div id="post-processing" class="section level2">
+<h2><span class="header-section-number">5.3</span> Post-processing</h2>
 <p>Trace smoothing with a Gaussian filter</p>
 <pre class="r"><code>A10 &lt;- filter1D(A9, type=&quot;Gaussian&quot;, sigma=2.5) </code></pre>
 <p>Automatic gain control</p>
@@ -282,19 +300,20 @@ plot(A9)</code></pre>
 <p>inverse normal transformations</p>
 <pre class="r"><code>A12 &lt;- traceScaling(A11, type = &quot;invNormal&quot;)</code></pre>
 </div>
-<div id="comparison-beforeafter-migration" class="section level1">
-<h1><span class="header-section-number">7</span> Comparison before/after migration</h1>
+<div id="comparison-beforeafter-migration" class="section level2">
+<h2><span class="header-section-number">5.4</span> Comparison before/after migration</h2>
 <p>Before migration</p>
 <pre class="r"><code>plot(traceScaling(A8, type = &quot;invNormal&quot;))</code></pre>
-<p><img src="RGPR_tutorial_migration_files/figure-html/unnamed-chunk-22-1.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_migration_files/figure-html/unnamed-chunk-24-1.png" /><!-- --></p>
 <p>After migration</p>
 <pre class="r"><code>plot(A12)</code></pre>
-<p><img src="RGPR_tutorial_migration_files/figure-html/unnamed-chunk-23-1.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_migration_files/figure-html/unnamed-chunk-25-1.png" /><!-- --></p>
 <hr />
 <p>Notes</p>
 <ul>
 <li>This document was created with R-markdown and knitr.</li>
 </ul>
+</div>
 </div>
 
 

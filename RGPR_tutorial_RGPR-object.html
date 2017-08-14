@@ -8,24 +8,24 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
+
 <meta name="author" content="Emanuel Huber (emanuel.huber@alumni.ethz.ch)" />
 
 <meta name="date" content="2016-04-11" />
 
 <title>RGPR tutorial - RGPR class</title>
 
-<script src="RGPR_tutorial_RGPR-object_files/jquery-1.11.0/jquery.min.js"></script>
+<script src="RGPR_tutorial_RGPR-object_files/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="RGPR_tutorial_RGPR-object_files/bootstrap-3.3.1/css/journal.min.css" rel="stylesheet" />
-<script src="RGPR_tutorial_RGPR-object_files/bootstrap-3.3.1/js/bootstrap.min.js"></script>
-<script src="RGPR_tutorial_RGPR-object_files/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
-<script src="RGPR_tutorial_RGPR-object_files/bootstrap-3.3.1/shim/respond.min.js"></script>
+<link href="RGPR_tutorial_RGPR-object_files/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
+<script src="RGPR_tutorial_RGPR-object_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="RGPR_tutorial_RGPR-object_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="RGPR_tutorial_RGPR-object_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="RGPR_tutorial_RGPR-object_files/navigation-1.1/tabsets.js"></script>
+<link href="RGPR_tutorial_RGPR-object_files/highlightjs-1.1/default.css" rel="stylesheet" />
+<script src="RGPR_tutorial_RGPR-object_files/highlightjs-1.1/highlight.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
-<link rel="stylesheet"
-      href="RGPR_tutorial_RGPR-object_files/highlight/default.css"
-      type="text/css" />
-<script src="RGPR_tutorial_RGPR-object_files/highlight/highlight.js"></script>
 <style type="text/css">
   pre:not([class]) {
     background-color: white;
@@ -39,6 +39,34 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 }
 </script>
 
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
 
 
 </head>
@@ -55,18 +83,44 @@ code {
   color: inherit;
   background-color: rgba(0, 0, 0, 0.04);
 }
-img { 
-  max-width:100%; 
-  height: auto; 
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
 }
 </style>
+
+
+
 <div class="container-fluid main-container">
 
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
 
-<div id="header">
-<h1 class="title">RGPR tutorial - <code>RGPR</code> class</h1>
+<!-- code folding -->
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">RGPR tutorial - <code>RGPR</code> class</h1>
 <h4 class="author"><em>Emanuel Huber (<a href="mailto:emanuel.huber@alumni.ethz.ch">emanuel.huber@alumni.ethz.ch</a>)</em></h4>
 <h4 class="date"><em>11 April 2016</em></h4>
+
 </div>
 
 <div id="TOC">
@@ -81,7 +135,7 @@ img {
 <blockquote>
 <p>R is a [free] programming language and software environment for statistical computing and graphics supported by the R Foundation for Statistical Computing (<a href="https://en.wikipedia.org/wiki/R_%28programming_language%29">Wikipedia &gt; R</a>).</p>
 </blockquote>
-<p><strong>Note</strong>: This R-package is still in development, and therefore some of the functions may change in a near future. The R-package <code>RGPR</code> is hosted on <a href="https://github.com/">GitHub</a> at <a href="https://github.com/emanuelhuber/RGPR"><a href="https://github.com/emanuelhuber/RGPR" class="uri">https://github.com/emanuelhuber/RGPR</a></a>. You can contribute to the development of <code>RGPR</code>: create an account on <a href="https://github.com/">GitHub</a>, <a href="https://guides.github.com/activities/forking/">fork</a> <code>RGPR</code>, improve it and sumbmit your modifications.</p>
+<p><strong>Note</strong>: This R-package is still in development, and therefore some of the functions may change in a near future. The R-package <code>RGPR</code> is hosted on <a href="https://github.com/">GitHub</a> at <a href="https://github.com/emanuelhuber/RGPR" class="uri">https://github.com/emanuelhuber/RGPR</a>. You can contribute to the development of <code>RGPR</code>: create an account on <a href="https://github.com/">GitHub</a>, <a href="https://guides.github.com/activities/forking/">fork</a> <code>RGPR</code>, improve it and sumbmit your modifications.</p>
 <p>If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german)</p>
 <blockquote>
 <p><code>emanuel.huber@stanford.edu</code></p>
@@ -106,15 +160,17 @@ img {
 <li><p>Read the tutorial <a href="http://emanuelhuber.github.io/RGPR/RGPR_tutorial_installation-load.html">RGPR - Getting started (tutorial 1)</a></p></li>
 <li><p>Load the packages <code>RGPR</code> and set the working directory:</p></li>
 </ul>
-<pre class="r"><code>library(RGPR)   # load RGPR in the current R session
-myDir &lt;- &quot;/home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke&quot;
+<pre class="r"><code>myDir &lt;- &quot;/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke&quot;
 setwd(myDir)    # set the working directory
 getwd()         # Return the current working directory (just to check)</code></pre>
-<pre><code>## [1] &quot;/home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke&quot;</code></pre>
+<pre><code>## [1] &quot;/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke&quot;</code></pre>
 <ul>
 <li>Load the GPR data <code>frenkeLine00</code> that is included in the package <code>RGPR</code>:</li>
 </ul>
-<pre class="r"><code>data(&quot;frenkeLine00&quot;)
+<pre class="r"><code>library(devtools)
+devtools::install_github(&quot;emanuelhuber/RGPR&quot;)
+library(RGPR)
+data(&quot;frenkeLine00&quot;)
 # just because it is simplier to enter &#39;A&#39; instead of &#39;frenkeLine00&#39;
 A &lt;- frenkeLine00   </code></pre>
 </div>
@@ -195,8 +251,7 @@ A &lt;- frenkeLine00   </code></pre>
 ## [1] 0.1</code></pre>
 <p>Normally you don’t need to access the slots directly because the R-package <code>RGPR</code> provides enough functions to manipulate the <code>GPR</code> object (i.e. to extract the necessary information and to modify the object). For example, the estimated radar wave velocity can be obtained with the function <code>vel()</code>:</p>
 <pre class="r"><code>vel(A)              # access the slot &#39;vel&#39;</code></pre>
-<pre><code>## [[1]]
-## [1] 0.1</code></pre>
+<pre><code>## [1] 0.1</code></pre>
 <!---
 `A` is an object of the class `GPR` with a complex structure:
 
@@ -274,14 +329,20 @@ B &lt;- A[90:200, 5:10]          </code></pre>
 </div>
 
 
+
+
 </div>
 
 <script>
 
 // add bootstrap table styles to pandoc tables
-$(document).ready(function () {
+function bootstrapStylePandocTables() {
   $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
 });
+
 
 </script>
 

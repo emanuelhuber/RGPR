@@ -14,7 +14,7 @@ output:
   
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir = "/home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke") 
+knitr::opts_knit$set(root.dir = "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke") 
 ```
 
 `RGPR` is a package for [R](https://cran.r-project.org/) to read, write, analyse and visualise ground-penetrating radar (GPR) data.
@@ -53,14 +53,16 @@ Don't hesitate to consult the help files and to search for help on the internet.
 
 * Load the packages `RGPR` and set the working directory:
 ```{r, warning=FALSE, message=FALSE}
-library(RGPR)   # load RGPR in the current R session
-myDir <- "/home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke"
+myDir <- "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
 setwd(myDir)    # set the working directory
 getwd()         # Return the current working directory (just to check)
 ```
 
 * Load the GPR data `frenkeLine00` that is included in the package `RGPR`:
-```{r, echo=TRUE}
+```{r, echo=TRUE, warning=FALSE, message=FALSE}
+library(devtools)
+devtools::install_github("emanuelhuber/RGPR")
+library(RGPR)
 data("frenkeLine00")
 # just because it is simplier to enter 'A' instead of 'frenkeLine00'
 A <- frenkeLine00   

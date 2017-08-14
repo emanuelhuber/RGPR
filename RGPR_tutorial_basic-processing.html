@@ -201,7 +201,9 @@ $(document).ready(function () {
 <div id="installload-the-necessary-packages" class="section level2">
 <h2><span class="header-section-number">2.2</span> Install/load the necessary packages</h2>
 <p>Load the packages <code>RGPR</code> and <code>rChoiceDialogs</code> (<code>rChoiceDialogs</code> provides a collection of portable choice dialog widgets):</p>
-<pre class="r"><code>library(RGPR)   # load RGPR in the current R session
+<pre class="r"><code>library(devtools)
+devtools::install_github(&quot;emanuelhuber/RGPR&quot;)
+library(RGPR)   # load RGPR in the current R session
 library(rChoiceDialogs)</code></pre>
 <p>[optionally] If <code>RGPR</code> is not installed, follow the instructions of the tutorial “Getting started” to install it.</p>
 <p>[optionally] If R answers you <code>there is no package called 'rChoiceDialogs'</code> you need first to install <code>rChoiceDialogs</code>, either through your R software or directly in R with:</p>
@@ -341,24 +343,27 @@ abline(h = mean(A[1:110, 15]), col = &quot;green&quot;) </code></pre>
 </div>
 <div id="first-wave-break-estimation-and-time-zero-correction" class="section level2">
 <h2><span class="header-section-number">5.2</span> First wave break estimation and time-zero correction</h2>
+<p>Maybe is time-zero not correctly set. To get the time-zero for each traces of <code>A1</code> use the function <code>time0()</code>:</p>
+<pre class="r"><code>time0(A1)</code></pre>
 <p>The first wave break is estimated for each traces</p>
-<pre class="r"><code>time0est &lt;- firstBreak(A1)   # take some time
-plot(pos(A1), time0est, pch = 20, ylab = &quot;first wave break&quot;, 
+<pre class="r"><code>tfb &lt;- firstBreak(A1)   # take some time
+plot(pos(A1), tfb, pch = 20, ylab = &quot;first wave break&quot;, 
      xlab = &quot;position (m)&quot;)</code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-25-1.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-26-1.png" /><!-- --> Convert the first wave break time into time-zero with <code>firstBreakToTime0()</code>. Here we define [time-zero] = [first wave break] - [air wave travel time between transmitter and receiver].</p>
+<pre class="r"><code>t0 &lt;- firstBreakToTime0(tfb, A1)
+time0(A1) &lt;- t0     # set time0 to A1</code></pre>
 <p>Check the first wave break on a trace plot</p>
-<pre class="r"><code>plot(A1[, 15])  # plot the 15th trace of the GPR-line
-abline( v = time0est[15] - time0(A1)[15], col = &quot;green&quot;, lwd = 2)</code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-26-1.png" /><!-- --></p>
-<p>Here we define [time-zero] = [first wave break] - [air wave travel time between transmitter and receiver]. To shift the traces to time-zero, use the function <code>time0Cor</code> and set <code>keep = NULL</code> to account for the air wave travel time between transmitter and receiver.</p>
-<pre class="r"><code>A2 &lt;- time0Cor(A1, t0 = time0est, method = &quot;pchip&quot;, keep = NULL)</code></pre>
-<p>Note that if <code>time0est</code> is too noisy, you can set <code>t0 = mean(time0est)</code>.</p>
-<pre class="r"><code>plot(A2)</code></pre>
+<pre class="r"><code>plot(A1[, 15])  # plot the 15th trace of the GPR-line</code></pre>
 <p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-28-1.png" /><!-- --></p>
+<p>To shift the traces to time-zero, use the function <code>time0Cor</code>.</p>
+<pre class="r"><code>A2 &lt;- time0Cor(A1, method = &quot;pchip&quot;)</code></pre>
+<p>Note that if <code>tbf</code> is too noisy, you can set <code>t0 = mean(tbf)</code>.</p>
+<pre class="r"><code>plot(A2)</code></pre>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-30-1.png" /><!-- --></p>
 </div>
 <div id="dewow" class="section level2">
 <h2><span class="header-section-number">5.3</span> Dewow</h2>
-<p>Remove the low-frequency components (the so-called “wow”) of the GPR record usind</p>
+<p>Remove the low-frequency components (the so-called “wow”) of the GPR record using:</p>
 <ol style="list-style-type: decimal">
 <li>either a median absolute deviation (MAD) filter (<code>type = &quot;MAD&quot;</code>).</li>
 <li>or a Gaussian filter (<code>type = &quot;Gaussian&quot;</code>). The Gaussian filter is faster than the MAD filter.</li>
@@ -366,20 +371,20 @@ abline( v = time0est[15] - time0(A1)[15], col = &quot;green&quot;, lwd = 2)</cod
 <p>In both cases, the argument <code>w</code> is the length of the filter in time units.</p>
 <pre class="r"><code>A3 &lt;- dewow(A2, type = &quot;MAD&quot;, w = 50)     # dewowing: take some time
 plot(A3)                                  # plot the result</code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-29-1.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-31-1.png" /><!-- --></p>
 <p>Can you see the difference with <code>A1</code>? Plot <code>A2 - A1</code> to see the removed “wow”.</p>
 <pre class="r"><code>plot(A3 - A2)                           # plot the difference</code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-30-1.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-32-1.png" /><!-- --></p>
 <p>See the dewowing by comparing the traces before (blue line) and after (red line):</p>
 <pre class="r"><code>plot(A2[,15], col = &quot;blue&quot;)      # before dewowing
 lines(A3[,15], col = &quot;red&quot;)      # after dewowing</code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-31-1.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-33-1.png" /><!-- --></p>
 </div>
 <div id="frequency-filter" class="section level2">
 <h2><span class="header-section-number">5.4</span> Frequency filter</h2>
 <p>Let’s have a look at the amplitude-frequency and phase-frequency plot (the spectrum given by the Fourier decomposition):</p>
 <pre class="r"><code>spec(A3)</code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-32-1.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-34-1.png" /><!-- --></p>
 <p>The curve in red is the averaged amplitude/phase over all the trace amplitudes/phases.</p>
 <p>On the first plot, notice</p>
 <ul>
@@ -389,12 +394,12 @@ lines(A3[,15], col = &quot;red&quot;)      # after dewowing</code></pre>
 </ul>
 <p>Eliminate the high-frequency (noise) component of the GPR record with a bandpass filter. We define as corner frequencies at <span class="math inline">\(150\,MHz\)</span> and <span class="math inline">\(260\,MHz\)</span>, and set <code>plotSpec = TRUE</code> to plot the spectrum with the signal, the filtered signal and the filter.</p>
 <pre class="r"><code>A4 &lt;- fFilter(A3, f = c(150, 260), type = &quot;low&quot;, plotSpec = TRUE)</code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-33-1.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-35-1.png" /><!-- --></p>
 <pre class="r"><code>plot(A4)</code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-33-2.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-35-2.png" /><!-- --></p>
 <p>Let see the difference</p>
 <pre class="r"><code>plot(A4 - A3, clip = 50)</code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-34-1.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-36-1.png" /><!-- --></p>
 <p>Ideally, the objective of processing is to remove the noise component without deterioring the signal component to improve the signal/noise ratio. When ploting the difference in processing (after - before), one should only observe the noise that is filtered out. However, in practice some part of the signal may be also deteriored when eliminating noise.</p>
 </div>
 <div id="time-gain" class="section level2">
@@ -407,7 +412,7 @@ lines(A3[,15], col = &quot;red&quot;)      # after dewowing</code></pre>
 </ul>
 <p>We will first apply a power gain and then an exponential gain. To visualise the amplitude of the GPR signal as a function of time, use the function <code>plotAmpl()</code> as follows:</p>
 <pre class="r"><code>plotAmpl(A4, col = &quot;black&quot;)          # plot amplitude as a function of time</code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-35-1.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-37-1.png" /><!-- --></p>
 <p>On the previous plot, there is a sharp amplitude increase at about <span class="math inline">\(20\,ns\)</span> corresponding to the first wave arrival. Then the amplitude decreases until a plateau at about <span class="math inline">\(200\,ns\)</span>. This plateau corresponds to the signal noise. There is little hope to extract some useful information above <span class="math inline">\(150\,ns\)</span> because above <span class="math inline">\(150\,ns\)</span> the signal/noise ratio is much smaller than <span class="math inline">\(1\)</span> (i.e., more noise than signal).</p>
 <div id="power-gain" class="section level3">
 <h3><span class="header-section-number">5.5.1</span> Power gain</h3>
@@ -417,53 +422,53 @@ lines(A3[,15], col = &quot;red&quot;)      # after dewowing</code></pre>
 <pre class="r"><code>plotAmpl(A5, col = &quot;red&quot;)
 # set add=TRUE to add the amplitude on the previous plot
 plotAmpl(A4, col = &quot;black&quot;, add = TRUE)   </code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-37-1.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-39-1.png" /><!-- --></p>
 <pre class="r"><code>plot(A5)        # how does it look after the gain?</code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-37-2.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-39-2.png" /><!-- --></p>
 </div>
 <div id="exponential-gain" class="section level3">
 <h3><span class="header-section-number">5.5.2</span> Exponential gain</h3>
 <p>Ideally, the parameter <span class="math inline">\(\alpha\)</span> in the exponential gain should be close to the slope of the amplitude decrease. This slope could be estimated by fitting a straight line to the amplitude decrease. We only want to apply the filter between <span class="math inline">\(0\,ns\)</span> (<code>t0</code>) and <span class="math inline">\(125\,ns\)</span> (<code>te</code> for <span class="math inline">\(t_{end}\)</span> ):</p>
 <pre class="r"><code>A6 &lt;- gain(A5, type =&quot;exp&quot;,  alpha = 0.2, t0 = 0, te = 125)
 plotAmpl(A6, col = &quot;green&quot;)</code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-38-1.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-40-1.png" /><!-- --></p>
 <p>Oops! Set <code>alpha</code> to a smaller value!</p>
 <pre class="r"><code>A6 &lt;- gain(A5, type = &quot;exp&quot;, alpha = 0.11, t0 = 0, te = 125)
 plotAmpl(A6, col = &quot;green&quot;)
 plotAmpl(A5, col = &quot;red&quot;, add = TRUE) 
 plotAmpl(A4, col = &quot;black&quot;, add = TRUE) </code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-39-1.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-41-1.png" /><!-- --></p>
 <pre class="r"><code>plot(A6)    # how does it look after the gain?</code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-39-2.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-41-2.png" /><!-- --></p>
 <p>Plot the gained GPR record and clip the amplitude values to <span class="math inline">\(50\,mV\)</span> using the argument <code>clip</code>:</p>
 <pre class="r"><code>plot(A6, clip = 50)    # how does it look after the gain?</code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-40-1.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-42-1.png" /><!-- --></p>
 </div>
 </div>
 <div id="inverse-normal-transformations" class="section level2">
 <h2><span class="header-section-number">5.6</span> inverse normal transformations</h2>
 <p>Have a look at the histogram of the values of <code>A6</code></p>
 <pre class="r"><code>hist(A6[], breaks = 50)</code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-41-1.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-43-1.png" /><!-- --></p>
 <p>This histogram is very narrow, meaning that a lot of values are very close to zero and therefore many details are not really visible. To widen this histogram, we can transform it to make it more normally distributed with a rank-based inverse normal transformation:</p>
 <pre class="r"><code>A7 &lt;- traceScaling(A6, type = &quot;invNormal&quot;)</code></pre>
 <p>Histograms before and after</p>
 <pre class="r"><code>par(mfrow = c(1, 2))
 hist(A6[], breaks = 50)
 hist(A7[], breaks = 50)</code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-43-1.png" /><!-- --> Have a look at the results of the transformation:</p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-45-1.png" /><!-- --> Have a look at the results of the transformation:</p>
 <pre class="r"><code>plot(A7)</code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-44-1.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-46-1.png" /><!-- --></p>
 </div>
 <div id="median-filter-spatial-filter" class="section level2">
 <h2><span class="header-section-number">5.7</span> Median filter (spatial filter)</h2>
 <p>A non-linear filter to remove noise:</p>
 <pre class="r"><code>A8 &lt;- filter2D(A7, type = &quot;median3x3&quot;)
 plot(A8)</code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-45-1.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-47-1.png" /><!-- --></p>
 <p>Let see the difference</p>
 <pre class="r"><code>plot(A8 - A7)</code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-46-1.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-48-1.png" /><!-- --></p>
 </div>
 <div id="frequency-wavenumber-filter-f-k-filter" class="section level2">
 <h2><span class="header-section-number">5.8</span> Frequency-wavenumber filter (f-k-filter)</h2>
@@ -472,13 +477,13 @@ plot(A8)</code></pre>
 area &lt;- list(x = c(0, min(FKSpec$wnb), min(FKSpec$wnb), max(FKSpec$wnb), max(FKSpec$wnb), 0),
              y = c(max(FKSpec$fre), 800, 0, 0, 800, max(FKSpec$fre) ))
 lines(area, type=&quot;o&quot;)</code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-47-1.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-49-1.png" /><!-- --></p>
 <pre class="r"><code>A9 &lt;- fkFilter(A8, fk = area)</code></pre>
 <p>With the f-k-filter you can successfully remove the artifacts but still the information gained is very small in this case (the quality of the raw GPR data is already bad):</p>
 <pre class="r"><code>plot(A9, clip = 50)</code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-48-1.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-50-1.png" /><!-- --></p>
 <pre class="r"><code>spec(A9, type = &quot;f-k&quot;)</code></pre>
-<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-48-2.png" /><!-- --></p>
+<p><img src="RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-50-2.png" /><!-- --></p>
 <!---
 By ploting the spectrum of the filtered GPR data you see that some 
 
@@ -486,21 +491,21 @@ By ploting the spectrum of the filtered GPR data you see that some
 spec(A7, type = "f-k")
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-51-1.png)<!-- -->
 <p>–&gt;</p>
 </div>
 <div id="processing-overview" class="section level2">
 <h2><span class="header-section-number">5.9</span> Processing overview</h2>
 <p>Let review the processing step applied on the GPR record:</p>
 <pre class="r"><code>processing(A9)</code></pre>
-<pre><code>## [1] &quot;dcshift&gt;u=1:110+FUN=mean&quot;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
-## [2] &quot;time0Cor//t0=49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,48.8,48.8,48.8,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.2,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.2,49.2,49.2,49.6,49.2,49.2,49.2,49.2,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,47.6,47.6,47.2,47.2,47.2,47.6,47.6,47.6,47.6,49.2,47.6,47.6,47.6,49.2,48.8,48.8,49.2,48.8,48.8,49.2,49.2,49.6,49.2,49.6,49.6,49.6,49.2,49.2,49.2,49.2,49.2,49.2,49.6,49.6,49.2,49.6,49.6,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.6,49.6,49.6,49.6,49.2,49.2,49.2,49.2,49.2,49.2,49.6,49.6,49.2,49.2,49.6,49.6,49.6,49.6,49.6,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.2,49.6,49.6,49.2,49.6,49.6,49.6,49.6,49.2,49.2,49.2,49.6,49.2,49.2,49.6,49.6,49.2,49.2,49.2,50.8,50.8,50.8,50.8,50.8,50.8,50.4,50.8,50.8,50.8,50.8,50.8,50.8,50.8,50.8,50.8,50.8,50.8,49.2,50.4,50.4,50.4,50.4,50.4,50.4,50.4,50.4+method=pchip+keep=&quot;
-## [3] &quot;dewow//type=MAD+w=50&quot;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
-## [4] &quot;fFilter//f=150,260+type=low+plotSpec=NULL&quot;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-## [5] &quot;gain//type=power+alpha=1+te=150+tcst=20&quot;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
-## [6] &quot;gain//type=exp+alpha=0.11+t0=0+te=125&quot;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
-## [7] &quot;traceScaling//type=invNormal&quot;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
-## [8] &quot;filter2D//type=median3x3&quot;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+<pre><code>## [1] &quot;dcshift&gt;u=1:110+FUN=mean&quot;                           
+## [2] &quot;time0Cor//method=pchip&quot;                             
+## [3] &quot;dewow//type=MAD+w=50&quot;                               
+## [4] &quot;fFilter//f=150,260+type=low+plotSpec=NULL&quot;          
+## [5] &quot;gain//type=power+alpha=1+te=150+tcst=20&quot;            
+## [6] &quot;gain//type=exp+alpha=0.11+t0=0+te=125&quot;              
+## [7] &quot;traceScaling//type=invNormal&quot;                       
+## [8] &quot;filter2D//type=median3x3&quot;                           
 ## [9] &quot;fkFilter//fk=0,-2,-2,2,2,0+fk=1250,800,0,0,800,1250&quot;</code></pre>
 </div>
 <div id="other-processing-functions" class="section level2">
@@ -526,7 +531,7 @@ spec(A7, type = "f-k")
 ##  223 traces,55.5m long
 ##  &gt; PROCESSING
 ##    1. dcshift&gt;u=1:110+FUN=mean
-##    2. time0Cor//t0=49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,48.8,48.8,48.8,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.2,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.2,49.2,49.2,49.6,49.2,49.2,49.2,49.2,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,47.6,47.6,47.2,47.2,47.2,47.6,47.6,47.6,47.6,49.2,47.6,47.6,47.6,49.2,48.8,48.8,49.2,48.8,48.8,49.2,49.2,49.6,49.2,49.6,49.6,49.6,49.2,49.2,49.2,49.2,49.2,49.2,49.6,49.6,49.2,49.6,49.6,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.6,49.6,49.6,49.6,49.2,49.2,49.2,49.2,49.2,49.2,49.6,49.6,49.2,49.2,49.6,49.6,49.6,49.6,49.6,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.2,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.6,49.2,49.6,49.6,49.2,49.6,49.6,49.6,49.6,49.2,49.2,49.2,49.6,49.2,49.2,49.6,49.6,49.2,49.2,49.2,50.8,50.8,50.8,50.8,50.8,50.8,50.4,50.8,50.8,50.8,50.8,50.8,50.8,50.8,50.8,50.8,50.8,50.8,49.2,50.4,50.4,50.4,50.4,50.4,50.4,50.4,50.4+method=pchip+keep=
+##    2. time0Cor//method=pchip
 ##    3. dewow//type=MAD+w=50
 ##    4. fFilter//f=150,260+type=low+plotSpec=NULL
 ##    5. gain//type=power+alpha=1+te=150+tcst=20

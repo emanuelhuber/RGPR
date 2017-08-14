@@ -15,7 +15,7 @@ If you have any questions, comments or wishes, etc. feel free to contact me (in 
 > `emanuel.huber@alumni.ethz.ch`
 
 # Objectives of this tutorial
-Learn how to migrate GPR data
+**Learn how to migrate GPR data.**
 
 Note that his tutorial will not explain you the math/algorithms behind the different processing methods.
 
@@ -184,7 +184,16 @@ A5 <- gain(A4, type = "power", alpha = 1, te = 150, tcst = 20)
 A6 <- gain(A5, type = "exp", alpha = 0.11, t0 = 0, te = 125)
 ```
 
-## Constant offset correction
+
+
+# Topographic Kirchhoff migration
+See *Dujardin & Bano (2013, Topographic migration of GPR data: 
+Examples from Chad and Mongolia, Comptes Rendus Géoscience, 345(2):73-80.
+Doi : 10.1016/j.crte.2013.01.003)*
+
+## Pre-processing
+
+### Constant offset correction
 Time correction for each trace to compensate the offset between transmitter 
 and receiver antennae (it converts the trace time of the data acquired with
 a bistatic antenna system into trace time data virtually acquiered with 
@@ -199,24 +208,44 @@ plot(A7)
 
 ![](RGPR_tutorial_migration_files/figure-html/unnamed-chunk-16-1.png)<!-- -->
 
-
-# Topographic Kirchhoff migration
-See Dujardin & Bano (2013, Topographic migration of GPR data: 
-Examples from Chad and Mongolia, Comptes Rendus Géoscience, 345(2):73-80.
-Doi : 10.1016/j.crte.2013.01.003)
-
-Time upsampling (sinc-interpolation) of the GPR data to reduce the aliasing risk.
+### Time upsampling (sinc-interpolation) of the GPR data to reduce the aliasing risk.
 
 ```r
 A8 <- upsample(A7, n = c(3,1))
 ```
 
 
-Topographic Kirchhoff migration.
+## Topographic Kirchhoff migration.
 
 Vertical resolution of the migrated data: `dz = 0.01`m.
 
-Dominant frequency: `fdo = 80` MHz (used to estimate the Fresnel zone)
+Dominant frequency from `spec(A9)`: `fdo = 80` MHz (used to estimate the Fresnel zone).
+
+For the moment the algorithm works **only with a constant radar wave velocity**. In this example the velocity is:
+
+```r
+vel(A8)         # velocity
+```
+
+```
+## [1] 0.1
+```
+
+```r
+depthunit(A8)   # units: nano-second (ns)
+```
+
+```
+## [1] "ns"
+```
+
+To change the velocity, simply do:
+
+```r
+vel(A8)  <- 0.09        # velocity in ns
+```
+
+
 
 
 ```r
@@ -225,11 +254,11 @@ A9 <- migration(A8, type="kirchhoff", max_depth = 10,
 plot(A9)
 ```
 
-![](RGPR_tutorial_migration_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
+![](RGPR_tutorial_migration_files/figure-html/unnamed-chunk-20-1.png)<!-- -->
 
 You don't see so much: we need some post-processing!
 
-# Post-processing
+## Post-processing
 
 Trace smoothing with a Gaussian filter
 
@@ -250,7 +279,7 @@ A12 <- traceScaling(A11, type = "invNormal")
 ```
 
 
-# Comparison before/after migration
+## Comparison before/after migration
 
 Before migration
 
@@ -258,7 +287,7 @@ Before migration
 plot(traceScaling(A8, type = "invNormal"))
 ```
 
-![](RGPR_tutorial_migration_files/figure-html/unnamed-chunk-22-1.png)<!-- -->
+![](RGPR_tutorial_migration_files/figure-html/unnamed-chunk-24-1.png)<!-- -->
 
 After migration
 
@@ -267,7 +296,7 @@ After migration
 plot(A12)
 ```
 
-![](RGPR_tutorial_migration_files/figure-html/unnamed-chunk-23-1.png)<!-- -->
+![](RGPR_tutorial_migration_files/figure-html/unnamed-chunk-25-1.png)<!-- -->
 
 
 

@@ -1490,7 +1490,8 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
     # truncate the data -> start at time-zero!!
     y <- y + time_0
     # y <- y + (time_0 + max(y))
-    ylim[1] <- ylim[1] - ylim[2] + time_0
+    #ylim[1] <- ylim[1] - ylim[2] + time_0
+    ylim[1] <- min(y)
     ylim[2] <- 0
     # ylim[2] <- min(ylim[2] + time_0, 0)
     # ylim[1] <-  ylim[1] + (time_0 + max(y))

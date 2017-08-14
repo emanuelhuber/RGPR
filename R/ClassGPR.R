@@ -3402,9 +3402,10 @@ setMethod("timeCorOffset", "GPR", function(x, t0 = NULL){
   tol <- sqrt(.Machine$double.eps)
   # all not equal
   if(abs(max(t0) - min(t0)) > tol){
-    tshift <- min(t0) - t0
-    x <- traceShift(x, ts = tshift, method = "spline")
-    x@time0 <- min(t0)
+    #tshift <- min(t0) - t0
+    #x <- traceShift(x, ts = tshift, method = "spline")
+    #x@time0 <- min(t0)
+    x <- time0Cor(x, method = "spline")
     t0 <- min(t0)
   }
   x <- x[floor(t0/x@dz):nrow(x),]

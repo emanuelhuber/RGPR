@@ -3407,7 +3407,7 @@ setMethod("timeCorOffset", "GPR", function(x, t0 = NULL){
     #x@time0 <- min(t0)
     #t0 <- min(t0)
     x <- time0Cor(x, method = "spline")
-    t0 <- x@time0
+    t0 <- mean(x@time0)
   }
   x <- x[floor(t0/x@dz):nrow(x),]
   tcor2 <- (x@depth - t0)^2 - 

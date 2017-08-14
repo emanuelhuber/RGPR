@@ -2138,24 +2138,44 @@ setMethod("deconv", "GPR", function(x,
 #' @export
 setMethod("traceShift", "GPR", function(x,  ts, method = c("spline", 
             "linear", "nearest", "pchip", "cubic", "none"), crop = TRUE){
-    method <- match.arg(method, c("spline", "linear", "nearest", "pchip", 
-                                  "cubic", "none"))
-    if(length(ts) == 1){
-      ts <- rep(ts, ncol(x))
-    }
-    xshift <- upsample(x, n = c(2,1))
-    xshift@data <- .traceShift(xshift@data, ts = ts, tt = xshift@depth, 
-                               dz = xshift@dz, method = method)
-    x@data <- xshift@data[seq(1, length.out = nrow(x), by = 2), ]
-    if(crop == TRUE){
-      testCrop <- apply(abs(x@data),1,sum)
-      x <- x[!is.na(testCrop),]
-    }
+    # method <- match.arg(method, c("spline", "linear", "nearest", "pchip", 
+    #                               "cubic", "none"))
+    # if(length(ts) == 1){
+    #   ts <- rep(ts, ncol(x))
+    # }
+    # xshift <- upsample(x, n = c(2,1))
+    # xshift@data <- .traceShift(xshift@data, ts = ts, tt = xshift@depth, 
+    #                            dz = xshift@dz, method = method)
+    # x@data <- xshift@data[seq(1, length.out = nrow(x), by = 2), ]
+    # if(crop == TRUE){
+    #   testCrop <- apply(abs(x@data),1,sum)
+    #   x <- x[!is.na(testCrop),]
+    # }
+    x <- .shiftThisTrace( x,  ts, method, crop = TRUE)
     proc(x) <- getArgs()
     # x@proc <- c(x@proc, proc)
     return(x)
   }
 )
+
+.shiftThisTrace <- function(x,  ts, method = c("spline", "linear", "nearest", 
+                                               "pchip", "cubic", "none"), 
+                            crop = TRUE){
+  method <- match.arg(method, c("spline", "linear", "nearest", "pchip", 
+                                "cubic", "none"))
+  if(length(ts) == 1){
+    ts <- rep(ts, ncol(x))
+  }
+  xshift <- upsample(x, n = c(2,1))
+  xshift@data <- .traceShift(xshift@data, ts = ts, tt = xshift@depth, 
+                             dz = xshift@dz, method = method)
+  x@data <- xshift@data[seq(1, length.out = nrow(x), by = 2), ]
+  if(crop == TRUE){
+    testCrop <- apply(abs(x@data),1,sum)
+    x <- x[!is.na(testCrop),]
+  }
+  return(x)
+}
 
 #' Time zero correction
 #'
@@ -2213,7 +2233,8 @@ setMethod("time0Cor", "GPR", function(x, t0 = NULL,  method = c("spline",
     # }
     # xshift <- traceShift(x,  ts = ts, method = method, crop = TRUE)
     # x@data <-xshift@data
-    x <- traceShift(x,  ts = ts, method = eval(method), crop = TRUE)
+    #x <- traceShift(x,  ts = ts, method = eval(method), crop = TRUE)
+    x <- .shiftThisTrace( x,  ts, method, crop = TRUE)
     x@time0 <- x@time0 + ts
     x@proc <- x@proc[-length(x@proc)] # remove proc from traceShift()
     proc(x) <- getArgs()

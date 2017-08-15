@@ -571,17 +571,18 @@ wapply <- function(x=NULL, width = NULL, by = NULL, FUN = NULL, ...){
 
 # NOT CURRENTLY USED
 # # mod by MANU
-# wapplyRow <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, ...){
-#   FUN <- match.fun(FUN)
-#   if (is.null(by)) by <- width
-#   lenX <- nrow(x)
-#   SEQ1 <- seq(1, lenX - width + 1, by = by)
-#   SEQ2 <- lapply(SEQ1, function(x) x:(x + width - 1))
-#    
-#   OUT <- lapply(SEQ2, function(a) FUN(x[a,,drop=FALSE], ...))
-#   OUT <- base::simplify2array(OUT, higher = TRUE)
-#   return(OUT)
-# }
+#' @export
+wapplyRow <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, ...){
+  FUN <- match.fun(FUN)
+  if (is.null(by)) by <- width
+  lenX <- nrow(x)
+  SEQ1 <- seq(1, lenX - width + 1, by = by)
+  SEQ2 <- lapply(SEQ1, function(x) x:(x + width - 1))
+
+  OUT <- lapply(SEQ2, function(a) FUN(x[a,,drop=FALSE], ...))
+  OUT <- base::simplify2array(OUT, higher = TRUE)
+  return(OUT)
+}
 
 # based on wapply and modified by Manu
 # centered moving window
@@ -908,6 +909,12 @@ setGenericVerif("shiftEst", function(x, y = NULL,
                 method=c("phase", "WSSD"), dxy = NULL, ...) 
                 standardGeneric("shiftEst"))
 
+setGenericVerif("NMOCor", function(x, v = NULL, asep = NULL) 
+  standardGeneric("NMOCor"))
+setGenericVerif("CMPAnalysis", function(x, method = c("semblance", 
+               "winsemblance", "wincoherence", "wincoherence2"), v = NULL, 
+               asep = NULL, w = NULL) standardGeneric("CMPAnalysis"))
+
 setGenericVerif("migration", function(x,type=c("static","kirchhoff"), ...) 
 standardGeneric("migration"))
 setGenericVerif("upsample", function(x,n) standardGeneric("upsample"))
@@ -1063,6 +1070,11 @@ extrema <- function(x, type=c("max","min")){
     y <- y[-1]
   }
   return(y)
+}
+
+#' @export                  
+trRecTime <- function(x, origin = "1970-01-01"){
+  return(as.POSIXct(x@time, origin = origin))
 }
 
 #' @export                  
@@ -1974,6 +1986,7 @@ scaleCol <- function(A, type = c("stat", "min-max", "95",
     type <- match.arg(type)
     if( type == "invNormal"){
       Ascl <- apply( A, 2, .nScoreTrans)
+      return(Ascl)
     }
     else if(type == "stat"){
       # A <- scale(A, center=.colMeans(A, nrow(A), ncol(A)), 

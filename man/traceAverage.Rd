@@ -11,7 +11,8 @@
 \item{x}{An object of the class GPR}
 
 \item{w}{A length-one integer vector equal to the window length of the 
-average window. Default value is \code{NULL}.}
+average window. If \code{w = NULL} a single trace corresponding to
+the average trace of the whole profile is returned.}
 
 \item{FUN}{A function to compute the average (default is \code{mean})}
 

@@ -959,9 +959,6 @@ setMethod(
 
 
 #------------------------------
-
-# "["
-# modify code to get for x[] as.vector(x@data)
 #' @export
 setMethod(
   f= "[",
@@ -1006,7 +1003,9 @@ setMethod(
       if(drop && length(rval) == 1){ rval <- c(rval)}
     }else if(length(i) > 0){
       rval <- rval[i]
+      x@depth <- x@depth[i]
     }
+    x@dz <- abs(mean(diff(x@depth)))
     x@data <- rval
     return(x)
   }
@@ -1834,7 +1833,8 @@ setMethod("traceScaling", "GPR", function(x,
 #' a moving average of the traces.
 #' @param x An object of the class GPR
 #' @param w A length-one integer vector equal to the window length of the 
-#'          average window. Default value is \code{NULL}.
+#'          average window. If \code{w = NULL} a single trace corresponding to
+#'          the average trace of the whole profile is returned.
 #' @param FUN A function to compute the average (default is \code{mean})
 #' @param ... Additional parameters for the FUN functions
 #' @return An object of the class GPR. When \code{w = NULL}, this function 
@@ -2503,6 +2503,10 @@ plot.GPR <- function(x,y,...){
       }else if(length(clip)==1){
         x@data <- .clip(x@data,clip[1])
       }
+    }else if(is.null(clip)){
+      # clip below the 0.01-quantile and above the 0.99-quantile
+      x@data <- .clip(x@data, quantile(as.vector(x@data), 0.99, na.rm = TRUE),
+                      quantile(as.vector(x@data), 0.01, na.rm = TRUE))
     }
     if(addFid == FALSE){
       x@fid <- character(length(x@fid))
@@ -3307,6 +3311,147 @@ setMethod("identifyDelineation", "GPR", function(x,sel=NULL,...){
       cat("No lines were delineated!\n")
     }
   }
+)
+
+#------------------------- CMP ANALYSIS -----------------------------------#
+
+#' Normal Move-Out correction
+#' 
+#' either use 'rec' and 'trans' to compute the distance between the antennas
+#' or give the distance between the antennas (asep)
+#' or seq(x@antsep, by = x@dx, length.out = length(x))
+#' @param x An object of the class \code{GPR}
+#' @param v A length-one numeric vector defining the radar wave velocity in 
+#'          the ground
+#' @param asep A length-n numeric vector defining the antenna separation for
+#'             each trace (n = number of traces)
+#' @name NMOCor
+#' @rdname NMOCor
+#' @export
+setMethod("NMOCor", "GPR", function(x, v = NULL, asep = NULL){
+    x <- .NMOCor(x, v = v, asep = asep)
+    proc(x) <- getArgs()
+    return(x)
+  }
+)
+
+.NMOCor <- function(x, v = NULL, asep = NULL){
+  if(is.null(asep)){
+    if(length(x@rec) == 0 || length(x@trans) == 0){
+      asep <- seq(x@antsep, by = x@dx, length.out = length(x))
+    }else{
+      asep <- sqrt(colSums((x@rec - x@trans)^2))
+    }
+  }
+  t0 <- round(x@time0[1]/x@dz)*x@dz
+  x@depth <- x@depth - t0
+  x <- x[(t0/x@dz + 1):nrow(x),]
+  x@time0 <- 0
+  x_nmoCor <- x
+  x_nmoCor@data[] <- 0
+  if(is.null(v)){
+    v <- x@vel[[1]]
+  }
+  for(i in seq_along(x)){
+    deltaT <- sqrt( x@depth^2 + (asep[i]^2 )/v^2 )
+    newT <- 2*x@depth - deltaT
+    test <- newT > 0
+    newT <- newT[test]
+    valreg <- signal::interp1(x = newT, y = x@data[, i], xi=x@depth[test], 
+                              method = "linear", extrap = NA)
+    x_nmoCor@data[seq_along(valreg),i] <- valreg
+  }
+  x_nmoCor@data[is.na(x_nmoCor@data)] <- 0
+  x_nmoCor@pos <- asep
+  return(x_nmoCor)
+}
+
+semblance <- function(x){
+  S <- sum((apply(x, 1, sum, na.rm = TRUE))^2) /
+    sum(apply((x)^2, 1, sum, na.rm = TRUE)) * nrow(x)
+  return(S)
+}
+
+
+signalNoiseRatio <- function(x){
+  ysvd <- svd(x)
+  n <- length(ysvd$d)
+  # estimator of the noise variance
+  sigma2 <- 1/(n-1)*sum(ysvd$d[-1])
+  # estimator of the signal energy
+  P <- (ysvd$d[1] - sigma2)/n
+  return( P/sigma2 )
+}
+signalNoiseRatio2 <- function(x){
+  ysvd <- svd(x)
+  m <- nrow(x)
+  n <- length(ysvd$d)
+  W <- m * log( 0 + (sum(ysvd$d)/n)^n / prod(ysvd$d) )^n
+  # estimator of the noise variance
+  sigma2 <- 1/(n-1)*sum(tail(ysvd$d,n-1))
+  # estimator of the signal energy
+  P <- (ysvd$d[1] - sigma2)/n
+  return( W * P/sigma2 )
+}
+
+#' Common mid-point (CMP) analysis
+#' 
+#' either use 'rec' and 'trans' to compute the distance between the antennas
+#' or give the distance between the antennas (asep)
+#' or seq(x@antsep, by = x@dx, length.out = length(x))
+#' See book Geophysics data processing (Sacchi)
+#' @param x An object of the class \code{GPR}
+#' @param method A length-one character vector 
+#' @param v A numeric vector defining at which velocities the analysis is
+#'          performed
+#' @param asep A length-n numeric vector defining the antenna separation for
+#'             each trace (n = number of traces)
+#' @param w A length-one numeric vector defining the window length for the
+#'          methods 'wincoherence' and 'wincoherence2'.           
+#' @name CMPAnalysis
+#' @rdname CMPAnalysis
+#' @export
+setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance", 
+                                     "winsemblance",   "wincoherence", 
+                                     "wincoherence2"), v = NULL, asep = NULL, 
+                                     w = NULL){
+  method <- match.arg(method, c("semblance", "winsemblance", 
+                                "wincoherence", "wincoherence2"))
+  if(is.null(v)){
+    vlim <- x@vel[[1]] * c(0.5, 1.5)
+    v <- seq(vlim[1], vlim[2], length = 50)
+  }
+  if(is.null(w)){
+    w <- ceiling(nrow(x))/10
+  }
+  nw <- floor(nrow(x)/w)
+  # vspec <- NMOCor(x, v = v[1], asep = asep)
+  vspec <- .NMOCor(x, v = v[1], asep = asep)
+  vspec <- vspec[,rep(1,length(v))]
+  vspec@data[] <- 0
+  # vspec <- matrix(0 nrow=nrow(test), ncol=length(vv))
+  vspec@pos <- v
+  for(i in seq_along(v)){
+    # y <- NMOCor(x, v = v[i], asep = asep)
+    y <- .NMOCor(x, v = v[i], asep = asep)
+    if(method == "wincoherence"){
+      test <- wapplyRow(y@data, width = w, by = 1, FUN = signalNoiseRatio)
+      vspec@data[floor(w/2) + seq_along(test),i] <- test
+    }else if(method == "wincoherence2"){
+      test <- wapplyRow(y@data, width = w, by = 1, FUN = signalNoiseRatio2)
+      vspec@data[floor(w/2) + seq_along(test),i] <- test
+    }else if(method == "semblance"){
+      vspec@data[,i] <- (apply(y@data, 1, sum, na.rm = TRUE))^2 / 
+        apply((y@data)^2, 1, sum, na.rm = TRUE)
+    }else if(method == "winsemblance"){
+      test <- wapplyRow(y@data, width = w, by = 1, FUN = semblance)
+      vspec@data[floor(w/2) + seq_along(test),i] <- test
+    }
+    #     semblance(cmpNMO)
+  }
+  proc(vspec) <- getArgs()
+  return(vspec)
+}
 )
 
 #---------------------- MIGRATION & OFFSET CORRECTION---------------------#

@@ -1,23 +1,8 @@
----
-title: "RGPR tutorial - RGPRsurvey, adding coordinates & processing"
-author: "Emanuel Huber (emanuel.huber@alumni.ethz.ch)"
-date: "11 April 2016"
-output: 
-  html_document: 
-    fig_caption: yes
-    keep_md: yes
-    number_sections: yes
-    self_contained: no
-    theme: default
-    toc: yes
-    includes:
-      in_header: header.html
----
+# RGPR tutorial - RGPRsurvey, adding coordinates & processing
+Emanuel Huber (emanuel.huber@alumni.ethz.ch)  
+11 April 2016  
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir = "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke") 
-```
+
 
 `RGPR` is a package for [R](https://cran.r-project.org/) to read, write, analyse and visualise ground-penetrating radar (GPR) data.
 
@@ -36,20 +21,24 @@ If you have any questions, comments or wishes, etc. feel free to contact me (in 
 However, this tutorial will not explain you the math/algorithms behind the different processing methods.
 
 In this tutorial the code snippets are in monospaced typewriter font like in the following example:
-```{r, eval=FALSE, echo=TRUE}
+
+```r
 1 + exp(1:10)
 ```
 
 The R output are preceded by a double hash (`##`). The following R output is from the code snippet above.
-```{r, eval=TRUE,echo=FALSE}
-1 + exp(1:10)
+
+```
+##  [1]     3.718282     8.389056    21.085537    55.598150   149.413159
+##  [6]   404.428793  1097.633158  2981.957987  8104.083928 22027.465795
 ```
 
 Create a text file and save it with the `.R` extension (the extension for the R-script files). Then copy the code snippets into your R-script file and adapt them to your needs. To run the code in R, copy the code and paste it into the R console. You can also manually enter the code.
 
 Don't hesitate to consult the help files and to search for help on the internet. For example, to see the help for the function `mean()`, enter:
 
-```{r,eval=FALSE}
+
+```r
 ?mean    # open the help file related to the function mean()
 ```
 
@@ -77,14 +66,16 @@ I recommand you to first think about the organisation of your files and director
 
 ## Install/load the necessary packages
 Load the packages `RGPR` and `rChoiceDialogs` (`rChoiceDialogs` provides a collection of portable choice dialog widgets):
-```{r, warning=FALSE, message=FALSE}
+
+```r
 library(RGPR)   # load RGPR in the current R session
 library(rChoiceDialogs)
 ```
 
 [optionally] If `RGPR` is not installed, follow the instructions of the tutorial "Getting started" to install it.
 [optionally] If R answers you `there is no package called 'rChoiceDialogs'` you need first to install `rChoiceDialogs`, either through your R software or directly in R with:
-```{r, eval=FALSE}
+
+```r
 install.packages("rChoiceDialogs")
 ```
 
@@ -92,7 +83,8 @@ The warnings that R shows can be ignored.
 
 ## Set the working directory
 The working directory must be correctly set to use relative filepath. The working directory can be set either in your R-software or in R directly with (of course you need to change the filepath shown below):
-```{r, eval=FALSE}
+
+```r
 myDir <- file.path(c("/media/huber/Elements/UNIBAS/software/codeR",
                      "package_RGPR/RGPR-gh-pages/2014_04_25_frenke"))
 setwd(myDir)    # set the working directory
@@ -100,7 +92,8 @@ getwd()         # Return the current working directory (just to check)
 ```
 
 [optionally] Alternatively, you can use an interactive dialog box from the R-package `rChoiceDialogs`:
-```{r, eval=FALSE}
+
+```r
 myDir <- rchoose.dir(default = "/home/huber/WORK/UNIBAS/RESEARCH/RGPR/")
 setwd(myDir)    # set the working directory
 getwd()         # Return the current working directory (just to check)
@@ -117,14 +110,16 @@ following options:
 
 * use a dialogue window
 
-```{r, echo=TRUE, eval=FALSE}
+
+```r
 # select all the GPR files except CMP.DT1
 LINES <- rchoose.files(caption = " DT1 files",filters = c("dt1","*.dt1"))
 ```
 
 * write manually all the filepath in a list
 
-```{r, echo=TRUE}
+
+```r
 # select all the GPR files except CMP.DT1
 LINES <- c()    # initialisation
 LINES[1] <- file.path(getwd(), "rawGPR/LINE00.DT1")
@@ -136,10 +131,21 @@ LINES[5] <- file.path(getwd(), "rawGPR/LINE04.DT1")
 
 * extract automatically all the GPR file from the directory
 
-```{r, echo=TRUE}
+
+```r
 # list of the filepath
 allFilesinDir <- list.files(file.path(getwd(), "rawGPR"))
 allFilesinDir
+```
+
+```
+##  [1] "CMP.DT1"    "CMP.GPS"    "CMP.HD"     "LINE00.DT1" "LINE00.GPS"
+##  [6] "LINE00.HD"  "LINE01.DT1" "LINE01.GPS" "LINE01.HD"  "LINE02.DT1"
+## [11] "LINE02.GPS" "LINE02.HD"  "LINE03.DT1" "LINE03.GPS" "LINE03.HD" 
+## [16] "LINE04.DT1" "LINE04.GPS" "LINE04.HD"
+```
+
+```r
 # now, select only the file ending with .DT1 and without "CMP" 
 # in their names
 selDT1 <- grepl("(.DT1)$", allFilesinDir, ignore.case = TRUE) & 
@@ -148,18 +154,34 @@ LINES <- file.path(getwd(), "rawGPR", allFilesinDir[selDT1])
 ```
 
 ## Create an object of the class `GPRsurvey`
-```{r, echo=TRUE}
+
+```r
 mySurvey <- GPRsurvey(LINES)
 ```
 
 Have a look at the newly created object:
-```{r,echo=TRUE}
+
+```r
 mySurvey
+```
+
+```
+## *** Class GPRsurvey ***
+## Unique directory: /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR 
+## - - - - - - - - - - - - - - -
+##     name length units       date freq coord int   filename
+## 1 LINE00  55.75     m 2014-04-25  100    NO  NO LINE00.DT1
+## 2 LINE01  11.50     m 2014-04-25  100    NO  NO LINE01.DT1
+## 3 LINE02  68.75     m 2014-04-25  100    NO  NO LINE02.DT1
+## 4 LINE03  90.00     m 2014-04-25  100    NO  NO LINE03.DT1
+## 5 LINE04 111.25     m 2014-04-25  100    NO  NO LINE04.DT1
+## ****************
 ```
 
 You can see that no coordinates (x,y,z) are associated with the GPR data. 
 Therefore, if you try to plot the suvey you will get:
-```{r, eval = FALSE, echo=TRUE}
+
+```r
 plot(mySurvey, asp=1) # throw an error
 ```
 
@@ -171,23 +193,50 @@ of an object of the class `GPR`. There are two possibilities:
 
 * Either subset `mySurvey` with `[[ ]]`
 
-```{r, echo=TRUE}
+
+```r
 A02 <- mySurvey[[3]]
 A02
 ```
 
+```
+## *** Class GPR ***
+##  name = LINE02
+##  filepath = /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
+##  description = 
+##  survey date =  2014-04-25 
+##  Reflection, 100MHz,Window length=399.6ns, dz=0.4ns
+##  275 traces,68.5m long
+##  ****************
+```
+
 * Or get the `GPR` object with the function `getGPR()`
 
-```{r, echo=TRUE}
+
+```r
 A02 <- getGPR(mySurvey, id = "LINE02")
 A02
 ```
 
+```
+## *** Class GPR ***
+##  name = LINE02
+##  filepath = /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
+##  description = 
+##  survey date =  2014-04-25 
+##  Reflection, 100MHz,Window length=399.6ns, dz=0.4ns
+##  275 traces,68.5m long
+##  ****************
+```
+
 You can also directly plot the GPR data with:
-```{r, echo=TRUE}
+
+```r
 # instead of 'A02 <- mySurvey[[3]]' and 'plot(A02)' do:
 plot(mySurvey[[2]]) 
 ```
+
+![](RGPR_tutorial_RGPR-survey_files/figure-html/unnamed-chunk-16-1.png)<!-- -->
 
 # Add coordinates
 There are two options: (1) either you already have the coordinates of each 
@@ -203,7 +252,8 @@ North ("N") and not the East ("E") as we would expect. The designation
 "E", "N", "Z" is less prone to confusion and therefore we chose it!
 
 1. Define the filepaths to the topo files:
-```{r, echo=TRUE}
+
+```r
 # select all the GPR files except CMP.DT1
 TOPO <- c()    # initialisation
 TOPO[1] <- file.path(getwd(), "coord/topo/LINE00.txt")
@@ -215,13 +265,19 @@ TOPO[5] <- file.path(getwd(), "coord/topo/LINE04.txt")
 
 2. Read all the files with the funciton `readTopo()` that creates a list whose 
 elements correspond to the GPR record and contain all the trace coordinates:
-```{r, echo=TRUE}
+
+```r
 TOPOList <- readTopo(TOPO, sep = "\t")
 ```
 
 3. Set the list of coordinates as the new coordinates to the GPRsurvey object:
-```{r, echo=TRUE}
+
+```r
 coords(mySurvey) <- TOPOList
+```
+
+```
+## Coordinates of the local system: 2622000 1256834 0
 ```
 
 ## Option 2: some trace coordinates exist
@@ -267,8 +323,17 @@ This function create for each GPR data a file containing the trace number,
 position for the start and end positions
 as well as for the fiducial makers.
 
-```{r, echo=TRUE}
+
+```r
 exportFid(mySurvey, fPath = file.path(getwd(), "coord/FID/"))
+```
+
+```
+## File "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE00.txt" created!
+## File "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE01.txt" created!
+## File "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE02.txt" created!
+## File "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE03.txt" created!
+## File "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE04.txt" created!
 ```
 
 2. Now, add to each FID files three columns corresponding to the trace 
@@ -301,7 +366,8 @@ in the directory `coord/FIDmod`.
 
 3. Read the modified fiducial marker files usind the funtion `readFID()`:
 
-```{r, echo=TRUE}
+
+```r
 FidFiles <- c()    # initialisation
 FidFiles[1] <- file.path(getwd(), "coord/FIDmod/LINE00.txt")
 FidFiles[2] <- file.path(getwd(), "coord/FIDmod/LINE01.txt")
@@ -310,8 +376,17 @@ FidFiles[4] <- file.path(getwd(), "coord/FIDmod/LINE03.txt")
 FidFiles[5] <- file.path(getwd(), "coord/FIDmod/LINE04.txt")
 ```
 
-```{r, echo=TRUE}
+
+```r
 FIDs <- readFID(FidFiles)
+```
+
+```
+## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE00.txt...
+## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE01.txt...
+## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE02.txt...
+## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE03.txt...
+## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE04.txt...
 ```
 
 If R throw the following error message 
@@ -324,13 +399,38 @@ does not matter).
 according to the modified fiducial marker files. The function `interpPos()`
 interpolate the position of the traces from the known trace positions and
 add the interpolated trace position to the object `mySurvey`. 
-```{r, echo=TRUE}
+
+```r
 # interpolating the positions of the traces between the fiducials for each
 # GPR-lines and adding the position to the survey.
 # + compute the intersection between the GPR-lines
 # windows open for checking purposes
 # dx should be between 0.1 m and 0.5 m
 mySurvey <- interpPos(mySurvey, FIDs) 
+```
+
+```
+## LINE00: mean dx=0.258  range dx=0.166-0.353
+```
+
+```
+## LINE01: mean dx=0.249  range dx=0.249-0.249
+```
+
+```
+## LINE02: mean dx=0.229  range dx=0.229-0.229
+```
+
+```
+## LINE03: mean dx=0.12  range dx=0-0.27
+```
+
+```
+## LINE04: mean dx=0.215  range dx=0.063-0.366
+```
+
+```
+## Coordinates of the local system: 2622000 1256834 0
 ```
 
 The function `interpPos()` prints for every GPR record the mean trace spacing
@@ -351,20 +451,23 @@ The topographic data were measured within the new Swiss coordinate system
 (datum: CH1903+, reference frame: LV95) that can be defined with the
 code EPSG \(2056\) that corresponds to the new Swiss coordinate system.
 
-```{r, echo=TRUE}
+
+```r
 crs(mySurvey) <- "+init=epsg:2056"
 ```
 
 ## Export the coordinates
 To export the coordinates as shapefiles (one shapefile for all the GPR 
 records), enter:
-```{r, echo=TRUE}
+
+```r
 exportCoord(mySurvey, fPath="coord/shapefiles/frenke")
 ```
 
 
 To export the coordinates as ASCII (`.txt`) files (on file per GPR record):
-```{r, eval = FALSE, echo=TRUE}
+
+```r
 exportCoord(mySurvey, folder="coord/topo", type="ASCII")
 ```
 
@@ -378,21 +481,37 @@ you will quit R. To save the GPR data, see [Save, export][].
 
 ## Plot the survey
 Use the `plot()` function
-```{r, echo=TRUE}
+
+```r
 plot(mySurvey)
 ```
+
+```
+## Warning in (function (x0, y0, x1 = x0, y1 = y0, length = 0.25, angle =
+## 30, : zero-length arrow is of indeterminate angle and so skipped
+```
+
+![](RGPR_tutorial_RGPR-survey_files/figure-html/unnamed-chunk-27-1.png)<!-- -->
 The red arrows indicate the direction of the survey, the red dots the fiducial markers and the circles the GPR profile intersections.
 
 ## Plot the GPR data
 
 To plot the first GPR record, enter:
-```{r, echo=TRUE}
+
+```r
 plot(mySurvey[[1]], addTopo=TRUE)
 ```
 
+```
+## time to depth conversion with constant velocity 0.1
+```
+
+![](RGPR_tutorial_RGPR-survey_files/figure-html/unnamed-chunk-28-1.png)<!-- -->
+
 ## Three-dimensional plot of the GPR data
 To plot all the GPR records with the topographic information in 3D, enter:
-```{r, echo=TRUE, eval = FALSE}
+
+```r
 plot3DRGL(mySurvey, addTopo = TRUE)
 ```
 
@@ -405,14 +524,22 @@ them all the GPR data. Here is an example
 
 Create a sub-directory in the `/processing` directory (name it `mySurveyProc`):
 
-```{r, echo=TRUE, eval = TRUE}
+
+```r
 procDir <- file.path(getwd(), "processing/mySurveyProc/")
 dir.create(file.path(procDir),showWarnings = TRUE)
 ```
 
+```
+## Warning in dir.create(file.path(procDir), showWarnings = TRUE): '/
+## media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/
+## 2014_04_25_frenke/processing/mySurveyProc' already exists
+```
+
 Now apply the processing step with a loop to all GPR data indexed by `mySurvey`:
 
-```{r, echo=TRUE, eval = FALSE, results = 'hide'}
+
+```r
 for(i in seq_along(mySurvey)){
   A <- mySurvey[[i]]            # get GPR-line no. i
   cat("processing of line", name(A),"      ")
@@ -430,12 +557,13 @@ for(i in seq_along(mySurvey)){
          format = "rds", overwrite = TRUE)
   cat("!\n")
 }
-``` 
+```
 
 
 ## Read again
 Next time you can directly load the processed files as follows:
-```{r, echo=TRUE}
+
+```r
 # select all the GPR files except CMP.DT1
 procLINES <- c()    # initialisation
 procLINES[1] <- file.path(procDir, "LINE00.rds")
@@ -445,14 +573,16 @@ procLINES[4] <- file.path(procDir, "LINE03.rds")
 procLINES[5] <- file.path(procDir, "LINE04.rds")
 ```
 
-```{r, echo=TRUE, eval = FALSE}
+
+```r
 procSurvey <- GPRsurvey(procLINES)
 ```
 
 
 and check the results:
 
-```{r, echo=TRUE, eval = FALSE}
+
+```r
 plot(procSurvey[[1]], addTopo=TRUE)
 plot3DRGL(procSurvey, addTopo = TRUE)
 ```

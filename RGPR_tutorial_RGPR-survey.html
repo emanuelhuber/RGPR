@@ -8,24 +8,28 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
+
 <meta name="author" content="Emanuel Huber (emanuel.huber@alumni.ethz.ch)" />
 
 <meta name="date" content="2016-04-11" />
 
 <title>RGPR tutorial - RGPRsurvey, adding coordinates &amp; processing</title>
 
-<script src="RGPR_tutorial_RGPR-survey_files/jquery-1.11.0/jquery.min.js"></script>
+<script src="RGPR_tutorial_RGPR-survey_files/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="RGPR_tutorial_RGPR-survey_files/bootstrap-3.3.1/css/journal.min.css" rel="stylesheet" />
-<script src="RGPR_tutorial_RGPR-survey_files/bootstrap-3.3.1/js/bootstrap.min.js"></script>
-<script src="RGPR_tutorial_RGPR-survey_files/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
-<script src="RGPR_tutorial_RGPR-survey_files/bootstrap-3.3.1/shim/respond.min.js"></script>
+<link href="RGPR_tutorial_RGPR-survey_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="RGPR_tutorial_RGPR-survey_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="RGPR_tutorial_RGPR-survey_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="RGPR_tutorial_RGPR-survey_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="RGPR_tutorial_RGPR-survey_files/navigation-1.1/tabsets.js"></script>
+<link href="RGPR_tutorial_RGPR-survey_files/highlightjs-1.1/default.css" rel="stylesheet" />
+<script src="RGPR_tutorial_RGPR-survey_files/highlightjs-1.1/highlight.js"></script>
+<header>
+  <p><a href="https://emanuelhuber.github.io/RGPR"><img src="home.png"/></a><a href="https://emanuelhuber.github.io/RGPR">back home</a></p>
+  <hr/>
+</header>
 
 <style type="text/css">code{white-space: pre;}</style>
-<link rel="stylesheet"
-      href="RGPR_tutorial_RGPR-survey_files/highlight/default.css"
-      type="text/css" />
-<script src="RGPR_tutorial_RGPR-survey_files/highlight/highlight.js"></script>
 <style type="text/css">
   pre:not([class]) {
     background-color: white;
@@ -39,6 +43,34 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 }
 </script>
 
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
 
 
 </head>
@@ -55,18 +87,44 @@ code {
   color: inherit;
   background-color: rgba(0, 0, 0, 0.04);
 }
-img { 
-  max-width:100%; 
-  height: auto; 
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
 }
 </style>
+
+
+
 <div class="container-fluid main-container">
 
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
 
-<div id="header">
-<h1 class="title">RGPR tutorial - RGPRsurvey, adding coordinates &amp; processing</h1>
+<!-- code folding -->
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">RGPR tutorial - RGPRsurvey, adding coordinates &amp; processing</h1>
 <h4 class="author"><em>Emanuel Huber (<a href="mailto:emanuel.huber@alumni.ethz.ch">emanuel.huber@alumni.ethz.ch</a>)</em></h4>
 <h4 class="date"><em>11 April 2016</em></h4>
+
 </div>
 
 <div id="TOC">
@@ -102,10 +160,10 @@ img {
 <blockquote>
 <p>R is a [free] programming language and software environment for statistical computing and graphics supported by the R Foundation for Statistical Computing (<a href="https://en.wikipedia.org/wiki/R_%28programming_language%29">Wikipedia &gt; R</a>).</p>
 </blockquote>
-<p><strong>Note</strong>: This R-package is still in development, and therefore some of the functions may change in a near future. The R-package <code>RGPR</code> is hosted on <a href="https://github.com/">GitHub</a> at <a href="https://github.com/emanuelhuber/RGPR"><a href="https://github.com/emanuelhuber/RGPR" class="uri">https://github.com/emanuelhuber/RGPR</a></a>. You can contribute to the development of <code>RGPR</code>: create an account on <a href="https://github.com/">GitHub</a>, <a href="https://guides.github.com/activities/forking/">fork</a> <code>RGPR</code>, improve it and sumbmit your modifications.</p>
+<p><strong>Note</strong>: This R-package is still in development, and therefore some of the functions may change in a near future. The R-package <code>RGPR</code> is hosted on <a href="https://github.com/">GitHub</a> at <a href="https://github.com/emanuelhuber/RGPR" class="uri">https://github.com/emanuelhuber/RGPR</a>. You can contribute to the development of <code>RGPR</code>: create an account on <a href="https://github.com/">GitHub</a>, <a href="https://guides.github.com/activities/forking/">fork</a> <code>RGPR</code>, improve it and sumbmit your modifications.</p>
 <p>If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german)</p>
 <blockquote>
-<p><code>emanuel.huber@stanford.edu</code></p>
+<p><code>emanuel.huber@alumni.ethz.ch</code></p>
 </blockquote>
 <div id="objectives-of-this-tutorial" class="section level1">
 <h1><span class="header-section-number">1</span> Objectives of this tutorial</h1>
@@ -156,10 +214,10 @@ library(rChoiceDialogs)</code></pre>
 <div id="set-the-working-directory" class="section level2">
 <h2><span class="header-section-number">2.3</span> Set the working directory</h2>
 <p>The working directory must be correctly set to use relative filepath. The working directory can be set either in your R-software or in R directly with (of course you need to change the filepath shown below):</p>
-<pre class="r"><code>myDir &lt;- &quot;/home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke&quot;
+<pre class="r"><code>myDir &lt;- file.path(c(&quot;/media/huber/Elements/UNIBAS/software/codeR&quot;,
+                     &quot;package_RGPR/RGPR-gh-pages/2014_04_25_frenke&quot;))
 setwd(myDir)    # set the working directory
 getwd()         # Return the current working directory (just to check)</code></pre>
-<pre><code>## [1] &quot;/home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke&quot;</code></pre>
 <p>[optionally] Alternatively, you can use an interactive dialog box from the R-package <code>rChoiceDialogs</code>:</p>
 <pre class="r"><code>myDir &lt;- rchoose.dir(default = &quot;/home/huber/WORK/UNIBAS/RESEARCH/RGPR/&quot;)
 setwd(myDir)    # set the working directory
@@ -209,18 +267,17 @@ LINES &lt;- file.path(getwd(), &quot;rawGPR&quot;, allFilesinDir[selDT1])</code>
 <p>Have a look at the newly created object:</p>
 <pre class="r"><code>mySurvey</code></pre>
 <pre><code>## *** Class GPRsurvey ***
-## Unique directory: /home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke/rawGPR 
+## Unique directory: /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR 
 ## - - - - - - - - - - - - - - -
-##     name length units       date fequency coordinates intersections
-## 1 LINE00  55.75     m 2014-04-25      100          NO            NO
-## 2 LINE01  11.50     m 2014-04-25      100          NO            NO
-## 3 LINE02  68.75     m 2014-04-25      100          NO            NO
-## 4 LINE03  90.00     m 2014-04-25      100          NO            NO
-## 5 LINE04 111.25     m 2014-04-25      100          NO            NO
+##     name length units       date freq coord int   filename
+## 1 LINE00  55.75     m 2014-04-25  100    NO  NO LINE00.DT1
+## 2 LINE01  11.50     m 2014-04-25  100    NO  NO LINE01.DT1
+## 3 LINE02  68.75     m 2014-04-25  100    NO  NO LINE02.DT1
+## 4 LINE03  90.00     m 2014-04-25  100    NO  NO LINE03.DT1
+## 5 LINE04 111.25     m 2014-04-25  100    NO  NO LINE04.DT1
 ## ****************</code></pre>
 <p>You can see that no coordinates (x,y,z) are associated with the GPR data. Therefore, if you try to plot the suvey you will get:</p>
-<pre class="r"><code>plot(mySurvey, asp=1) # no plot since no coordinates</code></pre>
-<pre><code>## Warning in plot.GPRsurvey(mySurvey, asp = 1): no coordinates</code></pre>
+<pre class="r"><code>plot(mySurvey, asp=1) # throw an error</code></pre>
 <p>Note that the object <code>mySurvey</code> only contains the meta-data and a link to the GPR files (that are stored in your working directory). But <code>mySurvey</code> does not contains the GPR data itself (i.e. the traces). However, we can ask <code>mySurvey</code> to read the data and return it in the form of an object of the class <code>GPR</code>. There are two possibilities:</p>
 <ul>
 <li>Either subset <code>mySurvey</code> with <code>[[ ]]</code></li>
@@ -229,7 +286,7 @@ LINES &lt;- file.path(getwd(), &quot;rawGPR&quot;, allFilesinDir[selDT1])</code>
 A02</code></pre>
 <pre><code>## *** Class GPR ***
 ##  name = LINE02
-##  filepath = /home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke/rawGPR/LINE02.DT1
+##  filepath = /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
 ##  description = 
 ##  survey date =  2014-04-25 
 ##  Reflection, 100MHz,Window length=399.6ns, dz=0.4ns
@@ -242,7 +299,7 @@ A02</code></pre>
 A02</code></pre>
 <pre><code>## *** Class GPR ***
 ##  name = LINE02
-##  filepath = /home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke/rawGPR/LINE02.DT1
+##  filepath = /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
 ##  description = 
 ##  survey date =  2014-04-25 
 ##  Reflection, 100MHz,Window length=399.6ns, dz=0.4ns
@@ -251,9 +308,7 @@ A02</code></pre>
 <p>You can also directly plot the GPR data with:</p>
 <pre class="r"><code># instead of &#39;A02 &lt;- mySurvey[[3]]&#39; and &#39;plot(A02)&#39; do:
 plot(mySurvey[[2]]) </code></pre>
-<div class="figure">
-<img src="RGPR_tutorial_RGPR-survey_files/figure-html/unnamed-chunk-16-1.png" />
-</div>
+<p><img src="RGPR_tutorial_RGPR-survey_files/figure-html/unnamed-chunk-16-1.png" /><!-- --></p>
 </div>
 </div>
 <div id="add-coordinates" class="section level1">
@@ -315,11 +370,11 @@ END     2622300.41, 1256921.53 343.5 </code></pre>
 <li>Now, you have to indicate R to which traces the coordinates correspond. That means, for each GPR data you have to create a file that contains the coordinates with the associated trace number. This is a lot of work. To help you to create these files, use the function <code>exportFid()</code>. This function create for each GPR data a file containing the trace number, position for the start and end positions as well as for the fiducial makers.</li>
 </ol>
 <pre class="r"><code>exportFid(mySurvey, fPath = file.path(getwd(), &quot;coord/FID/&quot;))</code></pre>
-<pre><code>## File &quot;/home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke/coord/FID/LINE00.txt&quot; created!
-## File &quot;/home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke/coord/FID/LINE01.txt&quot; created!
-## File &quot;/home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke/coord/FID/LINE02.txt&quot; created!
-## File &quot;/home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke/coord/FID/LINE03.txt&quot; created!
-## File &quot;/home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke/coord/FID/LINE04.txt&quot; created!</code></pre>
+<pre><code>## File &quot;/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE00.txt&quot; created!
+## File &quot;/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE01.txt&quot; created!
+## File &quot;/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE02.txt&quot; created!
+## File &quot;/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE03.txt&quot; created!
+## File &quot;/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE04.txt&quot; created!</code></pre>
 <ol start="2" style="list-style-type: decimal">
 <li>Now, add to each FID files three columns corresponding to the trace coordinates. These columns must have as header “N”, “E” and “Z” (for North, East and vertical elevation). Why not “x”, “y” and “z”? Because in topography, “x” defines sometimes the “North”, so it may be confusing…</li>
 </ol>
@@ -346,11 +401,11 @@ FidFiles[3] &lt;- file.path(getwd(), &quot;coord/FIDmod/LINE02.txt&quot;)
 FidFiles[4] &lt;- file.path(getwd(), &quot;coord/FIDmod/LINE03.txt&quot;)
 FidFiles[5] &lt;- file.path(getwd(), &quot;coord/FIDmod/LINE04.txt&quot;)</code></pre>
 <pre class="r"><code>FIDs &lt;- readFID(FidFiles)</code></pre>
-<pre><code>## read /home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke/coord/FIDmod/LINE00.txt...
-## read /home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke/coord/FIDmod/LINE01.txt...
-## read /home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke/coord/FIDmod/LINE02.txt...
-## read /home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke/coord/FIDmod/LINE03.txt...
-## read /home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke/coord/FIDmod/LINE04.txt...</code></pre>
+<pre><code>## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE00.txt...
+## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE01.txt...
+## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE02.txt...
+## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE03.txt...
+## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE04.txt...</code></pre>
 <p>If R throw the following error message “Error in readFID(FidFiles) : The headers should be”E“,”N“,”Z“,”TRACE“!” check that the three columns have been added to all the files and that the headers of these columns are correctly set (“N”, “E”, “Z”; the order does not matter).</p>
 <ol start="4" style="list-style-type: decimal">
 <li>Interpolate the coordinates of the traces for all the GPR profiles according to the modified fiducial marker files. The function <code>interpPos()</code> interpolate the position of the traces from the known trace positions and add the interpolated trace position to the object <code>mySurvey</code>.</li>
@@ -361,17 +416,17 @@ FidFiles[5] &lt;- file.path(getwd(), &quot;coord/FIDmod/LINE04.txt&quot;)</code>
 # windows open for checking purposes
 # dx should be between 0.1 m and 0.5 m
 mySurvey &lt;- interpPos(mySurvey, FIDs) </code></pre>
-<pre><code>## LINE00 : mean dx= 0.258   range dx= 0.244 - 0.337
-## LINE01 : mean dx= 0.249   range dx= 0.249 - 0.249
-## LINE02 : mean dx= 0.229   range dx= 0.229 - 0.229
-## LINE03 : mean dx= 0.12   range dx= 0.027 - 0.177
-## LINE04 : mean dx= 0.215   range dx= 0.096 - 0.248
-## Coordinates of the local system: 2622000 1256834 0</code></pre>
-<p>The function <code>interpPos()</code> prints for every GPR record the mean trace spacing as well as the trace spacing range. Normally, these values should be close to the operating settings. In this case, the trace spacing was set equal to <span class="math">\(0.25\,m\)</span> on the field. The trace spacing values for <code>XLINE00</code>, <code>XLINE01</code> and <code>XLINE02</code> looks good. However, the trace spacing for <code>XLINE04</code> and more particularly for <code>XLINE03</code> could be critic (the smallest trace spacing values are very low). You should check and if necessary correct the topographic data…</p>
+<pre><code>## LINE00: mean dx=0.258  range dx=0.166-0.353</code></pre>
+<pre><code>## LINE01: mean dx=0.249  range dx=0.249-0.249</code></pre>
+<pre><code>## LINE02: mean dx=0.229  range dx=0.229-0.229</code></pre>
+<pre><code>## LINE03: mean dx=0.12  range dx=0-0.27</code></pre>
+<pre><code>## LINE04: mean dx=0.215  range dx=0.063-0.366</code></pre>
+<pre><code>## Coordinates of the local system: 2622000 1256834 0</code></pre>
+<p>The function <code>interpPos()</code> prints for every GPR record the mean trace spacing as well as the trace spacing range. Normally, these values should be close to the operating settings. In this case, the trace spacing was set equal to <span class="math inline">\(0.25\,m\)</span> on the field. The trace spacing values for <code>XLINE00</code>, <code>XLINE01</code> and <code>XLINE02</code> looks good. However, the trace spacing for <code>XLINE04</code> and more particularly for <code>XLINE03</code> could be critic (the smallest trace spacing values are very low). You should check and if necessary correct the topographic data…</p>
 </div>
 <div id="setting-the-coordinate-reference-system" class="section level2">
 <h2><span class="header-section-number">4.3</span> Setting the coordinate reference system</h2>
-<p>Setting the coordinate reference system is important when exporting the coordinate data in geospatial data format, because it allows the coordinates to be correctly projected in other coordinate reference systems. The topographic data were measured within the new Swiss coordinate system (datum: CH1903+, reference frame: LV95) that can be defined with the code EPSG <span class="math">\(2056\)</span> that corresponds to the new Swiss coordinate system.</p>
+<p>Setting the coordinate reference system is important when exporting the coordinate data in geospatial data format, because it allows the coordinates to be correctly projected in other coordinate reference systems. The topographic data were measured within the new Swiss coordinate system (datum: CH1903+, reference frame: LV95) that can be defined with the code EPSG <span class="math inline">\(2056\)</span> that corresponds to the new Swiss coordinate system.</p>
 <pre class="r"><code>crs(mySurvey) &lt;- &quot;+init=epsg:2056&quot;</code></pre>
 </div>
 <div id="export-the-coordinates" class="section level2">
@@ -392,16 +447,16 @@ mySurvey &lt;- interpPos(mySurvey, FIDs) </code></pre>
 <h2><span class="header-section-number">5.1</span> Plot the survey</h2>
 <p>Use the <code>plot()</code> function</p>
 <pre class="r"><code>plot(mySurvey)</code></pre>
-<p><img src="RGPR_tutorial_RGPR-survey_files/figure-html/unnamed-chunk-27-1.png" /> The red arrows indicate the direction of the survey, the red dots the fiducial markers and the circles the GPR profile intersections.</p>
+<pre><code>## Warning in (function (x0, y0, x1 = x0, y1 = y0, length = 0.25, angle =
+## 30, : zero-length arrow is of indeterminate angle and so skipped</code></pre>
+<p><img src="RGPR_tutorial_RGPR-survey_files/figure-html/unnamed-chunk-27-1.png" /><!-- --> The red arrows indicate the direction of the survey, the red dots the fiducial markers and the circles the GPR profile intersections.</p>
 </div>
 <div id="plot-the-gpr-data" class="section level2">
 <h2><span class="header-section-number">5.2</span> Plot the GPR data</h2>
 <p>To plot the first GPR record, enter:</p>
 <pre class="r"><code>plot(mySurvey[[1]], addTopo=TRUE)</code></pre>
 <pre><code>## time to depth conversion with constant velocity 0.1</code></pre>
-<div class="figure">
-<img src="RGPR_tutorial_RGPR-survey_files/figure-html/unnamed-chunk-28-1.png" />
-</div>
+<p><img src="RGPR_tutorial_RGPR-survey_files/figure-html/unnamed-chunk-28-1.png" /><!-- --></p>
 </div>
 <div id="three-dimensional-plot-of-the-gpr-data" class="section level2">
 <h2><span class="header-section-number">5.3</span> Three-dimensional plot of the GPR data</h2>
@@ -415,9 +470,9 @@ mySurvey &lt;- interpPos(mySurvey, FIDs) </code></pre>
 <p>Create a sub-directory in the <code>/processing</code> directory (name it <code>mySurveyProc</code>):</p>
 <pre class="r"><code>procDir &lt;- file.path(getwd(), &quot;processing/mySurveyProc/&quot;)
 dir.create(file.path(procDir),showWarnings = TRUE)</code></pre>
-<pre><code>## Warning in dir.create(file.path(procDir), showWarnings = TRUE): &#39;/home/
-## huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke/processing/
-## mySurveyProc&#39; already exists</code></pre>
+<pre><code>## Warning in dir.create(file.path(procDir), showWarnings = TRUE): &#39;/
+## media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/
+## 2014_04_25_frenke/processing/mySurveyProc&#39; already exists</code></pre>
 <p>Now apply the processing step with a loop to all GPR data indexed by <code>mySurvey</code>:</p>
 <pre class="r"><code>for(i in seq_along(mySurvey)){
   A &lt;- mySurvey[[i]]            # get GPR-line no. i
@@ -448,7 +503,6 @@ procLINES[3] &lt;- file.path(procDir, &quot;LINE02.rds&quot;)
 procLINES[4] &lt;- file.path(procDir, &quot;LINE03.rds&quot;)
 procLINES[5] &lt;- file.path(procDir, &quot;LINE04.rds&quot;)</code></pre>
 <pre class="r"><code>procSurvey &lt;- GPRsurvey(procLINES)</code></pre>
-<pre><code>## Coordinates of the local system: 2622000 1256834 0</code></pre>
 <p>and check the results:</p>
 <pre class="r"><code>plot(procSurvey[[1]], addTopo=TRUE)
 plot3DRGL(procSurvey, addTopo = TRUE)</code></pre>
@@ -461,14 +515,20 @@ plot3DRGL(procSurvey, addTopo = TRUE)</code></pre>
 </div>
 
 
+
+
 </div>
 
 <script>
 
 // add bootstrap table styles to pandoc tables
-$(document).ready(function () {
+function bootstrapStylePandocTables() {
   $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
 });
+
 
 </script>
 

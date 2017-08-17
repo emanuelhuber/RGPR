@@ -1,6 +1,6 @@
 ---
 title: "RGPR tutorial - Getting started"
-author: "Emanuel Huber (emanuel.huber@stanford.edu)"
+author: "Emanuel Huber (emanuel.huber@alumni.ethz.ch)"
 date: "11 April 2016"
 output:
   html_document:
@@ -8,15 +8,17 @@ output:
     keep_md: yes
     number_sections: yes
     self_contained: no
-    theme: journal
+    theme: default
     toc: yes
+    includes:
+      in_header: header.html
   pdf_document:
     toc: yes
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir = "/home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/2014_04_25_frenke") 
+knitr::opts_knit$set(root.dir = "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke") 
 ```
 
 `RGPR` is a package for [R](https://cran.r-project.org/) to read, write, analyse and visualise ground-penetrating radar (GPR) data.
@@ -27,7 +29,7 @@ knitr::opts_knit$set(root.dir = "/home/huber/WORK/UNIBAS/RESEARCH/RGPR/tutorial/
 
 If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german)
 
-> `emanuel.huber@stanford.edu`
+> `emanuel.huber@alumni.ethz.ch`
 
 # Objectives of this tutorial
 

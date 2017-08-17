@@ -8,24 +8,28 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
-<meta name="author" content="Emanuel Huber (emanuel.huber@stanford.edu)" />
+
+<meta name="author" content="Emanuel Huber (emanuel.huber@alumni.ethz.ch)" />
 
 <meta name="date" content="2016-04-11" />
 
 <title>RGPR tutorial - Getting started</title>
 
-<script src="RGPR_tutorial_installation-load_files/jquery-1.11.0/jquery.min.js"></script>
+<script src="RGPR_tutorial_installation-load_files/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="RGPR_tutorial_installation-load_files/bootstrap-3.3.1/css/journal.min.css" rel="stylesheet" />
-<script src="RGPR_tutorial_installation-load_files/bootstrap-3.3.1/js/bootstrap.min.js"></script>
-<script src="RGPR_tutorial_installation-load_files/bootstrap-3.3.1/shim/html5shiv.min.js"></script>
-<script src="RGPR_tutorial_installation-load_files/bootstrap-3.3.1/shim/respond.min.js"></script>
+<link href="RGPR_tutorial_installation-load_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="RGPR_tutorial_installation-load_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="RGPR_tutorial_installation-load_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="RGPR_tutorial_installation-load_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="RGPR_tutorial_installation-load_files/navigation-1.1/tabsets.js"></script>
+<link href="RGPR_tutorial_installation-load_files/highlightjs-1.1/default.css" rel="stylesheet" />
+<script src="RGPR_tutorial_installation-load_files/highlightjs-1.1/highlight.js"></script>
+<header>
+  <p><a href="https://emanuelhuber.github.io/RGPR"><img src="home.png"/></a><a href="https://emanuelhuber.github.io/RGPR">back home</a></p>
+  <hr/>
+</header>
 
 <style type="text/css">code{white-space: pre;}</style>
-<link rel="stylesheet"
-      href="RGPR_tutorial_installation-load_files/highlight/default.css"
-      type="text/css" />
-<script src="RGPR_tutorial_installation-load_files/highlight/highlight.js"></script>
 <style type="text/css">
   pre:not([class]) {
     background-color: white;
@@ -39,6 +43,34 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 }
 </script>
 
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
 
 
 </head>
@@ -55,18 +87,44 @@ code {
   color: inherit;
   background-color: rgba(0, 0, 0, 0.04);
 }
-img { 
-  max-width:100%; 
-  height: auto; 
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
 }
 </style>
+
+
+
 <div class="container-fluid main-container">
 
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
 
-<div id="header">
-<h1 class="title">RGPR tutorial - Getting started</h1>
-<h4 class="author"><em>Emanuel Huber (<a href="mailto:emanuel.huber@stanford.edu">emanuel.huber@stanford.edu</a>)</em></h4>
+<!-- code folding -->
+
+
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">RGPR tutorial - Getting started</h1>
+<h4 class="author"><em>Emanuel Huber (<a href="mailto:emanuel.huber@alumni.ethz.ch">emanuel.huber@alumni.ethz.ch</a>)</em></h4>
 <h4 class="date"><em>11 April 2016</em></h4>
+
 </div>
 
 <div id="TOC">
@@ -83,10 +141,10 @@ img {
 <blockquote>
 <p>R is a [free] programming language and software environment for statistical computing and graphics supported by the R Foundation for Statistical Computing (<a href="https://en.wikipedia.org/wiki/R_%28programming_language%29">Wikipedia &gt; R</a>).</p>
 </blockquote>
-<p><strong>Note</strong>: This R-package is still in development, and therefore some of the functions may change in a near future. The R-package <code>RGPR</code> is hosted on <a href="https://github.com/">GitHub</a> at <a href="https://github.com/emanuelhuber/RGPR"><a href="https://github.com/emanuelhuber/RGPR" class="uri">https://github.com/emanuelhuber/RGPR</a></a>. You can contribute to the development of <code>RGPR</code>: create an account on <a href="https://github.com/">GitHub</a>, <a href="https://guides.github.com/activities/forking/">fork</a> <code>RGPR</code>, improve it and sumbmit your modifications.</p>
+<p><strong>Note</strong>: This R-package is still in development, and therefore some of the functions may change in a near future. The R-package <code>RGPR</code> is hosted on <a href="https://github.com/">GitHub</a> at <a href="https://github.com/emanuelhuber/RGPR" class="uri">https://github.com/emanuelhuber/RGPR</a>. You can contribute to the development of <code>RGPR</code>: create an account on <a href="https://github.com/">GitHub</a>, <a href="https://guides.github.com/activities/forking/">fork</a> <code>RGPR</code>, improve it and sumbmit your modifications.</p>
 <p>If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german)</p>
 <blockquote>
-<p><code>emanuel.huber@stanford.edu</code></p>
+<p><code>emanuel.huber@alumni.ethz.ch</code></p>
 </blockquote>
 <div id="objectives-of-this-tutorial" class="section level1">
 <h1><span class="header-section-number">1</span> Objectives of this tutorial</h1>
@@ -127,7 +185,7 @@ img {
 <div id="how-to-install-rgpr" class="section level1">
 <h1><span class="header-section-number">3</span> How to install <code>RGPR</code></h1>
 <p>Start R in the terminal (by entering <code>R</code>) or through a R GUI.</p>
-<p>The R-package <code>RGPR</code> is hosted on GitHub at <a href="https://github.com/emanuelhuber/RGPR"><a href="https://github.com/emanuelhuber/RGPR" class="uri">https://github.com/emanuelhuber/RGPR</a></a></p>
+<p>The R-package <code>RGPR</code> is hosted on GitHub at <a href="https://github.com/emanuelhuber/RGPR" class="uri">https://github.com/emanuelhuber/RGPR</a></p>
 <p>Use the function <code>install_github()</code> from the R-package <code>devtools</code> to install <code>RGPR</code> directly from the GitHub repository. But first you need to install and load <code>devtools</code>. You can install this package through the GUI (RStudio or RKward) or direclty in R by entering:</p>
 <pre class="r"><code>install.packages(&quot;devtools&quot;)     # install &quot;devtools&quot;</code></pre>
 <p>Select your prefered CRAN mirror and let R install <code>&quot;devtools&quot;</code>.</p>
@@ -167,14 +225,20 @@ library(RGPR)                    # load RGPR in the current R session</code></pr
 </div>
 
 
+
+
 </div>
 
 <script>
 
 // add bootstrap table styles to pandoc tables
-$(document).ready(function () {
+function bootstrapStylePandocTables() {
   $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
 });
+
 
 </script>
 

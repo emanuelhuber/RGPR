@@ -8,8 +8,10 @@ output:
     keep_md: yes
     number_sections: yes
     self_contained: no
-    theme: journal
+    theme: default
     toc: yes
+    includes:
+      in_header: header.html
 ---
   
 ```{r setup, include=FALSE}
@@ -25,7 +27,7 @@ knitr::opts_knit$set(root.dir = "/media/huber/Elements/UNIBAS/software/codeR/pac
 
 If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german)
 
-> `emanuel.huber@stanford.edu`
+> `emanuel.huber@alumni.ethz.ch`
 
 # Objectives of this tutorial
 * Learn what is an object of the class `RGPR`.

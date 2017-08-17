@@ -12,7 +12,7 @@ Emanuel Huber (emanuel.huber@alumni.ethz.ch)
 
 If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german)
 
-> `emanuel.huber@stanford.edu`
+> `emanuel.huber@alumni.ethz.ch`
 
 # Objectives of this tutorial
 * Learn what is an object of the class `RGPR`.

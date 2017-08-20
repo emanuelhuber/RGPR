@@ -631,7 +631,7 @@ setMethod("readGPR", "character", function(fPath, desc = "",
       }else if("RD3" == toupper(ext)){
         name <- .fNameWExt(fPath)
         A <- readRD3(fPath)
-        x <- .gpr(A, name = name, fPath = fPath, description = desc)
+        x <- .gprRD3(A, name = name, fPath = fPath, description = desc)
         if(!is.null(coordfile)){
           cat("coordinates added\n")
           xyzCoord <- as.matrix(read.table(coordfile,sep=",",head=TRUE))

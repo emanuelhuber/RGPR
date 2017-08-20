@@ -3683,6 +3683,18 @@ readRD3 <- function(fPath){
     return(list(hd = hRAD, data = dataRD3))}
 }
 
+# conversion latitude longitude (hh:mm:ss into decimal
+ll2dc <- function(x){
+  NS <- gsub('[^[:alpha:]]', "", x)
+  w <- gsub('[^0-9:.]', "", x)
+  V <- matrix(as.numeric(do.call(rbind, strsplit(w, ":"))), ncol = 3)
+  pm <- 2* (grepl("N", NS) | grepl("E", NS)) - 1
+  dec <- (V[,1] + V[,2] / 60 + V[,3]/3600) * pm
+  return(dec)
+}
+  
+
+  
   
 #--------------------------------------
 # http://stackoverflow.com/questions/17256834/getting-the-arguments-of-a-parent-

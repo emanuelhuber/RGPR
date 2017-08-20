@@ -69,7 +69,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Emanuel Huber \email{emanuel.huber@stanford.edu}
+\strong{Maintainer}: Emanuel Huber \email{emanuel.huber@alumni.ethz.ch}
 
 Authors:
 \itemize{

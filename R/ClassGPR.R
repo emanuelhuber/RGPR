@@ -443,6 +443,114 @@ setClass(
 # 
 # }
 
+.gprRD3 <- function(x, name = character(0), description = character(0),
+                    fPath = character(0)){  
+  coord <- matrix(nrow = 0, ncol = 0) 
+  if(!is.null(x$coords)){
+    coord <- cbind(ll2dc(x$coords$latitude),
+                   ll2dc(x$coords$longitude),
+                   as.numeric(gsub('[^0-9.]', "", x$coords$height)))
+  }
+  #====== HEADER DATA (FILE *.HD) ======#
+  pos_used <- integer(nrow(x$hd))
+  # OK
+  ttw  <- .getHD(x$hd,"TIMEWINDOW", position = TRUE)
+  if(!is.null(ttw)){
+    dz <- ttw[1] / nrow(x$data)
+    pos_used[ttw[2]] <- 1L
+  }else{
+    warning("time/depth resolution unknown! I take dz = 0.4 ns!\n")
+    dz <- 0.4
+    ttw  <- nrow(x$data) * dz
+  }
+  
+  sup_hd <- list()
+  # OK
+  startpos <- .getHD(x$hd, "START POSITION", position=TRUE)
+  if(!is.null(startpos)){
+    pos_used[startpos[2]] <- 1L
+    sup_hd[["startpos"]] <- as.numeric(startpos[1])
+  }else{
+    startpos <- 0
+  }
+  # OK
+  endpos <- .getHD(x$hd, "STOP POSITION", position=TRUE)
+  if(!is.null(endpos)){
+    pos_used[endpos[2]] <- 1L
+    sup_hd[["startpos"]] <- as.numeric(endpos[1])
+  }else{
+    endpos <- dx[1]*ncol(x$data)
+  }
+  
+  # OK
+  dx <- .getHD(x$hd, "DISTANCE INTERVAL", position=TRUE)
+  if(!is.null(dx)){
+    if(dx[1] == 0){
+      dx <- (endpos[1] - startpos[1])/ncol(x$data)
+    }
+    pos_used[dx[2]] <- 1L
+  }else{
+    dx <- mean(diff(x$dt1hd$position))
+  }
+  
+  # OK
+  freqS <- .getHD(x$hd, "ANTENNAS", position=TRUE, number = FALSE)
+  freq <- as.numeric(gsub('[^0-9]', '', freqS[1]))
+  if(!is.null(freq) && !is.na(freq)){
+    pos_used[freqS[2]] <- 1L
+  }else{
+    freq <- 100
+  }
+  # OK
+  antsep <- .getHD(x$hd, "ANTENNA SEPARATION", position=TRUE)
+  if(!is.null(antsep)){
+    pos_used[antsep[2]] <- 1L
+  }else{
+    antsep <- 1.00
+  }
+  x$hd2 <- x$hd[!pos_used,]
+  if(nrow(x$hd2)>0){
+    key <-  trimStr(x$hd2[,1])
+    test <- key!=""
+    key <- key[test]
+    key2 <- gsub("[[:punct:]]",replacement="",key)
+    key2 <- gsub(" ",replacement="_",key2)
+    nameL <- trimStr(x$hd2[test,2])
+    names(nameL) <- as.character(key2)
+    sup_hd2 <- as.list(nameL)
+    sup_hd <- c(sup_hd, sup_hd2)
+  }
+  new("GPR",   version="0.1",
+        data = byte2volt()*x$data,
+        traces = 1:ncol(x$data),
+        fid = character(0),
+        coord = coord,
+        pos = seq(0, by = dx[1], length.out = ncol(x$data)),
+        depth = seq(0, by = dz, length.out = nrow(x$data)),
+        rec = matrix(nrow = 0, ncol = 0),
+        trans = matrix(nrow = 0, ncol = 0),
+        time0 = rep(0, ncol(x$data)),
+        time = numeric(0),
+        proc = character(0),
+        vel = list(0.1),
+        name = name,
+        description = description,
+        filepath = fPath,
+        dz = dz, 
+        dx = dx[1],
+        depthunit = "ns",
+        posunit = "m",
+        freq = freq[1], 
+        antsep = antsep[1], 
+        surveymode = "reflection",
+        date = format(Sys.time(), "%d/%m/%Y"),
+        crs = character(0),
+        hd = sup_hd
+  )
+}
+  
+  
+  
 #' Read a GPR data file
 #' 
 #' @param fPath Filepath (character).
@@ -520,6 +628,23 @@ setMethod("readGPR", "character", function(fPath, desc = "",
           y@filepath <- fPath
           return(y)
         }
+      }else if("RD3" == toupper(ext)){
+        name <- .fNameWExt(fPath)
+        A <- readRD3(fPath)
+        x <- .gpr(A, name = name, fPath = fPath, description = desc)
+        if(!is.null(coordfile)){
+          cat("coordinates added\n")
+          xyzCoord <- as.matrix(read.table(coordfile,sep=",",head=TRUE))
+          x@crs  <-   crs    
+          x@coord <-   xyzCoord
+        }
+        if(!is.null(intfile)){
+          cat("intersection added\n")
+          intGPR <- (read.table(intfile, sep = " ", head = TRUE, 
+                      stringsAsFactors = FALSE))
+          x@ann <- intGPR
+        }
+        return(x)
       }else{
         stop(paste0("Problem with the file extension.",
                     "Should be either '.DT1' or '.rds'\n"))

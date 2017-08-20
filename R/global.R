@@ -3640,6 +3640,50 @@ readDT1 <- function( fPath){
   }
 }
 
+  
+#--------------- read MALA files -------------------#
+readRD3 <- function(fPath){
+  dirName     <- dirname(fPath)
+  baseName    <- .fNameWExt(fPath)
+  fNameRAD    <- file.path(dirName, paste0(baseName, ".rad"))
+  fNameRD3    <- file.path(dirName, paste0(baseName, ".rd3"))
+  fNameCOR    <- file.path(dirName, paste0(baseName, ".cor"))
+
+  ##---- RAD file
+  headRAD <- scan(fNameRAD, what = character(), strip.white = TRUE,
+                  quiet = TRUE, fill = TRUE, blank.lines.skip = TRUE, 
+                  flush = TRUE, sep = "\n")
+                  
+  nRAD <- length(headRAD)
+  hRAD <- data.frame( tag = character(), val = character(), 
+                          stringsAsFactors = FALSE)
+  for(i in seq_along(headRAD)){
+    hdline <- strsplit(headRAD[i], ":")[[1]]
+    hRAD[i,1:2] <-  as.character(sapply(hdline[1:2],trimStr))
+  }
+  nTr <- .getHD(hRAD, "LAST TRACE")
+  nPt <- .getHD(hRAD, "SAMPLES")
+  
+  ##---- RD3 file
+  dataRD3 <- matrix(NA, nrow = nPt, ncol = nTr)
+  con <- file(fNameRD3 , "rb")
+  for(i in seq_len(nTr)){
+    dataRD3[, i] <- readBin(fNameRD3, what = integer(), n = nPt, size = 2)
+  }
+  close(con)
+  
+  ##---- COR file
+  if(file.exists(fNameCOR)){
+    hCOR <- read.table(fNameCOR, sep = ",", dec = ".", header = FALSE,
+                       stringsAsFactors = FALSE)
+    colnames(hCOR) <- c("traces", "date", "time", "latitude", "longitude",
+                    "height", "accuracy")
+    return(list(hd = hRAD, data = dataRD3, coords = hCOR))
+  } else{
+    return(list(hd = hRAD, data = dataRD3))}
+}
+
+  
 #--------------------------------------
 # http://stackoverflow.com/questions/17256834/getting-the-arguments-of-a-parent-
 # function-in-r-with-names

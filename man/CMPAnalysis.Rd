@@ -26,4 +26,5 @@ methods 'wincoherence' and 'wincoherence2'.}
 either use 'rec' and 'trans' to compute the distance between the antennas
 or give the distance between the antennas (asep)
 or seq(x@antsep, by = x@dx, length.out = length(x))
+See book Geophysics data processing (Sacchi)
 }

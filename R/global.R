@@ -3674,10 +3674,15 @@ readRD3 <- function(fPath){
   
   ##---- COR file
   if(file.exists(fNameCOR)){
-    hCOR <- read.table(fNameCOR, sep = ",", dec = ".", header = FALSE,
-                       stringsAsFactors = FALSE)
-    colnames(hCOR) <- c("traces", "date", "time", "latitude", "longitude",
-                    "height", "accuracy")
+    #hCOR <- read.table(fNameCOR, sep = "\t", dec = ".", header = FALSE,
+    #                   stringsAsFactors = FALSE)
+    #colnames(hCOR) <- c("traces", "date", "time", "latitude", "longitude",
+    #                "height", "accuracy")
+    hCOR <- read.table(textConnection(gsub(",", "\t", readLines(fNameCOR))), dec = ".", header = FALSE,
+                   stringsAsFactors = FALSE)
+
+    colnames(hCOR) <- c("traces", "date", "time", "latitude", "lat", "longitude",
+                    "long", "height", "unit", "accuracy")
     return(list(hd = hRAD, data = dataRD3, coords = hCOR))
   } else{
     return(list(hd = hRAD, data = dataRD3))}

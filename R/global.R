@@ -538,6 +538,42 @@ posLine <- function(loc,last=FALSE){
   }
 }
   
+# see https://stackoverflow.com/a/30225804
+# latitude-longitude to UTM
+#' @export
+latlongToUTM <- function(lat, long, zone = NULL, south = FALSE){
+  # todo: check if lat/long in hh:mm:ss and convert them into
+  #       decimal with the function 'll2dc()' (see below)
+  if(is.null(zone)){
+    # see https://stackoverflow.com/a/9188972
+    #  The formula is to simple: it does not work for the both 
+    # UTM Zone Exceptions in Norway and Svalbard –
+    zone <- (floor((long + 180)/6) %% 60) + 1
+    zone <- unique(zone)[1]
+  }
+  ll <- data.frame(ID = 1:length(lat), X = long, Y = lat)
+  sp::coordinates(ll) <- c("X", "Y")
+  sp::proj4string(ll) <- sp::CRS("+proj=longlat +datum=WGS84")
+  if(isTRUE(south)){
+    south <- "+south "
+  }else{
+    south <- ""
+  }
+  xy <- sp::spTransform(ll, sp::CRS(paste0("+proj=utm ", south, "+zone=", zone,
+                                           " ellps=WGS84")))
+  return(as.matrix(as.data.frame(xy)[,2:3]))
+}
+  
+# conversion latitude longitude (hh:mm:ss into decimal
+ll2dc <- function(x){
+  NS <- gsub('[^[:alpha:]]', "", x)
+  w <- gsub('[^0-9:.]', "", x)
+  V <- matrix(as.numeric(do.call(rbind, strsplit(w, ":"))), ncol = 3)
+  pm <- 2* (grepl("N", NS) | grepl("E", NS)) - 1
+  dec <- (V[,1] + V[,2] / 60 + V[,3]/3600) * pm
+  return(dec)
+}  
+  
 .doubleVector <- function(v,n=2L){
   if(n > 1){
     m <- length(v)
@@ -3677,25 +3713,16 @@ readRD3 <- function(fPath){
     #                   stringsAsFactors = FALSE)
     #colnames(hCOR) <- c("traces", "date", "time", "latitude", "longitude",
     #                "height", "accuracy")
-    hCOR <- read.table(textConnection(gsub(",", "\t", readLines(fNameCOR))), dec = ".", header = FALSE,
-                   stringsAsFactors = FALSE)
+    hCOR <- read.table(textConnection(gsub(",", "\t", readLines(fNameCOR))), 
+                       dec = ".", header = FALSE, stringsAsFactors = FALSE)
 
     colnames(hCOR) <- c("traces", "date", "time", "latitude", "lat", "longitude",
                     "long", "height", "unit", "accuracy")
     return(list(hd = hRAD, data = dataRD3, coords = hCOR))
-  } else{
+  }else{
     return(list(hd = hRAD, data = dataRD3))}
 }
 
-# conversion latitude longitude (hh:mm:ss into decimal
-ll2dc <- function(x){
-  NS <- gsub('[^[:alpha:]]', "", x)
-  w <- gsub('[^0-9:.]', "", x)
-  V <- matrix(as.numeric(do.call(rbind, strsplit(w, ":"))), ncol = 3)
-  pm <- 2* (grepl("N", NS) | grepl("E", NS)) - 1
-  dec <- (V[,1] + V[,2] / 60 + V[,3]/3600) * pm
-  return(dec)
-}
   
 
   

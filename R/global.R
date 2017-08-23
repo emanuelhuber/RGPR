@@ -868,8 +868,7 @@ setGenericVerif("relPos", function(x)
 #' @name readGPR
 #' @rdname readGPR
 #' @export
-setGenericVerif("readGPR", function(fPath, desc = "", coordfile = NULL,
-                crs = "", intfile = NULL) standardGeneric("readGPR"))
+setGenericVerif("readGPR", function(fPath, desc = "") standardGeneric("readGPR"))
 
 #' @name writeGPR
 #' @rdname writeGPR

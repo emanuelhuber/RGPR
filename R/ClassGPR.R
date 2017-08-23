@@ -569,27 +569,14 @@ setClass(
 #' @name readGPR
 #' @rdname readGPR
 # @aliases readGPR-methods
-setMethod("readGPR", "character", function(fPath, desc = "", 
-          coordfile = NULL, crs = "", intfile = NULL){
+setMethod("readGPR", "character", function(fPath, desc = ""){
     ext <- .fExt(fPath)
     # DT1
     if(file.exists(fPath)){
       if("DT1" == toupper(ext)){
         name <- .fNameWExt(fPath)
         A <- readDT1(fPath)
-        x <- .gpr(A,name=name,fPath=fPath,description=desc)
-        if(!is.null(coordfile)){
-          cat("coordinates added\n")
-          xyzCoord <- as.matrix(read.table(coordfile,sep=",",head=TRUE))
-          x@crs  <-   crs    
-          x@coord <-   xyzCoord
-        }
-        if(!is.null(intfile)){
-          cat("intersection added\n")
-          intGPR <- (read.table(intfile, sep = " ", head = TRUE, 
-                      stringsAsFactors = FALSE))
-          x@ann <- intGPR
-        }
+        x <- .gpr(A,name = name, fPath = fPath, description = desc)
         return(x)
       }else if("rds" == tolower(ext)){
         x <- readRDS(fPath)
@@ -636,18 +623,6 @@ setMethod("readGPR", "character", function(fPath, desc = "",
         name <- .fNameWExt(fPath)
         A <- readRD3(fPath)
         x <- .gprRD3(A, name = name, fPath = fPath, description = desc)
-        if(!is.null(coordfile)){
-          cat("coordinates added\n")
-          xyzCoord <- as.matrix(read.table(coordfile,sep=",",head=TRUE))
-          x@crs  <-   crs    
-          x@coord <-   xyzCoord
-        }
-        if(!is.null(intfile)){
-          cat("intersection added\n")
-          intGPR <- (read.table(intfile, sep = " ", head = TRUE, 
-                      stringsAsFactors = FALSE))
-          x@ann <- intGPR
-        }
         return(x)
       }else{
         stop(paste0("Problem with the file extension.",

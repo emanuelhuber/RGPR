@@ -3720,7 +3720,7 @@ readRD3 <- function(fPath){
     #                "long", "height", "unit", "accuracy")
     # return(list(hd = hRAD, data = dataRD3, coords = hCOR))
   #}else{
-    return(list(hd = hRAD, data = dataRD3))}
+    return(list(hd = hRAD, data = dataRD3))
 }
 
   

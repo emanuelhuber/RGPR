@@ -445,15 +445,15 @@ setClass(
 
 .gprRD3 <- function(x, name = character(0), description = character(0),
                     fPath = character(0)){  
-  coord <- matrix(nrow = 0, ncol = 0) 
-  if(!is.null(x$coords)){
+  #coord <- matrix(nrow = 0, ncol = 0) 
+  #if(!is.null(x$coords)){
     #coord <- cbind(ll2dc(x$coords$latitude),
     #               ll2dc(x$coords$longitude),
     #               as.numeric(gsub('[^0-9.]', "", x$coords$height)))
     #coord <- cbind(x$coords$latitude,
     #               x$coords$longitude,
     #               x$coords$height)
-  }
+  #}
   #====== HEADER DATA (FILE *.HD) ======#
   pos_used <- integer(nrow(x$hd))
   # OK

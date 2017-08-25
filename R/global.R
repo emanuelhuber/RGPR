@@ -3682,7 +3682,7 @@ readRD3 <- function(fPath){
   baseName    <- .fNameWExt(fPath)
   fNameRAD    <- file.path(dirName, paste0(baseName, ".rad"))
   fNameRD3    <- file.path(dirName, paste0(baseName, ".rd3"))
-  fNameCOR    <- file.path(dirName, paste0(baseName, ".cor"))
+  #fNameCOR    <- file.path(dirName, paste0(baseName, ".cor"))
 
   ##---- RAD file
   headRAD <- scan(fNameRAD, what = character(), strip.white = TRUE,
@@ -3708,18 +3708,18 @@ readRD3 <- function(fPath){
   close(con)
   
   ##---- COR file
-  if(file.exists(fNameCOR)){
+  #if(file.exists(fNameCOR)){
     #hCOR <- read.table(fNameCOR, sep = "\t", dec = ".", header = FALSE,
     #                   stringsAsFactors = FALSE)
     #colnames(hCOR) <- c("traces", "date", "time", "latitude", "longitude",
     #                "height", "accuracy")
-    hCOR <- read.table(textConnection(gsub(",", "\t", readLines(fNameCOR))), 
-                       dec = ".", header = FALSE, stringsAsFactors = FALSE)
+    #hCOR <- read.table(textConnection(gsub(",", "\t", readLines(fNameCOR))), 
+    #                   dec = ".", header = FALSE, stringsAsFactors = FALSE)
 
-    colnames(hCOR) <- c("traces", "date", "time", "latitude", "lat", "longitude",
-                    "long", "height", "unit", "accuracy")
-    return(list(hd = hRAD, data = dataRD3, coords = hCOR))
-  }else{
+    # colnames(hCOR) <- c("traces", "date", "time", "latitude", "lat", "longitude",
+    #                "long", "height", "unit", "accuracy")
+    # return(list(hd = hRAD, data = dataRD3, coords = hCOR))
+  #}else{
     return(list(hd = hRAD, data = dataRD3))}
 }
 

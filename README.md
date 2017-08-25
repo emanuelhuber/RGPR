@@ -7,7 +7,7 @@ Currently:
 * the only supported binary formats are 
     
     - the Sensors & Software file format (.DT1, .HD)
-    - the MALA file format (.rd3, .rad and .cor but not yet the coordinates)
+    - the MALA file format (.rd3, .rad)
     
 * RGPR only support reflection data such as surface-based GPR data (no support for cross-borehole GPR data)
 * the documentation is still incomplete (but check the tutorials)

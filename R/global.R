@@ -738,6 +738,18 @@ setGenericVerif("coord", function(x, i, ...) standardGeneric("coord"))
 #' @export
 setGenericVerif("coord<-",function(x,value){standardGeneric("coord<-")})
 
+
+#' @name svDate
+#' @rdname svDate
+#' @export
+setGenericVerif("svDate", function(x, i, ...) standardGeneric("svDate"))
+
+#' @name svDate<-
+#' @rdname svDate
+#' @export
+setGenericVerif("svDate<-",function(x,value){standardGeneric("svDate<-")})
+
+
 #' @name vel
 #' @rdname vel
 #' @export

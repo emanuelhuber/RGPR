@@ -220,7 +220,7 @@ setClass(
     }
   }else{
     warnings("Could not understand the survey date\n")
-    d <- "1970-01-01"
+    d <- character(0)
   }
   #--- device type
   freepos <- which(pos_used[1:5] == 0)
@@ -243,7 +243,11 @@ setClass(
     sup_hd2 <- as.list(nameL)
     sup_hd <- c(sup_hd, sup_hd2)
   }
-  traceTime <- as.double(as.POSIXct(x$dt1$time, origin = as.Date(d)))
+  dorigin <- d
+  if(length(dorigin) == 0){
+	dorigin <- "1970-01-01"
+  }
+  traceTime <- as.double(as.POSIXct(x$dt1$time, origin = as.Date(dorigin)))
   new("GPR",   version="0.1",
         data = byte2volt()*x$data,
         traces = x$dt1$traces,            # x$dt1$traces
@@ -1337,6 +1341,42 @@ setReplaceMethod(
     return(x)
   }
 )
+
+#' Survey date
+#' 
+#' Return NULL if no date exists, else an object of the class 'Date'
+#' @name svDate
+#' @rdname svDate
+#' @export
+setMethod("svDate", "GPR", function(x){
+    if(length(x@date) > 0){
+	  return(as.Date(x@date))
+    }else{
+	  return(NULL)
+	}
+  } 
+)
+
+#' @param x An object of the class 'GPR'
+#' @param value An object of the class 'Date'
+#' @name svDate<-
+#' @rdname svDate
+#' @export
+setReplaceMethod(
+  f="svDate",
+  signature="GPR",
+  definition=function(x,value){
+    value <- value[1]
+    if(class(value) == "Date"){
+      x@date <- value
+      x@proc <- c(x@proc, "svDate<-")
+      return(x)
+    }else{
+      stop("'value' must be from the class 'Date'!")
+	}
+  }
+)
+
 #' Coordinate reference system (CRS) of the GPR data
 #' 
 #' @name crs

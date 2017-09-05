@@ -37,8 +37,35 @@ plot(frenkeLine00)
 
 ```
 
-## An incomplete overview of the functionality of RGPR
+## Existing functions
+
+### List of the functions from the class `GPR`
+```r
+library(RGPR)
+mtext <-  showMethods(class="GPR", printTo =FALSE )
+i <- grepl('Function', mtext) & grepl('package RGPR', mtext) 
+fvec <- gsub( "Function(\\:\\s|\\s\\\")(.+)(\\s\\(|\\\")(.+$)",
+                                      "\\2", mtext[i] )
+fvec
+```
+
+### List of the functions from the class `GPRsurvey`
+```r
+library(RGPR)
+mtext <-  showMethods(class="GPRsurvey", printTo =FALSE )
+i <- grepl('Function', mtext) & grepl('package RGPR', mtext) 
+fvec <- gsub( "Function(\\:\\s|\\s\\\")(.+)(\\s\\(|\\\")(.+$)",
+                                      "\\2", mtext[i] )
+fvec
+```
+
+### Incomplete overview of the RGPR-package
 ```r
 ?RGPR
 ```
 
+## Contributions
+
+Thanks to:
+
+-  @jmerc13

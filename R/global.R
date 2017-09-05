@@ -3703,7 +3703,7 @@ readRD3 <- function(fPath){
   dataRD3 <- matrix(NA, nrow = nPt, ncol = nTr)
   con <- file(fNameRD3 , "rb")
   for(i in seq_len(nTr)){
-    dataRD3[, i] <- readBin(fNameRD3, what = integer(), n = nPt, size = 2)
+    dataRD3[, i] <- readBin(con, what = integer(), n = nPt, size = 2)
   }
   close(con)
   

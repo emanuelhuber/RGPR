@@ -551,7 +551,7 @@ setClass(
         freq = freq[1], 
         antsep = antsep[1], 
         surveymode = "reflection",
-        date = format(Sys.time(), "%d/%m/%Y"),
+        date = character(0), #format(Sys.time(), "%d/%m/%Y"),
         crs = character(0),
         hd = sup_hd
   )

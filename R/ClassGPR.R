@@ -1368,7 +1368,7 @@ setReplaceMethod(
   definition=function(x,value){
     value <- value[1]
     if(class(value) == "Date"){
-      x@date <- value
+      x@date <- as.character(value)
       x@proc <- c(x@proc, "svDate<-")
       return(x)
     }else{

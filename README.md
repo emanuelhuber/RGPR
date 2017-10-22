@@ -27,7 +27,7 @@ http://emanuelhuber.github.io/RGPR/
 ## How to install/load
 
 ```r
-library(devtools)
+if(!require("devtools")) install.packages("devtools")
 devtools::install_github("emanuelhuber/RGPR")
 library(RGPR)
 

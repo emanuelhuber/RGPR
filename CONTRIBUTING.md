@@ -27,8 +27,20 @@ par(op)
 * Miscenallenous
     + `paste0()` instead of `paste(..., sep = "")`
     + 
+    
+## Tricks
+* use `message()` inside a function instead of `cat()` or `print()`!
+* `invisible()`: Return a (temporarily) invisible copy of an object, used in plot function
+* `missing()`: check if an arguments is missing
+* Don't want to pass `...`-arguments to a function? Solution: use a wrapper function, where the args after `...` are the args that you don't want to have in the function. e.g.:
+    ```{r}
+    lPoints <- function(..., log, axes, frame.plot, panel.first, panel.last) {
+     points(...)
+    }
+    ```
+* `unname()`
 
-### Keeping track of the processing
+## Keeping track of the processing
 
 The adopted notations is:
 ```

@@ -2,12 +2,14 @@
 R package to visualize, analyze, process and interpret *ground-penetrating radar* (GPR) data.
 
 ## Note
-Currently:
 
-* the only supported binary formats are 
+* supported binary formats: 
     
-    - the Sensors & Software file format (.DT1, .HD)
-    - the MALA file format (.rd3, .rad)
+    - [x] Sensors & Software file format (.DT1, .HD)
+    - [x] MALA file format (.rd3, .rad)
+    - [x] SEG-Y file format (.sgy) from RadSys Zond GPR device
+    - []
+    - Do you miss your preferred file format? Send me the file format description with a test file and I will adapt the RGPR-package to support this file format. 
     
 * RGPR only support reflection data such as surface-based GPR data (no support for cross-borehole GPR data)
 * the documentation is still incomplete (but check the tutorials)
@@ -44,8 +46,7 @@ plot(frenkeLine00)
 library(RGPR)
 mtext <-  showMethods(class="GPR", printTo =FALSE )
 i <- grepl('Function', mtext) & grepl('package RGPR', mtext) 
-fvec <- gsub( "Function(\\:\\s|\\s\\\")(.+)(\\s\\(|\\\")(.+$)",
-                                      "\\2", mtext[i] )
+fvec <- gsub( "Function(\\:\\s|\\s\\\")(.+)(\\s\\(|\\\")(.+$)", "\\2", mtext[i] )
 fvec
 ```
 
@@ -54,8 +55,7 @@ fvec
 library(RGPR)
 mtext <-  showMethods(class="GPRsurvey", printTo =FALSE )
 i <- grepl('Function', mtext) & grepl('package RGPR', mtext) 
-fvec <- gsub( "Function(\\:\\s|\\s\\\")(.+)(\\s\\(|\\\")(.+$)",
-                                      "\\2", mtext[i] )
+fvec <- gsub( "Function(\\:\\s|\\s\\\")(.+)(\\s\\(|\\\")(.+$)", "\\2", mtext[i] )
 fvec
 ```
 

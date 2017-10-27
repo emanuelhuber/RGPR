@@ -916,7 +916,8 @@ setGenericVerif("relPos", function(x)
 #' @name readGPR
 #' @rdname readGPR
 #' @export
-setGenericVerif("readGPR", function(fPath, desc = "") standardGeneric("readGPR"))
+setGenericVerif("readGPR", function(fPath, desc = "") standardGeneric("readGPR")
+)
 
 #' @name writeGPR
 #' @rdname writeGPR
@@ -979,43 +980,57 @@ setGenericVerif("filter1D", function(x, type = c("median", "hampel",
 #' @export
 setGenericVerif("filter2D", function(x, type=c("median3x3", "adimpro"), ...) 
                 standardGeneric("filter2D"))
+                
 setGenericVerif("dewow", function(x, type=c("MAD", "Gaussian"), w ) 
                 standardGeneric("dewow"))
-setGenericVerif("gain", function(x, type=c("power", "exp", "agc"),
-                  ...) standardGeneric("gain"))
-                  setGenericVerif("trAmplCor", function(x, type=c("power", "exp", "agc"),
-                  ...) standardGeneric("trAmplCor"))
+                
+setGenericVerif("gain", function(x, type=c("power", "exp", "agc"), ...) 
+                standardGeneric("gain")) 
+
+setGenericVerif("trAmplCor", 
+                function(x, type=c("power", "exp", "agc"),  ...) 
+                standardGeneric("trAmplCor"))
+                
 setGenericVerif("dcshift", function(x, u=1:10, FUN=mean) 
                 standardGeneric("dcshift"))
+                
 setGenericVerif("firstBreak", function(x, method = c("coppens", "coppens2",
-  "threshold",  "MER"), thr = 0.12, w = 11, ns = NULL, bet = NULL)
+                "threshold",  "MER"), thr = 0.12, w = 11, ns = NULL, 
+                bet = NULL)
                 standardGeneric("firstBreak"))
 
 setGenericVerif("clip", function(x, Amax=NULL,Amin=NULL) 
                 standardGeneric("clip"))
-setGenericVerif("gammaCorrection", function(x, a=1,b=1) 
+                
+setGenericVerif("gammaCorrection", function(x, a = 1, b = 1) 
                 standardGeneric("gammaCorrection"))
+                
 setGenericVerif("traceScaling", function(x, 
-                  type = c("stat","min-max","95","eq","sum", "rms", 
+                  type = c("stat", "min-max", "95", "eq", "sum", "rms", 
                            "mad", "invNormal")) 
                   standardGeneric("traceScaling"))
 
-setGenericVerif("spec", function(x, type=c("f-x", "f-k"), plotSpec=TRUE, 
+setGenericVerif("spec", function(x, type = c("f-x", "f-k"), plotSpec = TRUE, 
                 unwrapPhase = TRUE, ...) standardGeneric("spec"))
-setGenericVerif("fFilter", function(x, f=100, type=c('low','high','bandpass'),
-                L=257,plotSpec=FALSE) standardGeneric("fFilter"))
-setGenericVerif("fkFilter", function(x, fk=NULL, L=c(5,5),npad=1) 
+                
+setGenericVerif("fFilter", function(x, f = 100, 
+                type = c('low', 'high', 'bandpass'),
+                L = 257, plotSpec = FALSE) standardGeneric("fFilter"))
+                
+setGenericVerif("fkFilter", function(x, fk = NULL, L = c(5, 5), npad = 1) 
                 standardGeneric("fkFilter"))
 
 setGenericVerif("traceShift", function(x,  ts, method = c("spline", "linear", 
                 "nearest", "pchip", "cubic", "none"), crop = TRUE) 
                 standardGeneric("traceShift"))
+                
 setGenericVerif("traceAverage", function(x, w = NULL, FUN = mean, ...) 
                 standardGeneric("traceAverage"))
 
-setGenericVerif("time0Cor",  function(x, t0 = NULL, method = c("spline", "linear", 
-           "nearest", "pchip", "cubic", "none"), crop = TRUE, keep = 0) 
-           standardGeneric("time0Cor"))
+setGenericVerif("time0Cor",  function(x, t0 = NULL, 
+                method = c("spline", "linear", "nearest", "pchip", "cubic", 
+                "none"), crop = TRUE, keep = 0) 
+                standardGeneric("time0Cor"))
 
 setGenericVerif("deconv", function(x, method=c("spiking", "wavelet",
                 "min-phase", "mixed-phase"), ...) standardGeneric("deconv"))
@@ -1041,8 +1056,9 @@ setGenericVerif("plot3DRGL",
                   zlim = NULL,...) 
 standardGeneric("plot3DRGL"))
 
-setGenericVerif("exportPDF", function(x,fPath=NULL,addTopo=FALSE,clip=NULL,
-normalize=NULL,nupspl=NULL,...) standardGeneric("exportPDF"))
+setGenericVerif("exportPDF", function(x, fPath = NULL, addTopo = FALSE, 
+                clip = NULL, normalize = NULL, nupspl = NULL, ...) 
+standardGeneric("exportPDF"))
 
 #setGenericVerif("adimproSmooth", function(x,hmax=2,...) standardGeneric("
 # adimproSmooth"))
@@ -1051,8 +1067,9 @@ normalize=NULL,nupspl=NULL,...) standardGeneric("exportPDF"))
 #' @name delineate
 #' @rdname delineation
 #' @export
-setGenericVerif("delineate", function(x,name=NULL,type=c("raster","wiggles"),
-                  addTopo=FALSE,nupspl=NULL,n=10000,...) 
+setGenericVerif("delineate", function(x, name = NULL,
+                type = c("raster", "wiggles"),
+                addTopo = FALSE, nupspl = NULL, n = 10000, ...) 
                   standardGeneric("delineate"))
 #' @name rmDelineations<-
 #' @rdname delineation
@@ -1079,8 +1096,9 @@ setGenericVerif("exportDelineations", function(x, dirpath="")
 #' @name plotDelineations3D
 #' @rdname delineation
 #' @export
-setGenericVerif("plotDelineations3D", function(x,sel=NULL,col=NULL,add=TRUE,...)
-                  standardGeneric("plotDelineations3D"))
+setGenericVerif("plotDelineations3D", 
+                function(x,sel=NULL,col=NULL,add=TRUE,...)
+                standardGeneric("plotDelineations3D"))
 #' @name plotDelineations
 #' @rdname delineation
 #' @export
@@ -1200,8 +1218,11 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
   j=i
   k=i
   if(slice=="x"){
-    if(rmStripes == TRUE){ Xside = normalizeGPR(removeStripes(t(XYZ[,j,])))
-    }else{  Xside = normalizeGPR((t(XYZ[,j,])))  }
+    if(rmStripes == TRUE){ 
+      Xside = normalizeGPR(removeStripes(t(XYZ[,j,])))
+    }else{  
+      Xside = normalizeGPR((t(XYZ[,j,])))  
+    }
     
     Xside_x = matrix(vx,nrow=dimXYZ[3],ncol=dimXYZ[1],byrow=TRUE)
     Xside_y = matrix( vy[j],nrow=dimXYZ[3],ncol=dimXYZ[1],byrow=TRUE)
@@ -3612,56 +3633,6 @@ readDT1 <- function( fPath){
   close(con)
   return( list(hd = hHD, dt1hd = hDT1, data = dataDT1) )
   return( list(hd = hHD, dt1hd = hDT1, data = dataDT1) )
-#   dirName   <- dirname(fPath)
-#   splitBaseName <- unlist(strsplit(basename(fPath),'[.]'))
-#   baseName   <- paste(splitBaseName[1:(length(splitBaseName)-1)],sep="")
-#   
-#   fileNameHD   <- paste(dirName, "/",baseName,".HD",sep="")
-#   fileNameDT1  <- paste(dirName, "/",baseName,".DT1",sep="")
-#   
-#   headHD <-  scan(fileNameHD, what=character(),strip.white=TRUE,quiet=TRUE,
-# fill=TRUE,blank.lines.skip=TRUE,flush=TRUE,sep="\n")
-#   nHD <- length(headHD)
-#   headerHD <- data.frame(nrow=nHD,ncol=2)
-#   for(i in seq_along(headHD)){
-#     hdline <- strsplit(headHD[i],"=")[[1]]
-#     if(length(hdline) < 2){
-#       headerHD[i,1] <- ""
-#       headerHD[i,2] <- trimStr(hdline[1])
-#     }else{
-#       headerHD[i,1:2] <-  as.character(sapply(hdline[1:2],trimStr))
-#     }
-#   }
-# 
-#   nbTraces   = as.integer(as.character(headerHD[4,2]))
-#   nbPt     = as.integer(as.character(headerHD[5,2]))
-#   #----------------#
-#   #--- READ DT1 ---#
-#   dt1 <- file(fileNameDT1 , "rb")
-# 
-#   indexDT1Header=c("traces", "position", "samples","topo", "NA1", "bytes",
-#                     "tracenb", "stack","window","NA2", "NA3", "NA4",
-#                     "NA5", "NA6", "recx","recy","recz","transx","transy",
-#                     "transz","time0","zeroflag", "NA7", "time","x8","com")  
-#                     #,"com1","com2","com3","com4","com5","com6")
-#   headerDT1 = list()
-#   myData = matrix(NA,nrow=nbPt,ncol=nbTraces)
-#   for(i in 1:nbTraces){
-#     for(j in 1:25){
-#       headerDT1[[indexDT1Header[j]]][i] = readBin(dt1, what=numeric(), 
-#                                                   n = 1L, size=4)
-#       # hour of the day: format(as.POSIXct('0001-01-01 00:00:00') + 
-#                # headerDT1$time[1], "%I:%M:%S %p") 
-#     }
-#     # read the 28 characters long comment
-#     headerDT1[[indexDT1Header[26]]][i] = readChar(dt1, 28)
-#     # read the nbPt * 2 bytes rrace data
-#     myData[,i] = readBin(dt1, what=integer(), n = nbPt, size=2)
-#   }
-#   #headerDT1$time2 <- format(as.POSIXct(paste(as.character(headerHD[2,2]), 
-#             # ' 00:00:00', sep="")) + headerDT1$time, "%d-%m-%Y %I:%M:%S") 
-#   close(dt1)
-#   return(list(hd = headerHD, dt1hd = headerDT1, data=myData))
 }
 #-----------------
 #-----------------
@@ -3728,11 +3699,251 @@ readRD3 <- function(fPath){
     #hCOR <- read.table(textConnection(gsub(",", "\t", readLines(fNameCOR))), 
     #                   dec = ".", header = FALSE, stringsAsFactors = FALSE)
 
-    # colnames(hCOR) <- c("traces", "date", "time", "latitude", "lat", "longitude",
+    # colnames(hCOR) <- c("traces", "date", "time", "latitude", 
+    #                     "lat", "longitude",
     #                "long", "height", "unit", "accuracy")
     # return(list(hd = hRAD, data = dataRD3, coords = hCOR))
   #}else{
     return(list(hd = hRAD, data = dataRD3))
+}
+
+# Prism2 ” software
+#--------------- read RadSys Zond GPR device files -------------------#
+readSEGY <- function(fPath){
+  dirName     <- dirname(fPath)
+  baseName    <- .fNameWExt(fPath)
+  fName    <- file.path(dirName, paste0(baseName, ".sgy"))
+  hd <- c()
+  con <- file(fName , "rb")
+  ##---- SEGY file
+  invisible(seek(con, where = 3200, origin = "start"))
+  # Job identification number
+  hd$JOB_ID <- readBin(con, what = integer(), n = 1, size = 4)
+  # Line number
+  hd$LINE_NUMBER <-  readBin(con, what = integer(), n = 1, size = 4)
+  # Reel number
+  hd$REEL_NUMBER <- readBin(con, what = integer(), n = 1, size = 4)
+  # Number of data traces per record
+  hd$NB_DATA_TRACES <- readBin(con, what = integer(), n = 1, size = 2)
+  # Number of auxiliary traces per record
+  hd$NB_AUX_TRACES <- readBin(con, what = integer(), n = 1, size = 2)
+  # tspl > Sample interval of this reel's data in PICOseconds
+  # hd$TIME_SAMPLING in nanoseconds
+  hd$TIME_SAMPLING <-  readBin(con, what = integer(), n = 1, size = 2) * 1e-3
+  # Number of samples per trace for this reel's data
+  invisible(readBin(con, what = integer(), n = 1, size = 2))
+  # samples per trace for this reel's data
+  # Nspl
+  hd$NB_SAMPLES <- readBin(con, what = integer(), n = 1, size = 2)
+  #unused
+  invisible(readBin(con, what = integer(), n = 1, size = 2))
+  # data sample format code
+  # 1 = 32-bit IBM floating point;
+  # 2 = 32-bit fixed-point (integer);
+  # 3 = 16-bit fixed-point (integer);
+  # 4 = 16-bit fixed-point with gain code 
+  dsfc <- readBin(con, what = integer(), n = 1, size = 2)
+  hd$DATA_FORMAT <- switch(dsfc,
+                           "1" = "32-bit IBM floating point",
+                           "2" = "32-bit fixed-point",
+                           "3" = "16-bit fixed-point",
+                           "4" = "16-bit fixed-point with gain code")
+  #number of traces per ensemble
+  invisible(readBin(con, what = integer(), n = 1, size = 2))
+  # not used
+  invisible(readBin(con, what = integer(), n = 13, size = 2))
+  # mesuring system
+  # 1 = meters
+  # 2 = feet
+  pos_unit <- readBin(con, what = integer(), n = 1, size = 2)
+  hd$POS_UNIT <- switch(pos_unit,
+                        "1" = "meter",
+                        "2" = "feet")
+  # not used
+  invisible(readBin(con, what = integer(), n = 172, size = 2))
+  # 240-byte binary tracer header + trace data
+  hd$NB_TRACES <- (flen(con) - ftell(con))/(240 + hd$NB_SAMPLES*2)
+  dataSGY <- matrix(nrow = hd$NB_SAMPLES, ncol = hd$NB_TRACES)
+  hdt <- matrix(nrow = 7, ncol = hd$NB_TRACES)
+  xyfac <- numeric(hd$NB_TRACES)
+  for(i in 1:hd$NB_TRACES){
+    #--------------------------#
+    #--------- header ---------#
+    # trace sequence number within line
+    invisible(readBin(con, what = integer(), n = 1, size = 4, 
+                      endian = "little"))
+    # not used
+    invisible(readBin(con, what = integer(), n = 1, size = 4, 
+                      endian = "little"))
+    # Original field record number
+    invisible(readBin(con, what = integer(), n = 1, size = 4, 
+                      endian = "little"))
+    # Trace sequence number within original field record
+    invisible(readBin(con, what = integer(), n = 1, size = 4, 
+                      endian = "little"))
+    # not used
+    invisible(readBin(con, what = integer(), n = 1, size = 4, 
+                      endian = "little"))
+    # CDP ensemble number || CDP = CMP
+    invisible(readBin(con, what = integer(), n = 1, size = 4, 
+                      endian = "little"))
+    # Trace sequence number within CDP ensemble
+    invisible(readBin(con, what = integer(), n = 1, size = 4, 
+                      endian = "little"))
+    # Trace identification code:
+    # 1 = seismic data;
+    # 2 = dead;
+    # 3 = dummy;
+    # 4 = time break;
+    # 5 = uphole;
+    # 6 = sweep;
+    # 7 = timing;
+    # 8 = water break;
+    # 9 = optional use
+    invisible(readBin(con, what = integer(), n = 1, size = 2, 
+                      endian = "little"))
+    # Number of vertically summed traces yielding this trace
+    invisible(readBin(con, what = integer(), n = 1, size = 2, 
+                      endian = "little"))
+    # Number of horizontally summed traces yielding this trace
+    invisible(readBin(con, what = integer(), n = 1, size = 2, 
+                      endian = "little"))
+    # data use:
+    # 1 = production;
+    # 2 = test.
+    invisible(readBin(con, what = integer(), n = 1L, size = 2, 
+                      endian = "little"))
+    # not used
+    invisible(readBin(con, what = integer(), n = 1L, size = 4, 
+                      endian = "little"))
+    # Altitude (mean-sea-level)
+    invisible(readBin(con, what = numeric(), n = 1L, size = 4, 
+                      endian = "little"))
+    # Height of geoid above WGS84 ellipsoid
+    invisible(readBin(con, what = numeric(), n = 1L, size = 4, 
+                      endian = "little"))
+    # Backward/toward direction (if negative -backward)
+    invisible(readBin(con, what = integer(), n = 1, size = 4, 
+                      endian = "little"))
+    # Datum elevation at source in m (topography offset)
+    invisible(readBin(con, what = numeric(), n = 1L, size = 4, 
+                      endian = "little"))
+    # not used
+    invisible(readBin(con, what = integer(), n = 7L, size = 2, 
+                      endian = "little"))
+    # Scalar for coordinates:
+    # + = multiplier; 
+    # –= divisor.
+    xyfac[i] <- readBin(con, what = integer(), n = 1L, size = 2, 
+                      endian = "little")
+    # X source coordinate (Longitude in 32-bit float accuracy for arc seconds)
+    invisible(readBin(con, what = integer(), n = 1L, size = 4, 
+                      endian = "little"))
+    # Y source coordinate (Longitude in 32-bit float accuracy for arc seconds)
+    invisible(readBin(con, what = integer(), n = 1L, size = 4, 
+                      endian = "little"))
+    # X receiver group coordinate
+    hdt[4,i] <- readBin(con, what = integer(), n = 1L, size = 4, 
+                      endian = "little")
+    # Y receiver group coordinate
+    hdt[5,i] <- readBin(con, what = integer(), n = 1L, size = 4, 
+                      endian = "little")
+    # Coordinate units:
+    # 1 = length in meters or feets; 
+    # 2 = arc seconds (DDMM.SSSS).
+    invisible(readBin(con, what = integer(), n = 1L, size = 2, 
+                      endian = "little"))
+    # GPS signal quality
+    invisible(readBin(con, what = numeric(), n = 1L, size = 4, 
+                      endian = "little"))
+    # not used
+    invisible(readBin(con, what = integer(), n = 7L, size = 2, 
+                      endian = "little"))
+    # Lag time between shot and recording start in PICOseconds
+    invisible(readBin(con, what = integer(), n = 1L, size = 2, 
+                      endian = "little"))
+    # not used
+    invisible(readBin(con, what = numeric(), n = 1L, size = 4, 
+                      endian = "little"))
+    # Number of samples in this trace = hd$NB_SAMPLES
+    invisible(readBin(con, what = integer(), n = 1L, size = 2, 
+                      endian = "little"))
+    # Sample interval of this reel's data in PICOseconds 
+    # = hd$TIME_SAMPLING *1e3
+    invisible(readBin(con, what = integer(), n = 1L, size = 2, 
+                      endian = "little"))
+    # not used
+    invisible(readBin(con, what = integer(), n = 21L, size = 2, 
+                      endian = "little"))
+    # Hour of day (24 hour clock)
+    hdt[1,i] <- readBin(con, what = integer(), n = 1L, size = 2, 
+                      endian = "little")
+    # Minute of hour
+    hdt[2,i] <- readBin(con, what = integer(), n = 1L, size = 2, 
+                      endian = "little")
+    # Second of minute
+    hdt[3,i] <- readBin(con, what = integer(), n = 1L, size = 2, 
+                      endian = "little")
+    # Time basis code (1 –Local, 2 -GMT)
+    invisible(readBin(con, what = integer(), n = 1L, size = 2, 
+                      endian = "little"))
+    # not used
+    invisible(readBin(con, what = integer(), n = 7L, size = 2, 
+                      endian = "little"))
+    # Longitude in 64-bit double accuracy
+    invisible(readBin(con, what = numeric(), n = 1L, size = 8, 
+                      endian = "little"))
+    # Latitude in 64-bit double accuracy
+    invisible(readBin(con, what = numeric(), n = 1L, size = 8, 
+                      endian = "little"))
+    # not used
+    invisible(readBin(con, what = integer(), n = 8L, size = 2, 
+                      endian = "little"))
+    # Time scalar. If positive, scalar is used as a 
+    # multiplier. If negative –divisor.
+    invisible(readBin(con, what = integer(), n = 1L, size = 2, 
+                      endian = "little"))
+    # not used
+    invisible(readBin(con, what = integer(), n = 10L, size = 2, 
+                      endian = "little"))
+    # Marks indicator. If equal to 0x5555, trace is marked.
+    hdt[6,i] <- readBin(con, what = integer(), n = 1L, size = 2, 
+                      endian = "little")
+    # Mark number.
+    hdt[7,i] <- readBin(con, what = integer(), n = 1L, size = 2, 
+                      endian = "little") 
+    #---------- trace ---------------#
+    if( dsfc == 1){
+      # "32-bit IBM floating point"
+      dataSGY[,i] <- readBin(con, what = numeric(), n = hd$NB_SAMPLES, 
+                             size = 2, endian = "little")
+    }else{
+      dataSGY[,i] <- readBin(con, what = integer(), n = hd$NB_SAMPLES, 
+                             size = 2, endian = "little")
+    }
+  }
+  hdt[4,] <- hdt[4,] * abs(xyfac)^sign(xyfac)
+  close(con)
+
+  # byte to volt conversion assuming
+  # recording range: [-50mV, 50mV]
+  # 16 bytes
+  #V <- c(-50,50)
+  #nBytes <- 16
+  #A2 <- A*abs(diff(V))/(2^nBytes)
+
+  # time sample in nanosecond
+  #tt <- seq(0, by = hd$TIME_SAMPLING, length.out = hd$NB_SAMPLES)
+  
+  # hdt matrix
+  # row 1 = hour
+  # row 2 = minute
+  # row 3 = seconde
+  # row 4 = x-pos
+  # row 5 = y-pos
+  # row 6 = mark indicator
+  # row 7 = mark number
+  return(list(hd = hd, data = dataSGY, hdt = hdt))
 }
 
   
@@ -4003,12 +4214,13 @@ getFunName <- function(FUN){
   
   if(length(x@hd) > 0){
     hdNames <- names(x@hd)
-    hdNames <- hdNames[!(hdNames %in% 
-c("startpos","endpos","NUMBER_OF_STACKS","PULSER_VOLTAGE_V","gprdevice"))]
+    hdNames <- hdNames[!(hdNames %in% c("startpos", "endpos",
+                                        "NUMBER_OF_STACKS",
+                                        "PULSER_VOLTAGE_V", "gprdevice"))]
     for(i in seq_along(hdNames)){
-      hdName <- gsub("_",replacement=" ",as.character(hdNames[i]))
-      hdName <- gsub("Serial",replacement="Serial#",hdName)
-      hdName <- gsub("CAL tm",replacement="CAL (t/m)",hdName)
+      hdName <- gsub("_", replacement = " ", as.character(hdNames[i]))
+      hdName <- gsub("Serial", replacement = "Serial#", hdName)
+      hdName <- gsub("CAL tm", replacement = "CAL (t/m)", hdName)
       
 writeLines(paste(as.character(hdName), "=", as.character(x@hd[[hdNames[i]]]), 
               sep= ""), con = hd_file, sep = "\r\n")

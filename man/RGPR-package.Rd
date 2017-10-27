@@ -63,7 +63,7 @@ Several books!
 \seealso{
 Useful links:
 \itemize{
-  \item \url{http://stanford.edu/~ehuber/RGPR.html}
+  \item \url{https://github.com/emanuelhuber/RGPR}
   \item Report bugs at \url{https://github.com/emanuelhuber/RGPR/issues}
 }
 

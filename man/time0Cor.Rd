@@ -14,16 +14,17 @@
 \item{t0}{A numeric vector with length equal either to \code{NULL}, or one 
 or to the number traces.
 The traces will be shifted to \code{t0}. 
-If \code{t0 = NULL} `time0(x)` will be used instead. If \code{t0} is
-the time-zero, set \code{keep = 0}.}
+If \code{t0 = NULL} `time0(x)` will be used instead. 
+If \code{t0} is the time-zero, set \code{keep = 0}.}
 
-\item{method}{A length-one character vector defining the interpolation method 
-that are from the function 'interp1' from the 'signal' package.}
+\item{method}{A length-one character vector defining the interpolation 
+method that are from the function 'interp1' 
+from the 'signal' package.}
 
 \item{crop}{If TRUE (defaults), remove the rows containing only zero's 
 (no data).}
 
-\item{keep}{A length-one numeric vector indicating in time units how much of 
+\item{keep}{A length-one numeric vector indicating in time units how much of
 the trace has to be kept before time zero.}
 
 \item{c0}{Propagation speed of the GPR wave through air (used only when

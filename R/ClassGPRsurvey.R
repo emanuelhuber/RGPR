@@ -515,7 +515,8 @@ plot.GPRsurvey <- function(x, y, ...){
     if(add_shp_files){
       if(length(shp_files) > 0){
                 sel <- seq(from=1,length.out=length(shp_files),by=2)
-        BASEName <- unlist(strsplit(basename(shp_files),'[.]'), use.names = FALSE)[sel]
+        BASEName <- unlist(strsplit(basename(shp_files),'[.]'), 
+                           use.names = FALSE)[sel]
         DIRName <- dirname(shp_files)
         for(i in seq_along(shp_files)){
           shp <- readOGR(DIRName[i], BASEName[i])
@@ -543,17 +544,17 @@ plot.GPRsurvey <- function(x, y, ...){
     if(!is.null(parFid)){
       for(i in 1:length(x)){
         fidxyz <- x@coords[[i]][trimStr(x@fids[[i]]) != "", , 
-                                    drop=FALSE]
+                                    drop = FALSE]
         if(length(fidxyz)>0){
-          do.call( points, c(list(x=fidxyz[,1:2]),parFid))
+          do.call( points, c(list(x = fidxyz[, 1:2]), parFid))
         }
       }
     }
-    if(!is.null(parIntersect) && length(x@intersections)>0){ 
+    if(!is.null(parIntersect) && length(x@intersections) > 0){ 
       for(i in 1:length(x@intersections)){
         if(!is.null(x@intersections[[i]])){
           do.call(points , c(list(x=x@intersections[[i]]$coord), 
-          parIntersect))
+                  parIntersect))
         }
       }
     }
@@ -798,9 +799,10 @@ setMethod("shiftEst", "GPRsurvey", function(x, y = NULL,
     
 #' @export
 setMethod("plot3DRGL", "GPRsurvey", 
-        function(x,addTopo=FALSE,clip=NULL,normalize=NULL,nupspl=NULL,
-        add=TRUE,xlim=NULL,ylim=NULL,zlim=NULL,...){
-    add<-add
+        function(x, addTopo = FALSE, clip = NULL, normalize = NULL, 
+                 nupspl=NULL, add = TRUE, xlim = NULL, ylim= NULL, 
+                 zlim = NULL, ...){
+    add <- add
     for(i in seq_along(x)){
       cat("***", i , "***\n")
       gpr <- readGPR(x@filepaths[[i]])

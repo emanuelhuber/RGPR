@@ -161,13 +161,13 @@ setClass(
   if(!is.null(freq)){
     pos_used[freq[2]] <- 1L
   }else{
-    freq <- 100
+    freq <- numeric(0)
   }
   antsep = .getHD(x$hd, "ANTENNA SEPARATION", position=TRUE)
   if(!is.null(antsep)){
     pos_used[antsep[2]] <- 1L
   }else{
-    antsep <- 1.00
+    antsep <- numeric(0)
   }
   surveymode = .getHD(x$hd, "SURVEY MODE",number=FALSE, position=TRUE)
   if(!is.null(surveymode)){
@@ -339,14 +339,14 @@ setClass(
   if(!is.null(freq) && !is.na(freq)){
     pos_used[freqS[2]] <- 1L
   }else{
-    freq <- 100
+    freq <- numeric(0)
   }
   # OK
   antsep <- .getHD(x$hd, "ANTENNA SEPARATION", position=TRUE)
   if(!is.null(antsep)){
     pos_used[antsep[2]] <- 1L
   }else{
-    antsep <- 1.00
+    antsep <- numeric(0)
   }
   x$hd2 <- x$hd[!pos_used,]
   if(nrow(x$hd2)>0){
@@ -439,8 +439,8 @@ setClass(
         dx = x_dx,
         depthunit = "ns",
         posunit = x_posunit,
-        freq = 100, 
-        antsep = 1,     # check
+        freq = numeric(0), 
+        antsep = numeric(0),     # check
         surveymode = "reflection",
         date = character(0), #format(Sys.time(), "%d/%m/%Y"),
         crs = character(0),

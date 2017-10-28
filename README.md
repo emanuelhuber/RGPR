@@ -41,6 +41,113 @@ plot(frenkeLine00)
 
 ## Existing functions
 
+### Reading/writing/export functions
+* `readGPR()`: format DT1 (Sensors&Software), rds (R-format)
+* `writeGPR()`: format DT1 (Sensors&Software), rds (R-format)
+* `exportPDF()`: high quality graphic
+* `exportDelineations()`
+* `exportFID()`: ASCII-file
+* `exportCoord()`: SpatialLines, SpatialPoints or ASCII-file
+* `exportProc()`: ASCII-file
+
+### Plot functions
+* `plot()`:
+   * `type = "raster"` 
+   * `type = "wiggles"`
+* `lines()`
+* `plot3D()`
+
+
+### GPR data editing and referencing
+
+* Trace position reversal: `reverse()`
+* Vertical trace shift: `traceShift()`
+* Georeference coordinates (based on center and rotation angle): `georef()` (only for matrix)
+* Interpolate trace position (x, y, z) from known positions: `interpPos()`
+* Estimate shift between two parallel profiles: `shiftEst()`
+
+###  GPR data analysis and transforms
+* Trace amplitude: `ampl()`, plot trace amplitude: `plotAmpl()`
+* Average trace: `traceAverage()`
+* Spectrum (f-x and f-k): `spec(x, type = c("f-x", "f-k"))`
+* Structure tensor: `strTensor()`, plot structure tensor: `plotTensor()`
+
+### GPR data interpolation
+* Trace interpolation at regularly spaced positions: `regInterpPos()`
+* Upsampling (time and position): `upsample()`
+* Relative position on the radargramm: `relPos()`
+
+### GPR signal correction
+* DC-shift correction: `dcshift()`
+* Low-frequency ('wow') component removal: `dewow()` (type = "MAD", "Gaussian")
+* First-break picking: `firstBreak()` (method = "coppens", "threshold",  "MER")
+* Shift the traces vertically such that they start at time zero: `time0Cor()`
+* Constant offset time correction: `timeCorOffset()` 
+
+### GPR signal attenuation compensation (gain)
+* Linear, power, exponential, ang agc gain: `gain()` (type = "power", "exp", "agc")
+
+
+### GPR signal enhancement
+* Clip the GPR signal values: `clip()`
+* Gamma correction of the GPR signal values: `gammaCorrection()`
+* Trace scaling: `traceScaling()`
+* Trace filters (1D): `filter1D()`: type = "median", "hampel", "Gaussian"
+* Radargramm filters (2D): `filter2D()`: type = "median3x3", "adimpro"
+* Trace frequency filter (1D): `fFilter()`: freqency filter, type = 'low','high','bandpass'
+* Frequency-wavenumber filter (2D): `fkFilter()`
+* Trace (1D) and radargramm (2D) convolution: `conv1D()` and `conv2D()` 
+* Deconvolution: `deconv()` (type = "spiking", "wavelet", "min-phase",
+  "mixed-phase")
+* Phase rotation `rotatePhase()`
+
+### GPR signal velocity 
+* Common-mid point analysis (CMP): `CMPAnalysis()` (method = "semblance", "winsemblance",
+  "wincoherence")
+* Normal Move-Out correction (NMO): `NMOCor()`
+
+### GPR data topographic correction and migration 
+* Topography correction and topographic Kirchhoff migration: `migration()` (type = "static", "kirchhoff")
+
+###  GPR structure delineation and mapping  [EH]
+* `delineate()`
+* `rmDelineations()<-`
+* `delineations()`
+* `addDelineation()`
+* `plotDelineations3D()`
+* `plotDelineations()`
+* `identifyDelineation()`
+
+### Processing
+* Apply many processing steps: `papply()`
+
+### Miscellaneous
+* Operators: `+`, `-`, `*`, `/`, `^`
+* Mathematical functions: `max()`, `min()`, `mean()`, `median()`, `summary()`, `range()`, `abs()`, `sign()`, `sqrt()`, `ceiling()`, ...
+* Matrix functions: `length()`, `nrow()`, `ncol()`, `dim()`
+* Coercion: `as.matrix()`, `as.numeric()`, `as.double()`, `as.list()`, `as.SpatialLines()`, `as.SpatialPoints()`
+
+### Setter/getter functions
+* `depthunit()` & `depthunit()<-`
+* `description()` & `description()<-`   
+* `ann()` & `ann()<-`
+* `coord()` & `coord()<-`          
+* ``crs()` & `crs()<-`
+* `fid()` & `fid()<-`           
+* `filepath()` & `filepath()<-`
+* `pos()` & `pos()<-`            
+* `posunit()` & `posunit()<-`      
+* `proc<-()` & `processing" 
+* `name()` & `name()<-`
+* `values()` & `values()<-`          
+* `vel()` & `vel()<-` 
+* `gethd()`
+* `svDate()` & `svDate()<-`
+     
+
+        
+
+
 ### List of the functions from the class `GPR`
 ```r
 library(RGPR)
@@ -55,8 +162,8 @@ fvec
 library(RGPR)
 mtext <-  showMethods(class="GPRsurvey", printTo =FALSE )
 i <- grepl('Function', mtext) & grepl('package RGPR', mtext) 
-fvec <- gsub( "Function(\\:\\s|\\s\\\")(.+)(\\s\\(|\\\")(.+$)", "\\2", mtext[i] )
-fvec
+gvec <- gsub( "Function(\\:\\s|\\s\\\")(.+)(\\s\\(|\\\")(.+$)", "\\2", mtext[i] )
+gvec
 ```
 
 ### Incomplete overview of the RGPR-package

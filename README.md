@@ -43,8 +43,8 @@ plot(frenkeLine00)
 
 ### Reading/writing/export functions
 * `readGPR()`: format DT1 (Sensors&Software), rds (R-format)
-* `writeGPR()`: format DT1 (Sensors&Software), rds (R-format)
-* `exportPDF()`: high quality graphic
+* `writeGPR()`: format DT1 (Sensors&Software), rds (R-format), ASCII, 'xyz'
+* `exportPDF()`: high quality pdf graphic
 * `exportDelineations()`
 * `exportFID()`: ASCII-file
 * `exportCoord()`: SpatialLines, SpatialPoints or ASCII-file

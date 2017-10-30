@@ -3707,6 +3707,18 @@ readRD3 <- function(fPath){
     return(list(hd = hRAD, data = dataRD3))
 }
 
+
+# number of bytes in connection
+# file.info(filename)$size
+.flen <- function(con){
+  pos0 <- seek(con)
+  seek(con,0,"end")
+  pos <- seek(con)
+  seek(con,where=pos0,"start")
+  return(pos)
+}
+
+
 # Prism2 ” software
 #--------------- read RadSys Zond GPR device files -------------------#
 readSEGY <- function(fPath){
@@ -3762,7 +3774,7 @@ readSEGY <- function(fPath){
   # not used
   invisible(readBin(con, what = integer(), n = 172, size = 2))
   # 240-byte binary tracer header + trace data
-  hd$NB_TRACES <- (flen(con) - ftell(con))/(240 + hd$NB_SAMPLES*2)
+  hd$NB_TRACES <- (.flen(con) - seek(con))/(240 + hd$NB_SAMPLES*2)
   dataSGY <- matrix(nrow = hd$NB_SAMPLES, ncol = hd$NB_TRACES)
   hdt <- matrix(nrow = 7, ncol = hd$NB_TRACES)
   xyfac <- numeric(hd$NB_TRACES)

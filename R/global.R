@@ -3728,6 +3728,9 @@ readSEGY <- function(fPath){
   hd <- c()
   con <- file(fName , "rb")
   ##---- SEGY file
+  uu <- readBin(con, what = character(), n = 1, size = 1)
+  vv <- strsplit(uu, split ="\r\n")
+  hd$EBCDIC <- sub("\\s+$", "", vv[[1]])
   invisible(seek(con, where = 3200, origin = "start"))
   # Job identification number
   hd$JOB_ID <- readBin(con, what = integer(), n = 1, size = 4)

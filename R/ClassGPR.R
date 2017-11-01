@@ -418,6 +418,45 @@ setClass(
   }else{
     x_name <- name
   }
+  # Antenna frequency
+  antfreq0 <- grep("(antenna).*([0-9])+", x$hd$EBCDIC, ignore.case = TRUE, 
+                    value = TRUE)
+  antfreq <- as.numeric(gsub("[^0-9]", "", antfreq0))
+  if(length(antfreq) > 0){
+    ant <- list(f = c(12.5, 25, 50, 100, 110, 200, 225, 450,   900, 1200),
+                s = c( 8,    4,  2,   1,   1, 0.5, 0.5, 0.25, 0.17, 0.075))
+    antsep <- approx(ant$f, ant$s, xout = antfreq)$y
+    message("Antenna separation (", antsep,
+            " m) estimated from antenna frequency (", antfreq, " MHz).",
+            "\nCorrect if wrong.")
+  }else{
+    antfreq <- numeric(0)
+    antsep <- numeric(0)
+    message("Please, add antenna frequency and antenna separation.")
+  }
+  # Date
+  dd <- character(0)
+  traceTime <- as.double(as.POSIXct(x$hdt[1,] * 3600 + x$hdt[2,] * 60 + 
+                                    x$hdt[3,], origin = "1960-01-01"))
+  dateSurvey <- grep("(date).*([0-9])+", x$hd$EBCDIC, ignore.case = TRUE, 
+                     value = TRUE)
+  dateSurvey2 <- gsub("date", "-", dateSurvey, ignore.case = TRUE)
+  dateSurvey3 <- gsub("^(\\D)+", "", dateSurvey2)
+  dateSurvey3 <- gsub("\\D", "/", dateSurvey3)
+  if(length(dateSurvey3) > 0){
+    dateSurvey4 <- strsplit(dateSurvey3, "\\D")[[1]]
+    if(length(dateSurvey4) == 3){
+      if(nchar(dateSurvey4[1]) == 4){
+        dd <- as.Date(dateSurvey3, format = "%Y/%m/%d")
+      }else if(nchar(dateSurvey4[3]) == 4){
+        dd <- as.Date(dateSurvey3, format = "%d/%m/%Y")
+      }else{
+        dd <- as.Date(dateSurvey3, format = "%d/%m/%y")
+      }
+      traceTime <- as.double(as.POSIXct(x$hdt[1,] * 3600 + x$hdt[2,] * 60 + 
+                                        x$hdt[3,], origin = dd))
+    }
+  }
   new("GPR",   version="0.1",
         data = byte2volt()*x$data,
         traces = 1:ncol(x$data),
@@ -429,7 +468,8 @@ setClass(
         rec = matrix(nrow = 0, ncol = 0),
         trans = matrix(nrow = 0, ncol = 0),
         time0 = rep(0, ncol(x$data)),
-        time = x$hdt[1,] * 3600 + x$hdt[2,] * 60 + x$hdt[3,],
+        # time = x$hdt[1,] * 3600 + x$hdt[2,] * 60 + x$hdt[3,],
+        time = traceTime,
         proc = character(0),
         vel = list(0.1),
         name = x_name,
@@ -439,10 +479,10 @@ setClass(
         dx = x_dx,
         depthunit = "ns",
         posunit = x_posunit,
-        freq = 100, 
-        antsep = 1,     # check
+        freq = antfreq, 
+        antsep = antsep,     # check
         surveymode = "reflection",
-        date = character(0), #format(Sys.time(), "%d/%m/%Y"),
+        date = as.character(dd), #format(Sys.time(), "%d/%m/%Y"),
         crs = character(0),
         hd = x$hd
   )

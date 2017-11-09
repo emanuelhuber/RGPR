@@ -726,8 +726,8 @@ as.GPR.list <- function (x, ...){
               # processing steps
               vel = list(0.1),  #m/ns
               name = as.character(d_name),
-              description = paste("coercion of ", as.character(d_name), 
-                                  " (",typeof(x),") into GPR",sep=""),
+              description = paste0("coercion of ", as.character(d_name), 
+                                  " (",typeof(x), ") into GPR"),
               filepath = character(0),
       #         ntr = ncol(x$data), 
       #         w = nrow(x$data)*x$dz, 
@@ -2607,9 +2607,9 @@ plot.GPR <- function(x,y,...){
         x <- migration(x)
       }
       if(grepl("[m]$",x@depthunit)){
-        ylab <- paste("depth (",x@depthunit,")",sep="")
+        ylab <- paste0("depth (", x@depthunit, ")")
       }else if( grepl("[s]$",x@depthunit) ){
-        ylab <- paste("two-way travel time (",x@depthunit,")",sep="")
+        ylab <- paste0("two-way travel time (", x@depthunit, ")")
       }
       yvalues <- -rev(x@depth)
       if(is.null(zlim)){
@@ -2637,12 +2637,12 @@ plot.GPR <- function(x,y,...){
         topo = NULL
       }
       if(grepl("[m]$",x@depthunit)){
-        ylab <- paste("depth (",x@depthunit,")",sep="")
+        ylab <- paste0("depth (", x@depthunit, ")")
       }else if(grepl("[s]$",x@depthunit)){
         if(addTopo){
-          ylab <- paste("depth (m)",sep="")
+          ylab <- "depth (m)"
         }else{
-          ylab <- paste("two-way travel time (",x@depthunit,")",sep="")
+          ylab <- paste0("two-way travel time (", x@depthunit, ")")
         }
       }
       yvalues <- -rev(x@depth)

@@ -520,7 +520,7 @@ plot.GPRsurvey <- function(x, y, ...){
         DIRName <- dirname(shp_files)
         for(i in seq_along(shp_files)){
           shp <- readOGR(DIRName[i], BASEName[i])
-          cat(DIRName[i], BASEName[i],"\n",sep="")
+          message(DIRName[i], BASEName[i])
           plot(shp, add = TRUE,pch=13,col="darkblue")
         }
       }
@@ -812,8 +812,8 @@ setMethod("plot3DRGL", "GPRsurvey",
         gpr@coordref <- x@coordref
       }
       if(length(coord(gpr))==0){
-        cat(gpr@name, paste0(": no coordinates, I cannot plot",
-                  " this line!!\n",sep=""))
+        message(gpr@name, ": no coordinates, I cannot plot",
+                  " this line!!")
       }else{
         plot3DRGL(gpr, addTopo=addTopo, clip=clip, normalize=normalize, 
                     nupspl=nupspl,add=add,xlim=xlim, ylim=ylim, zlim=zlim,...)
@@ -837,10 +837,10 @@ setMethod("plotDelineations3D", "GPRsurvey",
         gpr@coordref <- x@coordref
       }
       if(length(coord(gpr))==0){
-        cat(gpr@name, paste0(": no coordinates, I cannot plot",
-                  " this line!!\n",sep=""))
+        message(gpr@name, ": no coordinates, I cannot plot",
+                  " this line!!")
       }else if(length(gpr@delineations) == 0){
-        cat(gpr@name, ": no delineations for this line!!\n",sep="")
+        message(gpr@name, ": no delineations for this line!!")
       }else{
         plotDelineations3D(gpr,sel=sel,col=col,add=add,...)
       }
@@ -910,7 +910,7 @@ setMethod("exportFid", "GPRsurvey", function(x, fPath = NULL){
       gpr <- readGPR(x@filepaths[[i]])
       file_name <- file.path(fPath, paste0(gpr@name, ".txt"))
       exportFid(gpr,file_name)
-      cat("File \"",file_name,"\" created!\n",sep="")
+      message('File "', file_name, '" created!')
       # x@coords[[gpr@name]] <- gpr@coord
     }
   }

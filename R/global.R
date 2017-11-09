@@ -51,8 +51,8 @@
 readFID <- function(FID,sep=","){
   myFid <- list() 
   for(i in seq_along(FID)){
-    cat("read ", FID[[i]],"...\n",sep="")
-    A <- read.table(FID[[i]],sep=",",stringsAsFactors=FALSE,header=TRUE)
+    message("read ", FID[[i]], "...")
+    A <- read.table(FID[[i]], sep=",", stringsAsFactors=FALSE,header=TRUE)
     colnames(A) <- toupper(colnames(A))
     if(!all(c("E","N","Z","TRACE") %in% colnames(A))){
       stop("The headers should be \"E\",\"N\",\"Z\",\"TRACE\"!\n")
@@ -1448,7 +1448,7 @@ plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
     widthPDF <- fac*(xlim[2] - xlim[1])*ratio + sum(omi[c(2,4)] + mai[c(2,4)])
   }
   if(!is.null(pdfName)){
-    Cairo::CairoPDF(file = paste(pdfName,".pdf",sep=""),
+    Cairo::CairoPDF(file = paste0(pdfName, ".pdf"),
         # pointsize=10,
         width = widthPDF, 
         height = heightPDF,
@@ -1591,7 +1591,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
     widthPDF <- fac*(xlim[2] - xlim[1])*ratio + sum(omi[c(2,4)] + mai[c(2,4)])
   }
   if(!is.null(pdfName)){
-    Cairo::CairoPDF(file = paste(pdfName,".pdf",sep=""),
+    Cairo::CairoPDF(file = paste0(pdfName, ".pdf"),
         # pointsize=10,
         width = widthPDF, 
         height = heightPDF,
@@ -3394,7 +3394,7 @@ optPhaseRotation <- function(x,rot=0.01,plot=TRUE){
     kurt[i] <- e1071::kurtosis( xrot)
   }
   phi_max <- pi_seq[which.max(kurt)]
-  cat("rotation angle =",phi_max/pi*180, "degree\n",sep="")
+  message("rotation angle = ", phi_max/pi*180, " degree")
   # dev.off(); windows()
   if(plot==TRUE){
     plot(pi_seq/pi*180,kurt,type="l")
@@ -4122,12 +4122,12 @@ getFunName <- function(FUN){
   
   # FILE NAMES
   dirName   <- dirname(fPath)
-  splitBaseName <- unlist(strsplit(basename(fPath),'[.]'), use.names = FALSE)
-  baseName   <- paste(splitBaseName[1:(length(splitBaseName)-1)],sep="")
+  splitBaseName <- unlist(strsplit(basename(fPath), '[.]'), use.names = FALSE)
+  baseName   <- paste0(splitBaseName[1:(length(splitBaseName)-1)])
   if(dirName == '.'){
     fPath <- baseName
   }else{
-    fPath <- paste(dirName,'/',baseName,sep="")
+    fPath <- paste0(dirName, '/', baseName)
   }
   # if(isTRUE(overwrite)){
     # cat("file may be overwritten\n")
@@ -4143,7 +4143,7 @@ getFunName <- function(FUN){
   
   
   # WRITE DT1 FILE
-  dt1_file <- file(paste(fPath,".DT1",sep="") , "wb")
+  dt1_file <- file(paste0(fPath, ".DT1") , "wb")
   for(i in 1:ncol(x@data)){
     for(j in 1:25){
       realData4 <- traces_hd[[j]][i]
@@ -4172,7 +4172,7 @@ getFunName <- function(FUN){
   
   #-------------------------
   # HD FILE: traces
-  hd_file <- file(paste(fPath,".HD",sep="") , "w+")
+  hd_file <- file(paste0(fPath, ".HD") , "w+")
   writeLines("1234", con = hd_file, sep = "\r\n")
   if(!is.null(x@hd$gprdevice)){
     writeLines(as.character(x@hd$gprdevice), con = hd_file, sep = "\r\n")
@@ -4180,51 +4180,52 @@ getFunName <- function(FUN){
     writeLines("Data from RGPR", con = hd_file, sep = "\r\n")
   }
   writeLines(as.character(x@date), con = hd_file, sep = "\r\n")
-  writeLines(paste("NUMBER OF TRACES","= ", as.character(ncol(x@data)),sep=""), 
-                  con = hd_file, sep = "\r\n")
-  writeLines(paste("NUMBER OF PTS/TRC","= ",as.character(nrow(x@data)),sep=""), 
-                  con = hd_file, sep = "\r\n")
-  writeLines(paste("TIMEZERO AT POINT", "=",
-                  as.character(1+round(mean(x@time0)/x@dz,2)), sep=""), 
-                  con = hd_file, sep = "\r\n")
-  writeLines(paste("TOTAL TIME WINDOW", "=", as.character(x@dz*(nrow(x@data))), 
-                  sep=""), con = hd_file, sep = "\r\n")
+  writeLines(paste0("NUMBER OF TRACES"," = ", as.character(ncol(x@data))), 
+             con = hd_file, sep = "\r\n")
+  writeLines(paste0("NUMBER OF PTS/TRC"," = ", as.character(nrow(x@data))), 
+             con = hd_file, sep = "\r\n")
+  writeLines(paste0("TIMEZERO AT POINT", " = ",
+                   as.character(1+round(mean(x@time0)/x@dz,2))), 
+             con = hd_file, sep = "\r\n")
+  writeLines(paste0("TOTAL TIME WINDOW", " = ", 
+                    as.character(x@dz*(nrow(x@data)))), 
+             con = hd_file, sep = "\r\n")
   startpos <- 0
   if(!is.null(x@hd$startpos)){
     startpos <- x@hd$startpos
   }
-  writeLines(paste("STARTING POSITION", "=", as.character(startpos), sep=""), 
+  writeLines(paste0("STARTING POSITION", " = ", as.character(startpos)), 
                   con = hd_file, sep = "\r\n")
   endpos <- (ncol(x@data)-1)*x@dx
   if(!is.null(x@hd$endpos)){
     endpos <- x@hd$endpos
   }
-  writeLines(paste("FINAL POSITION","=",as.character(endpos),sep=""), 
+  writeLines(paste0("FINAL POSITION"," = ", as.character(endpos)), 
               con = hd_file, sep = "\r\n")
-  writeLines(paste("STEP SIZE USED","=",as.character(x@dx),sep=""),
+  writeLines(paste0("STEP SIZE USED"," = ",as.character(x@dx)),
               con = hd_file, sep = "\r\n")
-  writeLines(paste("POSITION UNITS","=","m",sep=""), 
+  writeLines(paste0("POSITION UNITS", " = ", "m",), 
               con = hd_file, sep = "\r\n")
   if(x@posunit != "m"){
     warning('Position units were defined as "metres"!\n')
   }
-  writeLines(paste("NOMINAL FREQUENCY","=",as.character(x@freq),sep=""), 
+  writeLines(paste0("NOMINAL FREQUENCY"," = ", as.character(x@freq)), 
               con = hd_file, sep = "\r\n")
-  writeLines(paste("ANTENNA SEPARATION","=",as.character(x@antsep),sep=""), 
+  writeLines(paste0("ANTENNA SEPARATION"," = ", as.character(x@antsep)), 
               con = hd_file, sep = "\r\n")
   pulservoltage <- 0
   if(!is.null(x@hd$PULSER_VOLTAGE_V)){
     pulservoltage <- x@hd$PULSER_VOLTAGE_V
   }
-  writeLines(paste("PULSER VOLTAGE (V)", "=", as.character(pulservoltage), 
-              sep=""), con = hd_file, sep = "\r\n")
+  writeLines(paste0("PULSER VOLTAGE (V)", "=", as.character(pulservoltage),), 
+             con = hd_file, sep = "\r\n")
   nstacks <- 1
   if(!is.null(x@hd$NUMBER_OF_STACKS)){
     nstacks <- x@hd$NUMBER_OF_STACKS
   }
-  writeLines(paste("NUMBER OF STACKS","=",as.character(nstacks),sep=""), 
+  writeLines(paste0("NUMBER OF STACKS", " = ", as.character(nstacks)), 
               con = hd_file, sep = "\r\n")
-  writeLines(paste("SURVEY MODE","=",as.character(x@surveymode),sep=""), 
+  writeLines(paste0("SURVEY MODE", " = ", as.character(x@surveymode)), 
               con = hd_file, sep = "\r\n")
   
   if(length(x@hd) > 0){
@@ -4237,8 +4238,9 @@ getFunName <- function(FUN){
       hdName <- gsub("Serial", replacement = "Serial#", hdName)
       hdName <- gsub("CAL tm", replacement = "CAL (t/m)", hdName)
       
-writeLines(paste(as.character(hdName), "=", as.character(x@hd[[hdNames[i]]]), 
-              sep= ""), con = hd_file, sep = "\r\n")
+writeLines(paste0(as.character(hdName), " = ", 
+                  as.character(x@hd[[hdNames[i]]])), 
+           con = hd_file, sep = "\r\n")
     }
   }
   close(hd_file)

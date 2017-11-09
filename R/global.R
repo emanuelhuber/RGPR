@@ -4149,7 +4149,7 @@ getFunName <- function(FUN){
       realData4 <- traces_hd[[j]][i]
 #       realData4 <- A$dt1hd[[j]][i]
       storage.mode(realData4) <- "double"
-      writeBin(realData4, dt1_file, size = 4)
+      writeBin(realData4, dt1_file, size = 4, endian = "little")
     }
     comment28 <- as.character(traces_hd$com[i])
     # nnchar <- 28-nchar(comment28)
@@ -4161,7 +4161,7 @@ getFunName <- function(FUN){
       # writeChar("^@", dt1_file)
     # }
     # two-byte integers
-    writeBin(traceData[,i], dt1_file, size = 2)
+    writeBin(traceData[,i], dt1_file, size = 2, endian = "little")
   }
   close(dt1_file)
   

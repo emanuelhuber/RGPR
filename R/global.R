@@ -4204,7 +4204,7 @@ getFunName <- function(FUN){
               con = hd_file, sep = "\r\n")
   writeLines(paste0("STEP SIZE USED"," = ",as.character(x@dx)),
               con = hd_file, sep = "\r\n")
-  writeLines(paste0("POSITION UNITS", " = ", "m",), 
+  writeLines(paste0("POSITION UNITS", " = ", "m"), 
               con = hd_file, sep = "\r\n")
   if(x@posunit != "m"){
     warning('Position units were defined as "metres"!\n')
@@ -4217,7 +4217,7 @@ getFunName <- function(FUN){
   if(!is.null(x@hd$PULSER_VOLTAGE_V)){
     pulservoltage <- x@hd$PULSER_VOLTAGE_V
   }
-  writeLines(paste0("PULSER VOLTAGE (V)", "=", as.character(pulservoltage),), 
+  writeLines(paste0("PULSER VOLTAGE (V)", "=", as.character(pulservoltage)), 
              con = hd_file, sep = "\r\n")
   nstacks <- 1
   if(!is.null(x@hd$NUMBER_OF_STACKS)){

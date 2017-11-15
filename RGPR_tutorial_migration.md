@@ -1,24 +1,32 @@
 # RGPR tutorial - GPR data migration
 Emanuel Huber (emanuel.huber@alumni.ethz.ch)  
-14 August 2017  
+`r format(Sys.Date(), "%d %B %Y")`  
 
 
+
+***
 
 `RGPR` is a package for [R](https://cran.r-project.org/) to read, write, analyse and visualise ground-penetrating radar (GPR) data.
+  
 
-> R is a [free] programming language and software environment for statistical computing and graphics supported by the R Foundation for Statistical Computing ([Wikipedia > R](https://en.wikipedia.org/wiki/R_%28programming_language%29)).
+**Note**: 
 
-**Note**: This R-package is still in development, and therefore some of the functions may change in a near future. The R-package `RGPR` is hosted on [GitHub](https://github.com/) at [https://github.com/emanuelhuber/RGPR](https://github.com/emanuelhuber/RGPR). You can contribute to the development of `RGPR`: create an account on [GitHub](https://github.com/), [fork](https://guides.github.com/activities/forking/) `RGPR`, improve it and sumbmit your modifications.
+* This R-package is still in development, and therefore some of the functions may change in a near future. 
+* The R-package `RGPR` is hosted on [GitHub](https://github.com/) at [https://github.com/emanuelhuber/RGPR](https://github.com/emanuelhuber/RGPR). 
+* You can contribute to the development of `RGPR`: 
+    1. create an account on [GitHub](https://github.com/),
+    2. [fork](https://guides.github.com/activities/forking/) `RGPR`, 
+    3. change the code
+    4. make a [pull request](https://guides.github.com/activities/forking/#making-a-pull-request) (sumbmit your modifications).
 
-If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german)
-
-> `emanuel.huber@alumni.ethz.ch`
+If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
 
 # Objectives of this tutorial
 **Learn how to migrate GPR data.**
 
 Note that his tutorial will not explain you the math/algorithms behind the different processing methods.
 
+<!--
 In this tutorial the code snippets are in monospaced typewriter font like in the following example:
 
 ```r
@@ -40,6 +48,7 @@ Don't hesitate to consult the help files and to search for help on the internet.
 ```r
 ?mean    # open the help file related to the function mean()
 ```
+-->
 
 # Preliminary
 
@@ -299,11 +308,3 @@ plot(A12)
 ![](RGPR_tutorial_migration_files/figure-html/unnamed-chunk-25-1.png)<!-- -->
 
 
-
-
-
-***
-
-Notes
-
-* This document was created with R-markdown and knitr.

@@ -1,0 +1,604 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{nice_article_v0.01}[2016/10/08]
+
+
+% \eg
+% \ie
+% \logN
+% \degree
+% \abs{}
+% \norm{}
+% \abs*{} and \norm*{} do not resizes the size of the brackets
+% \superscript{}
+% \subscript{}
+% \acro{}
+% \tr  $A^\tr$
+% \argmin{}
+% \argmax{}
+% \begin{itemize*}
+% \lstinputpath{}
+% \greybox{}
+% \adress
+% \keywords
+% \Abstract
+% \Date
+% \Category
+
+
+% \usepackage{fourier}
+\usepackage[utf8]{inputenc}
+\usepackage[bitstream-charter]{mathdesign}
+\usepackage[T1]{fontenc} 	   	% codage des fontes tex
+\usepackage[scaled]{helvet}
+
+
+\newcommand{\chapterfont}{%
+	\fontencoding{\encodingdefault}%
+	\fontfamily{phv}% pzcmi pag  cmbr antt
+	\fontseries{b}%
+	\fontshape{n}%
+\selectfont}
+\newcommand{\chapterfontnumber}{%
+	\fontencoding{\encodingdefault}%
+	\fontfamily{pnc}% pzcmi pag  cmbr antt
+	\fontseries{b}%
+	\fontshape{n}%
+\selectfont}
+\newcommand{\sectionfont}{%
+	\fontencoding{\encodingdefault}%
+	\fontfamily{phv}% pzcmi pag  cmbr antt
+	\fontseries{b}%
+	\fontshape{n}%
+\selectfont}
+\newcommand{\sectionTocfont}{%
+	\fontencoding{\encodingdefault}%
+	\fontfamily{phv}% pzcmi pag  cmbr antt
+	\fontseries{m}%
+	\fontshape{n}%
+\selectfont}
+
+\usepackage{microtype}
+%\usepackage[letterspace=400]{microtype}
+\usepackage{textcomp}  		% mehr Sonderzeichen
+\usepackage{calc}     
+\usepackage{color}     		% Farbiger Text etc.
+\usepackage[x11names, table,usenames,dvipsnames]{xcolor}
+\usepackage[breakable, theorems, skins]{tcolorbox}
+\tcbset{enhanced}
+
+%\RequirePackage[utf8]{inputenc}
+%\RequirePackage[bitstream-charter]{mathdesign}
+%\RequirePackage{sansmath}
+%\RequirePackage[T1]{fontenc} 	   	% codage des fontes tex
+%\RequirePackage[scaled]{helvet}
+%\RequirePackage{eucal}	% font mathcal
+\usepackage{caption}
+\usepackage{lipsum}
+\usepackage{multicol}
+\usepackage[a4paper,margin=.9in]{geometry}
+%\usepackage[x11names, table,usenames,dvipsnames]{xcolor}
+\definecolor{palette2}{RGB}{235,249,249}
+
+\usepackage[english]{babel}
+\usepackage{ragged2e}
+\usepackage{array}
+\usepackage{fancyhdr}
+\usepackage{etoolbox}
+\usepackage{natbib}
+%\usepackage{color}     		% Farbiger Text etc.
+%\usepackage[many]{tcolorbox}
+\usepackage{xspace}
+\usepackage{csquotes}
+\usepackage{float}
+\usepackage{parskip}
+\usepackage{pifont}
+\usepackage{url}
+%----- math -----
+\usepackage{amsmath,amsfonts,mathrsfs,mathtools}
+%\let\mathbb\undefined  % delete the command definition 
+%\usepackage{amssymb}	%% The amssymb package provides various useful mathematical symbols
+\usepackage{amsthm}	%% The amsthm package provides extended theorem environments
+\usepackage{listings}
+%\RequirePackage{bbold}
+\usepackage{url}
+\usepackage{ifpdf} 	   		%pour pouvoir utiliser la fonction \ifpdf
+\ifpdf
+	
+ 	% exemple of use of package hyperref
+    \usepackage[pdftex, 	% Paramétrage de l a navi g a t i on
+ 		bookmarks			= true , 	% Signets
+ 		bookmarksnumbered	= true , 	% Signets numérotés
+ 		pdfpagemode			= UseOutlines , 	% Signets / vignettes fermé à l'ouverture
+ 		pdfstartview			= FitH , 	% La page prend toute la largeur
+ 		pdfpagelayout		= OneColumn,% Vue par page
+ 		colorlinks			= true , 	% Liens en couleur
+ 		urlcolor				= blue , 	% Couleur des liens externes
+		linkcolor			= darkblue,  % Couleur des liens internes
+		citecolor			= darkblue, % Couleur des citations
+ 		%pdfborder			= {0 0 0} 	% Style de bordure, ici rien!
+ 		]{hyperref}				    	% utilisation d'hypertext
+\fi
+
+
+\makeatletter
+\newtcolorbox{measurebox}[2][]{blank,parbox=false,
+  overlay={\xdef#2{\tcb@height}},
+  #1}
+\makeatother
+
+\newcommand{\headrulecolor}[1]{\patchcmd{\headrule}{\hrule}{\color{#1}\hrule}{}{}}
+
+\makeatletter
+\newcommand\adress[1]{\renewcommand\@adress{#1}}
+\newcommand\@adress{}
+\newcommand\keywords[1]{\renewcommand\@keywords{#1}}
+\newcommand\@keywords{}
+\newcommand\Abstract[1]{\renewcommand\@Abstract{#1}}
+\newcommand\@Abstract{}
+\newcommand\Date[1]{\renewcommand\@Date{#1}}
+\newcommand\@Date{}
+\newcommand\Category[1]{\renewcommand\@Category{#1}}
+\newcommand\@Category{}
+
+
+
+
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \headrulecolor{lightgray}
+  \lhead{\textit{\scriptsize\@Category}}
+  %\chead{\textit{\scriptsize\{\@Date}}}
+  \rhead{\textit{\scriptsize\@Date}}
+  \renewcommand{\headrulewidth}{.5pt}
+}
+
+%  \fancyhf{}
+%  \headrulecolor{lightgray}
+%
+%  \renewcommand{\headrulewidth}{.5pt}
+%%	\fancyhead[LE,RO]{\slshape \rightmark}
+%%	\fancyhead[LO,RE]{\slshape \leftmark}
+%%	\fancyfoot[C]{\thepage}
+%	
+%}
+%\renewcommand{\@title}[1]{ \markboth{#1}{} }
+%\renewcommand{\sectionmark}[1]{ \markright{#1}{} }
+%\renewcommand{\headrulewidth}{0.5pt}
+%\renewcommand{\footrulewidth}{0pt}
+%\headrulecolor{lightgray}
+
+%\setlength\parindent\z@
+%\newcommand*\docparspacing{
+%\setlength\parindent{16pt}
+%\setlength\parskip{90pt}
+%}
+
+
+\makeatother
+
+\makeatletter
+\def\@maketitle{%
+% % \begin{measurebox}{\myheight}
+%\raisebox{3.5ex}{\hbadness=9999
+%\colorbox{palette2}{\vrule width 0pt height 5.8ex \begin{tabular}{>{\RaggedRight\arraybackslash}p{\dimexpr.3\linewidth-\tabcolsep} >{\centering\arraybackslash}p{\dimexpr.35\linewidth-2\tabcolsep} >{\RaggedLeft\arraybackslash}p{\dimexpr.35\linewidth-4.4\tabcolsep}}
+%XXX&
+%\small{\@date}&
+%XXX
+%\end{tabular}}}
+%\vskip 2ex
+%\textcolor{lightgray}{\hrule height .5pt}
+%\vskip -4ex
+%\textcolor{gray}{\scriptsize\@date}
+\vskip 6ex
+\Huge{\color{DodgerBlue4}\@title}
+\vskip .4ex
+\normalsize{\@author}	%\hfill \@date
+\vskip 1ex
+\normalsize{\slshape\@adress}
+\vskip 1ex
+\normalsize
+\vskip .5ex
+\valign{%
+    \hsize=\dimexpr.35\linewidth-2\tabcolsep
+    \vskip 2ex
+    ##\vfil\nointerlineskip
+    \vskip 1.5ex
+    \cr
+    \noindent{\itshape\footnotesize Keywords}
+    \vskip -1.5ex
+    \hbox to\hsize{\color{lightgray}\leaders\hrule height .5pt\hfill}
+    \vskip 1.5ex
+    \itshape{%  
+    		\@keywords
+    }\cr
+    \noalign{\hfill}
+    \noindent{\itshape\footnotesize ABSTRACT}
+    \vskip -1.5ex
+    \hsize=\dimexpr.65\linewidth-2\tabcolsep
+    \hbox to\hsize{\color{lightgray}\leaders\hrule height .5pt\hfill}
+    \vskip 1.5ex
+
+    \normalsize \@Abstract \cr
+  }\par
+  \textcolor{lightgray}{\hrule height .5pt}
+%  \vskip2ex
+%
+%  \hbox to\linewidth{\color{lightgray}\leaders\hrule height .5pt\hfill}
+%\vskip 3ex
+%
+%\colorbox{palette2}{%
+%\begin{minipage}{\dimexpr\textwidth-2\fboxsep}
+%\lipsum[1-2]
+%\end{minipage}%
+%}
+%\vskip 5ex
+%\end{measurebox}
+%\docparspacing	  
+  
+%  
+%  \newpage
+%  \null
+%  \vskip 2em%
+%  \begin{center}%
+%  \let \footnote \thanks
+%    {\LARGE \@title \par}%
+%    \vskip 1.5em%
+%    {\large
+%      \lineskip .5em%
+%      \begin{tabular}[t]{c}%
+%        \@author
+%      \end{tabular}\par}%
+%    \vskip 1em%
+%    %{\large \@date}%
+%  \end{center}%
+%  \par
+%  \vskip 1.5em
+}
+%\fi
+\makeatother
+
+
+\makeatletter
+\renewcommand\section{\@startsection {section}{1}{\z@}%
+                                   {-3.5ex \@plus -1ex \@minus -.2ex}%
+                                   {0.3ex \@plus .2ex}%
+                                   {\color{DodgerBlue3}\normalfont\Large\bfseries}}% from \large
+\renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
+                                     {-3.25ex \@plus -1ex \@minus -.2ex}%
+                                     {0.1ex \@plus .2ex}%
+                                     {\color{DodgerBlue2}\normalfont\fontsize{13}{11}\bfseries\slshape}}% from \large
+                                     %{\color{DodgerBlue2}\normalfont\fontsize{10}{11}\slshape}}% from \large
+\renewcommand\subsubsection{\@startsection{subsubsection}{3}{\z@}%
+                                     {-3.25ex \@plus -1ex \@minus -.2ex}%
+                                     {0.1ex \@plus .05ex}%
+                                     {\color{DodgerBlue3}\normalfont\normalsize\slshape}}% from \normalsize
+\renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
+                                  {-3.25ex \@plus -1ex \@minus -0.2ex}%
+                                  {-2ex}%
+                                  {\color{DodgerBlue3}\normalfont\slshape}}%
+\makeatother
+
+% add a dot after section number
+\makeatletter
+\renewcommand{\@seccntformat}[1]{\csname the#1\endcsname.\hspace*{1ex}}
+\makeatother
+
+%\makeatletter
+%\renewcommand\normalsize{%
+%   \@setfontsize\normalsize\@viiipt{9.5}%
+%   \abovedisplayskip 8\p@ \@plus4\p@ \@minus4\p@
+%   \abovedisplayshortskip \z@ \@plus3\p@
+%   \belowdisplayshortskip 5\p@ \@plus3\p@ \@minus3\p@
+%   \belowdisplayskip \abovedisplayskip
+%   \let\@listi\@listI}
+%\normalsize
+%\makeatother
+
+%================ COLORS =============%
+\definecolor{white}{rgb}{1,1,1}  % 
+\definecolor{result}{rgb}{1,0,0}  % rouge vif!!
+\definecolor{normal}{rgb}{0,0,1}  % bleu vif!!
+\definecolor{grey}{rgb}{0.95,0.95,0.95} % on définit la couleur grise (c'est un gris très clair)
+\definecolor{darkblue}{rgb}{0,0,.5}
+\definecolor{darkgreen}{rgb}{0.05,0.5,.5}
+\definecolor{darkred}{rgb}{0.5,0,0}
+\definecolor{captioncolor}{RGB}{0, 52, 154}	% anciennement navyBlue
+\definecolor{captionlistingcolor}{rgb}{0, 0, 0}	% anciennement navyBlue
+
+
+
+%% NEW GREYBOX %%
+% Write text in a grey box
+\long\def\greybox#1{%
+    \newbox\contentbox%
+    \newbox\bkgdbox%
+    \setbox\contentbox\hbox to \hsize{%
+        \vtop{
+            \kern\columnsep
+            \hbox to \hsize{%
+                \kern\columnsep%
+                \advance\hsize by -2\columnsep%
+                \setlength{\textwidth}{\hsize}%
+                \vbox{
+                    \parskip=\baselineskip
+                    \parindent=0bp
+                    #1
+                }%
+                \kern\columnsep%
+            }%
+            \kern\columnsep%
+        }%
+    }%
+    \setbox\bkgdbox\vbox{
+        \pdfliteral{0.80 0.80 0.80 rg}
+        \hrule width  \wd\contentbox %
+               height \ht\contentbox %
+               depth  \dp\contentbox
+        \pdfliteral{0 0 0 rg}
+    }%
+    \wd\bkgdbox=0bp%
+    \vbox{\hbox to \hsize{\box\bkgdbox\box\contentbox}}%
+    \vskip\baselineskip%
+}
+
+\providecommand{\logN}{\mathcal{L}n\mathcal{N}}
+\newcommand{\degree}{\ensuremath{^\circ}\xspace}
+\newcommand{\celsius}{\ensuremath{^\circ}C\xspace}
+%\def\deg	{\:\ensuremath{^\circ \mathrm{C}}}
+
+%-------------------------------
+% Commande pour les indices et les exposants
+\newcommand{\superscript}[1]{\ensuremath{^{\textrm{#1}}}}
+\newcommand{\subscript}[1]{\ensuremath{_{\textrm{#1}}}}
+
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+% Swap the definition of \abs* and \norm*, so that \abs
+% and \norm resizes the size of the brackets, and the 
+% starred version does not.
+\makeatletter
+\let\oldabs\abs
+\def\abs{\@ifstar{\oldabs}{\oldabs*}}
+%
+\let\oldnorm\norm
+\def\norm{\@ifstar{\oldnorm}{\oldnorm*}}
+\makeatother
+
+% Fonction math \tr pour trace
+\DeclareMathOperator{\tr}{tr}
+
+% arg min
+%\DeclareMathOperator*{\argmin}{arg\,min}
+\newcommand{\argmin}{\operatornamewithlimits{argmin}}
+% arg max
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+% equal per definition
+%\newcommand\eqdef{\stackrel{\mathclap{\normalfont\mbox{\tiny def}}}{=}}
+\newcommand\eqdef{\mathrel{\overset{\makebox[0pt]{\mbox{\normalfont\tiny\sffamily def}}}{=}}}
+
+\DeclareMathAlphabet{\mathbbold}{U}{bbold}{m}{n}
+
+\newcommand*{\eg}{e.g.\@\xspace}
+\newcommand*{\ie}{i.e.\@\xspace}
+
+\setlength\parindent{0pt}
+
+% From IEEE
+\makeatletter
+% LIST SPACING CONTROLS
+
+% Controls the amount of EXTRA spacing
+% above and below \trivlist 
+% Both \list and IED lists override this.
+% However, \trivlist will use this as will most
+% things built from \trivlist like the \center
+% environment.
+\topsep           0.5\baselineskip
+
+% Controls the additional spacing around lists preceded
+% or followed by blank lines. the IEEE does not increase
+% spacing before or after paragraphs so it is set to zero.
+% \z@ is the same as zero, but faster.
+\partopsep          \z@
+
+% Controls the spacing between paragraphs in lists. 
+% The IEEE does not increase spacing before or after paragraphs
+% so this is also zero. 
+% With IEEEtran.cls, global changes to
+% this value DO affect lists (but not IED lists).
+\parsep             \z@
+
+% Controls the extra spacing between list items. 
+% The IEEE does not put extra spacing between items.
+% With IEEEtran.cls, global changes to this value DO affect
+% lists (but not IED lists).
+\itemsep            \z@
+
+% \itemindent is the amount to indent the FIRST line of a list
+% item. It is auto set to zero within the \list environment. To alter
+% it, you have to do so when you call the \list.
+% However, the IEEE uses this for the theorem environment
+% There is an alternative value for this near \leftmargini below
+\itemindent         -1em
+
+% \leftmargin, the spacing from the left margin of the main text to
+% the left of the main body of a list item is set by \list.
+% Hence this statement does nothing for lists.
+% But, quote and verse do use it for indention.
+\leftmargin         2em
+
+% we retain this stuff from the older IEEEtran.cls so that \list
+% will work the same way as before. However, itemize, enumerate and
+% description (IED) could care less about what these are as they
+% all are overridden.
+\leftmargini        2em
+%\itemindent         2em  % Alternative values: sometimes used.
+%\leftmargini        0em
+\leftmarginii       1em
+\leftmarginiii    1.5em
+\leftmarginiv     1.5em
+\leftmarginv      1.0em
+\leftmarginvi     1.0em
+\labelsep         0.5em 
+\labelwidth         \z@
+
+
+% V1.6 create hooks in case the caption spacing ever needs to be
+% overridden by a user
+\def\@IEEEfigurecaptionsepspace{\vskip\abovecaptionskip\relax}%
+\def\@IEEEtablecaptionsepspace{\vskip\abovecaptionskip\relax}%
+
+\makeatother
+
+
+%------LISTE-------------
+\renewcommand{\labelitemi}{$\triangleright$}	%level 1
+\renewcommand{\labelitemii}{$\cdot$}			%level 2
+\renewcommand{\labelitemiii}{$\diamond$}		%level 3
+\renewcommand{\labelitemiv}{$\ast$}				%level 4
+
+\newenvironment{itemize*}%
+  {\begin{itemize}%
+    \setlength{\itemsep}{0pt}%
+    \setlength{\parskip}{0pt}}%
+  {\end{itemize}}
+
+
+% LISTING
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% listing  %%%
+\usepackage{listings}
+\usepackage{courier}
+%\lstdefinestyle{R}{
+%	basicstyle=\scriptsize\ttfamily, % Standardschrift
+%	numbers=none, % Ort der Zeilennummern
+%	numberstyle=\tiny, % Stil der Zeilennummern
+%	%stepnumber=2, % Abstand zwischen den Zeilennummern
+%	numbersep=10pt, % Abstand der Nummern zum Text
+%	tabsize=2, % Groesse von Tabs
+%	extendedchars=true, %
+%	breaklines=true, % Zeilen werden Umgebrochen
+%	%keywordstyle=\color{red},
+%	commentstyle=\tiny\color{green},
+%	%keywordstyle = \color{blue},
+%	backgroundcolor=\color{lightgray},
+%	frame=b,
+%	%morecomment=[l]{\#}		% les commentaires
+%	% keywordstyle=[1]\textbf, % Stil der Keywords
+%	% keywordstyle=[2]\textbf, %
+%	% keywordstyle=[3]\textbf, %
+%	% keywordstyle=[4]\textbf, \sqrt{\sqrt{}} %
+%	stringstyle=\color{white}\ttfamily, % Farbe der String
+%	showspaces=false, % Leerzeichen anzeigen ?
+%	showtabs=false, % Tabs anzeigen ?
+%	xleftmargin=17pt,
+%	framexleftmargin=1pt,
+%	framexrightmargin=0pt,
+%	framexbottommargin=4pt,
+%	showstringspaces=false % Leerzeichen in Strings anzeigen ?
+%}
+
+%\lstloadlanguages{% Check Dokumentation for further languages ...
+%	%[Visual]Basic
+%	%Pascal	
+%	%C
+%	%C++
+%	R
+%}
+%
+%\lstdefinestyle{Asmcode}{
+%			language = [x86masm]Assembler,
+%			basicstyle = \footnotesize,
+%			keywordstyle = \color{blue},
+%			commentstyle=\tiny\color{black},
+%			stringstyle=\color{Plum},
+%			frame = single,
+%			%frameround=fttt,
+%			backgroundcolor=\color{SuperLightRed},
+%			numbers=left, numberstyle=\tiny\texttt, stepnumber=2, numbersep=10pt
+%}
+%
+%
+%\lstset{language=Matlab,
+%   keywords={break,case,catch,continue,else,elseif,end,for,function,
+%      global,if,otherwise,persistent,return,switch,try,while},
+%   basicstyle=\ttfamily,
+%   keywordstyle=\color{blue},
+%   commentstyle=\color{red},
+%   stringstyle=\color{darkgreen},
+%   numbers=left,
+%   numberstyle=\tiny\color{gray},
+%   stepnumber=1,
+%   numbersep=10pt,
+%   backgroundcolor=\color{white},
+%   tabsize=4,
+%   showspaces=false,
+%   showstringspaces=false}
+
+%
+\lstloadlanguages{R}
+\lstdefinelanguage{Renhanced}[]{R}{%
+  morekeywords={acf,ar,arima,arima.sim,colMeans,colSums,is.na,is.null,%
+    mapply,ms,na.rm,nlmin,replicate,row.names,rowMeans,rowSums,seasonal,%
+    sys.time,system.time,ts.plot,which.max,which.min},
+  deletekeywords={c},
+  alsoletter={.\%},%
+  alsoother={:_\$}}
+  \lstset{language=Renhanced,extendedchars=true,
+  basicstyle=\scriptsize\ttfamily,
+  commentstyle=\textsl\tiny\color{darkgreen},
+  keywordstyle=\mdseries,
+  showstringspaces=false,
+  index=[1][keywords],
+  keywordstyle = \color{darkblue},
+  backgroundcolor=\color{grey}, 
+  indexstyle=\indexfonction,
+  breaklines=true, % Zeilen werden Umgebrochen
+  basicstyle=\tiny\ttfamily,
+  xleftmargin=0pt,
+  xrightmargin=0pt,
+  framexleftmargin=0pt,
+  framexrightmargin=0pt,
+  framexbottommargin=0pt,
+  captionpos=b,
+  abovecaptionskip=-5pt,
+  belowcaptionskip=0pt
+  %frame=tb
+  }
+
+  \newcommand{\indexfonction}[1]{\index{#1@\texttt{#1}}}
+
+%\DeclareCaptionFont{white}{\color{white}}
+%\DeclareCaptionFormat{listing}{\colorbox[cmyk]{0.43, 0.35, 0.35,0.01}{\parbox{\linewidth}{\hspace{10pt}#1#2#3}}}
+%\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white, singlelinecheck=false, margin=0pt, font={bf,tiny}} 
+
+%captionpos=b
+\DeclareCaptionFormat{listing}{\vspace{-1ex}\tiny #3}
+\captionsetup[lstlisting]{format=listing,singlelinecheck=false, margin=0pt, font={sf,scriptsize},justification=raggedleft}
+%-----------------------------
+%% NEW ACRO %%  
+\makeatletter
+\DeclareRobustCommand\SMC{%
+\ifx\@currsize\normalsize\small\else
+\ifx\@currsize\small\footnotesize\else
+\ifx\@currsize\footnotesize\scriptsize\else
+\ifx\@currsize\large\normalsize\else
+\ifx\@currsize\Large\large\else
+\ifx\@currsize\LARGE\Large\else
+\ifx\@currsize\scriptsize\tiny\else
+\ifx\@currsize\tiny\tiny\else
+\ifx\@currsize\huge\LARGE\else
+\ifx\@currsize\Huge\huge\else
+\small\SMC@unknown@warning
+\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
+}  
+ \newcommand\SMC@unknown@warning{%
+\PackageWarning{acro}{\string\SMC: unrecognized
+text font size command -- using \string\small}}
+\newcommand\textSMC[1]{{\SMC #1}}
+\newcommand\acro[1]{\textSMC{#1}\@}
+\makeatother
+
+
+\newcommand*\lstinputpath[1]{\lstset{inputpath=#1}}

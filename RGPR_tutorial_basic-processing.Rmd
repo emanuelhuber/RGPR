@@ -1,8 +1,12 @@
 ---
 title: "RGPR tutorial - Basic GPR data processing"
 author: "Emanuel Huber (emanuel.huber@alumni.ethz.ch)"
-date: "13 August 2017"
+date: '`r format(Sys.Date(), "%d %B %Y")`'
 output: 
+  pdf_document:
+    toc: yes
+    number_sections: true
+    highlight: tango
   html_document: 
     fig_caption: yes
     keep_md: yes
@@ -12,6 +16,8 @@ output:
     toc: yes
     includes:
       in_header: header.html
+linkcolor: red
+urlcolor: blue
 ---
 
 ```{r setup, include=FALSE}
@@ -19,15 +25,22 @@ knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir = "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke") 
 ```
 
+***
+
 `RGPR` is a package for [R](https://cran.r-project.org/) to read, write, analyse and visualise ground-penetrating radar (GPR) data.
+  
 
-> R is a [free] programming language and software environment for statistical computing and graphics supported by the R Foundation for Statistical Computing ([Wikipedia > R](https://en.wikipedia.org/wiki/R_%28programming_language%29)).
+**Note**: 
 
-**Note**: This R-package is still in development, and therefore some of the functions may change in a near future. The R-package `RGPR` is hosted on [GitHub](https://github.com/) at [https://github.com/emanuelhuber/RGPR](https://github.com/emanuelhuber/RGPR). You can contribute to the development of `RGPR`: create an account on [GitHub](https://github.com/), [fork](https://guides.github.com/activities/forking/) `RGPR`, improve it and sumbmit your modifications.
+* This R-package is still in development, and therefore some of the functions may change in a near future. 
+* The R-package `RGPR` is hosted on [GitHub](https://github.com/) at [https://github.com/emanuelhuber/RGPR](https://github.com/emanuelhuber/RGPR). 
+* You can contribute to the development of `RGPR`: 
+    1. create an account on [GitHub](https://github.com/),
+    2. [fork](https://guides.github.com/activities/forking/) `RGPR`, 
+    3. change the code
+    4. make a [pull request](https://guides.github.com/activities/forking/#making-a-pull-request) (sumbmit your modifications).
 
-If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german)
-
-> `emanuel.huber@alumni.ethz.ch`
+If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
 
 # Objectives of this tutorial
 * Learn some basics of ground-penetrating radar data processing with `RGPR`.
@@ -35,6 +48,7 @@ If you have any questions, comments or wishes, etc. feel free to contact me (in 
 
 Note that his tutorial will not explain you the math/algorithms behind the different processing methods.
 
+<!--
 In this tutorial the code snippets are in monospaced typewriter font like in the following example:
 ```{r, eval=FALSE, echo=TRUE}
 1 + exp(1:10)
@@ -52,6 +66,7 @@ Don't hesitate to consult the help files and to search for help on the internet.
 ```{r,eval=FALSE}
 ?mean    # open the help file related to the function mean()
 ```
+-->
 
 # Preliminary
 
@@ -68,38 +83,27 @@ I recommand you to first think about the organisation of your files and director
 ```
 
 
-## Install/load the necessary packages
-Load the packages `RGPR` and `rChoiceDialogs` (`rChoiceDialogs` provides a collection of portable choice dialog widgets):
-```{r, warning=FALSE, message=FALSE}
-library(devtools)
-devtools::install_github("emanuelhuber/RGPR")
-library(RGPR)   # load RGPR in the current R session
-library(rChoiceDialogs)
-```
+## Install/load `RGPR` and set the working directory
 
-[optionally] If `RGPR` is not installed, follow the instructions of the tutorial "Getting started" to install it.
+* Set the working directory:
+    ```{r, warning=FALSE, message=FALSE, eval=FALSE}
+    myDir <- "~/2014_04_25_frenke"
+    setwd(myDir)    # set the working directory
+    getwd()         # Return the current working directory (just to check)
+    ```
 
-[optionally] If R answers you `there is no package called 'rChoiceDialogs'` you need first to install `rChoiceDialogs`, either through your R software or directly in R with:
-```{r, eval=FALSE}
-install.packages("rChoiceDialogs")
-```
+* Install and load the `RGPR`-package
+    ```{r, echo=TRUE, warning=FALSE, message=FALSE}
+    library(devtools)
+    devtools::install_github("emanuelhuber/RGPR")
+    library(RGPR)       # load RGPR in the current R session
+    ```
+    
+    If `devtools` is not installed, install this package through the GUI (RStudio or RKward) or direclty in R by entering:
 
-The warnings that R shows can be ignored.
-
-## Set the working directory
-The working directory must be correctly set to use relative filepath. The working directory can be set either in your R-software or in R directly with:
-```{r}
-myDir <- "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
-setwd(myDir)    # set the working directory
-getwd()         # Return the current working directory (just to check)
-```
-
-[optionally] Alternatively, you can use an interactive dialog box from the R-package `rChoiceDialogs`:
-```{r, eval=FALSE}
-myDir <- rchoose.dir(default = "/home/huber/WORK/UNIBAS/RESEARCH/RGPR/")
-setwd(myDir)    # set the working directory
-getwd()         # Return the current working directory (just to check)
-```
+    ```{r, eval=FALSE}
+    install.packages("devtools")     # install "devtools"
+    ```
 
 # Read GPR data
 The raw GPR data are located in the directory `/rawGPR`. The data format is the Sensor & Softwares format. Each GPR data consists of 
@@ -140,13 +144,13 @@ Per default, the plot start at time-zero which is here set at approximately
 `r mean(time0(A))` s. To plot the full data, set the argument `relTime0` equal
 to `FALSE` in the `plot()` function.
 ```{r, echo = TRUE}
-plot(A, relTime0 = FALSE)
+{plot(A, relTime0 = FALSE)
 # add a red line at time-zero
-abline(h = -mean(time0(A)), col = "green", lwd = 2)
+abline(h = -mean(time0(A)), col = "green", lwd = 2)}
 ```
 
 To plot only a part of the GPR data, use `xlim` and `ylim`. **Note that the 
-y-axis is here inverse and you have to use negative values to plot something
+y-axis is here reversed and you have to use negative values to plot something
 below time-zero!**
 ```{r, echo = TRUE}
 plot(A, ylim=c(-200, 0), xlim = c(30, 50))
@@ -237,9 +241,9 @@ You can visualise the DC-offset on the trace plot by adding an horizontal
 lines (`abline(h=...)`) with the argument  `h` equal the DC-offset, i.e., the
 mean of the first \(110\) samples (`mean(A[1:110,15]`):
 ```{r, echo=TRUE}
-plot(A[, 15])  # plot the 15th trace of the GPR-line 
+{plot(A[, 15])  # plot the 15th trace of the GPR-line 
 # add a green horizontal line
-abline(h = mean(A[1:110, 15]), col = "green") 
+abline(h = mean(A[1:110, 15]), col = "green") }
 ```
 
 
@@ -258,7 +262,7 @@ applied to the data. This is a first step toward reproducible research.
 
 The processing steps can be extracted with the function `processing()`:
 ```{r, echo=TRUE}
-processing(A1)
+proc(A1)
 ```
 
 
@@ -409,10 +413,10 @@ A5 <- gain(A4, type = "power", alpha = 1, te = 150, tcst = 20)
 
 Compare the amplitude before and after the power gain:
 ```{r, echo=TRUE}
-plotAmpl(A5, col = "red")
+{plotAmpl(A5, col = "red")
 # set add=TRUE to add the amplitude on the previous plot
 plotAmpl(A4, col = "black", add = TRUE)   
-plot(A5)        # how does it look after the gain?
+plot(A5) }       # how does it look after the gain?
 ```
 
 
@@ -504,17 +508,15 @@ plot(A9, clip = 50)
 spec(A9, type = "f-k")
 ```
 
-<!---
-By ploting the spectrum of the filtered GPR data you see that some 
+Let see the difference
 ```{r, echo=TRUE}
-spec(A7, type = "f-k")
+plot(A9 - A8)
 ```
--->
 
 ## Processing overview
 Let review the processing step applied on the GPR record:
 ```{r, echo=TRUE}
-processing(A9)
+proc(A9)
 ```
 
 ## Other processing functions
@@ -552,12 +554,16 @@ procA <- readGPR(fPath = file.path(getwd(), "processing", paste0(name(A9), ".rds
 Warning: processing can 
 introduce artifacts in the data and lead to false interpreations.
 
+***
+
 > What really matters is that the final interpretation is valid, 
 and although processing is important, ultimately, the key to good data
 interpretation is good data collection in the first place.   
 *in Cassidy (2009) Chapter 5 - Ground Penetrating Radar Data Processing, 
 Modelling and Analysis, In Ground Penetrating Radar Theory and Applications, 
 (Eds Harry M. Jol,), Elsevier, Amsterdam, pp: 141-176, ISBN 9780444533487*.
+
+***
 
 > A good practical mantra for most users to adopt is if it cannot be
 seen in the raw data – is it really there? As such, processing steps 
@@ -569,15 +575,10 @@ in a format that reflects the subsurface conditions accurately.
 Modelling and Analysis, In Ground Penetrating Radar Theory and Applications, 
 (Eds Harry M. Jol,), Elsevier, Amsterdam, pp: 141-176, ISBN 9780444533487*.
 
+***
+
 > Processing of GPR data tends to improve the appearance of data, but rarely
 does processing substantially change the interpretation.    
 *in Daniels et al. (1997) Coincident Antenna Three-Dimensional GPR.
 Journal of Environmental and Engineering Geophysics, Vol. 2, No.1, pp. 1–9*.
 
-
-
-***
-
-Notes
-
-* This document was created with R-markdown and knitr.

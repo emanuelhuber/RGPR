@@ -46,9 +46,21 @@ GPRsurvey <- function(LINES){
     line_names[i]        <- name(gpr)[1]
     line_descriptions[i] <- description(gpr)
     line_surveymodes[i]  <- gpr@surveymode
-    line_dates[i]        <- gpr@date
-    line_freq[i]         <- gpr@freq
-    line_antsep[i]       <- gpr@antsep
+    if(length(gpr@date) == 0){
+      line_dates[i]        <- NA
+    }else{
+      line_dates[i]        <- gpr@date
+    }
+    if(length(gpr@freq) == 0){
+      line_freq[i]        <- NA
+    }else{
+      line_freq[i]        <- gpr@freq
+    }
+    if(length(gpr@antsep) == 0){
+      line_antsep[i]        <- NA
+    }else{
+      line_antsep[i]        <- gpr@antsep
+    }
     posunit[i]           <- gpr@posunit[1]
     crs[i] <- ifelse(length(gpr@crs) > 0, gpr@crs[1], character(1))
     if(length(gpr@coord)>0){

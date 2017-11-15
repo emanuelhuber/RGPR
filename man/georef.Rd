@@ -3,21 +3,33 @@
 \name{georef}
 \alias{georef}
 \title{Georeferencing}
-\usage{
-georef(x, alpha = NULL, cloc = c(0, 0), creg = NULL, ploc = NULL,
-  preg = NULL, FUN = mean)
-}
 \arguments{
 \item{x}{A matrix with the first two columns corresponding
-to the coordinates.}
+to coordinates.}
 
 \item{alpha}{A length-one numeric vector corresponding to 
-the rotation angle in radians}
+the rotation angle in radians. If \code{alpha = NULL},
+\code{alpha} is estimated from the pairs of points in
+the local reference system (\code{ploc}) and in the
+regional reference system (\code{preg}).}
 
-\item{cloc}{A length-two numeric vector.}
+\item{cloc}{A length-two numeric vector corresponding to the coordinate
+center of the local reference system}
 
-\item{creg}{A length-two numeric vector or 
-\code{NULL} (default).}
+\item{creg}{A length-two numeric vector corresponding to the coordinate
+center of the regional reference system. Setting 
+\code{creg = NULL} (default) is equivalent to apply a rotation
+of angle \code{alpha} and center \code{cloc}.}
+
+\item{ploc}{A matrix with the first two columns corresponding
+to coordinates in the local reference system.}
+
+\item{preg}{A matrix with the first two columns corresponding
+to coordinates in the regional reference system.}
+
+\item{FUN}{If \code{alpha = NULL}, a function to estimate the rotation angle
+from the angles computed for each pairs of coordinates of
+\code{ploc}-\code{preg}.}
 }
 \description{
 Perform on a set of x,y coordinates

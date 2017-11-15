@@ -692,11 +692,6 @@ setMethod("reverse", "GPRsurvey", function(x, id = NULL, tol = 0.3){
   }
 })
 
-.saveTempFile <- function(x){
-  tmpf <- tempfile(x@name)
-  writeGPR(x, type = "rds", overwrite = FALSE, fPath = tmpf)
-  return(paste0(tmpf, ".rds"))
-}
 
 #' @export
 setMethod(
@@ -741,18 +736,18 @@ setReplaceMethod(
   }
 )
     
-    
-#' Rotate coordinates of the GPR traces
-#' @export
-setMethod("rotate", "GPRsurvey", 
-          function(x, alpha, center = NULL, center2 = NULL){
+# Rotate coordinates of the GPR traces
+#
+setMethod("georef", "GPRsurvey", 
+          function(x, alpha = NULL, cloc = c(0,0), creg = NULL,
+                   ploc = NULL, preg = NULL, FUN = mean){
   if(is.null(center)){
     center <- .centroid(x)
   }
-  xyz <- lapply(x@coords, georef, alpha = alpha,
-                cloc = center, creg = center2)
-  xyz2 <- lapply(x@intersections$coord, georef, alpha = alpha,
-                 cloc = center, creg = center2)
+  xyz  <- lapply(x@coords, georef, alpha = NULL, cloc = c(0,0), 
+                 creg = NULL, ploc = NULL, preg = NULL, FUN = mean)
+  xyz2 <- lapply(x@intersections$coord, georef, alpha = NULL, cloc = c(0,0), 
+                 creg = NULL, ploc = NULL, preg = NULL, FUN = mean)
   x@coords <- xyz
   x@intersections  <- xyz2
   x <- coordref(x)

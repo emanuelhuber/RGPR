@@ -25,6 +25,7 @@ Collate:
 	'global.R'    
 	'ClassGPR.R'
     'ClassGPRsurvey.R'
+    'ClassMisc.R'
     'data.R'
 Imports:
     sp,

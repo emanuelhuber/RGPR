@@ -42,6 +42,13 @@ When \code{keep = NULL} the amount of time kept is equal to
 time taken by the air wave to travel from the transmitter to the
 receiver.
 }
+\examples{
+data(frenkeLine00)
+tfb <- firstBreak(frenkeLine00)
+t0 <- firstBreakToTime0(tfb, frenkeLine00, c0 = 0.299)
+time0(frenkeLine00) <- t0
+frenkeLine00_2 <- time0Cor(frenkeLine00, method = "pchip")
+}
 \seealso{
 \code{\link{time0}} to set time zero and \code{\link{firstBreak}} 
          to estimate the first wave break.

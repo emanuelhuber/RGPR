@@ -42,7 +42,7 @@ plot(frenkeLine00)
 ## Existing functions
 
 ### Reading/writing/export functions
-* `readGPR()`: format DT1 (Sensors&Software), rds (R-format)
+* `readGPR()`, formats: Sensors & Software (.d11, .hd), MALA (.rd3, .rad), SEG-Y for RadSys Zond GPR device (.sgy),  R (rds)
 * `writeGPR()`: format DT1 (Sensors&Software), rds (R-format), ASCII, 'xyz'
 * `exportPDF()`: high quality pdf graphic
 * `exportDelineations()`
@@ -62,7 +62,7 @@ plot(frenkeLine00)
 
 * Trace position reversal: `reverse()`
 * Vertical trace shift: `traceShift()`
-* Georeference coordinates (based on center and rotation angle): `georef()` (only for matrix)
+* Georeference coordinates (based on center and rotation angle): `georef()` 
 * Interpolate trace position (x, y, z) from known positions: `interpPos()`
 * Estimate shift between two parallel profiles: `shiftEst()`
 

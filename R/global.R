@@ -270,6 +270,27 @@ linkCoordFid <- function(y, xyz, pcode ){
   
 
 ##------------- FILENAME/FILEPATH/EXTENSION -------------------##
+# return filename with correct extension (lower or upper case)
+getFName <- function(fPath, ext = c(".rad", ".rd3")){
+  fp <- file.path(dirname(fPath), .fNameWExt(fPath))
+  ext <- tolower(ext)
+  Ext <- toupper(ext)
+  mfile <- list()
+  for(i in seq_along(ext)){
+    if(file.exists(f1 <- paste0(fp, Ext[i]))){
+      #mfile[[gsub("^[.]",  "", ext[i])]] <- paste0(fp, Ext[i])
+      mfile[[gsub("^[.]",  "", ext[i])]] <- f1
+    }else if(file.exists(f2 <- paste0(fp, ext[i]))){
+      #mfile[[gsub("^[.]",  "", ext[i])]] <- paste0(fp, ext[i])
+      mfile[[gsub("^[.]",  "", ext[i])]] <- f2
+    }else{
+      stop("Files '", f1, "' and '", f2, "' do not exist!\n",
+            "Check the filepath!") 
+    }
+  }
+  return(mfile)
+}
+
 # NAME: safe file path
 # test if the file already exists
 # if yes, add a suffix to the filepath
@@ -309,6 +330,13 @@ trimStr <- function (x) gsub("^\\s+|\\s+$", "", x)
 .fExt <- function(x){
 #   cat("with caution... because split \'.\' may not be so good\n")
   unlist(lapply(strsplit(basename(x),"[.]"), tail , 1 ), use.names = FALSE)
+}
+
+
+.saveTempFile <- function(x){
+  tmpf <- tempfile(x@name)
+  writeGPR(x, type = "rds", overwrite = FALSE, fPath = tmpf)
+  return(paste0(tmpf, ".rds"))
 }
 
 ##------------- COLOR FUNCTIONS -------------------##
@@ -483,23 +511,36 @@ selectBBox <- function(border="red",lwd=2,...){
   }
 }
 
-#' Georeferencing
-#'
-#' Perform on a set of x,y coordinates
-#' (1) a translation by \code{-cloc}, then
-#' (2) a rotation by \code{alpha} (radian), and (3)
-#' a translation by \code{creg}. If \code{creg}
-#' is \code{NULL}, then \code{creg} is set equal
-#' to \code{cloc}.
-#' @export
-#' @param x A matrix with the first two columns corresponding
-#'          to the coordinates.
-#' @param alpha A length-one numeric vector corresponding to 
-#'              the rotation angle in radians
-#' @param cloc A length-two numeric vector.
-#' @param creg A length-two numeric vector or 
-#'                \code{NULL} (default).
-georef <- function(x, alpha = NULL, cloc = c(0,0), creg = NULL,
+#-- not exported!
+# Georeferencing
+#
+# Perform on a set of x,y coordinates
+# (1) a translation by \code{-cloc}, then
+# (2) a rotation by \code{alpha} (radian), and (3)
+# a translation by \code{creg}. If \code{creg}
+# is \code{NULL}, then \code{creg} is set equal
+# to \code{cloc}.
+# @param x A matrix with the first two columns corresponding
+#          to coordinates.
+# @param alpha A length-one numeric vector corresponding to 
+#              the rotation angle in radians. If \code{alpha = NULL},
+#              \code{alpha} is estimated from the pairs of points in
+#              the local reference system (\code{ploc}) and in the
+#              regional reference system (\code{preg}).
+# @param cloc A length-two numeric vector corresponding to the coordinate
+#             center of the local reference system
+# @param creg A length-two numeric vector corresponding to the coordinate
+#             center of the regional reference system. Setting 
+#             \code{creg = NULL} (default) is equivalent to apply a rotation
+#             of angle \code{alpha} and center \code{cloc}.
+# @param ploc A matrix with the first two columns corresponding
+#            to coordinates in the local reference system.
+# @param preg A matrix with the first two columns corresponding
+#             to coordinates in the regional reference system.
+# @param FUN If \code{alpha = NULL}, a function to estimate the rotation angle
+#            from the angles computed for each pairs of coordinates of
+#            \code{ploc}-\code{preg}.
+.georef <- function(x, alpha = NULL, cloc = c(0,0), creg = NULL,
                    ploc = NULL, preg = NULL, FUN = mean){
   x0 <- as.matrix(unname(x[,1:2, drop = FALSE]))
   if(is.null(alpha)){
@@ -840,6 +881,13 @@ setGenericVerif("time0", function(x) standardGeneric("time0"))
 #' @export
 setGenericVerif("time0<-",function(x,value){standardGeneric("time0<-")})
 
+#' Time of data collection for each trace
+#'
+#' @name trTime
+#' @rdname trTime
+#' @export
+setGenericVerif("trTime", function(x) standardGeneric("trTime"))
+
 #' @name fid
 #' @rdname fid
 #' @export
@@ -864,6 +912,12 @@ setGenericVerif("values<-", function(x,value) standardGeneric("values<-"))
 #' @rdname processing
 #' @export
 setGenericVerif("processing", function(x) standardGeneric("processing"))
+
+#' @name proc
+#' @rdname proc
+#' @export
+setGenericVerif("proc", function(x) standardGeneric("proc"))
+
 
 #' @name proc<-
 #' @rdname proc
@@ -1045,10 +1099,42 @@ setGenericVerif("surveyIntersect", function(x)
                 standardGeneric("surveyIntersect"))
 setGenericVerif("writeSurvey", function(x, fPath, overwrite=FALSE){ 
                 standardGeneric("writeSurvey")})
-setGenericVerif("rotate", function(x, alpha, center = NULL, center2 = NULL){ 
-                standardGeneric("rotate")})
-				
-				
+
+#' Georeferencing
+#'
+#' Perform on a set of x,y coordinates
+#' (1) a translation by \code{-cloc}, then
+#' (2) a rotation by \code{alpha} (radian), and (3)
+#' a translation by \code{creg}. If \code{creg}
+#' is \code{NULL}, then \code{creg} is set equal
+#' to \code{cloc}.
+#' @param x A matrix with the first two columns corresponding
+#'          to coordinates.
+#' @param alpha A length-one numeric vector corresponding to 
+#'              the rotation angle in radians. If \code{alpha = NULL},
+#'              \code{alpha} is estimated from the pairs of points in
+#'              the local reference system (\code{ploc}) and in the
+#'              regional reference system (\code{preg}).
+#' @param cloc A length-two numeric vector corresponding to the coordinate
+#'             center of the local reference system
+#' @param creg A length-two numeric vector corresponding to the coordinate
+#'             center of the regional reference system. Setting 
+#'             \code{creg = NULL} (default) is equivalent to apply a rotation
+#'             of angle \code{alpha} and center \code{cloc}.
+#' @param ploc A matrix with the first two columns corresponding
+#'             to coordinates in the local reference system.
+#' @param preg A matrix with the first two columns corresponding
+#'             to coordinates in the regional reference system.
+#' @param FUN If \code{alpha = NULL}, a function to estimate the rotation angle
+#'            from the angles computed for each pairs of coordinates of
+#'            \code{ploc}-\code{preg}.
+#' @export
+#' @name georef
+#' @rdname georef
+setGenericVerif("georef", function(x, alpha = NULL, cloc = c(0,0), creg = NULL,
+                   ploc = NULL, preg = NULL, FUN = mean){ 
+                standardGeneric("georef")})
+                
 #------------------------------BOTH
 setGenericVerif("plot3DRGL", 
           function(x, addTopo = FALSE, clip = NULL, normalize = NULL, 
@@ -1110,7 +1196,11 @@ setGenericVerif("plotDelineations", function(x,sel=NULL,col=NULL,...)
 setGenericVerif("identifyDelineation", function(x,sel=NULL,...) 
                   standardGeneric("identifyDelineation"))
 
-
+#' Structure tensor field of GPR data 
+#'
+#' @name strTensor
+#' @rdname strTensor
+#' @export
 setGenericVerif("strTensor", function(x,  blksze = c(2, 4),
                         kBlur   = list(n = 1, m = 1, sd = 1), 
                         kEdge   = list(n = 5, m = 5, sd = 1), 
@@ -1137,10 +1227,11 @@ extrema <- function(x, type=c("max","min")){
   return(y)
 }
 
-#' @export                  
-trRecTime <- function(x, origin = "1970-01-01"){
-  return(as.POSIXct(x@time, origin = origin))
-}
+#--- see trTime in "ClassGPR.R"
+# #' @export                  
+# trRecTime <- function(x, origin = "1970-01-01"){
+#   return(as.POSIXct(x@time, origin = origin))
+# }
 
 #' @export                  
 timeToDepth <- function(tt, time_0, v=0.1, antsep=1, c0 = 0.299){
@@ -1158,6 +1249,10 @@ depth0 <- function(time_0, v=0.1, antsep=1, c0 = 0.299){
 }
 #' @export
 firstBreakToTime0 <- function(fb, x, c0 = 0.299){
+  if(length(x@antsep) == 0 || (!is.numeric(x@antsep))){
+  stop("You must first define the antenna separation",
+        "with `antsep(x)<-...`!")
+  }
   fb - x@antsep/c0
 }
 
@@ -1561,20 +1656,22 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   }
   if(is.null(clim)){
     clim <- range(z[is.finite(z)], na.rm = TRUE)
-    if(!is.null(surveymode) && tolower(surveymode) %in% c("cmp","reflection")){
-      clim <- c(-1,1)*max(abs(z),na.rm=TRUE)
+    if( min(z) > 0 ){
+      # to plot amplitudes for example...
+      clim <- c(0, max(z, na.rm = TRUE))
+      # clim <- range(z, na.rm = TRUE)
+    }
+    else if(!is.null(surveymode) && 
+                tolower(surveymode) %in% c("cmp", "reflection")){
+      clim <- c(-1, 1) * max(abs(z), na.rm = TRUE)
     }
   }
   # Note that y and ylim are negative and time_0 is positive...
   if(relTime0 && ylim[2] > -time_0){
     # truncate the data -> start at time-zero!!
     y <- y + time_0
-    # y <- y + (time_0 + max(y))
-    #ylim[1] <- ylim[1] - ylim[2] + time_0
     ylim[1] <- max(c(min(y), ylim[1]))
     ylim[2] <- 0
-    # ylim[2] <- min(ylim[2] + time_0, 0)
-    # ylim[1] <-  ylim[1] + (time_0 + max(y))
   }
   if( length(unique(diff(x))) > 1){
     rasterImage <- FALSE
@@ -1642,13 +1739,13 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
     title(main)  
   }
   # plot axis
-#   axis(side=2, at=pretty_y + dusr/2, labels= -pretty_y)
-#   dusr <- dylim/length(y)
-#   if( yaxt != "n"){
-    pretty_y <- pretty(ylim, 10)
-    axis(side = 2, at = pretty_y, labels = -pretty_y)
+  pretty_y <- pretty(ylim, 10)
+  axis(side = 2, at = pretty_y, labels = -pretty_y)
+  if(toupper(surveymode) != "CMP"){
     .depthAxis(ylim, pretty_y, time_0, v, antsep, depthunit, posunit )
-#   }
+  }else{
+    axis(side = 4, at = pretty_y, labels = -pretty_y)
+  }
   # plot time0
   abline(h=0,col="red",lwd=0.5)
   # plot note
@@ -1662,21 +1759,15 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   if( bty != "n"){
     box(bty = bty)
   }
-    if(barscale){
+  if(barscale){
     op2 <- par(no.readonly=TRUE)
     .barScale(clim = clim, y = y, col = col, clab = clab, 
               clabcex = 0.8)
-   # plot3D::colkey(clim = clim, clab = clab, width = 0.7, dist = 0.1, 
-  #        add = TRUE, col = col)
     par(op2)
   }
-  
   if(!is.null(pdfName)){
     dev.off()
   }
-  #op$usr <- usr
- # par(op)
- #par("usr" = usr)
 }
 #---
 
@@ -2719,12 +2810,12 @@ distTensorLogE <- function(a1,b1,c1,a2,b2,c2){
 
 # return structure tensor
 #------------------------------
-#' Structure tensor field
-#' 
-#' @name strucTensor
-#' @rdname strucTensor
-#' @export
-strucTensor <- function(P, dxy = c(1, 1), mask = c(2, 2),
+# Structure tensor field
+# 
+# name strucTensor
+# rdname strucTensor
+# export
+.strucTensor <- function(P, dxy = c(1, 1), mask = c(2, 2),
                         kBlur   = list(n = 3, m =  3, sd = 1), 
                         kEdge   = list(n = 7, m =  7, sd = 1), 
                         kTensor = list(n = 5, m = 10, sd = 2),
@@ -3135,6 +3226,7 @@ convolution2D <- function(A,k){
   # g2 <- g[nk + 1:nh, mk + 1:mh]
   return(g2)
 }
+
 #' @export
 displacement <- function(x, y, method=c("phase", "WSSD"), dxy = NULL){
   nm <- c(max(nrow(x), nrow(y)), max(ncol(x), ncol(y)))
@@ -3591,12 +3683,13 @@ inPoly <- function(x, y, vertx, verty){
 # -------------------------------------------
 
 readDT1 <- function( fPath){
-   dirName     <- dirname(fPath)
-  baseName    <- .fNameWExt(fPath)
-  fileNameHD  <- file.path(dirName, paste0(baseName,".HD"))
-  fileNameDT1 <- file.path(dirName, paste0(baseName,".DT1"))
+  fName <- getFName(fPath, ext = c(".HD", ".DT1"))
+  #dirName     <- dirname(fPath)
+  #baseName    <- .fNameWExt(fPath)
+  #fileNameHD  <- file.path(dirName, paste0(baseName,".HD"))
+  #fileNameDT1 <- file.path(dirName, paste0(baseName,".DT1"))
   #--- read header file
-  headHD <- scan( fileNameHD, what = character(), strip.white = TRUE,
+  headHD <- scan( fName$hd, what = character(), strip.white = TRUE,
                   quiet = TRUE, fill = TRUE, blank.lines.skip = TRUE, 
                   flush = TRUE, sep = "\n")
   nHD <- length(headHD)
@@ -3620,7 +3713,7 @@ readDT1 <- function( fPath){
             "transz","time0","zeroflag", "NA7", "time","x8","com")  
   hDT1 <- list()
   dataDT1 <- matrix(NA, nrow = nPt, ncol = nTr)
-  con <- file(fileNameDT1 , "rb")
+  con <- file(fName$dt1 , "rb")
   for(i in 1:nTr){
     for(j in 1:25){
       hDT1[[tags[j]]][i] <- readBin(con, what = numeric(), n = 1L, size = 4)
@@ -3631,7 +3724,6 @@ readDT1 <- function( fPath){
     dataDT1[,i] <- readBin(con, what=integer(), n = nPt, size = 2)
   }
   close(con)
-  return( list(hd = hHD, dt1hd = hDT1, data = dataDT1) )
   return( list(hd = hHD, dt1hd = hDT1, data = dataDT1) )
 }
 #-----------------
@@ -3661,14 +3753,15 @@ readDT1 <- function( fPath){
   
 #--------------- read MALA files -------------------#
 readRD3 <- function(fPath){
-  dirName     <- dirname(fPath)
-  baseName    <- .fNameWExt(fPath)
-  fNameRAD    <- file.path(dirName, paste0(baseName, ".rad"))
-  fNameRD3    <- file.path(dirName, paste0(baseName, ".rd3"))
+  fName <- getFName(fPath, ext = c(".rad", ".rd3"))
+  #dirName     <- dirname(fPath)
+  #baseName    <- .fNameWExt(fPath)
+  #fNameRAD    <- file.path(dirName, paste0(baseName, ".rad"))
+  #fNameRD3    <- file.path(dirName, paste0(baseName, ".rd3"))
   #fNameCOR    <- file.path(dirName, paste0(baseName, ".cor"))
 
   ##---- RAD file
-  headRAD <- scan(fNameRAD, what = character(), strip.white = TRUE,
+  headRAD <- scan(fName$rad, what = character(), strip.white = TRUE,
                   quiet = TRUE, fill = TRUE, blank.lines.skip = TRUE, 
                   flush = TRUE, sep = "\n")
                   
@@ -3684,7 +3777,7 @@ readRD3 <- function(fPath){
   
   ##---- RD3 file
   dataRD3 <- matrix(NA, nrow = nPt, ncol = nTr)
-  con <- file(fNameRD3 , "rb")
+  con <- file(fName$rd3 , "rb")
   for(i in seq_len(nTr)){
     dataRD3[, i] <- readBin(con, what = integer(), n = nPt, size = 2)
   }
@@ -3722,11 +3815,12 @@ readRD3 <- function(fPath){
 # Prism2 ” software
 #--------------- read RadSys Zond GPR device files -------------------#
 readSEGY <- function(fPath){
-  dirName     <- dirname(fPath)
-  baseName    <- .fNameWExt(fPath)
-  fName    <- file.path(dirName, paste0(baseName, ".sgy"))
+  #dirName     <- dirname(fPath)
+  #baseName    <- .fNameWExt(fPath)
+  #fName    <- file.path(dirName, paste0(baseName, ".sgy"))
+  fName <- getFName(fPath, ext = c(".sgy"))
   hd <- c()
-  con <- file(fName , "rb")
+  con <- file(fName$sgy , "rb")
   ##---- SEGY file
   uu <- readBin(con, what = character(), n = 1, size = 1)
   vv <- strsplit(uu, split ="\r\n")

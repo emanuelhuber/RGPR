@@ -335,15 +335,15 @@ setClass(
   
   # OK
   # X <- "GX450 HDR (v.1)=3" 
-  X <- .getHD(x$hd, "ANTENNAS", position=TRUE, number = FALSE)
-  X2 <- strsplit(X, " ")
+  X <- .getHD(x$hd, "ANTENNAS", position = TRUE, number = FALSE)
+  X2 <- strsplit(X[1], " ")
   gsubwrap <- function(x, ...){
     grep('[0-9]{2,3}', x, value = TRUE)
   }
   freq <- as.numeric(gsub('[^0-9]', '', sapply(X2, gsubwrap)))
   # freq <- as.numeric(gsub('[^0-9]', '', freqS[1]))
   if(!is.null(freq) && !is.na(freq)){
-    pos_used[freqS[2]] <- 1L
+    pos_used[X[2]] <- 1L
   }else{
     freq <- 100
   }

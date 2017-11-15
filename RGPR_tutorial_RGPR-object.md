@@ -1,22 +1,31 @@
 # RGPR tutorial - `RGPR` class
 Emanuel Huber (emanuel.huber@alumni.ethz.ch)  
-11 April 2016  
+`r format(Sys.Date(), "%d %B %Y")`  
   
 
+
+***
 
 `RGPR` is a package for [R](https://cran.r-project.org/) to read, write, analyse and visualise ground-penetrating radar (GPR) data.
   
-> R is a [free] programming language and software environment for statistical computing and graphics supported by the R Foundation for Statistical Computing ([Wikipedia > R](https://en.wikipedia.org/wiki/R_%28programming_language%29)).
 
-**Note**: This R-package is still in development, and therefore some of the functions may change in a near future. The R-package `RGPR` is hosted on [GitHub](https://github.com/) at [https://github.com/emanuelhuber/RGPR](https://github.com/emanuelhuber/RGPR). You can contribute to the development of `RGPR`: create an account on [GitHub](https://github.com/), [fork](https://guides.github.com/activities/forking/) `RGPR`, improve it and sumbmit your modifications.
+**Note**: 
 
-If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german)
+* This R-package is still in development, and therefore some of the functions may change in a near future. 
+* The R-package `RGPR` is hosted on [GitHub](https://github.com/) at [https://github.com/emanuelhuber/RGPR](https://github.com/emanuelhuber/RGPR). 
+* You can contribute to the development of `RGPR`: 
+    1. create an account on [GitHub](https://github.com/),
+    2. [fork](https://guides.github.com/activities/forking/) `RGPR`, 
+    3. change the code
+    4. make a [pull request](https://guides.github.com/activities/forking/#making-a-pull-request) (sumbmit your modifications).
 
-> `emanuel.huber@alumni.ethz.ch`
+If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
+
 
 # Objectives of this tutorial
 * Learn what is an object of the class `RGPR`.
 
+<!--
 In this tutorial the code snippets are in monospaced typewriter font like in the following example:
 
 ```r
@@ -39,31 +48,41 @@ Don't hesitate to consult the help files and to search for help on the internet.
 ?mean    # open the help file related to the function mean()
 ```
 
+-->
+
 # Preliminary
 * Read the tutorial [RGPR - Getting started (tutorial 1)](http://emanuelhuber.github.io/RGPR/RGPR_tutorial_installation-load.html)
 
-* Load the packages `RGPR` and set the working directory:
+* Set the working directory:
+    
+    ```r
+    myDir <- "~/2014_04_25_frenke"
+    setwd(myDir)    # set the working directory
+    getwd()         # Return the current working directory (just to check)
+    ```
 
-```r
-myDir <- "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
-setwd(myDir)    # set the working directory
-getwd()         # Return the current working directory (just to check)
-```
+* Install and load the `RGPR`-package
+    
+    ```r
+    library(devtools)
+    devtools::install_github("emanuelhuber/RGPR")
+    library(RGPR)       # load RGPR
+    ```
+    
+    If `devtools` is not installed, install this package through the GUI (RStudio or RKward) or direclty in R by entering:
 
-```
-## [1] "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
-```
-
+    
+    ```r
+    install.packages("devtools")     # install "devtools"
+    ```
+    
 * Load the GPR data `frenkeLine00` that is included in the package `RGPR`:
-
-```r
-library(devtools)
-devtools::install_github("emanuelhuber/RGPR")
-library(RGPR)
-data("frenkeLine00")
-# just because it is simplier to enter 'A' instead of 'frenkeLine00'
-A <- frenkeLine00   
-```
+    
+    ```r
+    data("frenkeLine00")
+    # just because it is simplier to enter 'A' instead of 'frenkeLine00'
+    A <- frenkeLine00   
+    ```
 
 
 # An object of the class `RGPR`
@@ -76,13 +95,13 @@ A                 # let's have a look at the object A
 
 ```
 ## *** Class GPR ***
-##  name = LINE00
-##  filepath = rawGPR/LINE00.DT1
+##  name        = LINE00
+##  filepath    = rawGPR/LINE00.DT1
 ##  1 fiducial(s)
 ##  description = 
-##  survey date =  2014-04-25 
-##  Reflection, 100MHz,Window length=399.6ns, dz=0.4ns
-##  223 traces,55.5m long
+##  survey date = 2014-04-25
+##  Reflection, 100 MHz,Window length = 399.6 ns, dz = 0.4 ns
+##  223 traces,55.5 m
 ##  ****************
 ```
 
@@ -270,12 +289,12 @@ B
 
 ```
 ## *** Class GPR ***
-##  name = LINE00
-##  filepath = rawGPR/LINE00.DT1
+##  name        = LINE00
+##  filepath    = rawGPR/LINE00.DT1
 ##  description = 
-##  survey date =  2014-04-25 
-##  Reflection, 100MHz,Window length=44ns, dz=0.4ns
-##  6 traces,1.25m long
+##  survey date = 2014-04-25
+##  Reflection, 100 MHz,Window length = 44 ns, dz = 0.4 ns
+##  6 traces,1.25 m
 ##  ****************
 ```
 

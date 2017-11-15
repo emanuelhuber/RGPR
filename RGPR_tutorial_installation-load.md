@@ -1,24 +1,32 @@
 # RGPR tutorial - Getting started
 Emanuel Huber (emanuel.huber@alumni.ethz.ch)  
-11 April 2016  
+`r format(Sys.Date(), "%d %B %Y")`  
 
 
+
+***
 
 `RGPR` is a package for [R](https://cran.r-project.org/) to read, write, analyse and visualise ground-penetrating radar (GPR) data.
+  
 
-> R is a [free] programming language and software environment for statistical computing and graphics supported by the R Foundation for Statistical Computing ([Wikipedia > R](https://en.wikipedia.org/wiki/R_%28programming_language%29)).
+**Note**: 
 
-**Note**: This R-package is still in development, and therefore some of the functions may change in a near future. The R-package `RGPR` is hosted on [GitHub](https://github.com/) at [https://github.com/emanuelhuber/RGPR](https://github.com/emanuelhuber/RGPR). You can contribute to the development of `RGPR`: create an account on [GitHub](https://github.com/), [fork](https://guides.github.com/activities/forking/) `RGPR`, improve it and sumbmit your modifications.
+* This R-package is still in development, and therefore some of the functions may change in a near future. 
+* The R-package `RGPR` is hosted on [GitHub](https://github.com/) at [https://github.com/emanuelhuber/RGPR](https://github.com/emanuelhuber/RGPR). 
+* You can contribute to the development of `RGPR`: 
+    1. create an account on [GitHub](https://github.com/),
+    2. [fork](https://guides.github.com/activities/forking/) `RGPR`, 
+    3. change the code
+    4. make a [pull request](https://guides.github.com/activities/forking/#making-a-pull-request) (sumbmit your modifications).
 
-If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german)
-
-> `emanuel.huber@alumni.ethz.ch`
+If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
 
 # Objectives of this tutorial
 
 * Learn how to install the R-package `RGPR`.
 * Learn how to load the R-package `RGPR` in your current R session.
 
+<!--
 In this tutorial the code snippets are in monospaced typewriter font like in the following example:
 
 ```r
@@ -40,19 +48,20 @@ Don't hesitate to consult the help files and to search for help on the internet.
 ```r
 ?mean    # open the help file related to the function mean()
 ```
+--> 
 
 # Software
 1. Download R from the [R Cran website](http://cran.r-project.org) and install it.
 2. Optionally install a R-GUI:
-  * [Notepad++](https://notepad-plus-plus.org/) combined with [NppToR](https://sourceforge.net/projects/npptor/)
-  * [Rstudio](https://www.rstudio.com/)
-  * [RKward](https://rkward.kde.org/)
+    * [Notepad++](https://notepad-plus-plus.org/) combined with [NppToR](https://sourceforge.net/projects/npptor/)
+    * [Rstudio](https://www.rstudio.com/)
+    * [RKward](https://rkward.kde.org/)
 3. If necessary, learn some R basics:
-  * [An interactive introduction to R](http://tryr.codeschool.com)
-  * [Short R introduction](http://cran.r-project.org/doc/contrib/Torfs+Brauer-Short-R-Intro.pdf) 
-  * [R course](http://www.rochester.edu/college/psc/thestarlab/help/rcourse/R-Course.pdf)
+    * [An interactive introduction to R](http://tryr.codeschool.com)
+    * [Short R introduction](http://cran.r-project.org/doc/contrib/Torfs+Brauer-Short-R-Intro.pdf) 
+    * [R course](http://www.rochester.edu/college/psc/thestarlab/help/rcourse/R-Course.pdf)
   
-If you are a R-beginner I recommand you to start with [Rstudio](https://www.rstudio.com/) that provide a nice interface for R. With Windows, I prefer to work with [Notepad++](https://notepad-plus-plus.org/) (the best text editor I know) combined with [NppToR](https://sourceforge.net/projects/npptor/). With Linux, I work with [RKward](https://rkward.kde.org/) (because [Notepad++](https://notepad-plus-plus.org/) is not available for linux).
+If you are a R-beginner I recommand you to start with [Rstudio](https://www.rstudio.com/) that provides a nice interface for R. With Windows, I prefer to work with [Notepad++](https://notepad-plus-plus.org/) (the best text editor I know) combined with [NppToR](https://sourceforge.net/projects/npptor/). With Linux, I work with [RKward](https://rkward.kde.org/) (because [Notepad++](https://notepad-plus-plus.org/) is not available for linux).
   
 # How to install `RGPR`
 Start R in the terminal (by entering `R`) or through a R GUI.
@@ -94,6 +103,8 @@ The installation of `RGPR` has to be done only once. But each time you start a R
 library(RGPR)   # load RGPR in the current R session
 ```
 
+**But I recommand you to always re-install `RGPR` because this package is still in development**
+
 # R code
 
 Here is the complete code listing:
@@ -104,7 +115,7 @@ library("devtools")              # load "devtools" into the current R session
 devtools::install_github("emanuelhuber/RGPR")  # install RGPR
 library(RGPR)                    # load RGPR in the current R session
 ```
-<!---
+<!--
 # Suggested file organisation
 ```
 /name_of_survey   (put your R-script)

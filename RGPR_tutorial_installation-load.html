@@ -11,7 +11,7 @@
 
 <meta name="author" content="Emanuel Huber (emanuel.huber@alumni.ethz.ch)" />
 
-<meta name="date" content="2016-04-11" />
+<meta name="date" content="2017-11-15" />
 
 <title>RGPR tutorial - Getting started</title>
 
@@ -123,7 +123,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">RGPR tutorial - Getting started</h1>
 <h4 class="author"><em>Emanuel Huber (<a href="mailto:emanuel.huber@alumni.ethz.ch">emanuel.huber@alumni.ethz.ch</a>)</em></h4>
-<h4 class="date"><em>11 April 2016</em></h4>
+<h4 class="date"><em>15 November 2017</em></h4>
 
 </div>
 
@@ -137,50 +137,69 @@ $(document).ready(function () {
 </ul>
 </div>
 
+<hr />
 <p><code>RGPR</code> is a package for <a href="https://cran.r-project.org/">R</a> to read, write, analyse and visualise ground-penetrating radar (GPR) data.</p>
-<blockquote>
-<p>R is a [free] programming language and software environment for statistical computing and graphics supported by the R Foundation for Statistical Computing (<a href="https://en.wikipedia.org/wiki/R_%28programming_language%29">Wikipedia &gt; R</a>).</p>
-</blockquote>
-<p><strong>Note</strong>: This R-package is still in development, and therefore some of the functions may change in a near future. The R-package <code>RGPR</code> is hosted on <a href="https://github.com/">GitHub</a> at <a href="https://github.com/emanuelhuber/RGPR" class="uri">https://github.com/emanuelhuber/RGPR</a>. You can contribute to the development of <code>RGPR</code>: create an account on <a href="https://github.com/">GitHub</a>, <a href="https://guides.github.com/activities/forking/">fork</a> <code>RGPR</code>, improve it and sumbmit your modifications.</p>
-<p>If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german)</p>
-<blockquote>
-<p><code>emanuel.huber@alumni.ethz.ch</code></p>
-</blockquote>
+<p><strong>Note</strong>:</p>
+<ul>
+<li>This R-package is still in development, and therefore some of the functions may change in a near future.</li>
+<li>The R-package <code>RGPR</code> is hosted on <a href="https://github.com/">GitHub</a> at <a href="https://github.com/emanuelhuber/RGPR" class="uri">https://github.com/emanuelhuber/RGPR</a>.</li>
+<li>You can contribute to the development of <code>RGPR</code>:
+<ol style="list-style-type: decimal">
+<li>create an account on <a href="https://github.com/">GitHub</a>,</li>
+<li><a href="https://guides.github.com/activities/forking/">fork</a> <code>RGPR</code>,</li>
+<li>change the code</li>
+<li>make a <a href="https://guides.github.com/activities/forking/#making-a-pull-request">pull request</a> (sumbmit your modifications).</li>
+</ol></li>
+</ul>
+<p>If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german): <a href="mailto:emanuel.huber@alumni.ethz.ch">emanuel.huber@alumni.ethz.ch</a>.</p>
 <div id="objectives-of-this-tutorial" class="section level1">
 <h1><span class="header-section-number">1</span> Objectives of this tutorial</h1>
 <ul>
 <li>Learn how to install the R-package <code>RGPR</code>.</li>
 <li>Learn how to load the R-package <code>RGPR</code> in your current R session.</li>
 </ul>
-<p>In this tutorial the code snippets are in monospaced typewriter font like in the following example:</p>
-<pre class="r"><code>1 + exp(1:10)</code></pre>
-<p>The R output are preceded by a double hash (<code>##</code>). The following R output is from the code snippet above.</p>
-<pre><code>##  [1]     3.718282     8.389056    21.085537    55.598150   149.413159
-##  [6]   404.428793  1097.633158  2981.957987  8104.083928 22027.465795</code></pre>
-<p>Create a text file and save it with the <code>.R</code> extension (the extension for the R-script files). Then copy the code snippets into your R-script file and adapt them to your needs. To run the code in R, copy the code and paste it into the R console. You can also manually enter the code.</p>
-<p>Don’t hesitate to consult the help files and to search for help on the internet. For example, to see the help for the function <code>mean()</code>, enter:</p>
-<pre class="r"><code>?mean    # open the help file related to the function mean()</code></pre>
+<!--
+In this tutorial the code snippets are in monospaced typewriter font like in the following example:
+
+```r
+1 + exp(1:10)
+```
+
+The R output are preceded by a double hash (`##`). The following R output is from the code snippet above.
+
+```
+##  [1]     3.718282     8.389056    21.085537    55.598150   149.413159
+##  [6]   404.428793  1097.633158  2981.957987  8104.083928 22027.465795
+```
+
+Create a text file and save it with the `.R` extension (the extension for the R-script files). Then copy the code snippets into your R-script file and adapt them to your needs. To run the code in R, copy the code and paste it into the R console. You can also manually enter the code.
+
+Don't hesitate to consult the help files and to search for help on the internet. For example, to see the help for the function `mean()`, enter:
+
+
+```r
+?mean    # open the help file related to the function mean()
+```
+-->
 </div>
 <div id="software" class="section level1">
 <h1><span class="header-section-number">2</span> Software</h1>
 <ol style="list-style-type: decimal">
 <li>Download R from the <a href="http://cran.r-project.org">R Cran website</a> and install it.</li>
-<li>Optionally install a R-GUI:</li>
-</ol>
+<li>Optionally install a R-GUI:
 <ul>
 <li><a href="https://notepad-plus-plus.org/">Notepad++</a> combined with <a href="https://sourceforge.net/projects/npptor/">NppToR</a></li>
 <li><a href="https://www.rstudio.com/">Rstudio</a></li>
 <li><a href="https://rkward.kde.org/">RKward</a></li>
-</ul>
-<ol start="3" style="list-style-type: decimal">
-<li>If necessary, learn some R basics:</li>
-</ol>
+</ul></li>
+<li>If necessary, learn some R basics:
 <ul>
 <li><a href="http://tryr.codeschool.com">An interactive introduction to R</a></li>
 <li><a href="http://cran.r-project.org/doc/contrib/Torfs+Brauer-Short-R-Intro.pdf">Short R introduction</a></li>
 <li><a href="http://www.rochester.edu/college/psc/thestarlab/help/rcourse/R-Course.pdf">R course</a></li>
-</ul>
-<p>If you are a R-beginner I recommand you to start with <a href="https://www.rstudio.com/">Rstudio</a> that provide a nice interface for R. With Windows, I prefer to work with <a href="https://notepad-plus-plus.org/">Notepad++</a> (the best text editor I know) combined with <a href="https://sourceforge.net/projects/npptor/">NppToR</a>. With Linux, I work with <a href="https://rkward.kde.org/">RKward</a> (because <a href="https://notepad-plus-plus.org/">Notepad++</a> is not available for linux).</p>
+</ul></li>
+</ol>
+<p>If you are a R-beginner I recommand you to start with <a href="https://www.rstudio.com/">Rstudio</a> that provides a nice interface for R. With Windows, I prefer to work with <a href="https://notepad-plus-plus.org/">Notepad++</a> (the best text editor I know) combined with <a href="https://sourceforge.net/projects/npptor/">NppToR</a>. With Linux, I work with <a href="https://rkward.kde.org/">RKward</a> (because <a href="https://notepad-plus-plus.org/">Notepad++</a> is not available for linux).</p>
 </div>
 <div id="how-to-install-rgpr" class="section level1">
 <h1><span class="header-section-number">3</span> How to install <code>RGPR</code></h1>
@@ -200,6 +219,7 @@ $(document).ready(function () {
 <h1><span class="header-section-number">4</span> How to load <code>RGPR</code></h1>
 <p>The installation of <code>RGPR</code> has to be done only once. But each time you start a R session and want to use <code>RGPR</code>, you must first load it by entering</p>
 <pre class="r"><code>library(RGPR)   # load RGPR in the current R session</code></pre>
+<p><strong>But I recommand you to always re-install <code>RGPR</code> because this package is still in development</strong></p>
 </div>
 <div id="r-code" class="section level1">
 <h1><span class="header-section-number">5</span> R code</h1>
@@ -208,7 +228,7 @@ $(document).ready(function () {
 library(&quot;devtools&quot;)              # load &quot;devtools&quot; into the current R session
 devtools::install_github(&quot;emanuelhuber/RGPR&quot;)  # install RGPR
 library(RGPR)                    # load RGPR in the current R session</code></pre>
-<!---
+<!--
 # Suggested file organisation
 ```
 /name_of_survey   (put your R-script)

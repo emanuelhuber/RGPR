@@ -1,18 +1,25 @@
 # RGPR tutorial - RGPRsurvey, adding coordinates & processing
 Emanuel Huber (emanuel.huber@alumni.ethz.ch)  
-11 April 2016  
+`r format(Sys.Date(), "%d %B %Y")`  
 
 
+
+***
 
 `RGPR` is a package for [R](https://cran.r-project.org/) to read, write, analyse and visualise ground-penetrating radar (GPR) data.
+  
 
-> R is a [free] programming language and software environment for statistical computing and graphics supported by the R Foundation for Statistical Computing ([Wikipedia > R](https://en.wikipedia.org/wiki/R_%28programming_language%29)).
+**Note**: 
 
-**Note**: This R-package is still in development, and therefore some of the functions may change in a near future. The R-package `RGPR` is hosted on [GitHub](https://github.com/) at [https://github.com/emanuelhuber/RGPR](https://github.com/emanuelhuber/RGPR). You can contribute to the development of `RGPR`: create an account on [GitHub](https://github.com/), [fork](https://guides.github.com/activities/forking/) `RGPR`, improve it and sumbmit your modifications.
+* This R-package is still in development, and therefore some of the functions may change in a near future. 
+* The R-package `RGPR` is hosted on [GitHub](https://github.com/) at [https://github.com/emanuelhuber/RGPR](https://github.com/emanuelhuber/RGPR). 
+* You can contribute to the development of `RGPR`: 
+    1. create an account on [GitHub](https://github.com/),
+    2. [fork](https://guides.github.com/activities/forking/) `RGPR`, 
+    3. change the code
+    4. make a [pull request](https://guides.github.com/activities/forking/#making-a-pull-request) (sumbmit your modifications).
 
-If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german)
-
-> `emanuel.huber@alumni.ethz.ch`
+If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
 
 # Objectives of this tutorial
 * Learn how to add coordinates to the GPR data.
@@ -20,6 +27,7 @@ If you have any questions, comments or wishes, etc. feel free to contact me (in 
 
 However, this tutorial will not explain you the math/algorithms behind the different processing methods.
 
+<!--
 In this tutorial the code snippets are in monospaced typewriter font like in the following example:
 
 ```r
@@ -41,6 +49,7 @@ Don't hesitate to consult the help files and to search for help on the internet.
 ```r
 ?mean    # open the help file related to the function mean()
 ```
+-->
 
 # Preliminary
 
@@ -201,12 +210,12 @@ A02
 
 ```
 ## *** Class GPR ***
-##  name = LINE02
-##  filepath = /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
+##  name        = LINE02
+##  filepath    = /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
 ##  description = 
-##  survey date =  2014-04-25 
-##  Reflection, 100MHz,Window length=399.6ns, dz=0.4ns
-##  275 traces,68.5m long
+##  survey date = 2014-04-25
+##  Reflection, 100 MHz,Window length = 399.6 ns, dz = 0.4 ns
+##  275 traces,68.5 m
 ##  ****************
 ```
 
@@ -220,12 +229,12 @@ A02
 
 ```
 ## *** Class GPR ***
-##  name = LINE02
-##  filepath = /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
+##  name        = LINE02
+##  filepath    = /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
 ##  description = 
-##  survey date =  2014-04-25 
-##  Reflection, 100MHz,Window length=399.6ns, dz=0.4ns
-##  275 traces,68.5m long
+##  survey date = 2014-04-25
+##  Reflection, 100 MHz,Window length = 399.6 ns, dz = 0.4 ns
+##  275 traces,68.5 m
 ##  ****************
 ```
 
@@ -330,9 +339,21 @@ exportFid(mySurvey, fPath = file.path(getwd(), "coord/FID/"))
 
 ```
 ## File "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE00.txt" created!
+```
+
+```
 ## File "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE01.txt" created!
+```
+
+```
 ## File "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE02.txt" created!
+```
+
+```
 ## File "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE03.txt" created!
+```
+
+```
 ## File "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE04.txt" created!
 ```
 
@@ -383,9 +404,21 @@ FIDs <- readFID(FidFiles)
 
 ```
 ## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE00.txt...
+```
+
+```
 ## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE01.txt...
+```
+
+```
 ## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE02.txt...
+```
+
+```
 ## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE03.txt...
+```
+
+```
 ## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE04.txt...
 ```
 
@@ -503,7 +536,7 @@ plot(mySurvey[[1]], addTopo=TRUE)
 ```
 
 ```
-## time to depth conversion with constant velocity 0.1
+## time to depth conversion with constant velocity0.1
 ```
 
 ![](RGPR_tutorial_RGPR-survey_files/figure-html/unnamed-chunk-28-1.png)<!-- -->
@@ -586,9 +619,3 @@ and check the results:
 plot(procSurvey[[1]], addTopo=TRUE)
 plot3DRGL(procSurvey, addTopo = TRUE)
 ```
-
-***
-
-Notes
-
-* This document was created with R-markdown and knitr.

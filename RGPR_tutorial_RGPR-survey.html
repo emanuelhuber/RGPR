@@ -11,7 +11,7 @@
 
 <meta name="author" content="Emanuel Huber (emanuel.huber@alumni.ethz.ch)" />
 
-<meta name="date" content="2016-04-11" />
+<meta name="date" content="2017-11-15" />
 
 <title>RGPR tutorial - RGPRsurvey, adding coordinates &amp; processing</title>
 
@@ -123,7 +123,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">RGPR tutorial - RGPRsurvey, adding coordinates &amp; processing</h1>
 <h4 class="author"><em>Emanuel Huber (<a href="mailto:emanuel.huber@alumni.ethz.ch">emanuel.huber@alumni.ethz.ch</a>)</em></h4>
-<h4 class="date"><em>11 April 2016</em></h4>
+<h4 class="date"><em>15 November 2017</em></h4>
 
 </div>
 
@@ -156,15 +156,21 @@ $(document).ready(function () {
 </ul>
 </div>
 
+<hr />
 <p><code>RGPR</code> is a package for <a href="https://cran.r-project.org/">R</a> to read, write, analyse and visualise ground-penetrating radar (GPR) data.</p>
-<blockquote>
-<p>R is a [free] programming language and software environment for statistical computing and graphics supported by the R Foundation for Statistical Computing (<a href="https://en.wikipedia.org/wiki/R_%28programming_language%29">Wikipedia &gt; R</a>).</p>
-</blockquote>
-<p><strong>Note</strong>: This R-package is still in development, and therefore some of the functions may change in a near future. The R-package <code>RGPR</code> is hosted on <a href="https://github.com/">GitHub</a> at <a href="https://github.com/emanuelhuber/RGPR" class="uri">https://github.com/emanuelhuber/RGPR</a>. You can contribute to the development of <code>RGPR</code>: create an account on <a href="https://github.com/">GitHub</a>, <a href="https://guides.github.com/activities/forking/">fork</a> <code>RGPR</code>, improve it and sumbmit your modifications.</p>
-<p>If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german)</p>
-<blockquote>
-<p><code>emanuel.huber@alumni.ethz.ch</code></p>
-</blockquote>
+<p><strong>Note</strong>:</p>
+<ul>
+<li>This R-package is still in development, and therefore some of the functions may change in a near future.</li>
+<li>The R-package <code>RGPR</code> is hosted on <a href="https://github.com/">GitHub</a> at <a href="https://github.com/emanuelhuber/RGPR" class="uri">https://github.com/emanuelhuber/RGPR</a>.</li>
+<li>You can contribute to the development of <code>RGPR</code>:
+<ol style="list-style-type: decimal">
+<li>create an account on <a href="https://github.com/">GitHub</a>,</li>
+<li><a href="https://guides.github.com/activities/forking/">fork</a> <code>RGPR</code>,</li>
+<li>change the code</li>
+<li>make a <a href="https://guides.github.com/activities/forking/#making-a-pull-request">pull request</a> (sumbmit your modifications).</li>
+</ol></li>
+</ul>
+<p>If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german): <a href="mailto:emanuel.huber@alumni.ethz.ch">emanuel.huber@alumni.ethz.ch</a>.</p>
 <div id="objectives-of-this-tutorial" class="section level1">
 <h1><span class="header-section-number">1</span> Objectives of this tutorial</h1>
 <ul>
@@ -172,14 +178,29 @@ $(document).ready(function () {
 <li>Learn how to plot the GPR data from your survey all together.</li>
 </ul>
 <p>However, this tutorial will not explain you the math/algorithms behind the different processing methods.</p>
-<p>In this tutorial the code snippets are in monospaced typewriter font like in the following example:</p>
-<pre class="r"><code>1 + exp(1:10)</code></pre>
-<p>The R output are preceded by a double hash (<code>##</code>). The following R output is from the code snippet above.</p>
-<pre><code>##  [1]     3.718282     8.389056    21.085537    55.598150   149.413159
-##  [6]   404.428793  1097.633158  2981.957987  8104.083928 22027.465795</code></pre>
-<p>Create a text file and save it with the <code>.R</code> extension (the extension for the R-script files). Then copy the code snippets into your R-script file and adapt them to your needs. To run the code in R, copy the code and paste it into the R console. You can also manually enter the code.</p>
-<p>Don’t hesitate to consult the help files and to search for help on the internet. For example, to see the help for the function <code>mean()</code>, enter:</p>
-<pre class="r"><code>?mean    # open the help file related to the function mean()</code></pre>
+<!--
+In this tutorial the code snippets are in monospaced typewriter font like in the following example:
+
+```r
+1 + exp(1:10)
+```
+
+The R output are preceded by a double hash (`##`). The following R output is from the code snippet above.
+
+```
+##  [1]     3.718282     8.389056    21.085537    55.598150   149.413159
+##  [6]   404.428793  1097.633158  2981.957987  8104.083928 22027.465795
+```
+
+Create a text file and save it with the `.R` extension (the extension for the R-script files). Then copy the code snippets into your R-script file and adapt them to your needs. To run the code in R, copy the code and paste it into the R console. You can also manually enter the code.
+
+Don't hesitate to consult the help files and to search for help on the internet. For example, to see the help for the function `mean()`, enter:
+
+
+```r
+?mean    # open the help file related to the function mean()
+```
+-->
 </div>
 <div id="preliminary" class="section level1">
 <h1><span class="header-section-number">2</span> Preliminary</h1>
@@ -285,12 +306,12 @@ LINES &lt;- file.path(getwd(), &quot;rawGPR&quot;, allFilesinDir[selDT1])</code>
 <pre class="r"><code>A02 &lt;- mySurvey[[3]]
 A02</code></pre>
 <pre><code>## *** Class GPR ***
-##  name = LINE02
-##  filepath = /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
+##  name        = LINE02
+##  filepath    = /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
 ##  description = 
-##  survey date =  2014-04-25 
-##  Reflection, 100MHz,Window length=399.6ns, dz=0.4ns
-##  275 traces,68.5m long
+##  survey date = 2014-04-25
+##  Reflection, 100 MHz,Window length = 399.6 ns, dz = 0.4 ns
+##  275 traces,68.5 m
 ##  ****************</code></pre>
 <ul>
 <li>Or get the <code>GPR</code> object with the function <code>getGPR()</code></li>
@@ -298,12 +319,12 @@ A02</code></pre>
 <pre class="r"><code>A02 &lt;- getGPR(mySurvey, id = &quot;LINE02&quot;)
 A02</code></pre>
 <pre><code>## *** Class GPR ***
-##  name = LINE02
-##  filepath = /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
+##  name        = LINE02
+##  filepath    = /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
 ##  description = 
-##  survey date =  2014-04-25 
-##  Reflection, 100MHz,Window length=399.6ns, dz=0.4ns
-##  275 traces,68.5m long
+##  survey date = 2014-04-25
+##  Reflection, 100 MHz,Window length = 399.6 ns, dz = 0.4 ns
+##  275 traces,68.5 m
 ##  ****************</code></pre>
 <p>You can also directly plot the GPR data with:</p>
 <pre class="r"><code># instead of &#39;A02 &lt;- mySurvey[[3]]&#39; and &#39;plot(A02)&#39; do:
@@ -370,11 +391,11 @@ END     2622300.41, 1256921.53 343.5 </code></pre>
 <li>Now, you have to indicate R to which traces the coordinates correspond. That means, for each GPR data you have to create a file that contains the coordinates with the associated trace number. This is a lot of work. To help you to create these files, use the function <code>exportFid()</code>. This function create for each GPR data a file containing the trace number, position for the start and end positions as well as for the fiducial makers.</li>
 </ol>
 <pre class="r"><code>exportFid(mySurvey, fPath = file.path(getwd(), &quot;coord/FID/&quot;))</code></pre>
-<pre><code>## File &quot;/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE00.txt&quot; created!
-## File &quot;/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE01.txt&quot; created!
-## File &quot;/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE02.txt&quot; created!
-## File &quot;/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE03.txt&quot; created!
-## File &quot;/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE04.txt&quot; created!</code></pre>
+<pre><code>## File &quot;/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE00.txt&quot; created!</code></pre>
+<pre><code>## File &quot;/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE01.txt&quot; created!</code></pre>
+<pre><code>## File &quot;/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE02.txt&quot; created!</code></pre>
+<pre><code>## File &quot;/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE03.txt&quot; created!</code></pre>
+<pre><code>## File &quot;/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FID//LINE04.txt&quot; created!</code></pre>
 <ol start="2" style="list-style-type: decimal">
 <li>Now, add to each FID files three columns corresponding to the trace coordinates. These columns must have as header “N”, “E” and “Z” (for North, East and vertical elevation). Why not “x”, “y” and “z”? Because in topography, “x” defines sometimes the “North”, so it may be confusing…</li>
 </ol>
@@ -401,11 +422,11 @@ FidFiles[3] &lt;- file.path(getwd(), &quot;coord/FIDmod/LINE02.txt&quot;)
 FidFiles[4] &lt;- file.path(getwd(), &quot;coord/FIDmod/LINE03.txt&quot;)
 FidFiles[5] &lt;- file.path(getwd(), &quot;coord/FIDmod/LINE04.txt&quot;)</code></pre>
 <pre class="r"><code>FIDs &lt;- readFID(FidFiles)</code></pre>
-<pre><code>## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE00.txt...
-## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE01.txt...
-## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE02.txt...
-## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE03.txt...
-## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE04.txt...</code></pre>
+<pre><code>## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE00.txt...</code></pre>
+<pre><code>## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE01.txt...</code></pre>
+<pre><code>## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE02.txt...</code></pre>
+<pre><code>## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE03.txt...</code></pre>
+<pre><code>## read /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/coord/FIDmod/LINE04.txt...</code></pre>
 <p>If R throw the following error message “Error in readFID(FidFiles) : The headers should be”E“,”N“,”Z“,”TRACE“!” check that the three columns have been added to all the files and that the headers of these columns are correctly set (“N”, “E”, “Z”; the order does not matter).</p>
 <ol start="4" style="list-style-type: decimal">
 <li>Interpolate the coordinates of the traces for all the GPR profiles according to the modified fiducial marker files. The function <code>interpPos()</code> interpolate the position of the traces from the known trace positions and add the interpolated trace position to the object <code>mySurvey</code>.</li>
@@ -455,7 +476,7 @@ mySurvey &lt;- interpPos(mySurvey, FIDs) </code></pre>
 <h2><span class="header-section-number">5.2</span> Plot the GPR data</h2>
 <p>To plot the first GPR record, enter:</p>
 <pre class="r"><code>plot(mySurvey[[1]], addTopo=TRUE)</code></pre>
-<pre><code>## time to depth conversion with constant velocity 0.1</code></pre>
+<pre><code>## time to depth conversion with constant velocity0.1</code></pre>
 <p><img src="RGPR_tutorial_RGPR-survey_files/figure-html/unnamed-chunk-28-1.png" /><!-- --></p>
 </div>
 <div id="three-dimensional-plot-of-the-gpr-data" class="section level2">
@@ -506,11 +527,6 @@ procLINES[5] &lt;- file.path(procDir, &quot;LINE04.rds&quot;)</code></pre>
 <p>and check the results:</p>
 <pre class="r"><code>plot(procSurvey[[1]], addTopo=TRUE)
 plot3DRGL(procSurvey, addTopo = TRUE)</code></pre>
-<hr />
-<p>Notes</p>
-<ul>
-<li>This document was created with R-markdown and knitr.</li>
-</ul>
 </div>
 </div>
 

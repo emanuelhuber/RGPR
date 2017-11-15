@@ -2,20 +2,20 @@
 title: "RGPR tutorial - RGPRsurvey, adding coordinates & processing"
 author: "Emanuel Huber (emanuel.huber@alumni.ethz.ch)"
 date: '`r format(Sys.Date(), "%d %B %Y")`'
-output: 
-  pdf_document:
-    toc: yes
-    number_sections: true
-    highlight: tango
-  html_document: 
+output:
+  html_document:
     fig_caption: yes
+    includes:
+      in_header: header.html
     keep_md: yes
     number_sections: yes
     self_contained: no
     theme: default
     toc: yes
-    includes:
-      in_header: header.html
+  pdf_document:
+    highlight: tango
+    number_sections: yes
+    toc: yes
 linkcolor: red
 urlcolor: blue
 ---

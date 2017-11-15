@@ -236,8 +236,8 @@ setClass(
     key <-  trimStr(x$hd2[,1])
     test <- key!=""
     key <- key[test]
-    key2 <- gsub("[[:punct:]]",replacement="",key)
-    key2 <- gsub(" ",replacement="_",key2)
+    key2 <- gsub("[[:punct:]]", replacement = "", key)
+    key2 <- gsub(" ", replacement = "_", key2)
     nameL <- trimStr(x$hd2[test,2])
     names(nameL) <- as.character(key2)
     sup_hd2 <- as.list(nameL)
@@ -334,8 +334,14 @@ setClass(
   }
   
   # OK
-  freqS <- .getHD(x$hd, "ANTENNAS", position=TRUE, number = FALSE)
-  freq <- as.numeric(gsub('[^0-9]', '', freqS[1]))
+  # X <- "GX450 HDR (v.1)=3" 
+  X <- .getHD(x$hd, "ANTENNAS", position=TRUE, number = FALSE)
+  X2 <- strsplit(X, " ")
+  gsubwrap <- function(x, ...){
+    grep('[0-9]{2,3}', x, value = TRUE)
+  }
+  freq <- as.numeric(gsub('[^0-9]', '', sapply(X2, gsubwrap)))
+  # freq <- as.numeric(gsub('[^0-9]', '', freqS[1]))
   if(!is.null(freq) && !is.na(freq)){
     pos_used[freqS[2]] <- 1L
   }else{

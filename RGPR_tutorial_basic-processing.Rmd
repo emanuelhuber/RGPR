@@ -381,7 +381,7 @@ may be also deteriored when eliminating noise.
 
 ## Time gain
 Apply a gain to compensate the signal attenuation. Three types of gain are 
-disponible:
+available:
 
 * power gain (`type = power`): \(A_g(t) = A(t)\cdot t^\alpha \) with 
 \(\alpha = 1 \) per default.

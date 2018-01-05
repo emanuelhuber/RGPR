@@ -2890,24 +2890,40 @@ function(x,addTopo = FALSE, clip = NULL, normalize = NULL,
 #' @rdname plotAmpl
 #' @export
 setMethod("plotAmpl", "GPR", function(x, FUN = mean, add = FALSE, 
-            all = FALSE, ...){
+            all = FALSE, plotLog = TRUE, ...){
 #   op <- par(no.readonly=TRUE)
   AMP <- apply(abs(x@data),1,FUN,...)
-  z <- seq(0,by=x@dz,length.out=length(AMP))
+  ylab <- "mV"
+  if(plotLog == TRUE){
+    AMP <- log(AMP)
+    ylab <- "log(mV)"
+  }
+  #z <- seq(0,by=x@dz,length.out=length(AMP))
+  z <- depth(x)
   if(!add){
     par(mar=c(5, 4, 4, 2)+0.1)
-      plot(z, log(AMP), type = "l", xlab = x@depthunit, ylab = "log(mV)", ...)
+      plot(z, AMP, type = "l", xlab = x@depthunit, ylab = ylab, ...)
     if(all == TRUE){
-      nothing <- apply(log(abs(x@data)), 2, lines, x = z,
-                    col = rgb(0.2,0.2,0.2,7/max(ncol(A),7)))
+      if(plotLog == TRUE){
+        invisble(apply(log(abs(x@data)), 2, lines, x = z, 
+                          col=rgb(0.2,0.2,0.2,7/max(ncol(A),7))))
+      }else{
+        invisble(apply((abs(x@data)), 2, lines, x = z, 
+                          col=rgb(0.2,0.2,0.2,7/max(ncol(A),7))))
+      }
     }
     title(x@name)
   }else{
     if(all == TRUE){
-      nothing <- apply(log(abs(x@data)), 2, lines, x = z, 
-                        col=rgb(0.2,0.2,0.2,7/max(ncol(A),7)))
+      if(plotLog == TRUE){
+        invisble(apply(log(abs(x@data)), 2, lines, x = z, 
+                          col=rgb(0.2,0.2,0.2,7/max(ncol(A),7))))
+      }else{
+        invisble(apply((abs(x@data)), 2, lines, x = z, 
+                          col=rgb(0.2,0.2,0.2,7/max(ncol(A),7))))
+      }
     }
-    lines(z, log(AMP), ...)
+    lines(z, AMP, ...)
   }
 #   par(op)
   } 

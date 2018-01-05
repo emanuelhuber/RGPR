@@ -2486,10 +2486,10 @@ setMethod("deconv", "GPR", function(x,
   if(length(x@date) > 0){
     topaste <- c(topaste, paste0("survey date = ", x@date,"\n"))
   }
-  topaste <- c(topaste, paste0(x@surveymode,", ",x@freq, " MHz,", 
+  topaste <- c(topaste, paste0(x@surveymode,", ",x@freq, " MHz, ", 
                 "Window length = ",(nrow(x@data)-1)*x@dz, " ", x@depthunit,
                 ", dz = ",x@dz, " ", x@depthunit, "\n"))
-  topaste <- c(topaste, paste0(ncol(x@data), " traces,", 
+  topaste <- c(topaste, paste0(ncol(x@data), " traces, ", 
                 diff(range(x@pos))," ",x@posunit,"\n"))
   if(length(x@proc)>0){
     topaste <- c(topaste, paste("> PROCESSING\n"))

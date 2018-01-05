@@ -3,10 +3,24 @@
 \docType{methods}
 \name{dcshift}
 \alias{dcshift}
-\title{Direct-current removal}
+\title{Direct-Current shift removal}
 \usage{
 \S4method{dcshift}{GPR}(x, u = 1:10, FUN = mean)
 }
+\arguments{
+\item{x}{An object of the class `GPR`.}
+
+\item{u}{Number of time samples used to evaluate the DC-shift.}
+
+\item{FUN}{A function to apply on the first `u` time samples (default is 
+`mean`; alternatively `median` could be used or any user defined function).}
+
+\item{n}{[\code{integer(1)}]\cr
+My argument.
+Default is 1.}
+}
 \description{
-Direct-current removal
+The direct-current shift is estimated for each traces based on a specified 
+number of time samples (normally the samples before time-zero). Then, the
+direct-current shift of every trace is substracted from every trace.
 }

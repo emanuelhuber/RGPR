@@ -1616,8 +1616,18 @@ setReplaceMethod(
 
 #================= PROCESSING ===============#
 #----------------- DC-SHIFT
-#' Direct-current removal
+#' Direct-Current shift removal
 #' 
+#' The direct-current shift is estimated for each traces based on a specified 
+#' number of time samples (normally the samples before time-zero). Then, the
+#' direct-current shift of every trace is substracted from every trace.
+#' @param x An object of the class `GPR`.
+#' @param n [\code{integer(1)}]\cr
+#'   My argument.
+#'   Default is 1.
+#' @param u Number of time samples used to evaluate the DC-shift. 
+#' @param FUN A function to apply on the first `u` time samples (default is 
+#' `mean`; alternatively `median` could be used or any user defined function).
 #' @name dcshift
 #' @rdname dcshift
 #' @export

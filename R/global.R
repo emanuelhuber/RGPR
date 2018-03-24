@@ -951,6 +951,12 @@ setGenericVerif("plotAmpl", function(x, FUN = mean, add = FALSE,
                 all = FALSE,...) standardGeneric("plotAmpl"))
 setGenericVerif("ampl", function(x, FUN=mean, ...) standardGeneric("ampl"))
 
+#' @name trRmDuplicates
+#' @rdname trRmDuplicates
+#' @export
+setGenericVerif("trRmDuplicates", function(x, tol = NULL) 
+  standardGeneric("trRmDuplicates"))
+
 #' @name interpPos
 #' @rdname interpPos
 #' @export

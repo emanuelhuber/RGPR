@@ -14,5 +14,5 @@
 \description{
 If the GPR object consists of a single trace, wiggle plot is shown.
 
-If the GPR object consists of a single trace, wiggle plot is shown.
+Plot GPR suvey lines
 }

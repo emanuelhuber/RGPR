@@ -23,15 +23,21 @@ plots are displayed.}
 trace elevation \code{z} will be extracted based on the 
 trace position \code{(x, y)} on the raster.}
 
-\item{tol}{Tolerance values to remove duplicated measured trace positions.
+\item{tol}{Length-one numeric vector: if the horizontal distance between 
+two consecutive trace positions is smaller than \code{tol}, 
+then the traces in between as well as the second trace
+position are removed.
 If \code{tol = NULL}, \code{tol} is set equal to
 \code{sqrt(.Machine$double.eps)}.}
 
 \item{method}{A length-three character vector defining the interpolation
-methods (same methods as in \code{signal::interp1}). 
-First method for trace number interpolation, second for
-horizontal position interpolation, third for vertical position
-interpolation}
+methods (same methods as in \code{signal::interp1}:
+"linear", "nearest", "pchip", "cubic", and "spline"). 
+First element for the interpolation of the 
+inter-trace distances, 
+second element for the interpolation of the horizontal 
+trace positions, and third element for the interpolation
+of the vertical trace positions.}
 }
 \description{
 Interpolate trace positions from measurement (e.g., GPS).

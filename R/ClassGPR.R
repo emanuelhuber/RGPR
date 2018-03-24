@@ -1287,6 +1287,7 @@ setReplaceMethod(
     value <- as.matrix(value)
     if(ncol(x@data) == nrow(value) && ncol(value) == 3){
       x@coord <- value
+      x <- trRmDuplicates(x)
       x@proc <- c(x@proc, "coord<-")
     }else{
       stop("Dimension problem!!")
@@ -2949,6 +2950,51 @@ setMethod("spec", "GPR", function(x, type = c("f-x","f-k"), plotSpec = TRUE,
   } 
 )
 
+
+#--- REMOVE DUPLICATED TRACES (TRACES WITH (ALMOST) SAME POSITIONS) ---#
+#' Remove traces with duplicated trace positions
+#' 
+#' @param x   An object of the class GPR
+#' @param tol Length-one numeric vector: if the horizontal distance between two 
+#'            consecutive traces is smaller than \code{tol}, then
+#'            the second trace is removed.
+#'            If \code{tol = NULL}, \code{tol} is set equal to
+#'            \code{sqrt(.Machine$double.eps)}.
+#' @name trRmDuplicates 
+#' @rdname trRmDuplicates            
+#' @export
+setMethod("trRmDuplicates", "GPR", function(x, tol = NULL){
+  if(length(x@coord) == 0 ){
+    warning("No trace coordinates!")
+    return(x)
+  }
+  dist2D <- posLine(x@coord[, 1:2], last = FALSE)
+  # in 'x' and 'topo'
+  if(is.null(tol))  tol <- sqrt(.Machine$double.eps)
+  tdbl <- which(abs(diff(dist2D)) < tol)
+  # x <- x[, -(tdbl + 1)]
+  diff(tdbl)
+  check <- 0L
+  while(length(tdbl) > 0){
+    rmTr <- c()
+    skip <- FALSE
+    for(i in seq_along(tdbl)){
+      if(i > 1 && (tdbl[i] - 1 == tdbl[i - 1])){
+        tdbl[i] <- -999
+        next
+      }
+      rmTr <- c(rmTr, tdbl[i] + 1)
+      check <- check + 1L
+    }
+    x <- x[, -rmTr]  # remove trace in x
+    dist2D <- posLine(x@coord[, 1:2], last = FALSE)
+    tdbl <- which(abs(diff(dist2D)) < tol)
+  }
+  message(check, " duplicated trace(s) removed from 'x'!")
+  x@proc <- c(x@proc, "trRmDuplicates")
+  return(x)
+})
+
 #' Interpolate trace positions from measurement (e.g., GPS).
 #'
 #' @param x      An object of the class GPR.
@@ -2960,14 +3006,20 @@ setMethod("spec", "GPR", function(x, type = c("f-x","f-k"), plotSpec = TRUE,
 #' @param r      A 'RasterLayer' object from the package 'raster' from which
 #'               trace elevation \code{z} will be extracted based on the 
 #'               trace position \code{(x, y)} on the raster.
-#' @param tol    Tolerance values to remove duplicated measured trace positions.
+#' @param tol    Length-one numeric vector: if the horizontal distance between 
+#'               two consecutive trace positions is smaller than \code{tol}, 
+#'               then the traces in between as well as the second trace
+#'               position are removed.
 #'               If \code{tol = NULL}, \code{tol} is set equal to
 #'               \code{sqrt(.Machine$double.eps)}.
 #' @param method A length-three character vector defining the interpolation
-#'               methods (same methods as in \code{signal::interp1}). 
-#'               First method for trace number interpolation, second for
-#'               horizontal position interpolation, third for vertical position
-#'               interpolation
+#'               methods (same methods as in \code{signal::interp1}:
+#'               "linear", "nearest", "pchip", "cubic", and "spline"). 
+#'               First element for the interpolation of the 
+#'               inter-trace distances, 
+#'               second element for the interpolation of the horizontal 
+#'               trace positions, and third element for the interpolation
+#'               of the vertical trace positions.
 #' @name interpPos 
 #' @rdname interpPos
 #' @export
@@ -2999,10 +3051,10 @@ setMethod("interpPos", "GPR",
   # order topo by increasing traceNb
   topo <- topo[order(topo[, "TRACE"]), ]
   #--- REMOVE DUPLICATED TRACES (TRACES WITH (ALMOST) SAME POSITIONS) ---#
-  dist3D <- posLine(topo[, c("N","E","Z")], last = FALSE)
+  dist2D <- posLine(topo[, c("N", "E")], last = FALSE)
   # in 'x' and 'topo'
   if(is.null(tol))  tol <- sqrt(.Machine$double.eps)
-  tdbl <- which(abs(diff(dist3D)) < tol)
+  tdbl <- which(abs(diff(dist2D)) < tol)
   if(length(tdbl) > 0){
     check <- 0
     for(i in seq_along(tdbl)){
@@ -3014,13 +3066,14 @@ setMethod("interpPos", "GPR",
       topo <- topo[-(tdbl[i] + 1), ] 
       v <- (tdbl[i] + 1):nrow(topo)
       topo[v, "TRACE"] <- topo[v, "TRACE"] -  dtr
-      dist3D <- dist3D[-tdbl[i]]
+      #dist3D <- dist3D[-tdbl[i]]
       tdbl <- tdbl - 1
       check <- check + dtr
     }
     message(length(tdbl), " duplicate trace position(s) removed from 'topo'!")
     message("Accordingly, ", check, " trace(s) removed from 'x'!")
   }
+  dist3D <- posLine(topo[, c("N", "E", "Z")], last = FALSE)
   # if there are points measured with the total station
   # that do not have an fiducial (FID) > interpolate them!
   myWarning <- ""
@@ -3055,6 +3108,7 @@ setMethod("interpPos", "GPR",
           ", range dx = [", round( min(diff(dist3Dint)), 3 ),", ", 
           round( max(diff(dist3Dint)), 3 ),"]", myWarning)
   if(plot == TRUE){
+    op <- par(no.readonly=TRUE)
     par(mfrow=c(1, 3))
     plot(topo[, "TRACE"], dist3D, pch = 20, col = "red", cex = 2, asp = 1,
          xlab = "trace number", ylab = "trace spacing (3D)",
@@ -3073,6 +3127,7 @@ setMethod("interpPos", "GPR",
     points(topo[, c("E","N")], col = 1, pch = 20, cex = 2)
     lines(A[, "E"], A[, "N"], col = 2, lwd = 1)
     Sys.sleep(1)
+    par(op)
   }
   x@coord <- A
   x@proc <- c(x@proc, "interpPos")
@@ -3098,7 +3153,6 @@ rmRowDuplicates <- function(x, v){
 # posi <- seq_along(x@pos)
 # pos <- topo[, "TRACE"]
 # r
-
 interp3DPath <- function(x, pos, posi, r = NULL,
                          method = c("linear", "spline", "pchip")){
   if(ncol(x) > 3) x <- x[, 1:3]

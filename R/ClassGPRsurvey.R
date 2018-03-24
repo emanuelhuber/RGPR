@@ -5,11 +5,11 @@ setClass(
   Class="GPRsurvey",  
   slots=c(
     version = "character",     # version of the class
-    filepaths="character",     # filepath of the GPR data
-    names="character",      # names of the GPR profiles
-    descriptions ="character",  # descriptions of the GPR profiles
-    freqs ="numeric",       # frequencies of the GPR profiles
-    lengths="numeric",      # length in metres of the GPR profiles = [n]
+    filepaths = "character",     # filepath of the GPR data
+    names = "character",      # names of the GPR profiles
+    descriptions = "character",  # descriptions of the GPR profiles
+    freqs = "numeric",       # frequencies of the GPR profiles
+    lengths = "numeric",      # length in metres of the GPR profiles = [n]
     surveymodes ="character",  # survey mode (reflection/CMP)
     dates ="character",      # dates  of the GPR profiles
     antseps ="numeric",      # antenna separation of the GPR profiles
@@ -335,7 +335,7 @@ setMethod("getGPR", "GPRsurvey", function(x,id){
       }
     }
     if(length(x@coords[[gpr@name]])>0){
-      coord(gpr) <- x@coords[[gpr@name]]
+      gpr@coord <- x@coords[[gpr@name]]
     }
     if(length(x@intersections[[gpr@name]])>0){
       #ann(gpr) <- x@intersections[[gpr@name]][,3:4,drop=FALSE]
@@ -429,15 +429,15 @@ setMethod(f="length", signature="GPRsurvey", definition=function(x){
   }
 )
 
-#' Plot the GPR object.
+# parameter add=TRUE/FALSE
+#       addArrows = TRUE/FALSE
+#' Plot the GPRsurvey object.
 #'
-#' If the GPR object consists of a single trace, wiggle plot is shown.
+#' Plot GPR suvey lines
 #' @method plot GPRsurvey 
 #' @name plot
 #' @rdname plot
 #' @export
-# parameter add=TRUE/FALSE
-#       addArrows = TRUE/FALSE
 plot.GPRsurvey <- function(x, y, ...){
   if(length(x@coords) > 0){
     isNotNull <- which(!sapply(x@coords, is.null))
@@ -575,6 +575,23 @@ plot.GPRsurvey <- function(x, y, ...){
   }
 }
 
+#' Plot the GPR survey as lines
+#'
+#' Plot the GPR survey as lines
+#' @method lines GPRsurvey 
+#' @name lines
+#' @rdname lines
+#' @export
+lines.GPRsurvey <- function(x, ...){
+  dots <- list(...)
+  for(i in 1:length(x)){
+    xy <- unname(x@coords[[i]][,1:2])
+    dots$x <- xy[,1]
+    dots$y <- xy[,2]
+    do.call(lines, dots)
+  }
+}
+
 # intersection
 # list
 #     $GPR_NAME
@@ -628,6 +645,26 @@ setMethod("intersections", "GPRsurvey", function(x){
   }
 )
 
+           
+#' @export
+setMethod("trRmDuplicates", "GPRsurvey", function(x, tol = NULL){
+  nrm <- integer(length(x))
+  for(i in seq_along(x)){
+    y <- x[[i]]
+    n0 <- ncol(y)
+    y <- suppressMessages(trRmDuplicates(y))
+    if( (n0 - ncol(y)) > 0){
+      message(n0 - ncol(y), " duplicated trace(s) removed from '", name(y), "'!")
+      x@filepaths[[i]]     <- .saveTempFile(y)
+      x@coords[[y@name]]   <- y@coord
+      x@fids[[y@name]]     <- y@fid
+    }
+  }
+  x@intersections <- list()
+  x <- coordref(x)
+  return(x) 
+})
+
 #' @export
 setMethod("interpPos", "GPRsurvey",
           function(x, topo, plot = FALSE, r = NULL, tol = NULL, 
@@ -640,7 +677,8 @@ setMethod("interpPos", "GPRsurvey",
                        method = method, ...)
       x@coords[[gpr@name]] <- gpr@coord
       x@lengths[i] <- posLine(gpr@coord[ ,1:2], last = TRUE)
-    }      
+    }
+    x@intersections <- list()
     x <- coordref(x)
     return(x)
   }
@@ -712,28 +750,35 @@ setMethod(
 )
 #' @export
 setReplaceMethod(
-  f="coords",
-  signature="GPRsurvey",
-  definition=function(x,value){
+  f = "coords",
+  signature = "GPRsurvey",
+  definition = function(x, value){
     if(!is.list(value)){
       stop("value should be a list!!\n")
     }
-    if(length(value)!=length(x)){
+    if(length(value) != length(x)){
       stop("number of elements not equal to the number of gpr files!!\n")
     }
     for(i in seq_along(x)){
+      if( nrow(value[[i]]) != ncol(x[[i]]) ){
+        stop("error with the ", i, "th element of 'value':",
+             " number of coordinates is different from number of traces")
+      } 
       if(is.null(colnames(value[[i]]))){
-        x@coords[[x@names[i]]] <- value[[i]]
+        x@coords[[x@names[i]]] <- as.matrix(value[[i]])
       }else if(all(toupper(colnames(value[[i]])) %in% c("E","N","Z"))){
-        x@coords[[x@names[i]]] <- value[[i]][c("E","N","Z")]
+        x@coords[[x@names[i]]] <- as.matrix(value[[i]][c("E","N","Z")])
       }else{
-        x@coords[[x@names[i]]] <- value[[i]]
+        x@coords[[x@names[i]]] <- as.matrix(value[[i]])
       }
       x@lengths[i] <- posLine(value[[i]][,1:2],last=TRUE)
     }
     # in coordref, the intersection is computed by 
     #    "x <- surveyIntersect(x)"
-    x <- coordref(x)
+    # remove duplicates
+    x@intersections <- list()
+    x <- trRmDuplicates(x, tol = NULL)
+    #x <- coordref(x)
     return(x)
   }
 )
@@ -748,10 +793,10 @@ setMethod("georef", "GPRsurvey",
   }
   xyz  <- lapply(x@coords, georef, alpha = NULL, cloc = c(0,0), 
                  creg = NULL, ploc = NULL, preg = NULL, FUN = mean)
-  xyz2 <- lapply(x@intersections$coord, georef, alpha = NULL, cloc = c(0,0), 
-                 creg = NULL, ploc = NULL, preg = NULL, FUN = mean)
+  #xyz2 <- lapply(x@intersections$coord, georef, alpha = NULL, cloc = c(0,0), 
+  #               creg = NULL, ploc = NULL, preg = NULL, FUN = mean)
   x@coords <- xyz
-  x@intersections  <- xyz2
+  x@intersections <- list()
   x <- coordref(x)
   return(x)
 })
@@ -816,7 +861,7 @@ setMethod("plot3DRGL", "GPRsurvey",
       cat("***", i , "***\n")
       gpr <- readGPR(x@filepaths[[i]])
       if(length(x@coords[[gpr@name]])>0){
-        coord(gpr) <- x@coords[[gpr@name]]
+        gpr@coord <- x@coords[[gpr@name]]
         # cat(x@coordref,"\n")
         gpr@coordref <- x@coordref
       }
@@ -841,7 +886,7 @@ setMethod("plotDelineations3D", "GPRsurvey",
     for(i in seq_along(x)){
       gpr <- readGPR(x@filepaths[[i]])
       if(length(x@coords[[gpr@name]])>0){
-        coord(gpr) <- x@coords[[gpr@name]]
+        gpr@coord <- x@coords[[gpr@name]]
         # cat(x@coordref,"\n")
         gpr@coordref <- x@coordref
       }
@@ -898,7 +943,7 @@ setMethod("writeGPR", "GPRsurvey",
     for(i in seq_along(x)){
       gpr <- x[[i]]
       if(length(x@coords[[gpr@name]])>0){
-        coord(gpr) <- x@coords[[gpr@name]]
+        gpr@coord <- x@coords[[gpr@name]]
       }
       if(length(x@intersections[[gpr@name]])>0){
         #ann(gpr) <- x@intersections[[gpr@name]][,3:4]
@@ -1022,6 +1067,7 @@ setMethod("papply", "GPRsurvey", function(x, prc = NULL){
     x@filepaths[[i]] <- .saveTempFile(y)
     message(' done!', appendLF = TRUE)
   }
+  x@intersections <- list()
   x <- coordref(x)
   return(x)
   } 

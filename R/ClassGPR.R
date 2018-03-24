@@ -3047,7 +3047,7 @@ setMethod("interpPos", "GPR",
     #--- INTERPOLATION ---#
     A <- interp3DPath(x = topo[, c("E", "N", "Z")], pos = topo[, "TRACE"], 
                       posi = seq_along(x@pos), r =r,
-                      method = c("linear", "spline", "pchip"))
+                      method = method)
     colnames(A) <- c("E", "N", "Z")
   }
   dist3Dint <- posLine(A, last = FALSE)

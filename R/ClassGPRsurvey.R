@@ -531,7 +531,7 @@ plot.GPRsurvey <- function(x, y, ...){
                            use.names = FALSE)[sel]
         DIRName <- dirname(shp_files)
         for(i in seq_along(shp_files)){
-          shp <- readOGR(DIRName[i], BASEName[i])
+          shp <- rgdal::readOGR(DIRName[i], BASEName[i])
           message(DIRName[i], BASEName[i])
           plot(shp, add = TRUE,pch=13,col="darkblue")
         }
@@ -629,8 +629,9 @@ setMethod("intersections", "GPRsurvey", function(x){
 )
 
 #' @export
-setMethod("interpPos", "GPRsurvey", function(x,topo, plot = FALSE,
-                                      r = NULL, ...){
+setMethod("interpPos", "GPRsurvey",
+          function(x, topo, plot = FALSE, r = NULL, tol = NULL, 
+                   method = c("linear", "spline", "pchip"), ...){
     for(i in seq_along(x)){
       gpr <- readGPR(x@filepaths[[i]])
       # topoLine <- topo[[i]]

@@ -2949,121 +2949,188 @@ setMethod("spec", "GPR", function(x, type = c("f-x","f-k"), plotSpec = TRUE,
   } 
 )
 
-#' Interpolate the trace position.
+#' Interpolate trace positions from measurement (e.g., GPS).
 #'
-#' @param x An object of the class GPR.
-#' @param topo A (mx4) numeric matrix, with m the number of traces 
-#'        in x. The columns names of topo must be
-#'        "E", "N", "Z" and "TRACE".
-#' @param plot A length-one boolean vector. If TRUE some control
-#'        plots are displayed.
+#' @param x      An object of the class GPR.
+#' @param topo   A \eqn{m \times 4} numeric matrix, with \code{m} the number of 
+#'               traces in 'x'. The columns names of topo must be
+#'               "E", "N", "Z" and "TRACE".
+#' @param plot   A length-one boolean vector. If TRUE some control
+#'               plots are displayed.
+#' @param r      A 'RasterLayer' object from the package 'raster' from which
+#'               trace elevation \code{z} will be extracted based on the 
+#'               trace position \code{(x, y)} on the raster.
+#' @param tol    Tolerance values to remove duplicated measured trace positions.
+#'               If \code{tol = NULL}, \code{tol} is set equal to
+#'               \code{sqrt(.Machine$double.eps)}.
+#' @param method A length-three character vector defining the interpolation
+#'               methods (same methods as in \code{signal::interp1}). 
+#'               First method for trace number interpolation, second for
+#'               horizontal position interpolation, third for vertical position
+#'               interpolation
 #' @name interpPos 
 #' @rdname interpPos
 #' @export
-setMethod("interpPos", "GPR", function(x, topo, plot = FALSE, r = NULL, ...){
-  # test if any measured points have a reference to a trace 
-  # of the GPR-line
+setMethod("interpPos", "GPR", 
+          function(x, topo, plot = FALSE, r = NULL, tol = NULL, 
+                   method = c("linear", "spline", "pchip"), ...){
   if(all(is.na(topo[,"TRACE"]))){
-    warning(paste0(x@name, ": no link between the measured points",
+    stop(paste0(x@name, ": no link between the measured points",
                    "and the GPR traces!\n"))
-  }else{
-    # if we have measured some points before the line start or 
-    # after the end of the GPR Line, we delete them
-    test <- !is.na(topo[,"TRACE"])
-    trueEnd <- max(which(test))
-    trueBeg <- min(which(test))
-    topo <- topo[trueBeg:trueEnd,]
-    #--- 3D topo Distance ---#
-    if(is.null(r)){
-      dist3D <- posLine(topo[,c("N","E","Z")], last=FALSE)
-    }else{
-      topo[,"Z"] <- extract(r, topo[,c("E","N")], method = "bilinear")
-      dist3D <- posLine(topo[,c("N","E","Z")], last=FALSE)
-      #myLine <- sp::Line(topo[,c("E","N")])
-      #myLines <- sp::Lines(list(myLine), ID="1")
-      #spl <- sp::SpatialLines(list(myLines))
-      #plot(r)
-      #lines(spl, col = "red")
-      #splz <- extract(r, spl, method = "bilinear")
-      #plot(splz[[1]], type = "l")
-    }
-    #--- INTERPOLATION GPR POSITION FROM TOTAL STATION ---#
-    # if there are points measured with the total station
-    # that do not have an fiducial (FID) > interpolate them!
-    myWarning <- ""
-    if(!all(test[trueBeg:trueEnd])){
-      # dist3D[topo$PNAME %in% FID$PNAME] > distance for the points 
-      # also recorded in FID
-      myWarning <- "\npoints total station without fiducials"
-      # cat("  points total station without fiducials")
-      test <- !is.na(topo[,"TRACE"])
-      if(sum(test)>2){
-        interp_method <- "linear"
-      }else{
-        interp_method <- "linear"
-      }
-      FIDpos <- signal::interp1(x = dist3D[test], 
-                                y = x@pos[topo[test,"TRACE"]], 
-                                xi = dist3D,
-                                method = interp_method,
-                                extrap=TRUE)
-    }else{
-      FIDpos   <- x@pos[topo[test,"TRACE"]]
-    }
-    #--- INTERPOLATION N,E,Z ---#
-    intMeth <- ifelse(length(dist3D) > 2, "pchip", "linear")
-    posInt   <- signal::interp1(FIDpos, dist3D, x@pos, 
-                                method = intMeth , extrap=TRUE)
-    # 'pchip': piecewise cubic hermite interpolating polynomial 
-    Nint   <- signal::interp1(dist3D,topo$N, posInt, 
-                              method ="linear" , extrap=TRUE)
-    Eint   <- signal::interp1(dist3D,topo$E, posInt, 
-                              method ="linear", extrap=TRUE)
-    if(is.null(r)){
-      Zint <-  signal::interp1(dist3D, topo$Z, posInt, 
-                                method = intMeth, extrap = NA)
-    }else{
-      Zint <- extract(r, cbind(Eint, Nint), method = "bilinear")
-    } 
-    lastNA  <- max(which(!is.na(Zint)))
-    firstNA <- min(which(!is.na(Zint)))
-    if(firstNA > 1)  Zint[1:(firstNA-1)] <- Zint[firstNA]
-    if(lastNA < length(Zint)){
-      Zint[(lastNA+1):length(Zint)] <- Zint[lastNA]
-    }
-    message(x@name, ": mean dx=", round(mean(diff(posInt)),3), 
-        "  range dx=",round(min(diff(posInt)),3),"-", 
-        round(max(diff(posInt)),3), myWarning)
-    if(plot == TRUE){
-      par(mfrow=c(1,3))
-      plot(FIDpos, dist3D, pch = 20, col = "red", cex = 2, asp = 1,
-           xlab = "FID  position", ylab = "trace spacing (3D)",
-           xlim = range(x@pos), ylim=range(posInt), main=paste( x@name))
-      points(x@pos,posInt,pch=20,col="blue")
-      plot(posInt, Zint, type = "l", asp = 10, 
-           xlab = "interpolated trace spacing", 
-           ylab="interpolated elevation",
-           main = paste0(x@name, " min dx=",round(min(diff(posInt)),2), 
-                         "  max dx=",round(max(diff(posInt)),2)))
-      points(dist3D, topo[,c("Z")],pch=20,col="red")
-      plot(topo[,c("E","N")], col = 1, type = "l", lwd = 2, asp = 1,
-           ylim = range(Nint), xlim = range(Eint), 
-           main = paste0(x@name, " mean dx=", round(mean(diff(posInt)),2)))
-      points(topo[,c("E","N")],col=1,pch=20,cex=2)
-      lines(Eint,Nint,col=2,lwd=2)
-      Sys.sleep(1)
-    }
-    A <- matrix(nrow=length(Nint),ncol=3)
-    A[,1] <- Eint
-    A[,2] <- Nint
-    A[,3] <- Zint
-    colnames(A) <- c("E","N","Z")
-    x@coord <- A
-    x@proc <- c(x@proc, "interpPos")
   }
+  # if we have measured some points before the line start or 
+  # after the end of the GPR Line, we delete them
+  test <- which(!is.na(topo[,"TRACE"]))
+  #trueEnd <- max(which(test))
+  #trueBeg <- min(which(test))
+  topo <- topo[min(test):max(test), ]
+  #--- 3D topo Distance ---#
+  if(!is.null(r)){
+    topo[,"Z"] <- raster::extract(r, topo[, c("E","N")], method = "bilinear")
+    if(sum(is.na(topo[, "Z"])) > 0){
+      stop("\n'extract(r, topo[, c(\"E\",\"N\")], method = \"bilinear\")' ",
+           "returns 'NA' values!\n", 
+           "Not all GPR positions fall within raster extent or\n",
+           "there are 'NA' values in raster 'r'!")
+    }
+  }
+  # check for duplicates in TRACE ID and remove them!
+  topo <- rmRowDuplicates(topo, topo[, "TRACE"])
+  # order topo by increasing traceNb
+  topo <- topo[order(topo[, "TRACE"]), ]
+  #--- REMOVE DUPLICATED TRACES (TRACES WITH (ALMOST) SAME POSITIONS) ---#
+  dist3D <- posLine(topo[, c("N","E","Z")], last = FALSE)
+  # in 'x' and 'topo'
+  if(is.null(tol))  tol <- sqrt(.Machine$double.eps)
+  tdbl <- which(abs(diff(dist3D)) < tol)
+  if(length(tdbl) > 0){
+    check <- 0
+    for(i in seq_along(tdbl)){
+      dtr <- topo[tdbl[i]+1, "TRACE"] - topo[tdbl[i], "TRACE"]
+      # traces to remove
+      w <- topo[tdbl[i], "TRACE"] + seq_len(dtr)
+      x <- x[, -w]  # remove trace in x
+      # remove traces in topo and actualise the trace numbers
+      topo <- topo[-(tdbl[i] + 1), ] 
+      v <- (tdbl[i] + 1):nrow(topo)
+      topo[v, "TRACE"] <- topo[v, "TRACE"] -  dtr
+      dist3D <- dist3D[-tdbl[i]]
+      tdbl <- tdbl - 1
+      check <- check + dtr
+    }
+    message(length(tdbl), " duplicate trace position(s) removed from 'topo'!")
+    message("Accordingly, ", check, " trace(s) removed from 'x'!")
+  }
+  # if there are points measured with the total station
+  # that do not have an fiducial (FID) > interpolate them!
+  myWarning <- ""
+  if(anyNA(topo[,"TRACE"])){
+    # dist3D[topo$PNAME %in% FID$PNAME] > distance for the points 
+    # also recorded in FID
+    myWarning <- "\npoints total station without fiducials"
+    test <- !is.na(topo[,"TRACE"])
+    intMeth <- ifelse(sum(test) > 2, method[1], "linear")
+    traceNb <- signal::interp1(x      = dist3D[test], 
+                               y      = topo[test, "TRACE"], 
+                               xi     = dist3D,
+                               method = interp_method,
+                               extrap = TRUE)
+    topo[, "TRACE"] <- as.integer(round(traceNb))
+    # check for duplicates in TRACE ID and remove them!
+    topo <- rmRowDuplicates(topo, topo[, "TRACE"])
+  }
+  if(all(seq_along(x@pos) %in% topo[, "TRACE"])){
+    A <- topo[topo[, "TRACE"] %in% seq_along(x@pos), c("E", "N", "Z")]
+    message("No interpolation required because the trace positions\n",
+            "of all GPR traces is already available (in object 'topo')!")
+  }else{
+    #--- INTERPOLATION ---#
+    A <- interp3DPath(x = topo[, c("E", "N", "Z")], pos = topo[, "TRACE"], 
+                      posi = seq_along(x@pos), r =r,
+                      method = c("linear", "spline", "pchip"))
+    colnames(A) <- c("E", "N", "Z")
+  }
+  dist3Dint <- posLine(A, last = FALSE)
+  message(x@name, ": mean dx = ", round( mean(diff(dist3Dint)), 3 ), 
+          ", range dx = [", round( min(diff(dist3Dint)), 3 ),", ", 
+          round( max(diff(dist3Dint)), 3 ),"]", myWarning)
+  if(plot == TRUE){
+    par(mfrow=c(1, 3))
+    plot(topo[, "TRACE"], dist3D, pch = 20, col = "red", cex = 2, asp = 1,
+         xlab = "trace number", ylab = "trace spacing (3D)",
+         xlim = range(x@pos), ylim=range(dist3Dint), main=paste( x@name))
+    points(seq_along(x@pos), dist3Dint, pch = 20, col = "blue")
+    plot(dist3Dint, A[, "Z"], type = "l", asp = 10, 
+         xlab = "interpolated trace spacing", 
+         ylab = "interpolated elevation",
+         main = paste0(x@name, " min dx = ", round(min(diff(dist3Dint)), 2), 
+                       "  max dx = ", round(max(diff(dist3Dint)), 2)))
+    points(dist3D, topo[,"Z"], pch = 20, col = "red")
+    plot(topo[, c("E","N")], col = 1, type = "l", lwd = 2, asp = 1,
+         ylim = range(A[, "N"]), xlim = range(A[, "E"]), 
+         main = paste0(x@name, " mean dx=", round(mean(diff(dist3Dint)),2)))
+    points(topo[, c("E","N")], col = 1, pch = 20, cex = 2)
+    lines(A[, "E"], A[, "N"], col = 2, lwd = 2)
+    Sys.sleep(1)
+  }
+  x@coord <- A
+  x@proc <- c(x@proc, "interpPos")
   return(x)
 }
 )
+
+# remove rows of x with duplicated element in v
+# length(v) == nrow(x)
+# use the R-base function 'duplicated()'
+rmRowDuplicates <- function(x, v){
+  iRM <- which(duplicated(v))
+  if(length(iRM) > 0){
+    return( x[-iRM, ])
+  }else{
+    return(x)
+  }
+}
+
+
+# x = topo[, c("E", "N", "Z")] or C("x", "y", "z")
+# dist3D <- posLine(x, last = FALSE)
+# posi <- seq_along(x@pos)
+# pos <- topo[, "TRACE"]
+# r
+
+interp3DPath <- function(x, pos, posi, r = NULL,
+                         method = c("linear", "spline", "pchip")){
+  if(ncol(x) > 3) x <- x[, 1:3]
+  dist3D <- posLine(x, last = FALSE)
+  #--- INTERPOLATION dist3D ---#
+  intMeth <- ifelse(length(dist3D) > 2, method[1], "linear")
+  dist3DInt   <- signal::interp1(pos, dist3D, posi, 
+                                 method = intMeth , extrap=TRUE)
+  #--- INTERPOLATION N,E,Z ---#
+  ENZ <- matrix(nrow = length(posi), ncol = 3)
+  intMeth <- ifelse(length(dist3D) > 2, method[2], "linear")
+  ENZ[, 1] <- signal::interp1(dist3D, x[, 1], dist3DInt, 
+                              method = intMeth, extrap = TRUE)
+  ENZ[, 2] <- signal::interp1(dist3D, x[, 2], dist3DInt, 
+                              method = intMeth , extrap = TRUE)
+  if(is.null(r) && ncol(x) == 3){
+    intMeth <- ifelse(length(dist3D) > 2, method[3], "linear")
+    ENZ[, 3] <- signal::interp1(dist3D, x[, 3], dist3DInt, 
+                                method = intMeth, extrap = TRUE)
+  }else if(!is.null(r)){
+    ENZ[, 3] <- raster::extract(r, cbind(ENZ[, 1], ENZ[, 2]), method = "bilinear")
+  } 
+  # lastNA  <- max(which(!is.na(Zint)))
+  # firstNA <- min(which(!is.na(Zint)))
+  # if(firstNA > 1)  Zint[1:(firstNA-1)] <- Zint[firstNA]
+  # if(lastNA < length(Zint)){
+  #   Zint[(lastNA+1):length(Zint)] <- Zint[lastNA]
+  # }
+  # message(x@name, ": mean dx = ", round(mean(diff(dist3DInt)), 3), 
+  #         "  range dx = ",round(min(diff(dist3DInt)), 3)," - ", 
+  #         round(max(diff(dist3DInt)), 3))
+  return(ENZ)
+}
 
 
 #' Relative trace position on the GPR profile.

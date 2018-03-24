@@ -4,20 +4,35 @@
 \name{interpPos}
 \alias{interpPos}
 \alias{interpPos}
-\title{Interpolate the trace position.}
+\title{Interpolate trace positions from measurement (e.g., GPS).}
 \usage{
-\S4method{interpPos}{GPR}(x, topo, plot = FALSE, r = NULL, ...)
+\S4method{interpPos}{GPR}(x, topo, plot = FALSE, r = NULL, tol = NULL,
+  method = c("linear", "spline", "pchip"), ...)
 }
 \arguments{
 \item{x}{An object of the class GPR.}
 
-\item{topo}{A (mx4) numeric matrix, with m the number of traces 
-in x. The columns names of topo must be
+\item{topo}{A \eqn{m \times 4} numeric matrix, with \code{m} the number of 
+traces in 'x'. The columns names of topo must be
 "E", "N", "Z" and "TRACE".}
 
 \item{plot}{A length-one boolean vector. If TRUE some control
 plots are displayed.}
+
+\item{r}{A 'RasterLayer' object from the package 'raster' from which
+trace elevation \code{z} will be extracted based on the 
+trace position \code{(x, y)} on the raster.}
+
+\item{tol}{Tolerance values to remove duplicated measured trace positions.
+If \code{tol = NULL}, \code{tol} is set equal to
+\code{sqrt(.Machine$double.eps)}.}
+
+\item{method}{A length-three character vector defining the interpolation
+methods (same methods as in \code{signal::interp1}). 
+First method for trace number interpolation, second for
+horizontal position interpolation, third for vertical position
+interpolation}
 }
 \description{
-Interpolate the trace position.
+Interpolate trace positions from measurement (e.g., GPS).
 }

@@ -6,7 +6,8 @@
 \alias{plotAmpl}
 \title{Plot the trace amplitude}
 \usage{
-\S4method{plotAmpl}{GPR}(x, FUN = mean, add = FALSE, all = FALSE, ...)
+\S4method{plotAmpl}{GPR}(x, FUN = mean, add = FALSE, all = FALSE,
+  plotLog = TRUE, ...)
 }
 \arguments{
 \item{x}{An object of the class GPR.}

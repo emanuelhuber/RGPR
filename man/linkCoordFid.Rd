@@ -4,7 +4,7 @@
 \alias{linkCoordFid}
 \title{Link coordinates to fiducial marker}
 \usage{
-linkCoordFid(y, xyz, pcode)
+linkCoordFid(y, xyz, pcode, tol = 0.1)
 }
 \arguments{
 \item{y}{object of class GPSsurvey}
@@ -13,6 +13,8 @@ linkCoordFid(y, xyz, pcode)
 
 \item{pcode}{character vector (length(pcode) = nrow(xyz)) indicating which
 coordinates to which GPR data belongs}
+
+\item{tol}{Tolerance to detect duplicates from topo data}
 }
 \description{
 To interpolate topo

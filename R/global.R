@@ -75,15 +75,17 @@ readTopo <- function(TOPO,sep=","){
   return(myTopo)
 }
 
+# If there are more recorded positions than fiducials
+# remove duplicates from the recorded positions
 # P = Position (topo)
-# F = fiducials
-rmDuplicates <- function(xyz, fid){
+# F = fiducials (from GPR data)
+rmDuplicates <- function(xyz, fid, tol = 0.1){
   dn <- nrow(xyz) - nrow(fid)
   if(dn > 0){
     dd <- as.matrix(dist(xyz[, 1:2]))
     diag(dd) <- NA
     dd[upper.tri(dd)] <- NA
-    ij <- which(dd <= min(sort(dd)[dn], 0.1), arr.ind = TRUE)
+    ij <- which(dd <= min(sort(dd)[dn], tol, arr.ind = TRUE))
     # handle "duplicate"
     if(length(ij) > 0){
       A <- list()
@@ -218,8 +220,9 @@ rmfid <- function(xyz, fid){
 #' @param xyz matrix of coordinates
 #' @param pcode character vector (length(pcode) = nrow(xyz)) indicating which
 #'              coordinates to which GPR data belongs
+#' @param tol Tolerance to detect duplicates from topo data   
 #' @export
-linkCoordFid <- function(y, xyz, pcode ){
+linkCoordFid <- function(y, xyz, pcode, tol = 0.1 ){
   FIDs <- list()
   sn <- names(y)
   for(i in seq_along(y)){
@@ -951,8 +954,8 @@ setGenericVerif("ampl", function(x, FUN=mean, ...) standardGeneric("ampl"))
 #' @name interpPos
 #' @rdname interpPos
 #' @export
-setGenericVerif("interpPos", function(x, topo, plot = FALSE,
-                                      r = NULL, ...) 
+setGenericVerif("interpPos", function(x, topo, plot = FALSE, r = NULL, tol = NULL, 
+                   method = c("linear", "spline", "pchip"), ...) 
     standardGeneric("interpPos"))
 
 #' @name regInterpPos

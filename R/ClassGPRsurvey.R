@@ -636,7 +636,8 @@ setMethod("interpPos", "GPRsurvey",
       gpr <- readGPR(x@filepaths[[i]])
       # topoLine <- topo[[i]]
       # gpr <- interpPos(gpr,topoLine, ...)
-      gpr <- interpPos(gpr, topo[[i]], plot = plot, r = r, ...)
+      gpr <- interpPos(gpr, topo[[i]], plot = plot, r = r, tol = tol, 
+                       method = method, ...)
       x@coords[[gpr@name]] <- gpr@coord
       x@lengths[i] <- posLine(gpr@coord[ ,1:2], last = TRUE)
     }      

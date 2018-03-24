@@ -3118,7 +3118,8 @@ interp3DPath <- function(x, pos, posi, r = NULL,
     ENZ[, 3] <- signal::interp1(dist3D, x[, 3], dist3DInt, 
                                 method = intMeth, extrap = TRUE)
   }else if(!is.null(r)){
-    ENZ[, 3] <- raster::extract(r, cbind(ENZ[, 1], ENZ[, 2]), method = "bilinear")
+    ENZ[, 3] <- raster::extract(r, cbind(ENZ[, 1], ENZ[, 2]), 
+                                method = "bilinear")
   } 
   # lastNA  <- max(which(!is.na(Zint)))
   # firstNA <- min(which(!is.na(Zint)))

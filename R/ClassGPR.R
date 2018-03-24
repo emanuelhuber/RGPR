@@ -3033,7 +3033,7 @@ setMethod("interpPos", "GPR",
     traceNb <- signal::interp1(x      = dist3D[test], 
                                y      = topo[test, "TRACE"], 
                                xi     = dist3D,
-                               method = interp_method,
+                               method = intMeth,
                                extrap = TRUE)
     topo[, "TRACE"] <- as.integer(round(traceNb))
     # check for duplicates in TRACE ID and remove them!

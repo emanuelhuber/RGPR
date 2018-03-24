@@ -3058,8 +3058,9 @@ setMethod("interpPos", "GPR",
     par(mfrow=c(1, 3))
     plot(topo[, "TRACE"], dist3D, pch = 20, col = "red", cex = 2, asp = 1,
          xlab = "trace number", ylab = "trace spacing (3D)",
-         xlim = range(x@pos), ylim=range(dist3Dint), main=paste( x@name))
-    points(seq_along(x@pos), dist3Dint, pch = 20, col = "blue")
+         xlim = range(seq_along(x@pos)), ylim = range(dist3Dint), 
+         main = paste( x@name))
+    points(seq_along(x@pos), dist3Dint, pch = 20, col = "blue", cex = 0.6)
     plot(dist3Dint, A[, "Z"], type = "l", asp = 10, 
          xlab = "interpolated trace spacing", 
          ylab = "interpolated elevation",
@@ -3070,7 +3071,7 @@ setMethod("interpPos", "GPR",
          ylim = range(A[, "N"]), xlim = range(A[, "E"]), 
          main = paste0(x@name, " mean dx=", round(mean(diff(dist3Dint)),2)))
     points(topo[, c("E","N")], col = 1, pch = 20, cex = 2)
-    lines(A[, "E"], A[, "N"], col = 2, lwd = 2)
+    lines(A[, "E"], A[, "N"], col = 2, lwd = 1)
     Sys.sleep(1)
   }
   x@coord <- A
@@ -3110,23 +3111,31 @@ interp3DPath <- function(x, pos, posi, r = NULL,
   ENZ <- matrix(nrow = length(posi), ncol = 3)
   intMeth <- ifelse(length(dist3D) > 2, method[2], "linear")
   ENZ[, 1] <- signal::interp1(dist3D, x[, 1], dist3DInt, 
-                              method = intMeth, extrap = TRUE)
+                              method = intMeth, extrap = NA)
+  ENA <- is.na(ENZ[, 1])
+  ENZ[ENA, 1] <- signal::interp1(dist3D, x[, 1], dist3DInt[ENA], 
+                              method = "linear", extrap = TRUE)
   ENZ[, 2] <- signal::interp1(dist3D, x[, 2], dist3DInt, 
-                              method = intMeth , extrap = TRUE)
+                              method = intMeth , extrap = NA)
+  ZNA <- is.na(ENZ[, 2])
+  ENZ[ZNA, 2] <- signal::interp1(dist3D, x[, 2], dist3DInt[ZNA], 
+                                 method = "linear", extrap = TRUE)
   if(is.null(r) && ncol(x) == 3){
     intMeth <- ifelse(length(dist3D) > 2, method[3], "linear")
     ENZ[, 3] <- signal::interp1(dist3D, x[, 3], dist3DInt, 
-                                method = intMeth, extrap = TRUE)
+                                method = intMeth, extrap = NA)
   }else if(!is.null(r)){
     ENZ[, 3] <- raster::extract(r, cbind(ENZ[, 1], ENZ[, 2]), 
                                 method = "bilinear")
   } 
-  # lastNA  <- max(which(!is.na(Zint)))
-  # firstNA <- min(which(!is.na(Zint)))
-  # if(firstNA > 1)  Zint[1:(firstNA-1)] <- Zint[firstNA]
-  # if(lastNA < length(Zint)){
-  #   Zint[(lastNA+1):length(Zint)] <- Zint[lastNA]
-  # }
+  lastNA  <- max(which(!is.na(ENZ[, 3])))
+  firstNA <- min(which(!is.na(ENZ[, 3])))
+  if(firstNA > 1){
+    ENZ[1:(firstNA-1), 3] <- ENZ[firstNA, 3]
+  } 
+  if(lastNA < length(ENZ[, 3])){
+    ENZ[(lastNA+1):length(ENZ[, 3]), 3]<- ENZ[lastNA, 3]
+  }
   # message(x@name, ": mean dx = ", round(mean(diff(dist3DInt)), 3), 
   #         "  range dx = ",round(min(diff(dist3DInt)), 3)," - ", 
   #         round(max(diff(dist3DInt)), 3))

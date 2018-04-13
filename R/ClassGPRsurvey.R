@@ -24,6 +24,10 @@ setClass(
 
 #------------------------------------------#
 #-------------- CONSTRUCTOR ---------------#
+#' Create an object of the class GPRsurvey
+#'
+#' Create an object of the class GPRsurvey using a vector of GPR data filepath
+#' @name GPRsurvey
 #' @export
 # LINES = list of datapath
 GPRsurvey <- function(LINES){
@@ -169,9 +173,8 @@ setMethod("as.SpatialPoints", signature(x = "GPRsurvey"), function(x){
 
 #' Define a local reference coordinate
 #' 
-#' @name coordref
-#' @rdname coordref
-#' @export
+#' @rdname coordref-methods
+#' @aliases coordref,GPRsurvey-method
 setMethod("coordref", "GPRsurvey", function(x){
     if(length(x@coords) > 0){
       A <- do.call("rbind", x@coords)
@@ -219,8 +222,13 @@ setReplaceMethod(
 )
 
 #------------------------------
-#' @export
 # "["
+#' extract parts of GPRsurvey
+#'
+#' Return an object of class GPRsurvey
+#' @name GPRsurvey-subset
+#' @docType methods
+#' @rdname GPRsurvey-subset
 setMethod(
   f= "[",
   signature="GPRsurvey",
@@ -247,11 +255,18 @@ setMethod(
 )
 
 #------------------------------
-#' @export
+
 # "[["
 # return an instance of the class GPR!
 # identical to getGPR
 # i can be either the gpr data number or the gpr data name
+
+#' extract a GPR object from a GPRsurvey object
+#'
+#' Return an object of class GPR
+#' @name [[
+#' @docType methods
+#' @rdname GPRsurvey-subsubset
 setMethod(
   f= "[[",
   signature="GPRsurvey",
@@ -262,8 +277,7 @@ setMethod(
 )
     
 #-------------------------------
-# "[[<-"
-#' @export
+#' @rdname GPRsurvey-subsubset
 setReplaceMethod(
   f = "[[",
   signature = "GPRsurvey",
@@ -318,6 +332,10 @@ setReplaceMethod(
   }
 )
 
+#' Extract GPR object from GPRsurvey object
+#' 
+#' Extract GPR object from GPRsurvey object
+#' @rdname getGPR
 #' @export
 setMethod("getGPR", "GPRsurvey", function(x,id){
     if(length(id)>1){
@@ -358,7 +376,6 @@ setMethod("getGPR", "GPRsurvey", function(x,id){
 #' @method print GPRsurvey
 #' @name print
 #' @rdname show
-#' @export
 # > 2. S3 function:
 # setMethod("print", "GPR", function(x) print.GPR(x))   
 # > 2. S3 function:
@@ -416,7 +433,6 @@ print.GPRsurvey <- function(x, ...){
 #' Identical to print().
 #' @name show
 #' @rdname show
-#' @export
 # > 3. And finally a call to setMethod():
 setMethod("show", "GPRsurvey", function(object){print.GPRsurvey(object)}) 
 
@@ -598,6 +614,11 @@ lines.GPRsurvey <- function(x, ...){
 #         $ coords (x,y)
 #         $ trace
 #         $ name
+
+#' Compute the survey intersections
+#' 
+#' Compute the survey intersections
+#' @rdname surveyIntersect
 #' @export
 setMethod("surveyIntersect", "GPRsurvey", function(x){
   # intersections <- list()
@@ -639,7 +660,10 @@ setMethod("surveyIntersect", "GPRsurvey", function(x){
   return(x)
 })
 
-#' @export
+#' Return intersection from GPRsurvey
+#'
+#' @rdname intersections-methods
+#' @aliases intersections,GPRsurvey-method
 setMethod("intersections", "GPRsurvey", function(x){
     return(x@intersections)
   }
@@ -733,7 +757,11 @@ setMethod("reverse", "GPRsurvey", function(x, id = NULL, tol = 0.3){
 })
 
 
-#' @export
+#' Return coordinates
+#'
+#' Return coordinates
+#' @rdname coords-methods
+#' @aliases coords,GPRsurvey-method
 setMethod(
   f="coords",
   signature="GPRsurvey",
@@ -748,7 +776,11 @@ setMethod(
     }
   }
 )
-#' @export
+
+#' Set coordinates
+#'
+#' @rdname coords-methods
+#' @aliases coords<-,GPRsurvey-method
 setReplaceMethod(
   f = "coords",
   signature = "GPRsurvey",
@@ -905,6 +937,11 @@ setMethod("plotDelineations3D", "GPRsurvey",
 
 
 #----------------------- EXPORT/SAVE -----------------#
+#' Write GPRsurvey object
+#' 
+#' Write GPRsurvey object
+#' @name writeSurvey
+#' @rdname writeSurvey
 #' @export
 setMethod("writeSurvey", "GPRsurvey", function(x, fPath, overwrite=FALSE){
   if(isTRUE(overwrite)){

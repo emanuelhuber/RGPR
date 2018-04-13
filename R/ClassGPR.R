@@ -1,6 +1,8 @@
 #------------------------------------------#
 #----------- CLASS DEFINITION -------------#
 
+#' Class GPR
+#' 
 #' An S4 class to represent a ground-penetrating radar (GPR) data.
 #'
 #' @slot version A length-one character vector indicating the version of RGPR
@@ -58,6 +60,9 @@
 #' @slot vel  A list containing the velocity model.
 #' @slot delineations A list containing delineated structures.
 #' @slot hd A list containing less relevant additional informations.
+#' @name GPR-class
+#' @rdname GPR-class
+#' @export
 setClass(
   Class="GPR",  
   slots=c(
@@ -842,6 +847,7 @@ setMethod(
   }
 )
 
+# getGroupMembers("Math")
 #' Basic mathematical functions
 #'
 #' Methods for the base Math methods \link[methods]{S4groupGeneric}
@@ -857,13 +863,11 @@ setMethod(
 #' A <- exp(frenkeLine00)
 #' @rdname Math-methods
 #' @aliases Math-GPR-method
-#' @export
-# getGroupMembers("Math")
 setMethod(
   f="Math",
   signature="GPR",
   definition=function(x){
-    switch(.Generic,
+    x@data <- switch(.Generic,
       abs = abs(x@data),
       sign = sign(x@data),
       sqrt =  sign(x@data)*sqrt(abs(x@data)),
@@ -890,11 +894,11 @@ setMethod(
       stop(paste(.Generic, "not allowed on GPR objects"))
     )
     proc(x) <- getArgs()
-#     x@proc <- c(x@proc, proc)
     return(x)
   }
 )
 
+# ?groupGeneric
 # > getGroupMembers("Arith")
 # [1] "+"   "-"   "*"   "^"   "%%"  "%/%" "/" 
 .GPR.add <- function(a, b){
@@ -988,17 +992,17 @@ setMethod(
 #' data(frenkeLine00)
 #' A <- exp(frenkeLine00)
 #' B <- A + frenkeLine00
-#' @name Arith
 #' @rdname Arith-methods
-#' @export
+#' @aliases Arith,GPR,ANY-method
 setMethod(
   f= "Arith",
   signature=c(e1="GPR",e2="ANY"), 
   definition=.GPR.arith
 )
+
 #' @name Arith
 #' @rdname Arith-methods
-#' @export
+#' @aliases Arith,GPR,GPR-method
 setMethod(
   f= "Arith",
   signature=c(e1="GPR",e2="GPR"), 
@@ -1006,7 +1010,7 @@ setMethod(
 )
 #' @name Arith
 #' @rdname Arith-methods
-#' @export
+#' @aliases Arith,ANY,GPR-method
 setMethod(
   f= "Arith",
   signature=c(e1="ANY",e2="GPR"), 
@@ -1018,7 +1022,16 @@ setMethod(
 
 
 #------------------------------
-#' @export
+# ###' @rdname GPR-extract-methods
+#' extract parts of GPR
+#'
+#' Object of the class GPR can be manipulated as matrix
+#' @param x Object of class GPR
+#' @param i integer
+#' @param j integer
+#' @name GPR-subset
+#' @docType methods
+#' @rdname GPR-subset
 setMethod(
   f= "[",
   signature="GPR",
@@ -1072,8 +1085,8 @@ setMethod(
 )
 
 #-------------------------------
-# "[<-"
-#' @export
+#' @name [<-
+#' @rdname GPR-subset
 setReplaceMethod(
   f="[",
   signature="GPR",
@@ -1092,6 +1105,10 @@ setReplaceMethod(
   }
 )
 
+#' Return data header
+#'
+#' Return data header
+#' @rdname gethd
 #' @export
 setMethod("gethd", "GPR", function(x,hd=NULL){
     if(is.null(hd)){
@@ -1205,17 +1222,15 @@ setReplaceMethod(
 
 #' Filepath of the GPR data
 #' 
-#' @name filepath
-#' @rdname filepath
-#' @export
+#' @rdname filepath-methods
+#' @aliases filepath,GPR-method
 setMethod("filepath", "GPR", function(x){
     return(x@filepath)
   } 
 )
 
-#' @name filepath<-
-#' @rdname filepath
-#' @export
+#' @rdname filepath-methods
+#' @aliases filepath<-,GPR-method
 setReplaceMethod(
   f="filepath",
   signature="GPR",
@@ -1262,9 +1277,8 @@ setReplaceMethod(
 
 #' Coordinates of the GPR data
 #' 
-#' @name coord
-#' @rdname coord
-#' @export
+#' @rdname coord-methods
+#' @aliases coord,GPR-method
 setMethod("coord", "GPR", function(x, i, ...){
 #     if(is.integer(i) && i > 0 && i < 4)
     if(length(x@coord) == 0){
@@ -1277,9 +1291,9 @@ setMethod("coord", "GPR", function(x, i, ...){
   } 
 )
 
-#' @name coord<-
-#' @rdname coord
-#' @export
+
+#' @rdname coord-methods
+#' @aliases coord<-,GPR-method
 setReplaceMethod(
   f="coord",
   signature="GPR",
@@ -2346,15 +2360,15 @@ setMethod("conv2D", "GPR", function(x, w){
 #'   \item \code{wtr}: A length-one numeric vector defining the number of 
 #'                     neighorough traces to be combine into a "super trace"
 #'                     (the total number of traces is \code{2*wtr + 1}).
-#'   \item \code{nf} A length-one numeric vector defining the filter length.
-#'   \item \code{mu} A length-one numeric vector defining the amount of noise.
+#'   \item \code{nf}: A length-one numeric vector defining the filter length.
+#'   \item \code{mu}: A length-one numeric vector defining the amount of noise.
 #' }
 #' @section Wavelet deconvolution:
 #' The required arguments for \code{method = "wavelet"} are:
 #' \itemize{
 #'   \item \code{h}: A numeric vector corresponding to the wavelet used to
 #'                   deconvolve the GPR data.
-#'   \item \code{mu} A length-one numeric vector defining the amount of noise.
+#'   \item \code{mu}: A length-one numeric vector defining the amount of noise.
 #' }
 #'
 #' @param method Type of deconvolution method.
@@ -2502,12 +2516,12 @@ setMethod("deconv", "GPR", function(x,
   return(topaste)      
 }    
 
+# #' @rdname show
 #' Print GPR
 #'
 #' @method print GPR 
 #' @name print
 #' @rdname show
-#' @export
 # > 2. S3 function:
 print.GPR <- function(x, ...){
   jj <- .GPR.print(x, ...)
@@ -2515,13 +2529,12 @@ print.GPR <- function(x, ...){
   return(invisible(jj))
 }
 # > 3. And finally a call to setMethod():
+# #' @rdname show
 #' Show some information on the GPR object
 #'
 #' Identical to print().
 #' @name show
 #' @aliases show-method
-#' @rdname show
-#' @export
 setMethod("show", "GPR", function(object){print.GPR(object)})   
 
 #' Add a GPR trace on a plot
@@ -3705,17 +3718,51 @@ setMethod("identifyDelineation", "GPR", function(x,sel=NULL,...){
 
 #' Normal Move-Out correction
 #' 
-#' either use 'rec' and 'trans' to compute the distance between the antennas
-#' or give the distance between the antennas (asep)
-#' or seq(x@antsep, by = x@dx, length.out = length(x))
+#' Remove the Normal Move-Out (NMO) from the trace given a constant velocity: 
+#' this is a non-linear 
+#' correction of the time axis that require interpolation. Note that
+#' only the conventional NMO correction is currently implemented. The 
+#' conventional NMO introduces a streching effect. A nonstretch NMO will
+#' be implemented in a near future.
+#' 
+#' Assuming a horizontal reflecting plane and homogeneous medium, the two-way
+#' bistatic travel time of the reflected wave 
+#' for an antenna separation \eqn{x} follows directly from the Pythagorean 
+#' theorem:
+#' \deqn{t_{TWT}(x,z) = \sqrt{\frac{x^2}{v^2} + \frac{4z^2}{v^2}}}
+#' where \eqn{t_{TWT}(x)} is the two-way travel time at antenna
+#' separation \eqn{x} of the wave reflected at depth \eqn{z} with propagation
+#' velocity \eqn{v}. This equation defines an hyperbola (keep \eqn{z} constant,
+#' increase the antenna separation \eqn{x} and you obtain a hyperbola similar
+#' to the reflection signals you obtain with common-mid point survey).
+#' The idea behind NMO-correction is to correct the signal for the antenna 
+#' separation (offset) and therefore to transform the signal to the signal we 
+#' would have recorded with zero offset (\eqn{x = 0}). We write the vertical
+#' two-way traveltime at zero offset 
+#' \deqn{t_0 = t_{TWT}(x = 0) = \frac{2z}{v}}
+#' Therefore, the NMO-correction \eqn{\Delta_{NMO}} is
+#' \deqn{\Delta_{NMO} = t_{TWT}(x) - t_0}  
+#' \deqn{\Delta_{NMO} = t_0 (\sqrt{1 + \frac{x^2}{v^2 t_0^2}} - 1)}
 #' @param x An object of the class \code{GPR}
 #' @param v A length-one numeric vector defining the radar wave velocity in 
 #'          the ground
 #' @param asep A length-n numeric vector defining the antenna separation for
-#'             each trace (n = number of traces)
-#' @name NMOCor
-#' @rdname NMOCor
+#'             each trace (n = number of traces; for example:
+#'             \code{seq(x@antsep, by = x@dx, length.out = length(x))}). 
+#'             If \code{NULL}, the
+#'             slots \code{rec} and \code{trans} of \code{x} are used to 
+#'             compute the distance between the antennas
+#' @rdname NMOCor-methods
+#' @aliases NMOCor,GPR-method
 #' @export
+#' @references
+#' \itemize{
+#'   \item{Tillard and Dubois (1995) Analysis of GPR data: wave propagation
+#'         velocity determination. Journal of Applied Geophysics, 33:77-91}
+#'   \item{Shatilo and Aminzadeh (2000) Constant normal-moveout (CNMO) 
+#'         correction: a technique and test results. Geophysical Prospecting,
+#'         473-488}
+#' }
 setMethod("NMOCor", "GPR", function(x, v = NULL, asep = NULL){
     x <- .NMOCor(x, v = v, asep = asep)
     proc(x) <- getArgs()
@@ -3782,12 +3829,25 @@ signalNoiseRatio2 <- function(x){
   return( W * P/sigma2 )
 }
 
+
 #' Common mid-point (CMP) analysis
 #' 
 #' either use 'rec' and 'trans' to compute the distance between the antennas
 #' or give the distance between the antennas (asep)
 #' or seq(x@antsep, by = x@dx, length.out = length(x))
-#' See book Geophysics data processing (Sacchi)
+#'
+#' \describe{
+#'   \item{semblance}{also described as the ratio of input to output
+#'         energy (Niedell and Taner, 1971)}
+#'   \item{semblance2}{windowed semblance}       
+#'   \item{wincoherence}{Windowed coherence measure based on 
+#'         eigen-decomposition that estimates the 
+#'         signal-to-noise ratio for high resolution velocity analysis
+#'         (Sacchi, 2002)}
+#'   \item{wincoherence2}{Windowed coherence measure based on a log-generalized
+#'         likelihood ratio which tests the hypothesis of equality of 
+#'         eigenvalues (Key and Smithson, 1990)}
+#' }
 #' @param x An object of the class \code{GPR}
 #' @param method A length-one character vector 
 #' @param v A numeric vector defining at which velocities the analysis is
@@ -3796,8 +3856,19 @@ signalNoiseRatio2 <- function(x){
 #'             each trace (n = number of traces)
 #' @param w A length-one numeric vector defining the window length for the
 #'          methods 'wincoherence' and 'wincoherence2'.           
-#' @name CMPAnalysis
-#' @rdname CMPAnalysis
+#' @rdname CMPAnalysis-methods
+#' @aliases CMPAnalysis,GPR-method
+#' @references
+#' \itemize{
+#'   \item{Neidell and Taner (1971) Semblance and other coherency measures
+#'         for multichannel data. 
+#'         Geophysics, 36(3):482-497.}
+#'   \item{Key and Smithson (1990) New approach to seismic-reflection
+#'         event detection and velocity determination. 
+#'         Geophysics, 55(8):1057-1069.}
+#'   \item{Textbook: Sacchi (2002) Statistical and Transform Methods
+#'         in Geophysical Signal Processing}
+#' }
 #' @export
 setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance", 
                                          "winsemblance",   "wincoherence", 

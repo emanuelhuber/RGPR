@@ -4,8 +4,8 @@
 \name{coord}
 \alias{coord}
 \alias{coord<-}
-\alias{coord}
-\alias{coord<-}
+\alias{coord,GPR-method}
+\alias{coord<-,GPR-method}
 \title{Coordinates of the GPR data}
 \usage{
 \S4method{coord}{GPR}(x, i, ...)

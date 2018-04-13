@@ -47,6 +47,9 @@
 # FID <- choose.files(caption = " txt files",filters = c("txt","*.txt"))
 # output = list of data frame (one for each file from FID) 
 #    with c("E","N","Z","TRACE") structure
+#' read fiducial marker files
+#' 
+#' read fiducial marker files
 #' @export
 readFID <- function(FID,sep=","){
   myFid <- list() 
@@ -61,6 +64,10 @@ readFID <- function(FID,sep=","){
   }
   return(myFid)
 }
+
+#' read topo file
+#' 
+#' read topo file
 #' @export
 readTopo <- function(TOPO,sep=","){
   myTopo <- list() 
@@ -317,7 +324,9 @@ safeFPath <- function(fPath = NULL){
   return(newfPath)
 }
 
-# returns string w/o leading or trailing whitespace
+#' Trim string
+#'
+#' returns string w/o leading or trailing whitespace
 #' @export
 trimStr <- function (x) gsub("^\\s+|\\s+$", "", x)
 
@@ -444,7 +453,8 @@ displayPalGPR <- function(){
   par(op)
 }
 
-#
+#' Return color from palette
+#'
 #' @export
 colFromPal <- function(A , col = palGPR(n=101)){
   CCY = (A-min(A,na.rm=TRUE))/(max(A,na.rm=TRUE)-min(A,na.rm=TRUE))
@@ -571,6 +581,9 @@ selectBBox <- function(border="red",lwd=2,...){
   return(x)
 }
 
+#' Position on a multiline
+#'
+#' Position on a multiline
 #' @export
 posLine <- function(loc,last=FALSE){
   loc <- as.matrix(loc)
@@ -582,8 +595,9 @@ posLine <- function(loc,last=FALSE){
   }
 }
   
-# see https://stackoverflow.com/a/30225804
-# latitude-longitude to UTM
+#' latitude-longitude to UTM
+#' 
+#' see https://stackoverflow.com/a/30225804
 #' @export
 latlongToUTM <- function(lat, long, zone = NULL, south = FALSE){
   # todo: check if lat/long in hh:mm:ss and convert them into
@@ -649,8 +663,10 @@ wapply <- function(x=NULL, width = NULL, by = NULL, FUN = NULL, ...){
   return(OUT)
 }
 
-# NOT CURRENTLY USED
-# # mod by MANU
+#' Wapply on the row of a matrix (windowed)
+#'
+#' NOT CURRENTLY USED
+#' mod by MANU
 #' @export
 wapplyRow <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, ...){
   FUN <- match.fun(FUN)
@@ -748,38 +764,49 @@ standardGeneric("as.SpatialLines"))
 
 #------------------------------
 #' @name coordref
-#' @rdname coordref
-#' @export
+#' @rdname coordref-methods
+#' @exportMethod coordref
 setGenericVerif("coordref", function(x) standardGeneric("coordref"))
 
+
 #' @name coordref<-
-#' @rdname coordref
-#' @export
+#' @rdname coordref-methods
+#' @exportMethod coordref
 setGenericVerif("coordref<-", function(x, value) standardGeneric("coordref<-"))
 
+#' @name intersections
+#' @rdname intersections-methods
+#' @exportMethod intersections
 setGenericVerif("intersections", function(x) standardGeneric("intersections"))
 
 #' @name filepath
-#' @rdname filepath
-#' @export
+#' @rdname filepath-methods
+#' @exportMethod filepath
 setGenericVerif("filepath", function(x) standardGeneric("filepath"))
 
 #' @name filepath<-
-#' @rdname filepath
-#' @export
+#' @rdname filepath-methods
+#' @exportMethod filepath<-
 setGenericVerif("filepath<-", function(x, value) standardGeneric("filepath<-"))
 
+#' @name coords
+#' @rdname coords-methods
+#' @exportMethod coords
 setGenericVerif("coords", function(x,i) standardGeneric("coords"))
+
+#' @name coords<-
+#' @rdname coords-methods
+#' @exportMethod coords<-
 setGenericVerif("coords<-",function(x,value){standardGeneric("coords<-")})
 
 #' @name coord
-#' @rdname coord
-#' @export
+#' @rdname coord-methods
+#' @exportMethod coord
 setGenericVerif("coord", function(x, i, ...) standardGeneric("coord"))
 
 #' @name coord<-
-#' @rdname coord
-#' @export
+#' @rdname coord-methods
+#' @exportMethod coord<-
 setGenericVerif("coord<-",function(x,value){standardGeneric("coord<-")})
 
 
@@ -942,6 +969,9 @@ setGenericVerif("papply", function(x, prc = NULL) standardGeneric("papply"))
 ##########
                   
 #------------------------------GPR
+#' @name gethd
+#' @rdname gethd
+#' @export
 setGenericVerif("gethd", function(x,hd=NULL) standardGeneric("gethd"))
 
 #' @name plotAmpl
@@ -1020,8 +1050,16 @@ setGenericVerif("shiftEst", function(x, y = NULL,
                 method=c("phase", "WSSD"), dxy = NULL, ...) 
                 standardGeneric("shiftEst"))
 
+#' @name NMOCor
+#' @rdname NMOCor-methods
+#' @exportMethod NMOCor
 setGenericVerif("NMOCor", function(x, v = NULL, asep = NULL) 
   standardGeneric("NMOCor"))
+
+
+#' @name CMPAnalysis
+#' @rdname CMPAnalysis-methods
+#' @exportMethod CMPAnalysis
 setGenericVerif("CMPAnalysis", function(x, method = c("semblance", 
                "winsemblance", "wincoherence", "wincoherence2"), v = NULL, 
                asep = NULL, w = NULL) standardGeneric("CMPAnalysis"))
@@ -1034,7 +1072,6 @@ setGenericVerif("timeCorOffset", function(x, t0 = NULL, c0 = 0.299)
 
 #' @name filter1D
 #' @rdname filter1D
-#' @export
 setGenericVerif("filter1D", function(x, type = c("median", "hampel", 
                 "Gaussian"), ...) standardGeneric("filter1D"))
 
@@ -1103,9 +1140,19 @@ setGenericVerif("rotatePhase", function(x, phi) standardGeneric("rotatePhase"))
 
 
 #------------------------------GRPsurvey
+#' @name getGPR
+#' @rdname getGPR
+#' @export
 setGenericVerif("getGPR", function(x,id) standardGeneric("getGPR"))
+
+#' @name surveyIntersect
+#' @rdname surveyIntersect
+#' @export
 setGenericVerif("surveyIntersect", function(x) 
                 standardGeneric("surveyIntersect"))
+#' @name writeSurvey
+#' @rdname writeSurvey
+#' @export
 setGenericVerif("writeSurvey", function(x, fPath, overwrite=FALSE){ 
                 standardGeneric("writeSurvey")})
 
@@ -1242,20 +1289,37 @@ extrema <- function(x, type=c("max","min")){
 #   return(as.POSIXct(x@time, origin = origin))
 # }
 
+#' time to depth conversion
+#'
+#' time to depth conversion
 #' @export                  
 timeToDepth <- function(tt, time_0, v=0.1, antsep=1, c0 = 0.299){
   t0 <- time_0 - antsep/c0
   sqrt(v^2*(tt-t0)- antsep^2)/2
 }
+
+#' Depth to time conversion
+#' 
+#' Depth to time conversion
 #' @export
 depthToTime <- function(z, time_0, v=0.1, antsep=1, c0 = 0.299){
   t0 <- time_0 - antsep/c0
   sqrt((4*z^2 + antsep^2)/(v^2)) + t0
 }
+
+#' Depth zero 
+#' 
+#' Depth zero 
 #' @export
 depth0 <- function(time_0, v=0.1, antsep=1, c0 = 0.299){
   time_0 - antsep/c0 + antsep/v
 }
+
+#' Convert first wave break to time-zero
+#'
+#' Account for the delay time between time of wave emission and time of first
+#' wave break recording due to the antenna separation (offset).
+#' @rdname timeCorOffset
 #' @export
 firstBreakToTime0 <- function(fb, x, c0 = 0.299){
   if(length(x@antsep) == 0 || (!is.numeric(x@antsep))){
@@ -1636,6 +1700,9 @@ plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
 
 # @relTime0 > boolean, y scale relative to time0? 0 <-> time0
 # col, main, xlab, ylab, mar, barscale
+#' Plot GPR as image (raster)
+#' 
+#' Plot GPR as image (raster)
 #' @export
 plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
                       note = NULL, ratio = 1,
@@ -2433,8 +2500,9 @@ nextpower2 <- function(x){
   return(2^(ceiling(log2(x))))
 }
 
-# shift the phase of signal by phi (in radian)
-      
+#' Phase rotation
+#'       
+#' shift the phase of signal by phi (in radian)
 #' @export
 phaseRotation <- function(x,phi){
   nf <- length(x)
@@ -3236,6 +3304,9 @@ convolution2D <- function(A,k){
   return(g2)
 }
 
+#' Displacement to align two matrix
+#'
+#' Displacement to align two matrix
 #' @export
 displacement <- function(x, y, method=c("phase", "WSSD"), dxy = NULL){
   nm <- c(max(nrow(x), nrow(y)), max(ncol(x), ncol(y)))
@@ -3283,7 +3354,11 @@ displacement <- function(x, y, method=c("phase", "WSSD"), dxy = NULL){
   }
   return(d)
 }
-    
+
+
+#' shift a matrix by n and m
+#'     
+#' shift a matrix by n and m
 #' @export
 shiftmat <- function(x, n, m){
   xs <- matrix(0,nrow=nrow(x), ncol=ncol(x))
@@ -3296,6 +3371,10 @@ shiftmat <- function(x, n, m){
   xs[vx0, vy0] <- x[vx1, vy1]
   return(xs)
 }
+
+#' pad a matrix
+#' 
+#' pad a matrix
 #' @export
 padmat <- function(x, n, m, what = 0){
   x0 <- matrix(what, ncol=m, nrow=n)
@@ -3551,6 +3630,9 @@ optPhaseRotation <- function(x,rot=0.01,plot=TRUE){
 
 
 # version vectoriel!!!!
+#' Return points that are within a polygon
+#' 
+#' Return points that are within a polygon
 #' @export
 inPoly <- function(x, y, vertx, verty){
   inPo <- rep(0L, length(x))

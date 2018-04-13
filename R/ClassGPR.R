@@ -1058,6 +1058,7 @@ setMethod(
         x@time0 <- x@time0[j]
         x@time <- x@time[j]
         x@fid <- x@fid[j]
+        if(length(x@antsep)>0)  x@antsep <- x@antsep[j]
         if(length(x@coord)>0)  x@coord <- x@coord[j,,drop=FALSE]
         if(length(x@rec)>0) x@rec <- x@rec[j,,drop=FALSE]
         if(length(x@trans)>0) x@trans <- x@trans[j,,drop=FALSE]
@@ -2718,6 +2719,7 @@ plot.GPR <- function(x,y,...){
                  x@posunit), outer=TRUE)
 #     par(op)
    }else{
+     clab <- "mV"
     if(!is.null(nupspl)){
       x <- upsample(x,n=nupspl)
     }
@@ -2744,8 +2746,11 @@ plot.GPR <- function(x,y,...){
     if(toupper(x@surveymode) == "CMP" && length(x@antsep) == ncol(x)){
       xvalues <- x@antsep
       xlab <- paste0("antenna separation (", x@posunit, ")")
-    }
-    else if( length(x@coord) > 0 ){
+    }else if(toupper(x@surveymode) == "CMPANALYSIS"){
+      xvalues <- x@pos
+      clab <- ""
+      xlab <- paste0("velocity (", x@posunit, "/", x@depthunit, ")")
+    }else if( length(x@coord) > 0 ){
       xvalues <- posLine(x@coord)
     }else{
       xvalues <- x@pos
@@ -2772,7 +2777,7 @@ plot.GPR <- function(x,y,...){
                      xlab = xlab, ylab = ylab, note = x@filepath,
                      time_0 = x@time0, antsep = x@antsep, v = v, 
                      addFid = addFid, fid = x@fid, surveymode = x@surveymode,
-                     addAnn = addAnn, annotations = x@ann,
+                     addAnn = addAnn, annotations = x@ann, clab = clab,
                      depthunit = x@depthunit, posunit = x@posunit), dots))
     }else if(type=="wiggles"){
       if(addTopo && length(x@coord)>0){
@@ -3789,14 +3794,18 @@ setMethod("NMOCor", "GPR", function(x, v = NULL, asep = NULL){
   }
   for(i in seq_along(x)){
     deltaT <- sqrt( x@depth^2 + (asep[i]^2 )/v^2 )
-    newT <- 2*x@depth - deltaT
-    test <- newT > 0
-    newT <- newT[test]
-    valreg <- signal::interp1(x = newT, y = x@data[, i], xi = x@depth[test], 
-                              method = "linear", extrap = NA)
+    valreg <- signal::interp1(x = x@depth, y = x@data[, i], xi = deltaT, 
+                              method = "cubic", extrap = NA)
+    # deltaT <- sqrt( x@depth^2 + (asep[i]^2 )/v^2 )
+    # newT <- 2*x@depth - deltaT
+    # test <- newT > 0
+    # valreg <- signal::interp1(x = newT[test], y = x@data[, i], 
+    #                           xi = x@depth[test], 
+    #                           method = "cubic", extrap = NA)
     x_nmoCor@data[seq_along(valreg),i] <- valreg
   }
   x_nmoCor@data[is.na(x_nmoCor@data)] <- 0
+  x_nmoCor@data[is.infinite(x_nmoCor@data)] <- 0
   x_nmoCor@pos <- asep
   return(x_nmoCor)
 }
@@ -3882,10 +3891,11 @@ setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance",
   }
   if(is.null(w)){
     w <- ceiling(nrow(x))/10
+  }else{
+    w <- w/x@dz
   }
-  nw <- floor(nrow(x)/w)
   # vspec <- NMOCor(x, v = v[1], asep = asep)
-  vspec <- .NMOCor(x, v = v[1], asep = asep)
+  vspec <- .NMOCor(x, v = max(v), asep = asep)
   vspec <- vspec[,rep(1,length(v))]
   vspec@data[] <- 0
   # vspec <- matrix(0 nrow=nrow(test), ncol=length(vv))
@@ -3908,6 +3918,9 @@ setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance",
     }
     #     semblance(cmpNMO)
   }
+  vspec@data[is.infinite(vspec@data)] <- 0
+  vspec@surveymode <- "CMPANALYSIS"
+  vspec@antsep <- 0
   proc(vspec) <- getArgs()
   return(vspec)
 }

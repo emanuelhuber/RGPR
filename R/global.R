@@ -1736,8 +1736,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
       # to plot amplitudes for example...
       clim <- c(0, max(z, na.rm = TRUE))
       # clim <- range(z, na.rm = TRUE)
-    }
-    else if(!is.null(surveymode) && 
+    } else if(!is.null(surveymode) && 
                 tolower(surveymode) %in% c("cmp", "reflection")){
       clim <- c(-1, 1) * max(abs(z), na.rm = TRUE)
     }
@@ -1817,10 +1816,10 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   # plot axis
   pretty_y <- pretty(ylim, 10)
   axis(side = 2, at = pretty_y, labels = -pretty_y)
-  if(toupper(surveymode) != "CMP"){
-    .depthAxis(ylim, pretty_y, time_0, v, antsep, depthunit, posunit )
-  }else{
+  if( grepl("CMP", toupper(surveymode))){
     axis(side = 4, at = pretty_y, labels = -pretty_y)
+  }else{
+    .depthAxis(ylim, pretty_y, time_0, v, antsep, depthunit, posunit )
   }
   # plot time0
   abline(h=0,col="red",lwd=0.5)

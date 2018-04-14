@@ -3784,17 +3784,18 @@ setMethod("NMOCor", "GPR", function(x, v = NULL, asep = NULL){
     }
   }
   t0 <- round(x@time0[1]/x@dz)*x@dz
-  x@depth <- x@depth - t0
-  x <- x[(t0/x@dz + 1):nrow(x),]
-  x@time0 <- 0
+  tx0 <- x@depth - t0   # t(x = 0)
+  #x <- x[(t0/x@dz + 1):nrow(x),]
+  #x@time0 <- 0
   x_nmoCor <- x
   x_nmoCor@data[] <- 0
   if(is.null(v)){
     v <- x@vel[[1]]
   }
   for(i in seq_along(x)){
-    deltaT <- sqrt( x@depth^2 + (asep[i]^2 )/v^2 )
-    valreg <- signal::interp1(x = x@depth, y = x@data[, i], xi = deltaT, 
+    tt <- sqrt( tx0^2 + (asep[i]^2 )/v^2 )
+    tt[tx0 < 0] <- NA
+    valreg <- signal::interp1(x = tx0, y = x@data[, i], xi = tt, 
                               method = "cubic", extrap = NA)
     # deltaT <- sqrt( x@depth^2 + (asep[i]^2 )/v^2 )
     # newT <- 2*x@depth - deltaT
@@ -3802,7 +3803,7 @@ setMethod("NMOCor", "GPR", function(x, v = NULL, asep = NULL){
     # valreg <- signal::interp1(x = newT[test], y = x@data[, i], 
     #                           xi = x@depth[test], 
     #                           method = "cubic", extrap = NA)
-    x_nmoCor@data[seq_along(valreg),i] <- valreg
+    x_nmoCor@data[,i] <- valreg
   }
   x_nmoCor@data[is.na(x_nmoCor@data)] <- 0
   x_nmoCor@data[is.infinite(x_nmoCor@data)] <- 0
@@ -3890,37 +3891,55 @@ setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance",
     v <- seq(vlim[1], vlim[2], length = 50)
   }
   if(is.null(w)){
-    w <- ceiling(nrow(x))/10
-  }else{
-    w <- w/x@dz
+    w <- ceiling(nrow(x))/20
   }
+  wi <- w/x@dz
+  x <- x[(t0/x@dz + 1):nrow(x),]
+  x@time0 <- 0
+  x@depth <- x@depth - t0
   # vspec <- NMOCor(x, v = v[1], asep = asep)
   vspec <- .NMOCor(x, v = max(v), asep = asep)
-  vspec <- vspec[,rep(1,length(v))]
+  vspec <- vspec[, rep(1, length(v))]
   vspec@data[] <- 0
   # vspec <- matrix(0 nrow=nrow(test), ncol=length(vv))
   vspec@pos <- v
-  for(i in seq_along(v)){
-    # y <- NMOCor(x, v = v[i], asep = asep)
-    y <- .NMOCor(x, v = v[i], asep = asep)
-    if(method == "wincoherence"){
-      test <- wapplyRow(y@data, width = w, by = 1, FUN = signalNoiseRatio)
-      vspec@data[floor(w/2) + seq_along(test),i] <- test
-    }else if(method == "wincoherence2"){
-      test <- wapplyRow(y@data, width = w, by = 1, FUN = signalNoiseRatio2)
-      vspec@data[floor(w/2) + seq_along(test),i] <- test
-    }else if(method == "semblance"){
+  vabove <- seq_len(ceiling(w/2)) + 1
+  if(method == "wincoherence"){
+    for(i in seq_along(v)){
+      y <- .NMOCor(x, v = v[i], asep = asep)
+      vspec@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, 
+                                   FUN = signalNoiseRatio)
+      # vspec@data[floor(w/2) + seq_along(test),i] <- test
+      vspec@data[vabove,] <- 0
+    }
+  }else if(method == "wincoherence2"){
+    for(i in seq_along(v)){
+      y <- .NMOCor(x, v = v[i], asep = asep)
+      vspec@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, 
+                                   FUN = signalNoiseRatio2)
+      # vspec@data[floor(w/2) + seq_along(test),i] <- test
+      vspec@data[vabove,] <- 0
+    }
+  }else if(method == "semblance"){
+    for(i in seq_along(v)){
+      y <- .NMOCor(x, v = v[i], asep = asep)
       vspec@data[,i] <- (apply(y@data, 1, sum, na.rm = TRUE))^2 / 
-        apply((y@data)^2, 1, sum, na.rm = TRUE)
-    }else if(method == "winsemblance"){
-      test <- wapplyRow(y@data, width = w, by = 1, FUN = semblance)
-      vspec@data[floor(w/2) + seq_along(test),i] <- test
+                          apply((y@data)^2, 1, sum, na.rm = TRUE)
+    }
+  }else if(method == "winsemblance"){
+    for(i in seq_along(v)){
+      y <- .NMOCor(x, v = v[i], asep = asep)
+      vspec@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, FUN = semblance)
+      # vspec@data[floor(w/2) + seq_along(test),i] <- test
+      vspec@data[vabove,] <- 0
     }
     #     semblance(cmpNMO)
   }
+  vspec@data[is.na(vspec@data)] <- 0
   vspec@data[is.infinite(vspec@data)] <- 0
   vspec@surveymode <- "CMPANALYSIS"
   vspec@antsep <- 0
+  vspec@time0 <- 0
   proc(vspec) <- getArgs()
   return(vspec)
 }

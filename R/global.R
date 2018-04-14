@@ -680,6 +680,25 @@ wapplyRow <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, ...){
   return(OUT)
 }
 
+#' Wapply on the row of a matrix (windowed + CENTERED)
+#'
+#' NOT CURRENTLY USED
+#' mod by MANU
+#' @export
+wapplyRowC <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, ...){
+  FUN <- match.fun(FUN)
+  if (is.null(by)) by <- width
+  lenX <- nrow(x)
+  SEQ1 <- seq(-(width-1)/2 + 1, lenX -(width-1)/2, by = by)
+  SEQ2 <- lapply(SEQ1, function(x){ xnew <- x:(x + width - 1)
+                                    xnew <- xnew[xnew > 0]
+                                    xnew <- xnew[xnew <= lenX]})
+  
+  OUT <- lapply(SEQ2, function(a) FUN(x[a,,drop=FALSE], ...))
+  OUT <- base::simplify2array(OUT, higher = TRUE)
+  return(OUT)
+}
+
 # based on wapply and modified by Manu
 # centered moving window
 # return a matrix of the same dimension than x
@@ -691,10 +710,9 @@ wapplyMat <- function(x = NULL, width = NULL, by = NULL, FUN = NULL,
   if (is.null(by)) by <- width
   lenX <- ifelse(MARGIN == 1, ncol(x), nrow(x))
   SEQ1 <- seq(-(width-1)/2 + 1, lenX -(width-1)/2, by = by)
-  SEQ2 <- lapply(SEQ1, function(x){ 
-                  xnew <- x:(x + width - 1)
-                  xnew <- xnew[xnew > 0]
-                  xnew <- xnew[xnew <= lenX]})
+  SEQ2 <- lapply(SEQ1, function(x){ xnew <- x:(x + width - 1)
+                                    xnew <- xnew[xnew > 0]
+                                    xnew <- xnew[xnew <= lenX]})
   if(MARGIN == 1){
     OUT <- lapply(SEQ2, function(a) apply(x[, a, drop = FALSE], MARGIN, FUN))
   }else if( MARGIN == 2) {

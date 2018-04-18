@@ -2807,6 +2807,7 @@ plot.GPR <- function(x,y,...){
                     main=main, ylim = zlim,
                     xlab = x@posunit, ylab = ylab, note = x@filepath, 
                     time_0 = x@time0, antsep = x@antsep, v = v, 
+                    surveymode = x@surveymode,
                     addFid = addFid, fid = x@fid,
                     addAnn = addAnn, annotations=x@ann,
                     depthunit=x@depthunit, posunit = x@posunit,
@@ -3890,58 +3891,60 @@ setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance",
     vlim <- x@vel[[1]] * c(0.5, 1.5)
     v <- seq(vlim[1], vlim[2], length = 50)
   }
-  if(is.null(w)){
-    w <- ceiling(nrow(x))/20
-  }
-  wi <- w/x@dz
-  x <- x[(t0/x@dz + 1):nrow(x),]
-  x@time0 <- 0
-  x@depth <- x@depth - t0
-  # vspec <- NMOCor(x, v = v[1], asep = asep)
-  vspec <- .NMOCor(x, v = max(v), asep = asep)
-  vspec <- vspec[, rep(1, length(v))]
-  vspec@data[] <- 0
-  # vspec <- matrix(0 nrow=nrow(test), ncol=length(vv))
-  vspec@pos <- v
-  vabove <- seq_len(ceiling(w/2)) + 1
-  if(method == "wincoherence"){
-    for(i in seq_along(v)){
-      y <- .NMOCor(x, v = v[i], asep = asep)
-      vspec@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, 
-                                   FUN = signalNoiseRatio)
-      # vspec@data[floor(w/2) + seq_along(test),i] <- test
-      vspec@data[vabove,] <- 0
+  # x <- x[(t0/x@dz + 1):nrow(x),]
+  # x@time0 <- 0
+  # x@depth <- x@depth - t0
+  # x_velAna <- NMOCor(x, v = v[1], asep = asep)
+  #TODO: create a new object
+  x_velAna <- .NMOCor(x, v = max(v), asep = asep)
+  x_velAna <- x_velAna[, rep(1, length(v))]
+  x_velAna@data[] <- 0
+  # x_velAna <- matrix(0 nrow=nrow(test), ncol=length(vv))
+  x_velAna@pos <- v
+  if(method %in% c("wincoherence", "wincoherence2", "winsemblance")){
+    if(is.null(w)){
+      w <- ceiling(nrow(x))/20
     }
-  }else if(method == "wincoherence2"){
-    for(i in seq_along(v)){
-      y <- .NMOCor(x, v = v[i], asep = asep)
-      vspec@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, 
-                                   FUN = signalNoiseRatio2)
-      # vspec@data[floor(w/2) + seq_along(test),i] <- test
-      vspec@data[vabove,] <- 0
+    wi <- round(w/x@dz)
+    if(wi > ncol(x) || wi < 0 ) stop("w too large or too small")
+    vabove <- seq_len(ceiling(w/2)) + 1
+    if(method == "wincoherence"){
+      for(i in seq_along(v)){
+        y <- .NMOCor(x, v = v[i], asep = asep)
+        x_velAna@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, 
+                                     FUN = signalNoiseRatio)
+        # x_velAna@data[floor(w/2) + seq_along(test),i] <- test
+      }
+    }else if(method == "wincoherence2"){
+      for(i in seq_along(v)){
+        y <- .NMOCor(x, v = v[i], asep = asep)
+        x_velAna@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, 
+                                     FUN = signalNoiseRatio2)
+        # x_velAna@data[floor(w/2) + seq_along(test),i] <- test
+      }
+    }else if(method == "winsemblance"){
+      for(i in seq_along(v)){
+        y <- .NMOCor(x, v = v[i], asep = asep)
+        x_velAna@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, 
+                                        FUN = semblance)
+        # x_velAna@data[floor(w/2) + seq_along(test),i] <- test
+      }
     }
+    x_velAna@data[vabove,] <- 0
   }else if(method == "semblance"){
     for(i in seq_along(v)){
       y <- .NMOCor(x, v = v[i], asep = asep)
-      vspec@data[,i] <- (apply(y@data, 1, sum, na.rm = TRUE))^2 / 
+      x_velAna@data[,i] <- (apply(y@data, 1, sum, na.rm = TRUE))^2 / 
                           apply((y@data)^2, 1, sum, na.rm = TRUE)
     }
-  }else if(method == "winsemblance"){
-    for(i in seq_along(v)){
-      y <- .NMOCor(x, v = v[i], asep = asep)
-      vspec@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, FUN = semblance)
-      # vspec@data[floor(w/2) + seq_along(test),i] <- test
-      vspec@data[vabove,] <- 0
-    }
-    #     semblance(cmpNMO)
   }
-  vspec@data[is.na(vspec@data)] <- 0
-  vspec@data[is.infinite(vspec@data)] <- 0
-  vspec@surveymode <- "CMPANALYSIS"
-  vspec@antsep <- 0
-  vspec@time0 <- 0
-  proc(vspec) <- getArgs()
-  return(vspec)
+  x_velAna@data[is.na(x_velAna@data)] <- 0
+  x_velAna@data[is.infinite(x_velAna@data)] <- 0
+  x_velAna@surveymode <- "CMPANALYSIS"
+  x_velAna@antsep <- 0
+  x_velAna@time0 <- 0
+  proc(x_velAna) <- getArgs()
+  return(x_velAna)
 }
 )
 

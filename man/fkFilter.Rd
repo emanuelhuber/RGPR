@@ -10,4 +10,3 @@
 \description{
 Frequency-wavenumber filter
 }
-

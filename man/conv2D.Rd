@@ -18,4 +18,3 @@ The convolved GPR data.
 \description{
 Convolution of the GPR data with a kernel
 }
-

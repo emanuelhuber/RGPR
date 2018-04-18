@@ -10,4 +10,3 @@
 \description{
 Gain compensation
 }
-

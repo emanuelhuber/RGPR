@@ -3,10 +3,10 @@
 \docType{methods}
 \name{readGPR}
 \alias{readGPR}
+\alias{readGPR}
 \title{Read a GPR data file}
 \usage{
-\S4method{readGPR}{character}(fPath, desc = "", coordfile = NULL,
-  crs = "", intfile = NULL)
+\S4method{readGPR}{character}(fPath, desc = "")
 }
 \arguments{
 \item{fPath}{Filepath (character).}
@@ -29,4 +29,3 @@ Read a GPR data file
 \examples{
 NULL
 }
-

@@ -2,14 +2,22 @@
 % Please edit documentation in R/global.R, R/ClassGPR.R
 \docType{methods}
 \name{delineate}
-\alias{addDelineation}
 \alias{delineate}
+\alias{rmDelineations<-}
+\alias{delineations}
+\alias{addDelineation}
+\alias{exportDelineations}
+\alias{plotDelineations3D}
+\alias{plotDelineations}
+\alias{identifyDelineation}
+\alias{delineate}
+\alias{addDelineation}
+\alias{rmDelineations<-}
 \alias{delineations}
 \alias{exportDelineations}
-\alias{identifyDelineation}
-\alias{plotDelineations}
 \alias{plotDelineations3D}
-\alias{rmDelineations<-}
+\alias{plotDelineations}
+\alias{identifyDelineation}
 \title{Delineate structure on GPR data}
 \usage{
 \S4method{delineate}{GPR}(x, name = NULL, type = c("raster", "wiggles"),
@@ -34,4 +42,3 @@
 \description{
 Delineate structure on GPR data
 }
-

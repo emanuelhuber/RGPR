@@ -3,7 +3,7 @@
 \docType{class}
 \name{GPR-class}
 \alias{GPR-class}
-\title{An S4 class to represent a ground-penetrating radar (GPR) data.}
+\title{Class GPR}
 \description{
 An S4 class to represent a ground-penetrating radar (GPR) data.
 }

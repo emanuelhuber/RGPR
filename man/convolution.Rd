@@ -18,4 +18,3 @@ first column of the matrix with the smallest number of column is repeated to
 match the dimension of the other matrix.
 match the dimension of the other matrix.
 }
-

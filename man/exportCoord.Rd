@@ -3,13 +3,12 @@
 \docType{methods}
 \name{exportCoord}
 \alias{exportCoord}
+\alias{exportCoord}
 \title{Export the trace coordinates.}
 \usage{
 \S4method{exportCoord}{GPR}(x, type = c("SpatialPoints", "SpatialLines",
-  "ASCII"), fPath = NULL, folder = NULL, sep = "\\t",
-  driver = "ESRI Shapefile", ...)
+  "ASCII"), fPath = NULL, driver = "ESRI Shapefile", ...)
 }
 \description{
 Export the trace coordinates.
 }
-

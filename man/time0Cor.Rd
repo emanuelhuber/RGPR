@@ -5,23 +5,30 @@
 \alias{time0Cor}
 \title{Time zero correction}
 \usage{
-\S4method{time0Cor}{GPR}(x, method = c("none", "linear", "nearest", "pchip",
-  "cubic", "spline"), keep = NULL, crop = TRUE, c0 = 0.299)
+\S4method{time0Cor}{GPR}(x, t0 = NULL, method = c("spline", "linear",
+  "nearest", "pchip", "cubic", "none"), crop = TRUE, keep = 0)
 }
 \arguments{
 \item{x}{A object of the class GPR}
 
-\item{keep}{A length-one numeric vector indicating in time units how much of 
-the trace has to be kept before time zero.}
+\item{t0}{A numeric vector with length equal either to \code{NULL}, or one 
+or to the number traces.
+The traces will be shifted to \code{t0}. 
+If \code{t0 = NULL} `time0(x)` will be used instead. 
+If \code{t0} is the time-zero, set \code{keep = 0}.}
+
+\item{method}{A length-one character vector defining the interpolation 
+method that are from the function 'interp1' 
+from the 'signal' package.}
 
 \item{crop}{If TRUE (defaults), remove the rows containing only zero's 
 (no data).}
 
+\item{keep}{A length-one numeric vector indicating in time units how much of
+the trace has to be kept before time zero.}
+
 \item{c0}{Propagation speed of the GPR wave through air (used only when
 \code{keep = NULL}).}
-
-\item{ts}{A numeric vector defining the amount of time the traces have to
-shifted}
 }
 \value{
 An object of the class GPR.
@@ -35,8 +42,16 @@ When \code{keep = NULL} the amount of time kept is equal to
 time taken by the air wave to travel from the transmitter to the
 receiver.
 }
+\examples{
+data(frenkeLine00)
+tfb <- firstBreak(frenkeLine00)
+t0 <- firstBreakToTime0(tfb, frenkeLine00, c0 = 0.299)
+time0(frenkeLine00) <- t0
+frenkeLine00_2 <- time0Cor(frenkeLine00, method = "pchip")
+}
 \seealso{
 \code{\link{time0}} to set time zero and \code{\link{firstBreak}} 
          to estimate the first wave break.
+         \code{\link{firstBreakToTime0}} to convert the first wave break
+         into time zero.
 }
-

@@ -3,6 +3,7 @@
 \docType{methods}
 \name{filter2D}
 \alias{filter2D}
+\alias{filter2D}
 \title{Two-dimensional filters}
 \usage{
 \S4method{filter2D}{GPR}(x, type = c("median3x3", "adimpro"), ...)
@@ -10,4 +11,3 @@
 \description{
 Two-dimensional filters
 }
-

@@ -11,9 +11,9 @@
 \arguments{
 \item{x}{An object of the class \code{GPR}}
 
-\item{method}{A length-one character vector. \code{"coppens"} corresponds to 
+\item{method}{A length-one character vector. \code{"coppens"} corresponds to
 the modified Coppens method, \code{"threshold"} to the 
-threshold method, and \code{"MER"} to the modified energy ratio 
+threshold method, and \code{"MER"} to the modified energy ratio
 method.}
 
 \item{thr}{A length-one numeric vector defining the threshold  signal 
@@ -45,7 +45,7 @@ Compute the first wave break.
        Automatic first-breaks picking: New strategies and algorithms. 
        Geophysics, 75(4): 67-76.}
   \item{Modified Energy Ratio (MER) method}{Han L., Wong J., and John C. 
-       (2010) Time picking on noisy microseismograms. In: Proceedings of the 
+       (2010) Time picking on noisy microseismograms. In: Proceedings of the
        GeoCanada 2010 Convention - Working with the Earth, Calgary, AB, 
        Canada, p. 4}
 }
@@ -55,4 +55,3 @@ Compute the first wave break.
          \code{\link{time0Cor}} to shift the traces such that they start
          at time zero.
 }
-

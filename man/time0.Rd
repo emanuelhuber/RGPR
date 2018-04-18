@@ -4,6 +4,8 @@
 \name{time0}
 \alias{time0}
 \alias{time0<-}
+\alias{time0}
+\alias{time0<-}
 \title{'time-zero' of every traces}
 \usage{
 \S4method{time0}{GPR}(x)
@@ -28,4 +30,3 @@ time0(frenkeLine00)
 \seealso{
 \code{\link{firstBreak}} to estimate the first wave break.
 }
-

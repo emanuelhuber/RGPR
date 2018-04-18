@@ -10,4 +10,3 @@
 \description{
 Amplitude of the GPR data
 }
-

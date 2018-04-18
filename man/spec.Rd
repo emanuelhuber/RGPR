@@ -11,4 +11,3 @@
 \description{
 Return the amplitude spectrum of the GPR object.
 }
-

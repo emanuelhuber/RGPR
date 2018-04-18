@@ -30,8 +30,8 @@ The required arguments for \code{method = "spiking"} and
   \item \code{wtr}: A length-one numeric vector defining the number of 
                     neighorough traces to be combine into a "super trace"
                     (the total number of traces is \code{2*wtr + 1}).
-  \item \code{nf} A length-one numeric vector defining the filter length.
-  \item \code{mu} A length-one numeric vector defining the amount of noise.
+  \item \code{nf}: A length-one numeric vector defining the filter length.
+  \item \code{mu}: A length-one numeric vector defining the amount of noise.
 }
 }
 
@@ -41,7 +41,7 @@ The required arguments for \code{method = "wavelet"} are:
 \itemize{
   \item \code{h}: A numeric vector corresponding to the wavelet used to
                   deconvolve the GPR data.
-  \item \code{mu} A length-one numeric vector defining the amount of noise.
+  \item \code{mu}: A length-one numeric vector defining the amount of noise.
 }
 }
 

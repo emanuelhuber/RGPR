@@ -3,7 +3,8 @@
 \docType{methods}
 \name{processing}
 \alias{processing}
-\title{Processing steps applied to the data}
+\alias{processing}
+\title{DEPRECATED - Processing steps applied to the data}
 \usage{
 \S4method{processing}{GPR}(x)
 }
@@ -16,6 +17,7 @@ processing functions with their arguments applied previously on the
 GPR data.
 }
 \description{
+DEPRECATED - use \code{proc} instead!
 \code{processing} returns all the processing steps applied to the data.
 }
 \examples{
@@ -23,4 +25,3 @@ data(frenkeLine00)
 A <- dewow(frenkeLine00, type = "Gaussian")
 processing(A)
 }
-

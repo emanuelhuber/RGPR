@@ -5,8 +5,8 @@
 \alias{traceShift}
 \title{Shift vertically the traces by an amount of depth units.}
 \usage{
-\S4method{traceShift}{GPR}(x, ts, method = c("none", "linear", "nearest",
-  "pchip", "cubic", "spline"), crop = TRUE)
+\S4method{traceShift}{GPR}(x, ts, method = c("spline", "linear", "nearest",
+  "pchip", "cubic", "none"), crop = TRUE)
 }
 \arguments{
 \item{x}{A object of the class GPR}
@@ -32,4 +32,3 @@ Shift vertically the traces by an amount of depth units.
 \code{\link{time0Cor}} to shift the traces such that they start
          at time zero.
 }
-

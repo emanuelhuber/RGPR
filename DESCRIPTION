@@ -3,21 +3,20 @@ Type: Package
 Title: Ground-penetrating radar (GPR) data visualisation, processing and 
 	delineation
 Version: 0.0.0
-Date: 2016-09-23
+Date: 2017-10-24
 Authors@R: c(
-  person("Emanuel", "Huber", email = "emanuel.huber@stanford.edu",
+  person("Emanuel", "Huber", email = "emanuel.huber@alumni.ethz.ch",
   role = c("aut", "cre")),
   person("Guillaume", "Hans", email = "guillaume.hans@fpinnovations.ca", 
   role = "aut"))
+Author: Emanuel Huber and Guillaume Hans
+Maintainer: Emanuel Huber <emanuel.huber@alumni.ethz.ch>
 Description: S4 classes and R functions to read, write, analyse and visualise
     ground-penetrating radar (GPR) data.
 Depends:
-	base,
-    methods,
-    graphics,
-	stats
-License: MIT License
-URL: http://stanford.edu/~ehuber/RGPR.html
+	base
+License: GPL (>= 2)
+URL: https://github.com/emanuelhuber/RGPR
 BugReports: https://github.com/emanuelhuber/RGPR/issues
 LazyData: true
 Collate:
@@ -25,8 +24,14 @@ Collate:
 	'global.R'    
 	'ClassGPR.R'
     'ClassGPRsurvey.R'
+    'ClassMisc.R'
     'data.R'
 Imports:
+    methods,
+    graphics,
+  	stats,
+    grDevices,
+    utils,
     sp,
     rgdal,
     rgeos,
@@ -35,9 +40,10 @@ Imports:
     colorspace,
     Cairo,
     rgl,
-    EMD,
     mmand,
     e1071,
     plot3D,
-	adimpro
-RoxygenNote: 5.0.1
+	  adimpro,
+	  raster,
+	  fields
+RoxygenNote: 6.0.1

@@ -18,4 +18,3 @@ of phase angle is plotet.}
 \description{
 Optimum Phase Rotation
 }
-

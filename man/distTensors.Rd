@@ -4,9 +4,9 @@
 \alias{distTensors}
 \title{Distance between structure tensors}
 \usage{
-distTensors(J1, J2, method = c("geodesic", "log-Euclidean", "angular"), ...)
+distTensors(J1, J2, method = c("geodesic", "log-Euclidean", "angular", "L2"),
+  normalise = FALSE)
 }
 \description{
 Distance between structure tensors
 }
-

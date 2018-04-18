@@ -15,4 +15,3 @@ Coerce to SpatialLines
 
 Coerce to SpatialPoints
 }
-

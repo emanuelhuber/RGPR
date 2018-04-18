@@ -10,4 +10,3 @@
 \description{
 Gamma correction of the amplitude
 }
-

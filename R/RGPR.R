@@ -42,7 +42,11 @@
 #'   \item \code{plotDelineations3D}:
 #'   \item \code{identifyDelineation}:
 #' }
-#'
+#' @import stats
+#' @import graphics
+#' @import utils 
+#' @import grDevices 
+#' @import methods 
 #' @references Several books!
 "_PACKAGE"
 #> [1] "_PACKAGE"

@@ -10,4 +10,3 @@
 \description{
 Up-sample the GPR data (1D and 2D sinc-interpolation)
 }
-

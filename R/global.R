@@ -3812,23 +3812,6 @@ readDT1 <- function( fPath){
       hHD[i,1:2] <-  as.character(sapply(hdline[1:2],trimStr))
     }
   }
-<<<<<<< HEAD
-
- nbTraces   <- as.integer(as.character(headerHD[which(headerHD[,1]=="NUMBER OF TRACES"),2]))
-nbPt     <- as.integer(as.character(headerHD[which(headerHD[,1]=="NUMBER OF PTS/TRC"),2]))
-  #----------------#
-  #--- READ DT1 ---#
-  dt1 <- file(fileNameDT1 , "rb")
-
-  indexDT1Header=c("traces", "position", "samples","topo", "NA1", "bytes",
-                    "tracenb", "stack","window","NA2", "NA3", "NA4",
-                    "NA5", "NA6", "recx","recy","recz","transx","transy",
-                    "transz","time0","zeroflag", "NA7", "time","x8","com")  
-                    #,"com1","com2","com3","com4","com5","com6")
-  headerDT1 = list()
-  myData = matrix(NA,nrow=nbPt,ncol=nbTraces)
-  for(i in 1:nbTraces){
-=======
   nTr <- .getHD(hHD, "NUMBER OF TRACES")
   nPt <- .getHD(hHD, "NUMBER OF PTS/TRC")
   #--- READ DT1
@@ -3840,7 +3823,6 @@ nbPt     <- as.integer(as.character(headerHD[which(headerHD[,1]=="NUMBER OF PTS/
   dataDT1 <- matrix(NA, nrow = nPt, ncol = nTr)
   con <- file(fName$dt1 , "rb")
   for(i in 1:nTr){
->>>>>>> refs/remotes/emanuelhuber/master
     for(j in 1:25){
       hDT1[[tags[j]]][i] <- readBin(con, what = numeric(), n = 1L, size = 4)
     }

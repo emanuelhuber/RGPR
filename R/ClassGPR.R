@@ -3894,7 +3894,6 @@ setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance",
     w <- ceiling(nrow(x))/20
   }
   wi <- w/x@dz
-  t0 <- round(x@time0[1]/x@dz)*x@dz
   x <- x[(t0/x@dz + 1):nrow(x),]
   x@time0 <- 0
   x@depth <- x@depth - t0

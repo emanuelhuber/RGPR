@@ -1563,11 +1563,11 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
 }
 
 plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
-          time_0 = 0, antsep = 1, v = 0.1,
+          time_0 = 0, antsep = 1, v = 0.1, surveymode = NULL,
           addFid = TRUE, fid = NULL,
           addAnn = TRUE, annotations = NULL, 
           depthunit="ns", posunit="m",
-          topo=NULL, 
+          topo=NULL,
           pdfName=NULL, 
           yaxt = "s", bty = "o",
           col = "black", lwd = 0.5, ws = 1, side = 1, ratio = 1, 
@@ -1591,7 +1591,7 @@ plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
     topo <- rep(0L,nc)
   }else{
     # conversion ns to m!
-    if(grepl("[s]$",depthunit)){
+    if(grepl("[s]$", depthunit)){
       # timeToDepth <- function(tt, time0, v=0.1, antsep=1){
         # t0 <- time0 - antsep/0.299
         # sqrt(v^2*(tt-t0)- antsep^2)/2
@@ -1601,13 +1601,20 @@ plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
     }
     topo <- topo - max(topo)
   }
-  if(grepl("[s]$",depthunit) && relTime0){
+  if(grepl("[s]$", depthunit) && relTime0){
     y <- y + time_0
-  }else if(grepl("[m]$",depthunit)){
+    message("jaime")
+      message("yep", min(y))
+      message(ylim[1])
+      message(ylim[2])
+    if(ylim[2] > -time_0){
+      ylim[1] <- max(c(min(y), ylim[1]))
+      ylim[2] <- 0
+    }
+  }else if(grepl("[m]$", depthunit)){
     depth_0 <- depthToTime(z=0, time_0 , v=v, antsep=antsep) * v/ 2
     y <- y + depth_0
   }
-  
   if(is.null(xlim) ){
        # xlim <- range(x) 
        xlim <- range(x)  + c(-1,1)*dx
@@ -1616,9 +1623,7 @@ plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
     test <- ( x >= xlim[1] & x <= xlim[2] )
     xlim <- xlim + c(-1,1)*dx
   }
-  if(is.null(ylim) ){
-       ylim <-  range(y) + range(topo)
-  }
+
   
   omi=c(0,0,0.6,0)
   mgp=c(2.5, 0.75, 0)
@@ -1697,7 +1702,12 @@ plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
   if( yaxt != "n"){
     pretty_y <- pretty(y ,10)
     axis(side=2, at=pretty_y, labels= -pretty_y)
-    .depthAxis(y, pretty_y, time_0, v, antsep, depthunit, posunit )
+    if( grepl("CMP", toupper(surveymode))){
+      axis(side = 4, at = pretty_y, labels = -pretty_y)
+    }else{
+      #.depthAxis(ylim, pretty_y, time_0, v, antsep, depthunit, posunit )
+      .depthAxis(y, pretty_y, time_0, v, antsep, depthunit, posunit )
+    }
   }
   
   if( bty != "n"){

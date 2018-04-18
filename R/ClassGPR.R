@@ -1661,7 +1661,8 @@ setMethod("dcshift", "GPR", function(x, u, FUN=mean){
 #----------------- FIRST-BREAK
 #' First wave break
 #'
-#' Compute the first wave break.
+#' Pick the time corresponding to the first break of each trace in the GPR profile.
+#' Return a vector containing the first break times.
 #'
 #' @param x An object of the class \code{GPR}
 #' @param method A length-one character vector. \code{"coppens"} corresponds to
@@ -1674,7 +1675,7 @@ setMethod("dcshift", "GPR", function(x, u, FUN=mean){
 #' @param w A length-one numeric vector defining the length of leading window 
 #'          (only for the modified Coppens and modified energy ratio 
 #'          methods). Recommended value: about one period of the first-arrival 
-#'          waveform.
+#'          waveform. w is defined on a time basis.
 #' @param ns A length-one numeric vector defining the length of the edge 
 #'           preserving smoothing window (only for the modified Coppens 
 #'           method). Recommended value: between one and two signal periods.
@@ -1750,11 +1751,11 @@ setMethod("firstBreak", "GPR", function(x, method = c("coppens", "coppens2",
 )
 
 #--------------- DATA EDITING FUNCTIONS
-#' Shift vertically the traces by an amount of depth units.
+#' Shift traces vertically by an amount of depth (time) units. New traces are interpolated.
 #'
 #' @param x A object of the class GPR
 #' @param ts A numeric vector defining the amount of depth the traces have to
-#'              shifted
+#'              be shifted
 #' @param method A length-one character vector indicating the interpolation
 #'               method. \code{"none"} means that the trace is shifted by the
 #'               amount of points that is the closest to amount of depth 
@@ -1811,7 +1812,8 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("spline",
 #' Time zero correction
 #'
 #' \code{time0Cor} shift the traces vertically such that they start at
-#' time zero (time zero of the data can be modified with the function)
+#' time zero (time zero of the data can be modified with the function).
+#' New traces are interpolated.
 #'
 #' When \code{keep = NULL} the amount of time kept is equal to
 #' time taken by the air wave to travel from the transmitter to the
@@ -1955,7 +1957,7 @@ setMethod("timeCorOffset", "GPR", function(x, t0 = NULL){
 #'              filter)
 #' @param w A length-one numeric vector equal to the window length 
 #'            of the filter. Per default, the filter length is five times
-#'            the GPR pulse width.
+#'            the GPR pulse width. w is defined on a time basis.
 #' @return An object of the class GPR whose traces are dewowed.
 #' @examples
 #' data(frenkeLine00)
@@ -2182,8 +2184,10 @@ setMethod("traceScaling", "GPR", function(x,
 
 #' Trace average
 #'
-#' Compute the average trace of a radargram (resulting in a single trace) or
-#' a moving average of the traces.
+#' Average traces in a radargram along the distance (horizontal) axis using
+#' a moving window. This can be used to increase signal to noise ratio. Note that if 
+#' the moving window length is not defined, all traces are averaged into one single trace.
+#' 
 #' @param x An object of the class GPR
 #' @param w A length-one integer vector equal to the window length of the 
 #'          average window. If \code{w = NULL} a single trace corresponding to
@@ -2807,6 +2811,7 @@ plot.GPR <- function(x,y,...){
                     main=main, ylim = zlim,
                     xlab = x@posunit, ylab = ylab, note = x@filepath, 
                     time_0 = x@time0, antsep = x@antsep, v = v, 
+                    surveymode = x@surveymode,
                     addFid = addFid, fid = x@fid,
                     addAnn = addAnn, annotations=x@ann,
                     depthunit=x@depthunit, posunit = x@posunit,
@@ -3840,7 +3845,13 @@ signalNoiseRatio2 <- function(x){
 }
 
 
-#' Common mid-point (CMP) analysis
+#' Velocity Analysis of CMP Gather
+#' 
+#' Transform the space-time domain of the radargram into a velocity-time domain to obtain 
+#' the velocity spectrum (i.e. change in wave velocity with depth or time). This is achieved by applying
+#' Normal Move-Out (NMO) corrections to the radargram for the range of selected velocities 
+#' and computing a coherency measure for each result. In RGPR, the coherency measure can be defined using 
+#' different functions: "semblance", "winsemblance", "wincoherence", "wincoherence2".   
 #' 
 #' either use 'rec' and 'trans' to compute the distance between the antennas
 #' or give the distance between the antennas (asep)
@@ -3890,58 +3901,60 @@ setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance",
     vlim <- x@vel[[1]] * c(0.5, 1.5)
     v <- seq(vlim[1], vlim[2], length = 50)
   }
-  if(is.null(w)){
-    w <- ceiling(nrow(x))/20
-  }
-  wi <- w/x@dz
-  x <- x[(t0/x@dz + 1):nrow(x),]
-  x@time0 <- 0
-  x@depth <- x@depth - t0
-  # vspec <- NMOCor(x, v = v[1], asep = asep)
-  vspec <- .NMOCor(x, v = max(v), asep = asep)
-  vspec <- vspec[, rep(1, length(v))]
-  vspec@data[] <- 0
-  # vspec <- matrix(0 nrow=nrow(test), ncol=length(vv))
-  vspec@pos <- v
-  vabove <- seq_len(ceiling(w/2)) + 1
-  if(method == "wincoherence"){
-    for(i in seq_along(v)){
-      y <- .NMOCor(x, v = v[i], asep = asep)
-      vspec@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, 
-                                   FUN = signalNoiseRatio)
-      # vspec@data[floor(w/2) + seq_along(test),i] <- test
-      vspec@data[vabove,] <- 0
+  # x <- x[(t0/x@dz + 1):nrow(x),]
+  # x@time0 <- 0
+  # x@depth <- x@depth - t0
+  # x_velAna <- NMOCor(x, v = v[1], asep = asep)
+  #TODO: create a new object
+  x_velAna <- .NMOCor(x, v = max(v), asep = asep)
+  x_velAna <- x_velAna[, rep(1, length(v))]
+  x_velAna@data[] <- 0
+  # x_velAna <- matrix(0 nrow=nrow(test), ncol=length(vv))
+  x_velAna@pos <- v
+  if(method %in% c("wincoherence", "wincoherence2", "winsemblance")){
+    if(is.null(w)){
+      w <- ceiling(nrow(x))/20
     }
-  }else if(method == "wincoherence2"){
-    for(i in seq_along(v)){
-      y <- .NMOCor(x, v = v[i], asep = asep)
-      vspec@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, 
-                                   FUN = signalNoiseRatio2)
-      # vspec@data[floor(w/2) + seq_along(test),i] <- test
-      vspec@data[vabove,] <- 0
+    wi <- round(w/x@dz)
+    if(wi > ncol(x) || wi < 0 ) stop("w too large or too small")
+    vabove <- seq_len(ceiling(w/2)) + 1
+    if(method == "wincoherence"){
+      for(i in seq_along(v)){
+        y <- .NMOCor(x, v = v[i], asep = asep)
+        x_velAna@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, 
+                                     FUN = signalNoiseRatio)
+        # x_velAna@data[floor(w/2) + seq_along(test),i] <- test
+      }
+    }else if(method == "wincoherence2"){
+      for(i in seq_along(v)){
+        y <- .NMOCor(x, v = v[i], asep = asep)
+        x_velAna@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, 
+                                     FUN = signalNoiseRatio2)
+        # x_velAna@data[floor(w/2) + seq_along(test),i] <- test
+      }
+    }else if(method == "winsemblance"){
+      for(i in seq_along(v)){
+        y <- .NMOCor(x, v = v[i], asep = asep)
+        x_velAna@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, 
+                                        FUN = semblance)
+        # x_velAna@data[floor(w/2) + seq_along(test),i] <- test
+      }
     }
+    x_velAna@data[vabove,] <- 0
   }else if(method == "semblance"){
     for(i in seq_along(v)){
       y <- .NMOCor(x, v = v[i], asep = asep)
-      vspec@data[,i] <- (apply(y@data, 1, sum, na.rm = TRUE))^2 / 
+      x_velAna@data[,i] <- (apply(y@data, 1, sum, na.rm = TRUE))^2 / 
                           apply((y@data)^2, 1, sum, na.rm = TRUE)
     }
-  }else if(method == "winsemblance"){
-    for(i in seq_along(v)){
-      y <- .NMOCor(x, v = v[i], asep = asep)
-      vspec@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, FUN = semblance)
-      # vspec@data[floor(w/2) + seq_along(test),i] <- test
-      vspec@data[vabove,] <- 0
-    }
-    #     semblance(cmpNMO)
   }
-  vspec@data[is.na(vspec@data)] <- 0
-  vspec@data[is.infinite(vspec@data)] <- 0
-  vspec@surveymode <- "CMPANALYSIS"
-  vspec@antsep <- 0
-  vspec@time0 <- 0
-  proc(vspec) <- getArgs()
-  return(vspec)
+  x_velAna@data[is.na(x_velAna@data)] <- 0
+  x_velAna@data[is.infinite(x_velAna@data)] <- 0
+  x_velAna@surveymode <- "CMPANALYSIS"
+  x_velAna@antsep <- 0
+  x_velAna@time0 <- 0
+  proc(x_velAna) <- getArgs()
+  return(x_velAna)
 }
 )
 

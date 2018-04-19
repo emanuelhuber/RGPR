@@ -972,6 +972,17 @@ setGenericVerif("proc", function(x) standardGeneric("proc"))
 #' @export
 setGenericVerif("proc<-",function(x,value){standardGeneric("proc<-")})
 
+#' @name antsep
+#' @rdname antsep
+#' @export
+setGenericVerif("antsep", function(x) standardGeneric("antsep"))
+
+#' @name antsep<-
+#' @rdname antsep
+#' @export
+setGenericVerif("antsep<-",function(x,value){standardGeneric("antsep<-")})                
+                
+                
 #' @name description
 #' @rdname description
 #' @export

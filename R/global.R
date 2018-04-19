@@ -2028,10 +2028,14 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
         i <- fb[1]
         w <- (x[i] - thr) / (x[i] - x[i-1])
         return( w * tt[i-1] + (1- w) * tt[i] )
+      } else{
+        return(NA)
       }
+    } else{
+      return(NA)
     }
 #   }
-  return(NA)
+  
 #   return(first_breacks)
 }
 

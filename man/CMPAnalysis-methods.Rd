@@ -7,7 +7,7 @@
 \title{Velocity Analysis of CMP Gather}
 \usage{
 \S4method{CMPAnalysis}{GPR}(x, method = c("semblance", "winsemblance",
-  "wincoherence", "wincoherence2"), v = NULL, asep = NULL, w = NULL)
+  "wincoherence", "wincoherence2"), v = NULL, w = NULL)
 }
 \arguments{
 \item{x}{An object of the class \code{GPR}}
@@ -16,9 +16,6 @@
 
 \item{v}{A numeric vector defining at which velocities the analysis is
 performed}
-
-\item{asep}{A length-n numeric vector defining the antenna separation for
-each trace (n = number of traces)}
 
 \item{w}{A length-one numeric vector defining the window length for the
 methods 'wincoherence' and 'wincoherence2'.}

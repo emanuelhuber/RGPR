@@ -1580,8 +1580,9 @@ setReplaceMethod(
 #' @rdname isCMP
 #' @export
 setMethod("isCMP", "GPR", function(x){
-  grepl("CMP", toupper(x@surveymode)) || 
-    grepl("WARR", toupper(x@surveymode))
+  (grepl("CMP", toupper(x@surveymode)) || 
+    grepl("WARR", toupper(x@surveymode))) && 
+      !grepl("CMPANALYSIS", toupper(x@surveymode))
 } 
 )
 
@@ -3854,12 +3855,6 @@ setMethod("identifyDelineation", "GPR", function(x,sel=NULL,...){
 #' @param x An object of the class \code{GPR}
 #' @param v A length-one numeric vector defining the radar wave velocity in 
 #'          the ground
-#' @param asep A length-n numeric vector defining the antenna separation for
-#'             each trace (n = number of traces; for example:
-#'             \code{seq(x@antsep, by = x@dx, length.out = length(x))}). 
-#'             If \code{NULL}, the
-#'             slots \code{rec} and \code{trans} of \code{x} are used to 
-#'             compute the distance between the antennas
 #' @rdname NMOCor-methods
 #' @aliases NMOCor,GPR-method
 #' @export
@@ -3984,8 +3979,6 @@ signalNoiseRatio2 <- function(x){
 #' @param method A length-one character vector 
 #' @param v A numeric vector defining at which velocities the analysis is
 #'          performed
-#' @param asep A length-n numeric vector defining the antenna separation for
-#'             each trace (n = number of traces)
 #' @param w A length-one numeric vector defining the window length for the
 #'          methods 'wincoherence' and 'wincoherence2'.           
 #' @rdname CMPAnalysis-methods
@@ -4005,20 +3998,17 @@ signalNoiseRatio2 <- function(x){
 setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance", 
                                          "winsemblance",   "wincoherence", 
                                          "wincoherence2"), v = NULL, 
-                                         asep = NULL, w = NULL){
+                                          w = NULL){
   method <- match.arg(method, c("semblance", "winsemblance", 
                                 "wincoherence", "wincoherence2"))
   if(is.null(v)){
     vlim <- x@vel[[1]] * c(0.5, 1.5)
     v <- seq(vlim[1], vlim[2], length = 50)
   }
-  # x <- x[(t0/x@dz + 1):nrow(x),]
-  # x@time0 <- 0
-  # x@depth <- x@depth - t0
-  # x_velAna <- NMOCor(x, v = v[1], asep = asep)
+  x <- time0Cor(x, method = "pchip")
   #TODO: create a new object > check slot consistency
   # as(matrix(0, nrow = nrow(x), ncol = length(v)), "GPR")
-  x_velAna <- .NMOCor(x, v = max(v), asep = asep)
+  x_velAna <- .NMOCor(x, v = max(v), asep = x@antsep)
   x_velAna <- x_velAna[, rep(1, length(v))]
   x_velAna@data[] <- 0
   # x_velAna <- matrix(0 nrow=nrow(test), ncol=length(vv))
@@ -4030,23 +4020,24 @@ setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance",
     wi <- round(w/x@dz)
     if(wi > ncol(x) || wi < 0 ) stop("w too large or too small")
     vabove <- seq_len(ceiling(w/2)) + 1
+    # FIXME > use apply(x, i, FUN)
     if(method == "wincoherence"){
       for(i in seq_along(v)){
-        y <- .NMOCor(x, v = v[i], asep = asep)
+        y <- .NMOCor(x, v = v[i], asep = x@antsep)
         x_velAna@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, 
                                      FUN = signalNoiseRatio)
         # x_velAna@data[floor(w/2) + seq_along(test),i] <- test
       }
     }else if(method == "wincoherence2"){
       for(i in seq_along(v)){
-        y <- .NMOCor(x, v = v[i], asep = asep)
+        y <- .NMOCor(x, v = v[i], asep = x@antsep)
         x_velAna@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, 
                                      FUN = signalNoiseRatio2)
         # x_velAna@data[floor(w/2) + seq_along(test),i] <- test
       }
     }else if(method == "winsemblance"){
       for(i in seq_along(v)){
-        y <- .NMOCor(x, v = v[i], asep = asep)
+        y <- .NMOCor(x, v = v[i], asep = x@antsep)
         x_velAna@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, 
                                         FUN = semblance)
         # x_velAna@data[floor(w/2) + seq_along(test),i] <- test
@@ -4055,9 +4046,10 @@ setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance",
     x_velAna@data[vabove,] <- 0
   }else if(method == "semblance"){
     for(i in seq_along(v)){
-      y <- .NMOCor(x, v = v[i], asep = asep)
-      x_velAna@data[,i] <- (apply(y@data, 1, sum, na.rm = TRUE))^2 / 
-                          apply((y@data)^2, 1, sum, na.rm = TRUE)
+      y <- .NMOCor(x, v = v[i], asep = x@antsep)
+      x_velAna@data[,i] <- semblance(y@data)
+      #x_velAna@data[,i] <- (apply(y@data, 1, sum, na.rm = TRUE))^2 / 
+      #                    apply((y@data)^2, 1, sum, na.rm = TRUE)
     }
   }
   x_velAna@data[is.na(x_velAna@data)] <- 0

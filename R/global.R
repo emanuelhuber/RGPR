@@ -1109,7 +1109,7 @@ setGenericVerif("NMOCor", function(x, v = NULL)
 #' @exportMethod CMPAnalysis
 setGenericVerif("CMPAnalysis", function(x, method = c("semblance", 
                "winsemblance", "wincoherence", "wincoherence2"), v = NULL, 
-               asep = NULL, w = NULL) standardGeneric("CMPAnalysis"))
+               w = NULL) standardGeneric("CMPAnalysis"))
 
 setGenericVerif("migration", function(x,type=c("static","kirchhoff"), ...) 
 standardGeneric("migration"))

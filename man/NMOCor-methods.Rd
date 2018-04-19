@@ -13,13 +13,6 @@
 
 \item{v}{A length-one numeric vector defining the radar wave velocity in 
 the ground}
-
-\item{asep}{A length-n numeric vector defining the antenna separation for
-each trace (n = number of traces; for example:
-\code{seq(x@antsep, by = x@dx, length.out = length(x))}). 
-If \code{NULL}, the
-slots \code{rec} and \code{trans} of \code{x} are used to 
-compute the distance between the antennas}
 }
 \description{
 Remove the Normal Move-Out (NMO) from the trace given a constant velocity: 

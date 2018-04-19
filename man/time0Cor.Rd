@@ -35,7 +35,8 @@ An object of the class GPR.
 }
 \description{
 \code{time0Cor} shift the traces vertically such that they start at
-time zero (time zero of the data can be modified with the function)
+time zero (time zero of the data can be modified with the function).
+New traces are interpolated.
 }
 \details{
 When \code{keep = NULL} the amount of time kept is equal to

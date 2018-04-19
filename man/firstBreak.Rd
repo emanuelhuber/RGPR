@@ -23,7 +23,7 @@ threshold method).}
 \item{w}{A length-one numeric vector defining the length of leading window 
 (only for the modified Coppens and modified energy ratio 
 methods). Recommended value: about one period of the first-arrival 
-waveform.}
+waveform. w is defined on a time basis.}
 
 \item{ns}{A length-one numeric vector defining the length of the edge 
 preserving smoothing window (only for the modified Coppens 
@@ -37,7 +37,8 @@ When \code{bet = NULL} the value of \code{bet} is set to
 20\% of the maximal signal amplitude.}
 }
 \description{
-Compute the first wave break.
+Pick the time corresponding to the first break of each trace in the GPR profile.
+Return a vector containing the first break times.
 }
 \references{
 \describe{

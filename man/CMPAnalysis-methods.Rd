@@ -4,7 +4,7 @@
 \name{CMPAnalysis}
 \alias{CMPAnalysis}
 \alias{CMPAnalysis,GPR-method}
-\title{Common mid-point (CMP) analysis}
+\title{Velocity Analysis of CMP Gather}
 \usage{
 \S4method{CMPAnalysis}{GPR}(x, method = c("semblance", "winsemblance",
   "wincoherence", "wincoherence2"), v = NULL, asep = NULL, w = NULL)
@@ -24,11 +24,17 @@ each trace (n = number of traces)}
 methods 'wincoherence' and 'wincoherence2'.}
 }
 \description{
+Transform the space-time domain of the radargram into a velocity-time domain to obtain 
+the velocity spectrum (i.e. change in wave velocity with depth or time). This is achieved by applying
+Normal Move-Out (NMO) corrections to the radargram for the range of selected velocities 
+and computing a coherency measure for each result. In RGPR, the coherency measure can be defined using 
+different functions: "semblance", "winsemblance", "wincoherence", "wincoherence2".
+}
+\details{
 either use 'rec' and 'trans' to compute the distance between the antennas
 or give the distance between the antennas (asep)
 or seq(x@antsep, by = x@dx, length.out = length(x))
-}
-\details{
+
 \describe{
   \item{semblance}{also described as the ratio of input to output
         energy (Niedell and Taner, 1971)}

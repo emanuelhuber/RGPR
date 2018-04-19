@@ -982,7 +982,25 @@ setGenericVerif("antsep", function(x) standardGeneric("antsep"))
 #' @export
 setGenericVerif("antsep<-",function(x,value){standardGeneric("antsep<-")})                
                 
-                
+
+#' @name surveymode
+#' @rdname surveymode
+#' @export
+setGenericVerif("surveymode", function(x) standardGeneric("surveymode"))
+
+#' @name surveymode<-
+#' @rdname surveymode
+#' @export
+setGenericVerif("surveymode<-",
+                function(x, value){standardGeneric("surveymode<-")})    
+
+#' @name isCMP
+#' @rdname isCMP
+#' @export
+setGenericVerif("isCMP", function(x) standardGeneric("isCMP"))
+
+
+
 #' @name description
 #' @rdname description
 #' @export

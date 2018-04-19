@@ -16,7 +16,7 @@ filter)}
 
 \item{w}{A length-one numeric vector equal to the window length 
 of the filter. Per default, the filter length is five times
-the GPR pulse width.}
+the GPR pulse width. w is defined on a time basis.}
 }
 \value{
 An object of the class GPR whose traces are dewowed.

@@ -27,8 +27,9 @@ An object of the class GPR. When \code{w = NULL}, this function
         of the \code{w} neighbouring traces centered on the considered trace.
 }
 \description{
-Compute the average trace of a radargram (resulting in a single trace) or
-a moving average of the traces.
+Average traces in a radargram along the distance (horizontal) axis using
+a moving window. This can be used to increase signal to noise ratio. Note that if 
+the moving window length is not defined, all traces are averaged into one single trace.
 }
 \examples{
 data("frenkeLine00")

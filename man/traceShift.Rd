@@ -3,7 +3,7 @@
 \docType{methods}
 \name{traceShift}
 \alias{traceShift}
-\title{Shift vertically the traces by an amount of depth units.}
+\title{Shift traces vertically by an amount of depth (time) units. New traces are interpolated.}
 \usage{
 \S4method{traceShift}{GPR}(x, ts, method = c("spline", "linear", "nearest",
   "pchip", "cubic", "none"), crop = TRUE)
@@ -12,7 +12,7 @@
 \item{x}{A object of the class GPR}
 
 \item{ts}{A numeric vector defining the amount of depth the traces have to
-shifted}
+be shifted}
 
 \item{method}{A length-one character vector indicating the interpolation
 method. \code{"none"} means that the trace is shifted by the
@@ -26,7 +26,7 @@ amount of points that is the closest to amount of depth
 An object of the class GPR.
 }
 \description{
-Shift vertically the traces by an amount of depth units.
+Shift traces vertically by an amount of depth (time) units. New traces are interpolated.
 }
 \seealso{
 \code{\link{time0Cor}} to shift the traces such that they start

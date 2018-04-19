@@ -1506,6 +1506,87 @@ setReplaceMethod(
   }
 )
 
+#------------------------------------------------------------------------------#
+# FIXME - START
+#' Antenna separation
+#' 
+#' For common-offset GPR data, the antenna separation is constant.
+#' For multi-offset GPR data (e.g., CMP, WARR), the antenna separation increase
+#' from trace to trace.
+#' @name antsep
+#' @rdname antsep
+#' @export
+setMethod("antsep", "GPR", function(x){
+  return(x@antsep)
+} 
+)
+#' @name antsep<-
+#' @rdname antsep
+#' @export
+setReplaceMethod(
+  f = "antsep",
+  signature = "GPR",
+  definition = function(x, value){
+    if(isCMP(x)){
+      if(length(value) != ncol(x)){
+        stop("length(value) != ncol(x)")
+      }else{
+        x@antsep <- value
+      }
+    }else{
+      # not CMP, not WARR => common-offset
+      if(length(value) > 1) warning("Only first element is used!")
+      x@antsep <- value[1]
+    }
+    x@proc <- c(x@proc, "antsep<-")
+    return(x)
+  }
+)
+
+#' Survey mode of the GPR data
+#' 
+#' @name surveymode
+#' @rdname surveymode
+#' @export
+setMethod("surveymode", "GPR", function(x){
+  return(x@description)
+} 
+)
+
+#' @name surveymode<-
+#' @rdname surveymode
+#' @export
+setReplaceMethod(
+  f="surveymode",
+  signature="GPR",
+  definition=function(x, value){
+    value <- as.character(value)[1]
+    # define a function surveymodeValues() that return a character vector
+    if(toupper(value) %in% c("CMP", "REFLEXION", "WARR", "CMPANALYSIS", 
+                             "CMP/WARR")){
+      x@surveymode <- value
+    }else{
+      stop("value must be either 'CMP', 'reflexion', 'WARR', 'CMPanalysis',
+           or 'CMP/WARR'")
+    }
+    x@proc <- c(x@proc, "surveymode<-")
+    return(x)
+  }
+)
+
+#' Return TRUE is surveymode is CMP
+#' 
+#' @name isCMP
+#' @rdname isCMP
+#' @export
+setMethod("isCMP", "GPR", function(x){
+  grepl("CMP", toupper(x@surveymode)) || 
+    grepl("WARR", toupper(x@surveymode))
+} 
+)
+
+
+
 #' Fiducial markers of the GPR data
 #' 
 #' @name fid<-
@@ -2759,9 +2840,14 @@ plot.GPR <- function(x,y,...){
       x@fid <- character(length(x@fid))
     }
     xlab <- x@posunit
-    if(toupper(x@surveymode) == "CMP" && length(x@antsep) == ncol(x)){
-      xvalues <- x@antsep
-      xlab <- paste0("antenna separation (", x@posunit, ")")
+    if(isCMP(x)){
+      if(length(x@antsep) == ncol(x)){
+        xvalues <- x@antsep
+        xlab <- paste0("antenna separation (", x@posunit, ")")
+      }else{
+        stop("length(antsep(x)) != ncol(x). You must correctly define ",
+             "the antenna separation distance with 'antsep(x) <- ...'")
+      }
     }else if(toupper(x@surveymode) == "CMPANALYSIS"){
       xvalues <- x@pos
       clab <- ""
@@ -2821,7 +2907,7 @@ plot.GPR <- function(x,y,...){
 #       }
       do.call(plotWig, c(list(z = x@data, x = xvalues, y = yvalues, 
                     main=main, ylim = zlim,
-                    xlab = x@posunit, ylab = ylab, note = x@filepath, 
+                    xlab = xlab, ylab = ylab, note = x@filepath, 
                     time_0 = x@time0, antsep = x@antsep, v = v, 
                     surveymode = x@surveymode,
                     addFid = addFid, fid = x@fid,

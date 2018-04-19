@@ -1100,7 +1100,7 @@ setGenericVerif("shiftEst", function(x, y = NULL,
 #' @name NMOCor
 #' @rdname NMOCor-methods
 #' @exportMethod NMOCor
-setGenericVerif("NMOCor", function(x, v = NULL, asep = NULL) 
+setGenericVerif("NMOCor", function(x, v = NULL) 
   standardGeneric("NMOCor"))
 
 

@@ -1549,7 +1549,7 @@ setReplaceMethod(
 #' @rdname surveymode
 #' @export
 setMethod("surveymode", "GPR", function(x){
-  return(x@description)
+  return(x@surveymode)
 } 
 )
 
@@ -3871,10 +3871,20 @@ setMethod("identifyDelineation", "GPR", function(x,sel=NULL,...){
 #'         correction: a technique and test results. Geophysical Prospecting,
 #'         473-488}
 #' }
-setMethod("NMOCor", "GPR", function(x, v = NULL, asep = NULL){
-    x <- .NMOCor(x, v = v, asep = asep)
-    proc(x) <- getArgs()
-    return(x)
+setMethod("NMOCor", "GPR", function(x, v = NULL){
+  if(!isCMP(x)){
+    stop("survey mode of x is not multi-offset. ",
+         "update survey mode:\n",
+         "  surveymode(x) <- 'CMP'\n",
+         " or\n",
+         "  surveymode(x) <- 'WARR'\n")
+  }
+  if(is.null(v)){
+    v <- x@vel[[1]]
+  } 
+  x <- .NMOCor(x, v = v, asep = x@antsep)
+  proc(x) <- getArgs()
+  return(x)
   }
 )
 

@@ -6,7 +6,7 @@
 \alias{NMOCor,GPR-method}
 \title{Normal Move-Out correction}
 \usage{
-\S4method{NMOCor}{GPR}(x, v = NULL, asep = NULL)
+\S4method{NMOCor}{GPR}(x, v = NULL)
 }
 \arguments{
 \item{x}{An object of the class \code{GPR}}

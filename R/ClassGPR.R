@@ -1661,7 +1661,8 @@ setMethod("dcshift", "GPR", function(x, u, FUN=mean){
 #----------------- FIRST-BREAK
 #' First wave break
 #'
-#' Compute the first wave break.
+#' Pick the time corresponding to the first break of each trace in the GPR profile.
+#' Return a vector containing the first break times.
 #'
 #' @param x An object of the class \code{GPR}
 #' @param method A length-one character vector. \code{"coppens"} corresponds to
@@ -1674,7 +1675,7 @@ setMethod("dcshift", "GPR", function(x, u, FUN=mean){
 #' @param w A length-one numeric vector defining the length of leading window 
 #'          (only for the modified Coppens and modified energy ratio 
 #'          methods). Recommended value: about one period of the first-arrival 
-#'          waveform.
+#'          waveform. w is defined on a time basis.
 #' @param ns A length-one numeric vector defining the length of the edge 
 #'           preserving smoothing window (only for the modified Coppens 
 #'           method). Recommended value: between one and two signal periods.
@@ -1750,11 +1751,11 @@ setMethod("firstBreak", "GPR", function(x, method = c("coppens", "coppens2",
 )
 
 #--------------- DATA EDITING FUNCTIONS
-#' Shift vertically the traces by an amount of depth units.
+#' Shift traces vertically by an amount of depth (time) units. New traces are interpolated.
 #'
 #' @param x A object of the class GPR
 #' @param ts A numeric vector defining the amount of depth the traces have to
-#'              shifted
+#'              be shifted
 #' @param method A length-one character vector indicating the interpolation
 #'               method. \code{"none"} means that the trace is shifted by the
 #'               amount of points that is the closest to amount of depth 
@@ -1811,7 +1812,8 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("spline",
 #' Time zero correction
 #'
 #' \code{time0Cor} shift the traces vertically such that they start at
-#' time zero (time zero of the data can be modified with the function)
+#' time zero (time zero of the data can be modified with the function).
+#' New traces are interpolated.
 #'
 #' When \code{keep = NULL} the amount of time kept is equal to
 #' time taken by the air wave to travel from the transmitter to the
@@ -1955,7 +1957,7 @@ setMethod("timeCorOffset", "GPR", function(x, t0 = NULL){
 #'              filter)
 #' @param w A length-one numeric vector equal to the window length 
 #'            of the filter. Per default, the filter length is five times
-#'            the GPR pulse width.
+#'            the GPR pulse width. w is defined on a time basis.
 #' @return An object of the class GPR whose traces are dewowed.
 #' @examples
 #' data(frenkeLine00)
@@ -2182,8 +2184,10 @@ setMethod("traceScaling", "GPR", function(x,
 
 #' Trace average
 #'
-#' Compute the average trace of a radargram (resulting in a single trace) or
-#' a moving average of the traces.
+#' Average traces in a radargram along the distance (horizontal) axis using
+#' a moving window. This can be used to increase signal to noise ratio. Note that if 
+#' the moving window length is not defined, all traces are averaged into one single trace.
+#' 
 #' @param x An object of the class GPR
 #' @param w A length-one integer vector equal to the window length of the 
 #'          average window. If \code{w = NULL} a single trace corresponding to
@@ -3813,8 +3817,10 @@ setMethod("NMOCor", "GPR", function(x, v = NULL, asep = NULL){
 }
 
 semblance <- function(x){
-  S <- sum((apply(x, 1, sum, na.rm = TRUE))^2) /
-    sum(apply((x)^2, 1, sum, na.rm = TRUE)) * nrow(x)
+  S <- sum(rowSums(x, na.rm = TRUE)^2) / 
+           sum(rowSums(x^2, na.rm = TRUE)) * nrow(x)
+  #S <- sum((apply(x, 1, sum, na.rm = TRUE))^2) /
+  #  sum(apply((x)^2, 1, sum, na.rm = TRUE)) * nrow(x)
   return(S)
 }
 
@@ -3823,25 +3829,32 @@ signalNoiseRatio <- function(x){
   ysvd <- svd(x)
   n <- length(ysvd$d)
   # estimator of the noise variance
-  sigma2 <- 1/(n-1)*sum(ysvd$d[-1])
+  x_sig2 <- sum(ysvd$d[-1])/(n-1)
   # estimator of the signal energy
-  P <- (ysvd$d[1] - sigma2)/n
-  return( P/sigma2 )
+  P <- (ysvd$d[1] - x_sig2)/n
+  return( P/x_sig2 )
 }
+	
 signalNoiseRatio2 <- function(x){
   ysvd <- svd(x)
   m <- nrow(x)
   n <- length(ysvd$d)
   W <- m * log( 0 + (sum(ysvd$d)/n)^n / prod(ysvd$d) )^n
   # estimator of the noise variance
-  sigma2 <- 1/(n-1)*sum(tail(ysvd$d,n-1))
+  x_sig2 <- sum(tail(ysvd$d, n-1))/(n-1)
   # estimator of the signal energy
-  P <- (ysvd$d[1] - sigma2)/n
-  return( W * P/sigma2 )
+  P <- (ysvd$d[1] - x_sig2)/n
+  return( W * P/x_sig2 )
 }
 
 
-#' Common mid-point (CMP) analysis
+#' Velocity Analysis of CMP Gather
+#' 
+#' Transform the space-time domain of the radargram into a velocity-time domain to obtain 
+#' the velocity spectrum (i.e. change in wave velocity with depth or time). This is achieved by applying
+#' Normal Move-Out (NMO) corrections to the radargram for the range of selected velocities 
+#' and computing a coherency measure for each result. In RGPR, the coherency measure can be defined using 
+#' different functions: "semblance", "winsemblance", "wincoherence", "wincoherence2".   
 #' 
 #' either use 'rec' and 'trans' to compute the distance between the antennas
 #' or give the distance between the antennas (asep)

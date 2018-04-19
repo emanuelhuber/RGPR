@@ -1614,10 +1614,6 @@ plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
   }
   if(grepl("[s]$", depthunit) && relTime0){
     y <- y + time_0
-    message("jaime")
-      message("yep", min(y))
-      message(ylim[1])
-      message(ylim[2])
     if(ylim[2] > -time_0){
       ylim[1] <- max(c(min(y), ylim[1]))
       ylim[2] <- 0

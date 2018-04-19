@@ -95,3 +95,26 @@ to a processing step applied to the data.}
 \item{\code{hd}}{A list containing less relevant additional informations.}
 }}
 
+\section{Survey mode}{
+  Difference between reflection and CMP and WARR
+\describe{
+  \item{reflection}{The trace positions increase from trace to trace. The
+                    antenna separation distance is constant.
+                    Amplitude = f(depth, position)}
+  \item{CMP}{The trace positions, \code{x@pos}, are constant and equal to 
+             zero. The antenna separation distance increases increase from
+             trace to trace.
+             Amplitude = f(depth, antsep)}
+  \item{WARR}{The trace positions, \code{x@pos}, are not constant because
+             while the signal is emitted from the same position, the signal
+             the signal is recorded from different positions. 
+             The antenna separation distance increases increase from
+             trace to trace.
+             Is "CMP" a special case of "WARR"?
+             Amplitude = f(depth, antsep)}
+  \item{CMPAnalysis}{No trace positions, \code{x@pos = numeric(0)},
+                     no antenna separation, \code{x@antsep = numeric(0)},
+                     coherence/semblance = f(depth, velocity)}
+}
+}
+

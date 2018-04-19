@@ -3817,8 +3817,10 @@ setMethod("NMOCor", "GPR", function(x, v = NULL, asep = NULL){
 }
 
 semblance <- function(x){
-  S <- sum((apply(x, 1, sum, na.rm = TRUE))^2) /
-    sum(apply((x)^2, 1, sum, na.rm = TRUE)) * nrow(x)
+  S <- sum(rowSums(x, na.rm = TRUE)^2) / 
+           sum(rowSums(x^2, na.rm = TRUE)) * nrow(x)
+  #S <- sum((apply(x, 1, sum, na.rm = TRUE))^2) /
+  #  sum(apply((x)^2, 1, sum, na.rm = TRUE)) * nrow(x)
   return(S)
 }
 
@@ -3827,21 +3829,22 @@ signalNoiseRatio <- function(x){
   ysvd <- svd(x)
   n <- length(ysvd$d)
   # estimator of the noise variance
-  sigma2 <- 1/(n-1)*sum(ysvd$d[-1])
+  x_sig2 <- sum(ysvd$d[-1])/(n-1)
   # estimator of the signal energy
-  P <- (ysvd$d[1] - sigma2)/n
-  return( P/sigma2 )
+  P <- (ysvd$d[1] - x_sig2)/n
+  return( P/x_sig2 )
 }
+	
 signalNoiseRatio2 <- function(x){
   ysvd <- svd(x)
   m <- nrow(x)
   n <- length(ysvd$d)
   W <- m * log( 0 + (sum(ysvd$d)/n)^n / prod(ysvd$d) )^n
   # estimator of the noise variance
-  sigma2 <- 1/(n-1)*sum(tail(ysvd$d,n-1))
+  x_sig2 <- sum(tail(ysvd$d, n-1))/(n-1)
   # estimator of the signal energy
-  P <- (ysvd$d[1] - sigma2)/n
-  return( W * P/sigma2 )
+  P <- (ysvd$d[1] - x_sig2)/n
+  return( W * P/x_sig2 )
 }
 
 

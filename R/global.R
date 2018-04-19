@@ -1745,7 +1745,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
              addFid = TRUE, fid=NULL, ylim = NULL,
              addAnn = TRUE, annotations = NULL, 
              depthunit = "ns", posunit = "m",
-             rasterImage = TRUE, resfac = 1, clab = "mV",
+             rasterImage = FALSE, resfac = 1, clab = "mV",
              add = FALSE, barscale = TRUE, addGrid = FALSE, 
              col = palGPR(n = 101), yaxt = "s", bty = "o",
              relTime0 = TRUE, clim = NULL, pdfName = NULL,...){

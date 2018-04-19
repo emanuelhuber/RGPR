@@ -1914,34 +1914,46 @@ setMethod("timeCorOffset", "GPR", function(x, t0 = NULL){
     stop("You must first define the antenna separation",
          "with `vel(x)<-...`!")
   }
-  if(is.null(t0)){
-    tol <- sqrt(.Machine$double.eps)
-    # all not equal
-    if(abs(max(x@time0) - min(x@time0)) > tol){
-      #tshift <- min(t0) - t0
-      #x <- traceShift(x, ts = tshift, method = "spline")
-      #x@time0 <- min(t0)
-      #t0 <- min(t0)
-      x <- time0Cor(x, method = "spline")
-    }
-    t0 <- mean(x@time0)
-  }else{
-    if(length(t0) > 1){
-      t0 <- mean(t0)
-      warning("'length(t0)' should be equal to 1! I take the mean of 't0'!")
-    }
+  #----------------------------------------------------------------------------#
+  #FIXME > use here
+  if(!is.null(t0)){
+   time0(x) <- t0
   }
-  x <- x[floor(t0/x@dz):nrow(x),]
-  tcor2 <- (x@depth - t0)^2 - (x@antsep/x@vel[[1]])^2
-  #tcor2 <- (x@depth - mean(x@time0) + x@antsep/0.299)^2 - 
-  #                (x@antsep/x@vel[[1]])^2
-  x <- x[tcor2 > 0,]
-  tcor <- sqrt( tcor2[tcor2 > 0] )
-  x@depth <- tcor
-  x@time0 <- rep(0, ncol(x))
+  time0Cor(x, method = "spline")
+  # !!! pb if negative values in sqrt()!!!!
+  tcor2 <- x@depth^2 - (x@antsep/x@vel[[1]])^2
+  test <- tcor2 >= 0
+  x <- x[test]
+  x@depth <- sqrt(tcor2[test])
+  # x@time0 is already = 0
   x@proc <- x@proc[-length(x@proc)] # remove proc from traceShift()
   x@proc <- c(x@proc, "timeCorOffset")
   return(x)
+  #----------------------------------------------------------------------------#
+  # if(is.null(t0)){
+  #   tol <- sqrt(.Machine$double.eps)
+  #   # all not equal
+  #   if(abs(max(x@time0) - min(x@time0)) > tol){
+  #     x <- time0Cor(x, method = "spline")
+  #   }
+  #   t0 <- mean(x@time0)
+  # }else{
+  #   if(length(t0) > 1){
+  #     t0 <- mean(t0)
+  #     warning("'length(t0)' should be equal to 1! I take the mean of 't0'!")
+  #   }
+  # }
+  # x <- x[floor(t0/x@dz):nrow(x),]
+  # tcor2 <- (x@depth - t0)^2 - (x@antsep/x@vel[[1]])^2
+  # #tcor2 <- (x@depth - mean(x@time0) + x@antsep/0.299)^2 - 
+  # #                (x@antsep/x@vel[[1]])^2
+  # x <- x[tcor2 > 0,]
+  # tcor <- sqrt( tcor2[tcor2 > 0] )
+  # x@depth <- tcor
+  # x@time0 <- rep(0, ncol(x))
+  # x@proc <- x@proc[-length(x@proc)] # remove proc from traceShift()
+  # x@proc <- c(x@proc, "timeCorOffset")
+  # return(x)
 })
 
 

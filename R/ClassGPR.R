@@ -3797,7 +3797,7 @@ setMethod("NMOCor", "GPR", function(x, v = NULL, asep = NULL){
     tt <- sqrt( tx0^2 + (asep[i]^2 )/v^2 )
     tt[tx0 < 0] <- NA
     valreg <- signal::interp1(x = tx0, y = x@data[, i], xi = tt, 
-                              method = "cubic", extrap = NA)
+                              method = "spline", extrap = NA)
     # deltaT <- sqrt( x@depth^2 + (asep[i]^2 )/v^2 )
     # newT <- 2*x@depth - deltaT
     # test <- newT > 0
@@ -3895,7 +3895,8 @@ setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance",
   # x@time0 <- 0
   # x@depth <- x@depth - t0
   # x_velAna <- NMOCor(x, v = v[1], asep = asep)
-  #TODO: create a new object
+  #TODO: create a new object > check slot consistency
+  # as(matrix(0, nrow = nrow(x), ncol = length(v)), "GPR")
   x_velAna <- .NMOCor(x, v = max(v), asep = asep)
   x_velAna <- x_velAna[, rep(1, length(v))]
   x_velAna@data[] <- 0

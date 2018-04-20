@@ -1848,8 +1848,10 @@ setMethod("firstBreak", "GPR", function(x, method = c("coppens", "coppens2",
       fb <- .firstBreakMER(x@data, w)
       fb <- x@depth[fb]
     }
-    if(!all(is.na(fb)==FALSE)){
-      warning("First break could not be picked for some traces. That's no luck, but good news is you can try with another method. This is probably because your traces have a too low S/N ratio." )
+    if(any(is.na(fb))){
+      warning("First break could not be picked for some traces. \n",
+              "That's no luck, but good news is you can try with another method.\n",
+              "This is probably because your traces have a too low S/N ratio." )
     }
     return(fb)
   } 
@@ -1964,8 +1966,11 @@ setMethod("time0Cor", "GPR", function(x, t0 = NULL,  method = c("spline",
     if(is.null(t0)){
       ts <- -x@time0 + keep
     }else{
-      if(!all(is.na(t0)==FALSE)){
-        stop("Woops, time zero selected have NA values. This is not acceptable, time zero must have a numeric value in order to be corrected. If this is because first break could not be picked, you might want to consider removing these traces from your radargram.")
+      if(any(is.na(t0))){
+        stop("Woops, time zero selected have NA values. \n",
+             "This is not acceptable, time zero must have a numeric value in order to be corrected. \n",
+             "If this is because first break could not be picked, \n",
+              "you might want to consider removing these traces from your radargram.")
       } else{
         if(length(t0) == 1){
           t0 <- rep(t0, length(x@time0))

@@ -2421,6 +2421,83 @@ setMethod("fkFilter", "GPR", function(x, fk = NULL, L = c(5 , 5), npad = 1){
 )
 
 
+#--------------- EIGENIMAGE RECONSTRUCTION
+
+#' Eigenimage filter
+#'
+#'Decompose the GPR data (radargram) using singular value decomposition (SVD) and return
+#'the reconstructed data for the selected singular values (eigenvalues). This method is 
+#'sometimes refered to in the litterature as the Karhunen-Loee (KL) transformation or the 
+#'eigenimage decomposition.
+#'
+#' @param x = An object of the class GPR
+#' @param eigenvalue = A length-two integer vector specifying the eigenvalues selected. 
+#' eigenvalue = c(1,3) returns the image reconstructed using the first three eigenvalues
+#' while c(2,2) will return the image reconstructed for the second eigenvalue only. If NA,
+#' a plot of the eigenvalues spectrum will be displayed and the user will be prompted to 
+#' enter the pair of selected eigenvalues separated by a comma. That is for example 1,3 or 2,2. 
+#'
+#' @return An object of the class GPR.
+#' 
+#' @references
+#' \itemize{
+#'   \item{Textbook: Sacchi (2002) Statistical and Transform Methods
+#'         in Geophysical Signal Processing}
+#'         }
+#'         
+#' @examples  
+#' x1<-eigenFilter(x, eigenvalue = c(1,3))
+#' plot(x)
+#' plot(x1)
+#'
+#' @name eigenFilter
+#' @rdname eigenFilter
+#' @export
+setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA){
+
+  ev<-eigenvalue
+  X<-scale(x@data,center=T,scale=F)
+  Xsvd<-svd(X)
+  lambda<-Xsvd$d^2
+  
+  if(any(is.na(eigenvalue))){
+    
+    windows()
+    plot(1:length(lambda), lambda, type="b",
+         xlab="Eigenvalue Index",ylab="Eigenvalue", col="blue", pch=16)
+    
+    ev <- readline("What eigenvalues do you want to use to reconstruct the radargram ? ")
+    ev <- as.numeric(unlist(strsplit(ev, split=",")))
+    }
+  
+
+  Xeigen<-list()
+  for(i in 1:(ev[2]-ev[1]+1)){
+    
+    Xeigen[[i]]<-Xsvd$d[i+ev[1]-1] * Xsvd$u[,i+ev[1]-1] %*% t(Xsvd$v[,i+ev[1]-1])
+    
+    if(length(Xeigen)>1){
+      Xnew<-Reduce('+', Xeigen)
+    } else{
+      Xnew<-Xeigen[[1]]
+    }
+    
+    x@data<-Xnew
+    
+  }
+  
+  if(any(is.na(eigenvalue))){
+    proc(x) <- getArgs(addArgs = c('eigenvalue' = ev))
+  } else{
+    proc(x) <- getArgs()
+  }
+  
+  return(x)
+} 
+)
+
+
+
 
 #--------------- CONVOLUTION/DECONVOLUTION
 

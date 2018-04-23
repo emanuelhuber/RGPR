@@ -2473,18 +2473,16 @@ setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA){
 
   Xeigen<-list()
   for(i in 1:(ev[2]-ev[1]+1)){
-    
     Xeigen[[i]]<-Xsvd$d[i+ev[1]-1] * Xsvd$u[,i+ev[1]-1] %*% t(Xsvd$v[,i+ev[1]-1])
-    
-    if(length(Xeigen)>1){
-      Xnew<-Reduce('+', Xeigen)
-    } else{
-      Xnew<-Xeigen[[1]]
-    }
-    
-    x@data<-Xnew
-    
   }
+  
+  if(length(Xeigen)>1){
+    Xnew<-Reduce('+', Xeigen)
+  } else{
+    Xnew<-Xeigen[[1]]
+  }
+  
+  x@data<-Xnew
   
   if(any(is.na(eigenvalue))){
     proc(x) <- getArgs(addArgs = c('eigenvalue' = ev))

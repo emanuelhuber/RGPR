@@ -1167,7 +1167,7 @@ setGenericVerif("fFilter", function(x, f = 100,
 setGenericVerif("fkFilter", function(x, fk = NULL, L = c(5, 5), npad = 1) 
                 standardGeneric("fkFilter"))
 
-setGenericVerif("eigenFilter", function(x, eigenvalue = NA) 
+setGenericVerif("eigenFilter", function(x, eigenvalue = NA, center=T, scale=F) 
   standardGeneric("eigenFilter"))
 
 setGenericVerif("traceShift", function(x,  ts, method = c("spline", "linear", 

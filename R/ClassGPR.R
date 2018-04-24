@@ -2431,11 +2431,21 @@ setMethod("fkFilter", "GPR", function(x, fk = NULL, L = c(5 , 5), npad = 1){
 #'eigenimage decomposition.
 #'
 #' @param x = An object of the class GPR
-#' @param eigenvalue = A length-two integer vector specifying the eigenvalues selected. 
-#' eigenvalue = c(1,3) returns the image reconstructed using the first three eigenvalues
-#' while c(2,2) will return the image reconstructed for the second eigenvalue only. If NA,
+#' @param eigenvalue = A integer vector specifying the eigenvalues selected. 
+#' eigenvalue = 1:5 returns the image reconstructed using the first five eigenvalues
+#' while c(2,4,6) will return the image reconstructed for these three specific eigenvalues. If NA,
 #' a plot of the eigenvalues spectrum will be displayed and the user will be prompted to 
-#' enter the pair of selected eigenvalues separated by a comma. That is for example 1,3 or 2,2. 
+#' enter the pair of selected eigenvalues separated by a comma. That is for example 1,2 will 
+#' return the image reconstructred using tthe first two eigenvalues. If NULL, the image is reconstructed using 
+#' all eigenvalues.
+#' @param center =  logical or numeric. If TRUE, centering is done by subtracting the layer 
+#' means (omitting NAs), and if FALSE, no centering is done. If center is a numeric vector with 
+#' length equal to the nlayers(x), then each layer of x has the corresponding value from center 
+#' subtracted from it.
+#' @param scale = logical or numeric. If TRUE, scaling is done by dividing the (centered) 
+#' layers of x by their standard deviations if center is TRUE, and the root mean square otherwise. 
+#' If scale is FALSE, no scaling is done. If scale is a numeric vector with length equal to nlayers(x), 
+#' each layer of x is divided by the corresponding value. Scaling is done after centering.
 #'
 #' @return An object of the class GPR.
 #' 
@@ -2453,14 +2463,22 @@ setMethod("fkFilter", "GPR", function(x, fk = NULL, L = c(5 , 5), npad = 1){
 #' @name eigenFilter
 #' @rdname eigenFilter
 #' @export
-setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA){
+setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA, center=T, scale=F){
 
   ev<-eigenvalue
-  X<-scale(x@data,center=T,scale=F)
+  X<-scale(x@data,center=center,scale=scale)
   Xsvd<-svd(X)
   lambda<-Xsvd$d^2
   
-  if(any(is.na(eigenvalue))){
+  if(length(ev)>ncol(X)){
+    stop("The number of eigenvalues selected cannot exceed the number of GPR traces.")
+  }
+  
+  if(is.null(ev)){
+    ev<-c(1:ncol(X))
+  }
+  
+  if(any(is.na(ev))){
     
     windows()
     plot(1:length(lambda), lambda, type="b",
@@ -2471,25 +2489,39 @@ setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA){
     }
   
 
-  Xeigen<-list()
-  for(i in 1:(ev[2]-ev[1]+1)){
-    Xeigen[[i]]<-Xsvd$d[i+ev[1]-1] * Xsvd$u[,i+ev[1]-1] %*% t(Xsvd$v[,i+ev[1]-1])
+  Xeigen<-array(NA, dim = c(dim(Xsvd$u),length(ev)))
+  for(i in 1:length(ev)){
+    Xeigen[,,i]<-Xsvd$d[ev[i]] * Xsvd$u[,ev[i]] %*% t(Xsvd$v[,ev[i]])
   }
   
-  if(length(Xeigen)>1){
-    Xnew<-Reduce('+', Xeigen)
+  if(length(ev)>1){
+    Xnew<-rowSums(Xeigen, dims=2)
   } else{
-    Xnew<-Xeigen[[1]]
+    Xnew<-Xeigen[,,1]
   }
   
+  
+  if(!is.null(attr(X,'scaled:scale')) & !is.null(attr(X, 'scaled:center'))){
+    Xnew <- t(apply(Xnew , 1, function(r) r * attr(X,'scaled:scale') + attr(X, 'scaled:center')))
+  } else if(is.null(attr(X,'scaled:scale')) & !is.null(attr(X, 'scaled:center'))){
+    Xnew <- t(apply(Xnew , 1, function(r) r + attr(X, 'scaled:center')))
+  } else if(!is.null(attr(X,'scaled:scale')) & is.null(attr(X, 'scaled:center'))){
+    Xnew <- t(apply(Xnew , 1, function(r) r * attr(X, 'scaled:scale')))
+  }
+
   x@data<-Xnew
-  
-  if(any(is.na(eigenvalue))){
-    proc(x) <- getArgs(addArgs = c('eigenvalue' = ev))
+
+  if(is.null(eigenvalue)){
+    proc(x) <- getArgs(addArgs = list('eigenvalue' = eigenvalue, 
+                                      'center' = as.character(center), 
+                                      'scale'= as.character(scale)))
   } else{
-    proc(x) <- getArgs()
+    proc(x) <- getArgs(addArgs = list('eigenvalue' = ev, 
+                                      'center' = as.character(center), 
+                                      'scale'= as.character(scale)))
   }
-  
+
+
   return(x)
 } 
 )

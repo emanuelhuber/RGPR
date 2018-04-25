@@ -2425,27 +2425,38 @@ setMethod("fkFilter", "GPR", function(x, fk = NULL, L = c(5 , 5), npad = 1){
 
 #' Eigenimage filter
 #'
-#'Decompose the GPR data (radargram) using singular value decomposition (SVD) and return
-#'the reconstructed data for the selected singular values (eigenvalues). This method is 
-#'sometimes refered to in the litterature as the Karhunen-Loee (KL) transformation or the 
-#'eigenimage decomposition.
+#' Decompose the GPR data (radargram) using singular value decomposition (SVD) 
+#' and return the reconstructed data for the selected singular values 
+#' (eigenvalues). This method is sometimes refered to in the litterature as 
+#' the Karhunen-Loeve (KL) transformation or the eigenimage decomposition.
 #'
-#' @param x = An object of the class GPR
-#' @param eigenvalue = A integer vector specifying the eigenvalues selected. 
-#' eigenvalue = 1:5 returns the image reconstructed using the first five eigenvalues
-#' while c(2,4,6) will return the image reconstructed for these three specific eigenvalues. If NA,
-#' a plot of the eigenvalues spectrum will be displayed and the user will be prompted to 
-#' enter the pair of selected eigenvalues separated by a comma. That is for example 1,2 will 
-#' return the image reconstructred using tthe first two eigenvalues. If NULL, the image is reconstructed using 
-#' all eigenvalues.
-#' @param center =  logical or numeric. If TRUE, centering is done by subtracting the layer 
-#' means (omitting NAs), and if FALSE, no centering is done. If center is a numeric vector with 
-#' length equal to the nlayers(x), then each layer of x has the corresponding value from center 
-#' subtracted from it.
-#' @param scale = logical or numeric. If TRUE, scaling is done by dividing the (centered) 
-#' layers of x by their standard deviations if center is TRUE, and the root mean square otherwise. 
-#' If scale is FALSE, no scaling is done. If scale is a numeric vector with length equal to nlayers(x), 
-#' each layer of x is divided by the corresponding value. Scaling is done after centering.
+#' @param x           An object of the class GPR
+#' @param eigenvalue  An integer vector specifying the eigenvalues selected. 
+#'                    \code{eigenvalue = 1:5} returns the image reconstructed 
+#'                    using the first five eigenvalues while \code{c(2,4,6)}
+#'                    will return the image reconstructed for these three 
+#'                    specific eigenvalues. 
+#'                    If \code{NA}, a plot of the eigenvalues spectrum 
+#'                    will be displayed and the user will be prompted to enter 
+#'                    the pair of selected eigenvalues separated by a comma. 
+#'                    That is for example \code{1,2} will return the image 
+#'                    reconstructred using tthe first two eigenvalues. 
+#'                    If \code{NULL}, the image is reconstructed using 
+#'                    all eigenvalues.
+#' @param center      Logical or numeric. If \code{TRUE}, centering is done by 
+#'                    subtracting the layer means (omitting \code{NA}'s), and 
+#'                    if \code{FALSE}, no centering is done. If center is a 
+#'                    numeric vector with length equal to the 
+#'                    \code{nlayers(x)}, then each layer of \code{x} has the 
+#'                    corresponding value from center subtracted from it.
+#' @param scale       Logical or numeric. If \code{TRUE}, scaling is done by 
+#'                    dividing the (centered) layers of \code{x} by their 
+#'                    standard deviations if center is \code{TRUE}, and the 
+#'                    root mean square otherwise. 
+#'                    If scale is \code{FALSE}, no scaling is done. If scale is
+#'                    a numeric vector with length equal to \code{nlayers(x)}, 
+#'                    each layer of \code{x} is divided by the corresponding 
+#'                    value. Scaling is done after centering.
 #'
 #' @return An object of the class GPR.
 #' 
@@ -2456,56 +2467,62 @@ setMethod("fkFilter", "GPR", function(x, fk = NULL, L = c(5 , 5), npad = 1){
 #'         }
 #'         
 #' @examples  
-#' x1<-eigenFilter(x, eigenvalue = c(1,3))
+#' x1 <- eigenFilter(x, eigenvalue = c(1,3))
 #' plot(x)
 #' plot(x1)
 #'
 #' @name eigenFilter
 #' @rdname eigenFilter
 #' @export
-setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA, center=T, scale=F){
+setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA, center = TRUE, 
+                                         scale = FALSE){
 
-  ev<-eigenvalue
-  X<-scale(x@data,center=center,scale=scale)
-  Xsvd<-svd(X)
-  lambda<-Xsvd$d^2
+  ev <- unique(eigenvalue)
+  X <- scale(x@data, center = center, scale = scale)
+  Xsvd <- svd(X)
+  lambda <- Xsvd$d^2
   
-  if(length(ev)>ncol(X)){
-    stop("The number of eigenvalues selected cannot exceed the number of GPR traces.")
+  if(max(ev) > ncol(X)){
+    stop("The number of eigenvalues selected cannot exceed the number ",
+         "of GPR traces.")
+  }
+  if(min(ev) < 0){
+    stop("The eigenvalues number must be strictly positive.")
   }
   
   if(is.null(ev)){
-    ev<-c(1:ncol(X))
+    ev <- c(seq_len(ncol(X)))
   }
   
   if(any(is.na(ev))){
-    
     windows()
-    plot(1:length(lambda), lambda, type="b",
-         xlab="Eigenvalue Index",ylab="Eigenvalue", col="blue", pch=16)
-    
-    ev <- readline("What eigenvalues do you want to use to reconstruct the radargram ? ")
-    ev <- as.numeric(unlist(strsplit(ev, split=",")))
-    }
+    plot(seq_along(lambda), lambda, type = "b", col = "blue", pch = 16,
+         xlab = "Eigenvalue Index", ylab = "Eigenvalue")
+    ev <- readline("What eigenvalues do you want to use to reconstruct the ",
+                   "radargram ?")
+    ev <- as.numeric(unlist(strsplit(ev, split = ",")))
+  }
   
-
-  Xeigen<-array(NA, dim = c(dim(Xsvd$u),length(ev)))
-  for(i in 1:length(ev)){
-    Xeigen[,,i]<-Xsvd$d[ev[i]] * Xsvd$u[,ev[i]] %*% t(Xsvd$v[,ev[i]])
+  Xeigen <- array(NA, dim = c(dim(Xsvd$u), length(ev)))
+  for(i in seq_along(ev)){
+    Xeigen[,,i] <- Xsvd$d[ev[i]] * Xsvd$u[,ev[i]] %*% t(Xsvd$v[,ev[i]])
   }
   
   if(length(ev)>1){
-    Xnew<-rowSums(Xeigen, dims=2)
+    Xnew <- rowSums(Xeigen, dims=2)
   } else{
-    Xnew<-Xeigen[,,1]
+    Xnew <- Xeigen[,,1]
   }
   
   
-  if(!is.null(attr(X,'scaled:scale')) & !is.null(attr(X, 'scaled:center'))){
-    Xnew <- t(apply(Xnew , 1, function(r) r * attr(X,'scaled:scale') + attr(X, 'scaled:center')))
-  } else if(is.null(attr(X,'scaled:scale')) & !is.null(attr(X, 'scaled:center'))){
+  if(!is.null(attr(X, 'scaled:scale')) && !is.null(attr(X, 'scaled:center'))){
+    Xnew <- t(apply(Xnew, 1, function(r) r * attr(X, 'scaled:scale') + 
+                      attr(X, 'scaled:center')))
+  }else if(is.null(attr(X, 'scaled:scale')) && 
+           !is.null(attr(X, 'scaled:center'))){
     Xnew <- t(apply(Xnew , 1, function(r) r + attr(X, 'scaled:center')))
-  } else if(!is.null(attr(X,'scaled:scale')) & is.null(attr(X, 'scaled:center'))){
+  }else if(!is.null(attr(X, 'scaled:scale')) && 
+           is.null(attr(X, 'scaled:center'))){
     Xnew <- t(apply(Xnew , 1, function(r) r * attr(X, 'scaled:scale')))
   }
 
@@ -2514,14 +2531,12 @@ setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA, center=T, scale=F){
   if(is.null(eigenvalue)){
     proc(x) <- getArgs(addArgs = list('eigenvalue' = eigenvalue, 
                                       'center' = as.character(center), 
-                                      'scale'= as.character(scale)))
+                                      'scale' = as.character(scale)))
   } else{
     proc(x) <- getArgs(addArgs = list('eigenvalue' = ev, 
                                       'center' = as.character(center), 
-                                      'scale'= as.character(scale)))
+                                      'scale' = as.character(scale)))
   }
-
-
   return(x)
 } 
 )

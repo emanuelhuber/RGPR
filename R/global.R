@@ -4234,8 +4234,6 @@ readSEGY <- function(fPath){
 # website   twitter.com/RyanGrannell
 # location   Galway, Ireland
 getArgs <- function (returnCharacter = TRUE, addArgs = NULL) {
-  cat("current frame is", sys.nframe(), "\n")
-  cat("parents are", sys.parents(), "\n")
   if(sys.nframe() == 3){
     arg <- as.list(match.call(definition = sys.function( -1 ),
                               call = sys.call(-1),
@@ -4245,10 +4243,10 @@ getArgs <- function (returnCharacter = TRUE, addArgs = NULL) {
     if(returnCharacter){
       if(narg >=3){
         eval_arg <- sapply(arg[3:narg], eval, simplify = FALSE)
-        # print(sapply(eval_arg, pasteArgs, arg[3:narg]))
         argChar <- paste0(arg[[1]],"//", 
-                          paste(names(arg[3:narg]), sapply(eval_arg, pasteArgs, 
-                                                           arg[3:narg]), 
+                          paste(names(arg[3:narg]), 
+                                mapply(pasteArgs, eval_arg, arg[3:narg]), 
+                                #sapply(eval_arg, pasteArgs, arg[3:narg]), 
                                 sep = "=", collapse = "+"))
       }else{
         argChar <- paste0(arg[[1]],"//")
@@ -4264,16 +4262,41 @@ getArgs <- function (returnCharacter = TRUE, addArgs = NULL) {
 }
 
 pasteArgs <- function(eval_arg, arg){
-  if(is.numeric(eval_arg) || is.character(eval_arg)){
-    return( paste0(eval_arg, collapse = ",") )
+  arg <- deparse((arg))
+  # print(deparse(eval_arg))
+  #print(class(eval_arg))
+  if(class(eval_arg) == "function"){
+    trux <- sub('UseMethod\\(\\"', '', deparse(eval_arg)[2])
+    trux <- sub('\\"', '', trux)
+    return(trux)
+    #funName0 <- selectMethod(eval_arg, "numeric")
+    #funName <-funName0@generic[1]
+    #return(funName)
+  }else if(class(eval_arg) == "standardGeneric"){
+    #str(methods(eval_arg))
+    trux <- deparse(showMethods(eval_arg, includeDefs = FALSE, printTo = FALSE))
+    # str((trux[1]))
+    i <- regexpr("(Function: )([A-Za-z0-9]+)( \\(package)", trux[1])
+    v <- substr(trux, i[1], attr(i, "match.length"))
+    # print(v[1])
+    v <- sub("Function: ", '', v[1])
+    v <- sub(" \\(.+", '', v)
+    return(v)
+    #print(deparse(eval_arg))
   }else if(is.list(eval_arg)){
     return( paste0(names(eval_arg), "<-", (eval_arg), collapse = "," ) )
   }else if(is.matrix(eval_arg)){
     return(paste(arg))
-  }else if(any(is.null(eval_arg))){
-    return("")
+    # if eval_arg == "1:10", returns "1:10" instead of "1,2,3,4,5,6,7,8,9,10"
+  }else if(is.null(eval_arg)){
+    return("NULL")
+  }else if(grepl(pattern = '^([[:digit:]]+):([[:digit:]]+)$', arg)){
+    return(paste0(arg))
+  }else{
+    return( paste0(eval_arg, collapse = ",") )
   }
 }
+
 
 addArg <- function(proc, arg){
   proc_add <- paste(names(arg), sapply(arg, pasteArgs, arg),

@@ -1668,8 +1668,9 @@ setReplaceMethod(
 #' @export
 setMethod("ampl", "GPR", function(x, FUN = mean, ...){
     x@data[] <- apply(abs(x@data), 1, FUN, ...)
-    funName <- getFunName(FUN)
-    proc(x) <- getArgs( addArgs = c('FUN' = funName))
+    # funName <- getFunName(FUN)
+    # proc(x) <- getArgs( addArgs = c('FUN' = funName))
+    proc(x) <- getArgs()
     return(x)
   } 
 )
@@ -1753,8 +1754,9 @@ setMethod("dcshift", "GPR", function(x, u, FUN = mean){
     shift <- matrix(apply(x[u,],2, FUN), nrow = nrow(x), 
                     ncol=ncol(x), byrow = TRUE)
     x <-  x - shift
-    funName <- getFunName(FUN)
-    proc(x) <- getArgs(addArgs = c('FUN' = getFunName(FUN)))
+    # funName <- getFunName(FUN)
+    # proc(x) <- getArgs(addArgs = c('FUN' = getFunName(FUN)))
+    proc(x) <- getArgs()
     # proc(x) <- paste0("dcshift>u=", head(u,1),":",tail(u,1), "+", 
                       # "FUN=",funName)
     return(x)
@@ -2372,8 +2374,9 @@ setMethod("traceAverage", "GPR", function(x, w = NULL, FUN = mean, ...){
     }else{
       x@data <- wapplyMat(x@data, width = w, by = 1, FUN = FUN, MARGIN = 1, ...)
     }
-    funName <- getFunName(FUN)
-    proc(x) <- getArgs( addArgs = c('FUN' = funName))
+    # funName <- getFunName(FUN)
+    # proc(x) <- getArgs( addArgs = c('FUN' = funName))
+    proc(x) <- getArgs()
 #   x@proc <- c(x@proc, proc)
     return(x)
   }

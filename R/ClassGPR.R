@@ -1749,13 +1749,14 @@ setReplaceMethod(
 #' @name dcshift
 #' @rdname dcshift
 #' @export
-setMethod("dcshift", "GPR", function(x, u, FUN=mean){
+setMethod("dcshift", "GPR", function(x, u, FUN = mean){
     shift <- matrix(apply(x[u,],2, FUN), nrow = nrow(x), 
                     ncol=ncol(x), byrow = TRUE)
     x <-  x - shift
     funName <- getFunName(FUN)
-    proc(x) <- paste0("dcshift>u=", head(u,1),":",tail(u,1), "+", 
-                      "FUN=",funName)
+    proc(x) <- getArgs(addArgs = c('FUN' = getFunName(FUN)))
+    # proc(x) <- paste0("dcshift>u=", head(u,1),":",tail(u,1), "+", 
+                      # "FUN=",funName)
     return(x)
   } 
 )
@@ -1877,20 +1878,20 @@ setMethod("firstBreak", "GPR", function(x, method = c("coppens", "coppens2",
 #' @export
 setMethod("traceShift", "GPR", function(x,  ts, method = c("spline", 
             "linear", "nearest", "pchip", "cubic", "none"), crop = TRUE){
-    # method <- match.arg(method, c("spline", "linear", "nearest", "pchip", 
-    #                               "cubic", "none"))
-    # if(length(ts) == 1){
-    #   ts <- rep(ts, ncol(x))
-    # }
-    # xshift <- upsample(x, n = c(2,1))
-    # xshift@data <- .traceShift(xshift@data, ts = ts, tt = xshift@depth, 
-    #                            dz = xshift@dz, method = method)
-    # x@data <- xshift@data[seq(1, length.out = nrow(x), by = 2), ]
-    # if(crop == TRUE){
-    #   testCrop <- apply(abs(x@data),1,sum)
-    #   x <- x[!is.na(testCrop),]
-    # }
-    x <- .shiftThisTrace( x,  ts, method, crop = TRUE)
+    method <- match.arg(method, c("spline", "linear", "nearest", "pchip", 
+                                  "cubic", "none"))
+    if(length(ts) == 1){
+      ts <- rep(ts, ncol(x))
+    }
+    xshift <- upsample(x, n = c(2,1))
+    xshift@data <- .traceShift(xshift@data, ts = ts, tt = xshift@depth, 
+                               dz = xshift@dz, method = method)
+    x@data <- xshift@data[seq(1, length.out = nrow(x), by = 2), ]
+    if(crop == TRUE){
+      testCrop <- apply(abs(x@data),1,sum)
+      x <- x[!is.na(testCrop), ]
+    }
+    # x <- .shiftThisTrace( x,  ts, method, crop = TRUE)
     proc(x) <- getArgs()
     # x@proc <- c(x@proc, proc)
     return(x)
@@ -1988,12 +1989,23 @@ setMethod("time0Cor", "GPR", function(x, t0 = NULL,  method = c("spline",
     # xshift <- traceShift(x,  ts = ts, method = method, crop = TRUE)
     # x@data <-xshift@data
     #x <- traceShift(x,  ts = ts, method = eval(method), crop = TRUE)
-    x <- .shiftThisTrace( x,  ts, method, crop = TRUE)
+    x <- traceShift( x,  ts, method, crop = TRUE)
     x@time0 <- x@time0 + ts
-    x@proc <- x@proc[-length(x@proc)] # remove proc from traceShift()
+    # x@proc <- x@proc[-length(x@proc)] # remove proc from traceShift()
     proc(x) <- getArgs()
     return(x)
   }
+)
+
+setGeneric("FUN", function(x,  t0) standardGeneric("FUN"))
+
+#' @export
+setMethod("FUN", "GPR", function(x, t0){
+  x <- traceShift(x, -t0, method = c("pchip"), crop = TRUE)
+  #x@proc <- x@proc[-length(x@proc)] # remove proc from traceShift()
+  proc(x) <- getArgs()
+  return(x)
+}
 )
 
 #' Constant-offset correction (time) of the GPR data
@@ -2502,41 +2514,45 @@ setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA, center = TRUE,
                    "radargram ?")
     ev <- as.numeric(unlist(strsplit(ev, split = ",")))
   }
+  d <- numeric(length(Xsvd$d))
+  d[ev] <- Xsvd$d[ev]
+  Xnew <- Xsvd$u %*% diag(d) %*% t(Xsvd$v)
   
-  Xeigen <- array(NA, dim = c(dim(Xsvd$u), length(ev)))
-  for(i in seq_along(ev)){
-    Xeigen[,,i] <- Xsvd$d[ev[i]] * Xsvd$u[,ev[i]] %*% t(Xsvd$v[,ev[i]])
-  }
+  # Xeigen <- array(NA, dim = c(dim(Xsvd$u), length(ev)))
+  # for(i in seq_along(ev)){
+  #   Xeigen[,,i] <- Xsvd$d[ev[i]] * Xsvd$u[,ev[i]] %*% t(Xsvd$v[,ev[i]])
+  # }
+  # 
+  # if(length(ev)>1){
+  #   Xnew <- rowSums(Xeigen, dims=2)
+  # } else{
+  #   Xnew <- Xeigen[,,1]
+  # }
   
-  if(length(ev)>1){
-    Xnew <- rowSums(Xeigen, dims=2)
-  } else{
-    Xnew <- Xeigen[,,1]
-  }
   
-  
-  if(!is.null(attr(X, 'scaled:scale')) && !is.null(attr(X, 'scaled:center'))){
-    Xnew <- t(apply(Xnew, 1, function(r) r * attr(X, 'scaled:scale') + 
-                      attr(X, 'scaled:center')))
-  }else if(is.null(attr(X, 'scaled:scale')) && 
-           !is.null(attr(X, 'scaled:center'))){
-    Xnew <- t(apply(Xnew , 1, function(r) r + attr(X, 'scaled:center')))
-  }else if(!is.null(attr(X, 'scaled:scale')) && 
-           is.null(attr(X, 'scaled:center'))){
-    Xnew <- t(apply(Xnew , 1, function(r) r * attr(X, 'scaled:scale')))
-  }
+  # if(!is.null(attr(X, 'scaled:scale')) && !is.null(attr(X, 'scaled:center'))){
+  #   Xnew <- t(apply(Xnew, 1, function(r) r * attr(X, 'scaled:scale') + 
+  #                     attr(X, 'scaled:center')))
+  # }else if(is.null(attr(X, 'scaled:scale')) && 
+  #          !is.null(attr(X, 'scaled:center'))){
+  #   Xnew <- t(apply(Xnew , 1, function(r) r + attr(X, 'scaled:center')))
+  # }else if(!is.null(attr(X, 'scaled:scale')) && 
+  #          is.null(attr(X, 'scaled:center'))){
+  #   Xnew <- t(apply(Xnew , 1, function(r) r * attr(X, 'scaled:scale')))
+  # }
 
-  x@data<-Xnew
+  x@data <- unscale(X, Xnew)
 
-  if(is.null(eigenvalue)){
-    proc(x) <- getArgs(addArgs = list('eigenvalue' = eigenvalue, 
-                                      'center' = as.character(center), 
-                                      'scale' = as.character(scale)))
-  } else{
-    proc(x) <- getArgs(addArgs = list('eigenvalue' = ev, 
-                                      'center' = as.character(center), 
-                                      'scale' = as.character(scale)))
-  }
+  # if(is.null(eigenvalue)){
+  #   proc(x) <- getArgs(addArgs = list('eigenvalue' = eigenvalue, 
+  #                                     'center' = as.character(center), 
+  #                                     'scale' = as.character(scale)))
+  # } else{
+  #   proc(x) <- getArgs(addArgs = list('eigenvalue' = ev, 
+  #                                     'center' = as.character(center), 
+  #                                     'scale' = as.character(scale)))
+  # }
+  proc(x) <- getArgs()
   return(x)
 } 
 )
@@ -2557,10 +2573,8 @@ setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA, center = TRUE,
 #' @rdname rotatePhase
 #' @export
 setMethod("rotatePhase", "GPR", function(x, phi){
-  # rotatePhase <- function(x,phi){
     x@data <- apply(x@data, 2, phaseRotation, phi)
     proc(x) <- getArgs()
-#   x@proc <- c(x@proc, proc)
     return(x)
   }
 )

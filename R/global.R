@@ -1510,9 +1510,9 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
   return(xShifted)
 }
 
-.traceShift <- function(A, ts=0, tt=NULL, dz=0.4, method = "linear"){
+.traceShift <- function(A, ts = 0, tt = NULL, dz = 0.4, method = "linear"){
   ps <- ts/dz
-  Anew <- matrix(NA, nrow=nrow(A), ncol=ncol(A))
+  Anew <- matrix(NA, nrow = nrow(A), ncol = ncol(A))
   v0 <- 1:nrow(A)
   for(i in seq_len(ncol(A))){
     relts <- floor(ps[i])*dz - ts[i]
@@ -2242,6 +2242,23 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
     #return(list(x = y_n, table = tbl))
     return(y_n)
   }
+}
+
+# x = output of scale(...)
+# y = object to back-transform, same dimension as x
+# check:
+# x <- scale(x0, center = TRUE, scale = TRUE)
+# x0 <- unscale(x, x)
+#' @export
+unscale <- function(x, y){
+  xCenter <- attr(x, 'scaled:center')
+  xScale <- attr(x, 'scaled:scale')
+  if(is.null(xCenter)) xCenter <- rep(0, ncol(x))
+  if(is.null(xScale))  xScale <- rep(1, ncol(x))
+  ynew <- scale(y, center = -xCenter/xScale, scale = 1/xScale)
+  attr(ynew,'scaled:center') <- NULL
+  attr(ynew,'scaled:scale') <- NULL
+  return(ynew)
 }
 
 #=============================================#
@@ -4216,26 +4233,33 @@ readSEGY <- function(fPath){
 # Ryan Grannell
 # website   twitter.com/RyanGrannell
 # location   Galway, Ireland
-getArgs <- function (returnCharacter=TRUE, addArgs = NULL) {
-  arg <- as.list(match.call(definition = sys.function( -1 ),
-           call = sys.call(-1),
-           expand.dots = TRUE )
-           )
-  narg <- length(arg)
-  if(returnCharacter){
-    if(narg >=3){
-      eval_arg <- sapply(arg[3:narg],eval)
-      argChar <- paste0(arg[[1]],"//", paste(names(arg[3:narg]),
-          sapply(eval_arg,pasteArgs,arg[3:narg]),sep="=",collapse="+"))
+getArgs <- function (returnCharacter = TRUE, addArgs = NULL) {
+  cat("current frame is", sys.nframe(), "\n")
+  cat("parents are", sys.parents(), "\n")
+  if(sys.nframe() == 3){
+    arg <- as.list(match.call(definition = sys.function( -1 ),
+                              call = sys.call(-1),
+                              expand.dots = TRUE )
+    )
+    narg <- length(arg)
+    if(returnCharacter){
+      if(narg >=3){
+        eval_arg <- sapply(arg[3:narg], eval, simplify = FALSE)
+        # print(sapply(eval_arg, pasteArgs, arg[3:narg]))
+        argChar <- paste0(arg[[1]],"//", 
+                          paste(names(arg[3:narg]), sapply(eval_arg, pasteArgs, 
+                                                           arg[3:narg]), 
+                                sep = "=", collapse = "+"))
+      }else{
+        argChar <- paste0(arg[[1]],"//")
+      }
+      if(!is.null(addArgs)){
+        argChar <- addArg(argChar, addArgs)
+      }
+      return(argChar)
     }else{
-      argChar <- paste0(arg[[1]],"//")
+      return(arg)
     }
-    if(!is.null(addArgs)){
-      argChar <- addArg(argChar, addArgs)
-    }
-    return(argChar)
-  }else{
-    return(arg)
   }
 }
 
@@ -4252,11 +4276,9 @@ pasteArgs <- function(eval_arg, arg){
 }
 
 addArg <- function(proc, arg){
-# paste(names(arg[3:narg]),sapply(eval_arg,paste_args,arg[3:narg]),sep="=",
-# collapse="+")
-  proc_add <- paste(names(arg), sapply(arg,pasteArgs, arg),
+  proc_add <- paste(names(arg), sapply(arg, pasteArgs, arg),
                   sep = "=", collapse = "+")
-  if(substr(proc,nchar(proc),nchar(proc)) == "//"){
+  if(substr(proc, nchar(proc), nchar(proc)) == "//"){
     proc <- paste(proc, proc_add, sep = "")
   }else{
     proc <- paste(proc, "+", proc_add, sep = "")
@@ -4266,7 +4288,7 @@ addArg <- function(proc, arg){
 
 # return a character vector containing the name of the FUN function
 getFunName <- function(FUN){
-  if(class(FUN)=="function"){
+  if(class(FUN) == "function"){
     funName <- "FUN"
   }else{
     #  if(isGeneric("FUN")){

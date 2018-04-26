@@ -4264,25 +4264,9 @@ getArgs <- function (returnCharacter = TRUE, addArgs = NULL) {
 pasteArgs <- function(eval_arg, arg){
   arg <- deparse((arg))
   # print(deparse(eval_arg))
-  #print(class(eval_arg))
-  if(class(eval_arg) == "function"){
-    trux <- sub('UseMethod\\(\\"', '', deparse(eval_arg)[2])
-    trux <- sub('\\"', '', trux)
-    return(trux)
-    #funName0 <- selectMethod(eval_arg, "numeric")
-    #funName <-funName0@generic[1]
-    #return(funName)
-  }else if(class(eval_arg) == "standardGeneric"){
-    #str(methods(eval_arg))
-    trux <- deparse(showMethods(eval_arg, includeDefs = FALSE, printTo = FALSE))
-    # str((trux[1]))
-    i <- regexpr("(Function: )([A-Za-z0-9]+)( \\(package)", trux[1])
-    v <- substr(trux, i[1], attr(i, "match.length"))
-    # print(v[1])
-    v <- sub("Function: ", '', v[1])
-    v <- sub(" \\(.+", '', v)
-    return(v)
-    #print(deparse(eval_arg))
+  # print(class(eval_arg))
+  if(class(eval_arg) == "function" || class(eval_arg) == "standardGeneric"){
+    return(arg)
   }else if(is.list(eval_arg)){
     return( paste0(names(eval_arg), "<-", (eval_arg), collapse = "," ) )
   }else if(is.matrix(eval_arg)){

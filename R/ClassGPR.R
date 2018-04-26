@@ -1853,15 +1853,17 @@ setMethod("firstBreak", "GPR", function(x, method = c("coppens", "coppens2",
     }
     if(any(is.na(fb))){
       warning("First break could not be picked for some traces. \n",
-              "That's no luck, but good news is you can try with another method.\n",
-              "This is probably because your traces have a too low S/N ratio." )
+              "That's no luck, but good news is you can try with another ",
+              "method.\n", "This is probably because your traces have a ",
+              "too low S/N ratio." )
     }
     return(fb)
   } 
 )
 
 #--------------- DATA EDITING FUNCTIONS
-#' Shift traces vertically by an amount of depth (time) units. New traces are interpolated.
+#' Shift traces vertically by an amount of depth (time) units. New traces 
+#' are interpolated.
 #'
 #' @param x A object of the class GPR
 #' @param ts A numeric vector defining the amount of depth the traces have to
@@ -1960,20 +1962,18 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("spline",
 setMethod("time0Cor", "GPR", function(x, t0 = NULL,  method = c("spline", 
                       "linear", "nearest", "pchip", "cubic", "none"), 
                       crop = TRUE, keep = 0){
-    method <- match.arg(method, c("spline", 
-                                  "linear", "nearest", "pchip", "cubic", 
-                                  "none"))
-    #if(is.null(keep)){
-      #keep <- x@antsep/c0
-    #}
+    method <- match.arg(method, c("spline", "linear", "nearest", "pchip", 
+                                  "cubic", "none"))
     if(is.null(t0)){
       ts <- -x@time0 + keep
     }else{
       if(any(is.na(t0))){
         stop("Woops, time zero selected have NA values. \n",
-             "This is not acceptable, time zero must have a numeric value in order to be corrected. \n",
+             "This is not acceptable, time zero must have a numeric value in ",
+             "order to be corrected. \n",
              "If this is because first break could not be picked, \n",
-              "you might want to consider removing these traces from your radargram.")
+             "you might want to consider removing these traces from your ",
+             "radargram.")
       } else{
         if(length(t0) == 1){
           t0 <- rep(t0, length(x@time0))
@@ -1981,19 +1981,8 @@ setMethod("time0Cor", "GPR", function(x, t0 = NULL,  method = c("spline",
         ts <- -t0 + keep
       }
     }
-    # xshift <- upsample(x, n = c(2,1))
-    # xshift@data <- .traceShift(xshift@data, ts, x@depth, x@dz, method)
-    # x@data <- xshift@data[seq(1, length.out = nrow(A), by = 2), ]
-    # if(crop == TRUE){
-    #   testCrop <- apply(abs(Anew),1,sum)
-    #   x <- x[!is.na(testCrop),]
-    # }
-    # xshift <- traceShift(x,  ts = ts, method = method, crop = TRUE)
-    # x@data <-xshift@data
-    #x <- traceShift(x,  ts = ts, method = eval(method), crop = TRUE)
     x <- traceShift( x,  ts, method, crop = TRUE)
     x@time0 <- x@time0 + ts
-    # x@proc <- x@proc[-length(x@proc)] # remove proc from traceShift()
     proc(x) <- getArgs()
     return(x)
   }
@@ -4101,11 +4090,18 @@ setMethod("NMOCor", "GPR", function(x, v = NULL){
   return(x_nmoCor)
 }
 
-semblance <- function(x){
+winsemblance <- function(x){
   S <- sum(rowSums(x, na.rm = TRUE)^2) / 
            sum(rowSums(x^2, na.rm = TRUE)) * nrow(x)
   #S <- sum((apply(x, 1, sum, na.rm = TRUE))^2) /
   #  sum(apply((x)^2, 1, sum, na.rm = TRUE)) * nrow(x)
+  return(S)
+}
+
+semblance <- function(x){
+  S <- rowSums(x, na.rm = TRUE)^2 / rowSums(x^2, na.rm = TRUE)
+  #x_velAna@data[,i] <- (apply(y@data, 1, sum, na.rm = TRUE))^2 / 
+  #                    apply((y@data)^2, 1, sum, na.rm = TRUE)
   return(S)
 }
 
@@ -4221,7 +4217,7 @@ setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance",
       for(i in seq_along(v)){
         y <- .NMOCor(x, v = v[i], asep = x@antsep)
         x_velAna@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, 
-                                        FUN = semblance)
+                                        FUN = winsemblance)
         # x_velAna@data[floor(w/2) + seq_along(test),i] <- test
       }
     }
@@ -4230,8 +4226,6 @@ setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance",
     for(i in seq_along(v)){
       y <- .NMOCor(x, v = v[i], asep = x@antsep)
       x_velAna@data[,i] <- semblance(y@data)
-      #x_velAna@data[,i] <- (apply(y@data, 1, sum, na.rm = TRUE))^2 / 
-      #                    apply((y@data)^2, 1, sum, na.rm = TRUE)
     }
   }
   x_velAna@data[is.na(x_velAna@data)] <- 0

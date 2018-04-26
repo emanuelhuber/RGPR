@@ -4283,8 +4283,8 @@ pasteArgs <- function(eval_arg, arg){
 
 
 addArg <- function(proc, arg){
-  proc_add <- paste(names(arg), sapply(arg, pasteArgs, arg),
-                  sep = "=", collapse = "+")
+  proc_add <- paste(names(arg), sapply(pasteArgs, arg, arg),
+                    sep = "=", collapse = "+")
   if(substr(proc, nchar(proc), nchar(proc)) == "//"){
     proc <- paste(proc, proc_add, sep = "")
   }else{

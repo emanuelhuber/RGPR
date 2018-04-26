@@ -2861,87 +2861,6 @@ plot.GPR <- function(x,y,...){
   # type=c("raster","wiggles"),addTopo=FALSE,clip=NULL,normalize=NULL,
   #       nupspl=NULL,...){
   # print(list(...))
-  dots <- list()
-  type <- "raster"
-  addTopo <- FALSE
-  normalize <- NULL
-  nupspl <- NULL
-  addAnn <- TRUE
-  addFid <- TRUE
-  #   clim <- NULL
-  clip <- NULL
-  xlim <- NULL
-  zlim <- NULL    # depth 
-  main <- x@name
-  if( length(list(...)) ){
-    dots <- list(...)
-    if( !is.null(dots$type)){
-      type <- dots$type
-      dots$type <- NULL
-    }
-    if( !is.null(dots$zlim)){
-      zlim <- dots$zlim
-      dots$zlim <- NULL
-    }
-    if( !is.null(dots$xlim)){
-      xlim <- dots$xlim
-      dots$xlim <- NULL
-    }
-    if(!is.null(dots$ylim)){
-      if(!is.null(zlim)){
-        cat("You specified both, 'zlim' and 'ylim'.\n")
-        cat("These have the same meaning, I only consider 'zlim'.\n")
-      }else{
-        zlim <- dots$ylim
-        dots$ylim <- NULL
-      }
-    }
-    if( !is.null(dots$clip)){
-      clip <- dots$clip
-      dots$clip <- NULL
-    }
-    if( !is.null(dots$normalize)){
-      normalize <- dots$normalize
-      dots$normalize <- NULL
-    }
-    if( !is.null(dots$nupspl)){
-      nupspl <- dots$nupspl
-      dots$nupspl <- NULL
-    }
-    if( !is.null(dots$main) ){
-      main <- dots$main
-      dots$main <- NULL
-    }
-    # myCol <- colGPR(n=101)
-    # if( !is.null(dots$col) && !isTRUE(dots$col) ){
-      # myCol <- dots$col
-    # }
-    if( !is.null(dots$addAnn) && !isTRUE(dots$addAnn) ){
-      addAnn <- FALSE
-    }
-    if( !is.null(dots$addFid) && !isTRUE(dots$addFid) ){
-      addFid <- FALSE
-    }
-    addTopo <- FALSE
-    if( !is.null(dots$addTopo) && isTRUE(dots$addTopo) ){
-      addTopo <- TRUE
-    }
-    #dots$col <- NULL
-    dots$addAnn <- NULL
-    dots$addFid <- NULL
-    dots$addTopo <- NULL
-    dots$addArrows <- NULL
-    if(!is.null(dots$lwd)){
-      lwd <- dots$lwd
-    }
-    dots$add <- NULL
-    if(!is.null(dots$shp_files)){
-      add_shp_files <- TRUE
-      shp_files <- dots$shp_files
-    }
-    dots$shp_files <- NULL
-    # print(dots)
-  }
   if(length(x@vel)>0){  
     v <- x@vel[[1]]
   }else{
@@ -2949,14 +2868,26 @@ plot.GPR <- function(x,y,...){
   }
   if(any(dim(x) == 1)){
     par(mar=c(5,4,3,2)+0.1,oma=c(0,0,3,0), mgp=c(2, 0.5, 0))
-    if(grepl("[m]$",x@depthunit)){
+    z <- x@depth
+    if(grepl("[m]$", x@depthunit)){
       xlab <- paste0("depth (",x@depthunit,")")
-      z <- x@depth
-    }else if(grepl("[s]$",x@depthunit)){
+    }else if(grepl("[s]$", x@depthunit)){
       xlab <- paste0("two-way travel time (",x@depthunit,")")
-      z <- x@depth - x@time0
     }
-#     z <- seq(-x@time0, by = x@dz, length.out = length(x@data))
+    if( length(list(...)) ){
+      dots <- list(...)
+    }
+    if(is.null(dots$relTime0)){
+      z <- x@depth - x@time0
+      t0 <- 0
+    }else{ 
+      t0 <- x@time0
+      if(isTRUE(dots$relTime0)){
+        t0 <- 0
+        z <- x@depth - x@time0
+      }
+      dots$relTime0 <- NULL
+    }
     plot(z, x@data, type = "n", 
           xlab = xlab, 
           ylab = "amplitude (mV)",xaxt = "n")
@@ -2982,12 +2913,92 @@ plot.GPR <- function(x,y,...){
       mtext(paste0("depth (m),   v=",v,"m/ns") ,side=3, line=2)
     }
     abline(h = 0, lty = 3, col = "grey")
-    abline(v = 0, col = "red")
-    lines(z, x@data,...)
+    abline(v = t0, col = "red")
+    do.call(lines, c(list( x = z, x@data), dots))
     title(paste0(x@name, ": trace #", x@traces," @", round(x@pos,2), 
                  x@posunit), outer=TRUE)
-#     par(op)
    }else{
+     dots <- list()
+     type <- "raster"
+     addTopo <- FALSE
+     normalize <- NULL
+     nupspl <- NULL
+     addAnn <- TRUE
+     addFid <- TRUE
+     #   clim <- NULL
+     clip <- NULL
+     xlim <- NULL
+     zlim <- NULL    # depth 
+     main <- x@name
+     if( length(list(...)) ){
+       dots <- list(...)
+       if( !is.null(dots$type)){
+         type <- dots$type
+         dots$type <- NULL
+       }
+       if( !is.null(dots$zlim)){
+         zlim <- dots$zlim
+         dots$zlim <- NULL
+       }
+       if( !is.null(dots$xlim)){
+         xlim <- dots$xlim
+         dots$xlim <- NULL
+       }
+       if(!is.null(dots$ylim)){
+         if(!is.null(zlim)){
+           cat("You specified both, 'zlim' and 'ylim'.\n")
+           cat("These have the same meaning, I only consider 'zlim'.\n")
+         }else{
+           zlim <- dots$ylim
+           dots$ylim <- NULL
+         }
+       }
+       if( !is.null(dots$clip)){
+         clip <- dots$clip
+         dots$clip <- NULL
+       }
+       if( !is.null(dots$normalize)){
+         normalize <- dots$normalize
+         dots$normalize <- NULL
+       }
+       if( !is.null(dots$nupspl)){
+         nupspl <- dots$nupspl
+         dots$nupspl <- NULL
+       }
+       if( !is.null(dots$main) ){
+         main <- dots$main
+         dots$main <- NULL
+       }
+       # myCol <- colGPR(n=101)
+       # if( !is.null(dots$col) && !isTRUE(dots$col) ){
+       # myCol <- dots$col
+       # }
+       if( !is.null(dots$addAnn) && !isTRUE(dots$addAnn) ){
+         addAnn <- FALSE
+       }
+       if( !is.null(dots$addFid) && !isTRUE(dots$addFid) ){
+         addFid <- FALSE
+       }
+       addTopo <- FALSE
+       if( !is.null(dots$addTopo) && isTRUE(dots$addTopo) ){
+         addTopo <- TRUE
+       }
+       #dots$col <- NULL
+       dots$addAnn <- NULL
+       dots$addFid <- NULL
+       dots$addTopo <- NULL
+       dots$addArrows <- NULL
+       if(!is.null(dots$lwd)){
+         lwd <- dots$lwd
+       }
+       dots$add <- NULL
+       if(!is.null(dots$shp_files)){
+         add_shp_files <- TRUE
+         shp_files <- dots$shp_files
+       }
+       dots$shp_files <- NULL
+       # print(dots)
+     }
      clab <- "mV"
     if(!is.null(nupspl)){
       x <- upsample(x,n=nupspl)

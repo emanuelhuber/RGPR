@@ -4194,7 +4194,7 @@ setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance",
       w <- ceiling(nrow(x))/20
     }
     wi <- round(w/x@dz)
-    if(wi > nrow(x) || wi < 0 ) stop("w too large or too small")
+    if(wi > ncol(x) || wi < 0 ) stop("w too large or too small")
     vabove <- seq_len(ceiling(w/2)) + 1
     # FIXME > use apply(x, i, FUN)
     if(method == "wincoherence"){

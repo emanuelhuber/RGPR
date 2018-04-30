@@ -2863,9 +2863,7 @@ plot.GPR <- function(x,y,...){
     }else if(grepl("[s]$", x@depthunit)){
       xlab <- paste0("two-way travel time (",x@depthunit,")")
     }
-    if( length(list(...)) ){
-      dots <- list(...)
-    }
+    dots <- list(...)
     if(is.null(dots$relTime0)){
       z <- x@depth - x@time0
       t0 <- 0

@@ -1604,7 +1604,7 @@ plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
           pdfName=NULL, 
           yaxt = "s", bty = "o",
           col = "black", lwd = 0.5, ws = 1, side = 1, ratio = 1, 
-          dx = 0.25, dz = 0.4, xlim = NULL, ylim = NULL, relTime0 = TRUE, ...){
+          dx = 0.25, dz = 0.4, xlim = NULL, ylim = NULL, relTime0 = FALSE, ...){
   
   op <- par(no.readonly = TRUE) 
   dx <- mean(diff(x)) # estimated x-step
@@ -1761,7 +1761,8 @@ plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
 #' 
 #' Plot GPR as image (raster)
 #' @export
-plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
+plotRaster <- function(z, x = NULL, y = NULL, main = "", 
+                       xlim = NULL,
                       note = NULL, ratio = 1,
              time_0 = 0, antsep = 1, v = 0.1,surveymode = NULL,
              addFid = TRUE, fid=NULL, ylim = NULL,
@@ -1770,7 +1771,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
              rasterImage = FALSE, resfac = 1, clab = "mV",
              add = FALSE, barscale = TRUE, addGrid = FALSE, 
              col = palGPR(n = 101), yaxt = "s", bty = "o",
-             relTime0 = TRUE, clim = NULL, pdfName = NULL,...){
+             relTime0 = FALSE, clim = NULL, pdfName = NULL,...){
   op <- par(no.readonly=TRUE)
   time_0 <- median(time_0)
   mai <- op$mai
@@ -1780,7 +1781,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
     mai <- c(1.2, 1.2, 1.2, 1.8)
   }
   z <-  as.matrix(z)
-  z <- t(z[nrow(z):1,])
+  z <- t(z)
   if(is.null(x)){
     x <- (1:nrow(z))
   }  
@@ -1799,27 +1800,33 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
     }
   }
   # Note that y and ylim are negative and time_0 is positive...
-  if(relTime0 && ylim[2] > -time_0){
-    # truncate the data -> start at time-zero!!
-    y <- y + time_0
-    ylim[1] <- max(c(min(y), ylim[1]))
-    ylim[2] <- 0
+  # if(relTime0 && ylim[2] > -time_0){
+  #   # truncate the data -> start at time-zero!!
+  #   y <- y + time_0
+  #   ylim[1] <- max(c(min(y), ylim[1]))
+  #   ylim[2] <- 0
+  #   time_0 <- 0
+  # }
+  if(isTRUE(relTime0)){
+    y <- y - time_0
+    time_0 <- 0
   }
+  
   if( length(unique(diff(x))) > 1){
     rasterImage <- FALSE
   }
   omi <- c(0,0,0.6,0)
   mgp <- c(2.5, 0.75, 0)
   fac <- 0.2
-  # if the depthunit are "meters"
-  if(grepl("[m]$",depthunit)){
-    heightPDF <- fac*diff(ylim) + sum(omi[c(1,3)] + mai[c(1,3)])
-    widthPDF <- fac*diff(xlim)*ratio +  sum(omi[c(2,4)]+ mai[c(2,4)])
-  }else{
-    heightPDF <- fac*(ylim[2] - ylim[1])*v/ 2 + sum(omi[c(1,3)] + mai[c(1,3)])
-    widthPDF <- fac*(xlim[2] - xlim[1])*ratio + sum(omi[c(2,4)] + mai[c(2,4)])
-  }
   if(!is.null(pdfName)){
+    # if the depthunit are "meters"
+    if(grepl("[m]$",depthunit)){
+      heightPDF <- fac*diff(ylim) + sum(omi[c(1,3)] + mai[c(1,3)])
+      widthPDF <- fac*diff(xlim)*ratio +  sum(omi[c(2,4)]+ mai[c(2,4)])
+    }else{
+      heightPDF <- fac*(ylim[2] - ylim[1])*v/ 2 + sum(omi[c(1,3)] + mai[c(1,3)])
+      widthPDF <- fac*(xlim[2] - xlim[1])*ratio + sum(omi[c(2,4)] + mai[c(2,4)])
+    }
     Cairo::CairoPDF(file = paste0(pdfName, ".pdf"),
         # pointsize=10,
         width = widthPDF, 
@@ -1845,13 +1852,13 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   }
   #image(x,y,z,col=col,zlim=clim,xaxs="i", yaxs="i", yaxt="n",...)
   plot3D::image2D(x = x, y = y, z = z, col = col, 
-        xlim = xlim, ylim = ylim, zlim = clim,
+        #xlim = xlim, ylim = ylim, zlim = clim,
+        ylim = rev(range(y)),
         xaxs = "i", yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
         resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)
- 
   usr <- par("usr")
   if(is.null(xlim) ){
-     test <- rep(TRUE,length(x))
+     test <- rep(TRUE, length(x))
   }else{
     test <- ( x >= xlim[1] & x <= xlim[2] )
   }
@@ -1862,24 +1869,24 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   # plot annotations
   testAnn <- FALSE
   if(addAnn && !is.null(annotations) && length(annotations) > 0){
-    testAnn <- .plotAnn(annotations[test],x[test])
+    testAnn <- .plotAnn(annotations[test], x[test])
   }
   # plot title
   if(addAnn && testAnn){
-    title(main,outer=TRUE,line=1)
+    title(main, outer = TRUE, line = 1)
   }else{
     title(main)  
   }
   # plot axis
-  pretty_y <- pretty(ylim, 10)
-  axis(side = 2, at = pretty_y, labels = -pretty_y)
+  # pretty_y <- pretty(ylim, 10)
+  yat <- axis(side = 2)
   if( grepl("CMP", toupper(surveymode))){
-    axis(side = 4, at = pretty_y, labels = -pretty_y)
+    axis(side = 4)
   }else{
-    .depthAxis(ylim, pretty_y, time_0, v, antsep, depthunit, posunit )
+    .depthAxis(range(yat), pretty(yat), time_0, v, antsep, depthunit, posunit )
   }
   # plot time0
-  abline(h=0,col="red",lwd=0.5)
+  if(abs(time_0) > 0)  abline(h = -time_0, col = "chartreuse", lwd = 2)
   # plot note
   if(!is.null(note) && length(note) > 0){
     mtext(note, side = 1, line = 4, cex=0.6)
@@ -1941,6 +1948,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 
 
 .barScale <- function(clim, y, col, clab = "mV", clabcex = 0.8){
+  # clim <- sort(clim)
   usr <- par()$usr
   pin <- par()$pin  # inch
   mai <- par()$mai
@@ -1954,16 +1962,16 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
   xpos <- usr[1] + dxin*(mai2[2] - mai[2])
   zstrip <- matrix(seq(clim[1], clim[2], length.out = length(col)), nrow = 1)
   xstrip <- c( xpos - 20*wstrip,  xpos + 20*wstrip)#*c(0.9, 1.1)
-  ystrip <- seq(min(y),max(y),length.out=length(col))
-  ystrip <- seq(usr[3],usr[4],length.out=length(col))
+  ystrip <- seq(min(y), max(y), length.out=length(col))
+  ystrip <- rev(seq(usr[3], usr[4], length.out=length(col)))
+  ystrip <- sort(ystrip)
   pretty_z <- pretty(as.vector(zstrip))
   dclim <- clim[2]-clim[1] 
   pretty_at <- usr[3] - dylim * (clim[1] - pretty_z)/dclim
   axis(side=4,las=2, at=pretty_at, labels=pretty_z)
  #  print(par("usr"))
-  # print(range(xstrip))
   image(x = xstrip, y = ystrip, z = zstrip,
-        add = TRUE, col = col, 
+        add = TRUE, col = col,
         axes = FALSE, xlab = "", ylab = "", xaxs = "i", yaxs = "i")
   # axis(side=4, las=2)
   title(main=clab, line =1, cex.main = clabcex)
@@ -1976,36 +1984,22 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
 # the depth axes is squished.
 .depthAxis <- function(y, pretty_y, time_0, v, antsep, depthunit, posunit ){
   if(grepl("[s]$",depthunit)){
-    maxDepth <- max( abs(y + 2*time_0) ) * v
+    maxDepth <- v * max( abs(y - time_0) ) / 2
+    #print(maxDepth)
     depthAll <- pretty(c(0, maxDepth), 10)
     depthAllPos <- depthToTime(depthAll, 0, v, antsep)
-    axis(side = 4, at = -depthAllPos, labels = depthAll, tck = -0.01)
+    axis(side = 4, at = -depthAllPos - time_0, labels = depthAll, tck = -0.02)
+    depth2  <- seq(0.1, by = 0.1, 0.9)
+    depthat2 <- depthToTime(depth2, 0, v, antsep = antsep)
+    axis(side = 4, at = - depthat2 - time_0, labels = FALSE, tck = -0.01)
     mtext(paste0("depth (", posunit, "),   v = ",v, " ", posunit, "/", 
-                  depthunit), side = 4, line = 3)
-                  
-#     depth2 <- seq(0.1, by = 0.1, 0.9)
-#     depthat2 <- depthToTime(depth2, 0, v, antsep)
-#     
-#     maxDepth <- max( abs(y + 2*time_0) ) * v
-#     if(maxDepth > 1.1){
-#       # depth <- pretty(seq(1.1, by = 0.1 , max( abs(y + 2*time_0) ) * v), 10)
-#       depth <- pretty(c(1.1, max( abs(y + 2*time_0) ) * v), 10)
-#       depthat <- depthToTime(depth, 0, v, antsep)
-#       axis(side = 4, at = -depthat, labels = depth, tck = -0.02)
-#       labelsTop <- FALSE
-#     }else{
-#       labelsTop <- depth2
-#     }
-#     axis(side = 4, at = -depthat2, labels = labelsTop, tck = -0.01)
-#     axis(side = 4, at = -1*depthToTime(1, 0, v, antsep), 
-#          labels = "1", tck = -0.02)
-#     mtext(paste0("depth (", posunit, "),   v = ",v, " ", posunit, "/", 
-#                   depthunit), side = 4, line = 3)
+                  depthunit), side = 4, line = 2.5)
   }else{
     axis(side = 4, at = pretty_y, labels = -pretty_y)
     mtext(paste0("depth (", depthunit, ")") ,side = 4, line = 3)
   }
 }
+
 
 # Modified Energy ratio method
 .firstBreakMER <- function(x, w){
@@ -2030,8 +2024,12 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "", xlim = NULL,
       fb <- which(x > thr)
       if(length(fb) > 0){
         i <- fb[1]
-        w <- (x[i] - thr) / (x[i] - x[i-1])
-        return( w * tt[i-1] + (1- w) * tt[i] )
+        if(i > 1){
+        	w <- (x[i] - thr) / (x[i] - x[i-1])
+            return( w * tt[i-1] + (1- w) * tt[i] )
+        }else{
+            return(tt[i])
+        }
       } else{
         return(NA)
       }

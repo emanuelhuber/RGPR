@@ -7,9 +7,22 @@
 \alias{plot.GPRsurvey}
 \title{Plot the GPR object.}
 \usage{
-\method{plot}{GPR}(x, y, ...)
+\method{plot}{GPR}(x, y = NULL, ..., add = FALSE, relTime0 = FALSE,
+  main = NULL, type = NULL, xlab = "", ylab = "", clab = "mV",
+  col = NULL, note = NULL, addFid = TRUE, addAnn = TRUE,
+  addTime0 = TRUE, addDepth0 = TRUE, addAmpl0 = TRUE, ratio = 1,
+  rasterImage = FALSE, resfac = 1, barscale = TRUE, xaxt = "s",
+  yaxt = "s", bty = "o", ann = TRUE, pdfName = NULL)
 
 \method{plot}{GPRsurvey}(x, y, ...)
+}
+\arguments{
+\item{y}{\code{NULL,} not used}
+
+\item{type}{Possible values for 1D plot: "l", "p", "b", "c", "o", "s", "S", 
+"h", "n". For 2D plot: "wiggles", "raster".}
+
+\item{col}{\code{NULL,} Default 1D: "black". 2D: \code{palGPR(n = 101)}}
 }
 \description{
 If the GPR object consists of a single trace, wiggle plot is shown.

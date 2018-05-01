@@ -10,7 +10,7 @@ plotRaster(z, x = NULL, y = NULL, main = "", xlim = NULL, note = NULL,
   annotations = NULL, depthunit = "ns", posunit = "m",
   rasterImage = FALSE, resfac = 1, clab = "mV", add = FALSE,
   barscale = TRUE, addGrid = FALSE, col = palGPR(n = 101), yaxt = "s",
-  bty = "o", relTime0 = TRUE, clim = NULL, pdfName = NULL, ...)
+  bty = "o", relTime0 = FALSE, clim = NULL, pdfName = NULL, ...)
 }
 \description{
 Plot GPR as image (raster)

@@ -1078,7 +1078,7 @@ setMethod(
         x@time0 <- x@time0[j]
         x@time <- x@time[j]
         x@fid <- x@fid[j]
-        if(length(x@antsep)>0)  x@antsep <- x@antsep[j]
+        if(length(x@antsep) > 1) x@antsep <- x@antsep[j]
         if(length(x@coord)>0)  x@coord <- x@coord[j,,drop=FALSE]
         if(length(x@rec)>0) x@rec <- x@rec[j,,drop=FALSE]
         if(length(x@trans)>0) x@trans <- x@trans[j,,drop=FALSE]
@@ -2823,7 +2823,7 @@ lines.GPR <- function(x,...){
 #' @name points
 #' @rdname points
 #' @export
-points.GPR <- function(x,...){
+points.GPR <- function(x, ...){
   if(length(x@vel)>0){  
     v <- x@vel[[1]]
   }else{
@@ -2838,170 +2838,167 @@ points.GPR <- function(x,...){
   }
 }
 
+
+
+
 #' Plot the GPR object.
 #'
 #' If the GPR object consists of a single trace, wiggle plot is shown.
+#' @param y \code{NULL,} not used
+#' @param col \code{NULL,} Default 1D: "black". 2D: \code{palGPR(n = 101)}
+#' @param type Possible values for 1D plot: "l", "p", "b", "c", "o", "s", "S", 
+#'             "h", "n". For 2D plot: "wiggles", "raster".
 #' @method plot GPR 
 #' @name plot
 #' @rdname plot
 #' @export
 # options: type=c(raster,wiggles), addTopo, clip, normalize
-plot.GPR <- function(x,y,...){
-  # type=c("raster","wiggles"),addTopo=FALSE,clip=NULL,normalize=NULL,
-  #       nupspl=NULL,...){
+plot.GPR <- function(x, 
+                     y = NULL, 
+                     ...,
+                     add = FALSE, 
+                     relTime0 = FALSE,
+                     # xlim = NULL,
+                     # ylim = NULL,
+                     #clim = NULL, 
+                     #main = NULL,
+                     #type = NULL,
+                     #xlab = "",
+                     #ylab = "",
+                     #col = NULL,
+                     note = NULL, 
+                     addFid = TRUE,
+                     addAnn = TRUE,
+                     addTime0 = TRUE,
+                     addDepth0 = TRUE,
+                     addAmpl0 = TRUE,
+                     addTopo = FALSE,
+                     clip = NULL,
+                     ratio = 1,
+                     #rasterImage = FALSE, 
+                     #resfac = 1, 
+                     barscale = TRUE, 
+                     #xaxt = "s", 
+                     #yaxt = "s", 
+                     bty = "o",
+                     #ann = TRUE,   # graphic parameter
+                     pdfName = NULL){
   # print(list(...))
   if(length(x@vel)>0){  
     v <- x@vel[[1]]
   }else{
     v <- 0
   }
+  dots <- list(...)
   if(any(dim(x) == 1)){
-    par(mar=c(5,4,3,2)+0.1,oma=c(0,0,3,0), mgp=c(2, 0.5, 0))
+    par(mar = c(5, 4, 3, 2) + 0.1, oma = c(0, 0, 3, 0), mgp = c(2, 0.5, 0))
     z <- x@depth
-    if(grepl("[m]$", x@depthunit)){
-      xlab <- paste0("depth (",x@depthunit,")")
-    }else if(grepl("[s]$", x@depthunit)){
-      xlab <- paste0("two-way travel time (",x@depthunit,")")
-    }
-    if( length(list(...)) ){
-      dots <- list(...)
-    }
-    if(is.null(dots$relTime0)){
+    t0 <- x@time0
+    if(isTRUE(relTime0)){
       z <- x@depth - x@time0
       t0 <- 0
-    }else{ 
-      t0 <- x@time0
-      if(isTRUE(dots$relTime0)){
-        t0 <- 0
-        z <- x@depth - x@time0
+    }
+    if(is.null(dots$xlab)){
+      if(grepl("[m]$", x@depthunit)){
+        dots$xlab <- paste0("depth (",x@depthunit,")")
+      }else if(grepl("[s]$", x@depthunit)){
+        dots$xlab <- paste0("two-way travel time (",x@depthunit,")")
       }
-      dots$relTime0 <- NULL
     }
-    plot(z, x@data, type = "n", 
-          xlab = xlab, 
-          ylab = "amplitude (mV)",xaxt = "n")
-    x_axis <- pretty(z,10)
-      axis(side = 1, at = x_axis, labels = x_axis, tck = +0.02)
-    if(grepl("[m]$",x@depthunit)){
-      axis(side = 3, at = x_axis, labels = x_axis, tck = +0.02)
-    }else if(grepl("[s]$",x@depthunit)){
-      depth_0 <- depth0(0, v, antsep=x@antsep)
-      depth2 <- seq(0.1,by=0.1,0.9)
-      depthat0 <- depthToTime(0, 0, v, antsep=x@antsep)
-      if(max(z)*v/2 > 1.3){
-        depth <- pretty(seq(1.1,by=0.1,max(z)*v/2 ),10)
-        depthat <- depthToTime(depth, 0, v, antsep=x@antsep)
-        axis(side=3,at=depthat, labels=depth,tck=+0.02)
+    if(is.null(dots$type)) dots$type <- "l"
+    if(is.null(dots$col)) dots$col <- "black"
+    if(is.null(dots$ylab)) dots$ylab <- "amplitude (mV)"
+    if(is.null(dots$xaxt)) dots$xaxt <- "n"
+    if(is.null(dots$main)){
+      myMain <- paste0(x@name, ": trace #", x@traces," @", round(x@pos,2), 
+                                            x@posunit)
+    }else{
+      myMain <- dots$main
+      dots$main <- NULL
+    } 
+      
+      
+    do.call(plot, c(list(x = z, y = x@data), dots))
+    
+    if(is.null(dots$ann) || dots$ann != FALSE){
+      if(is.null(dots$xaxt) || dots$xaxt != "n"){
+        x_axis <- pretty(z,10)
+        xat <- axis(side = 1,  tck = +0.02)
+        if(grepl("[m]$", x@depthunit)){
+          # axis(side = 3, at = x_axis, labels = x_axis, tck = +0.02)
+          axis(side = 3, tck = +0.02)
+        #FIXME: use fx .depthAxis()
+      }else if(grepl("[s]$", x@depthunit))
+        depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
+        depth2  <- seq(0.1, by = 0.1, 0.9)
+        depthat0 <- depthToTime(0, 0, v, antsep = x@antsep)
+        if(max(z)*v/2 > 1.3){
+          # depth <- pretty(seq(1.1, by = 0.1, max(z)*v/2), 10)
+          depth <- pretty(xat * v / 2, 10)
+          depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
+          axis(side = 3, at = t0 + depthat, labels = depth, tck = +0.02)
+          #print(t0)
+        }
+        depthat2 <- depthToTime(depth2, 0, v, antsep = x@antsep)
+        axis(side =3, at = t0 + depthat2, labels = FALSE, tck =+0.01)
+        if(isTRUE(addDepth0)) abline(v = depth_0, col = "grey", lty = 3)
+        mtext(paste0("depth (m),   v=", v, "m/ns"), side = 3, line = 2)
       }
-      depthat2 <- depthToTime(depth2, 0, v, antsep=x@antsep)
-      axis(side=3,at=depthat0, labels="0",tck=+0.02)
-      axis(side=3,at=depthat2, labels=FALSE,tck=+0.01)
-      axis(side=3,at=depthToTime(1, 0, v, antsep=x@antsep), 
-            labels=FALSE,tck=+0.02)
-      abline(v=depth_0,col="grey",lty=3)
-      mtext(paste0("depth (m),   v=",v,"m/ns") ,side=3, line=2)
     }
-    abline(h = 0, lty = 3, col = "grey")
-    abline(v = t0, col = "red")
-    do.call(lines, c(list( x = z, x@data), dots))
-    title(paste0(x@name, ": trace #", x@traces," @", round(x@pos,2), 
-                 x@posunit), outer=TRUE)
-   }else{
-     dots <- list()
-     type <- "raster"
-     addTopo <- FALSE
-     normalize <- NULL
-     nupspl <- NULL
-     addAnn <- TRUE
-     addFid <- TRUE
-     #   clim <- NULL
-     clip <- NULL
-     xlim <- NULL
-     zlim <- NULL    # depth 
-     main <- x@name
-     if( length(list(...)) ){
-       dots <- list(...)
-       if( !is.null(dots$type)){
-         type <- dots$type
-         dots$type <- NULL
-       }
-       if( !is.null(dots$zlim)){
-         zlim <- dots$zlim
-         dots$zlim <- NULL
-       }
-       if( !is.null(dots$xlim)){
-         xlim <- dots$xlim
-         dots$xlim <- NULL
-       }
-       if(!is.null(dots$ylim)){
-         if(!is.null(zlim)){
-           cat("You specified both, 'zlim' and 'ylim'.\n")
-           cat("These have the same meaning, I only consider 'zlim'.\n")
-         }else{
-           zlim <- dots$ylim
-           dots$ylim <- NULL
-         }
-       }
-       if( !is.null(dots$clip)){
-         clip <- dots$clip
-         dots$clip <- NULL
-       }
-       if( !is.null(dots$normalize)){
-         normalize <- dots$normalize
-         dots$normalize <- NULL
-       }
-       if( !is.null(dots$nupspl)){
-         nupspl <- dots$nupspl
-         dots$nupspl <- NULL
-       }
-       if( !is.null(dots$main) ){
-         main <- dots$main
-         dots$main <- NULL
-       }
-       # myCol <- colGPR(n=101)
-       # if( !is.null(dots$col) && !isTRUE(dots$col) ){
-       # myCol <- dots$col
-       # }
-       if( !is.null(dots$addAnn) && !isTRUE(dots$addAnn) ){
-         addAnn <- FALSE
-       }
-       if( !is.null(dots$addFid) && !isTRUE(dots$addFid) ){
-         addFid <- FALSE
-       }
-       addTopo <- FALSE
-       if( !is.null(dots$addTopo) && isTRUE(dots$addTopo) ){
-         addTopo <- TRUE
-       }
-       #dots$col <- NULL
-       dots$addAnn <- NULL
-       dots$addFid <- NULL
-       dots$addTopo <- NULL
-       dots$addArrows <- NULL
-       if(!is.null(dots$lwd)){
-         lwd <- dots$lwd
-       }
-       dots$add <- NULL
-       if(!is.null(dots$shp_files)){
-         add_shp_files <- TRUE
-         shp_files <- dots$shp_files
-       }
-       dots$shp_files <- NULL
-       # print(dots)
-     }
-     clab <- "mV"
-    if(!is.null(nupspl)){
-      x <- upsample(x,n=nupspl)
-    }
-    if(!is.null(normalize)){
-      x@data <- normalize(x@data,type=normalize)
-    }
+    
+    title(myMain, outer = TRUE)
+    
+    if(isTRUE(addAmpl0))  abline(h = 0, lty = 3, col = "grey")
+    if(isTRUE(addTime0))  abline(v = t0, col = "red")
+  }else{
+     # dots <- list()
+     # # type <- "raster"
+     # addTopo <- FALSE
+     # normalize <- NULL
+     # nupspl <- NULL
+     # #   clim <- NULL
+     # clip <- NULL
+     # # xlim <- NULL
+     # # zlim <- NULL    # depth 
+     # main <- x@name
+     # if( length(list(...)) ){
+     #   dots <- list(...)
+     #   if( !is.null(dots$clip)){
+     #     clip <- dots$clip
+     #     dots$clip <- NULL
+     #   }
+     #   if( !is.null(dots$normalize)){
+     #     normalize <- dots$normalize
+     #     dots$normalize <- NULL
+     #   }
+     #   if( !is.null(dots$nupspl)){
+     #     nupspl <- dots$nupspl
+     #     dots$nupspl <- NULL
+     #   }
+     #   if( !is.null(dots$main) ){
+     #     main <- dots$main
+     #     dots$main <- NULL
+     #   }
+     #   # if( !is.null(dots$addAnn) && !isTRUE(dots$addAnn) ){
+     #   #   addAnn <- FALSE
+     #   # }
+     #   # if( !is.null(dots$addFid) && !isTRUE(dots$addFid) ){
+     #   #   addFid <- FALSE
+     #   # }
+     #   addTopo <- FALSE
+     #   if( !is.null(dots$addTopo) && isTRUE(dots$addTopo) ){
+     #     addTopo <- TRUE
+     #   }
+     #   dots$addTopo <- NULL
+     #   # dots$add <- NULL
+     # }
     # warning("First upsample then addTopo. 
-#     Problem: interpolate also coord!!!")
+    # Problem: interpolate also coord!!!")
     if(!is.null(clip) && is.numeric(clip)){
       if(length(clip) > 1){
-        x@data <- .clip(x@data,clip[2],clip[1])
-      }else if(length(clip)==1){
-        x@data <- .clip(x@data,clip[1])
+        x@data <- .clip(x@data, clip[2], clip[1])
+      }else if(length(clip) == 1){
+        x@data <- .clip(x@data, clip[1])
       }
     }else if(is.null(clip)){
       # clip below the 0.01-quantile and above the 0.99-quantile
@@ -3011,63 +3008,255 @@ plot.GPR <- function(x,y,...){
     if(addFid == FALSE){
       x@fid <- character(length(x@fid))
     }
-    xlab <- x@posunit
+    if(is.null(note)) note <- x@filepath
+    
+    time_0 <- x@time0    
+    t0 <- median(x@time0)
+    z <- t( as.matrix(x@data) )
+    xvalues <- x@pos
+    yvalues <- x@depth
+    myxlab <- x@posunit
+    myclab <- "mV"
+    mymain <- x@name
     if(isCMP(x)){
       if(length(x@antsep) == ncol(x)){
         xvalues <- x@antsep
-        xlab <- paste0("antenna separation (", x@posunit, ")")
+        myxlab <- paste0("antenna separation (", x@posunit, ")")
       }else{
         stop("length(antsep(x)) != ncol(x). You must correctly define ",
              "the antenna separation distance with 'antsep(x) <- ...'")
       }
     }else if(toupper(x@surveymode) == "CMPANALYSIS"){
       xvalues <- x@pos
-      clab <- ""
-      xlab <- paste0("velocity (", x@posunit, "/", x@depthunit, ")")
+      myclab <- ""
+      myxlab <- paste0("velocity (", x@posunit, "/", x@depthunit, ")")
     }else if( length(x@coord) > 0 ){
       xvalues <- posLine(x@coord)
-    }else{
-      xvalues <- x@pos
     }
-    if(is.null(xlim)){
-      xlim <- range(xvalues)
+    if(grepl("[m]$",x@depthunit)){
+      myylab <- paste0("depth (", x@depthunit, ")")
+    }else if( grepl("[s]$", x@depthunit) ){
+      myylab <- paste0("two-way travel time (", x@depthunit, ")")
     }
-    type <- match.arg(type, c("raster","wiggles"))
-    if(type == "raster"){
-      if(grepl("[s]$",x@depthunit) && addTopo){
+    if(is.null(dots$xlab)) dots$xlab <- myxlab
+    if(is.null(dots$ylab)) dots$ylab <- myylab
+    if(is.null(dots$clab)) dots$clab <- myclab
+    if(!is.null(dots$main)) mymain <- dots$main
+    dots$main <- NULL
+    if(is.null(dots$type)) dots$type <- "raster"
+    dots$type <- match.arg(dots$type, c("raster","wiggles"))
+    
+    # if(is.null(xlim)){
+    #   xlim <- range(xvalues)
+    # }
+    
+    if(dots$type == "raster"){
+      if(grepl("[s]$", x@depthunit) && addTopo){
         x <- migration(x)
       }
-      if(grepl("[m]$",x@depthunit)){
-        ylab <- paste0("depth (", x@depthunit, ")")
-      }else if( grepl("[s]$",x@depthunit) ){
-        ylab <- paste0("two-way travel time (", x@depthunit, ")")
+      if(isTRUE(relTime0)){
+        yvalues <- yvalues - t0
+        time_0 <- x@time0 - t0
+        t0 <- 0
       }
-      yvalues <- -rev(x@depth)
-      if(is.null(zlim)){
-        zlim <- range(yvalues)
+
+      if(!is.null(dots$rasterImage) && isTRUE(rasterImage)){
+        dy <- diff(yvalues)
+        dx <- diff(yvalues)
+        test1 <- abs(max(dx) - min(dx)) > sqrt(.Machine$double.eps)
+        test2 <- abs(max(dy) - min(dy)) > sqrt(.Machine$double.eps)
+        # all not equal
+        if(test1 && test2){
+          dots$rasterImage <- FALSE
+        }
       }
-      do.call(plotRaster, c(list(z = x@data, x = xvalues, y = yvalues, 
-                     main = main, ylim = zlim, xlim = xlim,
-                     xlab = xlab, ylab = ylab, note = x@filepath,
-                     time_0 = x@time0, antsep = x@antsep, v = v, 
-                     addFid = addFid, fid = x@fid, surveymode = x@surveymode,
-                     addAnn = addAnn, annotations = x@ann, clab = clab,
-                     depthunit = x@depthunit, posunit = x@posunit), dots))
-    }else if(type=="wiggles"){
+      if(is.null(dots$zlim)){
+        if( min(z) > 0 ){
+          # to plot amplitudes for example...
+          dots$zlim <- c(0, max(z, na.rm = TRUE))
+          # clim <- range(z, na.rm = TRUE)
+        } else if(!is.null(x@surveymode) && 
+                  tolower(x@surveymode) %in% c("cmp", "reflection")){
+          dots$zlim <- c(-1, 1) * max(abs(z), na.rm = TRUE)
+        }else{
+          dots$zlim <- range(z[is.finite(z)], na.rm = TRUE)
+        }
+      }
+      if(is.null(dots$col)) dots$col <- palGPR(n = 101)
+      if(is.null(dots$xaxs)) dots$xaxs <- "i"
+      if(is.null(dots$yaxs)) dots$yaxs <- "i"
+      if(is.null(dots$yaxt)) dots$yaxt <- "n"
+      if(is.null(dots$bty)) dots$bty <- "n"
+      if(is.null(dots$colkey)) dots$colkey <- FALSE
+      if(is.null(dots$ylim)) dots$ylim <- rev(range(yvalues))
+      if(dots$ylim[1] < dots$ylim[2]) dots$ylim <- rev(dots$ylim)
+      #FIXME: if dots$ylim[1] < dots$ylim[2] > rev(dots$ylim)
+      # yvalues <- -rev(x@depth)
+      # if(is.null(zlim)){
+      #   zlim <- range(yvalues)
+      # }
+      
+      # do.call(plotRaster, c(list(z = x@data, x = xvalues, y = yvalues, 
+      #                main = main, 
+      #                # ylim = zlim, xlim = xlim,
+      #                xlab = xlab, ylab = ylab, note = x@filepath,
+      #                t0 = x@time0, antsep = x@antsep, v = v, 
+      #                addFid = addFid, fid = x@fid, surveymode = x@surveymode,
+      #                addAnn = addAnn, annotations = x@ann, clab = clab,
+      #                depthunit = x@depthunit, posunit = x@posunit, col = col),
+      #                dots))
+      op <- par(no.readonly=TRUE)
+      mai <- op$mai
+      if(barscale == FALSE){
+        mai <- c(1.2, 1.2, 1.2, 1.2)
+      }else{
+        mai <- c(1.2, 1.2, 1.2, 1.8)
+      }
+      omi <- c(0,0,0.6,0)
+      mgp <- c(2.5, 0.75, 0)
+      fac <- 0.2
+      # x <- xvalues
+      # y <- yvalues
+  
+      # if(!is.null(pdfName)){
+      #   # if the depthunit are "meters"
+      #   if(grepl("[m]$",depthunit)){
+      #     heightPDF <- fac*diff(ylim) + sum(omi[c(1,3)] + mai[c(1,3)])
+      #     widthPDF <- fac*diff(xlim)*ratio +  sum(omi[c(2,4)]+ mai[c(2,4)])
+      #   }else{
+      #     heightPDF <- fac*(ylim[2] - ylim[1])*v/ 2 + sum(omi[c(1,3)] + mai[c(1,3)])
+      #     widthPDF <- fac*(xlim[2] - xlim[1])*ratio + sum(omi[c(2,4)] + mai[c(2,4)])
+      #   }
+      #   Cairo::CairoPDF(file = paste0(pdfName, ".pdf"),
+      #                   # pointsize=10,
+      #                   width = widthPDF, 
+      #                   height = heightPDF,
+      #                   # dpi=75,  # 75
+      #                   bg = "white",
+      #                   pointsize=10,
+      #                   # units = "in",
+      #                   title = pdfName)  
+      # }
+      if(add == TRUE){ 
+        par(new = TRUE)
+      }else{
+        par( mai = mai, omi = omi, mgp = mgp)
+      }
+      
+      #image(x,y,z,col=col,zlim=clim,xaxs="i", yaxs="i", yaxt="n",...)
+      do.call(plot3D::image2D, c(list(x = xvalues, y = yvalues, z = z), dots))
+                  #       col = col, 
+                  # #xlim = xlim, ylim = ylim, 
+                  # zlim = zlim,
+                  # ylim = rev(range(yvalues)),
+                  # xaxs = "i", 
+                  # yaxs = "i", 
+                  # yaxt = "n", 
+                  # rasterImage = rasterImage, 
+                  # resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)
+      usr <- par("usr")
+      xlim <- par("usr")[1:2]
+
+      test <- ( xvalues >= xlim[1] & xvalues <= xlim[2] )
+      # plot fiducial markers
+      if(isTRUE(addFid) && !is.null(x@fid) && length(x@fid) > 0){
+        .plotFid(x@fid[test], xvalues[test])
+      }
+      # plot annotations
+      testAnn <- FALSE
+      if(isTRUE(addAnn) && !is.null(x@ann) && length(x@ann) > 0){
+        testAnn <- .plotAnn(x@ann[test], xvalues[test])
+      }
+      # plot title
+      # if(is.null(main)){
+      #   main <- paste0(x@name, ": trace #", x@traces," @", round(x@pos,2), 
+      #                  x@posunit)
+      # }
+      if(isTRUE(addAnn) && isTRUE(testAnn)){
+        title(mymain, outer = TRUE, line = 1)
+      }else{
+        title(mymain)  
+      }
+      # plot axis
+      # pretty_y <- pretty(ylim, 10)
+      # if( grepl("CMP", toupper(x@surveymode))){
+      #   axis(side = 4)
+      # }else{
+      #   .depthAxis(range(yat), pretty(yat), t0, v, x@antsep, 
+      #              x@depthunit, x@posunit )
+      # }
+      
+      if(is.null(dots$ann) || dots$ann != FALSE){
+        yat <- axis(side = 2)
+        #xat <- axis(side = 1,  tck = +0.02)
+        if(grepl("[m]$", x@depthunit) || grepl("CMP", toupper(x@surveymode))){
+          axis(side = 4)
+          #FIXME: use fx .depthAxis()
+        }else if(grepl("[s]$", x@depthunit)){
+          depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
+          depth2  <- seq(0.1, by = 0.1, 0.9)
+          depthat0 <- depthToTime(0, 0, v, antsep = x@antsep)
+          if(max(yvalues) * v / 2 > 1.3){
+            # depth <- pretty(seq(1.1, by = 0.1, max(z)*v/2), 10)
+            depth <- pretty(yat * v / 2, 10)
+            depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
+            axis(side = 4, at = t0 + depthat, labels = depth, tck = -0.02)
+            #print(t0)
+          }
+          depthat2 <- depthToTime(depth2, 0, v, antsep = x@antsep)
+          axis(side = 4, at = t0 + depthat2, labels = FALSE, tck = -0.01)
+          axis(side = 4, at = depth_0, labels = "0", tick = FALSE)
+          if(isTRUE(addDepth0)) abline(h = depth_0, col = "grey", lty = 3)
+          # mtext(paste0("depth (m),   v=", v, "m/ns"), side = 4, line = 2)
+          mtext(paste0("depth (", x@posunit, "),   v = ", v, " ", x@posunit, 
+                       "/",  x@depthunit), side = 4, line = 2.5)
+        }
+      }
+      
+      
+      
+      # plot time0
+      if(isTRUE(addTime0)){
+        dx <- diff(xvalues)/2
+        xt0 <- c(xvalues[1] - dx[1],  xvalues + c(dx,  tail(dx, 1)))
+        lines(xt0, c(time_0, tail(time_0, 1)), type = "s", col = "chartreuse",
+              lwd = 2)
+      }  #abline(h = t0, col = "chartreuse", lwd = 2)
+      # plot note
+      if(!is.null(note) && length(note) > 0){
+        mtext(note, side = 1, line = 4, cex=0.6)
+      }
+      # add grid
+      # if(addGrid){
+      #   grid()
+      # }
+      # if( bty != "n"){
+      #   box(bty = bty)
+      # }
+      if(barscale){
+        op2 <- par(no.readonly=TRUE)
+        .barScale(clim = dots$zlim, y = yvalues, col = dots$col, 
+                  clab = dots$clab, clabcex = 0.8)
+        par(op2)
+      }
+      # if(!is.null(pdfName)){
+      #   dev.off()
+      # }
+    }else if(dots$type == "wiggles"){
       if(addTopo && length(x@coord)>0){
         topo <- x@coord[,3]
       }else{
         topo = NULL
       }
-      if(grepl("[m]$",x@depthunit)){
-        ylab <- paste0("depth (", x@depthunit, ")")
-      }else if(grepl("[s]$",x@depthunit)){
-        if(addTopo){
-          ylab <- "depth (m)"
-        }else{
-          ylab <- paste0("two-way travel time (", x@depthunit, ")")
-        }
-      }
+      # if(grepl("[m]$",x@depthunit)){
+      #   ylab <- paste0("depth (", x@depthunit, ")")
+      # }else if(grepl("[s]$",x@depthunit)){
+      #   if(addTopo){
+      #     ylab <- "depth (m)"
+      #   }else{
+      #     ylab <- paste0("two-way travel time (", x@depthunit, ")")
+      #   }
+      # }
       yvalues <- -rev(x@depth)
       if(is.null(zlim)){
         zlim <- range(yvalues)
@@ -3080,7 +3269,7 @@ plot.GPR <- function(x,y,...){
       do.call(plotWig, c(list(z = x@data, x = xvalues, y = yvalues, 
                     main=main, ylim = zlim,
                     xlab = xlab, ylab = ylab, note = x@filepath, 
-                    time_0 = x@time0, antsep = x@antsep, v = v, 
+                    t0 = x@time0, antsep = x@antsep, v = v, 
                     surveymode = x@surveymode,
                     addFid = addFid, fid = x@fid,
                     addAnn = addAnn, annotations=x@ann,
@@ -4251,80 +4440,85 @@ setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance",
 setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
     if(length(x@antsep) == 0 || (!is.numeric(x@antsep))){
     stop("You must first define the antenna separation",
-          "with `antsep(x)<-...`!")
+          "with 'antsep(x) <- ...'!")
     }
     if(is.null(x@vel) || length(x@vel)==0){
       stop("You must first define the antenna separation",
-          "with `vel(x)<-...`!")
+          "with 'vel(x) <- ...'!")
     }
-    type <- match.arg(type, c("static", "kirchhoff"))
-    if(type == "static"){  
-      ntr <- ncol(x@data)
-      if(ncol(x@coord) == 3 && length(x@coord[,3])>= ntr){
-        topo <- x@coord[1:ntr,3]
-      }else{
-        topo <- rep.int(0L, ntr)
-        message("no topo!")
-      }
-      if(x@depthunit == "ns"){
-        # "migration"
-        message("time to depth conversion with constant velocity", x@vel[[1]])
-        x@dz <-  x@dz * x@vel[[1]]/ 2
-        x@depthunit <- "m"
-        time_0 <- mean(x@time0)
-        # depth_0 <- time_0 * x@vel[[1]]/ 2
-        depth_0 <- depthToTime(z = 0, time_0 , v = x@vel[[1]], 
-                               antsep = x@antsep) *  x@vel[[1]]/ 2
-        depth_all <- x@depth * x@vel[[1]]/ 2
-        # shift to time0
-        sel <- c(round((depth_0 - depth_all[1]) / x@dz):nrow(x))
-        # sel <- c(round((depth_0)/x@dz):nrow(x))
-        x <- x[sel,]
-      }
-      x@data <- .topoShift(x@data,topo,dz = x@dz)
-      x@depth     <- seq(0, by = x@dz, length.out = nrow(x@data))  
-      x@time0     <- rep(0,length(x@time0))
-      x@vel       <- list()  # FIX ME!!
-      x@time0     <- rep(0L,ncol(x@data))  # FIX ME!!
-      x@coord[,3] <- max(x@coord[,3])
-    }else if(type == "kirchhoff"){
-      A <- x@data
-      topoGPR <- x@coord[,3]
-      dx <- x@dx
-      dts <- x@dz
-      v <- x@vel[[1]]
-      # initialisation
-      max_depth <- nrow(x)*x@dx
-      dz <- 0.25*x@dz
-      fdo <- x@freq
-      FUN <- sum
-      if( length(list(...)) ){
-        dots <- list(...)
-        if( !is.null(dots$max_depth)){
-          max_depth <- dots$max_depth
-        }
-        if( !is.null(dots$dz)){
-          dz <- dots$dz
-        }
-        if( !is.null(dots$fdo)){
-          fdo <- dots$fdo
-        }
-        if( !is.null(dots$FUN)){
-          FUN <- dots$FUN
-        }
-      }  
-      x@data      <- .kirMig(x@data, topoGPR = x@coord[,3], dx = x@dx,
-                             dts = x@dz, v = x@vel[[1]], max_depth = max_depth, 
-                             dz = dz, fdo = fdo, FUN = FUN)
-      x@depth     <- seq(0,by=dz, length.out = nrow(x))
-      x@time0     <- rep(0, ncol(x))
-      x@dz        <- dz
-      x@depthunit <- x@posunit          # check!!!
-      x@coord[,3] <- max(x@coord[,3])
+  if(length(x@coord) == 0){
+    stop("You must first set coordinates to the traces",
+         "with 'coord(x) <- ...' or ",
+         "'x <- interpPos(x, ...)' !")
+  }
+  type <- match.arg(type, c("static", "kirchhoff"))
+  if(type == "static"){  
+    ntr <- ncol(x@data)
+    if(ncol(x@coord) == 3 && length(x@coord[,3])>= ntr){
+      topo <- x@coord[1:ntr,3]
+    }else{
+      topo <- rep.int(0L, ntr)
+      message("no topo!")
     }
-    proc(x) <- getArgs()
-    return(x)
-  } 
+    if(x@depthunit == "ns"){
+      # "migration"
+      message("time to depth conversion with constant velocity", x@vel[[1]])
+      x@dz <-  x@dz * x@vel[[1]]/ 2
+      x@depthunit <- "m"
+      time_0 <- mean(x@time0)
+      # depth_0 <- time_0 * x@vel[[1]]/ 2
+      depth_0 <- depthToTime(z = 0, time_0 , v = x@vel[[1]], 
+                             antsep = x@antsep) *  x@vel[[1]]/ 2
+      depth_all <- x@depth * x@vel[[1]]/ 2
+      # shift to time0
+      sel <- c(round((depth_0 - depth_all[1]) / x@dz):nrow(x))
+      # sel <- c(round((depth_0)/x@dz):nrow(x))
+      x <- x[sel,]
+    }
+    x@data <- .topoShift(x@data,topo,dz = x@dz)
+    x@depth     <- seq(0, by = x@dz, length.out = nrow(x@data))  
+    x@time0     <- rep(0,length(x@time0))
+    x@vel       <- list()  # FIX ME!!
+    x@time0     <- rep(0L,ncol(x@data))  # FIX ME!!
+    x@coord[,3] <- max(x@coord[,3])
+  }else if(type == "kirchhoff"){
+    A <- x@data
+    topoGPR <- x@coord[,3]
+    dx <- x@dx
+    dts <- x@dz
+    v <- x@vel[[1]]
+    # initialisation
+    max_depth <- nrow(x)*x@dx
+    dz <- 0.25*x@dz
+    fdo <- x@freq
+    FUN <- sum
+    if( length(list(...)) ){
+      dots <- list(...)
+      if( !is.null(dots$max_depth)){
+        max_depth <- dots$max_depth
+      }
+      if( !is.null(dots$dz)){
+        dz <- dots$dz
+      }
+      if( !is.null(dots$fdo)){
+        fdo <- dots$fdo
+      }
+      if( !is.null(dots$FUN)){
+        FUN <- dots$FUN
+      }
+    }  
+    x@data      <- .kirMig(x@data, topoGPR = x@coord[,3], dx = x@dx,
+                           dts = x@dz, v = x@vel[[1]], max_depth = max_depth, 
+                           dz = dz, fdo = fdo, FUN = FUN)
+    x@depth     <- seq(0,by=dz, length.out = nrow(x))
+    x@time0     <- rep(0, ncol(x))
+    x@dz        <- dz
+    x@depthunit <- x@posunit          # check!!!
+    x@coord[,3] <- max(x@coord[,3])
+  }
+  proc(x) <- getArgs()
+  return(x)
+} 
 )
 
 

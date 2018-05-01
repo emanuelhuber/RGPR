@@ -2893,8 +2893,18 @@ plot.GPR <- function(x,
   if(any(dim(x) == 1)){
     par(mar = c(5, 4, 3, 2) + 0.1, oma = c(0, 0, 3, 0), mgp = c(2, 0.5, 0))
     z <- x@depth
+<<<<<<< HEAD
     t0 <- x@time0
     if(isTRUE(relTime0)){
+=======
+    if(grepl("[m]$", x@depthunit)){
+      xlab <- paste0("depth (",x@depthunit,")")
+    }else if(grepl("[s]$", x@depthunit)){
+      xlab <- paste0("two-way travel time (",x@depthunit,")")
+    }
+    dots <- list(...)
+    if(is.null(dots$relTime0)){
+>>>>>>> a12fe9d942ebe76be1068d8f283356d3a0650ad6
       z <- x@depth - x@time0
       t0 <- 0
     }

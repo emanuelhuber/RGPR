@@ -4407,8 +4407,10 @@ setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance",
     vlim <- x@vel[[1]] * c(0.5, 1.5)
     v <- seq(vlim[1], vlim[2], length = 50)
   }
-  x <- time0Cor(x, method = "pchip")
-  #TODO: create a new object > check slot consistency
+  if(any(x@time0 != 0)){
+    x <- time0Cor(x, method = "pchip")
+  }
+  #FIXME: create a new object > check slot consistency
   # as(matrix(0, nrow = nrow(x), ncol = length(v)), "GPR")
   x_velAna <- .NMOCor(x, v = max(v), asep = x@antsep)
   x_velAna <- x_velAna[, rep(1, length(v))]

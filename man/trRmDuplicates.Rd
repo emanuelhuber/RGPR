@@ -6,7 +6,7 @@
 \alias{trRmDuplicates}
 \title{Remove traces with duplicated trace positions}
 \usage{
-\S4method{trRmDuplicates}{GPR}(x, tol = NULL)
+\S4method{trRmDuplicates}{GPR}(x, tol = NULL, verbose = TRUE)
 }
 \arguments{
 \item{x}{An object of the class GPR}
@@ -16,6 +16,9 @@ consecutive traces is smaller than \code{tol}, then
 the second trace is removed.
 If \code{tol = NULL}, \code{tol} is set equal to
 \code{sqrt(.Machine$double.eps)}.}
+
+\item{verbose}{Logical. \code{TRUE}: a message will be thrown, 
+\code{FALSE}: no message will be thrown.}
 }
 \description{
 checks for duplicates trace positions (up to precision defined by 'tol') 

@@ -1,4 +1,13 @@
 
+.onAttach <- function(libname, pkgname) {
+  packageStartupMessage(paste0("WARNING: the function plot was completely ",
+                               "rewritten. If you used the 'delineate()' ",
+                               "function, you may got some inconsistencies ",
+                               "when loading your GPR data (*.rds). I ",
+                               "tried to ensure compatibility. If you ",
+                               "encounter any problem, please contact me:\n",
+                               "emanuel.huber@alumni.ethz.ch"))
+}
 
 
 
@@ -1031,7 +1040,7 @@ setGenericVerif("ampl", function(x, FUN=mean, ...) standardGeneric("ampl"))
 #' @name trRmDuplicates
 #' @rdname trRmDuplicates
 #' @export
-setGenericVerif("trRmDuplicates", function(x, tol = NULL) 
+setGenericVerif("trRmDuplicates", function(x, tol = NULL, verbose = TRUE) 
   standardGeneric("trRmDuplicates"))
 
 #' @name interpPos
@@ -1344,16 +1353,22 @@ extrema <- function(x, type=c("max","min")){
 #'
 #' time to depth conversion
 #' @export                  
-timeToDepth <- function(tt, time_0, v=0.1, antsep=1, c0 = 0.299){
-  t0 <- time_0 - antsep/c0
-  sqrt(v^2*(tt-t0)- antsep^2)/2
+timeToDepth <- function(tt, time_0, v = 0.1, antsep = 1, c0 = 0.299){
+  # t0 <- time_0 - antsep/c0
+  y <- v^2 * (tt - time_0)^2 - antsep^2
+  test <- (y >= 0) & ((tt - time_0) >= 0)
+  y[!test] <- NA
+  y[test] <- sqrt(y[test])/2
+  return(y)
+  # sqrt(v^2*(tt - t0)- antsep^2)/2
 }
 
 #' Depth to time conversion
 #' 
 #' Depth to time conversion
 #' @export
-depthToTime <- function(z, time_0, v=0.1, antsep=1, c0 = 0.299){
+depthToTime <- function(z, time_0, v = 0.1, antsep = 1, c0 = 0.299){
+  #FIXME
   t0 <- time_0 - antsep/c0
   sqrt((4*z^2 + antsep^2)/(v^2)) + t0
 }
@@ -1414,101 +1429,103 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
   }
 }
 
-.plot3DSlice <- function(XYZ,slice=c("x","y","z"),section=1,col=palGPR(n=101), 
-                          sampling = c(0.25,0.25,0.04),rmStripes = TRUE){
-  # k=100
-  # j=25
-  # i=40
-  # col <- tim.colors(101) # height color lookup table
-  slice = match.arg(slice)
-  if(length(slice)>1){
-    slice = slice[1]
-  }
-  
-  dimXYZ = dim(XYZ)
-  vz = seq(0,dimXYZ[3]-1,by=1)*sampling[3]  # dtime / 2 * v
-  vx = seq(0,dimXYZ[1]-1,by=1)*sampling[1]
-  vy = seq(0,dimXYZ[2]-1,by=1)*sampling[2]
-  if(rgl::rgl.cur()==0){  # si la fenêtre rgl est ouverte, on plot dedans...
-    rgl::rgl.open()
-    rgl::rgl.bg( color=c("white"))
-  }
-  i = section
-  j=i
-  k=i
-  if(slice=="x"){
-    if(rmStripes == TRUE){ 
-      Xside = normalizeGPR(removeStripes(t(XYZ[,j,])))
-    }else{  
-      Xside = normalizeGPR((t(XYZ[,j,])))  
-    }
-    
-    Xside_x = matrix(vx,nrow=dimXYZ[3],ncol=dimXYZ[1],byrow=TRUE)
-    Xside_y = matrix( vy[j],nrow=dimXYZ[3],ncol=dimXYZ[1],byrow=TRUE)
-    Xside_z = matrix( max(vz)-vz,nrow=dimXYZ[3],ncol=dimXYZ[1],byrow=FALSE)
+# .plot3DSlice <- function(XYZ,slice=c("x","y","z"),section=1,col=palGPR(n=101), 
+#                           sampling = c(0.25,0.25,0.04),rmStripes = TRUE){
+#   # k=100
+#   # j=25
+#   # i=40
+#   # col <- tim.colors(101) # height color lookup table
+#   slice = match.arg(slice)
+#   if(length(slice)>1){
+#     slice = slice[1]
+#   }
+#   
+#   dimXYZ = dim(XYZ)
+#   vz = seq(0,dimXYZ[3]-1,by=1)*sampling[3]  # dtime / 2 * v
+#   vx = seq(0,dimXYZ[1]-1,by=1)*sampling[1]
+#   vy = seq(0,dimXYZ[2]-1,by=1)*sampling[2]
+#   if(rgl::rgl.cur()==0){  # si la fenêtre rgl est ouverte, on plot dedans...
+#     rgl::rgl.open()
+#     rgl::rgl.bg( color=c("white"))
+#   }
+#   i = section
+#   j=i
+#   k=i
+#   if(slice=="x"){
+#     if(rmStripes == TRUE){ 
+#       Xside = normalizeGPR(removeStripes(t(XYZ[,j,])))
+#     }else{  
+#       Xside = normalizeGPR((t(XYZ[,j,])))  
+#     }
+#     
+#     Xside_x = matrix(vx,nrow=dimXYZ[3],ncol=dimXYZ[1],byrow=TRUE)
+#     Xside_y = matrix( vy[j],nrow=dimXYZ[3],ncol=dimXYZ[1],byrow=TRUE)
+#     Xside_z = matrix( max(vz)-vz,nrow=dimXYZ[3],ncol=dimXYZ[1],byrow=FALSE)
+# 
+#     CCX = (Xside-min(Xside))/(max(Xside)-min(Xside))
+#     ClimX <- range(CCX)
+#     ClenX <- ClimX[2] - ClimX[1] + 1
+#     # col <- tim.colors(101) # height color lookup table
+#     #col = palette(gray(0:101 / 101))
+#     colCX <- col[ (CCX)*100+1 ] 
+#     
+#     surface3d(Xside_x, Xside_z, Xside_y, col= setCol(Xside), lit=FALSE,
+#             front="fill",back="fill")#, alpha=0.5)
+#   }else if(slice=="z"){
+#     if(rmStripes == TRUE){ Zside = (removeStripes(t(XYZ[,,k])))
+#     }else{  Zside = ((t(XYZ[,,k])))  }
+#     
+#     Zside_x = matrix(vx,nrow=dimXYZ[2],ncol=dimXYZ[1],byrow=TRUE)
+#     Zside_y = matrix( vy,nrow=dimXYZ[2],ncol=dimXYZ[1],byrow=FALSE)
+#     Zside_z = matrix(max(vz) - vz[k],nrow=dimXYZ[2],ncol=dimXYZ[1],byrow=FALSE)
+# 
+#     CCZ = (Zside-min(Zside))/(max(Zside)-min(Zside))
+#     ClimZ <- range(CCZ)
+#     ClenZ <- ClimZ[2] - ClimZ[1] + 1
+#     #col = palette(gray(0:101 / 101))
+#     colCZ <- col[ (CCZ)*100+1 ]
+#     
+#     surface3d(Zside_x, Zside_z, Zside_y, col= setCol(Zside), lit=FALSE,
+#               front="fill",back="fill")#, alpha=0.5)
+#   }else if(slice=="y"){
+#     if(rmStripes == TRUE){ Yside = normalizeGPR(removeStripes(t(XYZ[i,,])))
+#     }else{  Yside = normalizeGPR((t(XYZ[i,,])))  }
+#     
+#     Yside_x = matrix(vx[i],nrow=dimXYZ[3],ncol=dimXYZ[2],byrow=TRUE)
+#     Yside_y = matrix( vy,nrow=dimXYZ[3],ncol=dimXYZ[2],byrow=TRUE)
+#     Yside_z = matrix( max(vz)-vz,nrow=dimXYZ[3],ncol=dimXYZ[2],byrow=FALSE)
+#     
+# #     CCY = (Yside-min(Yside))/(max(Yside)-min(Yside))
+# #     ClimY <- range(CCY)
+# #     ClenY <- ClimY[2] - ClimY[1] + 1
+# #     colCY <- col[ (CCY)*100+1 ] 
+#     colCY <- colFromPal(Yside , col = col )
+# 
+#     surface3d(Yside_x, Yside_z, Yside_y, col= setCol(Yside), lit=FALSE,
+#               front="fill",back="fill")#, alpha=0.5)
+#   }
+# }
 
-    CCX = (Xside-min(Xside))/(max(Xside)-min(Xside))
-    ClimX <- range(CCX)
-    ClenX <- ClimX[2] - ClimX[1] + 1
-    # col <- tim.colors(101) # height color lookup table
-    #col = palette(gray(0:101 / 101))
-    colCX <- col[ (CCX)*100+1 ] 
-    
-    surface3d(Xside_x, Xside_z, Xside_y, col= setCol(Xside), lit=FALSE,
-            front="fill",back="fill")#, alpha=0.5)
-  }else if(slice=="z"){
-    if(rmStripes == TRUE){ Zside = (removeStripes(t(XYZ[,,k])))
-    }else{  Zside = ((t(XYZ[,,k])))  }
-    
-    Zside_x = matrix(vx,nrow=dimXYZ[2],ncol=dimXYZ[1],byrow=TRUE)
-    Zside_y = matrix( vy,nrow=dimXYZ[2],ncol=dimXYZ[1],byrow=FALSE)
-    Zside_z = matrix(max(vz) - vz[k],nrow=dimXYZ[2],ncol=dimXYZ[1],byrow=FALSE)
+# # shift the topography of the GPR profile (to display its topography)
+# .topoShift <- function(x, topo, z){
+#   zShift <- (max(topo) - topo)
+#   # in fact >> old_t = x@depth
+#   # old_t <- seq(0, length.out = nrow(x), by = dz)
+#   old_t <- z
+#   xShifted <- matrix(0, nrow = nrow(x) + floor(max(zShift)/dz), ncol = ncol(x))
+#   n <- 1:(nrow(x)-2)
+#   for(i in 1:ncol(x)){
+#     # compute new t-vector for each trace
+#     new_t <- old_t + zShift[i]
+#     xit <- seq(ceiling(new_t[1]/dz), ceiling(new_t[nrow(x)-2]/dz))
+#     # interpolate
+#     # FIX ME! does not work well (not nice interpolation)
+#     xShifted[xit + 1, i] = signal::interp1(new_t, x[,i], xi = xit * dz, 
+#                                            method = "spline", extrap = TRUE)  
+#   }
+#   return(xShifted)
+# }
 
-    CCZ = (Zside-min(Zside))/(max(Zside)-min(Zside))
-    ClimZ <- range(CCZ)
-    ClenZ <- ClimZ[2] - ClimZ[1] + 1
-    #col = palette(gray(0:101 / 101))
-    colCZ <- col[ (CCZ)*100+1 ]
-    
-    surface3d(Zside_x, Zside_z, Zside_y, col= setCol(Zside), lit=FALSE,
-              front="fill",back="fill")#, alpha=0.5)
-  }else if(slice=="y"){
-    if(rmStripes == TRUE){ Yside = normalizeGPR(removeStripes(t(XYZ[i,,])))
-    }else{  Yside = normalizeGPR((t(XYZ[i,,])))  }
-    
-    Yside_x = matrix(vx[i],nrow=dimXYZ[3],ncol=dimXYZ[2],byrow=TRUE)
-    Yside_y = matrix( vy,nrow=dimXYZ[3],ncol=dimXYZ[2],byrow=TRUE)
-    Yside_z = matrix( max(vz)-vz,nrow=dimXYZ[3],ncol=dimXYZ[2],byrow=FALSE)
-    
-#     CCY = (Yside-min(Yside))/(max(Yside)-min(Yside))
-#     ClimY <- range(CCY)
-#     ClenY <- ClimY[2] - ClimY[1] + 1
-#     colCY <- col[ (CCY)*100+1 ] 
-    colCY <- colFromPal(Yside , col = col )
-
-    surface3d(Yside_x, Yside_z, Yside_y, col= setCol(Yside), lit=FALSE,
-              front="fill",back="fill")#, alpha=0.5)
-  }
-}
-
-# shift the topography of the GPR profile (to display its topography)
-.topoShift <- function(x, topo, dz){
-  zShift <- (max(topo) - topo)
-  # in fact >> old_t = x@depth
-  old_t <- seq(0, length.out = nrow(x), by = dz)
-  xShifted <- matrix(0, nrow = nrow(x) + floor(max(zShift)/dz), ncol = ncol(x))
-  n <- 1:(nrow(x)-2)
-  for(i in 1:ncol(x)){
-    # compute new t-vector for each trace
-    new_t <- old_t + zShift[i]
-    xit <- seq(ceiling(new_t[1]/dz), ceiling(new_t[nrow(x)-2]/dz))
-    # interpolate
-    # FIX ME! does not work well (not nice interpolation)
-    xShifted[xit + 1, i] = signal::interp1(new_t, x[,i], xi = xit * dz, 
-                                           method = "spline",extrap = TRUE)  
-  }
-  return(xShifted)
-}
 
 .traceShift <- function(A, ts = 0, tt = NULL, dz = 0.4, method = "linear"){
   ps <- ts/dz
@@ -1595,320 +1612,320 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
   return(kirTopoGPR)
 }
 
-plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
-          time_0 = 0, antsep = 1, v = 0.1, surveymode = NULL,
-          addFid = TRUE, fid = NULL,
-          addAnn = TRUE, annotations = NULL, 
-          depthunit="ns", posunit="m",
-          topo=NULL,
-          pdfName=NULL, 
-          yaxt = "s", bty = "o",
-          col = "black", lwd = 0.5, ws = 1, side = 1, ratio = 1, 
-          dx = 0.25, dz = 0.4, xlim = NULL, ylim = NULL, relTime0 = FALSE, ...){
-  
-  op <- par(no.readonly = TRUE) 
-  dx <- mean(diff(x)) # estimated x-step
-  z[is.na(z)] = 0
-  z <- z/max(abs(z)) * dx
-  # A =  as.matrix(A)/max(abs(A))
-  # v <- ifelse(is.null(v),1,v/2)
-  nr <- nrow(z)
-  nc <- ncol(z)
-  z <- z[nr:1,]
-  time_0 <- mean(time_0)
-  if(is.null(y)){
-    y <- -(ncol(GPR):1)
-  }
-  y0 <- 0
-  if(is.null(topo)){
-    topo <- rep(0L,nc)
-  }else{
-    # conversion ns to m!
-    if(grepl("[s]$", depthunit)){
-      # timeToDepth <- function(tt, time0, v=0.1, antsep=1){
-        # t0 <- time0 - antsep/0.299
-        # sqrt(v^2*(tt-t0)- antsep^2)/2
-      # }
-      y <-  y * v/ 2
-      depthunit <- "m"
-    }
-    topo <- topo - max(topo)
-  }
-  if(grepl("[s]$", depthunit) && relTime0){
-    y <- y + time_0
-    if(ylim[2] > -time_0){
-      ylim[1] <- max(c(min(y), ylim[1]))
-      ylim[2] <- 0
-    }
-  }else if(grepl("[m]$", depthunit)){
-    depth_0 <- depthToTime(z=0, time_0 , v=v, antsep=antsep) * v/ 2
-    y <- y + depth_0
-  }
-  if(is.null(xlim) ){
-       # xlim <- range(x) 
-       xlim <- range(x)  + c(-1,1)*dx
-     test <- rep(TRUE,length(x))
-  }else{
-    test <- ( x >= xlim[1] & x <= xlim[2] )
-    xlim <- xlim + c(-1,1)*dx
-  }
+# plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
+#           time_0 = 0, antsep = 1, v = 0.1, surveymode = NULL,
+#           addFid = TRUE, fid = NULL,
+#           addAnn = TRUE, annotations = NULL, 
+#           depthunit="ns", posunit="m",
+#           topo=NULL,
+#           pdfName=NULL, 
+#           yaxt = "s", bty = "o",
+#           col = "black", lwd = 0.5, ws = 1, side = 1, ratio = 1, 
+#           dx = 0.25, dz = 0.4, xlim = NULL, ylim = NULL, relTime0 = FALSE, ...){
+#   
+#   op <- par(no.readonly = TRUE) 
+#   dx <- mean(diff(x)) # estimated x-step
+#   z[is.na(z)] = 0
+#   z <- z/max(abs(z)) * dx
+#   # A =  as.matrix(A)/max(abs(A))
+#   # v <- ifelse(is.null(v),1,v/2)
+#   nr <- nrow(z)
+#   nc <- ncol(z)
+#   z <- z[nr:1,]
+#   time_0 <- mean(time_0)
+#   if(is.null(y)){
+#     y <- -(ncol(GPR):1)
+#   }
+#   y0 <- 0
+#   if(is.null(topo)){
+#     topo <- rep(0L,nc)
+#   }else{
+#     # conversion ns to m!
+#     if(grepl("[s]$", depthunit)){
+#       # timeToDepth <- function(tt, time0, v=0.1, antsep=1){
+#         # t0 <- time0 - antsep/0.299
+#         # sqrt(v^2*(tt-t0)- antsep^2)/2
+#       # }
+#       y <-  y * v/ 2
+#       depthunit <- "m"
+#     }
+#     topo <- topo - max(topo)
+#   }
+#   if(grepl("[s]$", depthunit) && relTime0){
+#     y <- y + time_0
+#     if(ylim[2] > -time_0){
+#       ylim[1] <- max(c(min(y), ylim[1]))
+#       ylim[2] <- 0
+#     }
+#   }else if(grepl("[m]$", depthunit)){
+#     depth_0 <- depthToTime(z=0, time_0 , v=v, antsep=antsep) * v/ 2
+#     y <- y + depth_0
+#   }
+#   if(is.null(xlim) ){
+#        # xlim <- range(x) 
+#        xlim <- range(x)  + c(-1,1)*dx
+#      test <- rep(TRUE,length(x))
+#   }else{
+#     test <- ( x >= xlim[1] & x <= xlim[2] )
+#     xlim <- xlim + c(-1,1)*dx
+#   }
+# 
+#   
+#   omi=c(0,0,0.6,0)
+#   mgp=c(2.5, 0.75, 0)
+#   fac <- 0.2
+#   # if the depthunit are "meters"
+#   if(grepl("[m]$",depthunit)){
+#     mai=c(1,0.8,0.6,0.8)+0.02
+#     heightPDF <- fac*diff(ylim) + sum(omi[c(1,3)] + mai[c(1,3)])
+#     widthPDF <- fac*diff(xlim)*ratio +  sum(omi[c(2,4)]+ mai[c(2,4)])
+#   }else{
+#     mai=c(1,0.8,0.6,1.0)+0.02 
+#     heightPDF <- fac*(ylim[2] - ylim[1])*v/ 2 + sum(omi[c(1,3)] + mai[c(1,3)])
+#     widthPDF <- fac*(xlim[2] - xlim[1])*ratio + sum(omi[c(2,4)] + mai[c(2,4)])
+#   }
+#   if(!is.null(pdfName)){
+#     Cairo::CairoPDF(file = paste0(pdfName, ".pdf"),
+#         # pointsize=10,
+#         width = widthPDF, 
+#         height = heightPDF,
+#         # dpi=75,  # 75
+#         bg = "white",
+#         pointsize=10,
+#         # units = "in",
+#         title = pdfName)  
+#   }
+#   
+#   par(mai=mai,omi=omi,mgp=mgp)
+#       
+#   plot(0,0, type="n", xaxs="i", yaxs="i", yaxt="n",
+#       xlim=xlim, ylim=ylim, bty = "n", ...)
+#   usr <- par("usr")
+#   if(side==1){
+#     for(i in rev(seq_along(x))){
+#       y2 <- y + topo[i]
+#       wig = cbind(ws*z[,i]+x[i],y2)
+#       wig1 = rbind(c(x[i],y2[1]),wig,c(x[i],y2[nr]))
+#       polygon(wig1, col = col, border=NA)
+#       rect(min(wig1[,1]), ylim[1], x[i], ylim[2],col="white",border=NA)
+#       # lines(x[i]+ws*z[,i],y2,lwd=lwd)
+#     }
+#   }else{
+#     for(i in (seq_along(x))){
+#       y2 <- y + topo[i]
+#       wig = cbind(ws*z[,i]+x[i],y2)
+#       wig1 = rbind(c(x[i],y2[1]),wig,c(x[i],y2[nr]))
+#       polygon(wig1, col = col, border=NA)
+#       rect(max(wig1[,1]), ylim[1], x[i], ylim[2],col="white",border=NA)
+#     }
+#   }
+#   for(i in (seq_along(x))){
+#     y2 <- y + topo[i]
+#     lines(x[i]+ws*z[,i],y2,lwd=lwd)  
+#   }
+# 
+#   # plot fiducial markers
+#   if(!is.null(fid) && length(fid) > 0){
+#     .plotFid(fid[test], x[test])
+#   }
+#   
+#   # plot annotations
+#   testAnn <- FALSE
+#   if(addAnn && !is.null(annotations) && length(annotations) > 0){
+#     testAnn <- .plotAnn(annotations[test],x[test])
+#   }
+#   
+#   # plot title
+#   if(addAnn && testAnn){
+#     title(main,outer=TRUE,line=1)
+#   }else{
+#     title(main)  
+#   }
+#   
+#   # plot axis
+# #   axis(side=2, at=pretty_y + dusr/2, labels= -pretty_y)
+# #   dusr <- dylim/length(y)
+#   if( yaxt != "n"){
+#     pretty_y <- pretty(y ,10)
+#     axis(side=2, at=pretty_y, labels= -pretty_y)
+#     if( grepl("CMP", toupper(surveymode))){
+#       axis(side = 4, at = pretty_y, labels = -pretty_y)
+#     }else{
+#       #.depthAxis(ylim, pretty_y, time_0, v, antsep, depthunit, posunit )
+#       .depthAxis(y, pretty_y, time_0, v, antsep, depthunit, posunit )
+#     }
+#   }
+#   
+#   if( bty != "n"){
+#     box(bty = bty)
+#   }
+#   if(!is.null(note) && length(note) > 0){
+#      mtext(note, side = 1, line = 4, cex=0.6)
+#   }
+#   
+#   if(!is.null(pdfName)){
+#     dev.off()
+#   }else{
+#     par(op)
+#     par("usr" = usr)
+#   }
+# }
 
-  
-  omi=c(0,0,0.6,0)
-  mgp=c(2.5, 0.75, 0)
-  fac <- 0.2
-  # if the depthunit are "meters"
-  if(grepl("[m]$",depthunit)){
-    mai=c(1,0.8,0.6,0.8)+0.02
-    heightPDF <- fac*diff(ylim) + sum(omi[c(1,3)] + mai[c(1,3)])
-    widthPDF <- fac*diff(xlim)*ratio +  sum(omi[c(2,4)]+ mai[c(2,4)])
-  }else{
-    mai=c(1,0.8,0.6,1.0)+0.02 
-    heightPDF <- fac*(ylim[2] - ylim[1])*v/ 2 + sum(omi[c(1,3)] + mai[c(1,3)])
-    widthPDF <- fac*(xlim[2] - xlim[1])*ratio + sum(omi[c(2,4)] + mai[c(2,4)])
-  }
-  if(!is.null(pdfName)){
-    Cairo::CairoPDF(file = paste0(pdfName, ".pdf"),
-        # pointsize=10,
-        width = widthPDF, 
-        height = heightPDF,
-        # dpi=75,  # 75
-        bg = "white",
-        pointsize=10,
-        # units = "in",
-        title = pdfName)  
-  }
-  
-  par(mai=mai,omi=omi,mgp=mgp)
-      
-  plot(0,0, type="n", xaxs="i", yaxs="i", yaxt="n",
-      xlim=xlim, ylim=ylim, bty = "n", ...)
-  usr <- par("usr")
-  if(side==1){
-    for(i in rev(seq_along(x))){
-      y2 <- y + topo[i]
-      wig = cbind(ws*z[,i]+x[i],y2)
-      wig1 = rbind(c(x[i],y2[1]),wig,c(x[i],y2[nr]))
-      polygon(wig1, col = col, border=NA)
-      rect(min(wig1[,1]), ylim[1], x[i], ylim[2],col="white",border=NA)
-      # lines(x[i]+ws*z[,i],y2,lwd=lwd)
-    }
-  }else{
-    for(i in (seq_along(x))){
-      y2 <- y + topo[i]
-      wig = cbind(ws*z[,i]+x[i],y2)
-      wig1 = rbind(c(x[i],y2[1]),wig,c(x[i],y2[nr]))
-      polygon(wig1, col = col, border=NA)
-      rect(max(wig1[,1]), ylim[1], x[i], ylim[2],col="white",border=NA)
-    }
-  }
-  for(i in (seq_along(x))){
-    y2 <- y + topo[i]
-    lines(x[i]+ws*z[,i],y2,lwd=lwd)  
-  }
 
-  # plot fiducial markers
-  if(!is.null(fid) && length(fid) > 0){
-    .plotFid(fid[test], x[test])
-  }
-  
-  # plot annotations
-  testAnn <- FALSE
-  if(addAnn && !is.null(annotations) && length(annotations) > 0){
-    testAnn <- .plotAnn(annotations[test],x[test])
-  }
-  
-  # plot title
-  if(addAnn && testAnn){
-    title(main,outer=TRUE,line=1)
-  }else{
-    title(main)  
-  }
-  
-  # plot axis
-#   axis(side=2, at=pretty_y + dusr/2, labels= -pretty_y)
-#   dusr <- dylim/length(y)
-  if( yaxt != "n"){
-    pretty_y <- pretty(y ,10)
-    axis(side=2, at=pretty_y, labels= -pretty_y)
-    if( grepl("CMP", toupper(surveymode))){
-      axis(side = 4, at = pretty_y, labels = -pretty_y)
-    }else{
-      #.depthAxis(ylim, pretty_y, time_0, v, antsep, depthunit, posunit )
-      .depthAxis(y, pretty_y, time_0, v, antsep, depthunit, posunit )
-    }
-  }
-  
-  if( bty != "n"){
-    box(bty = bty)
-  }
-  if(!is.null(note) && length(note) > 0){
-     mtext(note, side = 1, line = 4, cex=0.6)
-  }
-  
-  if(!is.null(pdfName)){
-    dev.off()
-  }else{
-    par(op)
-    par("usr" = usr)
-  }
-}
-
-
-# @relTime0 > boolean, y scale relative to time0? 0 <-> time0
-# col, main, xlab, ylab, mar, barscale
-#' Plot GPR as image (raster)
-#' 
-#' Plot GPR as image (raster)
-#' @export
-plotRaster <- function(z, x = NULL, y = NULL, main = "", 
-                       xlim = NULL,
-                      note = NULL, ratio = 1,
-             time_0 = 0, antsep = 1, v = 0.1,surveymode = NULL,
-             addFid = TRUE, fid=NULL, ylim = NULL,
-             addAnn = TRUE, annotations = NULL, 
-             depthunit = "ns", posunit = "m",
-             rasterImage = FALSE, resfac = 1, clab = "mV",
-             add = FALSE, barscale = TRUE, addGrid = FALSE, 
-             col = palGPR(n = 101), yaxt = "s", bty = "o",
-             relTime0 = FALSE, clim = NULL, pdfName = NULL,...){
-  op <- par(no.readonly=TRUE)
-  time_0 <- median(time_0)
-  mai <- op$mai
-  if(barscale == FALSE){
-    mai <- c(1.2, 1.2, 1.2, 1.2)
-  }else{
-    mai <- c(1.2, 1.2, 1.2, 1.8)
-  }
-  z <-  as.matrix(z)
-  z <- t(z)
-  if(is.null(x)){
-    x <- (1:nrow(z))
-  }  
-  if(is.null(y)){
-    y <- -(ncol(z):1)
-  }
-  if(is.null(clim)){
-    clim <- range(z[is.finite(z)], na.rm = TRUE)
-    if( min(z) > 0 ){
-      # to plot amplitudes for example...
-      clim <- c(0, max(z, na.rm = TRUE))
-      # clim <- range(z, na.rm = TRUE)
-    } else if(!is.null(surveymode) && 
-                tolower(surveymode) %in% c("cmp", "reflection")){
-      clim <- c(-1, 1) * max(abs(z), na.rm = TRUE)
-    }
-  }
-  # Note that y and ylim are negative and time_0 is positive...
-  # if(relTime0 && ylim[2] > -time_0){
-  #   # truncate the data -> start at time-zero!!
-  #   y <- y + time_0
-  #   ylim[1] <- max(c(min(y), ylim[1]))
-  #   ylim[2] <- 0
-  #   time_0 <- 0
-  # }
-  if(isTRUE(relTime0)){
-    y <- y - time_0
-    time_0 <- 0
-  }
-  
-  if( length(unique(diff(x))) > 1){
-    rasterImage <- FALSE
-  }
-  omi <- c(0,0,0.6,0)
-  mgp <- c(2.5, 0.75, 0)
-  fac <- 0.2
-  if(!is.null(pdfName)){
-    # if the depthunit are "meters"
-    if(grepl("[m]$",depthunit)){
-      heightPDF <- fac*diff(ylim) + sum(omi[c(1,3)] + mai[c(1,3)])
-      widthPDF <- fac*diff(xlim)*ratio +  sum(omi[c(2,4)]+ mai[c(2,4)])
-    }else{
-      heightPDF <- fac*(ylim[2] - ylim[1])*v/ 2 + sum(omi[c(1,3)] + mai[c(1,3)])
-      widthPDF <- fac*(xlim[2] - xlim[1])*ratio + sum(omi[c(2,4)] + mai[c(2,4)])
-    }
-    Cairo::CairoPDF(file = paste0(pdfName, ".pdf"),
-        # pointsize=10,
-        width = widthPDF, 
-        height = heightPDF,
-        # dpi=75,  # 75
-        bg = "white",
-        pointsize=10,
-        # units = "in",
-        title = pdfName)  
-  }
-  if(add == TRUE){ 
-    par(new = TRUE)
-  }else{
-    par( mai = mai,omi=omi,mgp=mgp)
-  }
-  if(isTRUE(rasterImage)){
-    dy <- diff(y)
-    tol <- sqrt(.Machine$double.eps)
-    # all not equal
-    if(abs(max(dy) - min(dy)) > tol){
-      rasterImage <- FALSE
-    }
-  }
-  #image(x,y,z,col=col,zlim=clim,xaxs="i", yaxs="i", yaxt="n",...)
-  plot3D::image2D(x = x, y = y, z = z, col = col, 
-        #xlim = xlim, ylim = ylim, zlim = clim,
-        ylim = rev(range(y)),
-        xaxs = "i", yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
-        resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)
-  usr <- par("usr")
-  if(is.null(xlim) ){
-     test <- rep(TRUE, length(x))
-  }else{
-    test <- ( x >= xlim[1] & x <= xlim[2] )
-  }
-  # plot fiducial markers
-  if(!is.null(fid) && length(fid) > 0){
-    .plotFid(fid[test], x[test])
-  }
-  # plot annotations
-  testAnn <- FALSE
-  if(addAnn && !is.null(annotations) && length(annotations) > 0){
-    testAnn <- .plotAnn(annotations[test], x[test])
-  }
-  # plot title
-  if(addAnn && testAnn){
-    title(main, outer = TRUE, line = 1)
-  }else{
-    title(main)  
-  }
-  # plot axis
-  # pretty_y <- pretty(ylim, 10)
-  yat <- axis(side = 2)
-  if( grepl("CMP", toupper(surveymode))){
-    axis(side = 4)
-  }else{
-    .depthAxis(range(yat), pretty(yat), time_0, v, antsep, depthunit, posunit )
-  }
-  # plot time0
-  if(abs(time_0) > 0)  abline(h = -time_0, col = "chartreuse", lwd = 2)
-  # plot note
-  if(!is.null(note) && length(note) > 0){
-    mtext(note, side = 1, line = 4, cex=0.6)
-  }
-  # add grid
-  if(addGrid){
-    grid()
-  }
-  if( bty != "n"){
-    box(bty = bty)
-  }
-  if(barscale){
-    op2 <- par(no.readonly=TRUE)
-    .barScale(clim = clim, y = y, col = col, clab = clab, 
-              clabcex = 0.8)
-    par(op2)
-  }
-  if(!is.null(pdfName)){
-    dev.off()
-  }
-}
-#---
+# # @relTime0 > boolean, y scale relative to time0? 0 <-> time0
+# # col, main, xlab, ylab, mar, barscale
+# #' Plot GPR as image (raster)
+# #' 
+# #' Plot GPR as image (raster)
+# #' @export
+# plotRaster <- function(z, x = NULL, y = NULL, main = "", 
+#                        xlim = NULL,
+#                       note = NULL, ratio = 1,
+#              time_0 = 0, antsep = 1, v = 0.1,surveymode = NULL,
+#              addFid = TRUE, fid=NULL, ylim = NULL,
+#              addAnn = TRUE, annotations = NULL, 
+#              depthunit = "ns", posunit = "m",
+#              rasterImage = FALSE, resfac = 1, clab = "mV",
+#              add = FALSE, barscale = TRUE, addGrid = FALSE, 
+#              col = palGPR(n = 101), yaxt = "s", bty = "o",
+#              relTime0 = FALSE, clim = NULL, pdfName = NULL,...){
+#   op <- par(no.readonly=TRUE)
+#   time_0 <- median(time_0)
+#   mai <- op$mai
+#   if(barscale == FALSE){
+#     mai <- c(1.2, 1.2, 1.2, 1.2)
+#   }else{
+#     mai <- c(1.2, 1.2, 1.2, 1.8)
+#   }
+#   z <-  as.matrix(z)
+#   z <- t(z)
+#   if(is.null(x)){
+#     x <- (1:nrow(z))
+#   }  
+#   if(is.null(y)){
+#     y <- -(ncol(z):1)
+#   }
+#   if(is.null(clim)){
+#     clim <- range(z[is.finite(z)], na.rm = TRUE)
+#     if( min(z) > 0 ){
+#       # to plot amplitudes for example...
+#       clim <- c(0, max(z, na.rm = TRUE))
+#       # clim <- range(z, na.rm = TRUE)
+#     } else if(!is.null(surveymode) && 
+#                 tolower(surveymode) %in% c("cmp", "reflection")){
+#       clim <- c(-1, 1) * max(abs(z), na.rm = TRUE)
+#     }
+#   }
+#   # Note that y and ylim are negative and time_0 is positive...
+#   # if(relTime0 && ylim[2] > -time_0){
+#   #   # truncate the data -> start at time-zero!!
+#   #   y <- y + time_0
+#   #   ylim[1] <- max(c(min(y), ylim[1]))
+#   #   ylim[2] <- 0
+#   #   time_0 <- 0
+#   # }
+#   if(isTRUE(relTime0)){
+#     y <- y - time_0
+#     time_0 <- 0
+#   }
+#  
+#   if( length(unique(diff(x))) > 1){
+#     rasterImage <- FALSE
+#   }
+#   omi <- c(0,0,0.6,0)
+#   mgp <- c(2.5, 0.75, 0)
+#   fac <- 0.2
+#   if(!is.null(pdfName)){
+#     # if the depthunit are "meters"
+#     if(grepl("[m]$",depthunit)){
+#       heightPDF <- fac*diff(ylim) + sum(omi[c(1,3)] + mai[c(1,3)])
+#       widthPDF <- fac*diff(xlim)*ratio +  sum(omi[c(2,4)]+ mai[c(2,4)])
+#     }else{
+#       heightPDF <- fac*(ylim[2] - ylim[1])*v/ 2 + sum(omi[c(1,3)] + mai[c(1,3)])
+#       widthPDF <- fac*(xlim[2] - xlim[1])*ratio + sum(omi[c(2,4)] + mai[c(2,4)])
+#     }
+#     Cairo::CairoPDF(file = paste0(pdfName, ".pdf"),
+#         # pointsize=10,
+#         width = widthPDF, 
+#         height = heightPDF,
+#         # dpi=75,  # 75
+#         bg = "white",
+#         pointsize=10,
+#         # units = "in",
+#         title = pdfName)  
+#   }
+#   if(add == TRUE){ 
+#     par(new = TRUE)
+#   }else{
+#     par( mai = mai,omi=omi,mgp=mgp)
+#   }
+#   if(isTRUE(rasterImage)){
+#     dy <- diff(y)
+#     tol <- sqrt(.Machine$double.eps)
+#     # all not equal
+#     if(abs(max(dy) - min(dy)) > tol){
+#       rasterImage <- FALSE
+#     }
+#   }
+#   #image(x,y,z,col=col,zlim=clim,xaxs="i", yaxs="i", yaxt="n",...)
+#   plot3D::image2D(x = x, y = y, z = z, col = col, 
+#         #xlim = xlim, ylim = ylim, zlim = clim,
+#         ylim = rev(range(y)),
+#         xaxs = "i", yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
+#         resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)
+#   usr <- par("usr")
+#   if(is.null(xlim) ){
+#      test <- rep(TRUE, length(x))
+#   }else{
+#     test <- ( x >= xlim[1] & x <= xlim[2] )
+#   }
+#   # plot fiducial markers
+#   if(!is.null(fid) && length(fid) > 0){
+#     .plotFid(fid[test], x[test])
+#   }
+#   # plot annotations
+#   testAnn <- FALSE
+#   if(addAnn && !is.null(annotations) && length(annotations) > 0){
+#     testAnn <- .plotAnn(annotations[test], x[test])
+#   }
+#   # plot title
+#   if(addAnn && testAnn){
+#     title(main, outer = TRUE, line = 1)
+#   }else{
+#     title(main)  
+#   }
+#   # plot axis
+#   # pretty_y <- pretty(ylim, 10)
+#   yat <- axis(side = 2)
+#   if( grepl("CMP", toupper(surveymode))){
+#     axis(side = 4)
+#   }else{
+#     .depthAxis(range(yat), pretty(yat), time_0, v, antsep, depthunit, posunit )
+#   }
+#   # plot time0
+#   if(abs(time_0) > 0)  abline(h = -time_0, col = "chartreuse", lwd = 2)
+#   # plot note
+#   if(!is.null(note) && length(note) > 0){
+#     mtext(note, side = 1, line = 4, cex=0.6)
+#   }
+#   # add grid
+#   if(addGrid){
+#     grid()
+#   }
+#   if( bty != "n"){
+#     box(bty = bty)
+#   }
+#   if(barscale){
+#     op2 <- par(no.readonly=TRUE)
+#     .barScale(clim = clim, y = y, col = col, clab = clab, 
+#               clabcex = 0.8)
+#     par(op2)
+#   }
+#   if(!is.null(pdfName)){
+#     dev.off()
+#   }
+# }
+# #---
 
 .plotAnn <- function(ann, x, line=1.7){
   if(length(ann)>0){
@@ -1917,7 +1934,7 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "",
       posann <- x
       ann <- gsub("#","\n",ann)
       abline(v=posann[testann],col="red",lwd=1)
-      mtext(ann[testann], side = 3, line = line, at=posann[testann], 
+     mtext(ann[testann], side = 3, line = line, at=posann[testann],
             col="red", cex=0.9)
     }
     return(TRUE)
@@ -2247,6 +2264,10 @@ plotRaster <- function(z, x = NULL, y = NULL, main = "",
 # check:
 # x <- scale(x0, center = TRUE, scale = TRUE)
 # x0 <- unscale(x, x)
+
+#' Unscale
+#'
+#' Back-transform/unscale from \code{scale}
 #' @export
 unscale <- function(x, y){
   xCenter <- attr(x, 'scaled:center')
@@ -3149,7 +3170,7 @@ plotTensor <- function(x, O, type=c("vectors", "ellipses"), normalise=FALSE,
           }
         }
         if(!(aij == 0 & bij == 0)){
-          E <- ellipse(saxes = c(aij, bij*ratio)*len1,
+          E <- RConics::ellipse(saxes = c(aij, bij*ratio)*len1,
 #           /normdxdy[i,j], 
                       loc   = c(X[i,j], Y[i,j]), 
                       theta = -angle[i,j], n=n)
@@ -3258,7 +3279,7 @@ plotTensor0 <- function(alpha, l1, l2,  x, y, col = NULL ,
           }
         }
         if(!(aij == 0 & bij == 0)){
-          E <- ellipse(saxes = c(aij, bij*ratio)*len1,
+          E <- RConics::ellipse(saxes = c(aij, bij*ratio)*len1,
 #           /normdxdy[i,j], 
                       loc   = c(X[i,j], Y[i,j]), 
                       theta = pi/2 - angle[i,j], n=n)
@@ -3610,12 +3631,12 @@ deconvolve <- function(y,h,mu=0.0001){
 # convolution model: y = h*x 
 # h and y are known, x is unknown
 # x ~ H^h * Y / (H^h * H + mu)
-deconvolutionMtx <- function(y,h,nf,mu=0.0001){
+deconvolutionMtx <- function(y, h, nf, mu = 0.0001){
   # ny <- length(y)
   # nh <- length(h)
   # L  <- ny + ny - 1
   H  <- convmtx(h,nf)
-  y_acf <- as.numeric(acf(y,lag=nf-1,plot=FALSE)[[1]])
+  y_acf <- as.numeric(acf(y, lag.max = nf - 1, plot = FALSE)[[1]])
   y_acf[1] <- y_acf[1] + mu
   HtH <- toeplitz(y_acf)
   x <-  solve(HtH) %*% (t(H[1:nf,1:nf]) %*% y)
@@ -3668,9 +3689,9 @@ optPhaseRotation <- function(x,rot=0.01,plot=TRUE){
 # if shift is not NULL, case of wavelet estimation
 #     from the trace via the autocorrelation matrix.
 # mu = percent of pre-whitening
-.spikingFilter <- function(y,nf=32,mu=0.1,shft=1){
+.spikingFilter <- function(y, nf = 32, mu = 0.1, shft = 1){
   # R = t(Y)%*%Y = Toepliz matrix of ACF
-  y_acf <- as.numeric(acf(y,lag=nf-1,plot=FALSE)[[1]])
+  y_acf <- as.numeric(acf(y, lag.max = nf - 1, plot= FALSE)[[1]])
   taper <- hammingWindow(2*nf)
   y_acf <- y_acf*taper[(nf+1):(2*nf)] 
   y_acf[1] <- y_acf[1] + mu

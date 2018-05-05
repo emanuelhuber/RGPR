@@ -4,10 +4,10 @@ title: Home
 date: 2018-02-12
 ---
 
-# R Course
+# RGPR
 
 <p class="message">
-  An introduction to R and RStudio
+  RGPR is a package for R to read, write, analyse and visualise ground-penetrating radar (GPR) data.
 </p>
 
 ## Content

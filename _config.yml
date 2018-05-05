@@ -6,11 +6,11 @@ highlighter:      rouge
 permalink:        pretty
 
 # Setup
-title:            R
-tagline:          "R Course"
-description:      'Course.'
-url:              https://emanuelhuber.github.io/Rcourse/
-baseurl:          /Rcourse
+title:            RGPR
+tagline:          "R-package RGPR"
+description:      'RGPR is a package for R to read, write, analyse and visualise ground-penetrating radar (GPR) data.'
+url:              http://emanuelhuber.github.io/RGPR/
+baseurl:          /RGPR
 
 #author:
 #  name:           'Mark Otto'
@@ -19,7 +19,7 @@ baseurl:          /Rcourse
 paginate:         5
 
 # Custom vars
-version:          2.1.0
+version:          0.2
 
 #github:
 #  repo:           https://github.com/poole/hyde

@@ -8,7 +8,7 @@ permalink:        pretty
 # Setup
 title:            RGPR
 tagline:          "R-package RGPR"
-description:      'RGPR is a package for R to read, write, analyse and visualise ground-penetrating radar (GPR) data.'
+description:      'A R package for R to read, write, analyse and visualise ground-penetrating radar (GPR) data.'
 url:              http://emanuelhuber.github.io/RGPR/
 baseurl:          /RGPR
 

@@ -10,7 +10,7 @@ title:            RGPR
 tagline:          "R-package RGPR"
 description:      'A R package for R to read, write, analyse and visualise ground-penetrating radar (GPR) data.'
 url:              https://emanuelhuber.github.io/RGPR/
-baseurl:          /RGPR
+baseurl:          /RGPR/
 
 #author:
 #  name:           'Mark Otto'

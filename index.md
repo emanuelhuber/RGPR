@@ -23,6 +23,7 @@ date: 2018-02-12
 1. [Basic GPR data processing](01_RGPR_tutorial_basic-processing)
 2. [GPR data migration](02_RGPR_tutorial_migration)
 3. [Add coordinates to GPR data](03_RGPR_tutorial_RGPR-survey)
+4. [Some explanation on the class GPR](04_RGPR_tutorial_RGPR-object)
 
 
 <!--

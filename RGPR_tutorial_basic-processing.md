@@ -121,7 +121,7 @@ To plot the GPR record as a raster image (default mode), enter
 plot(A)                                 
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+![I like it!](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 
 The green line indicates the position of time-zero.
 The yellow triangle indicates the position of a fiducial marker that was set 

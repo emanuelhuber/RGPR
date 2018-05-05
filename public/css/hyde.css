@@ -124,6 +124,9 @@ a.sidebar-nav-item:focus {
 .sidebar li:last-child a {
   border-radius:0 5px 5px 0;
 }
+.sidebar {
+  line-height:1;
+}
 
 .sidebar ul a {
   line-height:1;

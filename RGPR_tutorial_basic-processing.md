@@ -2,24 +2,16 @@
 layout: page
 title: Basic GPR data processing
 date: 2018-05-05
----
+---  
+
+
 
 ***
-
-`RGPR` is a package for [R](https://cran.r-project.org/) to read, write, analyse and visualise ground-penetrating radar (GPR) data.
-  
 
 **Note**: 
 
 * This R-package is still in development, and therefore some of the functions may change in a near future. 
-* The R-package `RGPR` is hosted on [GitHub](https://github.com/) at [https://github.com/emanuelhuber/RGPR](https://github.com/emanuelhuber/RGPR). 
-* You can contribute to the development of `RGPR`: 
-    1. create an account on [GitHub](https://github.com/)
-    2. [fork](https://guides.github.com/activities/forking/) `RGPR`
-    3. change the code
-    4. make a [pull request](https://guides.github.com/activities/forking/#making-a-pull-request) (submit your modifications)
-
-If you have any questions, comments or suggestions, feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
+* If you have any questions, comments or suggestions, feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
 
 # Objectives of this tutorial
 * Learn some basics of ground-penetrating radar data processing with `RGPR`.
@@ -27,29 +19,6 @@ If you have any questions, comments or suggestions, feel free to contact me (in 
 
 Note that his tutorial will not explain you the math/algorithms behind the different processing methods.
 
-<!--
-In this tutorial the code snippets are in monospaced typewriter font like in the following example:
-
-```r
-1 + exp(1:10)
-```
-
-The R output are preceded by a double hash (`##`). The following R output is from the code snippet above.
-
-```
-##  [1]     3.718282     8.389056    21.085537    55.598150   149.413159
-##  [6]   404.428793  1097.633158  2981.957987  8104.083928 22027.465795
-```
-
-Create a text file and save it with the `.R` extension (the extension for the R-script files). Then copy the code snippets into your R-script file and adapt them to your needs. To run the code in R, copy the code and paste it into the R console. You can also manually enter the code.
-
-Don't hesitate to consult the help files and to search for help on the internet. For example, to see the help for the function `mean()`, enter:
-
-
-```r
-?mean    # open the help file related to the function mean()
-```
--->
 
 # Preliminary
 

@@ -35,12 +35,12 @@ knitr::opts_knit$set(root.dir = "/media/huber/Elements/UNIBAS/software/codeR/pac
 * This R-package is still in development, and therefore some of the functions may change in a near future. 
 * The R-package `RGPR` is hosted on [GitHub](https://github.com/) at [https://github.com/emanuelhuber/RGPR](https://github.com/emanuelhuber/RGPR). 
 * You can contribute to the development of `RGPR`: 
-    1. create an account on [GitHub](https://github.com/),
-    2. [fork](https://guides.github.com/activities/forking/) `RGPR`, 
+    1. create an account on [GitHub](https://github.com/)
+    2. [fork](https://guides.github.com/activities/forking/) `RGPR`
     3. change the code
-    4. make a [pull request](https://guides.github.com/activities/forking/#making-a-pull-request) (sumbmit your modifications).
+    4. make a [pull request](https://guides.github.com/activities/forking/#making-a-pull-request) (submit your modifications)
 
-If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
+If you have any questions, comments or suggestions, feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
 
 # Objectives of this tutorial
 * Learn some basics of ground-penetrating radar data processing with `RGPR`.
@@ -70,11 +70,11 @@ Don't hesitate to consult the help files and to search for help on the internet.
 
 # Preliminary
 
-* Read the tutorial [RGPR - Getting started (tutorial 1)](http://emanuelhuber.github.io/RGPR/RGPR_tutorial_installation-load.html)
 * Download the data [2014_04_25_frenke.zip](http://emanuelhuber.github.io/RGPR/2014_04_25_frenke.zip)
+* Unzip the data
 
 ## File organisation
-I recommand you to first think about the organisation of your files and directories. I suggest to organise them as follows:
+I suggest to organise your files and directories as follows:
 ```
 /2014_04_25_frenke   (project directory with date and location)
     /processing      (here you will save the processed GPR files)
@@ -85,53 +85,49 @@ I recommand you to first think about the organisation of your files and director
 
 ## Install/load `RGPR` and set the working directory
 
-* Set the working directory:
-    ```{r, warning=FALSE, message=FALSE, eval=FALSE}
-    myDir <- "~/2014_04_25_frenke"
-    setwd(myDir)    # set the working directory
-    getwd()         # Return the current working directory (just to check)
-    ```
-
 * Install and load the `RGPR`-package
     ```{r, echo=TRUE, warning=FALSE, message=FALSE}
-    library(devtools)
+    # install "devtools" if not already done
+    if(!require("devtools")) install.packages("devtools")
     devtools::install_github("emanuelhuber/RGPR")
     library(RGPR)       # load RGPR in the current R session
     ```
     
-    If `devtools` is not installed, install this package through the GUI (RStudio or RKward) or direclty in R by entering:
-
-    ```{r, eval=FALSE}
-    install.packages("devtools")     # install "devtools"
+* Set the working directory:
+    ```{r, warning=FALSE, message=FALSE, eval=FALSE}
+    myDir <- "~/2014_04_25_frenke"  # adapt that to your directory structure
+    setwd(myDir)    # set the working directory
+    getwd()         # Return the current working directory (just to check)
     ```
 
 # Read GPR data
-The raw GPR data are located in the directory `/rawGPR`. The data format is the Sensor & Softwares format. Each GPR data consists of 
+The raw GPR data are located in the directory `/rawGPR`. The data format is 
+the Sensors & Software format. Each GPR data consists of 
 
-* a header file (extension `.hd`) that can be opened with a normal text editor,
-* and a binary data file (extension `.DT1`).
+* a header file (extension `.hd`) that can be opened with a normal text editor
+* a binary data file (extension `.DT1`).
 
-To read the Sensor & Softwares GPR data, enter
+To read the GPR data, enter
 
 ```{r, echo=TRUE}
 A <- readGPR(fPath = "rawGPR/LINE00.DT1")   # the filepath is case sensitive!
+class(A)
 ```
-
-If the filepath (argument `fPath`) is not correct compared with the working directory, an error message is thrown.
-
-More information on the structure of an object of the class `RGPR` (like `A`) can be found in the tutorial "RGPR tutorial - `RGPR` class"
 
 # Plot the GPR data
 ## 2D plot: radargramm
+
 To plot the GPR record as a raster image (default mode), enter
+
 ```{r, echo=TRUE}
 plot(A)                                 
 ```
 
+The green line indicates the position of time-zero.
 The yellow triangle indicates the position of a fiducial marker that was set 
-during the survey to mark something (a specific object close to the GPR line, a 
-change in morphology/topography/sedimentology, an intersection with another GPR 
-line, etc.). These markers are very useful to add topographic data to the GPR 
+during the survey to mark something (such as a specific object close to the GPR line, a 
+change in morphology/topography/sedimentology or an intersection with another GPR 
+line). These markers are very useful to add topographic data to the GPR 
 profile, particularly when the fiducial markers correspond to the locations 
 where the (x,y,z) coordinates were measured.
 
@@ -140,36 +136,27 @@ Plot wiggles
 ```{r, echo=TRUE}
 plot(A, type = "wiggles")          
 ```
-Per default, the plot start at time-zero which is here set at approximately
-`r mean(time0(A))` s. To plot the full data, set the argument `relTime0` equal
-to `FALSE` in the `plot()` function.
+
+
+
+To plot only a part of the GPR data, use `xlim` and `ylim`. 
 ```{r, echo = TRUE}
-{plot(A, relTime0 = FALSE)
-# add a red line at time-zero
-abline(h = -mean(time0(A)), col = "green", lwd = 2)}
+plot(A, ylim = c(50, 100), xlim = c(30, 40))
 ```
 
-To plot only a part of the GPR data, use `xlim` and `ylim`. **Note that the 
-y-axis is here reversed and you have to use negative values to plot something
-below time-zero!**
-```{r, echo = TRUE}
-plot(A, ylim=c(-200, 0), xlim = c(30, 50))
-```
+To set the origin of the vertical axis at time-zero, set the argument `relTime0` equal
+to `TRUE`.
 
 ```{r, echo = TRUE}
-plot(A, relTime0 = FALSE, ylim=c(-200, 0), xlim = c(30, 50))
-# add a red line at time-zero
-abline(h = -mean(time0(A)), col = "green", lwd = 2)
+plot(A, relTime0 = TRUE, ylim = c(0, 200), xlim = c(30, 50))
 ```
-
 
 
 Another way to plot only a part of the GPR data is to extract a part of the GPR
 data. The object `A` can be manipulated in the same way as a matrix without 
-losing the meta-data (see the tutorial [Description of the RGPR package (tutorial 4)](http://emanuelhuber.github.io/RGPR/RGPR_tutorial_RGPR-object.html)).
+losing the meta-data (e.g., trace coordinates, antenna separation).
 
-To extract the time samples 100 to 300 samples of the traces 15 to 150, simply
-write this
+To extract the samples 100 to 300 of the 15\(^{th}\) to 150\(^{th}\):
 ```{r, echo=TRUE}
 # extract the 100 to 300 samples of the traces 15 to 150
 A0 <- A[100:300, 15:150]  
@@ -190,7 +177,7 @@ plot(A[100:300, 15:150])
 ```
 
 ## 1D plot: trace plot
-Plot a signal trace, notice that the signal is clipped to \(+/-50\,mV\) 
+Plot a signal trace, notice that the signal is clipped to \(\pm50\,mV\) 
 (between \(0\) and \(20\,ns\)):
 ```{r, echo=TRUE}
 plot(A[, 15])      # plot the 15th trace of the GPR-line   
@@ -203,6 +190,12 @@ Plot the first 40 trace samples:
 ```{r, echo=TRUE}
 # plot the first 40 samples of the 15th trace of the GPR profile
 plot(A[1:40, 15])  
+```
+
+## More infos
+Check the help for more details on the `plot()` function:
+```{r, echo=TRUE, eval=FALSE}
+?plot.GPR
 ```
 
 # Basic processing steps
@@ -225,7 +218,7 @@ direct current offset is estimated on trace samples before time-zero.
 \(n = 110\):
 
 ```{r, echo=TRUE}
- # plot the first 110 samples of the 15th trace of the GPR profile
+# plot the first 110 samples of the 15th trace of the GPR profile
 plot(A[1:110, 15]) 
 ```
 
@@ -269,40 +262,55 @@ proc(A1)
 
 ## First wave break estimation and time-zero correction
 
+Here, we define time-zero, \(t_0\) as the time at which the transmitter
+starts to emit the wave.
+
 Maybe is time-zero not correctly set. To get the time-zero for each traces of
 `A1` use the function `time0()`:
 ```{r, eval=FALSE}
 time0(A1)
 ```
 
-The first wave break is estimated for each traces
+The first wave break, \(t_{\mathrm{fb}}\), is estimated for each traces (it is
+the time of the first wave record)
 ```{r, eval=TRUE}
 tfb <- firstBreak(A1)   # take some time
 plot(pos(A1), tfb, pch = 20, ylab = "first wave break", 
      xlab = "position (m)")
 ```
-Convert the first wave break time into time-zero with `firstBreakToTime0()`. Here we define [time-zero] = [first wave break] - [air wave travel time between 
-transmitter and receiver]. 
+
+Convert the first wave break time \(t_{\mathrm{fb}}\) into time-zero \(t_0\) 
+with `firstBreakToTime0()`. 
+
+Here we define \(t_0 = t_{\mathrm{fb}} - a/c_0\), where \(a\) is the distance
+between the transmitter and receiver and \(c_0\) is the wave velocity in
+the media between the transmitter and receiver (in our case, air). 
+The value \(a/c_0\) corresponds to the wave travel time from the transmitter 
+to the receiver.
+
+
 ```{r, echo=TRUE}
 t0 <- firstBreakToTime0(tfb, A1)
 time0(A1) <- t0     # set time0 to A1
 ```
 
+Note that if `t0` is too noisy, you can set `time0(A1) <- mean(t0)`.
 
-Check the first wave break on a trace plot
+Check the results (do you see the difference between time-zero in red and 
+first wave break time in blue?):
 ```{r, echo=TRUE}
 plot(A1[, 15])  # plot the 15th trace of the GPR-line
+abline(v = tfb[15], col = "blue")  # first wave break time
 ```
 
 
-To shift the traces to time-zero, use the function `time0Cor`.
+To shift the traces to time-zero, use the function `time0Cor` (the `method`
+argument defines the type of interpolation method)
 
 ```{r, eval=TRUE}
 A2 <- time0Cor(A1, method = "pchip")
 ```
 
-
-Note that if `tbf` is too noisy, you can set `t0 = mean(tbf)`.
 
 ```{r, eval=TRUE}
 plot(A2)
@@ -349,18 +357,18 @@ amplitudes/phases.
 
 On the first plot, notice 
 
-* a sharp decrease of the amplitude between \(0\,MHz\) and \(10\,MHz\): these 
+* a sharp increase of the amplitude between \(0\,\mathit{MHz}\) and \(10\,\mathit{MHz}\): these 
 frequency correspond to the slowing-varying part of the signal. In this 
 particular case, filtering out this part of the signal results in 
 strong signal distorsion.
-* after a peak at \(80\,MHz\) (the returned signal frequency that is lower than 
+* after a peak at \(80\,\mathit{MHz}\) (the returned signal frequency that is lower than 
 the antenna frequency because of frequency-dependent attenuation in the ground), 
 the amplitude decreases.
-* at about \(200\,MHz\) the amplitude stays constant (plateau): noise frequency.
+* at about \(200\,\mathit{MHz}\) the amplitude stays constant (plateau): noise frequency.
 
 Eliminate the high-frequency (noise) component of 
 the GPR record with a bandpass filter. We define as corner frequencies 
-at \(150\,MHz\) and \(260\,MHz\), and set 
+at \(150\,\mathit{MHz}\) and \(260\,\mathit{MHz}\), and set 
 `plotSpec = TRUE` to plot the spectrum with the signal, the filtered signal and 
 the filter.
 ```{r, echo=TRUE}
@@ -374,24 +382,25 @@ plot(A4 - A3, clip = 50)
 ```
 
 Ideally, the objective of processing is to remove the noise component without 
-deterioring the signal component to improve the signal/noise ratio. When 
+altering the signal component to improve the signal/noise ratio. When 
 ploting the difference in processing (after - before), one should only observe 
-the noise that is filtered out. However, in practice some part of the signal 
-may be also deteriored when eliminating noise.
+the noise that is filtered out. Here, removing and attenuating some frequencies
+change the signal amplitude.
 
 ## Time gain
 Apply a gain to compensate the signal attenuation. Three types of gain are 
 available:
 
-* power gain (`type = power`): \(A_g(t) = A(t)\cdot t^\alpha \) with 
+* power gain (`type = "power"`): \(A_g(t) = A(t)\cdot t^\alpha \) with 
 \(\alpha = 1 \) per default.
-* exponential gain (`type = exp`): \(A_g(t) = A(t)\cdot \exp(\alpha \cdot t)\).
-* Automatic gain control (`type = agc`): make gain equal to the local root mean 
+* exponential gain (`type = "exp"`): \(A_g(t) = A(t)\cdot \exp(\alpha \cdot t)\).
+* Automatic gain control (`type = "agc"`): make gain equal to the local root mean 
 squared signal.
 
 We will first apply a power gain and then an exponential gain.
 To visualise the amplitude of the GPR signal as a function of time, use the 
 function `plotAmpl()` as follows:
+
 ```{r, echo=TRUE}
 plotAmpl(A4, col = "black")          # plot amplitude as a function of time
 
@@ -413,10 +422,10 @@ A5 <- gain(A4, type = "power", alpha = 1, te = 150, tcst = 20)
 
 Compare the amplitude before and after the power gain:
 ```{r, echo=TRUE}
-{plotAmpl(A5, col = "red")
+plotAmpl(A4, col = "black")   
 # set add=TRUE to add the amplitude on the previous plot
-plotAmpl(A4, col = "black", add = TRUE)   
-plot(A5) }       # how does it look after the gain?
+plotAmpl(A5, col = "red", add = TRUE)
+plot(A5)      # how does it look after the gain?
 ```
 
 
@@ -426,7 +435,8 @@ plot(A5) }       # how does it look after the gain?
 Ideally, the parameter \(\alpha\) in the exponential gain should be close to 
 the slope of the amplitude decrease. This slope could be estimated by fitting 
 a straight line to the amplitude decrease. We only want to apply the filter 
-between \(0\,ns\) (`t0`) and \(125\,ns\) (`te` for \(t_{end}\)  ):
+between \(0\,\mathit{ns}\) (`t0`) and \(125\,\mathit{ns}\) 
+(`te` for \(t_\mathit{end}\)  ):
 ```{r, echo=TRUE}
 A6 <- gain(A5, type ="exp",  alpha = 0.2, t0 = 0, te = 125)
 plotAmpl(A6, col = "green")
@@ -435,13 +445,13 @@ plotAmpl(A6, col = "green")
 Oops! Set `alpha` to a smaller value!
 ```{r, echo=TRUE}
 A6 <- gain(A5, type = "exp", alpha = 0.11, t0 = 0, te = 125)
-plotAmpl(A6, col = "green")
+plotAmpl(A4, col = "black") 
 plotAmpl(A5, col = "red", add = TRUE) 
-plotAmpl(A4, col = "black", add = TRUE) 
+plotAmpl(A6, col = "green", add = TRUE)
 plot(A6)    # how does it look after the gain?
 ```
 
-Plot the gained GPR record and clip the amplitude values to \(50\,mV\) using 
+Plot the gained GPR record and clip the amplitude values to \(50\,\mathit{mV}\) using 
 the argument `clip`:
 ```{r, echo=TRUE}
 plot(A6, clip = 50)    # how does it look after the gain?
@@ -538,8 +548,8 @@ writeGPR(A9, fPath = file.path(getwd(), "processing", paste0(name(A9), ".rds")),
  
 Export a high quality PDF: 
 ```{r, results='hide', eval = FALSE} 
-exportPDF(A9, clip = 30, fPath = file.path(getwd(), "processing", name(A9)),
-          lwd = 0.5, ws = 1.5)
+plot(A9, type = "wiggles", clip = 30, pdfName = file.path(getwd(), "processing", name(A9)),
+          lwd = 0.5, wsize = 2.5)
 ```
 
 ## Read the saved GPR data

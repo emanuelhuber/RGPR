@@ -1,0 +1,16 @@
+---
+layout: default
+---
+
+<div class="page">
+  <h1 class="page-title">{{ page.title }}</h1>
+  {{ content }}
+</div>
+
+<footer>
+	<p>Last update: <time datetime="{{page.date}}">{{ page.date | date_to_string }}</time> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;
+    <a href="http://validator.w3.org/check?uri=https%3A%2F%2Femanuelhuber.github.io%2Findex.html">HTML</a> &amp; 
+    <a href="http://jigsaw.w3.org/css-validator/validator?uri=https%3A%2F%2Femanuelhuber.github.io%2Findex.html">CSS</a>
+  </p>
+</footer>
+

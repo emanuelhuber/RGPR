@@ -14,12 +14,12 @@ Emanuel Huber (emanuel.huber@alumni.ethz.ch)
 * This R-package is still in development, and therefore some of the functions may change in a near future. 
 * The R-package `RGPR` is hosted on [GitHub](https://github.com/) at [https://github.com/emanuelhuber/RGPR](https://github.com/emanuelhuber/RGPR). 
 * You can contribute to the development of `RGPR`: 
-    1. create an account on [GitHub](https://github.com/),
-    2. [fork](https://guides.github.com/activities/forking/) `RGPR`, 
+    1. create an account on [GitHub](https://github.com/)
+    2. [fork](https://guides.github.com/activities/forking/) `RGPR`
     3. change the code
-    4. make a [pull request](https://guides.github.com/activities/forking/#making-a-pull-request) (sumbmit your modifications).
+    4. make a [pull request](https://guides.github.com/activities/forking/#making-a-pull-request) (submit your modifications)
 
-If you have any questions, comments or wishes, etc. feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
+If you have any questions, comments or suggestions, feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
 
 # Objectives of this tutorial
 * Learn some basics of ground-penetrating radar data processing with `RGPR`.
@@ -53,11 +53,11 @@ Don't hesitate to consult the help files and to search for help on the internet.
 
 # Preliminary
 
-* Read the tutorial [RGPR - Getting started (tutorial 1)](http://emanuelhuber.github.io/RGPR/RGPR_tutorial_installation-load.html)
 * Download the data [2014_04_25_frenke.zip](http://emanuelhuber.github.io/RGPR/2014_04_25_frenke.zip)
+* Unzip the data
 
 ## File organisation
-I recommand you to first think about the organisation of your files and directories. I suggest to organise them as follows:
+I suggest to organise your files and directories as follows:
 ```
 /2014_04_25_frenke   (project directory with date and location)
     /processing      (here you will save the processed GPR files)
@@ -68,60 +68,61 @@ I recommand you to first think about the organisation of your files and director
 
 ## Install/load `RGPR` and set the working directory
 
-* Set the working directory:
-    
-    ```r
-    myDir <- "~/2014_04_25_frenke"
-    setwd(myDir)    # set the working directory
-    getwd()         # Return the current working directory (just to check)
-    ```
-
 * Install and load the `RGPR`-package
     
     ```r
-    library(devtools)
+    # install "devtools" if not already done
+    if(!require("devtools")) install.packages("devtools")
     devtools::install_github("emanuelhuber/RGPR")
     library(RGPR)       # load RGPR in the current R session
     ```
     
-    If `devtools` is not installed, install this package through the GUI (RStudio or RKward) or direclty in R by entering:
-
+* Set the working directory:
     
     ```r
-    install.packages("devtools")     # install "devtools"
+    myDir <- "~/2014_04_25_frenke"  # adapt that to your directory structure
+    setwd(myDir)    # set the working directory
+    getwd()         # Return the current working directory (just to check)
     ```
 
 # Read GPR data
-The raw GPR data are located in the directory `/rawGPR`. The data format is the Sensor & Softwares format. Each GPR data consists of 
+The raw GPR data are located in the directory `/rawGPR`. The data format is 
+the Sensors & Software format. Each GPR data consists of 
 
-* a header file (extension `.hd`) that can be opened with a normal text editor,
-* and a binary data file (extension `.DT1`).
+* a header file (extension `.hd`) that can be opened with a normal text editor
+* a binary data file (extension `.DT1`).
 
-To read the Sensor & Softwares GPR data, enter
+To read the GPR data, enter
 
 
 ```r
 A <- readGPR(fPath = "rawGPR/LINE00.DT1")   # the filepath is case sensitive!
+class(A)
 ```
 
-If the filepath (argument `fPath`) is not correct compared with the working directory, an error message is thrown.
-
-More information on the structure of an object of the class `RGPR` (like `A`) can be found in the tutorial "RGPR tutorial - `RGPR` class"
+```
+## [1] "GPR"
+## attr(,"package")
+## [1] "RGPR"
+```
 
 # Plot the GPR data
 ## 2D plot: radargramm
+
 To plot the GPR record as a raster image (default mode), enter
+
 
 ```r
 plot(A)                                 
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
 
+The green line indicates the position of time-zero.
 The yellow triangle indicates the position of a fiducial marker that was set 
-during the survey to mark something (a specific object close to the GPR line, a 
-change in morphology/topography/sedimentology, an intersection with another GPR 
-line, etc.). These markers are very useful to add topographic data to the GPR 
+during the survey to mark something (such as a specific object close to the GPR line, a 
+change in morphology/topography/sedimentology or an intersection with another GPR 
+line). These markers are very useful to add topographic data to the GPR 
 profile, particularly when the fiducial markers correspond to the locations 
 where the (x,y,z) coordinates were measured.
 
@@ -132,46 +133,34 @@ Plot wiggles
 plot(A, type = "wiggles")          
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
-Per default, the plot start at time-zero which is here set at approximately
-52.1840028 s. To plot the full data, set the argument `relTime0` equal
-to `FALSE` in the `plot()` function.
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
+
+
+
+To plot only a part of the GPR data, use `xlim` and `ylim`. 
 
 ```r
-{plot(A, relTime0 = FALSE)
-# add a red line at time-zero
-abline(h = -mean(time0(A)), col = "green", lwd = 2)}
+plot(A, ylim = c(50, 100), xlim = c(30, 40))
+```
+
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
+
+To set the origin of the vertical axis at time-zero, set the argument `relTime0` equal
+to `TRUE`.
+
+
+```r
+plot(A, relTime0 = TRUE, ylim = c(0, 200), xlim = c(30, 50))
 ```
 
 ![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
 
-To plot only a part of the GPR data, use `xlim` and `ylim`. **Note that the 
-y-axis is here reversed and you have to use negative values to plot something
-below time-zero!**
-
-```r
-plot(A, ylim=c(-200, 0), xlim = c(30, 50))
-```
-
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
-
-
-```r
-plot(A, relTime0 = FALSE, ylim=c(-200, 0), xlim = c(30, 50))
-# add a red line at time-zero
-abline(h = -mean(time0(A)), col = "green", lwd = 2)
-```
-
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
-
-
 
 Another way to plot only a part of the GPR data is to extract a part of the GPR
 data. The object `A` can be manipulated in the same way as a matrix without 
-losing the meta-data (see the tutorial [Description of the RGPR package (tutorial 4)](http://emanuelhuber.github.io/RGPR/RGPR_tutorial_RGPR-object.html)).
+losing the meta-data (e.g., trace coordinates, antenna separation).
 
-To extract the time samples 100 to 300 samples of the traces 15 to 150, simply
-write this
+To extract the samples 100 to 300 of the 15\(^{th}\) to 150\(^{th}\):
 
 ```r
 # extract the 100 to 300 samples of the traces 15 to 150
@@ -186,8 +175,8 @@ A
 ##  1 fiducial(s)
 ##  description = 
 ##  survey date = 2014-04-25
-##  Reflection, 100 MHz,Window length = 399.6 ns, dz = 0.4 ns
-##  223 traces,55.5 m
+##  Reflection, 100 MHz, Window length = 399.6 ns, dz = 0.4 ns
+##  223 traces, 55.5 m
 ##  ****************
 ```
 
@@ -201,8 +190,8 @@ A0
 ##  filepath    = rawGPR/LINE00.DT1
 ##  description = 
 ##  survey date = 2014-04-25
-##  Reflection, 100 MHz,Window length = 80 ns, dz = 0.4 ns
-##  136 traces,33.75 m
+##  Reflection, 100 MHz, Window length = 80 ns, dz = 0.4 ns
+##  136 traces, 33.75 m
 ##  ****************
 ```
 
@@ -220,17 +209,17 @@ Plot a section/subset of the GPR record (like zooming)
 plot(A[100:300, 15:150])        
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
 
 ## 1D plot: trace plot
-Plot a signal trace, notice that the signal is clipped to \(+/-50\,mV\) 
+Plot a signal trace, notice that the signal is clipped to \(\pm50\,mV\) 
 (between \(0\) and \(20\,ns\)):
 
 ```r
 plot(A[, 15])      # plot the 15th trace of the GPR-line   
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-16-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
 
 Note: the `@3.5m` in the plot title indicate the relative position of the trace
 on the GPR profile.
@@ -242,7 +231,14 @@ Plot the first 40 trace samples:
 plot(A[1:40, 15])  
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-17-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
+
+## More infos
+Check the help for more details on the `plot()` function:
+
+```r
+?plot.GPR
+```
 
 # Basic processing steps
 
@@ -254,7 +250,7 @@ Plot a single trace:
 plot(A[, 15])  # plot the 15th trace of the GPR-line
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-17-1.png)<!-- -->
 
 Notice how the trace samples before the first wave arrival (before 
 \(t = 0\,ns\)) are slightly shifted below \(0\,mV\)? This shift is called 
@@ -268,11 +264,11 @@ direct current offset is estimated on trace samples before time-zero.
 
 
 ```r
- # plot the first 110 samples of the 15th trace of the GPR profile
+# plot the first 110 samples of the 15th trace of the GPR profile
 plot(A[1:110, 15]) 
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-19-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
 
 2. Remove the DC-offset estimated on the first n samples usind the function 
 `dcshift()`. This function takes as argument the `GPR` object and the sample 
@@ -293,7 +289,7 @@ mean of the first \(110\) samples (`mean(A[1:110,15]`):
 abline(h = mean(A[1:110, 15]), col = "green") }
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-21-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-20-1.png)<!-- -->
 
 
 Have a look at A1:
@@ -309,10 +305,8 @@ A1
 ##  1 fiducial(s)
 ##  description = 
 ##  survey date = 2014-04-25
-##  Reflection, 100 MHz,Window length = 399.6 ns, dz = 0.4 ns
-##  223 traces,55.5 m
-##  > PROCESSING
-##    1. dcshift>u=1:110+FUN=mean
+##  Reflection, 100 MHz, Window length = 399.6 ns, dz = 0.4 ns
+##  223 traces, 55.5 m
 ##  ****************
 ```
 
@@ -331,12 +325,15 @@ proc(A1)
 ```
 
 ```
-## [1] "dcshift>u=1:110+FUN=mean"
+## character(0)
 ```
 
 
 
 ## First wave break estimation and time-zero correction
+
+Here, we define time-zero, \(t_0\) as the time at which the transmitter
+starts to emit the wave.
 
 Maybe is time-zero not correctly set. To get the time-zero for each traces of
 `A1` use the function `time0()`:
@@ -345,7 +342,8 @@ Maybe is time-zero not correctly set. To get the time-zero for each traces of
 time0(A1)
 ```
 
-The first wave break is estimated for each traces
+The first wave break, \(t_{\mathrm{fb}}\), is estimated for each traces (it is
+the time of the first wave record)
 
 ```r
 tfb <- firstBreak(A1)   # take some time
@@ -353,26 +351,39 @@ plot(pos(A1), tfb, pch = 20, ylab = "first wave break",
      xlab = "position (m)")
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-25-1.png)<!-- -->
-Convert the first wave break time into time-zero with `firstBreakToTime0()`. Here we define [time-zero] = [first wave break] - [air wave travel time between 
-transmitter and receiver]. 
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-24-1.png)<!-- -->
+
+Convert the first wave break time \(t_{\mathrm{fb}}\) into time-zero \(t_0\) 
+with `firstBreakToTime0()`. 
+
+Here we define \(t_0 = t_{\mathrm{fb}} - a/c_0\), where \(a\) is the distance
+between the transmitter and receiver and \(c_0\) is the wave velocity in
+the media between the transmitter and receiver (in our case, air). 
+The value \(a/c_0\) corresponds to the wave travel time from the transmitter 
+to the receiver.
+
+
 
 ```r
 t0 <- firstBreakToTime0(tfb, A1)
 time0(A1) <- t0     # set time0 to A1
 ```
 
+Note that if `t0` is too noisy, you can set `time0(A1) <- mean(t0)`.
 
-Check the first wave break on a trace plot
+Check the results (do you see the difference between time-zero in red and 
+first wave break time in blue?):
 
 ```r
 plot(A1[, 15])  # plot the 15th trace of the GPR-line
+abline(v = tfb[15], col = "blue")  # first wave break time
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-27-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-26-1.png)<!-- -->
 
 
-To shift the traces to time-zero, use the function `time0Cor`.
+To shift the traces to time-zero, use the function `time0Cor` (the `method`
+argument defines the type of interpolation method)
 
 
 ```r
@@ -380,14 +391,12 @@ A2 <- time0Cor(A1, method = "pchip")
 ```
 
 
-Note that if `tbf` is too noisy, you can set `t0 = mean(tbf)`.
-
 
 ```r
 plot(A2)
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-29-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-28-1.png)<!-- -->
 
 
 ## Dewow
@@ -405,7 +414,7 @@ A3 <- dewow(A2, type = "MAD", w = 50)     # dewowing: take some time
 plot(A3)                                  # plot the result
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-30-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-29-1.png)<!-- -->
 
 Can you see the difference with `A1`? Plot `A2 - A1` to see the removed "wow".
 
@@ -413,7 +422,7 @@ Can you see the difference with `A1`? Plot `A2 - A1` to see the removed "wow".
 plot(A3 - A2)                           # plot the difference
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-31-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-30-1.png)<!-- -->
 
 
 See the dewowing by comparing the traces before (blue line) and after 
@@ -424,7 +433,7 @@ plot(A2[,15], col = "blue")      # before dewowing
 lines(A3[,15], col = "red")      # after dewowing
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-32-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-31-1.png)<!-- -->
 
 ## Frequency filter
 
@@ -435,25 +444,25 @@ Let's have a look at the amplitude-frequency and phase-frequency plot
 spec(A3)
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-33-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-32-1.png)<!-- -->
 
 The curve in red is the averaged amplitude/phase over all the trace 
 amplitudes/phases.
 
 On the first plot, notice 
 
-* a sharp decrease of the amplitude between \(0\,MHz\) and \(10\,MHz\): these 
+* a sharp increase of the amplitude between \(0\,\mathit{MHz}\) and \(10\,\mathit{MHz}\): these 
 frequency correspond to the slowing-varying part of the signal. In this 
 particular case, filtering out this part of the signal results in 
 strong signal distorsion.
-* after a peak at \(80\,MHz\) (the returned signal frequency that is lower than 
+* after a peak at \(80\,\mathit{MHz}\) (the returned signal frequency that is lower than 
 the antenna frequency because of frequency-dependent attenuation in the ground), 
 the amplitude decreases.
-* at about \(200\,MHz\) the amplitude stays constant (plateau): noise frequency.
+* at about \(200\,\mathit{MHz}\) the amplitude stays constant (plateau): noise frequency.
 
 Eliminate the high-frequency (noise) component of 
 the GPR record with a bandpass filter. We define as corner frequencies 
-at \(150\,MHz\) and \(260\,MHz\), and set 
+at \(150\,\mathit{MHz}\) and \(260\,\mathit{MHz}\), and set 
 `plotSpec = TRUE` to plot the spectrum with the signal, the filtered signal and 
 the filter.
 
@@ -461,13 +470,13 @@ the filter.
 A4 <- fFilter(A3, f = c(150, 260), type = "low", plotSpec = TRUE)
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-34-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-33-1.png)<!-- -->
 
 ```r
 plot(A4)
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-34-2.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-33-2.png)<!-- -->
 
 Let see the difference
 
@@ -475,33 +484,34 @@ Let see the difference
 plot(A4 - A3, clip = 50)
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-35-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-34-1.png)<!-- -->
 
 Ideally, the objective of processing is to remove the noise component without 
-deterioring the signal component to improve the signal/noise ratio. When 
+altering the signal component to improve the signal/noise ratio. When 
 ploting the difference in processing (after - before), one should only observe 
-the noise that is filtered out. However, in practice some part of the signal 
-may be also deteriored when eliminating noise.
+the noise that is filtered out. Here, removing and attenuating some frequencies
+change the signal amplitude.
 
 ## Time gain
 Apply a gain to compensate the signal attenuation. Three types of gain are 
 available:
 
-* power gain (`type = power`): \(A_g(t) = A(t)\cdot t^\alpha \) with 
+* power gain (`type = "power"`): \(A_g(t) = A(t)\cdot t^\alpha \) with 
 \(\alpha = 1 \) per default.
-* exponential gain (`type = exp`): \(A_g(t) = A(t)\cdot \exp(\alpha \cdot t)\).
-* Automatic gain control (`type = agc`): make gain equal to the local root mean 
+* exponential gain (`type = "exp"`): \(A_g(t) = A(t)\cdot \exp(\alpha \cdot t)\).
+* Automatic gain control (`type = "agc"`): make gain equal to the local root mean 
 squared signal.
 
 We will first apply a power gain and then an exponential gain.
 To visualise the amplitude of the GPR signal as a function of time, use the 
 function `plotAmpl()` as follows:
 
+
 ```r
 plotAmpl(A4, col = "black")          # plot amplitude as a function of time
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-36-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-35-1.png)<!-- -->
 
 On the previous plot, there is a sharp amplitude increase at about \(20\,ns\) 
 corresponding to the first wave arrival. Then the amplitude decreases until a 
@@ -521,13 +531,18 @@ A5 <- gain(A4, type = "power", alpha = 1, te = 150, tcst = 20)
 Compare the amplitude before and after the power gain:
 
 ```r
-{plotAmpl(A5, col = "red")
+plotAmpl(A4, col = "black")   
 # set add=TRUE to add the amplitude on the previous plot
-plotAmpl(A4, col = "black", add = TRUE)   
-plot(A5) }       # how does it look after the gain?
+plotAmpl(A5, col = "red", add = TRUE)
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-38-1.png)<!-- -->![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-38-2.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-37-1.png)<!-- -->
+
+```r
+plot(A5)      # how does it look after the gain?
+```
+
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-37-2.png)<!-- -->
 
 
 
@@ -536,40 +551,41 @@ plot(A5) }       # how does it look after the gain?
 Ideally, the parameter \(\alpha\) in the exponential gain should be close to 
 the slope of the amplitude decrease. This slope could be estimated by fitting 
 a straight line to the amplitude decrease. We only want to apply the filter 
-between \(0\,ns\) (`t0`) and \(125\,ns\) (`te` for \(t_{end}\)  ):
+between \(0\,\mathit{ns}\) (`t0`) and \(125\,\mathit{ns}\) 
+(`te` for \(t_\mathit{end}\)  ):
 
 ```r
 A6 <- gain(A5, type ="exp",  alpha = 0.2, t0 = 0, te = 125)
 plotAmpl(A6, col = "green")
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-39-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-38-1.png)<!-- -->
 
 Oops! Set `alpha` to a smaller value!
 
 ```r
 A6 <- gain(A5, type = "exp", alpha = 0.11, t0 = 0, te = 125)
-plotAmpl(A6, col = "green")
+plotAmpl(A4, col = "black") 
 plotAmpl(A5, col = "red", add = TRUE) 
-plotAmpl(A4, col = "black", add = TRUE) 
+plotAmpl(A6, col = "green", add = TRUE)
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-40-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-39-1.png)<!-- -->
 
 ```r
 plot(A6)    # how does it look after the gain?
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-40-2.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-39-2.png)<!-- -->
 
-Plot the gained GPR record and clip the amplitude values to \(50\,mV\) using 
+Plot the gained GPR record and clip the amplitude values to \(50\,\mathit{mV}\) using 
 the argument `clip`:
 
 ```r
 plot(A6, clip = 50)    # how does it look after the gain?
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-41-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-40-1.png)<!-- -->
 
 ## inverse normal transformations
 
@@ -579,7 +595,7 @@ Have a look at the histogram of the values of `A6`
 hist(A6[], breaks = 50)
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-41-1.png)<!-- -->
 
 This histogram is very narrow, meaning that a lot of values are very close to 
 zero and therefore many details are not really visible. To widen this 
@@ -600,14 +616,14 @@ hist(A6[], breaks = 50)
 hist(A7[], breaks = 50)
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-43-1.png)<!-- -->
 Have a look at the results of the transformation:
 
 ```r
 plot(A7)
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-45-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
 
 ## Median filter (spatial filter)
 A non-linear filter to remove noise:
@@ -617,7 +633,7 @@ A8 <- filter2D(A7, type = "median3x3")
 plot(A8)
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-46-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-45-1.png)<!-- -->
 
 Let see the difference
 
@@ -625,7 +641,7 @@ Let see the difference
 plot(A8 - A7)
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-47-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-46-1.png)<!-- -->
 
 ## Frequency-wavenumber filter (f-k-filter)
 
@@ -640,7 +656,7 @@ area <- list(x = c(0, min(FKSpec$wnb), min(FKSpec$wnb), max(FKSpec$wnb), max(FKS
 lines(area, type="o")
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-48-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-47-1.png)<!-- -->
 
 ```r
 A9 <- fkFilter(A8, fk = area)
@@ -654,13 +670,13 @@ raw GPR data is already bad):
 plot(A9, clip = 50)
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-48-1.png)<!-- -->
 
 ```r
 spec(A9, type = "f-k")
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-49-2.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-48-2.png)<!-- -->
 
 Let see the difference
 
@@ -668,7 +684,7 @@ Let see the difference
 plot(A9 - A8)
 ```
 
-![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-50-1.png)<!-- -->
+![](RGPR_tutorial_basic-processing_files/figure-html/unnamed-chunk-49-1.png)<!-- -->
 
 ## Processing overview
 Let review the processing step applied on the GPR record:
@@ -678,15 +694,7 @@ proc(A9)
 ```
 
 ```
-## [1] "dcshift>u=1:110+FUN=mean"                           
-## [2] "time0Cor//method=pchip"                             
-## [3] "dewow//type=MAD+w=50"                               
-## [4] "fFilter//f=150,260+type=low+plotSpec=NULL"          
-## [5] "gain//type=power+alpha=1+te=150+tcst=20"            
-## [6] "gain//type=exp+alpha=0.11+t0=0+te=125"              
-## [7] "traceScaling//type=invNormal"                       
-## [8] "filter2D//type=median3x3"                           
-## [9] "fkFilter//fk=0,-2,-2,2,2,0+fk=1250,800,0,0,800,1250"
+## [1] "time0<-"
 ```
 
 ## Other processing functions
@@ -715,26 +723,18 @@ writeGPR(A9, fPath = file.path(getwd(), "processing", paste0(name(A9), ".rds")),
 ##  1 fiducial(s)
 ##  description = 
 ##  survey date = 2014-04-25
-##  Reflection, 100 MHz,Window length = 352 ns, dz = 0.4 ns
-##  223 traces,55.5 m
+##  Reflection, 100 MHz, Window length = 352 ns, dz = 0.4 ns
+##  223 traces, 55.5 m
 ##  > PROCESSING
-##    1. dcshift>u=1:110+FUN=mean
-##    2. time0Cor//method=pchip
-##    3. dewow//type=MAD+w=50
-##    4. fFilter//f=150,260+type=low+plotSpec=NULL
-##    5. gain//type=power+alpha=1+te=150+tcst=20
-##    6. gain//type=exp+alpha=0.11+t0=0+te=125
-##    7. traceScaling//type=invNormal
-##    8. filter2D//type=median3x3
-##    9. fkFilter//fk=0,-2,-2,2,2,0+fk=1250,800,0,0,800,1250
+##    1. time0<-
 ##  ****************
 ```
  
 Export a high quality PDF: 
 
 ```r
-exportPDF(A9, clip = 30, fPath = file.path(getwd(), "processing", name(A9)),
-          lwd = 0.5, ws = 1.5)
+plot(A9, type = "wiggles", clip = 30, pdfName = file.path(getwd(), "processing", name(A9)),
+          lwd = 0.5, wsize = 2.5)
 ```
 
 ## Read the saved GPR data

@@ -100,7 +100,7 @@ a.sidebar-nav-item:focus {
 }
 
 /* START add Manu */
-sidebar ul {
+.sidebar ul {
   list-style:none;
   height:40px;
   padding:0;
@@ -110,22 +110,22 @@ sidebar ul {
   width:270px;
 }
 
-sidebar li {
+.sidebar li {
   width:89px;
   float:left;
   border-right:1px solid #e0e0e0;
   height:40px;
 }
 
-sidebar li:first-child a {
+.sidebar li:first-child a {
   border-radius:5px 0 0 5px;
 }
 
-sidebar li:last-child a {
+.sidebar li:last-child a {
   border-radius:0 5px 5px 0;
 }
 
-sidebar ul a {
+.sidebar ul a {
   line-height:1;
   font-size:11px;
   color:#999;
@@ -135,25 +135,25 @@ sidebar ul a {
   height:34px;
 }
 
-sidebar ul a:hover {
+.sidebar ul a:hover {
   color:#999;
 }
 
-sidebar ul a:active {
+.sidebar ul a:active {
   background-color:#f0f0f0;
 }
 
-strong {
+.sidebar strong {
   color:#222;
   font-weight:700;
 }
 
-header ul li + li + li {
+.sidebar ul li + li + li {
   border-right:none;
   width:89px;
 }
 
-header ul a strong {
+.sidebar ul a strong {
   font-size:14px;
   display:block;
   color:#222;

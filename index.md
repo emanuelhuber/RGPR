@@ -11,11 +11,11 @@ date: 2018-02-12
 <acronym title="R-package for Ground Penetrating Radar data">RGPR</acronym> is hosted on <a href="https://github.com/" title="GitHub">GitHub</a> at <a href="https://github.com/emanuelhuber/RGPR" title="RGPR on GitHub">https://github.com/emanuelhuber/RGPR</a>. 
 </p>
 
-<p>This R-package is still in development, and therefore some of the functions may change in a near future. </p>
+<p>This R package is still in development, and therefore some of the functions may change in a near future. </p>
 
-<p>To report bugs, contribute to the development of `RGPR`, see <a href="https://github.com/emanuelhuber/RGPR/blob/master/CONTRIBUTING.md" title="how to contribute">how to contribute</a>
+<p>To report bugs, contribute to the development of <acronym title="R-package for Ground Penetrating Radar data">RGPR</acronym>, see <a href="https://github.com/emanuelhuber/RGPR/blob/master/CONTRIBUTING.md" title="how to contribute">how to contribute</a></p>
 
-<p>If you have any questions, comments or suggestions, feel free to contact me (in english, french or german):<br/> <a href="mailto:emanuel.huber@alumni.ethz.ch">emanuel.huber@alumni.ethz.ch</a></p>
+<p>If you have any questions, comments or suggestions, feel free to contact me (in english, french or german):<br/><a href="mailto:emanuel.huber@alumni.ethz.ch">emanuel.huber@alumni.ethz.ch</a></p>
 
 
 ## Tutorials

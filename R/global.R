@@ -2254,6 +2254,7 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
       tbl <- data.frame(x = x1, nscore = y)
     }
     y_n <- approx(x1, y, xout = x, rule = 2)$y
+    y_n <- y_n * sd(x) + mean(x)
     #return(list(x = y_n, table = tbl))
     return(y_n)
   }
@@ -2318,8 +2319,7 @@ scaleCol <- function(A, type = c("stat", "min-max", "95",
     if( type == "invNormal"){
       Ascl <- apply( A, 2, .nScoreTrans)
       return(Ascl)
-    }
-    else if(type == "stat"){
+    }else if(type == "stat"){
       # A <- scale(A, center=.colMeans(A, nrow(A), ncol(A)), 
       #            scale = apply(A, 2, sd, na.rm = TRUE))
       Ascl <- scale(A)

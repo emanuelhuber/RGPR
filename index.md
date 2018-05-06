@@ -7,8 +7,8 @@ date: 2018-02-12
 # RGPR
 
 <p class="message">
-<acronym title="R-package for Ground Penetrating Radar data">RGPR</acronym> is a free and open-source <a href="https://cran.r-project.org/" title="R Cran">R</a> package to read, write, analyse and visualise <strong>ground-penetrating radar (GPR)</strong> data. 
-<acronym title="R-package for Ground Penetrating Radar data">RGPR</acronym> is hosted on <a href="https://github.com/" title="GitHub">GitHub</a> at <a href="https://github.com/emanuelhuber/RGPR" title="RGPR on GitHub">https://github.com/emanuelhuber/RGPR</a>. 
+<acronym title="a R package for Ground Penetrating Radar data">RGPR</acronym> is a free and open-source <a href="https://cran.r-project.org/" title="R Cran">R</a> package to read, write, analyse and visualise <strong>ground-penetrating radar (GPR)</strong> data. 
+<acronym title="a R package for Ground Penetrating Radar data">RGPR</acronym> is hosted on <a href="https://github.com/" title="GitHub">GitHub</a> at <a href="https://github.com/emanuelhuber/RGPR" title="RGPR on GitHub">https://github.com/emanuelhuber/RGPR</a>. 
 </p>
 
 <p>This R package is still in development, and therefore some of the functions may change in a near future. </p>

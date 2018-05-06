@@ -25,6 +25,9 @@ date: 2018-02-12
 3. [GPR data migration](02_RGPR_tutorial_migration)
 4. [Some explanation on the class GPR](04_RGPR_tutorial_RGPR-object)
 
+## Coming soon
+
+We are developing a <a href="https://github.com/emanuelhuber/RGPR/tree/develop">new version of RGPR</a> that will handle three-dimensional GPR data as well as multi-dimensional transformations, see <a href="2018_huber-and-hans_RGPR-new-R-package_notes.pdf">our objectives</a>.
 
 <!--
 $$\forall x \in R$$

@@ -1,5 +1,8 @@
-# RGPR tutorial - `RGPR` class
-Emanuel Huber (emanuel.huber@alumni.ethz.ch)  
+---
+layout: page
+title: Adding coordinates to GPR data
+date: 2018-05-05
+---  
 
   
 

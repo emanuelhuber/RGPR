@@ -1,0 +1,165 @@
+---
+title: "RGPR tutorial - `RGPR` class"
+author: "Emanuel Huber (emanuel.huber@alumni.ethz.ch)"
+date: '`r format(Sys.Date(), "%d %B %Y")`'
+output:
+  html_document:
+    fig_caption: yes
+    includes:
+      in_header: header.html
+    keep_md: yes
+    number_sections: yes
+    self_contained: no
+    theme: default
+    toc: yes
+  pdf_document:
+    highlight: tango
+    number_sections: yes
+    toc: yes
+linkcolor: red
+urlcolor: blue
+---
+  
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages_tools/2014_04_25_frenke") 
+```
+
+***
+
+**Note**: 
+
+* This R-package is still in development, and therefore some of the functions may change in a near future. 
+* If you have any questions, comments or suggestions, feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
+
+
+Convert the first wave break time $t_{\mathrm{fb}}$ into time-zero $t_0$ 
+with `firstBreakToTime0()`. 
+
+Here we define $t_0 = t_{\mathrm{fb}} - a/c_0$, where $a$ is the distance
+between the transmitter and receiver and $c_0$ is the wave velocity in
+the media between the transmitter and receiver (in our case, air). 
+The value $a/c_0$ corresponds to the wave travel time from the transmitter 
+to the receiver.
+
+
+
+
+# Objectives of this tutorial
+* Learn what is an object of the class `RGPR`.
+
+
+
+# Preliminary
+
+* Install and load the `RGPR`-package
+    ```{r install_load, echo=TRUE, warning=FALSE, message=FALSE}
+    # install "devtools" if not already done
+    if(!require("devtools")) install.packages("devtools")
+    devtools::install_github("emanuelhuber/RGPR")
+    library(RGPR)       # load RGPR in the current R session
+    ```
+    
+* Set the working directory:
+    ```{r setwd, warning=FALSE, message=FALSE, eval=FALSE}
+    myDir <- "~/2014_04_25_frenke"  # adapt that to your directory structure
+    setwd(myDir)    # set the working directory
+    getwd()         # Return the current working directory (just to check)
+    ```
+    
+* Load the GPR data `frenkeLine00` that is included in the package `RGPR`:
+    ```{r, echo=TRUE, warning=FALSE, message=FALSE}
+    data("frenkeLine00")
+    # just because it is simplier to enter 'A' instead of 'frenkeLine00'
+    A <- frenkeLine00   
+    ```
+
+
+# An object of the class `RGPR`
+
+If you just enter the newly created object `A` in R (or enter `print(A)`), R will show you some information on the object A:
+```{r, echo=TRUE}
+A                 # let's have a look at the object A
+```
+
+`A` is an object of the class `GPR` with a complex structure that can be visualised with the `str()` function:
+```{r, echo=TRUE}
+str(A)            # let's have a look at the structure of A
+```
+
+
+The strings after the `@` are the names of the elements that form `A`. These elements are called `slots`. To get the `slots` names enter:
+```{r, echo=TRUE}
+slotNames(A)      # return the slot names
+```
+
+A `RGPR` object consist of:
+1. the GPR data (i.e. the measured amplitudes as a function of time for each GPR traces). The data are stored in the slot `data`.
+2. meta-data (e.g. position of the traces on the survey line, time of the trace recording, time/depth of each trace sample, time step, etc.)
+
+To access the content of a slot, enter `@` followed by the name of the slot. For example, the `slot` `vel` (the estimated radar wave velocity associated with `A`) is accessed by:
+```{r, echo=TRUE}
+A@vel              # the slot 'vel' (for velocity)
+```
+
+Normally you don't need to access the slots directly because the R-package `RGPR` provides enough functions to manipulate the `GPR` object (i.e. to extract the necessary information and to modify the object). For example, the estimated radar wave velocity can be obtained with the function `vel()`:
+```{r, echo=TRUE}
+vel(A)              # access the slot 'vel'
+```
+
+<!---
+`A` is an object of the class `GPR` with a complex structure:
+```{r, echo=TRUE}
+class(A)          # To which class belong A?
+```
+
+To see the structure of `A` enter
+```{r, results='hide'}
+str(A)            # let's have a look at the structure of A
+```
+
+The strings after the `@` are the names of the elements that form `A`. These elements are called `slots`. To get the `slots` names enter:
+```{r, results='hide'}
+slotNames(A)      # return the slot names
+```
+
+To access the content of a slot, enter `@` followed by the name of the slot. For example, the `slot` `vel` (the estimated radar wave velocity) is accessed by:
+```{r, echo=TRUE}
+A@vel              # the slot 'vel' (for velocity)
+```
+-->
+
+<!---
+What is the velocity unit? The slot `@depthunit` gives the vertical unit (z, time) and `@posunit` the horizontal unit (x-y):
+```{r, echo=TRUE}
+paste0(A@posunit,"/",A@depthunit)           # the slot 'vel' ('vel' for velocity)
+```
+-->
+
+<!---
+The GPR data are in the slot `@data`. If you enter `A@data` you will notice that `A@data` is a matrix whose columns correspond to the recorded traces and the lines to the time of record. It is not a good practice that the user change the slot contents itself, because some of the slots are related and should not be changed alone. The R-package `RGPR` provides enough function to manipulate the `GPR` object.
+-->
+
+Note that an object of the class `RGPR` (e.g. `A`) can be manipulated as a matrix:
+
+```{r, results='hold'}
+dim(A)            # dimension of the data: col x row
+nrow(A)
+ncol(A)
+Aexp <- exp(A)    # Take the exponential of the GPR data
+Asum <- A + Aexp  # Addition
+# etc.
+```
+
+Furthermore, it is possible to extract a portion of the GPR data without losing the meta-data contained in the object:
+```{r, results='hold'}
+# Extract a portion of A that only contains
+# the time samples 90 to 200 of the traces 5 to 10
+B <- A[90:200, 5:10]          
+```
+
+Note that `B` is also an object of the class `RGPR` consisting of `r ncol(B)` traces with each `r nrow(B)` time samples:
+```{r}
+B        
+```
+

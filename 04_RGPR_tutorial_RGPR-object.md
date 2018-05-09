@@ -5,7 +5,7 @@
 ---
 layout: page
 title: Class GPR
-date: 09 Mai 2018
+date: 2018-05-09
 ---  
 
 ***

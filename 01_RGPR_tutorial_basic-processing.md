@@ -1,7 +1,3 @@
-
-
-
-
 ---
 layout: page
 title: Basic GPR data processing

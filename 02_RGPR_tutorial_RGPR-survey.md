@@ -1,6 +1,3 @@
-
-
-
 ---
 layout: page
 title: Adding coordinates to GPR data

@@ -1,6 +1,3 @@
-
-
-
 ---
 layout: page
 title: GPR data migration

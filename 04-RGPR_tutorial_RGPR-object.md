@@ -1,6 +1,6 @@
 # RGPR tutorial - `RGPR` class
 Emanuel Huber (emanuel.huber@alumni.ethz.ch)  
-`r format(Sys.Date(), "%d %B %Y")`  
+
   
 
 

@@ -15,11 +15,11 @@ date: 2018-05-05
 * If you have any questions, comments or suggestions, feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
 
 
-Convert the first wave break time \(t_{\mathrm{fb}}\) into time-zero \(t_0\) 
+Convert the first wave break time $t_{\mathrm{fb}}$ into time-zero $t_0$ 
 with `firstBreakToTime0()`. 
 
-Here we define \(t_0 = t_{\mathrm{fb}} - a/c_0\), where \(a\) is the distance
-between the transmitter and receiver and \(c_0\) is the wave velocity in
+Here we define $t_0 = t_{\mathrm{fb}} - a/c_0$, where $a$ is the distance
+between the transmitter and receiver and $c_0$ is the wave velocity in
 the media between the transmitter and receiver (in our case, air). 
 The value \(a/c_0\) corresponds to the wave travel time from the transmitter 
 to the receiver.

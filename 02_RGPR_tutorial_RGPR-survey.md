@@ -394,7 +394,7 @@ mySurvey <- interpPos(mySurvey, FIDs)
 The function `interpPos()` prints for every GPR record the mean trace spacing
 as well as the trace spacing range. Normally, these values should be close
 to the operating settings. In this case, the trace spacing was set
-equal to \(0.25\,m\) on the field. The trace spacing values for `XLINE00`,
+equal to $0.25\,m$ on the field. The trace spacing values for `XLINE00`,
 `XLINE01` and `XLINE02` looks good. However, the trace spacing for `XLINE04`
 and more particularly for `XLINE03` could be critic (the smallest trace spacing
 values are very low). You should check and if necessary correct the topographic
@@ -407,7 +407,7 @@ coordinate data in geospatial data format, because it allows the coordinates
 to be correctly projected in other coordinate reference systems.
 The topographic data were measured within the new Swiss coordinate system 
 (datum: CH1903+, reference frame: LV95) that can be defined with the
-code EPSG \(2056\) that corresponds to the new Swiss coordinate system.
+code EPSG $2056$ that corresponds to the new Swiss coordinate system.
 
 
 ```r

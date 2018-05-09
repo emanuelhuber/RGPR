@@ -94,7 +94,7 @@ coord(A) <- TOPOList[[1]]
 ## DC shift removal
 Remove the DC-offset estimated on the first n samples usind the function 
 `dcshift()`. This function takes as argument the `GPR` object and the sample 
-index used to estimate the DC shift (in this case, the first \(110\) samples):
+index used to estimate the DC shift (in this case, the first $110$ samples):
 
 ```r
 A1 <- dcshift(A, 1:110)   # new object A1 
@@ -110,13 +110,13 @@ The first wave break time, t_{\mathrm{fb}}, is estimated for each traces
 tfb <- firstBreak(A1)   # take some time
 ```
 
-Convert the first wave break time \(t_{\mathrm{fb}}\) into time-zero \(t_0\) 
+Convert the first wave break time $t_{\mathrm{fb}}$ into time-zero $t_0$ 
 with `firstBreakToTime0()`. 
 
-Here we define \(t_0 = t_{\mathrm{fb}} - a/c_0\), where \(a\) is the distance
-between the transmitter and receiver and \(c_0\) is the wave velocity in
+Here we define $t_0 = t_{\mathrm{fb}} - a/c_0$, where $a$ is the distance
+between the transmitter and receiver and $c_0$ is the wave velocity in
 the media between the transmitter and receiver (in our case, air). 
-The value \(a/c_0\) corresponds to the wave travel time from the transmitter 
+The value $a/c_0$ corresponds to the wave travel time from the transmitter 
 to the receiver.
 
 
@@ -146,7 +146,7 @@ A3 <- dewow(A2, type = "MAD", w = 50)     # dewowing: take some time
 
 Eliminate the high-frequency (noise) component of 
 the GPR record with a bandpass filter. We define as corner frequencies 
-at \(150\,MHz\) and \(260\,MHz\), and set 
+at $150\,MHz$ and $260\,MHz$, and set 
 `plotSpec = TRUE` to plot the spectrum with the signal, the filtered signal and 
 the filter.
 

@@ -1,9 +1,11 @@
+
+
+
 ---
 layout: page
 title: Adding coordinates to GPR data
-date: 2018-05-05
+date: 2018-05-09
 ---  
-
 
 
 ***
@@ -145,7 +147,7 @@ mySurvey
 
 ```
 ## *** Class GPRsurvey ***
-## Unique directory: /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages_tools/2014_04_25_frenke/rawGPR 
+## Unique directory: /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR 
 ## - - - - - - - - - - - - - - -
 ##     name length units       date freq coord int   filename
 ## 1 LINE00  55.75     m 2014-04-25  100    NO  NO LINE00.DT1
@@ -180,7 +182,7 @@ A02
 ```
 ## *** Class GPR ***
 ##  name        = LINE02
-##  filepath    = /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages_tools/2014_04_25_frenke/rawGPR/LINE02.DT1
+##  filepath    = /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
 ##  description = 
 ##  survey date = 2014-04-25
 ##  Reflection, 100 MHz, Window length = 399.6 ns, dz = 0.4 ns
@@ -199,7 +201,7 @@ A02
 ```
 ## *** Class GPR ***
 ##  name        = LINE02
-##  filepath    = /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages_tools/2014_04_25_frenke/rawGPR/LINE02.DT1
+##  filepath    = /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
 ##  description = 
 ##  survey date = 2014-04-25
 ##  Reflection, 100 MHz, Window length = 399.6 ns, dz = 0.4 ns
@@ -214,7 +216,7 @@ You can also directly plot the GPR data with:
 plot(mySurvey[[2]]) 
 ```
 
-![](RGPR_tutorial_RGPR-survey_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
+![](02_RGPR_tutorial_RGPR-survey_files/figure-html/unnamed-chunk-13-1.png)<!-- -->
 
 # Add coordinates
 There are two options: (1) either you already have the coordinates of each 
@@ -444,7 +446,7 @@ Use the `plot()` function
 plot(mySurvey)
 ```
 
-![plot survey](RGPR_tutorial_RGPR-survey_files/figure-html/unnamed-chunk-24-1.png)
+![plot survey](02_RGPR_tutorial_RGPR-survey_files/figure-html/unnamed-chunk-24-1.png)
 The red arrows indicate the direction of the survey, the red dots the fiducial markers and the circles the GPR profile intersections.
 
 ## Plot the GPR data
@@ -459,7 +461,7 @@ plot(mySurvey[[1]], addTopo=TRUE)
 ## time to depth conversion with constant velocity (0.1 m/ns)
 ```
 
-![plot GPR data](RGPR_tutorial_RGPR-survey_files/figure-html/unnamed-chunk-25-1.png)
+![plot GPR data](02_RGPR_tutorial_RGPR-survey_files/figure-html/unnamed-chunk-25-1.png)
 
 ## Three-dimensional plot of the GPR data
 To plot all the GPR records with the topographic information in 3D, enter:

@@ -1,9 +1,11 @@
+
+
+
 ---
 layout: page
 title: GPR data migration
-date: 2018-05-05
+date: 2018-05-09
 --- 
-
 
 ***
 
@@ -94,7 +96,7 @@ coord(A) <- TOPOList[[1]]
 ## DC shift removal
 Remove the DC-offset estimated on the first n samples usind the function 
 `dcshift()`. This function takes as argument the `GPR` object and the sample 
-index used to estimate the DC shift (in this case, the first $110$ samples):
+index used to estimate the DC shift (in this case, the first \(110\) samples):
 
 ```r
 A1 <- dcshift(A, 1:110)   # new object A1 
@@ -110,13 +112,13 @@ The first wave break time, t_{\mathrm{fb}}, is estimated for each traces
 tfb <- firstBreak(A1)   # take some time
 ```
 
-Convert the first wave break time $t_{\mathrm{fb}}$ into time-zero $t_0$ 
+Convert the first wave break time \(t_{\mathrm{fb}}\) into time-zero \(t_0\) 
 with `firstBreakToTime0()`. 
 
-Here we define $t_0 = t_{\mathrm{fb}} - a/c_0$, where $a$ is the distance
-between the transmitter and receiver and $c_0$ is the wave velocity in
+Here we define \(t_0 = t_{\mathrm{fb}} - a/c_0\), where \(a\) is the distance
+between the transmitter and receiver and \(c_0\) is the wave velocity in
 the media between the transmitter and receiver (in our case, air). 
-The value $a/c_0$ corresponds to the wave travel time from the transmitter 
+The value \(a/c_0\) corresponds to the wave travel time from the transmitter 
 to the receiver.
 
 
@@ -146,7 +148,7 @@ A3 <- dewow(A2, type = "MAD", w = 50)     # dewowing: take some time
 
 Eliminate the high-frequency (noise) component of 
 the GPR record with a bandpass filter. We define as corner frequencies 
-at $150\,MHz$ and $260\,MHz$, and set 
+at \(150\,MHz\) and \(260\,MHz\), and set 
 `plotSpec = TRUE` to plot the spectrum with the signal, the filtered signal and 
 the filter.
 
@@ -155,7 +157,7 @@ the filter.
 A4 <- fFilter(A3, f = c(150, 260), type = "low", plotSpec = TRUE)
 ```
 
-![frequency filter](RGPR_tutorial_migration_files/figure-html/unnamed-chunk-10-1.png)
+![frequency filter](03_RGPR_tutorial_migration_files/figure-html/unnamed-chunk-10-1.png)
 
 
 
@@ -199,7 +201,7 @@ A7 <- timeCorOffset(A6)
 plot(A7)
 ```
 
-![plot data](RGPR_tutorial_migration_files/figure-html/unnamed-chunk-12-1.png)
+![plot data](03_RGPR_tutorial_migration_files/figure-html/unnamed-chunk-12-1.png)
 
 ### Time upsampling (sinc-interpolation) of the GPR data to reduce the aliasing risk.
 
@@ -247,7 +249,7 @@ A9 <- migration(A8, type="kirchhoff", max_depth = 10,
 plot(A9)
 ```
 
-![plot migrated data](RGPR_tutorial_migration_files/figure-html/unnamed-chunk-16-1.png)
+![plot migrated data](03_RGPR_tutorial_migration_files/figure-html/unnamed-chunk-16-1.png)
 
 You don't see so much: we need some post-processing!
 
@@ -280,7 +282,7 @@ Before migration
 plot(traceScaling(A8, type = "invNormal"))
 ```
 
-![before migration](RGPR_tutorial_migration_files/figure-html/unnamed-chunk-20-1.png)
+![before migration](03_RGPR_tutorial_migration_files/figure-html/unnamed-chunk-20-1.png)
 
 After migration
 
@@ -289,6 +291,6 @@ After migration
 plot(A12)
 ```
 
-![after migration](RGPR_tutorial_migration_files/figure-html/unnamed-chunk-21-1.png)
+![after migration](03_RGPR_tutorial_migration_files/figure-html/unnamed-chunk-21-1.png)
 
 

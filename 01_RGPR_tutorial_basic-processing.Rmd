@@ -1,7 +1,7 @@
 ---
-title: "RGPR tutorial - Basic GPR data processing"
-author: "Emanuel Huber (emanuel.huber@alumni.ethz.ch)"
-date: '`r format(Sys.Date(), "%d %B %Y")`'
+#title: "RGPR tutorial - Basic GPR data processing"
+#author: "Emanuel Huber (emanuel.huber@alumni.ethz.ch)"
+#date: '`r format(Sys.Date(), "%d %B %Y")`'
 output:
   html_document:
     fig_caption: yes
@@ -22,8 +22,15 @@ urlcolor: blue
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir = "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages_tools/2014_04_25_frenke") 
+knitr::opts_knit$set(root.dir = "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke") 
 ```
+
+
+---
+layout: page
+title: Basic GPR data processing
+date: `r format(Sys.Date(), "%Y-%m-%d")`
+---  
 
 ***
 
@@ -372,8 +379,8 @@ We will first apply a power gain and then an exponential gain.
 To visualise the amplitude of the GPR signal as a function of time, use the 
 function `plotAmpl()` as follows:
 
-```{r plotAmpl, echo=TRUE}
-plotAmpl(A4, col = "black", fig.cap = 'plot amplitude')          # plot amplitude as a function of time
+```{r plotAmpl, echo=TRUE, fig.cap = 'plot amplitude'}
+plotAmpl(A4, col = "black")          # plot amplitude as a function of time
 
 ```
 
@@ -532,8 +539,8 @@ procA <- readGPR(fPath = file.path(getwd(), "processing", paste0(name(A9), ".rds
 
 
 # Some final thoughts
-Warning: processing can 
-introduce artifacts in the data and lead to false interpreations.
+Warning: processing can introduce artifacts in the data and lead to 
+wrong interpretations.
 
 ***
 

@@ -1,7 +1,7 @@
 ---
-title: "RGPR tutorial - `RGPR` class"
-author: "Emanuel Huber (emanuel.huber@alumni.ethz.ch)"
-date: '`r format(Sys.Date(), "%d %B %Y")`'
+#title: "RGPR tutorial - `RGPR` class"
+#author: "Emanuel Huber (emanuel.huber@alumni.ethz.ch)"
+#date: '`r format(Sys.Date(), "%d %B %Y")`'
 output:
   html_document:
     fig_caption: yes
@@ -22,8 +22,15 @@ urlcolor: blue
   
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::opts_knit$set(root.dir = "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages_tools/2014_04_25_frenke") 
+knitr::opts_knit$set(root.dir = "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke") 
 ```
+
+
+---
+layout: page
+title: Class GPR
+date: `r format(Sys.Date(), "%Y-%m-%d")`
+---  
 
 ***
 

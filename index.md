@@ -13,7 +13,7 @@ date: 2018-02-12
 
 <p>This R package is still in development, and therefore some of the functions may change in a near future. </p>
 
-<p>To report bugs, contribute to the development of <acronym title="R-package for Ground Penetrating Radar data">RGPR</acronym>, see <a href="https://github.com/emanuelhuber/RGPR/blob/master/CONTRIBUTING.md" title="how to contribute">how to contribute</a></p>
+<p>To report bugs, contribute to the development of <acronym title="R-package for Ground Penetrating Radar data">RGPR</acronym>, see <a href="https://github.com/emanuelhuber/RGPR/blob/master/CONTRIBUTING.md" title="how to contribute">how to contribute</a>.</p>
 
 <p>If you have any questions, comments or suggestions, feel free to contact me (in english, french or german):<br/><a href="mailto:emanuel.huber@alumni.ethz.ch">emanuel.huber@alumni.ethz.ch</a></p>
 
@@ -21,9 +21,33 @@ date: 2018-02-12
 ## Tutorials
 
 1. [Basic GPR data processing](01_RGPR_tutorial_basic-processing)
-2. [Add coordinates to GPR data](03_RGPR_tutorial_RGPR-survey)
-3. [GPR data migration](02_RGPR_tutorial_migration)
+2. [Add coordinates to GPR data](02_RGPR_tutorial_RGPR-survey)
+3. [GPR data migration](03_RGPR_tutorial_migration)
 4. [Some explanations on the class GPR](04_RGPR_tutorial_RGPR-object)
+
+
+## How to install/load
+
+
+1. Download R from the [R Cran website](http://cran.r-project.org) and install it.
+2. Optionally install a R-editor:
+  * [Rstudio](https://www.rstudio.com/)
+  * [RKward](https://rkward.kde.org/)
+  * [Notepad++](https://notepad-plus-plus.org/) combined with [NppToR](https://sourceforge.net/projects/npptor/)
+3. Install `RGPR`
+
+    ```r
+    if(!require("devtools")) install.packages("devtools")
+    devtools::install_github("emanuelhuber/RGPR")
+    ```
+
+## Notes
+
+* supported binary formats: 
+    - [x] Sensors & Software file format (.DT1, .HD)
+    - [x] MALA file format (.rd3, .rad)
+    - [x] SEG-Y file format (.sgy) from RadSys Zond GPR device  
+* RGPR only support reflection data such as surface-based GPR data (no support for cross-borehole GPR data)
 
 ## Coming soon
 

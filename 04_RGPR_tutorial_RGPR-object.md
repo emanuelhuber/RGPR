@@ -1,7 +1,6 @@
 ---
 layout: page
-title: Basic GPR data processing
-date: 2018-05-25
+title: Class GPR date: 2018-05-25
 ---
 
 <!--

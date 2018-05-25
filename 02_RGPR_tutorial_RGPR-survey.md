@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Basic GPR data processing
+title: Adding coordinates to GPR data
 date: 2018-05-25
 ---
 

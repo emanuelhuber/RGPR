@@ -6,6 +6,7 @@ date: 2018-05-25
 
 <!--
 "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke")
+"G:/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
 -->
 
 ------------------------------------------------------------------------
@@ -147,7 +148,7 @@ mySurvey
 ```
 
     ## *** Class GPRsurvey ***
-    ## Unique directory: G:/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR 
+    ## Unique directory: /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR 
     ## - - - - - - - - - - - - - - -
     ##     name length units       date freq coord int   filename
     ## 1 LINE00  55.75     m 2014-04-25  100    NO  NO LINE00.DT1
@@ -174,7 +175,7 @@ A02
 
     ## *** Class GPR ***
     ##  name        = LINE02
-    ##  filepath    = G:/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
+    ##  filepath    = /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
     ##  description = 
     ##  survey date = 2014-04-25
     ##  Reflection, 100 MHz, Window length = 399.6 ns, dz = 0.4 ns
@@ -190,7 +191,7 @@ A02
 
     ## *** Class GPR ***
     ##  name        = LINE02
-    ##  filepath    = G:/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
+    ##  filepath    = /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
     ##  description = 
     ##  survey date = 2014-04-25
     ##  Reflection, 100 MHz, Window length = 399.6 ns, dz = 0.4 ns

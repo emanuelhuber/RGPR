@@ -1,10 +1,12 @@
 ---
 layout: page
-title: Class GPR date: 2018-05-25
+title: Class GPR
+date: 2018-05-25
 ---
 
 <!--
-"/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke")
+"/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
+"G:/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
 -->
 
 ------------------------------------------------------------------------

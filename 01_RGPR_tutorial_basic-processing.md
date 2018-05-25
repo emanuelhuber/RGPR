@@ -5,7 +5,8 @@ date: 2018-05-25
 ---
 
 <!--
-"/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke")
+"/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
+"G:/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
 -->
 
 ------------------------------------------------------------------------
@@ -599,11 +600,9 @@ writeGPR(A9, fPath = file.path(getwd(), "processing", paste0(name(A9), ".rds")),
          format = "rds", overwrite = TRUE)
 ```
 
-    ## File overwritten
-
     ## *** Class GPR ***
     ##  name        = LINE00
-    ##  filepath    = G:/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/processing/LINE00.dt1
+    ##  filepath    = /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/processing/LINE00.dt1
     ##  1 fiducial(s)
     ##  description = 
     ##  survey date = 2014-04-25

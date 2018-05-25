@@ -26,7 +26,10 @@
 
 \item{add}{logical. If \code{TRUE}, add to current plot}
 
-\item{relTime0}{logical. If \code{TRUE}, adjust vertical axis to time-zero.}
+\item{relTime0}{logical. If \code{TRUE}, adjust vertical axis to time-zero.
+If time-zero varies from trace to trace, the vertical axis
+is adjusted to the mean time-zero. Apply first the function
+\code{time0Cor()} to shift the traces to their time-zero.}
 
 \item{addFid}{logical. Add fiducial markes}
 
@@ -43,11 +46,12 @@ in time unit, the data are migrated with a static
 migration)}
 
 \item{clip}{numeric. If length-one numeric vector, clip the amplitudes 
-                    larger than \code{clip} and smaller than \code{-clip}.
-                    If length-two numeric vector, clip the amplitudes
-                    smaller than \code{clip[1]} and larger than 
-                    \code{clip[2]}.
-Add fiducial markes}
+larger than \code{clip} and smaller than \code{-clip}.
+If length-two numeric vector, clip the amplitudes
+smaller than \code{clip[1]} and larger than 
+\code{clip[2]}. Per default, values below the 
+0.01-quantile and above the 0.99-quantile are clipped.
+If \code{clip = FALSE} the data are not clipped.}
 
 \item{ratio}{logical. Add fiducial markes}
 
@@ -64,7 +68,7 @@ without extension}
 
 \item{...}{additional arguments passed to the plotting methods 
 \code{\link[graphics]{plot}} for 1D plot and 
-\code{\link[plot3D]{image2D}} for 2D plot. See also  \code{details}.}
+\code{\link[plot3D]{Image}} for 2D plot. See also  \code{details}.}
 }
 \description{
 \code{plot}: If the GPR object consists of a single trace, wiggle plot 

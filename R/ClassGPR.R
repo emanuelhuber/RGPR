@@ -2856,6 +2856,9 @@ points.GPR <- function(x, ...){
 #' @param x Object of class \code{GPR}
 #' @param add logical. If \code{TRUE}, add to current plot
 #' @param relTime0 logical. If \code{TRUE}, adjust vertical axis to time-zero.
+#'                 If time-zero varies from trace to trace, the vertical axis
+#'                 is adjusted to the mean time-zero. Apply first the function
+#'                 \code{time0Cor()} to shift the traces to their time-zero.
 #' @param addFid logical. Add fiducial markes
 #' @param addAnn logical. Add GPR annotations (line intersections)
 #' @param addTime0 logical. Add time-zero line
@@ -2868,8 +2871,9 @@ points.GPR <- function(x, ...){
 #'                      larger than \code{clip} and smaller than \code{-clip}.
 #'                      If length-two numeric vector, clip the amplitudes
 #'                      smaller than \code{clip[1]} and larger than 
-#'                      \code{clip[2]}.
-#'  Add fiducial markes
+#'                      \code{clip[2]}. Per default, values below the 
+#'                      0.01-quantile and above the 0.99-quantile are clipped.
+#'                      If \code{clip = FALSE} the data are not clipped.
 #' @param ratio logical. Add fiducial markes
 #' @param barscale logical. Add a colorbar scale
 #' @param wsize length-one numeric. Size of the wiggles (default = \code{1}).
@@ -2880,7 +2884,7 @@ points.GPR <- function(x, ...){
 #'                without extension
 #' @param ... additional arguments passed to the plotting methods 
 #'            \code{\link[graphics]{plot}} for 1D plot and 
-#'            \code{\link[plot3D]{image2D}} for 2D plot. See also  \code{details}.
+#'            \code{\link[plot3D]{Image}} for 2D plot. See also  \code{details}.
 #' @method plot GPR 
 #' @name plot
 #' @rdname plot
@@ -2985,11 +2989,11 @@ plot.GPR <- function(x,
       }else if(length(clip) == 1){
         x@data <- .clip(x@data, clip[1])
       }
-    }#else if(is.null(clip)){
+    }else if(is.null(clip)){
       # clip below the 0.01-quantile and above the 0.99-quantile
-      #x@data <- .clip(x@data, quantile(as.vector(x@data), 0.99, na.rm = TRUE),
-                      # quantile(as.vector(x@data), 0.01, na.rm = TRUE))
-    #}
+      x@data <- .clip(x@data, quantile(as.vector(x@data), 0.99, na.rm = TRUE),
+                       quantile(as.vector(x@data), 0.01, na.rm = TRUE))
+    }
     if(addFid == FALSE){
       x@fid <- character(length(x@fid))
     }

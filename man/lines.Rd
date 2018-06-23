@@ -7,7 +7,7 @@
 \alias{lines.GPRsurvey}
 \title{Add a GPR trace on a plot}
 \usage{
-\method{lines}{GPR}(x, ...)
+\method{lines}{GPR}(x, relTime0 = FALSE, ...)
 
 \method{lines}{GPRsurvey}(x, ...)
 }

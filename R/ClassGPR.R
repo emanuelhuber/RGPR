@@ -2801,15 +2801,21 @@ setMethod("show", "GPR", function(object){print.GPR(object)})
 #' @name lines
 #' @rdname lines
 #' @export
-lines.GPR <- function(x,...){
-  if(length(x@vel)>0){  
+lines.GPR <- function(x, relTime0 = FALSE, ...){
+  if(length(x@vel) > 0){  
     v <- x@vel[[1]]
   }else{
     v <- 0
   }
   if(any(dim(x) == 1)){
-#     z <- seq(-x@time0, by = x@dz, length.out = length(x@data))
-    z <- x@depth - x@time0
+    z <- x@depth
+    t0 <- x@time0
+    if(isTRUE(relTime0)){
+      z <- x@depth - x@time0
+      t0 <- 0
+    }
+    # z <- seq(-x@time0, by = x@dz, length.out = length(x@data))
+    #z <- x@depth - x@time0
     lines(z, x@data,...)
    }else{
     stop("x must a vector!")

@@ -2918,67 +2918,71 @@ plot.GPR <- function(x,
   }
   dots <- list(...)
   if(any(dim(x) == 1)){
-    par(mar = c(5, 4, 3, 2) + 0.1, oma = c(0, 0, 3, 0), mgp = c(2, 0.5, 0))
-    z <- x@depth
-    t0 <- x@time0
-    if(isTRUE(relTime0)){
-      z <- x@depth - x@time0
-      t0 <- 0
-    }
-    if(is.null(dots$xlab)){
-      if(grepl("[m]$", x@depthunit)){
-        dots$xlab <- paste0("depth (",x@depthunit,")")
-      }else if(grepl("[s]$", x@depthunit)){
-        dots$xlab <- paste0("two-way travel time (",x@depthunit,")")
-      }
-    }
-    if(is.null(dots$type)) dots$type <- "l"
-    if(is.null(dots$col)) dots$col <- "black"
-    if(is.null(dots$ylab)) dots$ylab <- "amplitude (mV)"
-    dotsxaxt <- dots$xaxt 
-    if(is.null(dots$xaxt)) dots$xaxt <- "n"
-    if(is.null(dots$main)){
-      myMain <- paste0(x@name, ": trace #", x@traces," @", round(x@pos,2), 
-                                            x@posunit)
+    if(isTRUE(add)){
+      lines(x, ...)
     }else{
-      myMain <- dots$main
-      dots$main <- NULL
-    } 
-      
-      
-    do.call(plot, c(list(x = z, y = x@data), dots))
-    
-    if(is.null(dots$ann) || dots$ann != FALSE){
-      if(is.null(dotsxaxt) || dotsxaxt != "n"){
-        x_axis <- pretty(z,10)
-        xat <- axis(side = 1,  tck = +0.02)
+      par(mar = c(5, 4, 3, 2) + 0.1, oma = c(0, 0, 3, 0), mgp = c(2, 0.5, 0))
+      z <- x@depth
+      t0 <- x@time0
+      if(isTRUE(relTime0)){
+        z <- x@depth - x@time0
+        t0 <- 0
+      }
+      if(is.null(dots$xlab)){
         if(grepl("[m]$", x@depthunit)){
-          # axis(side = 3, at = x_axis, labels = x_axis, tck = +0.02)
-          axis(side = 3, tck = +0.02)
-        #FIXME: use fx .depthAxis()
+          dots$xlab <- paste0("depth (",x@depthunit,")")
         }else if(grepl("[s]$", x@depthunit)){
-          depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
-          depth2  <- seq(0.1, by = 0.1, 0.9)
-          depthat0 <- depthToTime(0, 0, v, antsep = x@antsep)
-          if(max(z)*v/2 > 1.3){
-            # depth <- pretty(seq(1.1, by = 0.1, max(z)*v/2), 10)
-            depth <- pretty(xat * v / 2, 10)
-            depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
-            axis(side = 3, at = t0 + depthat, labels = depth, tck = +0.02)
-            #print(t0)
-          }
-          depthat2 <- depthToTime(depth2, 0, v, antsep = x@antsep)
-          axis(side =3, at = t0 + depthat2, labels = FALSE, tck =+0.01)
-          if(isTRUE(addDepth0)) abline(v = depth_0, col = "grey", lty = 3)
-          mtext(paste0("depth (m),   v=", v, "m/ns"), side = 3, line = 2)
+          dots$xlab <- paste0("two-way travel time (",x@depthunit,")")
         }
       }
+      if(is.null(dots$type)) dots$type <- "l"
+      if(is.null(dots$col)) dots$col <- "black"
+      if(is.null(dots$ylab)) dots$ylab <- "amplitude (mV)"
+      dotsxaxt <- dots$xaxt 
+      if(is.null(dots$xaxt)) dots$xaxt <- "n"
+      if(is.null(dots$main)){
+        myMain <- paste0(x@name, ": trace #", x@traces," @", round(x@pos,2), 
+                                              x@posunit)
+      }else{
+        myMain <- dots$main
+        dots$main <- NULL
+      } 
+        
+        
+      do.call(plot, c(list(x = z, y = x@data), dots))
+      
+      if(is.null(dots$ann) || dots$ann != FALSE){
+        if(is.null(dotsxaxt) || dotsxaxt != "n"){
+          x_axis <- pretty(z,10)
+          xat <- axis(side = 1,  tck = +0.02)
+          if(grepl("[m]$", x@depthunit)){
+            # axis(side = 3, at = x_axis, labels = x_axis, tck = +0.02)
+            axis(side = 3, tck = +0.02)
+          #FIXME: use fx .depthAxis()
+          }else if(grepl("[s]$", x@depthunit)){
+            depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
+            depth2  <- seq(0.1, by = 0.1, 0.9)
+            depthat0 <- depthToTime(0, 0, v, antsep = x@antsep)
+            if(max(z)*v/2 > 1.3){
+              # depth <- pretty(seq(1.1, by = 0.1, max(z)*v/2), 10)
+              depth <- pretty(xat * v / 2, 10)
+              depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
+              axis(side = 3, at = t0 + depthat, labels = depth, tck = +0.02)
+              #print(t0)
+            }
+            depthat2 <- depthToTime(depth2, 0, v, antsep = x@antsep)
+            axis(side =3, at = t0 + depthat2, labels = FALSE, tck =+0.01)
+            if(isTRUE(addDepth0)) abline(v = depth_0, col = "grey", lty = 3)
+            mtext(paste0("depth (m),   v=", v, "m/ns"), side = 3, line = 2)
+          }
+        }
+      }
+      
+      title(myMain, outer = TRUE)
+      
+      if(isTRUE(addAmpl0))  abline(h = 0, lty = 3, col = "grey")
+      if(isTRUE(addTime0))  abline(v = t0, col = "red")
     }
-    
-    title(myMain, outer = TRUE)
-    
-    if(isTRUE(addAmpl0))  abline(h = 0, lty = 3, col = "grey")
-    if(isTRUE(addTime0))  abline(v = t0, col = "red")
   }else{
     if(grepl("[s]$", x@depthunit) && addTopo){
       x <- migration(x)

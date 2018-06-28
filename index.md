@@ -4,10 +4,10 @@ title: Home
 date: 2018-02-12
 ---
 
-# RGPR - free and open-source software package to process and visualise <acronym title="Ground Penetrating Radar">GPR</acronym> data
+# RGPR: a free and open-source software package to process and visualise <acronym title="Ground Penetrating Radar">GPR</acronym> data
 
 <p class="message">
-<acronym title="a R package for Ground Penetrating Radar data">RGPR</acronym> is a free and open-source software package package to read, write, analyse and visualise <strong>ground-penetrating radar (GPR)</strong> data.
+<acronym title="a R package for Ground Penetrating Radar data">RGPR</acronym> is a free and open-source software package to read, export, analyse, process and visualise <strong>ground-penetrating radar (GPR)</strong> data.
   
 <acronym title="a R package for Ground Penetrating Radar data">RGPR</acronym> is written in <a href="https://cran.r-project.org/" title="R Cran">R</a>, a high-level  programming language for statistical computing and graphics that is freely available under the GNU General Public License and runs on Linux, Windows and MacOS. <a href="https://cran.r-project.org/" title="R Cran">R</a> is a highly versatile and extensible language to which   C,   C++  and   Fortran   code  can  be   linked  and  run. Furthermore,  the  R  developer  community  is  very  active  and more  than  10'000  packages  are  hosted  on  the  official  global package    repository    CRAN    (Comprehensive    R    Archive Network, <a href="https://cran.r-project.org/" title="R Cran">https://cran.r-project.org</a>). In 2017, <a href="https://cran.r-project.org/" title="R Cran">R</a>was   ranked  as   the   sixth   top programming   language   by   the   Institute   of   Electrical   and  Electronics Engineers.
 

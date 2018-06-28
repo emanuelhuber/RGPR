@@ -11,11 +11,11 @@ RGPR is a free and open-source software package to read, export, analyse, proces
     - [x] Sensors & Software file format (.DT1, .HD)
     - [x] MALA file format (.rd3, .rad)
     - [x] SEG-Y file format (.sgy) from RadSys Zond GPR device
-    - [ ] ...
-    - [ ] Do you miss your preferred file format? Send me the file format description with a test file and I will adapt the RGPR-package to support this file format. 
+    
+    Do you miss your preferred file format? Send me the file format description with a test file and I will adapt the RGPR-package to support this file format. 
     
 * RGPR only support reflection data such as surface-based GPR data (no support for cross-borehole GPR data)
-* the documentation is still incomplete (but check the tutorials)
+* the documentation is still incomplete (but check the tutorials, http://emanuelhuber.github.io/RGPR)
 
 This is an ongoing project.
 If you have any questions, don't hesitate to contact me:
@@ -27,7 +27,7 @@ Thank you!
 ## Online tutorials
 Check the companion website for more info, tutorials, etc.
 
-http://emanuelhuber.github.io/RGPR/
+http://emanuelhuber.github.io/RGPR
 
 ## How to install/load
 
@@ -132,17 +132,17 @@ plot(frenkeLine00)
 
 ### Setter/getter functions
 * `depthunit()` & `depthunit()<-`
-* `description()` & `description()<-`   
+* `description()` & `description()<-`
 * `ann()` & `ann()<-`
-* `coord()` & `coord()<-`          
-* ``crs()` & `crs()<-`
-* `fid()` & `fid()<-`           
+* `coord()` & `coord()<-`
+* `crs()` & `crs()<-`
+* `fid()` & `fid()<-`
 * `filepath()` & `filepath()<-`
-* `pos()` & `pos()<-`            
-* `posunit()` & `posunit()<-`      
-* `proc<-()` & `processing" 
+* `pos()` & `pos()<-`
+* `posunit()` & `posunit()<-`
+* `proc<-()` & `processing` 
 * `name()` & `name()<-`
-* `values()` & `values()<-`          
+* `values()` & `values()<-`
 * `vel()` & `vel()<-` 
 * `gethd()`
 * `svDate()` & `svDate()<-`

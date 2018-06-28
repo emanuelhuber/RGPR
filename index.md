@@ -8,10 +8,13 @@ date: 2018-02-12
 
 <p class="message">
 <acronym title="a R package for Ground Penetrating Radar data">RGPR</acronym> is a free and open-source software package to read, export, analyse, process and visualise <strong>ground-penetrating radar (GPR)</strong> data.
-  
-<acronym title="a R package for Ground Penetrating Radar data">RGPR</acronym> is written in <a href="https://cran.r-project.org/" title="R Cran">R</a>, a high-level  programming language for statistical computing and graphics that is freely available under the GNU General Public License and runs on Linux, Windows and MacOS. <a href="https://cran.r-project.org/" title="R Cran">R</a> is a highly versatile and extensible language to which   C,   C++  and   Fortran   code  can  be   linked  and  run. Furthermore,  the  R  developer  community  is  very  active  and more  than  10'000  packages  are  hosted  on  the  official  global package    repository    CRAN    (Comprehensive    R    Archive Network, <a href="https://cran.r-project.org/" title="R Cran">https://cran.r-project.org</a>). In 2017, <a href="https://cran.r-project.org/" title="R Cran">R</a>was   ranked  as   the   sixth   top programming   language   by   the   Institute   of   Electrical   and  Electronics Engineers.
+ </p>
+ 
+<p class="message"> 
+<acronym title="a R package for Ground Penetrating Radar data">RGPR</acronym> is written in <a href="https://cran.r-project.org/" title="R Cran">R</a>, a high-level  programming language for statistical computing and graphics that is freely available under the GNU General Public License and runs on Linux, Windows and MacOS. <a href="https://cran.r-project.org/" title="R Cran">R</a> is a highly versatile and extensible language to which   C,   C++  and   Fortran   code  can  be   linked  and  run. Furthermore,  the  R  developer  community  is  very  active  and more  than  10'000  packages  are  hosted  on  the  official  global package    repository    CRAN    (Comprehensive    R    Archive Network, <a href="https://cran.r-project.org/" title="R Cran">https://cran.r-project.org</a>). In 2017, <a href="https://cran.r-project.org/" title="R Cran">R</a> was   ranked  as   the   sixth   top programming   language   by   the   Institute   of   Electrical   and  Electronics Engineers.
+</p>
 
-    
+<p class="message">    
 <acronym title="a R package for Ground Penetrating Radar data">RGPR</acronym> is hosted on <a href="https://github.com/" title="GitHub">GitHub</a> at <a href="https://github.com/emanuelhuber/RGPR" title="RGPR on GitHub">https://github.com/emanuelhuber/RGPR</a>. 
 </p>
 
@@ -50,7 +53,9 @@ date: 2018-02-12
 * supported binary formats: 
     - [x] Sensors & Software file format (.DT1, .HD)
     - [x] MALA file format (.rd3, .rad)
-    - [x] SEG-Y file format (.sgy) from RadSys Zond GPR device  
+    - [x] SEG-Y file format (.sgy) from RadSys Zond GPR device
+    - [ ] ...
+    - [ ] Do you miss your preferred file format? Send me the file format description with a test file and I will adapt the RGPR-package to support this file format. 
 * RGPR only support reflection data such as surface-based GPR data (no support for cross-borehole GPR data)
 
 ## Coming soon

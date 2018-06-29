@@ -19,6 +19,7 @@ if(!grepl(".Rmd", filename)) {
 }
 
 tempfile <- sub('.Rmd', '_deleteme.Rmd', filename)
+mdtempfile <- sub('.Rmd', '_deleteme.md', filename)
 mdfile <- sub('.Rmd', '.md', filename)
 
 #knit(filename, mdfile)
@@ -51,16 +52,20 @@ writeLines(x4[[1]], tempfile)
 
 
 
-rmarkdown::render(tempfile, output_format = 'all', output_file = mdfile)
+rmarkdown::render(tempfile, output_format = 'all', output_file = mdtempfile)
 
 
 
-x0 <- readLines(mdfile)
+x0 <- readLines(mdtempfile)
 
 x <- paste(x0, collapse = "!@#:")
 
-x1 <- gsub("!@#:[[:space:]]*<pre>", " ", x)
-x2 <- gsub("</pre>!@#:", " ", x1)
+x1 <- gsub("<pre>\\${2}", "", x)
+x2 <- gsub("\\${2}</pre>", "!@#:", x1)
+
+
+x1 <- gsub("(!@#:[[:space:]]*)<pre>\\${1}", " ", x)
+x2 <- gsub("\\${1}</pre>(!@#:)", " ", x1)
 # remove space before punctuation!
 x3 <- gsub("\\s+([,;:)!\\.\\?])", "\\1", x2)
 #x3 <- gsub("\\s+([[:punct:]])", "\\1", x2)
@@ -70,6 +75,7 @@ x4 <- strsplit(x3, split="!@#:", fixed = TRUE)
 writeLines(x4[[1]], mdfile)
 
 
+unlink(mdtempfile)
 unlink(tempfile)
 
 

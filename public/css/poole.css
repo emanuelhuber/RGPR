@@ -178,6 +178,14 @@ pre code {
   color: inherit;
   background-color: transparent;
 }
+/* add Manu */
+pre {
+  display: inline;
+  font-size: 16px;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
 /*
 code,
 pre {

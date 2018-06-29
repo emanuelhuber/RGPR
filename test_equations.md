@@ -43,6 +43,10 @@ This is a test
 <pre>$A_g(t) = A(t)\cdot \exp(\alpha \cdot t)$</pre>
 with a nice equation.
 
+### protected with `<code>`
+
+This is a test <code>*A*<sub>*g*</sub>(*t*)=*A*(*t*)⋅exp(*α* ⋅ *t*)</code> with a nice equation.
+
 ### protected with `<span>` NOT WORKING!
 
 This is a test <span>*A*<sub>*g*</sub>(*t*)=*A*(*t*)⋅exp(*α* ⋅ *t*)</span> with a nice equation.

@@ -35,7 +35,7 @@ This is a test *A*<sub>*g*</sub>(*t*)=*A*(*t*)⋅exp(*α* ⋅ *t*) with a ni
 
 ### protected with `\`
 
-This is a test $A\_g(t) = A(t)(t)$ with a nice equation.
+This is a test $ A\_g(t) = A(t)(t)$ with a nice equation. With $ = 1$
 
 ### protected with `<pre>`
 

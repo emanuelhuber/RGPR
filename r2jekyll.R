@@ -27,10 +27,29 @@ rmarkdown::render(filename, output_format = 'all')
 
 
 
-all_data <- readLines(output)
+x0 <- readLines(output)
 
-all_data <-  gsub('<pre>', '', all_data)
-all_data <-  gsub('</pre>', '', all_data)
+x <- paste(x0, collapse = "!@#:")
+
+x1 <- gsub("!@#:[[:space:]]*<pre>", " ", x)
+x2 <- gsub("</pre>!@#:", " ", x1)
+# remove space before punctuation!
+x3 <- gsub("\\s+([,;:)!\\.\\?])", "\\1", x2)
+#x3 <- gsub("\\s+([[:punct:]])", "\\1", x2)
+x4 <- strsplit(x3, split="!@#:", fixed = TRUE)
 
 
-writeLines(all_data, output)
+writeLines(x4[[1]], "test.txt")
+
+
+
+writeLines(x4[[1]], output)
+
+
+
+x0 <- c("To extract the samples 100 to 300 of the 15",
+       "    <pre>$^{th}$</pre>",
+       ", to 150",
+	   "<pre>$^{th}$</pre>",
+		":")
+

@@ -121,7 +121,11 @@ plot(A, relTime0 = TRUE, ylim = c(0, 200), xlim = c(30, 50))
 
 Another way to plot only a part of the GPR data is to extract a part of the GPR data. The object `A` can be manipulated in the same way as a matrix without losing the meta-data (e.g., trace coordinates, antenna separation).
 
-To extract the samples 100 to 300 of the 15**<sup>*t**h*</sup> to 150**<sup>*t**h*</sup>:
+To extract the samples 100 to 300 of the 15
+<pre>$^{th}$</pre>
+to 150
+<pre>$^{th}$</pre>
+:
 
 ``` r
 # extract the 100 to 300 samples of the traces 15 to 150
@@ -171,7 +175,13 @@ plot(A[100:300, 15:150])
 1D plot: trace plot
 -------------------
 
-Plot a signal trace, notice that the signal is clipped to ±50 *m**V* (between 0 and 20 *n**s*):
+Plot a signal trace, notice that the signal is clipped to
+<pre>$\pm50\,mV$</pre>
+(between
+<pre>$0$</pre>
+and
+<pre>$20\,ns$</pre>
+):
 
 ``` r
 plot(A[, 15])      # plot the 15th trace of the GPR-line   
@@ -213,9 +223,19 @@ plot(A[, 15])  # plot the 15th trace of the GPR-line
 
 ![plot single trace](01_RGPR_tutorial_basic-processing_files/figure-markdown_github-tex_math_single_backslash/dcShift_plot1D_15-1.png)
 
-Notice how the trace samples before the first wave arrival (before *t* = 0 *n**s*) are slightly shifted below 0 *m**V*? This shift is called direct current offset (DC-offset) and you will remove it from the data. The direct current offset is estimated on trace samples before time-zero.
+Notice how the trace samples before the first wave arrival (before
+<pre>$t = 0\,ns$</pre>
+) are slightly shifted below
+<pre>$0\,mV$</pre>
+? This shift is called direct current offset (DC-offset) and you will remove it from the data. The direct current offset is estimated on trace samples before time-zero.
 
-1.  Determine which samples will be used to estimate the direct current offset (i.e., the samples before the first wave arrival). Identify the samples before *t* = 0 *n**s* by ploting the first n samples of the traces. For example, for *n* = 110:
+1.  Determine which samples will be used to estimate the direct current offset (i.e., the samples before the first wave arrival). Identify the samples before
+    <pre>$t = 0\,ns$</pre>
+    by ploting the first
+    <pre>$n$</pre>
+    samples of the traces. For example, for
+    <pre>$n = 110$</pre>
+    :
 
 ``` r
 # plot the first 110 samples of the 15th trace of the GPR profile
@@ -224,13 +244,17 @@ plot(A[1:110, 15])
 
 ![plot single trace, first 110 samples](01_RGPR_tutorial_basic-processing_files/figure-markdown_github-tex_math_single_backslash/dcShift_plot_first_samples-1.png)
 
-1.  Remove the DC-offset estimated on the first n samples usind the function `dcshift()`. This function takes as argument the `GPR` object and the sample index used to estimate the DC shift (in this case, the first 110 samples):
+1.  Remove the DC-offset estimated on the first n samples usind the function `dcshift()`. This function takes as argument the `GPR` object and the sample index used to estimate the DC shift (in this case, the first
+    <pre>$110$</pre>
+    samples):
 
 ``` r
 A1 <- dcshift(A, 1:110)   # new object A1 
 ```
 
-You can visualise the DC-offset on the trace plot by adding an horizontal lines (`abline(h=...)`) with the argument `h` equal the DC-offset, i.e., the mean of the first 110 samples (`mean(A[1:110,15]`):
+You can visualise the DC-offset on the trace plot by adding an horizontal lines (`abline(h=...)`) with the argument `h` equal the DC-offset, i.e., the mean of the first
+<pre>$110$</pre>
+samples (`mean(A[1:110,15]`):
 
 ``` r
 plot(A[, 15])  # plot the 15th trace of the GPR-line 
@@ -269,7 +293,9 @@ proc(A1)
 First wave break estimation and time-zero correction
 ----------------------------------------------------
 
-Here, we define time-zero, *t*<sub>0</sub> as the time at which the transmitter starts to emit the wave.
+Here, we define time-zero,
+<pre>$t_0$</pre>
+as the time at which the transmitter starts to emit the wave.
 
 Maybe is time-zero not correctly set. To get the time-zero for each traces of `A1` use the function `time0()`:
 
@@ -277,7 +303,9 @@ Maybe is time-zero not correctly set. To get the time-zero for each traces of `A
 time0(A1)
 ```
 
-The first wave break, *t*<sub>*f**b*</sub>, is estimated for each traces (it is the time of the first wave record)
+The first wave break,
+<pre>$t_{\mathrm{fb}}$</pre>
+, is estimated for each traces (it is the time of the first wave record)
 
 ``` r
 tfb <- firstBreak(A1)   # take some time
@@ -287,9 +315,26 @@ plot(pos(A1), tfb, pch = 20, ylab = "first wave break",
 
 ![plot first wave break time](01_RGPR_tutorial_basic-processing_files/figure-markdown_github-tex_math_single_backslash/first_wave_break-1.png)
 
-Convert the first wave break time *t*<sub>*f**b*</sub> into time-zero *t*<sub>0</sub> with `firstBreakToTime0()`.
+Convert the first wave break time
+<pre>$t_{\mathrm{fb}}$</pre>
+into time-zero
+<pre>$t_0$</pre>
+with `firstBreakToTime0()`.
 
-Here we define *t*<sub>0</sub> = *t*<sub>*f**b*</sub> − *a*/*c*<sub>0</sub>, where *a* is the distance between the transmitter and receiver and *c*<sub>0</sub> is the wave velocity in the media between the transmitter and receiver (in our case, air). The value *a*/*c*<sub>0</sub> corresponds to the wave travel time from the transmitter to the receiver.
+Here we define
+
+<pre>
+$$
+t_0 = t_{\mathrm{fb}} - a/c_0
+$$
+</pre>
+where
+<pre>$a$</pre>
+is the distance between the transmitter and receiver and
+<pre>$c_0$</pre>
+is the wave velocity in the media between the transmitter and receiver (in our case, air). The value
+<pre>$a/c_0$</pre>
+corresponds to the wave travel time from the transmitter to the receiver.
 
 ``` r
 t0 <- firstBreakToTime0(tfb, A1)
@@ -403,8 +448,11 @@ Apply a gain to compensate the signal attenuation. Three types of gain are avail
 
 -   power gain (`type = "power"`):
 
-    *A*<sub>*g*</sub>(*t*)=*A*(*t*)⋅*t*<sup>*α*</sup>
-
+    <pre>
+    $$
+    A_g(t) = A(t)\cdot t^\alpha 
+    $$ 
+    </pre>
     with
     <pre>$\alpha = 1$</pre>
     per default.

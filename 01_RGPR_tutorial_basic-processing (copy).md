@@ -122,9 +122,9 @@ plot(A, relTime0 = TRUE, ylim = c(0, 200), xlim = c(30, 50))
 Another way to plot only a part of the GPR data is to extract a part of the GPR data. The object `A` can be manipulated in the same way as a matrix without losing the meta-data (e.g., trace coordinates, antenna separation).
 
 To extract the samples 100 to 300 of the 15
-$^{th}$
+<pre>$^{th}$</pre>
 to 150
-$^{th}$
+<pre>$^{th}$</pre>
 :
 
 ``` r
@@ -176,11 +176,11 @@ plot(A[100:300, 15:150])
 -------------------
 
 Plot a signal trace, notice that the signal is clipped to
-$\pm50\,mV$
+<pre>$\pm50\,mV$</pre>
 (between
-$0$
+<pre>$0$</pre>
 and
-$20\,ns$
+<pre>$20\,ns$</pre>
 ):
 
 ``` r
@@ -224,17 +224,17 @@ plot(A[, 15])  # plot the 15th trace of the GPR-line
 ![plot single trace](01_RGPR_tutorial_basic-processing_files/figure-markdown_github-tex_math_single_backslash/dcShift_plot1D_15-1.png)
 
 Notice how the trace samples before the first wave arrival (before
-$t = 0\,ns$
+<pre>$t = 0\,ns$</pre>
 ) are slightly shifted below
-$0\,mV$
+<pre>$0\,mV$</pre>
 ? This shift is called direct current offset (DC-offset) and you will remove it from the data. The direct current offset is estimated on trace samples before time-zero.
 
 1.  Determine which samples will be used to estimate the direct current offset (i.e., the samples before the first wave arrival). Identify the samples before
-    $t = 0\,ns$
+    <pre>$t = 0\,ns$</pre>
     by ploting the first
-    $n$
+    <pre>$n$</pre>
     samples of the traces. For example, for
-    $n = 110$
+    <pre>$n = 110$</pre>
     :
 
 ``` r
@@ -245,7 +245,7 @@ plot(A[1:110, 15])
 ![plot single trace, first 110 samples](01_RGPR_tutorial_basic-processing_files/figure-markdown_github-tex_math_single_backslash/dcShift_plot_first_samples-1.png)
 
 1.  Remove the DC-offset estimated on the first n samples usind the function `dcshift()`. This function takes as argument the `GPR` object and the sample index used to estimate the DC shift (in this case, the first
-    $110$
+    <pre>$110$</pre>
     samples):
 
 ``` r
@@ -253,7 +253,7 @@ A1 <- dcshift(A, 1:110)   # new object A1
 ```
 
 You can visualise the DC-offset on the trace plot by adding an horizontal lines (`abline(h=...)`) with the argument `h` equal the DC-offset, i.e., the mean of the first
-$110$
+<pre>$110$</pre>
 samples (`mean(A[1:110,15]`):
 
 ``` r
@@ -294,7 +294,7 @@ First wave break estimation and time-zero correction
 ----------------------------------------------------
 
 Here, we define time-zero,
-$t_0$
+<pre>$t_0$</pre>
 as the time at which the transmitter starts to emit the wave.
 
 Maybe is time-zero not correctly set. To get the time-zero for each traces of `A1` use the function `time0()`:
@@ -304,7 +304,7 @@ time0(A1)
 ```
 
 The first wave break,
-$t_{\mathrm{fb}}$
+<pre>$t_{\mathrm{fb}}$</pre>
 , is estimated for each traces (it is the time of the first wave record)
 
 ``` r
@@ -316,24 +316,24 @@ plot(pos(A1), tfb, pch = 20, ylab = "first wave break",
 ![plot first wave break time](01_RGPR_tutorial_basic-processing_files/figure-markdown_github-tex_math_single_backslash/first_wave_break-1.png)
 
 Convert the first wave break time
-$t_{\mathrm{fb}}$
+<pre>$t_{\mathrm{fb}}$</pre>
 into time-zero
-$t_0$
+<pre>$t_0$</pre>
 with `firstBreakToTime0()`.
 
 Here we define
 
-
+<pre>
 $$
 t_0 = t_{\mathrm{fb}} - a/c_0
 $$
-
+</pre>
 where
-$a$
+<pre>$a$</pre>
 is the distance between the transmitter and receiver and
-$c_0$
+<pre>$c_0$</pre>
 is the wave velocity in the media between the transmitter and receiver (in our case, air). The value
-$a/c_0$
+<pre>$a/c_0$</pre>
 corresponds to the wave travel time from the transmitter to the receiver.
 
 ``` r
@@ -448,21 +448,21 @@ Apply a gain to compensate the signal attenuation. Three types of gain are avail
 
 -   power gain (`type = "power"`):
 
-    
+    <pre>
     $$
     A_g(t) = A(t)\cdot t^\alpha 
     $$ 
-    
+    </pre>
     with
-    $\alpha = 1$
+    <pre>$\alpha = 1$</pre>
     per default.
 
 -   exponential gain (`type = "exp"`):
-    
+    <pre>
     $$
     A_g(t) = A(t)\cdot \exp(\alpha \cdot t)
     $$
-    
+    </pre>
 -   Automatic gain control (`type = "agc"`): make gain equal to the local root mean squared signal.
 
 We will first apply a power gain and then an exponential gain. To visualise the amplitude of the GPR signal as a function of time, use the function `plotAmpl()` as follows:

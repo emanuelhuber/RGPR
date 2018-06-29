@@ -6,7 +6,8 @@
 
 
 
-library(knitr)
+#library(knitr)
+library(rmarkdown)
 
 # Get the filename given as an argument in the shell.
 args <- commandArgs(TRUE)
@@ -19,7 +20,11 @@ if(!grepl(".Rmd", filename)) {
 
 output <- sub('.Rmd', '.md', filename)
 
-knit(filename, output)
+#knit(filename, output)
+
+
+rmarkdown::render(filename, output_format = 'all')
+
 
 
 all_data <- readLines(output)

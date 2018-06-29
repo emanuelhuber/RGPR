@@ -27,17 +27,9 @@ mdfile <- sub('.Rmd', '.md', filename)
 
 x0 <- readLines(filename)
 
-#x0 <- x0[258:265]
-#x0 <- x0[371:378]
-#x0 <- x0[490:500]
-#x2 <- paste(a, collapse = "!@#:")
-#x3 <- gsub("(\\$\\$.*\\$\\$)", "<pre>\\1<\\/pre>", x2)
-#gsub("(\\$.*?\\$)", "<pre>\\1<\\/pre>", a)
-
 
 sel <- grepl("([[:blank:]]|[[:punct:]]){1}\\${1}(.+?)\\$", x0)
 
-#x1 <- gsub("([\\s[[:punct:]]+)(\\${1}(.+?)\\$)", "\\1<pre>\\2<\\/pre>", x0)
 x1 <- x0
 x1[sel] <- gsub("(\\${1}(.+?)\\$)", "<pre>\\1<\\/pre>", x0[sel])
 
@@ -60,19 +52,19 @@ x0 <- readLines(mdtempfile)
 
 x <- paste(x0, collapse = "!@#:")
 
-x1 <- gsub("<pre>\\${2}", "", x)
-x2 <- gsub("\\${2}</pre>", "!@#:", x1)
+x1 <- gsub("<pre>\\${2}", "$$", x)
+x2 <- gsub("\\${2}</pre>", "$$!@#:", x1)
 
-
-x1 <- gsub("(!@#:[[:space:]]*)<pre>\\${1}", " ", x)
-x2 <- gsub("\\${1}</pre>(!@#:)", " ", x1)
+x3 <- gsub("(!@#:[[:space:]]*)<pre>\\${1}", " $", x2)
+x4 <- gsub("\\${1}</pre>(!@#:)", "$ ", x3)
 # remove space before punctuation!
-x3 <- gsub("\\s+([,;:)!\\.\\?])", "\\1", x2)
+x5 <- gsub("\\s+([,;:)!\\.\\?])", "\\1", x4)
 #x3 <- gsub("\\s+([[:punct:]])", "\\1", x2)
-x4 <- strsplit(x3, split="!@#:", fixed = TRUE)
+x6 <- strsplit(x5, split="!@#:", fixed = TRUE)
 
 
-writeLines(x4[[1]], mdfile)
+writeLines(x6[[1]], mdfile)
+
 
 
 unlink(mdtempfile)

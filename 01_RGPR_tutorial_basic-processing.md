@@ -121,7 +121,7 @@ plot(A, relTime0 = TRUE, ylim = c(0, 200), xlim = c(30, 50))
 
 Another way to plot only a part of the GPR data is to extract a part of the GPR data. The object `A` can be manipulated in the same way as a matrix without losing the meta-data (e.g., trace coordinates, antenna separation).
 
-To extract the samples 100 to 300 of the 15^{th} to 150^{th}:
+To extract the samples 100 to 300 of the $15^{th}$ to $150^{th}$:
 
 ``` r
 # extract the 100 to 300 samples of the traces 15 to 150
@@ -171,7 +171,7 @@ plot(A[100:300, 15:150])
 1D plot: trace plot
 -------------------
 
-Plot a signal trace, notice that the signal is clipped to\pm50\,mV (between 0 and 20\,ns):
+Plot a signal trace, notice that the signal is clipped to $\pm50\,mV$ (between $0$ and $20\,ns$):
 
 ``` r
 plot(A[, 15])      # plot the 15th trace of the GPR-line
@@ -213,9 +213,9 @@ plot(A[, 15])  # plot the 15th trace of the GPR-line
 
 ![plot single trace](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/dcShift_plot1D_15-1.png)
 
-Notice how the trace samples before the first wave arrival (before t = 0\,ns) are slightly shifted below 0\,mV? This shift is called direct current offset (DC-offset) and you will remove it from the data. The direct current offset is estimated on trace samples before time-zero.
+Notice how the trace samples before the first wave arrival (before $t = 0\,ns$) are slightly shifted below $0\,mV$? This shift is called direct current offset (DC-offset) and you will remove it from the data. The direct current offset is estimated on trace samples before time-zero.
 
-1.  Determine which samples will be used to estimate the direct current offset (i.e., the samples before the first wave arrival). Identify the samples before t = 0\,ns     by ploting the first n     samples of the traces. For example, for n = 110:
+1.  Determine which samples will be used to estimate the direct current offset (i.e., the samples before the first wave arrival). Identify the samples before $t = 0\,ns$     by ploting the first $n$     samples of the traces. For example, for $n = 110$:
 
 ``` r
 # plot the first 110 samples of the 15th trace of the GPR profile
@@ -224,13 +224,13 @@ plot(A[1:110, 15])
 
 ![plot single trace, first 110 samples](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/dcShift_plot_first_samples-1.png)
 
-1.  Remove the DC-offset estimated on the first n samples usind the function `dcshift()`. This function takes as argument the `GPR` object and the sample index used to estimate the DC shift (in this case, the first 110     samples):
+1.  Remove the DC-offset estimated on the first n samples usind the function `dcshift()`. This function takes as argument the `GPR` object and the sample index used to estimate the DC shift (in this case, the first $110$     samples):
 
 ``` r
 A1 <- dcshift(A, 1:110)   # new object A1
 ```
 
-You can visualise the DC-offset on the trace plot by adding an horizontal lines (`abline(h=...)`) with the argument `h` equal the DC-offset, i.e., the mean of the first 110 samples (`mean(A[1:110,15]`):
+You can visualise the DC-offset on the trace plot by adding an horizontal lines (`abline(h=...)`) with the argument `h` equal the DC-offset, i.e., the mean of the first $110$ samples (`mean(A[1:110,15]`):
 
 ``` r
 plot(A[, 15])  # plot the 15th trace of the GPR-line
@@ -269,7 +269,7 @@ proc(A1)
 First wave break estimation and time-zero correction
 ----------------------------------------------------
 
-Here, we define time-zero, t_0 as the time at which the transmitter starts to emit the wave.
+Here, we define time-zero, $t_0$ as the time at which the transmitter starts to emit the wave.
 
 Maybe is time-zero not correctly set. To get the time-zero for each traces of `A1` use the function `time0()`:
 
@@ -277,7 +277,7 @@ Maybe is time-zero not correctly set. To get the time-zero for each traces of `A
 time0(A1)
 ```
 
-The first wave break, t_{\mathrm{fb}}, is estimated for each traces (it is the time of the first wave record)
+The first wave break, $t_{\mathrm{fb}}$, is estimated for each traces (it is the time of the first wave record)
 
 ``` r
 tfb <- firstBreak(A1)   # take some time
@@ -287,12 +287,15 @@ plot(pos(A1), tfb, pch = 20, ylab = "first wave break",
 
 ![plot first wave break time](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/first_wave_break-1.png)
 
-Convert the first wave break time t_{\mathrm{fb}} into time-zero t_0 with `firstBreakToTime0()`.
+Convert the first wave break time $t_{\mathrm{fb}}$ into time-zero $t_0$ with `firstBreakToTime0()`.
 
 Here we define
- $
+
+$$
 t_0 = t_{\mathrm{fb}} - a/c_0
-$ where a is the distance between the transmitter and receiver and c_0 is the wave velocity in the media between the transmitter and receiver (in our case, air). The value a/c_0 corresponds to the wave travel time from the transmitter to the receiver.
+$$
+
+where $a$ is the distance between the transmitter and receiver and $c_0$ is the wave velocity in the media between the transmitter and receiver (in our case, air). The value $a/c_0$ corresponds to the wave travel time from the transmitter to the receiver.
 
 ``` r
 t0 <- firstBreakToTime0(tfb, A1)
@@ -371,11 +374,11 @@ The curve in red is the averaged amplitude/phase over all the trace amplitudes/p
 
 On the first plot, notice
 
--   a sharp increase of the amplitude between 0\,\mathit{MHz}     and 10\,\mathit{MHz}: these frequency correspond to the slowing-varying part of the signal. In this particular case, filtering out this part of the signal results in strong signal distorsion.
--   after a peak at 80\,\mathit{MHz}     (the returned signal frequency that is lower than the antenna frequency because of frequency-dependent attenuation in the ground), the amplitude decreases.
--   at about 200\,\mathit{MHz}     the amplitude stays constant (plateau): noise frequency.
+-   a sharp increase of the amplitude between $0\,\mathit{MHz}$     and $10\,\mathit{MHz}$: these frequency correspond to the slowing-varying part of the signal. In this particular case, filtering out this part of the signal results in strong signal distorsion.
+-   after a peak at $80\,\mathit{MHz}$     (the returned signal frequency that is lower than the antenna frequency because of frequency-dependent attenuation in the ground), the amplitude decreases.
+-   at about $200\,\mathit{MHz}$     the amplitude stays constant (plateau): noise frequency.
 
-Eliminate the high-frequency (noise) component of the GPR record with a bandpass filter. We define as corner frequencies at 150\,\mathit{MHz} and 260\,\mathit{MHz}, and set `plotSpec = TRUE` to plot the spectrum with the signal, the filtered signal and the filter.
+Eliminate the high-frequency (noise) component of the GPR record with a bandpass filter. We define as corner frequencies at $150\,\mathit{MHz}$ and $260\,\mathit{MHz}$, and set `plotSpec = TRUE` to plot the spectrum with the signal, the filtered signal and the filter.
 
 ``` r
 A4 <- fFilter(A3, f = c(150, 260), type = "low", plotSpec = TRUE)
@@ -405,14 +408,20 @@ Amplitude gain
 Apply a gain to compensate the signal attenuation. Three types of gain are available:
 
 -   power gain (`type = "power"`):
- $
+
+    $$
     A_g(t) = A(t)\cdot t^\alpha
-    $     with\alpha = 1     per default.
+    $$
+
+    with $\alpha = 1$     per default.
 
 -   exponential gain (`type = "exp"`):
- $
+
+    $$
     A_g(t) = A(t)\cdot\exp(\alpha\cdot t)
-    $ -   Automatic gain control (`type = "agc"`): make gain equal to the local root mean squared signal.
+    $$
+
+-   Automatic gain control (`type = "agc"`): make gain equal to the local root mean squared signal.
 
 We will first apply a power gain and then an exponential gain. To visualise the amplitude of the GPR signal as a function of time, use the function `plotAmpl()` as follows:
 
@@ -422,11 +431,11 @@ plotAmpl(A4, col = "black")          # plot amplitude as a function of time
 
 ![plot amplitude](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/plotAmpl-1.png)
 
-On the previous plot, there is a sharp amplitude increase at about 20\,ns corresponding to the first wave arrival. Then the amplitude decreases until a plateau at about 200\,\mathit{ns}. This plateau corresponds to the signal noise. There is little hope to extract some useful information above 150 ns because above 150\,ns the signal/noise ratio is much smaller than 1 (i.e., more noise than signal).
+On the previous plot, there is a sharp amplitude increase at about $20\,ns$ corresponding to the first wave arrival. Then the amplitude decreases until a plateau at about $200\,\mathit{ns}$. This plateau corresponds to the signal noise. There is little hope to extract some useful information above 150 ns because above $150\,ns$ the signal/noise ratio is much smaller than $1$ (i.e., more noise than signal).
 
 ### Power gain
 
-The power gain is set constant until `tcst = 100` ns and applied from 100\,ns to `te = 200` ns, with\alpha = 1.
+The power gain is set constant until `tcst = 100` ns and applied from $100\,ns$ to `te = 200` ns, with $\alpha = 1$.
 
 ``` r
 A5 <- gain(A4, type = "power", alpha = 1, te = 150, tcst = 20)
@@ -450,7 +459,7 @@ plot(A5)      # how does it look after the gain?
 
 ### Exponential gain
 
-Ideally, the parameter\alpha in the exponential gain should be close to the slope of the amplitude decrease. This slope could be estimated by fitting a straight line to the amplitude decrease. We only want to apply the filter between 0\,\mathit{ns} (`t0`) and 125\,\mathit{ns} (`te` for t_\mathit{end}):
+Ideally, the parameter $\alpha$ in the exponential gain should be close to the slope of the amplitude decrease. This slope could be estimated by fitting a straight line to the amplitude decrease. We only want to apply the filter between $0\,\mathit{ns}$ (`t0`) and $125\,\mathit{ns}$ (`te` for $t_\mathit{end}$):
 
 ``` r
 A6 <- gain(A5, type ="exp",  alpha = 0.2, t0 = 0, te = 125)
@@ -476,7 +485,7 @@ plot(A6)    # how does it look after the gain?
 
 ![plot amplitude after exponential gain](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/gain_check2-2.png)
 
-Plot the gained GPR record and clip the amplitude values to 50\,\mathit{mV} using the argument `clip`:
+Plot the gained GPR record and clip the amplitude values to $50\,\mathit{mV}$ using the argument `clip`:
 
 ``` r
 plot(A6, clip = 50)    # how does it look after the gain?

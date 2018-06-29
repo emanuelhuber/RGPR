@@ -18,16 +18,44 @@ if(!grepl(".Rmd", filename)) {
   stop("You must specify a .Rmd file.")
 }
 
-output <- sub('.Rmd', '.md', filename)
+tempfile <- sub('.Rmd', '_deleteme.Rmd', filename)
+mdfile <- sub('.Rmd', '.md', filename)
 
-#knit(filename, output)
-
-
-rmarkdown::render(filename, output_format = 'all')
+#knit(filename, mdfile)
 
 
+x0 <- readLines(filename)
 
-x0 <- readLines(output)
+#x0 <- x0[258:265]
+#x0 <- x0[371:378]
+#x0 <- x0[490:500]
+#x2 <- paste(a, collapse = "!@#:")
+#x3 <- gsub("(\\$\\$.*\\$\\$)", "<pre>\\1<\\/pre>", x2)
+#gsub("(\\$.*?\\$)", "<pre>\\1<\\/pre>", a)
+
+
+sel <- grepl("([[:blank:]]|[[:punct:]]){1}\\${1}(.+?)\\$", x0)
+
+#x1 <- gsub("([\\s[[:punct:]]+)(\\${1}(.+?)\\$)", "\\1<pre>\\2<\\/pre>", x0)
+x1 <- x0
+x1[sel] <- gsub("(\\${1}(.+?)\\$)", "<pre>\\1<\\/pre>", x0[sel])
+
+x2 <- paste(x1, collapse = "!@#:")
+
+x3 <- gsub("(\\${2}(.+?)\\${2})", "<pre>\\1<\\/pre>", x2)
+
+x4 <- strsplit(x3, split="!@#:", fixed = TRUE)
+
+writeLines(x4[[1]], tempfile)
+
+
+
+
+rmarkdown::render(tempfile, output_format = 'all', output_file = mdfile)
+
+
+
+x0 <- readLines(mdfile)
 
 x <- paste(x0, collapse = "!@#:")
 
@@ -39,12 +67,10 @@ x3 <- gsub("\\s+([,;:)!\\.\\?])", "\\1", x2)
 x4 <- strsplit(x3, split="!@#:", fixed = TRUE)
 
 
-writeLines(x4[[1]], "test.txt")
+writeLines(x4[[1]], mdfile)
 
 
-
-writeLines(x4[[1]], output)
-
+unlink(tempfile)
 
 
 x0 <- c("To extract the samples 100 to 300 of the 15",

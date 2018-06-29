@@ -405,16 +405,9 @@ Apply a gain to compensate the signal attenuation. Three types of gain are avail
 
     *A*<sub>*g*</sub>(*t*)=*A*(*t*)⋅*t*<sup>*α*</sup>
 
-    with
-    <pre>$\alpha = 1 $</pre>
-    per default.
+    with $= 1 $ per default.
 
--   exponential gain (`type = "exp"`):
-    <pre>
-    $$
-    A_g(t) = A(t)\cdot \exp(\alpha \cdot t)
-    $$
-    </pre>
+-   exponential gain (`type = "exp"`): $$ A\_g(t) = A(t)(t) $$
 -   Automatic gain control (`type = "agc"`): make gain equal to the local root mean squared signal.
 
 We will first apply a power gain and then an exponential gain. To visualise the amplitude of the GPR signal as a function of time, use the function `plotAmpl()` as follows:

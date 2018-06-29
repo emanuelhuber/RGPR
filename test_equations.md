@@ -11,6 +11,10 @@ Block equation
 
 *A*<sub>*g*</sub>(*t*)=*A*(*t*)⋅exp(*α* ⋅ *t*)
 
+### protected with `\`
+
+$$ A\_g(t) = A(t)(t) $$
+
 ### protected with `<pre>`
 
 <pre>
@@ -28,6 +32,10 @@ Inline equation
 ### As it is
 
 This is a test *A*<sub>*g*</sub>(*t*)=*A*(*t*)⋅exp(*α* ⋅ *t*) with a nice equation.
+
+### protected with `\`
+
+This is a test $A\_g(t) = A(t)(t)$ with a nice equation.
 
 ### protected with `<pre>`
 

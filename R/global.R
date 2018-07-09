@@ -2819,6 +2819,7 @@ byte2volt <- function ( V=c(-50,50), nBytes = 16) {
 #      | a2  c2 |
 #  B = |        |
 #      | c2  b2 |
+#' @export
 invAxB <- function(a1,b1,c1,a2,b2,c2){
   D <- a1*b1 - c1*c1
   return(list( a11 = (a2*b1 - c1*c2)/D,
@@ -2832,6 +2833,7 @@ invAxB <- function(a1,b1,c1,a2,b2,c2){
 #      | a   d |
 #  J = |       |
 #      | d   b |
+#' @export
 eigenDecomp2x2SymMatrix <- function(a,b,d){
   D <- sqrt((a-b)^2 + 4*d^2)
 #   l1 <- 0.5*(a+b + D)
@@ -2853,6 +2855,7 @@ eigenDecomp2x2SymMatrix <- function(a,b,d){
 #      | a11  a12 |
 #  A = |          |
 #      | a21  a22 |
+#' @export
 eigenValue2x2Mat <- function(a11,a12,a21,a22){
   D <- a11*a22 - a21*a12
   tr <- a11 + a22
@@ -2868,6 +2871,7 @@ eigenValue2x2Mat <- function(a11,a12,a21,a22){
 #      | a   d |
 #  A = |       |
 #      | d   b |
+#' @export
 matPow <- function(a, b, d, n){
   eg <- eigenDecomp2x2SymMatrix(a, b, d)
   l1 <- eg$l1^n
@@ -2878,6 +2882,7 @@ matPow <- function(a, b, d, n){
               a21 = eg$u1y*eg$u1x * l1 + eg$u2y*eg$u2x * l2))
 }
 
+#' @export
 matProd2x2 <- function(a11, a12, a21, a22, b11, b12, b21, b22){
   return(list(a11 = a11*b11 + a12*b21,
               a12 = a11*b12 + a12*b22,
@@ -2918,6 +2923,7 @@ distTensors <- function(J1, J2, method=c("geodesic", "log-Euclidean",
   }
 }
 #
+#' @export
 normTensor <- function(a1,b1,c1){
   val_1 <- eigenValue2x2Mat(a1, c1, c1, b1)
 #   l1 <- (val_1$l1 + val_1$l2)
@@ -2936,6 +2942,7 @@ normTensor <- function(a1,b1,c1){
 #       | a2   c2 |
 #  J2 = |         |
 #       | c2   b2 |
+#' @export
 distTensorGeod <- function(a1,b1,c1,a2,b2,c2){
   ABA <- invAxB(a1,b1,c1,a2,b2,c2)
 #   A <- matPow(a1, b1, c1, -0.5)
@@ -2965,6 +2972,7 @@ distTensorGeod <- function(a1,b1,c1,a2,b2,c2){
 #       | a2   c2 |
 #  J2 = |         |
 #       | c2   b2 |
+#' @export
 distTensorLogE <- function(a1,b1,c1,a2,b2,c2){
   a1[a1 < 10^-100] <- 10^-100
   a2[a2 < 10^-100] <- 10^-100

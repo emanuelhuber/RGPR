@@ -2987,7 +2987,7 @@ distTensorLogE <- function(a1,b1,c1,a2,b2,c2){
 # 
 # name strucTensor
 # rdname strucTensor
-# export
+#' @export
 .strucTensor <- function(P, dxy = c(1, 1), mask = c(2, 2),
                         kBlur   = list(n = 3, m =  3, sd = 1), 
                         kEdge   = list(n = 7, m =  7, sd = 1), 

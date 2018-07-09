@@ -3150,7 +3150,7 @@ plotTensor <- function(x, O, type=c("vectors", "ellipses"), normalise=FALSE,
     xvalues <- x@pos
   }
   X = matrix(xvalues[v_y],nrow=length(v_x),ncol=length(v_y),byrow=TRUE)
-  Y = matrix(-x@depth[v_x],nrow=length(v_x),ncol=length(v_y),byrow=FALSE)
+  Y = matrix(x@depth[v_x],nrow=length(v_x),ncol=length(v_y),byrow=FALSE)
   
   angle = O$polar$orientation[v_x, v_y];
   l1 <- O$values[[1]][v_x, v_y]

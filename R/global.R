@@ -3180,7 +3180,6 @@ plotTensor <- function(x, O, type=c("vectors", "ellipses"), normalise=FALSE,
         if(isTRUE(normalise)){
           maxab <- max(aij, bij)
         }
-        cat(aij/maxab, " - ", bij*ratio/maxab, "\n")
         if(!(aij == 0 & bij == 0)){
           E <- RConics::ellipse(saxes = c(aij/maxab, bij*ratio/maxab)*len1,
                                 loc   = c(X[i,j], Y[i,j]), 

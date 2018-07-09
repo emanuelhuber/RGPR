@@ -2819,6 +2819,7 @@ byte2volt <- function ( V=c(-50,50), nBytes = 16) {
 #      | a2  c2 |
 #  B = |        |
 #      | c2  b2 |
+
 #' @export
 invAxB <- function(a1,b1,c1,a2,b2,c2){
   D <- a1*b1 - c1*c1
@@ -2833,6 +2834,10 @@ invAxB <- function(a1,b1,c1,a2,b2,c2){
 #      | a   d |
 #  J = |       |
 #      | d   b |
+
+#' Eigendecomposition of 2x2 matrices
+#'
+#' @name eigenDecomp2x2SymMatrix 
 #' @export
 eigenDecomp2x2SymMatrix <- function(a,b,d){
   D <- sqrt((a-b)^2 + 4*d^2)
@@ -2855,6 +2860,7 @@ eigenDecomp2x2SymMatrix <- function(a,b,d){
 #      | a11  a12 |
 #  A = |          |
 #      | a21  a22 |
+
 #' @export
 eigenValue2x2Mat <- function(a11,a12,a21,a22){
   D <- a11*a22 - a21*a12
@@ -2871,6 +2877,7 @@ eigenValue2x2Mat <- function(a11,a12,a21,a22){
 #      | a   d |
 #  A = |       |
 #      | d   b |
+
 #' @export
 matPow <- function(a, b, d, n){
   eg <- eigenDecomp2x2SymMatrix(a, b, d)
@@ -2923,6 +2930,7 @@ distTensors <- function(J1, J2, method=c("geodesic", "log-Euclidean",
   }
 }
 #
+
 #' @export
 normTensor <- function(a1,b1,c1){
   val_1 <- eigenValue2x2Mat(a1, c1, c1, b1)
@@ -2942,6 +2950,7 @@ normTensor <- function(a1,b1,c1){
 #       | a2   c2 |
 #  J2 = |         |
 #       | c2   b2 |
+
 #' @export
 distTensorGeod <- function(a1,b1,c1,a2,b2,c2){
   ABA <- invAxB(a1,b1,c1,a2,b2,c2)
@@ -2972,6 +2981,7 @@ distTensorGeod <- function(a1,b1,c1,a2,b2,c2){
 #       | a2   c2 |
 #  J2 = |         |
 #       | c2   b2 |
+
 #' @export
 distTensorLogE <- function(a1,b1,c1,a2,b2,c2){
   a1[a1 < 10^-100] <- 10^-100
@@ -2995,6 +3005,10 @@ distTensorLogE <- function(a1,b1,c1,a2,b2,c2){
 # 
 # name strucTensor
 # rdname strucTensor
+
+#' structure tensor for matrices
+#'
+#' @name strucTensor
 #' @export
 .strucTensor <- function(P, dxy = c(1, 1), mask = c(2, 2),
                         kBlur   = list(n = 3, m =  3, sd = 1), 

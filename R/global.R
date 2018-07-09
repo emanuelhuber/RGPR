@@ -3168,7 +3168,7 @@ plotTensor <- function(x, O, type=c("vectors", "ellipses"), normalise=FALSE,
     dy <- len1*dy0/normdxdy/2*ratio
     segments(X - dx, (Y - dy), X + dx , (Y + dy))#,...)
   }else if(type == "ellipses"){
-  l1[l1 < 0] <- 0
+    l1[l1 < 0] <- 0
     l2[l2 < 0] <- 0
     a <- 1/sqrt(l2)
     b <- 1/sqrt(l1)
@@ -3195,7 +3195,7 @@ plotTensor <- function(x, O, type=c("vectors", "ellipses"), normalise=FALSE,
           E <- RConics::ellipse(saxes = c(aij, bij*ratio)*len1,
 #           /normdxdy[i,j], 
                       loc   = c(X[i,j], Y[i,j]), 
-                      theta = -angle[i,j], n=n)
+                      theta = angle[i,j], n=n)
           polygon(E, ...)
         }
       }

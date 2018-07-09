@@ -3132,11 +3132,11 @@ distTensorLogE <- function(a1,b1,c1,a2,b2,c2){
 #' @rdname plotTensor
 #' @export
 plotTensor <- function(x, O, type=c("vectors", "ellipses"), normalise=FALSE,
-                      spacing=c(6,4), len=1.9, n=10, ratio=1,...){
+                       spacing=c(6,4), len=1.9, n=10, ratio=1,...){
   type <- match.arg(type, c("vectors", "ellipses"))
   n <- nrow(x)
   m <- ncol(x)
-
+  
   len1 <- len*max(spacing*c(x@dx,x@dz));  # length of orientation lines
   
   # Subsample the orientation data according to the specified spacing
@@ -3155,7 +3155,7 @@ plotTensor <- function(x, O, type=c("vectors", "ellipses"), normalise=FALSE,
   angle = O$polar$orientation[v_x, v_y];
   l1 <- O$values[[1]][v_x, v_y]
   l2 <- O$values[[2]][v_x, v_y]
-
+  
   if(type == "vectors"){
     #Orientation vectors
     dx0 <- cos(angle)
@@ -3172,50 +3172,26 @@ plotTensor <- function(x, O, type=c("vectors", "ellipses"), normalise=FALSE,
     l2[l2 < 0] <- 0
     a <- 1/sqrt(l2)
     b <- 1/sqrt(l1)
-#     normdxdy <- matrix(max(a[is.finite(a)],b[is.finite(b)]),
-    normdxdy <- matrix(max(a[is.finite(a)]),
-                nrow=length(v_x),ncol=length(v_y))
-    if(isTRUE(normalise)){
-      normdxdy <- b
-    }
     for(i in seq_along(v_x)){
       for(j in seq_along(v_y)){
         aij <- ifelse(is.infinite(a[i,j]), 0, a[i,j])
         bij <- ifelse(is.infinite(b[i,j]), 0, b[i,j])
+        maxab <- 1
         if(isTRUE(normalise)){
           maxab <- max(aij, bij)
-          if(maxab != 0){
-            aij <- aij/maxab
-            bij <- bij/maxab
-#             cat(i,".",j,"  > a =",aij, "  b =", bij, "\n")
-#           normdxdy <- b
-          }
         }
+        cat(aij/maxab, " - ", bij*ratio/maxab, "\n")
         if(!(aij == 0 & bij == 0)){
-          E <- RConics::ellipse(saxes = c(aij, bij*ratio)*len1,
-#           /normdxdy[i,j], 
-                      loc   = c(X[i,j], Y[i,j]), 
-                      theta = angle[i,j], n=n)
+          E <- RConics::ellipse(saxes = c(aij/maxab, bij*ratio/maxab)*len1,
+                                loc   = c(X[i,j], Y[i,j]), 
+                                theta = angle[i,j], n=n)
           polygon(E, ...)
         }
       }
     }
-    #     a <- 1/sqrt(l1)
-    #     b <- 1/sqrt(l2)
-    #     normdxdy <- matrix(max(a,b),nrow=length(v_x),ncol=length(v_y))
-    #     if(isTRUE(normalise)){
-    #       normdxdy <- a
-    #     }
-    #     for(i in seq_along(v_x)){
-    #       for(j in seq_along(v_y)){
-    #         E <- ellipse(saxes = c(a[i,j], b[i,j]*ratio)*len1/normdxdy[i,j], 
-    #                     loc   = c(X[i,j], -Y[i,j]), 
-    #                     theta = -angle[i,j], n=n)
-    #         polygon(E,...)
-    #       }
-    #     }
   }
 }
+
 
 #' Plot structure tensor on GPR data
 #' 

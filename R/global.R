@@ -3100,6 +3100,14 @@ distTensorLogE <- function(a1,b1,c1,a2,b2,c2){
   Jeig$l1[mask2] <- 0
   Jeig$l2[mask2] <- 0
   mode(mask2) <- "integer"
+
+  # APPLY MASK TO local tensor and structure tensor
+  Gxx[mask2] <- 0
+  Gyy[mask2] <- 0
+  Gxy[mask2] <- 0 
+  Jxx[mask2] <- 0
+  Jyy[mask2] <- 0
+  Jxy[mask2] <- 0
   
   return(list(tensor  = list("xx" = Jxx,
                              "yy" = Jyy,

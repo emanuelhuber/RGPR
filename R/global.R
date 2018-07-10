@@ -3018,7 +3018,7 @@ distTensorLogE <- function(a1,b1,c1,a2,b2,c2){
   n <- nrow(P)
   m <- ncol(P)
  
- #-------------------------------------------------
+  #-------------------------------------------------
   #- Identify ridge-like regions and normalise image
   #-------------------------------------------------
   # normalization (mean = 0, sd = 1)
@@ -3029,9 +3029,7 @@ distTensorLogE <- function(a1,b1,c1,a2,b2,c2){
       blksze2 <- round(mask/2)
       Pn <- (P - mean(P, na.rm = TRUE))/sd(as.vector(P), na.rm = TRUE)
       nseq <- c(seq(1, n, mask[1]),n)
-  #     nseq <- seq(1, n/blksze[1])
       mseq <- c(seq(1, m, mask[2]),m)
-  #     mseq <- seq(1, m/blksze[2])
       P_sd <- matrix(NA, nrow = n, ncol = m)
       for(i in seq_len(n)){
         for(j in seq_len(m)){
@@ -3045,12 +3043,11 @@ distTensorLogE <- function(a1,b1,c1,a2,b2,c2){
       }
       mask <- P_sd < thresh
     }else{
-#       P <- (P - mean(P[!mask], na.rm = TRUE))/
-#           sd(as.vector(P[!mask]), na.rm = TRUE)
+      # P <- (P - mean(P[!mask], na.rm = TRUE))/
+      #        sd(as.vector(P[!mask]), na.rm = TRUE)
     }
   }else{
     mask <- matrix(FALSE, nrow = n, ncol = m)
-#     P <- (P - mean(P, na.rm = TRUE))/sd(as.vector(P), na.rm = TRUE)
   }
 
   #------------------------------
@@ -3070,15 +3067,13 @@ distTensorLogE <- function(a1,b1,c1,a2,b2,c2){
   kdy <- do.call( dy_gkernel, kEdge)
   vx <- convolution2D(P_f, kdx)/dxy[1]
   vy <- convolution2D(P_f, kdy)/dxy[2]
-#   image2D(vy)
-#   image2D(vx)
+
   # local TENSOR
   Gxx <- vx^2
   Gyy <- vy^2
   Gxy <- vx*vy 
     
   # LOCAL AVERAGED TENSOR
-  #sze = 5 *2
   kg <- do.call(gkernel, kTensor)
   Jxx  <- convolution2D(Gxx, kg)
   Jyy  <- convolution2D(Gyy, kg)
@@ -3086,20 +3081,15 @@ distTensorLogE <- function(a1,b1,c1,a2,b2,c2){
   Jxx[Jxx < .Machine$double.eps^0.75] <- 0
   Jyy[Jyy < .Machine$double.eps^0.75] <- 0
   
-#   image2D(Jxx)
-#   image2D(Jyy)
-#   image2D(Jxy)
-  
   
   # polar parametrisation
   energy <- Jxx + Jyy                               # energy
   anisot  <- sqrt((Jxx-Jyy)^2 + 4*(Jxy)^2)/energy   # anisotropy
-  orient <- 1/2*atan2(2*Jxy, (Jxx - Jyy) ) + pi/2     # orientation
+  orient <- 1/2*atan2(2*Jxy, (Jxx - Jyy) ) + pi/2   # orientation
   mask2 <- mask | is.infinite(energy) | is.infinite(anisot)
   anisot[mask2] <- 0
   energy[mask2] <- 0
   orient[mask2] <- 0
-#   anisot[is.infinite(orient)] <- 0
 
   # ANALYTIC SOLUTION BASED ON SVD DECOMPOSITION
   Jeig <- eigenDecomp2x2SymMatrix(Jxx, Jyy, Jxy)
@@ -3114,6 +3104,9 @@ distTensorLogE <- function(a1,b1,c1,a2,b2,c2){
   return(list(tensor  = list("xx" = Jxx,
                              "yy" = Jyy,
                              "xy" = Jxy),
+			  gradtens = list("xx" = Gxx,
+							  "yy" = Gyy,
+                              "xy" = Gxy),
               vectors = list("u1x" = Jeig$u1x,
                              "u1y" = Jeig$u1y,
                              "u2x" = Jeig$u2x,

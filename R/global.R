@@ -3141,8 +3141,8 @@ plotTensor <- function(x, O, type=c("vectors", "ellipses"), normalise=FALSE,
   len1 <- len*max(spacing*c(x@dx,x@dz));  # length of orientation lines
   
   # Subsample the orientation data according to the specified spacing
-  v_y = seq(spacing[1],(m),by=spacing[1])
-  v_x = seq(spacing[2],(n), by=spacing[2])
+  v_y = seq(1,(m),by=spacing[1])
+  v_x = seq(1,(n), by=spacing[2])
   
   # Determine placement of orientation vectors
   if(length(x@coord)>0){

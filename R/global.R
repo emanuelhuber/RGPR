@@ -382,8 +382,10 @@ palGPR <- function(colPal="default", n = 101, power = 1, returnNames = FALSE){
                 "#E50023", "#DC0024", "#D30024", "#CA0024", "#C20024",
                 "#B70023", "#AF0023", "#A70023", "#9C0022"))(n),
     
-	nice = grDevices::colorRampPalette(rev(RColorBrewer::brewer.pal(11, 
-											"Spectral")), space="Lab")(n),
+	nice = grDevices::colorRampPalette(c("#5E4FA2", "#3288BD", "#66C2A5", 
+						   "#ABDDA4", 
+                           "#fffbf2", "#FFFFFF",  "#fffbf2", "#FDAE61", 
+                           "#F46D43",  "#D53E4F",  "#9E0142"), space="Lab")(n),
     hcl_0 = colorspace::diverge_hcl(n,power=1),
     # blue - white - red (fade)
     hcl_1 = colorspace::diverge_hcl(n, c = 100, l = c(50, 90), power = power), 

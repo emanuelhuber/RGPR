@@ -23,3 +23,7 @@ version:          0.2
 
 #github:
 #  repo:           https://github.com/poole/hyde
+analytics:
+  		provider: "google-universal"
+  	google:
+ 	tracking_id: "UA-124908003-2"

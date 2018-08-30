@@ -5,6 +5,9 @@
 # Rscript --vanilla 01_RGPR_tutorial_basic-processing.Rmd
 
 
+# CHECK
+# https://gist.github.com/emanuelhuber/11835e6840868029d7c4721b7f7bf465
+
 
 #library(knitr)
 library(rmarkdown)

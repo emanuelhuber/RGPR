@@ -1,4 +1,4 @@
-# RGPR: a free and open-source software package to process and visualise *ground-penetrating radar* (GPR) data 
+# RGPR: a free and open-source software package for ground-penetrating radar (GPR) data processing
 
 
 RGPR is a free and open-source software package to read, export, analyse, process and visualise *ground-penetrating radar* (GPR) data. RGPR is written in [R](https://cran.r-project.org/), a high-level  programming language for statistical computing and graphics that is freely available under the GNU General Public License and runs on Linux, Windows and MacOS.
@@ -44,7 +44,7 @@ plot(frenkeLine00)
 
 ## Existing functions
 
-### Reading/writing/export functions
+### Input/output functions
 * `readGPR()`, formats: Sensors & Software (.d11, .hd), MALA (.rd3, .rad), SEG-Y for RadSys Zond GPR device (.sgy),  R (rds)
 * `writeGPR()`: format DT1 (Sensors&Software), rds (R-format), ASCII, 'xyz'
 * `exportPDF()`: high quality pdf graphic
@@ -61,7 +61,7 @@ plot(frenkeLine00)
 * `plot3D()`
 
 
-### GPR data editing and referencing
+### GPR data positioning and referencing
 
 * Trace position reversal: `reverse()`
 * Vertical trace shift: `traceShift()`
@@ -69,29 +69,30 @@ plot(frenkeLine00)
 * Interpolate trace position (x, y, z) from known positions: `interpPos()`
 * Estimate shift between two parallel profiles: `shiftEst()`
 
-###  GPR data analysis and transforms
+### GPR data analysis and processing
+####  GPR data analysis and transforms
 * Trace amplitude: `ampl()`, plot trace amplitude: `plotAmpl()`
 * Average trace: `traceAverage()`
 * Spectrum (f-x and f-k): `spec(x, type = c("f-x", "f-k"))`
 * Structure tensor: `strTensor()`, plot structure tensor: `plotTensor()`
 
-### GPR data interpolation
+#### GPR data interpolation
 * Trace interpolation at regularly spaced positions: `regInterpPos()`
 * Upsampling (time and position): `upsample()`
 * Relative position on the radargramm: `relPos()`
 
-### GPR signal correction
+#### GPR signal correction
 * DC-shift correction: `dcshift()`
 * Low-frequency ('wow') component removal: `dewow()` (type = "MAD", "Gaussian")
 * First-break picking: `firstBreak()` (method = "coppens", "threshold",  "MER")
 * Shift the traces vertically such that they start at time zero: `time0Cor()`
 * Constant offset time correction: `timeCorOffset()` 
 
-### GPR signal attenuation compensation (gain)
+#### GPR signal attenuation compensation (gain)
 * Linear, power, exponential, ang agc gain: `gain()` (type = "power", "exp", "agc")
 
 
-### GPR signal enhancement
+#### GPR signal enhancement
 * Clip the GPR signal values: `clip()`
 * Gamma correction of the GPR signal values: `gammaCorrection()`
 * Trace scaling: `traceScaling()`
@@ -104,15 +105,18 @@ plot(frenkeLine00)
   "mixed-phase")
 * Phase rotation `rotatePhase()`
 
-### GPR signal velocity 
+#### GPR signal velocity 
 * Common-mid point analysis (CMP): `CMPAnalysis()` (method = "semblance", "winsemblance",
   "wincoherence")
 * Normal Move-Out correction (NMO): `NMOCor()`
 
-### GPR data topographic correction and migration 
+#### GPR data topographic correction and migration 
 * Topography correction and topographic Kirchhoff migration: `migration()` (type = "static", "kirchhoff")
 
-###  GPR structure delineation and mapping  [EH]
+#### Generic processing functions
+* Apply many processing steps: `papply()`
+
+###  GPR data delineation and mapping
 * `delineate()`
 * `rmDelineations()<-`
 * `delineations()`
@@ -121,8 +125,6 @@ plot(frenkeLine00)
 * `plotDelineations()`
 * `identifyDelineation()`
 
-### Processing
-* Apply many processing steps: `papply()`
 
 ### Miscellaneous
 * Operators: `+`, `-`, `*`, `/`, `^`

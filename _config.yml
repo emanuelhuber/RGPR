@@ -7,11 +7,22 @@ permalink:        pretty
 
 # Setup
 title:            RGPR
-tagline:          "free software package for GPR data"
-description:      'A free and open-source software package to read, write, analyse, process and visualise ground-penetrating radar (GPR) data.'
+tagline:          "free and open-source software package for ground-penetrating radar (GPR) data processing"
+description:      'RGPR: a free and open-source software package for ground-penetrating radar (GPR) data processing, analysis, visualisation, import and export .'
 url:              https://emanuelhuber.github.io/RGPR/
 baseurl:          /RGPR
-
+logo:             http://emanuelhuber.github.io/RGPR/img/RGPR_logo.png
+twitter:
+  username: RGPRsoftware
+  card: summary
+social:
+  name: GPR software
+  links:
+    - https://www.linkedin.com/company/rgpr-open-source-gpr-processing/
+    - https://github.com/open-source-GPR-software-processing
+    - https://www.researchgate.net/project/RGPR-a-free-and-open-source-software-package-for-ground-penetrating-radar-GPR-data-processing
+    
+    
 #author:
 #  name:           'Mark Otto'
 #  url:            https://twitter.com/mdo
@@ -27,3 +38,7 @@ analytics:
   provider: "google-universal"
 google:
   tracking_id: "UA-124908003-2"
+
+# jekyll plugins
+plugins:
+  - jekyll-seo-tag

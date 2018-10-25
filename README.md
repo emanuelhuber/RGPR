@@ -3,6 +3,23 @@
 
 RGPR is a free and open-source software package to read, export, analyse, process and visualise *ground-penetrating radar* (GPR) data. RGPR is written in [R](https://cran.r-project.org/), a high-level  programming language for statistical computing and graphics that is freely available under the GNU General Public License and runs on Linux, Windows and MacOS.
 
+## How to cite
+
+> E. Huber and G. Hans (2018) RGPR — An open-source package to process and visualize GPR data. 17th International Conference on Ground Penetrating Radar (GPR), Switzerland, Rapperswil, 18-21 June 2018, pp. 1-4.
+> doi: [10.1109/ICGPR.2018.8441658](https://doi.org/10.1109/ICGPR.2018.8441658)
+
+Bibtex format
+
+```
+@INPROCEEDINGS{huber&hans:2018,
+author    = {Emanuel Huber and Guillaume Hans},
+booktitle = {2018 17th International Conference on Ground Penetrating Radar (GPR)},
+title     = {RGPR — An open-source package to process and visualize GPR data},
+year      = {2018},
+pages     = {1--4},
+doi       = {10.1109/ICGPR.2018.8441658},
+ISSN      = {2474-3844}}
+```
 
 ## Note
 

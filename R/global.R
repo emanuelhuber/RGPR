@@ -1400,37 +1400,40 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
   fb - x@antsep/c0
 }
 
-.plot3DRGL <- function(A,x,y,z,z0,col=palGPR(n=101),back="fill", 
-                  smooth = TRUE, lit=FALSE, lwd=0,empty=FALSE,...){
+.plot3DRGL <- function(A, x, y, z, z0, col = palGPR(n = 101), 
+                       back = "fill", smooth = TRUE, lit = FALSE,
+                       lwd = 0, empty = FALSE, ...){
   nr = nrow(A)
   nc = ncol(A)
-  if(empty==TRUE){
-    X <- matrix(x, ncol=nc, nrow=2, byrow=TRUE)
-    Y <- matrix(y, ncol=nc, nrow=2, byrow=TRUE)
-    Z <-  matrix(z0, ncol=nc, nrow=2, byrow=TRUE) - 
-          matrix(z[c(1,nr)], ncol=nc, nrow=2, byrow=FALSE)
+  if(empty == TRUE){
+    X <- matrix( x, ncol = nc, nrow = 2, byrow = TRUE)
+    Y <- matrix( y, ncol = nc, nrow = 2, byrow = TRUE)
+    Z <- matrix(z0, ncol = nc, nrow = 2, byrow = TRUE) - 
+          matrix(z[c(1, nr)], ncol = nc, nrow = 2, byrow = FALSE)
     colA <- col[1]
     if(!is.null(list(...)$alpha) && (list(...)$alpha==0 || is.null(col))){
 
     }else{
-      rgl::rgl.surface(Y, X, Z, color=colA, back=back, smooth = smooth, 
-                  lit=lit, lwd= lwd,...) 
+      rgl::rgl.surface(Y, X, Z, color = colA, back = back, 
+                       smooth = smooth, lit = lit, lwd = lwd, ...) 
     }
-    lines3d(y,z0,x, col="black",alpha=1,lwd=lwd)   
-    lines3d(y,(z0-z[length(z)]),x, col="black",alpha=1,lwd=lwd)   
-    lines3d(rep(y[1],2),(z0[1]-z),rep(x[1],2), col="black",alpha=1,lwd=lwd)
-    lines3d(rep(y[length(y)],2),(z0[length(z0)]-z),rep(x[length(x)],2),
-            col="black",alpha=1,lwd=lwd)   
+    lines3d(y, z0, x, col = "black", alpha = 1, lwd = lwd)   
+    lines3d(y, (z0 - z[length(z)]), x, col = "black", alpha = 1, lwd = lwd)   
+    lines3d(rep(y[1], 2), (z0[1] - z), rep(x[1], 2), col = "black", 
+            alpha = 1, lwd = lwd)
+    lines3d(rep(y[length(y)], 2), (z0[length(z0)] - z), rep(x[length(x)], 2),
+            col = "black", alpha = 1, lwd = lwd)   
 
   }else{
-    X <- matrix(x, ncol=nc, nrow=nr, byrow=TRUE)
-    Y <- matrix(y, ncol=nc, nrow=nr, byrow=TRUE)
-    Z <-  matrix(z0, ncol=nc, nrow=nr, byrow=TRUE) - 
-          matrix(z, ncol=nc, nrow=nr, byrow=FALSE)
-    A = (A-min(A))/(max(A)-min(A))
-    colA <- col[ (A)*100+1 ] # assign colors to heights for each point 
-    rgl::rgl.surface(Y, X, Z, color=colA, back=back, smooth = smooth, 
-                lit=lit, lwd= lwd,...) 
+    X <- matrix( x, ncol = nc, nrow = nr, byrow = TRUE)
+    Y <- matrix( y, ncol = nc, nrow = nr, byrow = TRUE)
+    Z <- matrix(z0, ncol = nc, nrow = nr, byrow = TRUE) - 
+          matrix(z, ncol = nc, nrow = nr, byrow = FALSE)
+    A = (A - min(A, na.rm =TRUE))/(max(A, na.rm =TRUE) - min(A, na.rm =TRUE))
+    # assign colors to heights for each point 
+    colA <- col[A * (length(col) - 1) + 1] 
+    rgl::rgl.surface(Y, X, Z, color = colA, back = back, smooth = smooth, 
+                lit = lit, lwd = lwd,...) 
   }
 }
 

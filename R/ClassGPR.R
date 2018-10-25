@@ -3332,9 +3332,10 @@ contour.GPR <- function(x,
 #' @rdname plot3DRGL
 #' @export
 setMethod("plot3DRGL", "GPR", 
-function(x,addTopo = FALSE, clip = NULL, normalize = NULL, 
-        nupspl = NULL, add = TRUE, xlim=NULL, ylim=NULL, zlim=NULL,...){
-    if(length(x@vel)>0){  
+function(x, addTopo = FALSE, clip = NULL, normalize = NULL, 
+         nupspl = NULL, add = TRUE, xlim = NULL, ylim = NULL, 
+         zlim = NULL, ...){
+    if(length(x@vel) > 0){  
       velo <- x@vel[[1]]
     }else{
       velo <- 0
@@ -3342,33 +3343,33 @@ function(x,addTopo = FALSE, clip = NULL, normalize = NULL,
     xsel <- rep(TRUE,length(x))
     if(!is.null(xlim)){
       xlim <- sort(xlim)
-      xsel <- coord(x, 1) >= xlim[1] &  coord(x, 1) <= xlim[2]
+      xsel <- coord(x, 1) >= xlim[1] & coord(x, 1) <= xlim[2]
     }
     ysel <- rep(TRUE,length(x))
     if(!is.null(ylim)){
       ylim <- sort(ylim)
-      ysel <- coord(x, 2) >= ylim[1] &  coord(x, 2) <= ylim[2]
+      ysel <- coord(x, 2) >= ylim[1] & coord(x, 2) <= ylim[2]
       cat(ylim,"  range = ", range(coord(x, 2)),"\n")
     }
     xysel <- xsel & ysel
-    if(sum(xysel)<=2){
+    if(sum(xysel) <= 2){
       return(NULL)
     }
     x <- x[,xysel]
     if(!is.null(nupspl)){
       cat("upsample...")
-      x <- upsample(x,n=nupspl)
+      x <- upsample(x, n = nupspl)
     }
     if(!is.null(normalize)){
-      x@data <- normalize(x@data,type=normalize)
+      x@data <- normalize(x@data, type = normalize)
     }
     # warning("First upsample then addTopo. 
     # Problem: interpolate also coord!!!")
     if(!is.null(clip) && is.numeric(clip)){
       if(length(clip)>1){
-        x@data <- .clip(x@data,clip[2],clip[1])
-      }else if(length(clip)==1){
-        x@data <- .clip(x@data,clip[1])
+        x@data <- .clip(x@data, clip[2], clip[1])
+      }else if(length(clip) == 1){
+        x@data <- .clip(x@data, clip[1])
       }
     }
     if(length(x@coordref)!=3 ){
@@ -3391,7 +3392,7 @@ function(x,addTopo = FALSE, clip = NULL, normalize = NULL,
       # rgl.open()
       rgl::open3d()
     }
-    .plot3DRGL(A,xpos,ypos,zpos,z0,...)
+    .plot3DRGL(A, xpos, ypos, zpos, z0, ...)
   }
 )
 

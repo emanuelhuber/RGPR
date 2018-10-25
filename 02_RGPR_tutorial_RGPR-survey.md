@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Adding coordinates to GPR data
-date: 2018-05-25
+date: 2018-10-25
 ---
 
 <!--
@@ -56,7 +56,7 @@ library(RGPR)   # load RGPR in the current R session
 library(rChoiceDialogs)
 ```
 
-\[optionally\] If `RGPR` is not installed, follow the instructions of the tutorial "Getting started" to install it. \[optionally\] If R answers you `there is no package called 'rChoiceDialogs'` you need first to install `rChoiceDialogs`, either through your R software or directly in R with:
+\[optionally\] If `RGPR` is not installed, follow the instructions of the tutorial "Getting started" to install it.\[optionally\] If R answers you `there is no package called 'rChoiceDialogs'` you need first to install `rChoiceDialogs`, either through your R software or directly in R with:
 
 ``` r
 install.packages("rChoiceDialogs")
@@ -123,14 +123,14 @@ allFilesinDir
 
     ##  [1] "CMP.DT1"    "CMP.GPS"    "CMP.HD"     "LINE00.DT1" "LINE00.GPS"
     ##  [6] "LINE00.HD"  "LINE01.DT1" "LINE01.GPS" "LINE01.HD"  "LINE02.DT1"
-    ## [11] "LINE02.GPS" "LINE02.HD"  "LINE03.DT1" "LINE03.GPS" "LINE03.HD" 
+    ## [11] "LINE02.GPS" "LINE02.HD"  "LINE03.DT1" "LINE03.GPS" "LINE03.HD"
     ## [16] "LINE04.DT1" "LINE04.GPS" "LINE04.HD"
 
 ``` r
-# now, select only the file ending with .DT1 and without "CMP" 
+# now, select only the file ending with.DT1 and without "CMP"
 # in their names
-selDT1 <- grepl("(.DT1)$", allFilesinDir, ignore.case = TRUE) & 
-          !grepl("CMP", allFilesinDir, ignore.case = TRUE)
+selDT1 <- grepl("(.DT1)$", allFilesinDir, ignore.case = TRUE) &
+!grepl("CMP", allFilesinDir, ignore.case = TRUE)
 LINES <- file.path(getwd(), "rawGPR", allFilesinDir[selDT1])
 ```
 
@@ -148,7 +148,7 @@ mySurvey
 ```
 
     ## *** Class GPRsurvey ***
-    ## Unique directory: /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR 
+    ## Unique directory: /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR
     ## - - - - - - - - - - - - - - -
     ##     name length units       date freq coord int   filename
     ## 1 LINE00  55.75     m 2014-04-25  100    NO  NO LINE00.DT1
@@ -161,7 +161,7 @@ mySurvey
 You can see that no coordinates (x,y,z) are associated with the GPR data. Therefore, if you try to plot the suvey you will get:
 
 ``` r
-plot(mySurvey, asp=1) # throw an error
+plot(mySurvey, asp = 1) # throw an error
 ```
 
 Note that the object `mySurvey` only contains the meta-data and a link to the GPR files (that are stored in your working directory). But `mySurvey` does not contains the GPR data itself (i.e. the traces). However, we can ask `mySurvey` to read the data and return it in the form of an object of the class `GPR`. There are two possibilities:
@@ -176,7 +176,7 @@ A02
     ## *** Class GPR ***
     ##  name        = LINE02
     ##  filepath    = /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
-    ##  description = 
+    ##  description =
     ##  survey date = 2014-04-25
     ##  Reflection, 100 MHz, Window length = 399.6 ns, dz = 0.4 ns
     ##  275 traces, 68.5 m
@@ -192,7 +192,7 @@ A02
     ## *** Class GPR ***
     ##  name        = LINE02
     ##  filepath    = /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
-    ##  description = 
+    ##  description =
     ##  survey date = 2014-04-25
     ##  Reflection, 100 MHz, Window length = 399.6 ns, dz = 0.4 ns
     ##  275 traces, 68.5 m
@@ -202,10 +202,10 @@ You can also directly plot the GPR data with:
 
 ``` r
 # instead of 'A02 <- mySurvey[[3]]' and 'plot(A02)' do:
-plot(mySurvey[[2]]) 
+plot(mySurvey[[2]])
 ```
 
-![](02_RGPR_tutorial_RGPR-survey_files/figure-markdown_github/unnamed-chunk-14-1.png)
+![](02_RGPR_tutorial_RGPR-survey_deleteme_files/figure-markdown_github-tex_math_single_backslash/unnamed-chunk-14-1.png)
 
 Add coordinates
 ===============
@@ -250,12 +250,12 @@ The file `coord/measured_coordinates.txt` shows some of the surveyed coordinates
     Coordinates reference system: CH1903+ / LV95
 
     XLINE00
-    START 2622172.58, 1256908.26 346.7 
+    START 2622172.58, 1256908.26 346.7
     FID1  2622218.98, 1256906.46 345.9
     END   2622229.68, 1256905.16 345.9
 
     XLINE01
-    START 2622233.08, 1256905.76    346 
+    START 2622233.08, 1256905.76    346
     END     2622244.28, 1256905.16 346
 
     XLINE02
@@ -265,12 +265,12 @@ The file `coord/measured_coordinates.txt` shows some of the surveyed coordinates
     XLINE03
     START   2622226.08, 1256842.96 346.7
     FID1    2622265.48, 1256843.26 344
-    END     2622269.08, 1256842.96 343.4 
+    END     2622269.08, 1256842.96 343.4
 
     XLINE04
     START   2622262.98, 1256834.06 343.8
     FID2    2622265.48, 1256843.26 344
-    END     2622300.41, 1256921.53 343.5 
+    END     2622300.41, 1256921.53 343.5
 
 You observe that the coordinates of the begining and end of each GPR profile are known and that the coordinates of some fiducial markers were also surveyed.
 
@@ -296,7 +296,7 @@ The same file with the three columns added:
     TRACE,POSITION,COMMENT,E,N,Z
     1,0,START,2622262.98,1256834.06,343.8
     100,24.75,F2,2622265.48,1256843.26,344
-    445,111,END,2622300.41,1256921.53,343.5 
+    445,111,END,2622300.41,1256921.53,343.5
 
 Note that the two lines with the fiducial markers F1 and F3 were removed as no coordinates are available for these markers. Save the modified files in the directory `coord/FIDmod`.
 
@@ -315,7 +315,7 @@ FidFiles[5] <- file.path(getwd(), "coord/FIDmod/LINE04.txt")
 FIDs <- readFID(FidFiles)
 ```
 
-If R throw the following error message "Error in readFID(FidFiles) : The headers should be "E","N","Z","TRACE"!" check that the three columns have been added to all the files and that the headers of these columns are correctly set ("N", "E", "Z"; the order does not matter).
+If R throw the following error message "Error in readFID(FidFiles): The headers should be "E","N","Z","TRACE"!" check that the three columns have been added to all the files and that the headers of these columns are correctly set ("N", "E", "Z"; the order does not matter).
 
 1.  Interpolate the coordinates of the traces for all the GPR profiles according to the modified fiducial marker files. The function `interpPos()` interpolate the position of the traces from the known trace positions and add the interpolated trace position to the object `mySurvey`.
 
@@ -325,7 +325,7 @@ If R throw the following error message "Error in readFID(FidFiles) : The headers
 # + compute the intersection between the GPR-lines
 # windows open for checking purposes
 # dx should be between 0.1 m and 0.5 m
-mySurvey <- interpPos(mySurvey, FIDs) 
+mySurvey <- interpPos(mySurvey, FIDs)
 ```
 
     ## LINE00: mean dx = 0.258, range dx = [0.244, 0.337]
@@ -340,12 +340,12 @@ mySurvey <- interpPos(mySurvey, FIDs)
 
     ## Coordinates of the local system: 2622000 1256834 0
 
-The function `interpPos()` prints for every GPR record the mean trace spacing as well as the trace spacing range. Normally, these values should be close to the operating settings. In this case, the trace spacing was set equal to 0.25 *m* on the field. The trace spacing values for `XLINE00`, `XLINE01` and `XLINE02` looks good. However, the trace spacing for `XLINE04` and more particularly for `XLINE03` could be critic (the smallest trace spacing values are very low). You should check and if necessary correct the topographic data...
+The function `interpPos()` prints for every GPR record the mean trace spacing as well as the trace spacing range. Normally, these values should be close to the operating settings. In this case, the trace spacing was set equal to $0.25\,m$ on the field. The trace spacing values for `XLINE00`, `XLINE01` and `XLINE02` looks good. However, the trace spacing for `XLINE04` and more particularly for `XLINE03` could be critic (the smallest trace spacing values are very low). You should check and if necessary correct the topographic data...
 
 Setting the coordinate reference system
 ---------------------------------------
 
-Setting the coordinate reference system is important when exporting the coordinate data in geospatial data format, because it allows the coordinates to be correctly projected in other coordinate reference systems. The topographic data were measured within the new Swiss coordinate system (datum: CH1903+, reference frame: LV95) that can be defined with the code EPSG 2056 that corresponds to the new Swiss coordinate system.
+Setting the coordinate reference system is important when exporting the coordinate data in geospatial data format, because it allows the coordinates to be correctly projected in other coordinate reference systems. The topographic data were measured within the new Swiss coordinate system (datum: CH1903+, reference frame: LV95) that can be defined with the code EPSG $2056$ that corresponds to the new Swiss coordinate system.
 
 ``` r
 crs(mySurvey) <- "+init=epsg:2056"
@@ -369,7 +369,7 @@ exportCoord(mySurvey, folder="coord/topo", type="ASCII")
 Remark
 ------
 
-Note that the coordinates are added to the object `mySurvey` but not to the GPR file. Unless you save the GPR data you will lose the coordinates when you will quit R. To save the GPR data, see \[Save, export\]\[\].
+Note that the coordinates are added to the object `mySurvey` but not to the GPR file. Unless you save the GPR data you will lose the coordinates when you will quit R. To save the GPR data, see\[Save, export\]\[\].
 
 Plot functions
 ==============
@@ -383,7 +383,7 @@ Use the `plot()` function
 plot(mySurvey)
 ```
 
-![plot survey](02_RGPR_tutorial_RGPR-survey_files/figure-markdown_github/unnamed-chunk-25-1.png) The red arrows indicate the direction of the survey, the red dots the fiducial markers and the circles the GPR profile intersections.
+![plot survey](02_RGPR_tutorial_RGPR-survey_deleteme_files/figure-markdown_github-tex_math_single_backslash/unnamed-chunk-25-1.png) The red arrows indicate the direction of the survey, the red dots the fiducial markers and the circles the GPR profile intersections.
 
 Plot the GPR data
 -----------------
@@ -396,7 +396,7 @@ plot(mySurvey[[1]], addTopo=TRUE)
 
     ## time to depth conversion with constant velocity (0.1 m/ns)
 
-![plot GPR data](02_RGPR_tutorial_RGPR-survey_files/figure-markdown_github/unnamed-chunk-26-1.png)
+![plot GPR data](02_RGPR_tutorial_RGPR-survey_deleteme_files/figure-markdown_github-tex_math_single_backslash/unnamed-chunk-26-1.png)
 
 Three-dimensional plot of the GPR data
 --------------------------------------
@@ -417,7 +417,7 @@ Once you found a satisfactory combination of processing steps, you can apply the
 Create a sub-directory in the `/processing` directory (name it `mySurveyProc`):
 
 ``` r
-procDir <- file.path(getwd(), "processing/mySurveyProc/")
+procDir <- file.path(getwd(), "processing/mySurveyProc")
 dir.create(file.path(procDir),showWarnings = TRUE)
 ```
 
@@ -437,14 +437,13 @@ for(i in seq_along(mySurvey)){
  exportPDF(A, clip = 30, fPath = file.path(procDir, name(A)), addTopo = TRUE,
           lwd = 0.5, ws = 1.5)
   # save the processed GPR-line into ".rds" format
-  writeGPR(A, fPath = file.path(procDir, paste0(name(A),".rds")), 
-         format = "rds", overwrite = TRUE)
+  writeGPR(A, fPath = file.path(procDir, paste0(name(A),".rds")),
+          type = "rds", overwrite = TRUE)
   cat("!\n")
 }
 ```
 
-Read again
-----------
+### Read again
 
 Next time you can directly load the processed files as follows:
 
@@ -467,4 +466,28 @@ and check the results:
 ``` r
 plot(procSurvey[[1]], addTopo=TRUE)
 plot3DRGL(procSurvey, addTopo = TRUE)
+```
+
+Alternative: sequentially apply the processing steps on an object of the class GPRsurvey
+----------------------------------------------------------------------------------------
+
+Create a list of lists defining the processing steps. The name of each sublist (e.g., `agc`) correspond to the name of the processing function, each sublist corresponds to the argument = values as defined by the corresponding processing function. For example
+
+``` r
+prc <- list("gain"    = list(type = "agc", w = 10),
+            "dewow"   = list(type = "Gaussian", w = 15),
+            "fFilter" = list(f = c(10, 40, 150, 200), type = "bandpass",
+                             plotSpec = FALSE))
+```
+
+Then, apply all the processing steps with the function `papply()` to the `GPRsurvey` object `mySurvey`
+
+``` r
+mySurveyProc <- RGPR::papply(mySurvey, prc)
+```
+
+What do `papply()` do? It applies the processing steps as in the for-loop in the previous section and stores locally the processed GPR data on your local computer (temp files). That means that if you want to use the processed GPR data in another R session, you still need to save them manually, for example with the function `writeGPR()`:
+
+``` r
+writeGPR(mySurveyProc, fPath = procDir, type = "rds")
 ```

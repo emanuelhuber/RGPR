@@ -901,8 +901,9 @@ setMethod("plot3DRGL", "GPRsurvey",
         message(gpr@name, ": no coordinates, I cannot plot",
                   " this line!!")
       }else{
-        plot3DRGL(gpr, addTopo=addTopo, clip=clip, normalize=normalize, 
-                    nupspl=nupspl,add=add,xlim=xlim, ylim=ylim, zlim=zlim,...)
+        plot3DRGL(gpr, addTopo = addTopo, clip = clip, normalize = normalize, 
+                  nupspl = nupspl, add = add, xlim = xlim, ylim = ylim, 
+                  zlim = zlim, ...)
       }
       add <- TRUE
     }  

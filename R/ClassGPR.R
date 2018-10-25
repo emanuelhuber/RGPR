@@ -3371,6 +3371,10 @@ function(x, addTopo = FALSE, clip = NULL, normalize = NULL,
       }else if(length(clip) == 1){
         x@data <- .clip(x@data, clip[1])
       }
+    }else if(is.null(clip)){
+      # clip below the 0.01-quantile and above the 0.99-quantile
+      x@data <- .clip(x@data, quantile(as.vector(x@data), 0.99, na.rm = TRUE),
+                       quantile(as.vector(x@data), 0.01, na.rm = TRUE))
     }
     if(length(x@coordref)!=3 ){
       refCoord <- apply(coord(x),2,min)

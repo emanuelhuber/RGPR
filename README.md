@@ -3,6 +3,8 @@
 
 RGPR is a free and open-source software package to read, export, analyse, process and visualise *ground-penetrating radar* (GPR) data. RGPR is written in [R](https://cran.r-project.org/), a high-level  programming language for statistical computing and graphics that is freely available under the GNU General Public License and runs on Linux, Windows and MacOS.
 
+
+
 ## How to cite
 
 > E. Huber and G. Hans (2018) RGPR — An open-source package to process and visualize GPR data. 17th International Conference on Ground Penetrating Radar (GPR), Switzerland, Rapperswil, 18-21 June 2018, pp. 1-4.
@@ -27,7 +29,10 @@ ISSN      = {2474-3844}}
     
     - [x] Sensors & Software file format (.DT1, .HD)
     - [x] MALA file format (.rd3, .rad)
-    - [x] SEG-Y file format (.sgy) from RadSys Zond GPR device
+    - [x] SEG-Y file format from RadSys Zond GPR device (.sgy) (it is not like the usual SEG-Y file format)
+    - [x] ImpulseRadar format (.iprb, iprh) 
+    - [ ] DTZ format from GSSI (.dtz) -> we are working on it
+    - [ ] SEG-Y
     
     Do you miss your preferred file format? Send me the file format description with a test file and I will adapt the RGPR-package to support this file format. 
     

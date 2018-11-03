@@ -54,13 +54,20 @@ date: 2018-02-12
 
 ## Notes
 
-* supported binary formats: 
-    - [x] Sensors & Software file format (.DT1, .HD)
-    - [x] MALA file format (.rd3, .rad)
-    - [x] SEG-Y file format (.sgy) from RadSys Zond GPR device
-    - [ ] ...
-    - [ ] Do you miss your preferred file format? Send me the file format description with a test file and I will adapt the RGPR-package to support this file format. 
-* RGPR only support reflection data such as surface-based GPR data (no support for cross-borehole GPR data)
+### Supported binary formats:
+
+- [x] Sensors & Software file format (.DT1, .HD)
+- [x] MALA file format (.rd3, .rad)
+- [x] SEG-Y file format from RadSys Zond GPR device (.sgy) (it is not like the usual SEG-Y file format)
+- [x] ImpulseRadar format (.iprb, iprh) 
+- [ ] DTZ format from GSSI (.dtz) -> we are working on it
+- [ ] SEG-Y -> we are working on it
+    
+Do you miss your preferred file format? Send me the file format description with a test file and I will adapt the RGPR-package to support this file format. 
+
+### Current limitations
+
+RGPR only support reflection data such as surface-based GPR data (no support for cross-borehole GPR data)
 
 ## Coming soon
 

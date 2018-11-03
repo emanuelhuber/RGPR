@@ -303,6 +303,105 @@ setClass(
 }
 
 
+.gprImpulseRadar <- function(x, name = character(0), description = character(0),
+                             fPath = character(0)){ 
+  rec_coord <- matrix(nrow = 0, ncol = 0)
+  trans_coord <- matrix(nrow = 0, ncol = 0)
+  coord <- matrix(nrow = 0, ncol = 0)
+  pos_used <- integer(nrow(x$hd))
+  nBytes <- .getHD(x$hd, "DATA VERSION", position = TRUE)
+  if(!is.null(nBytes)){
+    pos_used[nBytes[2]] <- 1L
+  }else{
+    nBytes <- 16
+  }
+  nTr <- ncol(x$data)
+  dx <- .getHD(x$hd, "USER DISTANCE INTERVAL", position = TRUE)
+  if(!is.null(dx)){
+    pos_used[dx[2]] <- 1L
+  }else{
+    dx <- 1
+  }
+  ttw  <- .getHD(x$hd,"TIMEWINDOW", position = TRUE)
+  if(!is.null(ttw)){
+    dz <- ttw[1]/nrow(x$data)
+    pos_used[ttw[2]] <- 1L
+  }else{
+    warning("time/depth resolution unknown! I take dz = 0.4 ns!\n")
+    dz <- 0.4
+    ttw  <- nrow(x$data) * dz
+  }
+  nT0 <- .getHD(x$hd, "ZERO LEVEL", position = TRUE)
+  if(!is.null(nT0)){
+    pos_used[nT0[2]] <- 1L
+  }else{
+    nT0 <- 1
+  }
+  if(!is.null(x$time)){
+    traceTime <- as.double(as.POSIXct(paste(x$time[,2], x$time[,3])))
+  }else{
+    traceTime <- rep(0, nTr)
+  }
+  afreq <- .getHD(x$hd, "ANTENNA", position = TRUE, number = FALSE)
+  if(!is.null(afreq)){
+    antfreq <- as.numeric(gsub("[^0-9]", "", afreq[1]))
+    pos_used[as.integer(afreq[2])] <- 1L
+  }else{
+    antfreq <- 100
+  }
+  antsep <- .getHD(x$hd, "ANTENNA SEPARATION", position = TRUE)
+  if(!is.null(antsep)){
+    pos_used[antsep[2]] <- 1L
+  }else{
+    antsep[1] <- 1
+  }
+  surveyDate <- .getHD(x$hd, "DATE", position = TRUE, number = FALSE)
+  if(!is.null(surveyDate)){
+    d <- as.character(as.Date(surveyDate[1], "%Y-%m-%d"))
+    pos_used[surveyDate[2]] <- 1L
+  }else{
+    surveyDate[1] <- 0
+  }
+  x$hd2 <- x$hd[!pos_used,]
+  if(nrow(x$hd2) > 0){
+    key <-  trimStr(x$hd2[,1])
+    test <- key!=""
+    key <- key[test]
+    key2 <- gsub("[[:punct:]]", replacement = "", key)
+    key2 <- gsub(" ", replacement = "_", key2)
+    nameL <- trimStr(x$hd2[test,2])
+    names(nameL) <- as.character(key2)
+    sup_hd <- as.list(nameL)
+  }
+  
+  new("GPR",   version="0.2",
+      data = byte2volt(nBytes = nBytes[1])*x$data,
+      traces = seq_len(nTr),                       # trace number
+      fid = rep("", nTr),                          # markes/fid
+      coord = coord,                               # trace coordinates
+      pos = seq(0, by = dx[1], length.out = nTr),  # trace position
+      depth = seq(0, by = dz, length.out = nrow(x$data)),
+      rec = rec_coord,                             # recorder coordinates
+      trans = trans_coord,                         # transmitter coordinates
+      time0 = rep((nT0[1] - 1) * dz, nTr),            # time-zero
+      time = traceTime,                            # sampling time
+      proc = character(0),                         # processing steps
+      vel = list(0.1),                             # m/ns
+      name = name,
+      description = description,
+      filepath = fPath,
+      dz = dz, 
+      dx = dx[1],                                   # "STEP SIZE USED"
+      depthunit = "ns",
+      posunit = "m",
+      freq = antfreq, 
+      antsep = antsep[1], 
+      surveymode = "reflection",
+      date = d,
+      crs = character(0),
+      hd = sup_hd                      # header
+  )
+}
 
 
 .gprRD3 <- function(x, name = character(0), description = character(0),
@@ -536,85 +635,82 @@ setClass(
 setMethod("readGPR", "character", function(fPath, desc = ""){
     ext <- .fExt(fPath)
     # DT1
-    #if(file.exists(fPath)){
-      if("DT1" == toupper(ext)){
-        name <- .fNameWExt(fPath)
-        A <- readDT1(fPath)
-        x <- .gpr(A, name = name, fPath = fPath, description = desc)
-        #return(x)
-      }else if("rds" == tolower(ext)){
-        x <- readRDS(fPath)
-        if(class(x) == "GPR"){
-          x@filepath <- fPath
-          #return(x)
-        }else if(class(x) == "list"){
-          versRGPR <- x[["version"]]
-          if(versRGPR == "0.1"){
-            for(i in seq_along(x[['delineations']])){
-              x[['delineations']][[i]][, 5] <- -x[['delineations']][[i]][, 5]
-            }
+    if("DT1" == toupper(ext)){
+      name <- .fNameWExt(fPath)
+      A <- readDT1(fPath)
+      x <- .gpr(A, name = name, fPath = fPath, description = desc)
+    }else if("rds" == tolower(ext)){
+      x <- readRDS(fPath)
+      if(class(x) == "GPR"){
+        x@filepath <- fPath
+      }else if(class(x) == "list"){
+        versRGPR <- x[["version"]]
+        if(versRGPR == "0.1"){
+          for(i in seq_along(x[['delineations']])){
+            x[['delineations']][[i]][, 5] <- -x[['delineations']][[i]][, 5]
           }
-          y <- new("GPR",
-            version = x[['version']],
-            data = x[['data']],
-            traces = x[['traces']],           # x$dt1$traces
-            depth = x[['depth']],
-            pos = x[['pos']],                 # x$dt1$position of the traces
-            time0 = x[['time0']],             # x$dt1$time0
-            time = x[['time']],               # x$dt1$time
-            fid = trimStr(x[['fid']]),        # x$dt1$fid <-> x$dt1$x8
-            ann = trimStr(x[['ann']]),        # x$dt1$fid <-> x$dt1$x8
-            coord = x[['coord']],             # x$dt1$topo  of the traces
-            rec = x[['rec']],                # x$dt1$recx,x$dt1$recy,x$dt1$recz
-            trans = x[['trans']],
-            coordref = x[['coordref']],       # x$dt1$topo of the traces
-            freq = x[['freq']], 
-            dz = x[['dz']], 
-            dx = x[['dx']], 
-            antsep = x[['antsep']], 
-            name = x[['name']],
-            description = x[['description']],
-            filepath =x[['filepath']],
-            depthunit = x[['depthunit']],
-            posunit = x[['posunit']],
-            surveymode = x[['surveymode']],
-            date = x[['date']],
-            crs = x[['crs']],
-            proc = x[['proc']],               # processing steps
-            vel = x[['vel']],                 # m/ns
-            delineations = x[['delineations']],
-            hd =  x[['hd']]                   # header
-          )
-          y@filepath <- fPath
-          x <- y
-          #return(y)
         }
-      }else if("RD3" == toupper(ext)){
-        name <- .fNameWExt(fPath)
-        A <- readRD3(fPath)
-        x <- .gprRD3(A, name = name, fPath = fPath, description = desc)
-        #return(x)
-      }else if("SGY" == toupper(ext) || "SEGY" == toupper(ext)){
-        name <- .fNameWExt(fPath)
-        A <- readSEGY(fPath)
-        x <- .gprSEGY(A, name = name, fPath = fPath, description = desc)
-        #return(x)
+        y <- new("GPR",
+          version = x[['version']],
+          data = x[['data']],
+          traces = x[['traces']],           # x$dt1$traces
+          depth = x[['depth']],
+          pos = x[['pos']],                 # x$dt1$position of the traces
+          time0 = x[['time0']],             # x$dt1$time0
+          time = x[['time']],               # x$dt1$time
+          fid = trimStr(x[['fid']]),        # x$dt1$fid <-> x$dt1$x8
+          ann = trimStr(x[['ann']]),        # x$dt1$fid <-> x$dt1$x8
+          coord = x[['coord']],             # x$dt1$topo  of the traces
+          rec = x[['rec']],                # x$dt1$recx,x$dt1$recy,x$dt1$recz
+          trans = x[['trans']],
+          coordref = x[['coordref']],       # x$dt1$topo of the traces
+          freq = x[['freq']], 
+          dz = x[['dz']], 
+          dx = x[['dx']], 
+          antsep = x[['antsep']], 
+          name = x[['name']],
+          description = x[['description']],
+          filepath =x[['filepath']],
+          depthunit = x[['depthunit']],
+          posunit = x[['posunit']],
+          surveymode = x[['surveymode']],
+          date = x[['date']],
+          crs = x[['crs']],
+          proc = x[['proc']],               # processing steps
+          vel = x[['vel']],                 # m/ns
+          delineations = x[['delineations']],
+          hd =  x[['hd']]                   # header
+        )
+        y@filepath <- fPath
+        x <- y
+      }
+    }else if("RD3" == toupper(ext)){
+      name <- .fNameWExt(fPath)
+      A <- readRD3(fPath)
+      x <- .gprRD3(A, name = name, fPath = fPath, description = desc)
+    }else if("SGY" == toupper(ext) || "SEGY" == toupper(ext)){
+      name <- .fNameWExt(fPath)
+      A <- readSEGY(fPath)
+      x <- .gprSEGY(A, name = name, fPath = fPath, description = desc)
+    }else if("IPRB" == toupper(ext) || "IPRH" == toupper(ext)){
+      name <- .fNameWExt(fPath)
+      A <- readImpulseRadar(fPath)
+      x <- .gprImpulseRadar(A, name = name, fPath = fPath, 
+                             description = desc)
+    }else{
+      stop(paste0("File extension not recognised!\n",
+                  "Must be '.DT1', '.rd3', 'sgy', 'segy', '.rds'\n",
+                  "'iprb' or 'iprh"))
+    }
+    if(grepl("CMP", x@surveymode)){
+      x@surveymode <- "CMP"
+      if(length(x@rec) == 0 || length(x@trans) == 0){
+        x@antsep <- seq(x@antsep, by = x@dx, length.out = length(x))
       }else{
-        stop(paste0("File extension not recognised!\n",
-                    "Must be '.DT1', '.rd3', 'sgy', 'segy' or '.rds'"))
+        x@antsep <- sqrt(colSums((x@rec - x@trans)^2))
       }
-      if(grepl("CMP", x@surveymode)){
-        x@surveymode <- "CMP"
-        if(length(x@rec) == 0 || length(x@trans) == 0){
-          x@antsep <- seq(x@antsep, by = x@dx, length.out = length(x))
-        }else{
-          x@antsep <- sqrt(colSums((x@rec - x@trans)^2))
-        }
-      }
-      return(x)
-    #}else{
-    #  stop(fPath, "does not exist!")
-    #}
+    }
+    return(x)
   } 
 )
 

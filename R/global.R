@@ -289,8 +289,22 @@ linkCoordFid <- function(y, xyz, pcode, tol = 0.1 ){
   
 
 ##------------- FILENAME/FILEPATH/EXTENSION -------------------##
-# return filename with correct extension (lower or upper case)
-getFName <- function(fPath, ext = c(".rad", ".rd3")){
+
+#' Filepath(s) with correct extension(s)
+#' 
+#' Returns the filepaths with the correct extension and check for 
+#' upper and lower case extension (e.g., ".txt" or ".TXT")
+#' @param fPath length-one character vector (e.g., "xline01.dt1")
+#' @param ext   character vector of the extension required
+#' @param throwError boolean. If TRUE, an error is thrown if the filepath
+#'                   with one of the extension does not exist. If FALSE,
+#'                   it returns NULL for the missing extension
+#' @return A list whose keys correspond to \code{ext} and the values to 
+#'         the filepaths:
+#'         $hd  -> xline01.hd
+#'         $dt1 -> xline01.dt1
+#' @export  
+getFName <- function(fPath, ext = c(".hd", ".dt1"), throwError = TRUE){
   fp <- file.path(dirname(fPath), .fNameWExt(fPath))
   ext <- tolower(ext)
   Ext <- toupper(ext)
@@ -303,8 +317,12 @@ getFName <- function(fPath, ext = c(".rad", ".rd3")){
       #mfile[[gsub("^[.]",  "", ext[i])]] <- paste0(fp, ext[i])
       mfile[[gsub("^[.]",  "", ext[i])]] <- f2
     }else{
-      stop("Files '", f1, "' and '", f2, "' do not exist!\n",
-            "Check the filepath!") 
+      if(isTRUE(throwError)){
+        stop("Files '", f1, "' and '", f2, "' do not exist!\n",
+             "Check the filepath!")
+      }else{
+        mfile[[gsub("^[.]",  "", ext[i])]] <- NULL
+      }
     }
   }
   return(mfile)
@@ -4250,7 +4268,53 @@ readSEGY <- function(fPath){
 
   
 
+readImpulseRadar <- function( fPath){
+  fName <- getFName(fPath, ext = c(".iprh", ".iprb"))
+  #--- read header file
+  headHD <- scan( fName$iprh, what = character(), strip.white = TRUE,
+                  quiet = TRUE, fill = TRUE, blank.lines.skip = TRUE, 
+                  flush = TRUE, sep = "\n")
+  nHD <- length(headHD)
+  hHD <- data.frame( tag = character(), val = character(), 
+                     stringsAsFactors = FALSE)
+  for(i in seq_along(headHD)){
+    hdline <- strsplit(headHD[i], ":")[[1]]
+    if(length(hdline) < 2){
+      hHD[i,1] <- ""
+      hHD[i,2] <- trimStr(hdline[1])
+    }else{
+      hHD[i,1:2] <-  as.character(sapply(hdline[1:2],trimStr))
+    }
+  }
+  nTr    <- .getHD(hHD, "LAST TRACE")
+  nPt    <- .getHD(hHD, "SAMPLES")
+  nBytes <- .getHD(hHD, "DATA VERSION")
   
+  #--- READ .IPRB
+  bind <- matrix(NA, nrow = nPt, ncol = nTr)
+  con <- file(fName$iprb , "rb")
+  for(i in 1:nTr){
+    bind[,i] <- readBin(con, what=integer(), n = nPt, size = 2)
+  }
+  close(con)
+  #--- READ OPTIONAL FILES
+  fName <- getFName(fPath, ext = c(".cor", ".time", ".mrk"), 
+                    throwError = FALSE)
+  # TIME: trace_numer date(yyyy-mm-dd) time(hh:mm:sss)
+  hTime <- NULL
+  if(!is.null(fName$time))  hTime <- read.table(fName$time, 
+                                                stringsAsFactors = FALSE)
+  # GPS POSITION: trace date time north N East E Elevation M Quality
+  hCor <- NULL
+  if(!is.null(fName$cor)) hCor <- read.table(fName$cor,
+                                             stringsAsFactors = FALSE)
+  # marker
+  hMrk <- NULL
+  if(!is.null(fName$mrk)) hMrk <- read.table(fName$mrk, 
+                                             stringsAsFactors = FALSE)
+  
+  return( list(hd = hHD, data = bind, time = hTime, cor = hCor, mkr = hMrk) )
+}  
   
 #--------------------------------------
 # http://stackoverflow.com/questions/17256834/getting-the-arguments-of-a-parent-

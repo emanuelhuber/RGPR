@@ -3,6 +3,17 @@
 
 RGPR is a free and open-source software package to read, export, analyse, process and visualise *ground-penetrating radar* (GPR) data. RGPR is written in [R](https://cran.r-project.org/), a high-level  programming language for statistical computing and graphics that is freely available under the GNU General Public License and runs on Linux, Windows and MacOS.
 
+<!--ts-->
+   * [How to cite](#how-to-cite)
+   * [Notes](#notes)
+      * [Supported binary formats](#supported-binary-formats) 
+      * [Current limitations](#current-limitations)
+      * [Yes, you can contribute](#yes-you-can-contribute)
+   * [Online tutorials](#online-tutorials)
+   * [How to install](#how-to-install)
+   * [Function overview](#function-overview)
+   * [Contributions](#contributions)
+<!--te-->
 
 
 ## How to cite
@@ -23,9 +34,9 @@ doi       = {10.1109/ICGPR.2018.8441658},
 ISSN      = {2474-3844}}
 ```
 
-## Note
+## Notes
 
-* supported binary formats: 
+### Supported binary formats
     
     - [x] Sensors & Software file format (.DT1, .HD)
     - [x] MALA file format (.rd3, .rad)
@@ -35,13 +46,19 @@ ISSN      = {2474-3844}}
     - [ ] SEG-Y -> we are working on it
     
     Do you miss your preferred file format? Send me the file format description with a test file and I will adapt the RGPR-package to support this file format. 
-    
-* RGPR only support reflection data such as surface-based GPR data (no support for cross-borehole GPR data)
-* the documentation is still incomplete (but check the tutorials, http://emanuelhuber.github.io/RGPR)
 
-This is an ongoing project.
-If you have any questions, don't hesitate to contact me:
+### Current limitations
 
+RGPR only support reflection data such as surface-based GPR data (no support for cross-borehole GPR data)
+
+
+### Yes, you can contribute
+
+**This is an ongoing project.**
+
+To report bugs, contribute to the development of RGPR, see [how to contribute](https://github.com/emanuelhuber/RGPR/blob/master/CONTRIBUTING.md).
+
+If you have any questions, comments or suggestions, feel free to contact me (in english, french or german):
 emanuel.huber@alumni.ethz.ch
 
 Thank you!
@@ -51,7 +68,9 @@ Check the companion website for more info, tutorials, etc.
 
 http://emanuelhuber.github.io/RGPR
 
-## How to install/load
+## How to install
+
+You must first install [R](https://cran.r-project.org/). Then, in R console, enter the following:
 
 ```r
 if(!require("devtools")) install.packages("devtools")
@@ -64,7 +83,9 @@ plot(frenkeLine00)
 
 ```
 
-## Existing functions
+## Function overview
+
+The documentation is still incomplete (but check the tutorials, http://emanuelhuber.github.io/RGPR)
 
 ### Input/output functions
 * `readGPR()`, formats: Sensors & Software (.d11, .hd), MALA (.rd3, .rad), SEG-Y for RadSys Zond GPR device (.sgy),  R (rds)
@@ -170,9 +191,6 @@ plot(frenkeLine00)
 * `vel()` & `vel()<-` 
 * `gethd()`
 * `svDate()` & `svDate()<-`
-     
-
-        
 
 
 ### List of the functions from the class `GPR`

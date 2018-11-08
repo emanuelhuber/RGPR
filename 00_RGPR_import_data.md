@@ -172,9 +172,11 @@ Instead of giving the spatial (dx) and vertical (dz) sampling, you could directl
 x3 <- list(data = mydata,
            freq = 250,
            # trace position
-           pos = seq(from = 0, by = 0.025, length.out = ncol(mydata)),
+           pos = seq(from = 0, by = 0.025,
+                     length.out = ncol(mydata)),
            # sample position
-           depth = seq(from = 0, by = 0.1, length.out = nrow(mydata)),
+           depth = seq(from = 0, by = 0.1,
+                       length.out = nrow(mydata)),
            antsep = 1
 )
 

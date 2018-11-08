@@ -833,22 +833,29 @@ setAs(from = "list", to = "GPR", def = function (from) as.GPR.list(from))
 #' @export
 as.GPR.list <- function (x, ...){
   # prefix: "d_" for default
-  if(any("data" == tolower(names(x))) && is.matrix(x$data)){
-    if(is.null(x$pos) && !is.null(x$dx) && is.numeric(x$dx)){
-      x$pos <- (1:ncol(x$data) -1) * x$dx
+  if(any("data" == tolower(names(x))) && is.matrix(x[["data"]])){
+    if(is.null(x[["pos"]]) && !is.null(x[["dx"]]) && is.numeric(x[["dx"]])){
+      x[["pos"]] <- (1:ncol(x[["data"]]) -1) * x[["dx"]]
+    }else if( is.null(x[["pos"]]) ){
+      x[["pos"]] <- (1:ncol(x[["data"]]) -1)*0.25
     }else{
-      x$pos <- (1:ncol(x$data) -1)*0.25
+      if(length(x[["pos"]]) != ncol(x[["data"]])){
+        stop("length(x[['pos']]) must be equal to ncol(x[['data']]")
+      }
+      x[["dx"]] <- mean(diff(x[["pos"]]))
     }
-    if(is.null(x$depth) && !is.null(x$dz) && is.numeric(x$dz)){
-      x$depth <- (1:nrow(x$data) -1) * x$dz
+    if(is.null(x[["depth"]]) && !is.null(x[["dz"]]) && is.numeric(x[["dz"]])){
+      x[["depth"]] <- (1:nrow(x[["data"]]) -1) * x[["dz"]]
+    }else if( is.null(x[["depth"]]) ){
+      x[["depth"]] <- (1:nrow(x[["data"]]) -1)
     }else{
-      x$depth <- (1:nrow(x$data) -1)*0.8
+      if(length(x[["depth"]]) != nrow(x[["data"]])){
+        stop("length(x[['depth']]) must be equal to nrow(x[['data']]")
+      }      
+      x[["dz"]] <- mean(diff(x[["depth"]]))
     }
-    if(is.null(x$dx)){
-      x$dx <- mean(diff(x$pos))
-    }
-    if(is.null(x$dz)){
-      x$dz <- mean(diff(x$depth))
+    if(!is.null(x[["vel"]]) && !is.list(x[["vel"]])){
+      x[["vel"]] <- list(x[["vel"]])
     }
     myArg <- as.list(match.call(definition = sys.function(-2),
            call = sys.call(-2),
@@ -856,40 +863,36 @@ as.GPR.list <- function (x, ...){
            )
     d_name <- paste(eval(myArg[2]))
     y <- new("GPR", 
-              version = "0.2",
-              data = x$data,
-              traces = 1:ncol(x$data),    # trace numbering
-              pos = x$pos,                # position of the traces
-              depth= x$depth,
-              time0 = rep(0,ncol(x$data)),  
-              time = rep(0,ncol(x$data)), # time of trace records
-              proc =  character(0),       # processing steps
-              # proc =  ifelse(is.null(x$proc),character(0),x$proc),  
-              # processing steps
-              vel = list(0.1),  #m/ns
-              name = as.character(d_name),
+              version     = "0.2",
+              data        = x[["data"]],
+              traces      = 1:ncol(x[["data"]]),       # trace numbering
+              pos         = x[["pos"]],                # trace position
+              depth       = x[["depth"]],
+              time0       = rep(0, ncol(x[["data"]])),  
+              time        = rep(0, ncol(x[["data"]])), # time of trace records
+              proc        =  character(0),       
+              vel         = list(0.1),                 # m/ns
+              name        = as.character(d_name),
               description = paste0("coercion of ", as.character(d_name), 
-                                  " (",typeof(x), ") into GPR"),
-              filepath = character(0),
-      #         ntr = ncol(x$data), 
-      #         w = nrow(x$data)*x$dz, 
-              dz = x$dz, 
-              dx = x$dx, 
-              depthunit = "ns",
-              posunit = "m",
-              freq = 100,
-              antsep = 1, 
-              surveymode = "reflection",
-              date = format(Sys.time(), "%d/%m/%Y"),
-              crs = character(0),
-              hd = list())
+                                   " (",typeof(x), ") into GPR"),
+              filepath    = character(0),
+              dz          = x[["dz"]], 
+              dx          = x[["dx"]], 
+              depthunit   = "ns",
+              posunit     = "m",
+              freq        = 100,
+              antsep      = 1, 
+              surveymode  = "reflection",
+              date        = format(Sys.time(), "%d/%m/%Y"),
+              crs         = character(0),
+              hd          = list())
     sNames <- slotNames(y)
-    sNames <- sNames[ !(sNames %in% c("data","pos","depth","dz","dx"))]
+    sNames <- sNames[ !(sNames %in% c("data", "pos", "depth", "dz", "dx"))]
     for(i in seq_along(sNames)){
       if(!is.null(x[[sNames[i]]])){
         slot(y, sNames[i], check = TRUE) <- x[[sNames[i]]]
       }
-    }# if(!is.null(x$traces)) 
+    }
     return(y)
   }else{
     stop("The list must have a 'data' index name")

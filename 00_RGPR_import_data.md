@@ -118,10 +118,10 @@ A <- as.matrix(frenkeLine00)
 
 ``` r
 x <- list(data = mydata,
-           freq = 250,                          # MHz (antenna frequency)
-           dx = 0.025,                          # metres (spatial sampling)
-           dz = 0.1000,                         # ns (vertical sampling)
-           antsep = 1                           # antenna separation 1 m
+           freq = 250,            # MHz (antenna frequency)
+           dx = 0.025,            # metres (spatial sampling)
+           dz = 0.1000,           # ns (vertical sampling)
+           antsep = 1             # antenna separation 1 m
 )
 ```
 
@@ -143,19 +143,24 @@ See examples below:
 
 ``` r
 x2 <- list(data = mydata,
-           freq = 250,                          # MHz (antenna frequency)
-           dx = 0.025,                          # metres (spatial sampling)
-           dz = 0.1000,                         # ns (vertical sampling)
-           antsep = 1,                          # antenna separation 1 m
-           surveymode = "reflection",           # either 'reflection', 'CMP' or 'WARR'
-           date = "25/12/2017",                 # date of the survey: dd/mm/yyyy
+           freq = 250,
+           dx = 0.025,
+           dz = 0.1000,
+           antsep = 1,
+           # either 'reflection', 'CMP' or 'WARR'
+           surveymode = "reflection",
+           date = "25/12/2017",
+           # date of the survey: dd/mm/yyyy
            name = "XLINE00",
            description = "A nice survey",
            depthunit = "ns",
            posunit = "m",
-           vel = list(0.1)                      # GPR wave velocity in m/ns, must be a list
-)                                    # for the moment, only constant wave velocity
-                                               # are implemented.
+           # GPR wave velocity in m/ns, must be a list
+           # for the moment, only constant wave velocity
+           # are implemented.
+           vel = list(0.1)
+)
+
 
 gprdata2 <- as(x2, "GPR")
 plot(gprdata2, main = "test2")
@@ -165,10 +170,12 @@ Instead of giving the spatial (dx) and vertical (dz) sampling, you could directl
 
 ``` r
 x3 <- list(data = mydata,
-           freq = 250,                          # MHz (antenna frequency)
+           freq = 250,
+           # trace position
            pos = seq(from = 0, by = 0.025, length.out = ncol(mydata)),
+           # sample position
            depth = seq(from = 0, by = 0.1, length.out = nrow(mydata)),
-           antsep = 1                           # antenna separation 1 m
+           antsep = 1
 )
 
 gprdata3 <- as(x3, "GPR")

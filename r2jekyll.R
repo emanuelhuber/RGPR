@@ -23,6 +23,8 @@ library(rmarkdown)
 args <- commandArgs(TRUE)
 filename <- args[1]
 
+print(filename)
+
 # Check that it's a .Rmd file.
 if(!grepl(".Rmd", filename)) {
   stop("You must specify a .Rmd file.")

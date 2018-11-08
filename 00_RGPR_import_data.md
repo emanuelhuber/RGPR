@@ -166,7 +166,7 @@ gprdata2 <- as(x2, "GPR")
 plot(gprdata2, main = "test2")
 ```
 
-Instead of giving the spatial (dx) and vertical (dz) sampling, you could directly give the trace positions (pos) and the sample time (depth). Example:
+Instead of giving the spatial (`dx`) and vertical (`dz`) sampling, you can directly give the trace positions (`pos`) and the sample time (`depth`). Example:
 
 ``` r
 x3 <- list(data = mydata,

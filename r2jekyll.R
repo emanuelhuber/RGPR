@@ -2,6 +2,7 @@
 
 #Be sure to make r2jekyll.R executable with chmod +x r2jekyll.R. Then, to convert my .Rmd file to a .md file and take care of any .png file housekeeping, I navigate to my _drafts directory and execute in the terminal:
 
+# Rscript --vanilla 00_RGPR_import_data.Rmd
 # Rscript --vanilla 01_RGPR_tutorial_basic-processing.Rmd
 # Rscript --vanilla 02_RGPR_tutorial_RGPR-survey.Rmd
 

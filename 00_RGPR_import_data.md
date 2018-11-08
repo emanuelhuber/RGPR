@@ -93,7 +93,7 @@ Each GPR data consists of
 
 -   a binary data file with the SEG-Y Sounding Data Format (extension `.sgy` or `.segy`, 16-bit or 32-bit).
 
-**NOTE THAT THIS SEG-Y DATA FORMAT DOES NOT CORRESPOND TO OTHER SEG-Y FORMATS.**
+**NOTE THAT THIS SEG-Y DATA FORMAT IS NOT THE USUAL SEG-Y FORMAT.**
 
 To read the GPR data, enter
 

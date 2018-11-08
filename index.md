@@ -31,10 +31,11 @@ date: 2018-02-12
 
 ## Tutorials
 
-1. [Basic GPR data processing](01_RGPR_tutorial_basic-processing)
-2. [Add coordinates to GPR data](02_RGPR_tutorial_RGPR-survey)
-3. [GPR data migration](03_RGPR_tutorial_migration)
-4. [Some explanations on the class GPR](04_RGPR_tutorial_RGPR-object)
+1. [Import GPR data](00_RGPR_import_data)
+2. [Basic GPR data processing](01_RGPR_tutorial_basic-processing)
+3. [Add coordinates to GPR data](02_RGPR_tutorial_RGPR-survey)
+4. [GPR data migration](03_RGPR_tutorial_migration)
+5. [Some explanations on the class GPR](04_RGPR_tutorial_RGPR-object)
 
 
 ## How to install/load

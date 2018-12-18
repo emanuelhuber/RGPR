@@ -617,7 +617,79 @@ setClass(
         hd = x$hd
   )
 }
+
+
+.gprDZT <- function(x, name = character(0), description = character(0),
+                     fPath = character(0)){  
+  dd <- as.Date(x$hd$DATE, format = "%Y-%m-%d")
+  traceTime <- as.double(as.POSIXct(
+                    strptime(paste(x$hd$DATE, "01:30:00"), "%Y-%m-%d %H:%M:%S")
+                    )) + 1:ncol(x$data)
+  if(length(name) == 0){
+    x_name <- "LINE"
+  }else{
+    x_name <- name
+  }
+  antfreq <- switch(x$hd$ANT,
+                    '3200'   = numeric(0), # adjustable
+                    '3200MLF' = numeric(0), # adjustable
+                    '500MHz' = 500,
+                    '3207' = 100,
+                    '3207AP' = 100,
+                    '5106' = 200,
+                    '5106A' = 200,
+                    '50300' = 300,
+                    '350' = 350,
+                    '350HS' = 350,
+                    '50270' = 270,
+                    '50270S' = 270,
+                    '50400' = 400,
+                    '50400S' = 400,
+                    '800' = 800,
+                    '3101' = 900,
+                    '3101A' = 900,
+                    '51600' = 1600,
+                    '51600S' = 1600,
+                    '62000' = 2000,
+                    '62000-003' = 2000,
+                    '62300' = 2300,
+                    '62300XT' = 2300,
+                    '52600' = 2600,
+                    '52600S' = 2600,
+                    'D50800' = 800,
+                    numeric(0))  # 800,300,
   
+  new("GPR",   version="0.2",
+      data = byte2volt(nBytes = x$hd$BITS) * x$data,
+      traces = 1:ncol(x$data),
+      fid = character(0),
+      #coord = coord,
+      coord = matrix(nrow=0, ncol = 0),
+      pos = x$pos,
+      depth = x$depth,
+      rec = matrix(nrow = 0, ncol = 0),
+      trans = matrix(nrow = 0, ncol = 0),
+      time0 = rep(0, ncol(x$data)),
+      # time = x$hdt[1,] * 3600 + x$hdt[2,] * 60 + x$hdt[3,],
+      time = traceTime,
+      proc = character(0),
+      vel = list(0.1),
+      name = x_name,
+      description = description,
+      filepath = fPath,
+      dz =  x$hd$RANGE /  (x$hd$NSAMP - 1 ), 
+      dx = 1 / x$hd$SPM,
+      depthunit = "ns",
+      posunit = "m",
+      freq = antfreq, 
+      antsep = numeric(0),     # check
+      surveymode = "reflection",
+      date = as.character(dd), #format(Sys.time(), "%d/%m/%Y"),
+      crs = character(0),
+      hd = x$hd
+  )
+}
+
 #' Read a GPR data file
 #' 
 #' @param fPath Filepath (character).
@@ -697,6 +769,11 @@ setMethod("readGPR", "character", function(fPath, desc = ""){
       A <- readImpulseRadar(fPath)
       x <- .gprImpulseRadar(A, name = name, fPath = fPath, 
                              description = desc)
+    }else if("DZT" == toupper(ext)){
+      name <- .fNameWExt(fPath)
+      A <- readDZT(fPath)
+      x <- .gprDZT(A, name = name, fPath = fPath, 
+                            description = desc)
     }else{
       stop(paste0("File extension not recognised!\n",
                   "Must be '.DT1', '.rd3', 'sgy', 'segy', '.rds'\n",
@@ -3022,6 +3099,7 @@ plot.GPR <- function(x,
     v <- 0
   }
   dots <- list(...)
+  #------------------------ trace plot (1D) -----------------------------------#
   if(any(dim(x) == 1)){
     if(isTRUE(add)){
       lines(x, ...)
@@ -3065,20 +3143,24 @@ plot.GPR <- function(x,
             axis(side = 3, tck = +0.02)
           #FIXME: use fx .depthAxis()
           }else if(grepl("[s]$", x@depthunit)){
-            depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
-            depth2  <- seq(0.1, by = 0.1, 0.9)
-            depthat0 <- depthToTime(0, 0, v, antsep = x@antsep)
-            if(max(z)*v/2 > 1.3){
-              # depth <- pretty(seq(1.1, by = 0.1, max(z)*v/2), 10)
-              depth <- pretty(xat * v / 2, 10)
-              depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
-              axis(side = 3, at = t0 + depthat, labels = depth, tck = +0.02)
-              #print(t0)
+            if(length(x@antsep) > 0 && x@antsep > 0){
+              depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
+              depth2  <- seq(0.1, by = 0.1, 0.9)
+              depthat0 <- depthToTime(0, 0, v, antsep = x@antsep)
+              if(max(z)*v/2 > 1.3){
+                # depth <- pretty(seq(1.1, by = 0.1, max(z)*v/2), 10)
+                depth <- pretty(xat * v / 2, 10)
+                depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
+                axis(side = 3, at = t0 + depthat, labels = depth, tck = +0.02)
+                #print(t0)
+              }
+              depthat2 <- depthToTime(depth2, 0, v, antsep = x@antsep)
+              axis(side =3, at = t0 + depthat2, labels = FALSE, tck =+0.01)
+              if(isTRUE(addDepth0)) abline(v = depth_0, col = "grey", lty = 3)
+              mtext(paste0("depth (m),   v=", v, "m/ns"), side = 3, line = 2)
+            }else{
+              axis(side = 3, tck = +0.02)
             }
-            depthat2 <- depthToTime(depth2, 0, v, antsep = x@antsep)
-            axis(side =3, at = t0 + depthat2, labels = FALSE, tck =+0.01)
-            if(isTRUE(addDepth0)) abline(v = depth_0, col = "grey", lty = 3)
-            mtext(paste0("depth (m),   v=", v, "m/ns"), side = 3, line = 2)
           }
         }
       }
@@ -3088,6 +3170,7 @@ plot.GPR <- function(x,
       if(isTRUE(addAmpl0))  abline(h = 0, lty = 3, col = "grey")
       if(isTRUE(addTime0))  abline(v = t0, col = "red")
     }
+  #------------------------ radargram plot (2D) -------------------------------#
   }else{
     if(grepl("[s]$", x@depthunit) && addTopo){
       x <- migration(x)
@@ -3174,6 +3257,11 @@ plot.GPR <- function(x,
       mai <- c(1.2, 1.2, 1.2, 1.2)
     }else{
       mai <- c(1.2, 1.2, 1.2, 1.8)
+      if(grepl("[s]$", x@depthunit)){
+        if(length(x@antsep) > 0 && x@antsep > 0){
+          mai <- c(1.2, 1.2, 1.2, 1.8)
+        }
+      }
     }
     omi <- c(0, 0, 0.6, 0)
     mgp <- c(2.5, 0.75, 0)
@@ -3326,22 +3414,26 @@ plot.GPR <- function(x,
         axis(side = 4)
         #FIXME: use fx .depthAxis()
       }else if(grepl("[s]$", x@depthunit)){
-        depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
-        depth2  <- seq(0.1, by = 0.1, 0.9)
-        depthat0 <- depthToTime(0, 0, v, antsep = x@antsep)
-        if(max(yvalues) * v / 2 > 1.3){
-          # depth <- pretty(seq(1.1, by = 0.1, max(z)*v/2), 10)
-          depth <- pretty(yat * v / 2, 10)
-          depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
-          axis(side = 4, at = t0 + depthat, labels = depth, tck = -0.02)
+        if(length(x@antsep) > 0 && x@antsep > 0){
+          depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
+          depth2  <- seq(0.1, by = 0.1, 0.9)
+          depthat0 <- depthToTime(0, 0, v, antsep = x@antsep)
+          if(max(yvalues) * v / 2 > 1.3){
+            # depth <- pretty(seq(1.1, by = 0.1, max(z)*v/2), 10)
+            depth <- pretty(yat * v / 2, 10)
+            depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
+            axis(side = 4, at = t0 + depthat, labels = depth, tck = -0.02)
+          }
+          depthat2 <- depthToTime(depth2, 0, v, antsep = x@antsep)
+          axis(side = 4, at = t0 + depthat2, labels = FALSE, tck = -0.01)
+          axis(side = 4, at = depth_0, labels = "0", tick = FALSE)
+          if(isTRUE(addDepth0)) abline(h = depth_0, col = "grey", lty = 3)
+          # mtext(paste0("depth (m),   v=", v, "m/ns"), side = 4, line = 2)
+          mtext(paste0("depth (", x@posunit, "),   v = ", v, " ", x@posunit, 
+                       "/",  x@depthunit), side = 4, line = 2.5)
+        }else{
+          axis(side = 4)
         }
-        depthat2 <- depthToTime(depth2, 0, v, antsep = x@antsep)
-        axis(side = 4, at = t0 + depthat2, labels = FALSE, tck = -0.01)
-        axis(side = 4, at = depth_0, labels = "0", tick = FALSE)
-        if(isTRUE(addDepth0)) abline(h = depth_0, col = "grey", lty = 3)
-        # mtext(paste0("depth (m),   v=", v, "m/ns"), side = 4, line = 2)
-        mtext(paste0("depth (", x@posunit, "),   v = ", v, " ", x@posunit, 
-                     "/",  x@depthunit), side = 4, line = 2.5)
       }
     }
 

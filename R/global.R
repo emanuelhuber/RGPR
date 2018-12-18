@@ -2734,13 +2734,16 @@ phaseRotation <- function(x,phi){
 # }
 
 
-
-
-#-------------------------------------
-#------- PRIVAT FUNCTION --------#
+#' Bytes to volt conversion
+#'       
+#' Convert bytes to volt values
+#' @export
 byte2volt <- function ( V=c(-50,50), nBytes = 16) {
   abs(diff(V))/(2^nBytes)
 }
+
+#-------------------------------------
+#------- PRIVAT FUNCTION --------#
 
 
 
@@ -4012,15 +4015,7 @@ readRD3 <- function(fPath){
 }
 
 
-# number of bytes in connection
-# file.info(filename)$size
-.flen <- function(con){
-  pos0 <- seek(con)
-  seek(con,0,"end")
-  pos <- seek(con)
-  seek(con,where=pos0,"start")
-  return(pos)
-}
+
 
 
 # Prism2 ” software
@@ -4315,6 +4310,179 @@ readImpulseRadar <- function( fPath){
   
   return( list(hd = hHD, data = bind, time = hTime, cor = hCor, mkr = hMrk) )
 }  
+
+readDZT <- function(fPath){
+  fName <- getFName(fPath, ext = c(".dzt"))
+  hd <- c()
+  DZT <- file(fName$dzt , "rb")
+  MINHEADSIZE <- 1024  # absolute minimum total header size
+  nScans <- 0
+  #--------------------------------- READ HEADER ------------------------------#  
+  # 0x00ff ('\xff\a') if header, 0xfnff for old file
+  #rh_tag <- readChar(DZT, nchars = 1, useBytes = TRUE)
+  hd$TAG <- .readBin_ushort(DZT)
+  # Offset to Data from beginning of file
+  #   if rh_data < MINHEADSIZE then offset is MINHEADSIZE * rh_data
+  #   else offset is MINHEADSIZE *rh_nchan
+  hd$OFFSETDATA <- .readBin_ushort(DZT)   # rh_offsetdata
+  # samples per scan
+  hd$NSAMP <- .readBin_ushort(DZT)        # rh_nsamp
+  # bits per data word (8,16, 32) *
+  hd$BITS <- .readBin_ushort(DZT)         # rh_bits
+  # Binary_offset
+  # if rh_system is SIR 30, then equals repeats/sample
+  #     otherwise is 0x80 for 8 bit data and 0x8000 for 16 bit data
+  hd$ZERO <-.readBin_short(DZT)           # rh_zero
+  # scans per second
+  hd$SPS <- .readBin_float(DZT)           # rh_sps
+  # scans per meter
+  hd$SPM <- .readBin_float(DZT)           # rh_spm
+  # meters per mark
+  hd$MPM <- .readBin_float(DZT)           # rh_mpm
+  # position (ns)
+  hd$POSITION <- .readBin_float(DZT)      # rh_position
+  # range (ns)
+  hd$RANGE <- .readBin_float(DZT)         # rh_range
+  # number of passes for 2-D files
+  hd$NPASS <- .readBin_ushort(DZT)        # rh_npass
+  # creation date
+  creaDT <- .readRFDate(DZT, where = 31)
+  # modification date
+  modDT  <- .readRFDate(DZT, where = 35)
+  hd$DATE <- creaDT$date
+  hd$TIME <- creaDT$time
+  # skip across some proprietary stuff
+  seek(DZT, where = 44, origin = "start")
+  # offset to text
+  hd$OFFSETTEXT <- .readBin_ushort(DZT)   # rh_text
+  # size of text
+  hd$NTEXT <- .readBin_ushort(DZT)        # rh_ntext
+  # offset to processing history
+  hd$PROC <- .readBin_ushort(DZT)         # rh_proc
+  # size of processing history
+  hd$NPROC <- .readBin_ushort(DZT)        # rh_nproc
+  # number of channels
+  hd$NCHAN <- .readBin_ushort(DZT)        # rh_nchan
+  # average dilectric
+  hd$EPSR <- .readBin_float(DZT)          # rhf_epsr
+  # position in meters (useless?)
+  hd$TOP <- .readBin_float(DZT)           # rhf_top
+  # range in meters
+  hd$DEPTH <- .readBin_float(DZT)        # rhf_depth
+  seek(DZT, where = 98, origin = "start")
+  hd$ANT <- readChar(DZT, nchars = 14, useBytes = TRUE)
+  # byte containing versioning bits
+  hd$VSBYTE <- .readBin_ushort(DZT) 
+
+  #--------------------------------- READ DATA --------------------------------#
+  # number of bytes in file
+  nB <- .flen(DZT)
+  
+  # whether or not the header is normal or big-->determines offset to data array
+  if( hd$OFFSETDATA < MINHEADSIZE){
+    hd$OFFSETDATA <- MINHEADSIZE * hd$OFFSETDATA
+  }else{
+    hd$OFFSETDATA <- MINHEADSIZE * hd$NCHAN
+  }
+  
+  if(nScans == 0){ # read all the scans
+    nNumScans <- (nB - hd$OFFSETDATA)/(hd$NCHAN * hd$NSAMP * hd$BITS/8);
+  }
+  
+  seek(DZT, where = hd$OFFSETDATA, origin = "start")
+  
+  nNumSkipScans <- 0
+  
+  if(hd$BITS == 16){
+    #.skipBin(DZT, hd$NSAMP * nNumSkipScans * hd$NCHAN, size = 2)
+    invisible(readBin(DZT, "integer", n = hd$NSAMP * nNumSkipScans * hd$NCHAN, 
+                      size = 2L))
+    A <- matrix(nrow = hd$NSAMP, ncol = nNumScans * hd$NCHAN)
+    A[] <- readBin(DZT, what = "int", n = prod(dim(A)),  size = 2)
+    test <- A > 0
+    A[ test] <- A[ test] - 32768
+    A[!test] <- A[!test] + 32768
+  }else if(hd$BITS == 32){
+    A <- matrix(nrow = hd$NSAMP, ncol = nNumScans * hd$NCHAN)
+    A[] <- readBin(DZT, what = "int", n = prod(dim(A)),  size = 4) 
+  }
+  
+  tt <- (seq_len(hd$NSAMP) - 1) * hd$RANGE /  (hd$NSAMP - 1 )
+  yy <- 1/hd$SPM * (seq_len(ncol(A)) - 1)
+  #plot3D::image2D(x = tt, y = yy, z = A)
+  
+  close(DZT)
+  return(list(hd = hd, data = A, depth = tt, pos = yy))
+}
+
+.readRFDate <- function(con, where = 31){
+  seek(con, where = where, origin = "start")
+  rhb_cdt0 <- readBin(con, what = "raw", n = 4L, size = 1L, endian = "little")
+  
+  aa <- rawToBits(rhb_cdt0)
+  xdate <- paste(.bit2int(aa[25 + (1:7)]) + 1980, 
+                 sprintf("%02d", .bit2int(aa[21 + (1:4)])),  # sprintf()
+                 sprintf("%02d", .bit2int(aa[16 + (1:5)])), sep = "-")
+  xtime <- paste(sprintf("%02d", .bit2int(aa[11 + (1:5)])),
+                 sprintf("%02d", .bit2int(aa[5 + (1:6)])),
+                 sprintf("%02d", .bit2int(aa[1:5])* 2), sep = ":" )
+  return(list(date = xdate, time = xtime))
+}
+
+#-----------------------------------------
+# bit to integer conversion
+.bit2int <- function(x){
+  sum(as.integer(x) * 2^( rev(seq_along(x)) - 1))
+}
+
+# number of bytes in connection
+# file.info(filename)$size
+.flen <- function(con){
+  pos0 <- seek(con)
+  seek(con,0,"end")
+  pos <- seek(con)
+  seek(con,where=pos0,"start")
+  return(pos)
+}
+
+# unsigned integer, 2 bytes
+.readBin_int1 <- function(x, n = 1){
+  readBin(x, what = "int", n = n, size = 1, signed = FALSE, endian = "little")
+}
+
+# unsigned integer, 2 bytes
+.readBin_ushort <- function(x, n = 1){
+  readBin(x, what = "int", n = n, size = 2, signed = FALSE, endian = "little")
+}
+
+# signed integer, 2 bytes
+.readBin_short <- function(x){
+  readBin(x, what = "int", size = 2, signed = TRUE, endian = "little")
+}
+
+# float, 4 bytes
+.readBin_float <- function(x){
+  readBin(x, what = "numeric", size = 4, endian = "little")
+}
+
+# float, 8 bytes
+.readBin_float8 <- function(x){
+  readBin(x, what = "numeric", size = 8, endian = "little")
+}
+
+# char, 4 bytes
+.readBin_char <- function(x, n = 1){
+  readBin(x, what = "character", n = n, size = 1, endian = "little")
+}
+
+#  returns the current position in the specified file/connection con
+.ftell <- function(con){
+  return(seek(con))
+}
+
+# .skipBin <- function(con, n, size = 1L){
+#   if(n > 0) invisible(readBin(con, "integer", n = n, size = size))
+# }
   
 #--------------------------------------
 # http://stackoverflow.com/questions/17256834/getting-the-arguments-of-a-parent-

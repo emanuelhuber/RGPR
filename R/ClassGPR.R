@@ -122,20 +122,20 @@ setClass(
 #------------------------------------------#
 #-------------- CONSTRUCTOR ---------------#
 # x = classical GPR list
-.gpr <- function(x, name = character(0), description = character(0),
+.gpr <- function(x, fName = character(0), desc = character(0),
                     fPath = character(0)){
   rec_coord <- cbind(x$dt1$recx, x$dt1$recy, x$dt1$recz)
   trans_coord <- cbind(x$dt1$transx, x$dt1$transy, x$dt1$transz)
   if(sum(is.na(rec_coord)) > 0){
-    warning(paste(name,": ",sum(is.na(rec_coord)), 
+    warning(paste(fName,": ",sum(is.na(rec_coord)), 
                 "NA's in the receiver coordinates\n"))
   }
   if(sum(is.na(trans_coord)) > 0){
-    warning(paste(name,": ",sum(is.na(trans_coord)), 
+    warning(paste(fName,": ",sum(is.na(trans_coord)), 
                 "NA's in the transmitter coordinates\n"))
   }
   if(sum(is.na(x$dt1$topo)) > 0){
-    warning(paste(name,": ",sum(is.na(x$dt1$topo)), 
+    warning(paste(fName,": ",sum(is.na(x$dt1$topo)), 
                 "NA's in the topo coordinates\n"))
   }
   if(sum(abs(rec_coord),na.rm = TRUE) == 0 ){
@@ -286,8 +286,8 @@ setClass(
         time = traceTime,                       # x$dt1$time
         proc = character(0),              # processing steps
         vel = list(0.1),                  # m/ns
-        name = name,
-        description = description,
+        name = fName,
+        description = desc,
         filepath = fPath,
         dz = dz, 
         dx = dx[1],                       # "STEP SIZE USED"
@@ -303,7 +303,7 @@ setClass(
 }
 
 
-.gprImpulseRadar <- function(x, name = character(0), description = character(0),
+.gprImpulseRadar <- function(x, fName = character(0), desc = character(0),
                              fPath = character(0)){ 
   rec_coord <- matrix(nrow = 0, ncol = 0)
   trans_coord <- matrix(nrow = 0, ncol = 0)
@@ -387,8 +387,8 @@ setClass(
       time = traceTime,                            # sampling time
       proc = character(0),                         # processing steps
       vel = list(0.1),                             # m/ns
-      name = name,
-      description = description,
+      name = fName,
+      description = desc,
       filepath = fPath,
       dz = dz, 
       dx = dx[1],                                   # "STEP SIZE USED"
@@ -404,7 +404,7 @@ setClass(
 }
 
 
-.gprRD3 <- function(x, name = character(0), description = character(0),
+.gprRD3 <- function(x, fName = character(0), desc = character(0),
                     fPath = character(0)){  
   #coord <- matrix(nrow = 0, ncol = 0) 
   #if(!is.null(x$coords)){
@@ -504,8 +504,8 @@ setClass(
         time = numeric(0),
         proc = character(0),
         vel = list(0.1),
-        name = name,
-        description = description,
+        name = fName,
+        description = desc,
         filepath = fPath,
         dz = dz, 
         dx = dx[1],
@@ -520,7 +520,7 @@ setClass(
   )
 }
   
-.gprSEGY <- function(x, name = character(0), description = character(0),
+.gprSEGY <- function(x, fName = character(0), desc = character(0),
                     fPath = character(0)){  
   
   if( all(diff(x$hdt[4,]) > 0) || all(diff(x$hdt[5,]) > 0)){
@@ -543,10 +543,10 @@ setClass(
     x_posunit <- "feet"
     warning("Position unit 'feet' no yet implemented!")
   }
-  if(length(name) == 0){
+  if(length(fName) == 0){
     x_name <- paste0("LINE", x$hd$LINE_NUMBER)
   }else{
-    x_name <- name
+    x_name <- fName
   }
   # Antenna frequency
   antfreq0 <- grep("(antenna).*([0-9])+", x$hd$EBCDIC, ignore.case = TRUE, 
@@ -603,7 +603,7 @@ setClass(
         proc = character(0),
         vel = list(0.1),
         name = x_name,
-        description = description,
+        description = desc,
         filepath = fPath,
         dz = x_dz, 
         dx = x_dx,
@@ -618,17 +618,33 @@ setClass(
   )
 }
 
+.gprTXT <- function(x, fName = character(0), desc = character(0),
+                    fPath = character(0)){  
+  
+  if(!is.null(A$depth) && !is.null(A$pos)){
+    x <- list(data = A$data,
+            pos = A$pos,
+            depth = A$depth,
+            name = fName,
+            filepath = fPath)
+  }else{
+    x <- list(data = A$data)
+  }
+  y <- as(x, "GPR") 
+  if(desc != "") description(y) <- desc
+  return(y)
+}
 
-.gprDZT <- function(x, name = character(0), description = character(0),
+.gprDZT <- function(x, fName = character(0), desc = character(0),
                      fPath = character(0)){  
   dd <- as.Date(x$hd$DATE, format = "%Y-%m-%d")
   traceTime <- as.double(as.POSIXct(
                     strptime(paste(x$hd$DATE, "01:30:00"), "%Y-%m-%d %H:%M:%S")
                     )) + 1:ncol(x$data)
-  if(length(name) == 0){
+  if(length(fName) == 0){
     x_name <- "LINE"
   }else{
-    x_name <- name
+    x_name <- fName
   }
   antfreq <- switch(x$hd$ANT,
                     '3200'   = numeric(0), # adjustable
@@ -675,7 +691,7 @@ setClass(
       proc = character(0),
       vel = list(0.1),
       name = x_name,
-      description = description,
+      description = desc,
       filepath = fPath,
       dz =  x$hd$RANGE /  (x$hd$NSAMP - 1 ), 
       dx = 1 / x$hd$SPM,
@@ -708,9 +724,9 @@ setMethod("readGPR", "character", function(fPath, desc = ""){
     ext <- .fExt(fPath)
     # DT1
     if("DT1" == toupper(ext)){
-      name <- .fNameWExt(fPath)
+      fName <- .fNameWExt(fPath)
       A <- readDT1(fPath)
-      x <- .gpr(A, name = name, fPath = fPath, description = desc)
+      x <- .gpr(A, fName = fName, fPath = fPath, desc = desc)
     }else if("rds" == tolower(ext)){
       x <- readRDS(fPath)
       if(class(x) == "GPR"){
@@ -757,23 +773,28 @@ setMethod("readGPR", "character", function(fPath, desc = ""){
         x <- y
       }
     }else if("RD3" == toupper(ext)){
-      name <- .fNameWExt(fPath)
+      fName <- .fNameWExt(fPath)
       A <- readRD3(fPath)
-      x <- .gprRD3(A, name = name, fPath = fPath, description = desc)
+      x <- .gprRD3(A, fName = fName, fPath = fPath, desc = desc)
     }else if("SGY" == toupper(ext) || "SEGY" == toupper(ext)){
-      name <- .fNameWExt(fPath)
+      fName <- .fNameWExt(fPath)
       A <- readSEGY(fPath)
-      x <- .gprSEGY(A, name = name, fPath = fPath, description = desc)
+      x <- .gprSEGY(A, fName = fName, fPath = fPath, desc = desc)
     }else if("IPRB" == toupper(ext) || "IPRH" == toupper(ext)){
-      name <- .fNameWExt(fPath)
+      fName <- .fNameWExt(fPath)
       A <- readImpulseRadar(fPath)
-      x <- .gprImpulseRadar(A, name = name, fPath = fPath, 
-                             description = desc)
+      x <- .gprImpulseRadar(A, fName = fName, fPath = fPath, 
+                             desc = desc)
     }else if("DZT" == toupper(ext)){
-      name <- .fNameWExt(fPath)
+      fName <- .fNameWExt(fPath)
       A <- readDZT(fPath)
-      x <- .gprDZT(A, name = name, fPath = fPath, 
-                            description = desc)
+      x <- .gprDZT(A, fName = fName, fPath = fPath, 
+                            desc = desc)
+    }else if("TXT" == toupper(ext)){
+      fName <- .fNameWExt(fPath)
+      A <- readTXT(fPath)
+      x <- .gprTXT(A, fName = fName, fPath = fPath, 
+                   desc = desc)
     }else{
       stop(paste0("File extension not recognised!\n",
                   "Must be '.DT1', '.rd3', 'sgy', 'segy', '.rds'\n",
@@ -3302,7 +3323,7 @@ plot.GPR <- function(x,
         }
       }
       if(is.null(dots$zlim)){
-        if( min(z, na.rm = TRUE) > 0 ){
+        if( min(z, na.rm = TRUE) >= 0 ){
           # to plot amplitudes for example...
           dots$zlim <- c(0, max(z, na.rm = TRUE))
         } else if(!is.null(x@surveymode) && 
@@ -5018,16 +5039,17 @@ setMethod("strTensor", "GPR", function(x,  blksze = c(2, 4),
 #' @rdname writeGPR
 #' @export
 setMethod("writeGPR", "GPR", function(x, fPath = NULL, 
-      type = c("DT1", "rds", "ASCII", "xyzv"),
+      type = c("DT1", "rds", "ASCII", "xta", "xyza"),
       overwrite = FALSE, ...){
-    type <- match.arg(tolower(type), c("dt1", "rds", "ascii", "xyzv"))
+    type <- match.arg(tolower(type), c("dt1", "rds", "ascii", "xta", "xyza"))
     fPath <- ifelse(is.null(fPath), x@name, 
                     file.path(dirname(fPath), .fNameWExt(fPath)))
     ext <- switch(type,
                   "dt1" = ".dt1",
                   "rds" = ".rds",
                   "ascii" = ".txt",
-                  "xyzv" = ".txt")
+                  "xta" = ".txt",
+                  "xyza" = ".txt")
     fPath <- paste0(fPath, ext)
     testFile <- file.exists(fPath)
     if(isTRUE(overwrite)){
@@ -5049,8 +5071,11 @@ setMethod("writeGPR", "GPR", function(x, fPath = NULL,
             "ascii" = {write.table(as.matrix(x), file = fPath, 
                        quote = FALSE, col.names = x@pos, row.names = x@depth,
                        ...)},
-            "xyzv" = {xyzv <- matrix(nrow=prod(dim(x)), ncol = 4)
-                      colnames(xyzv) <- c("x", "y", "z", "v")
+            "xyza" = {if(length(x@coord) == 0){
+                        stop("This data has no coordinates!")
+                      }
+                      xyzv <- matrix(nrow=prod(dim(x)), ncol = 4)
+                      colnames(xyzv) <- c("x", "y", "z", "a")
                       xyzv[, 4]  <- as.vector(as.matrix(x))
                       xyzv[,1:3] <-  kronecker(x@coord, matrix(1,nrow(x),1))
                       xyzv[,3]   <- rep(max(xyzv[,3]), ncol(x)) - 

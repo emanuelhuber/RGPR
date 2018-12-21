@@ -1095,7 +1095,7 @@ setGenericVerif("readGPR", function(fPath, desc = "") standardGeneric("readGPR")
 #' @rdname writeGPR
 #' @export
 setGeneric("writeGPR", function(x, fPath = NULL, 
-                type = c("DT1", "rds", "ASCII", "xyzv"),
+                type = c("DT1", "rds", "ASCII", "xta", "xyza"),
                 overwrite = FALSE, ...){ standardGeneric("writeGPR")})
 
 #' @name exportCoord
@@ -4309,6 +4309,148 @@ readImpulseRadar <- function( fPath){
                                              stringsAsFactors = FALSE)
   
   return( list(hd = hHD, data = bind, time = hTime, cor = hCor, mkr = hMrk) )
+}  
+
+readTXT <- function(fPath){
+  fName <- getFName(fPath, ext = c(".txt"))
+
+  con <- file(fName$txt , "rt")
+  x <- readLines(con, n = 20, skipNul = TRUE)
+  close(con)
+  x <- x[ x!= ""]
+  
+  #----------------------------------------------------------------------------#
+  #------------------------------ find header ---------------------------------#
+  #----------------------------------------------------------------------------#
+  y <- strsplit(x, split = "[^[:alnum:]]+")
+  test0 <- suppressWarnings(lapply(y, as.numeric))
+  test <- sapply(test0, function(x) sum(is.na(x)))
+  if( all(test[-1] > 0) ){
+    stop("PROBLEM")
+  }else{
+    nHeader <- which(test > 0)
+    message("there is ", length(nHeader), " header lines!")
+  }
+  
+  if(length(nHeader) > 0){
+    x0 <- x[-nHeader]
+    header <- TRUE
+    skip <- max(nHeader) - 1
+  }else{
+    x0 <- x
+    header <- FALSE
+    skip <- 0
+  }
+  #----------------------------------------------------------------------------#
+  #--------------------------- find separator ---------------------------------#
+  #----------------------------------------------------------------------------#
+  captureSep <- function(x){ 
+    i <- gregexpr("[^[:alnum:]]+", x, perl = TRUE)
+    sep <- unique(substring(x, i[[1]], i[[1]]))
+  }
+  sep <- unique(unlist(lapply(x0, captureSep)))
+  sepName <- sep
+  if(sep == "\t"){
+    sepName <- "\\t"
+  }
+  if(length(sep) > 1){
+    stop("seems that you have different column delimiters: ", sepName, "\n")
+  }else{
+    message("Column delimiter is '", sepName, "'")
+  }
+  
+  #----------------------------------------------------------------------------#
+  #--------------------------- number of columns ------------------------------#
+  #----------------------------------------------------------------------------#
+  z <- strsplit(x0, split = "[^[:alnum:]]+")
+  nCol <- unique(sapply(z, length))
+  if(length(nCol) > 1){
+    # only first row has one element less -> first row = trace position
+    #                                     -> first col = trace depth
+    if( length(unique(nCols[-1])) == 1 && nCols[1] == nCols[2] - 1){
+      A <- read.table(fPath, header = header, skip = skip + 1, sep = sep)
+      if(header == TRUE){
+        skip <- skip + 1
+      }
+      Apos <- scan(fPath, sep = sep, skip = skip, nlines = 1)
+      return(list(data = as.matrix(A[,-1]), pos = Apos, depth = A[,1]))
+    }else{
+      cat("Error, not same number of elements per line.")
+    }
+  }else{
+    message(nCol, " columns")
+  }
+  
+  #----------------------------------------------------------------------------#
+  #---------------------------- 3 (or 4) column file --------------------------#
+  #----------------------------------------------------------------------------#
+  rmNaCol <- function(x){
+    # remove NA columns
+    rmCol <- which(apply(x, 2, function(x) sum(is.na(x))) > 0)
+    x <- x[, - rmCol]
+    return(x)
+  }
+  
+  X <- read.table(fPath, header = header, skip = skip, sep = sep)
+  
+  # remove NA columns
+  X <- rmNaCol(X)
+
+  if(ncol(X) == 3){
+    Xn <- list()
+    Xn[[1]] <- unique(rle(X[,1])$lengths)
+    Xn[[2]] <- unique(rle(X[,2])$lengths)
+    Xn[[3]] <- unique(rle(X[,3])$lengths)
+    pos <- 1:3
+    
+    Xamp <- which(lapply(Xn, length) > 2)
+    if(length(XampPos) > 1){
+      cat("Error")
+    }
+    XnTemp <- Xn
+    XnTemp[[Xamp]] <- NULL
+    pos <- pos[-Xamp]
+    Xpos <- pos[which.max((XnTemp))]
+    Xt <- pos[-Xpos]
+    
+    nr <- Xn[[Xpos]]
+    nc <- length(unique(X[, Xpos]))
+    if( nc != nrow(X)/nr){
+      cat("Error")
+    }
+  
+    A <- matrix(X[, Xamp][seq_len(nc * nr)], nrow = nr, ncol = nc, byrow = FALSE)
+    return(list(data = A, pos = unique(X[, Xpos]), depth = unique(X[, Xt])))
+  # }else if(ncol(X) == 4){
+  #   # case xyza!!!
+  #   Xn <- list()
+  #   Xn[[1]] <- unique(rle(X[,1])$lengths)
+  #   Xn[[2]] <- unique(rle(X[,2])$lengths)
+  #   Xn[[3]] <- unique(rle(X[,3])$lengths)
+  #   Xn[[4]] <- unique(rle(X[,4])$lengths)
+  #   pos <- 1:x <- list(data = A$data)
+  #   
+  #   Xamp <- which(lapply(Xn, length) > 2)
+  #   if(length(XampPos) > 1){
+  #     cat("Error")
+  #   }
+  #   XnTemp <- Xn
+  #   XnTemp[[Xamp]] <- NULL
+  #   pos <- pos[-Xamp]
+  #   Xpos <- pos[which.max((XnTemp))]
+  #   Xt <- pos[-Xpos]
+  #   
+  #   nr <- Xn[[Xpos]]
+  #   nc <- length(unique(X[, Xpos]))
+  #   if( nc != nrow(X)/nr){
+  #     cat("Error")
+  #   }
+  #   
+  #   A <- matrix(X[, Xamp][seq_len(nc * nr)], nrow = nr, ncol = nc, byrow = FALSE)
+  #   return(list(data = A, pos = unique(X[, Xpos]), depth = unique(X[, Xt])))
+  }else{
+    return(list(data = X))
+  }
 }  
 
 readDZT <- function(fPath){

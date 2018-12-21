@@ -964,11 +964,12 @@ setMethod("writeSurvey", "GPRsurvey", function(x, fPath, overwrite=FALSE){
 
 #' @export
 setMethod("writeGPR", "GPRsurvey", 
-        function(x, fPath = NULL, type = c("DT1", "rds", "ASCII", "xyzv"),
+        function(x, fPath = NULL, 
+                 type = c("DT1", "rds", "ASCII", "xta", "xyzv"),
                  overwrite = FALSE, ...){
     #setMethod("writeGPR", "GPRsurvey", 
     #    function(x,fPath, format=c("DT1","rds"), overwrite=FALSE){
-    type <- match.arg(tolower(type), c("dt1", "rds", "ascii", "xyzv"))
+    type <- match.arg(tolower(type), c("dt1", "rds", "ascii", "xta", "xyza"))
     mainDir <- dirname(fPath)
     if(mainDir =="." || mainDir =="/" ){
       mainDir <- ""

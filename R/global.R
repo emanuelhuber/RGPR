@@ -4326,10 +4326,10 @@ readTXT <- function(fPath){
   test0 <- suppressWarnings(lapply(y, as.numeric))
   test <- sapply(test0, function(x) sum(is.na(x)))
   if( all(test[-1] > 0) ){
-    stop("PROBLEM")
+    stop("PROBLEM. Please contact me: emanuel.huber@alumni.ethz.ch")
   }else{
     nHeader <- which(test > 0)
-    message("there is ", length(nHeader), " header lines!")
+    #message("there is ", length(nHeader), " header lines!")
   }
   
   if(length(nHeader) > 0){
@@ -4356,7 +4356,7 @@ readTXT <- function(fPath){
   if(length(sep) > 1){
     stop("seems that you have different column delimiters: ", sepName, "\n")
   }else{
-    message("Column delimiter is '", sepName, "'")
+    #message("Column delimiter is '", sepName, "'")
   }
   
   #----------------------------------------------------------------------------#
@@ -4375,10 +4375,10 @@ readTXT <- function(fPath){
       Apos <- scan(fPath, sep = sep, skip = skip, nlines = 1)
       return(list(data = as.matrix(A[,-1]), pos = Apos, depth = A[,1]))
     }else{
-      cat("Error, not same number of elements per line.")
+      stop("Error, not same number of elements per line.")
     }
   }else{
-    message(nCol, " columns")
+    #message(nCol, " columns")
   }
   
   #----------------------------------------------------------------------------#

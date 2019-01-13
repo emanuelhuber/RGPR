@@ -16,6 +16,9 @@ Takes time to compute!!}
 \arguments{
 \item{x}{An object of the class GPR}
 
+\item{width}{A length-one integer vector equal to the window length of the 
+average window (an odd number).}
+
 \item{trim}{A length-one numeric vector: the fraction (0 to 0.5) of 
 observations to be trimmed from each end of x before 
 the mean is computed. Values of trim outside that range 
@@ -32,9 +35,6 @@ the iteration number.}
 \item{itmax}{A length-one positiv integer vector defining the maximum
 iteration number. If \code{NULL}, \code{itmax} defines
 the iteration number.}
-
-\item{w}{A length-one integer vector equal to the window length of the 
-average window (an odd number).}
 }
 \value{
 An object of the class GPR with substracted background.

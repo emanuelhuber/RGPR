@@ -2624,6 +2624,11 @@ setMethod("backgroundSub", "GPR", function(x, width = 21, trim = 0.2,
   if(width > ncol(x)){
     stop("'width' must be smaller than the column number of x") 
   }
+  if(is.null(itmax) && is.null(eps)){
+    stop("You cannot set both 'eps' and 'imax' equal to 'NULL'!")
+  } 
+  if(is.null(itmax)) itmax <- Inf
+  if(is.null(eps)) eps <- 0
   
   if( (width %% 2) == 0){
     width <- width + 1
@@ -2631,26 +2636,22 @@ setMethod("backgroundSub", "GPR", function(x, width = 21, trim = 0.2,
   y0 <- as.matrix(x[, c(((width - 1)/2 + 1):2, 
                         seq_along(x1), 
                         ncol(x1) - 1:((width - 1)/2))])
-  if(is.null(itmax) && is.null(eps)){
-    stop("You cannot set both 'eps' and 'imax' equal to 'NULL'!")
-  } 
-  if(is.null(itmax)) itmax <- Inf
-  if(is.null(eps)) eps <- 0
   test <- c()
   i <- 0
-
+  
   d <- eps + 1
   while(i < itmax || d <= eps){
-    message("* ", appendLF = FALSE)
     i <- i + 1
     y <- wapplyMat(y0, width = width, by = 1, FUN = .BMSfx, 
-                        MARGIN = 1,  s = s, trim = trim)
-    d <- sum(((y - y0)^2))/prod(dim(y))
+                   MARGIN = 1,  s = s, trim = trim)
+    message("* ", appendLF = FALSE)
+    d <- sum(((y - y0)^2), na.rm =TRUE)/prod(dim(y))
     test <- c(test, d)
     y0 <- y
   }
   message("Residuals: ", paste(round(test, 3), collapse = " "))
-  return(x - y0[, - c(1:((w-1)/2), (w-1)/2  + ncol(x1) + 1:((w-1)/2))])
+  return(x - y0[, - c(1:((width-1)/2), 
+                      (width-1)/2  + ncol(x1) + 1:((width-1)/2))])
 }
 ) 
 

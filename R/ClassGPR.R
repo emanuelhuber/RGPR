@@ -2689,31 +2689,39 @@ setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA, center = TRUE,
   X <- scale(x@data, center = center, scale = scale)
   Xsvd <- svd(X)
   lambda <- Xsvd$d^2
-  
-  if(max(ev) > ncol(X)){
-    stop("The number of eigenvalues selected cannot exceed the number ",
-         "of GPR traces.")
-  }
-  if(min(ev) < 0){
-    stop("The eigenvalues number must be strictly positive.")
-  }
-  
+
   if(is.null(ev)){
     ev <- c(seq_len(ncol(X)))
+  }else if(!is.na(ev)){
+    if(max(ev) > ncol(X)){
+      stop("The number of eigenvalues selected cannot exceed the number ",
+         "of GPR traces.")
+    }
+    if(min(ev) < 0){
+      stop("The eigenvalues number must be strictly positive.")
+    }
   }
-  
+
   if(any(is.na(ev))){
-    windows()
     plot(seq_along(lambda), lambda, type = "b", col = "blue", pch = 16,
-         xlab = "Eigenvalue Index", ylab = "Eigenvalue")
+         xlab = "Eigenvalue Index", ylab = "Eigenvalue", 
+         main = paste0(length(lambda), " eigenvalues"))
     ev <- readline(paste0("What eigenvalues do you want to use to reconstruct ",
                           "the radargram ?"))
-    ev <- as.numeric(unlist(strsplit(ev, split = ",")))
+    if(grepl(":", ev)){
+      ev <- as.integer(eval(parse(text = ev)))
+    }else{
+      ev <- as.integer(unlist(strsplit(ev, split = ",")))
+    }
+    if(!is.integer(ev)){
+      stop("Select the eigenvalues by typing either '2:12' or '1,2,3,4' or '10'.")
+    }
   }
+
   d <- numeric(length(Xsvd$d))
   d[ev] <- Xsvd$d[ev]
   Xnew <- Xsvd$u %*% diag(d) %*% t(Xsvd$v)
-  
+
   # Xeigen <- array(NA, dim = c(dim(Xsvd$u), length(ev)))
   # for(i in seq_along(ev)){
   #   Xeigen[,,i] <- Xsvd$d[ev[i]] * Xsvd$u[,ev[i]] %*% t(Xsvd$v[,ev[i]])
@@ -2724,8 +2732,8 @@ setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA, center = TRUE,
   # } else{
   #   Xnew <- Xeigen[,,1]
   # }
-  
-  
+
+
   # if(!is.null(attr(X, 'scaled:scale')) && !is.null(attr(X, 'scaled:center'))){
   #   Xnew <- t(apply(Xnew, 1, function(r) r * attr(X, 'scaled:scale') + 
   #                     attr(X, 'scaled:center')))
@@ -2749,6 +2757,7 @@ setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA, center = TRUE,
   #                                     'scale' = as.character(scale)))
   # }
   proc(x) <- getArgs()
+
   return(x)
 } 
 )

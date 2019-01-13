@@ -7,6 +7,6 @@
 wapplyRow(x = NULL, width = NULL, by = NULL, FUN = NULL, ...)
 }
 \description{
-NOT CURRENTLY USED
-mod by MANU
+NOT CURRENTLY USED.
+mod by MANU.
 }

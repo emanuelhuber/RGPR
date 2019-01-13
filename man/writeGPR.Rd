@@ -6,11 +6,11 @@
 \alias{writeGPR}
 \title{Write the GPR object in a file.}
 \usage{
-writeGPR(x, fPath = NULL, type = c("DT1", "rds", "ASCII", "xyzv"),
+writeGPR(x, fPath = NULL, type = c("DT1", "rds", "ASCII", "xta", "xyza"),
   overwrite = FALSE, ...)
 
 \S4method{writeGPR}{GPR}(x, fPath = NULL, type = c("DT1", "rds", "ASCII",
-  "xyzv"), overwrite = FALSE, ...)
+  "xta", "xyza"), overwrite = FALSE, ...)
 }
 \description{
 Write the GPR object in a file.

@@ -5,7 +5,8 @@
 \alias{traceAverage}
 \title{Trace average}
 \usage{
-\S4method{traceAverage}{GPR}(x, w = NULL, FUN = mean, ...)
+\S4method{traceAverage}{GPR}(x, width = 21, alpha = 0.2, s = 1, eps = 1,
+  itmax = 5)
 }
 \arguments{
 \item{x}{An object of the class GPR}

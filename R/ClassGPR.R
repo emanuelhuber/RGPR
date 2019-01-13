@@ -2597,7 +2597,7 @@ setMethod("traceAverage", "GPR", function(x, w = NULL, FUN = mean, ...){
 #' doi: 10.1016/j.jappgeo.2014.04.022
 #' Takes time to compute!!
 #' @param x An object of the class GPR
-#' @param w A length-one integer vector equal to the window length of the 
+#' @param width A length-one integer vector equal to the window length of the 
 #'          average window (an odd number).
 #' @param trim  A length-one numeric vector: the fraction (0 to 0.5) of 
 #'              observations to be trimmed from each end of x before 
@@ -2625,12 +2625,12 @@ setMethod("backgroundSub", "GPR", function(x, width = 21, trim = 0.2,
     stop("'width' must be smaller than the column number of x") 
   }
   
-  if( (w %% 2) == 0){
-    w <- w + 1
+  if( (width %% 2) == 0){
+    width <- width + 1
   }
-  y0 <- as.matrix(x[, c(((w-1)/2 + 1):2, 
+  y0 <- as.matrix(x[, c(((width - 1)/2 + 1):2, 
                         seq_along(x1), 
-                        ncol(x1) - 1:((w-1)/2))])
+                        ncol(x1) - 1:((width - 1)/2))])
   if(is.null(itmax) && is.null(eps)){
     stop("You cannot set both 'eps' and 'imax' equal to 'NULL'!")
   } 

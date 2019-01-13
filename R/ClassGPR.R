@@ -2598,7 +2598,7 @@ setMethod("traceAverage", "GPR", function(x, w = NULL, FUN = mean, ...){
 #' @name backgroundSub
 #' @rdname backgroundSub
 #' @export
-setMethod("traceAverage", "GPR", function(x, width = 21, alpha = 0.2,
+setMethod("backgroundSub", "GPR", function(x, width = 21, alpha = 0.2,
                                           s = 1, eps = 1, itmax = 5){
   if(is.null(width)){
     stop("Set a value to 'width'")

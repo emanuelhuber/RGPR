@@ -9,8 +9,8 @@ See  Rashed and Harbi (2014) Background matrix subtraction (BMS):
 A novel background removal algorithm for GPR data
 doi: 10.1016/j.jappgeo.2014.04.022}
 \usage{
-\S4method{traceAverage}{GPR}(x, width = 21, alpha = 0.2, s = 1, eps = 1,
-  itmax = 5)
+\S4method{backgroundSub}{GPR}(x, width = 21, alpha = 0.2, s = 1,
+  eps = 1, itmax = 5)
 }
 \description{
 Background matrix substraction

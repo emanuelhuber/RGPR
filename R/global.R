@@ -678,11 +678,13 @@ ll2dc <- function(x){
 }
 
 #--------------------------------
-# wapply: A faster (but less functional) "rollapply" for vector setups
-# April 23, 2013
-# By A.N. Spiess, senior scientist at the Department of Andrology at the 
-# University Hospital Hamburg-Eppendorf
-# This is what turned out (wapply for "window apply")
+#' wapply: A faster (but less functional) "rollapply" for vector setups
+
+#' April 23, 2013.
+#' By A.N. Spiess, senior scientist at the Department of Andrology at the 
+#' University Hospital Hamburg-Eppendorf.
+#' This is what turned out (wapply for "window apply").
+#' @export
 wapply <- function(x=NULL, width = NULL, by = NULL, FUN = NULL, ...){
   FUN <- match.fun(FUN)
   if (is.null(by)) by <- width
@@ -697,8 +699,8 @@ wapply <- function(x=NULL, width = NULL, by = NULL, FUN = NULL, ...){
 
 #' Wapply on the row of a matrix (windowed)
 #'
-#' NOT CURRENTLY USED
-#' mod by MANU
+#' NOT CURRENTLY USED.
+#' mod by MANU.
 #' @export
 wapplyRow <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, ...){
   FUN <- match.fun(FUN)
@@ -714,8 +716,8 @@ wapplyRow <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, ...){
 
 #' Wapply on the row of a matrix (windowed + CENTERED)
 #'
-#' NOT CURRENTLY USED
-#' mod by MANU
+#' NOT CURRENTLY USED.
+#' mod by MANU.
 #' @export
 wapplyRowC <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, ...){
   FUN <- match.fun(FUN)
@@ -731,10 +733,13 @@ wapplyRowC <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, ...){
   return(OUT)
 }
 
-# based on wapply and modified by Manu
-# centered moving window
-# return a matrix of the same dimension than x
-# some border effect at a distance < width/2 at the first and last col/row
+#' windowing with centered window
+#'
+#' based on wapply and modified by Manu.
+#' centered moving window.
+#' return a matrix of the same dimension than x.
+#' some border effect at a distance < width/2 at the first and last col/row
+#' @export
 wapplyMat <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, 
                       MARGIN = 1, ...){
   FUN <- match.fun(FUN)
@@ -758,10 +763,13 @@ wapplyMat <- function(x = NULL, width = NULL, by = NULL, FUN = NULL,
   }
 }
 
-
-# based on wapply and modified by Manu
-# not centered moving window!
-# return a matrix of with smaller dimension than x (margin - 2*width)
+#' windowing with centered window
+#'
+#' based on wapply and modified by Manu.
+#' not centered moving window! start first row/column and 
+#' stop when the extremity of the windwo reach the last row/column.
+#' return a matrix of with smaller dimension than x (margin - 2*width)
+#' @export
 wapplyMat2 <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, 
                       MARGIN = 1, ...){
   FUN <- match.fun(FUN)

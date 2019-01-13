@@ -1068,7 +1068,22 @@ setMethod(
     range(x@data,na.rm=na.rm)
   }
 )
-
+#' @export
+setMethod(   
+  # can make the sum of a list of object of class GPR
+  f = "sum", 
+  signature = "GPR", 
+  definition = function(x, ..., na.rm = FALSE){
+    dots <- list(...)
+    if(length(dots) == 0){
+      sum(as.matrix(x), na.rm = na.rm)
+    }else{
+      z <- lapply(dots, function(x){ sum(x@data, na.rm)})
+      Reduce("+", z) + sum(as.matrix(x), na.rm = na.rm)
+    }
+  }
+)
+          
 # getGroupMembers("Math")
 #' Basic mathematical functions
 #'
@@ -2575,6 +2590,56 @@ setMethod("traceAverage", "GPR", function(x, w = NULL, FUN = mean, ...){
   }
 )
 
+#' Background matrix substraction
+#'  
+#' See  Rashed and Harbi (2014) Background matrix subtraction (BMS): 
+#' A novel background removal algorithm for GPR data
+#' doi: 10.1016/j.jappgeo.2014.04.022
+#' @name backgroundSub
+#' @rdname backgroundSub
+#' @export
+setMethod("traceAverage", "GPR", function(x, width = 21, alpha = 0.2,
+                                          s = 1, eps = 1, itmax = 5){
+  if(is.null(width)){
+    stop("Set a value to 'width'")
+  }
+  if(width > ncol(x)){
+    stop("'width' must be smaller than the column number of x") 
+  }
+  
+  if( (w %% 2) == 0){
+    w <- w + 1
+  }
+  y0 <- as.matrix(x[, c(((w-1)/2 + 1):2, 
+                        seq_along(x1), 
+                        ncol(x1) - 1:((w-1)/2))])
+  
+  y <- y0
+  test <- c()
+  i <- 0
+  
+  d <- eps + 1
+  while(i < max_it || d <= eps){
+    i <- i + 1
+    y <- wapplyMat(y0, width = width, by = 1, FUN = .BMSfx, 
+                        MARGIN = 1,  s = s, alpha = alpha)
+    d <- sum(((y - y0)^2))/prod(dim(y))
+    test <- c(test, d)
+    y0 <- y
+  }
+  message("Residuals: ", paste(round(test, 3), collapse = " "))
+  x - y0[, - c(1:((w-1)/2), (w-1)/2  + ncol(x1) + 1:((w-1)/2))]
+}
+) 
+
+.BMSfx <- function(x, s = 1, alpha = 0.2){
+  x_trimMean <- mean(x, trim = alpha, na.rm = TRUE)
+  x_hat <- x[sign(x) == sign(x_trimMean)]
+  w <- 1/(sqrt((x_hat - x_trimMean)^2))^s 
+  w_norm <- length(x_hat) * w/sum(w, na.rm = TRUE)
+  return(mean(w_norm * x_hat, na.rm = TRUE))
+}  
+  
 #----------------- FREQUENCY FILTERS
 #' Frequency filter
 #'

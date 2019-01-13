@@ -2692,7 +2692,7 @@ setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA, center = TRUE,
 
   if(is.null(ev)){
     ev <- c(seq_len(ncol(X)))
-  }else if(!is.na(ev)){
+  }else if(!any(is.na(ev))){
     if(max(ev) > ncol(X)){
       stop("The number of eigenvalues selected cannot exceed the number ",
          "of GPR traces.")

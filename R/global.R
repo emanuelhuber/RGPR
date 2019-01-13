@@ -1218,7 +1218,7 @@ setGenericVerif("traceShift", function(x,  ts, method = c("spline", "linear",
 setGenericVerif("traceAverage", function(x, w = NULL, FUN = mean, ...) 
                 standardGeneric("traceAverage"))
                 
-setGenericVerif("backgroundSub", function(x, width = 21, alpha = 0.2,
+setGenericVerif("backgroundSub", function(x, width = 21, trim = 0.2,
                                           s = 1, eps = 1, itmax = 5)
                 standardGeneric("backgroundSub"))
 

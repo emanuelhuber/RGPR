@@ -7,10 +7,37 @@
  
 See  Rashed and Harbi (2014) Background matrix subtraction (BMS): 
 A novel background removal algorithm for GPR data
-doi: 10.1016/j.jappgeo.2014.04.022}
+doi: 10.1016/j.jappgeo.2014.04.022
+Takes time to compute!!}
 \usage{
-\S4method{backgroundSub}{GPR}(x, width = 21, alpha = 0.2, s = 1,
-  eps = 1, itmax = 5)
+\S4method{backgroundSub}{GPR}(x, width = 21, trim = 0.2, s = 1, eps = 1,
+  itmax = 5)
+}
+\arguments{
+\item{x}{An object of the class GPR}
+
+\item{trim}{A length-one numeric vector: the fraction (0 to 0.5) of 
+observations to be trimmed from each end of x before 
+the mean is computed. Values of trim outside that range 
+are taken as the nearest endpoint 
+(argument of the function \code{mean}).}
+
+\item{s}{A length-one positiv numeric vector controling the strength
+of the weighting scheme}
+
+\item{eps}{A length-one positiv numeric vector defining the minimum
+desired residual value. If \code{NULL}, \code{itmax} defines
+the iteration number.}
+
+\item{itmax}{A length-one positiv integer vector defining the maximum
+iteration number. If \code{NULL}, \code{itmax} defines
+the iteration number.}
+
+\item{w}{A length-one integer vector equal to the window length of the 
+average window (an odd number).}
+}
+\value{
+An object of the class GPR with substracted background.
 }
 \description{
 Background matrix substraction
@@ -18,4 +45,5 @@ Background matrix substraction
 See  Rashed and Harbi (2014) Background matrix subtraction (BMS): 
 A novel background removal algorithm for GPR data
 doi: 10.1016/j.jappgeo.2014.04.022
+Takes time to compute!!
 }

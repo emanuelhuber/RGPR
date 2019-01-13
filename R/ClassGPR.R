@@ -2713,8 +2713,9 @@ setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA, center = TRUE,
     }else{
       ev <- as.integer(unlist(strsplit(ev, split = ",")))
     }
-    if(!is.integer(ev)){
-      stop("Select the eigenvalues by typing either '2:12' or '1,2,3,4' or '10'.")
+    if(!is.integer(ev) || is.na(ev)){
+      stop("Select the eigenvalues by typing (for example)\n",
+           "either '2:12' or '1,2,3,4' or '10'.")
     }
   }
 

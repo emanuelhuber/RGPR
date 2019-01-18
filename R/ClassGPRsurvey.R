@@ -747,7 +747,9 @@ setMethod("reverse", "GPRsurvey", function(x, id = NULL, tol = 0.3){
       y <- getGPR(x, id = id[i])
       y <- reverse(y)
       x@filepaths[[i]]     <- .saveTempFile(y)
-      x@coords[[y@name]]   <- y@coord
+      if(length(y@coord) > 0){
+        x@coords[[y@name]]   <- y@coord
+      }
       x@fids[[y@name]]      <- y@fid
     }
     x@intersections <- list()
@@ -1101,7 +1103,7 @@ setMethod("papply", "GPRsurvey", function(x, prc = NULL){
     message('Processing ', y@name, '...', appendLF = FALSE)
     for(k in seq_along(prc)){
       y <- do.call(names(prc[k]), c(x = y,  prc[[k]]))
-      x@coords[[y@name]] <- y@coord
+      if(length(y@coord) > 0)   x@coords[[y@name]] <- y@coord
     }
     x@filepaths[[i]] <- .saveTempFile(y)
     message(' done!', appendLF = TRUE)

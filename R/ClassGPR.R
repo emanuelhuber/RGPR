@@ -2402,7 +2402,7 @@ setMethod("filter1D", "GPR", function(x, type = c("median", "hampel",
         w <- w + 1  # uneven window
       }
       w <- (w-1)/2
-      x@data <-  apply(x@data,2,.medianFilter1D,w)
+      x@data <-  apply(x@data, 2, .medianFilter1D, w)
     }else if(type == "hampel"){
       if( length(dots <-  list(...)) ){
 #         dots <- list(...)

@@ -1593,18 +1593,91 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
 # max_depth = to which depth should the migration be performed
 # dz = vertical resolution of the migrated data
 # fdo = dominant frequency of the GPR signal
-.kirMig <- function(x, topoGPR, dx, dts, v, max_depth = 8, 
+.kirMig <- function(x, topoGPR, xpos, dts, v, max_depth = 8, 
                  dz = 0.025, fdo = 80, FUN = sum){
   n <- nrow(x)
   m <- ncol(x)
   z <- max(topoGPR) - topoGPR
-  fdo <- fdo*10^6   # from MHz to Hz
+  fdo <- fdo * 10^6   # from MHz to Hz
+  lambda <- fdo / v * 10^-9
+  v2 <- v^2
+  kirTopoGPR <- matrix(0, nrow = max_depth/dz + 1, ncol = m)
+    dx <- mean(diff(xpos))
+  for( i in seq_len(m)){
+    # x_d <- (i - 1)*dx   # diffraction
+    x_d <- xpos[i]   # diffraction
+    z_d <- seq(z[i], max_depth, by = dz)
+#     mt <- (i - migTpl):(i + migTpl) # migration template
+#     mt <- mt[mt > 0 & mt <= m]
+#     l_migtpl <- length(mt)
+    # if(i == 1){
+    #   dx <- xpos[2] - xpos[1]
+    # }else if (i == m){
+    #   dx <- xpos[m] - xpos[m-1]
+    # }else{
+    #   dx <- sum((diff(xpos[(i-1):(i+1)]))/2)
+    # }
+    
+    for(k in seq_along(z_d)){
+      t_0 <- 2*(z_d[k] - z[i])/v    # = k * dts in reality
+      z_idx <- round(z_d[k] /dz + 1)
+      # Fresnel zone
+      # Pérez-Gracia et al. (2008) Horizontal resolution in a non-destructive
+      # shallow GPR survey: An experimental evaluation. NDT & E International,
+      # 41(8): 611–620. doi:10.1016/j.ndteint.2008.06.002
+      rf <- 0.5 * sqrt(lambda * 2 * (z_d[k] - z[i]))
+      rf_tr <- round(rf/dx)
+      mt <- (i - rf_tr):(i + rf_tr)
+      mt <- mt[mt > 0 & mt <= m]
+      
+      lmt <- length(mt)
+      Ampl <- numeric(lmt)
+      for(j in mt){
+        # x_a <- (j-1)*dx
+        x_a <- xpos[j]
+        t_top <-  t_0 - 2*(z[j] - z[i])/v
+        t_x <- sqrt( t_top^2 +   4*(x_a - x_d)^2 /v2)
+        t1 <- floor(t_x/dts) + 1 # the largest integers not greater
+        t2 <- ceiling(t_x/dts) + 1 # smallest integers not less
+        if(t2 <= n && t1 > 0 && t_x != 0){
+          w <- ifelse(t1 != t2, abs((t1 - t_x)/(t1 - t2)), 0)
+          # Dujardin & Bano amplitude factor weight: cos(alpha) = t_top/t_x
+          # Ampl[j- mt[1] + 1] <- (t_top/t_x) * 
+          # ((1-w)*A[t1,j] + w*A[t2,j])
+          # http://sepwww.stanford.edu/public/docs/sep87/SEP087.Bevc.pdf
+          Ampl[j- mt[1] + 1] <- (dx/sqrt(2*pi*t_x*v))*
+                                (t_top/t_x) * 
+                                ((1-w)*x[t1,j] + w*x[t2,j])
+        }
+      }
+      kirTopoGPR[z_idx,i] <- FUN(Ampl)
+    }
+  }
+  kirTopoGPR <- kirTopoGPR/max(kirTopoGPR, na.rm=TRUE) * 50
+#   kirTopoGPR2 <- kirTopoGPR
+  
+  return(kirTopoGPR)
+}
+# x = data matrix (col = traces)
+# topoGPR = z-coordinate of each trace
+# dx = spatial sampling (trace spacing)
+# dts = temporal sampling
+# v = GPR wave velocity (ns)
+# max_depth = to which depth should the migration be performed
+# dz = vertical resolution of the migrated data
+# fdo = dominant frequency of the GPR signal
+.kirMigold <- function(x, topoGPR, dx, dts, v, max_depth = 8, 
+                 dz = 0.025, fdo = 80, FUN = sum){
+  n <- nrow(x)
+  m <- ncol(x)
+  z <- max(topoGPR) - topoGPR
+  fdo <- fdo * 10^6   # from MHz to Hz
   lambda <- fdo / v * 10^-9
   v2 <- v^2
   kirTopoGPR <- matrix(0, nrow = max_depth/dz + 1, ncol = m)
   for( i in seq_len(m)){
-    x_d <- (i-1)*dx   # diffraction
-    z_d <- seq(z[i],max_depth,by=dz)
+    x_d <- (i - 1)*dx   # diffraction
+    z_d <- seq(z[i], max_depth, by = dz)
 #     mt <- (i - migTpl):(i + migTpl) # migration template
 #     mt <- mt[mt > 0 & mt <= m]
 #     l_migtpl <- length(mt)
@@ -1615,8 +1688,7 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
       # Fresnel zone
       # Pérez-Gracia et al. (2008) Horizontal resolution in a non-destructive
       # shallow GPR survey: An experimental evaluation. NDT & E International,
-      # 41(8): 611–620.
-      # doi:10.1016/j.ndteint.2008.06.002
+      # 41(8): 611–620. doi:10.1016/j.ndteint.2008.06.002
       rf <- 0.5 * sqrt(lambda * 2 * (z_d[k] - z[i]))
       rf_tr <- round(rf/dx)
       mt <- (i - rf_tr):(i + rf_tr)
@@ -2015,19 +2087,27 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
   fin2 <- par()$fin
   wstrip <- dxin*(fin2[1] - mai2[2] - mai2[4])/2
   xpos <- usr[1] + dxin*(mai2[2] - mai[2])
-  zstrip <- matrix(seq(clim[1], clim[2], length.out = length(col)), nrow = 1)
   xstrip <- c( xpos - 20*wstrip,  xpos + 20*wstrip)#*c(0.9, 1.1)
-  ystrip <- seq(min(y), max(y), length.out=length(col))
-  ystrip <- rev(seq(usr[3], usr[4], length.out=length(col)))
+  # ystrip <- seq(min(y), max(y), length.out = length(col))
+  ystrip <- rev(seq(usr[3], usr[4], length.out = length(col)))
   ystrip <- sort(ystrip)
-  pretty_z <- pretty(as.vector(zstrip))
-  dclim <- clim[2]-clim[1] 
-  pretty_at <- usr[3] - dylim * (clim[1] - pretty_z)/dclim
-  axis(side=4,las=2, at=pretty_at, labels=pretty_z)
+  dclim <- clim[2] - clim[1] 
+  if(dclim == 0){
+    axis(side = 4, las = 2, at = (usr[3] - usr[4])/2, labels = clim[1])
+    image(x = xstrip, y = c(usr[4], usr[3]), 
+          z = matrix(rep(clim[1], 2), nrow = 1),
+          add = TRUE, col = col,
+          axes = FALSE, xlab = "", ylab = "", xaxs = "i", yaxs = "i")
+  }else{
+    zstrip <- matrix(seq(clim[1], clim[2], length.out = length(col)), nrow = 1)
+    pretty_z <- pretty(as.vector(zstrip))
+    pretty_at <- usr[3] - dylim * (clim[1] - pretty_z)/dclim
+    axis(side = 4, las = 2, at = pretty_at, labels = pretty_z)
+    image(x = xstrip, y = ystrip, z = zstrip,
+          add = TRUE, col = col,
+          axes = FALSE, xlab = "", ylab = "", xaxs = "i", yaxs = "i")
+  }
  #  print(par("usr"))
-  image(x = xstrip, y = ystrip, z = zstrip,
-        add = TRUE, col = col,
-        axes = FALSE, xlab = "", ylab = "", xaxs = "i", yaxs = "i")
   # axis(side=4, las=2)
   title(main=clab, line =1, cex.main = clabcex)
   box()

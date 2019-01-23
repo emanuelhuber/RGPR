@@ -3424,13 +3424,24 @@ plot.GPR <- function(x,
         if( min(z, na.rm = TRUE) >= 0 ){
           # to plot amplitudes for example...
           dots$zlim <- c(0, max(z, na.rm = TRUE))
+          clim <- dots$zlim
         } else if(!is.null(x@surveymode) && 
                   tolower(x@surveymode) %in% c("cmp", "reflection")){
           dots$zlim <- c(-1, 1) * max(abs(z), na.rm = TRUE)
+          clim <- dots$zlim
         }else{
           dots$zlim <- range(z[is.finite(z)], na.rm = TRUE)
+          clim <- dots$zlim
         }
       }
+      clim <- dots$zlim
+      
+      if(diff(range(z, na.rm = TRUE)) == 0){
+        dots$zlim <- rep(0, 2)
+        clim <- rep(z[1], 2)
+        z[!is.na(z)] <- 0
+      }
+      
       if(is.null(dots$xaxs)) dots$xaxs <- "i"
       if(is.null(dots$yaxs)) dots$yaxs <- "i"
       if(is.null(dots$yaxt)) dots$yaxt <- "n"
@@ -3456,10 +3467,9 @@ plot.GPR <- function(x,
         do.call(plot3D::image2D, c(list(x = xvalues, y = yvalues, z = z), dots))
       }
         
-
       if(barscale){
         op2 <- par(no.readonly=TRUE)
-        .barScale(clim = dots$zlim, y = yvalues, col = dots$col, 
+        .barScale(clim = clim, y = yvalues, col = dots$col, 
                   clab = dots$clab, clabcex = 0.8)
         par(op2)
       }
@@ -4799,6 +4809,12 @@ setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance",
 # fdo = dominant frequency of the GPR signal
 
 #' Migration of the GPR data
+#' 
+#' Fresnel zone defined according to 
+#' Pérez-Gracia et al. (2008) Horizontal resolution in a non-destructive
+#' shallow GPR survey: An experimental evaluation. NDT & E International,
+#' 41(8): 611–620.
+#' doi:10.1016/j.ndteint.2008.06.002
 #'
 #' @name migration
 #' @rdname migration
@@ -4806,26 +4822,23 @@ setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance",
 setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
     if(length(x@antsep) == 0 || (!is.numeric(x@antsep))){
     stop("You must first define the antenna separation ",
-          "with 'antsep(x) <- ...'!")
+          "with 'antsep(x) <- 1' for example!")
     }
     if(is.null(x@vel) || length(x@vel)==0){
       stop("You must first define the EM wave velocity ",
-          "with 'vel(x) <- ...'!")
+          "with 'vel(x) <- 0.1' for example!")
     }
-  if(length(x@coord) == 0){
-    stop("You must first set coordinates to the traces ",
-         "with 'coord(x) <- ...' or ",
-         "'x <- interpPos(x, ...)' !")
+  if(length(x@coord) != 0 && ncol(x@coord) == 3){
+    topo <- x@coord[1:ncol(x@data), 3]
+    # stop("You must first set coordinates to the traces ",
+    #      "with 'coord(x) <- ...' or ",
+    #      "'x <- interpPos(x, ...)' !")
+  }else{
+    topo <- rep.int(0L, ncol(x@data))
+    message("Trace vertical position set to zero!")
   }
   type <- match.arg(type, c("static", "kirchhoff"))
   if(type == "static"){  
-    ntr <- ncol(x@data)
-    if(ncol(x@coord) == 3 ){
-      topo <- x@coord[1:ntr, 3]
-    }else{
-      topo <- rep.int(0L, ntr)
-      message("no topo!")
-    }
     if(any(x@time0 != 0)){
       x <- time0Cor(x, method = c("pchip"))
     }
@@ -4858,21 +4871,22 @@ setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
       }
     }
     zShift <- (max(topo) - topo)
-    all(zShift != 0)
+    #all(zShift != 0)
     x <- traceShift(x,  ts = zShift, method = c("pchip"), crop = FALSE)
-    x@vel       <- list() 
-    if(ncol(x@coord) == 3 ){
+    x@vel <- list() 
+    if(length(x@coord) > 0 && ncol(x@coord) == 3 ){
       x@coord[, 3] <- max(x@coord[,3])
     }
   }else if(type == "kirchhoff"){
     A <- x@data
-    topoGPR <- x@coord[,3]
+    #topo <- x@coord[,3]
     dx <- x@dx
     dts <- x@dz
     v <- x@vel[[1]]
     # initialisation
-    max_depth <- nrow(x)*x@dx
-    dz <- 0.25*x@dz
+    #max_depth <- nrow(x)*x@dx
+    max_depth <- max(x@depth) * v / 2 * 0.9
+    dz <- 0.25 * x@dz
     fdo <- x@freq
     FUN <- sum
     if( length(list(...)) ){
@@ -4890,14 +4904,16 @@ setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
         FUN <- dots$FUN
       }
     }  
-    x@data      <- .kirMig(x@data, topoGPR = x@coord[,3], dx = x@dx,
-                           dts = x@dz, v = x@vel[[1]], max_depth = max_depth, 
+    x@data      <- .kirMig(x@data, topoGPR = topo, xpos = x@pos,
+                           dts = x@dz, v = v, max_depth = max_depth, 
                            dz = dz, fdo = fdo, FUN = FUN)
     x@depth     <- seq(0,by=dz, length.out = nrow(x))
     x@time0     <- rep(0, ncol(x))
     x@dz        <- dz
     x@depthunit <- x@posunit          # check!!!
-    x@coord[,3] <- max(x@coord[,3])
+    if(length(x@coord) > 0 && ncol(x@coord) == 3 ){
+      x@coord[,3] <- max(x@coord[,3])
+    }
   }
   proc(x) <- getArgs()
   return(x)

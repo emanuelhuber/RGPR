@@ -400,10 +400,9 @@ palGPR <- function(colPal="default", n = 101, power = 1, returnNames = FALSE){
                 "#E50023", "#DC0024", "#D30024", "#CA0024", "#C20024",
                 "#B70023", "#AF0023", "#A70023", "#9C0022"))(n),
     
-	nice = grDevices::colorRampPalette(c("#5E4FA2", "#3288BD", "#66C2A5", 
-						   "#ABDDA4", 
-                           "#fffbf2", "#FFFFFF",  "#fffbf2", "#FDAE61", 
-                           "#F46D43",  "#D53E4F",  "#9E0142"), space="Lab")(n),
+	  nice = grDevices::colorRampPalette(c("#5E4FA2", "#3288BD", "#66C2A5", 
+						   "#ABDDA4", "#fffbf2", "#FFFFFF",  "#fffbf2", "#FDAE61", 
+               "#F46D43",  "#D53E4F",  "#9E0142"), space="Lab")(n),
     hcl_0 = colorspace::diverge_hcl(n,power=1),
     # blue - white - red (fade)
     hcl_1 = colorspace::diverge_hcl(n, c = 100, l = c(50, 90), power = power), 
@@ -439,12 +438,19 @@ palGPR <- function(colPal="default", n = 101, power = 1, returnNames = FALSE){
     grey = colorspace::sequential_hcl(n, h = c(190, 1), c = 10, 
                           l = c(1, 110), power=power),
     rainbow = grDevices::colorRampPalette(rainbow(13),interpolate ="spline")(n),
-    rainbow_hcl = colorspace::rainbow_hcl(n,c=100,l=60)
+    rainbow_hcl = colorspace::rainbow_hcl(n,c=100,l=60),
+	  jet = grDevices::colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
+	                           "#7FFF7F", "yellow", "#FF7F00", "red", 
+	                           "#7F0000"))(n),
+	  jet2 = grDevices::colorRampPalette(c("blue", "#007FFF", "cyan",
+	                            "#7FFF7F", "yellow", "#FF7F00", "red"))(n),
+	  slice = colorRampPalette(rev(c("gray100", "gray60", "grey20", "blue", "#007FFF", "cyan",
+	                   "#7FFF7F", "yellow", "#FF7F00", "red")))(n)
   ))
   if(returnNames){
    return( names(tmp) )
   }
-  (tmp[[match(colPal, names(tmp))]])
+  rev(tmp[[match(colPal, names(tmp))]])
 }
 
 #' Plot single colour palette
@@ -459,7 +465,7 @@ plotPal <- function(col, border = NA){
   n <- length(col)
   plot(0, 0, type="n", xlim = c(0, 1), ylim = c(0, 1), axes = FALSE, 
         xlab = "",  ylab = "")
-  rect(0:(n-1)/n, 0, 1:n/n, 1, col = col, border = border)
+  rect(0:(n-1)/n, 0, 1:n/n, 1, col = (col), border = border)
 }
 
 #' Colour palette
@@ -471,14 +477,14 @@ plotPal <- function(col, border = NA){
 #' @export
 displayPalGPR <- function(){
    op <- par(no.readonly=TRUE)
-   par(mai=op$mai + c(0,1,0,0))
+   par(mai=c(1,1,1,0), oma = c(0,0,1,0))
   pNames <- palGPR(returnNames=TRUE)
   n <- 101
   plot(0, 0, type="n", xlim = c(0, 1), ylim = c(0, length(pNames)), 
         axes = FALSE, xlab = "", ylab = "")
   for(i in seq_along(pNames)){
-    myPal  <- palGPR(colPal=pNames[i], n=n)
-    rect(0:(n-1)/n, i-1/3, 1:n/n, i + 1/3, col = myPal, border = NA)
+    myPal  <- palGPR(colPal = pNames[i], n = n)
+    rect(0:(n-1)/n, i-1/3, 1:n/n, i + 1/3, col = (myPal), border = NA)
     mtext(pNames[i], side=2, at=i, adj = 1, las = 1)
   }
   title("Colour palettes from RGPR (palGPR)")
@@ -498,7 +504,10 @@ colFromPal <- function(A , col = palGPR(n=101)){
 
 
 # Compute the orientation angle of GPR profile
+# TODO: compute all the angles (maybe not a good idea...)
 gprAngle <- function(x){
+  #dEN <- x@coord[1:(length(x) - 1),1:2] - x@coord[2:length(x),1:2]
+  # return(atan2(dEN[1,2], dEN[1,1]))
   dEN <- x@coord[1,1:2] - tail(x@coord[,1:2],1)
   return(atan2(dEN[2], dEN[1]))
 }
@@ -1129,7 +1138,14 @@ setGenericVerif("exportProc",  function(x,fPath=NULL,sep="\t", row.names=FALSE,
 #' @export
 setGenericVerif("reverse", function(x, id = NULL,  tol = 0.3) 
                 standardGeneric("reverse"))
-  
+
+
+#' @name setGridCoord
+#' @rdname setGridCoord-methods
+#' @export
+setGeneric("setGridCoord<-",function(x,value){standardGeneric("setGridCoord<-")})
+
+
 #' @name shiftEst
 #' @rdname shiftEst
 #' @export
@@ -1178,7 +1194,7 @@ setGenericVerif("trAmplCor",
                 function(x, type=c("power", "exp", "agc"),  ...) 
                 standardGeneric("trAmplCor"))
                 
-setGenericVerif("dcshift", function(x, u=1:10, FUN=mean) 
+setGenericVerif("dcshift", function(x, u = NULL, FUN = mean) 
                 standardGeneric("dcshift"))
                 
 setGenericVerif("firstBreak", function(x, method = c("coppens", "coppens2",
@@ -1209,7 +1225,7 @@ setGenericVerif("fkFilter", function(x, fk = NULL, L = c(5, 5), npad = 1)
 
 setGenericVerif("eigenFilter", function(x, eigenvalue = NA, center = TRUE, 
                                         scale = FALSE) 
-standardGeneric("eigenFilter"))
+                standardGeneric("eigenFilter"))
 
 setGenericVerif("traceShift", function(x,  ts, method = c("spline", "linear", 
                 "nearest", "pchip", "cubic", "none"), crop = TRUE) 
@@ -2104,7 +2120,7 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
     pretty_at <- usr[3] - dylim * (clim[1] - pretty_z)/dclim
     axis(side = 4, las = 2, at = pretty_at, labels = pretty_z)
     image(x = xstrip, y = ystrip, z = zstrip,
-          add = TRUE, col = col,
+          add = TRUE, col = rev(col),
           axes = FALSE, xlab = "", ylab = "", xaxs = "i", yaxs = "i")
   }
  #  print(par("usr"))
@@ -3532,10 +3548,10 @@ displacement <- function(x, y, method=c("phase", "WSSD"), dxy = NULL){
     x0 <- paddMatrix(x, nm[1], nm[2], zero=TRUE)
     y0 <- paddMatrix(y, nmy[1], nmy[2], zero=TRUE)
     # weights (zero outside the image range)
-    wx <- matrix(1,nrow=nrow(x),ncol=ncol(x))
-    wx <- paddMatrix(wx, nm[1], nm[2], zero=TRUE)
-    wy <- matrix(1,nrow=nrow(y),ncol=ncol(y))
-    wy <- paddMatrix(wy, nmy[1], nmy[2], zero=TRUE)
+    wx <- matrix(1, nrow = nrow(x), ncol = ncol(x))
+    wx <- paddMatrix(wx, nm[1], nm[2], zero = TRUE)
+    wy <- matrix(1,nrow = nrow(y), ncol = ncol(y))
+    wy <- paddMatrix(wy, nmy[1], nmy[2], zero = TRUE)
     WX <- fft(wx)
     WY <- fft(wy)
     X  <- fft(wx * x0)
@@ -4544,6 +4560,10 @@ readTXT <- function(fPath){
     return(list(data = X))
   }
 }  
+
+
+
+
 
 readDZT <- function(fPath){
   fName <- getFName(fPath, ext = c(".dzt"))

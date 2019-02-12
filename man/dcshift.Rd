@@ -5,7 +5,7 @@
 \alias{dcshift}
 \title{Direct-Current shift removal}
 \usage{
-\S4method{dcshift}{GPR}(x, u = 1:10, FUN = mean)
+\S4method{dcshift}{GPR}(x, u = NULL, FUN = mean)
 }
 \arguments{
 \item{x}{An object of the class `GPR`.}

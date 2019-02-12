@@ -1538,7 +1538,7 @@ setReplaceMethod(
   definition=function(x,value){
     value <- as.matrix(value)
     if(ncol(x@data) == nrow(value) && ncol(value) == 3){
-      x@coord <- value
+      x@coord <- as.matrix(value)
       x <- trRmDuplicates(x, verbose = FALSE)
       
       x@proc <- c(x@proc, "coord<-//")
@@ -1968,8 +1968,14 @@ setReplaceMethod(
 #' @name dcshift
 #' @rdname dcshift
 #' @export
-setMethod("dcshift", "GPR", function(x, u, FUN = mean){
-    shift <- matrix(apply(x[u,],2, FUN), nrow = nrow(x), 
+setMethod("dcshift", "GPR", function(x, u = NULL, FUN = mean){
+  if(is.null(u) && all(time0(x) > x@depth[1])){
+    Dt <- min(time0(x)) - x@depth[1]  # time before time-zero
+    u <- x@depth[1] + 0:round((Dt*0.9)/x@dz)
+  }else{
+    stop("You must define 'u', default values do not work...")
+  }
+    shift <- matrix(apply(x[u, ], 2, FUN), nrow = nrow(x), 
                     ncol=ncol(x), byrow = TRUE)
     x <-  x - shift
     # funName <- getFunName(FUN)
@@ -3144,7 +3150,8 @@ points.GPR <- function(x, ...){
 #' Plot the GPR object.
 #'
 #' \code{plot}: If the GPR object consists of a single trace, wiggle plot 
-#' is shown.
+#' is shown. For CMP, the position of the traces on the x-axis is defined
+#' by the antenna separation (\code{antsep(x)}).
 #' 
 #' Additional arguments
 #' \itemize{
@@ -3354,6 +3361,7 @@ plot.GPR <- function(x,
         addTime0 <- FALSE
         addFid <- FALSE
         addAnn <- FALSE
+        note <- ""
       }
     }
       
@@ -3372,17 +3380,22 @@ plot.GPR <- function(x,
 
     op <- par(no.readonly=TRUE)
     
+    colkeyDist <- 0.05
     if(barscale == FALSE){
-      mai <- c(1.2, 1.2, 1.2, 1.2)
+      mai <- c(1.1, 1.02, 1.02, 1.02)
     }else{
-      mai <- c(1.2, 1.2, 1.2, 1.8)
-      if(grepl("[s]$", x@depthunit)){
+      mai <- c(1.1, 1.02, 1.02, 1.4)
+      if(grepl("[s]$", x@depthunit) && !isCMP(x) && 
+         toupper(x@surveymode) != "CMPANALYSIS"){
         if(length(x@antsep) > 0 && x@antsep > 0){
-          mai <- c(1.2, 1.2, 1.2, 1.8)
+          mai <- c(1.1, 1.02, 1.02, 1.8)
+          colkeyDist <- 0.09
         }
       }
     }
-    omi <- c(0, 0, 0.6, 0)
+    # print(colkeyDist)
+    # omi <- c(0, 0, 0.6, 0)
+    mai <- mai + c(0, 0, 0, 0)
     mgp <- c(2.5, 0.75, 0)
     fac <- 0.2
     
@@ -3420,21 +3433,24 @@ plot.GPR <- function(x,
           dots$rasterImage <- FALSE
         }
       }
+
       if(is.null(dots$zlim)){
         if( min(z, na.rm = TRUE) >= 0 ){
           # to plot amplitudes for example...
           dots$zlim <- c(0, max(z, na.rm = TRUE))
-          clim <- dots$zlim
-        } else if(!is.null(x@surveymode) && 
+          # if I use 'dots$col', R returns 'dots$colkey'!!!!
+          if(is.null(dots[["col"]])) dots[["col"]] <- palGPR("slice")
+        }else if(!is.null(x@surveymode) && 
                   tolower(x@surveymode) %in% c("cmp", "reflection")){
           dots$zlim <- c(-1, 1) * max(abs(z), na.rm = TRUE)
-          clim <- dots$zlim
         }else{
           dots$zlim <- range(z[is.finite(z)], na.rm = TRUE)
-          clim <- dots$zlim
         }
       }
       clim <- dots$zlim
+      # if I use 'dots$col', R returns 'dots$colkey'!!!!
+      if(is.null(dots[["col"]])) dots[["col"]] <- palGPR(n = 101)
+      
       
       if(diff(range(z, na.rm = TRUE)) == 0){
         dots$zlim <- rep(0, 2)
@@ -3451,31 +3467,46 @@ plot.GPR <- function(x,
         #par(new = TRUE)
         dots$add <- TRUE
         barscale <- FALSE
+        dots[["colkey"]] <- FALSE
+        dots[["main"]] <- ""
+        addDepth0 <- FALSE
+        addAmpl0 <- FALSE
+        addTime0 <- FALSE
+        addFid <- FALSE
+        addAnn <- FALSE
+        mymain <- ""
+        note <- ""
+        dots[["ann"]] <- FALSE
+        dots[["axes"]] <- FALSE
+        
       }else{
-        par( mai = mai, omi = omi, mgp = mgp)
+        # par( mai = mai, omi = omi, mgp = mgp)
+        # par( mai = mai, mgp = mgp)
+        par( mai = mai)
       }
+      
+      # print(clim)  
+      # print(dots)  
+      
       if(dots$type == "contour"){
+        # if(is.null(dots[["colkey"]]) && isTRUE(dots[["add"]])){
+        #   dots[["colkey"]] <- list(plot = FALSE)
+        # } 
         #if(is.null(dots[["col"]])) dots[["col"]] <- "black"
         dots$type <- NULL
         do.call(plot3D::contour2D, c(list(x = xvalues, y = yvalues, z = z), 
                                      dots))
       }else if(dots$type == "raster"){
         #if(is.null(dots$bty)) dots$bty <- "n"
-        # if I use 'dots$col', R returns 'dots$colkey'!!!!
-        if(is.null(dots[["col"]])) dots[["col"]] <- palGPR(n = 101)
         dots$type <- NULL
         do.call(plot3D::image2D, c(list(x = xvalues, y = yvalues, z = z), dots))
       }
-        
-      if(barscale){
-        op2 <- par(no.readonly=TRUE)
-        .barScale(clim = clim, y = yvalues, col = dots$col, 
-                  clab = dots$clab, clabcex = 0.8)
-        par(op2)
-      }
+      
+
     #------------------------------ WIGGLES -----------------------------------#
     }else if(dots$type == "wiggles"){
       dots$type <- NULL
+      barscale <- FALSE
 
       op <- par(no.readonly = TRUE) 
       dx <- mean(diff(xvalues)) # estimated x-step
@@ -3597,6 +3628,17 @@ plot.GPR <- function(x,
     }else{
       title(mymain)  
     }
+    
+    if(barscale){
+      # op2 <- par(no.readonly=TRUE)
+      plot3D::colkey (col = dots$col, clim = clim, clab = dots$clab, clog = FALSE, 
+              add = TRUE, cex.clab = 0.75, dist = colkeyDist)
+              
+      # .barScale(clim = clim, y = yvalues, col = dots$col, 
+                # clab = dots$clab, clabcex = 0.8)
+      # par(op2)
+    }
+    # par(op)
     
     if(!is.null(pdfName)){
       dev.off()
@@ -4602,7 +4644,7 @@ setMethod("identifyDelineation", "GPR", function(x,sel=NULL,...){
 #' }
 setMethod("NMOCor", "GPR", function(x, v = NULL){
   if(!isCMP(x)){
-    stop("survey mode of x is not multi-offset. ",
+    stop("survey mode of 'x' is not multi-offset. ",
          "update survey mode:\n",
          "  surveymode(x) <- 'CMP'\n",
          " or\n",
@@ -4629,6 +4671,7 @@ setMethod("NMOCor", "GPR", function(x, v = NULL){
   tx0 <- x@depth - t0   # t(x = 0)
   #x <- x[(t0/x@dz + 1):nrow(x),]
   #x@time0 <- 0
+  print(v)
   x_nmoCor <- x
   x_nmoCor@data[] <- 0
   if(is.null(v)){
@@ -4707,7 +4750,7 @@ signalNoiseRatio2 <- function(x){
 #' \describe{
 #'   \item{semblance}{also described as the ratio of input to output
 #'         energy (Niedell and Taner, 1971)}
-#'   \item{semblance2}{windowed semblance}       
+#'   \item{winsemblance}{windowed semblance}       
 #'   \item{wincoherence}{Windowed coherence measure based on 
 #'         eigen-decomposition that estimates the 
 #'         signal-to-noise ratio for high resolution velocity analysis

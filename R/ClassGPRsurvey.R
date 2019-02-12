@@ -456,8 +456,8 @@ setMethod(f="length", signature="GPRsurvey", definition=function(x){
 #' @export
 plot.GPRsurvey <- function(x, y, ...){
   if(length(x@coords) > 0){
-    isNotNull <- which(!sapply(x@coords, is.null))
-    x <- x[isNotNull]
+    #isNotNull <- which(!sapply(x@coords, is.null))
+    #x <- x[isNotNull]
     add <- FALSE
     add_shp_files <- FALSE
     parArrows <- list(col = "red", length = 0.1)
@@ -554,30 +554,46 @@ plot.GPRsurvey <- function(x, y, ...){
       }
     }
     for(i in 1:length(x)){
-      xy <- unname(x@coords[[i]][,1:2])
-      dots$x <- xy[,1]
-      dots$y <- xy[,2]
-      do.call(lines, dots)
-    }
-    #niet <- lapply(x@coords, .plotLine, lwd = lwd, col = col )
-    if(!is.null(parArrows)){
-      for(i in 1:length(x)){
-        xyz <- unname(x@coords[[i]])
-        do.call(arrows, c(xyz[nrow(xyz)-1,1], xyz[nrow(xyz)-1,2], 
-                          x1 = xyz[nrow(xyz),1],   y1 = xyz[nrow(xyz),2], 
-                          parArrows))
-      }
-      #niet <- lapply(x@coords, .plotArrows, parArrows)
-    }
-    if(!is.null(parFid)){
-      for(i in 1:length(x)){
-        fidxyz <- x@coords[[i]][trimStr(x@fids[[i]]) != "", , 
-                                    drop = FALSE]
-        if(length(fidxyz)>0){
-          do.call( points, c(list(x = fidxyz[, 1:2]), parFid))
+      if(is.null(x@coords[[x@names[i]]])){
+        message(x@names[i], ": coordinates missing.")
+      }else{
+        xyz <- unname(x@coords[[x@names[i]]])
+        dots$x <- xyz[,1]
+        dots$y <- xyz[,2]
+        do.call(graphics::lines, dots)
+        if(!is.null(parArrows)){
+         do.call(arrows, c(xyz[nrow(xyz)-1,1], xyz[nrow(xyz)-1,2], 
+                           x1 = xyz[nrow(xyz),1],   y1 = xyz[nrow(xyz),2], 
+                           parArrows))
+        }
+        if(!is.null(parFid)){
+          fidxyz <- x@coords[[x@names[i]]][trimStr(x@fids[[i]]) != "", , 
+                                  drop = FALSE]
+          if(length(fidxyz)>0){
+            do.call( graphics::points, c(list(x = fidxyz[, 1:2]), parFid))
+          }
         }
       }
     }
+    #niet <- lapply(x@coords, .plotLine, lwd = lwd, col = col )
+    # if(!is.null(parArrows)){
+    #   for(i in 1:length(x)){
+    #     xyz <- unname(x@coords[[i]])
+    #     do.call(arrows, c(xyz[nrow(xyz)-1,1], xyz[nrow(xyz)-1,2], 
+    #                       x1 = xyz[nrow(xyz),1],   y1 = xyz[nrow(xyz),2], 
+    #                       parArrows))
+    #   }
+    #   #niet <- lapply(x@coords, .plotArrows, parArrows)
+    # }
+    # if(!is.null(parFid)){
+    #   for(i in 1:length(x)){
+    #     fidxyz <- x@coords[[i]][trimStr(x@fids[[i]]) != "", , 
+    #                                 drop = FALSE]
+    #     if(length(fidxyz)>0){
+    #       do.call( points, c(list(x = fidxyz[, 1:2]), parFid))
+    #     }
+    #   }
+    # }
     if(!is.null(parIntersect) && length(x@intersections) > 0){ 
       for(i in 1:length(x@intersections)){
         if(!is.null(x@intersections[[i]])){
@@ -714,7 +730,10 @@ setMethod("interpPos", "GPRsurvey",
 #' @rdname reverse
 #' @export
 setMethod("reverse", "GPRsurvey", function(x, id = NULL, tol = 0.3){
-  if(is.null(id)){
+  if(is.null(id) && length(x@coords) > 0){
+    # reverse radargram based on their name 
+    # (all the XLINE have the same orientation, 
+    # all the YLINE have the same orientation)
     lnTypes <- gsub("[0-9]*$", "", basename(x@names))
     lnTypeUniq <- unique(lnTypes)
     angRef <- rep(NA, length = length(lnTypeUniq))
@@ -742,21 +761,112 @@ setMethod("reverse", "GPRsurvey", function(x, id = NULL, tol = 0.3){
     x@intersections <- list()
     x <- coordref(x)
     return(x)
-  }else{
-    for(i in seq_along(id)){
-      y <- getGPR(x, id = id[i])
-      y <- reverse(y)
-      x@filepaths[[i]]     <- .saveTempFile(y)
-      if(length(y@coord) > 0){
-        x@coords[[y@name]]   <- y@coord
-      }
-      x@fids[[y@name]]      <- y@fid
+  }
+  if (is.null(id) || (is.character(id) && id == "zigzag")){
+    if(length(x) > 1){
+      id <- seq(from = 2L, by = 2L, to = length(x))
     }
-    x@intersections <- list()
-    x <- coordref(x)
-    return(x) 
+  } 
+  if(is.numeric(id)){
+    id <- as.integer(id)
+    if(max(id) <= length(x) && min(id) >= 1){
+      for(i in seq_along(id)){
+        y <- getGPR(x, id = id[i])
+        y <- reverse(y)
+        x@filepaths[[id[i]]]     <- .saveTempFile(y)
+        if(length(y@coord) > 0){
+          # x@coords[[y@name]]   <- y@coord
+          x@coords[[id[i]]]   <- y@coord
+        }
+        # x@fids[[y@name]]      <- y@fid
+        x@fids[[id[i]]]      <- y@fid
+      }
+      x@intersections <- list()
+      x <- coordref(x)
+      return(x) 
+    }else{
+      stop("id must be between 1 and ", length(x),"!")
+    }
   }
 })
+
+
+# value = x, y, dx, dy
+
+#' Set grid coordinates the trace position.
+#'
+#' Set grid coordinates to a survey
+#' @param x An object of the class GPRsurvey
+#' @param value A list with following elements: \code{xlines} (number or id of 
+#'              the GPR data along the x-coordinates), \code{ylines} (number or 
+#'              id of the GPR data along the y-coordinates), \code{xpos} 
+#'              (position of the x-GPR data on the x-axis),
+#'              \code{xpos} (position of the y-GPR data on the y-axis)
+#' @rdname setGridCoord-methods
+#' @export
+setReplaceMethod(
+  f="setGridCoord",
+  signature="GPRsurvey",
+  definition=function(x, value){
+    value$xlines <- unique(value$xlines)
+    value$ylines <- unique(value$ylines)
+    if( any(value$xlines %in% value$ylines) ){
+      stop("No duplicates between 'x' and 'y' allowed!")
+    }
+    
+    if(length(value$xlines) != length(value$xpos)){
+      stop("length(x) must be equal to length(dx)")
+    }
+    if(length(value$ylines) != length(value$ypos)){
+      stop("length(y) must be equal to length(dy)")
+    }
+    if(!is.null(value$xlines)){
+      if(is.numeric(value$xlines)){
+        if(max(value$xlines) > length(x) || 
+           min(value$xlines) < 1){
+          stop("Length of 'xlines' must be between 1 and ", length(x))
+        }
+        xNames <- x@names[value$xlines]
+      }else if(is.character(value$xlines)){
+        if(!all(value$xlines %in% x@names) ){
+          stop("These names do not exist in the GPRsurvey object:\n",
+               value$xlines[! (value$xlines %in% x@names) ])
+        }
+        xNames <- value$xlines
+      }
+      for(i in seq_along(xNames)){
+        y <- getGPR(x, xNames[i])
+        ntr <- ncol(y)
+        x@coords[[xNames[i]]] <- matrix(0, nrow = ntr, ncol = 3)
+        x@coords[[xNames[i]]][,1] <- value$xpos[i]
+        x@coords[[xNames[i]]][,2] <- y@pos
+      }
+    }
+    if(!is.null(value$ylines)){
+      if(is.numeric(value$ylines)){
+        if(max(value$ylines) > length(x) || 
+           min(value$ylines) < 1){
+          stop("Length of 'ylines' must be between 1 and ", length(x))
+        }
+        yNames <- x@names[value$ylines]
+      }else if(is.character(value$ylines)){
+        if(!all(value$ylines %in% x@names) ){
+          stop("These names do not exist in the GPRsurvey object:\n",
+               value$ylines[! (value$ylines %in% x@names) ])
+        }
+        xyNames <- value$ylines
+      }
+      for(i in seq_along(yNames)){
+        y <- getGPR(x, xNames[i])
+        ntr <- ncol(y)
+        x@coords[[yNames[i]]] <- matrix(0, nrow = ntr, ncol = 3)
+        x@coords[[yNames[i]]][,1] <- y@pos
+        x@coords[[yNames[i]]][,2] <- value$ypos[i]
+      }
+    }
+    return(x)
+  }
+)
 
 
 #' Return coordinates

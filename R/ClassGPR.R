@@ -3461,6 +3461,7 @@ plot.GPR <- function(x,
     mai <- mai + c(0, 0, 0, 0)
     mgp <- c(2.5, 0.75, 0)
     fac <- 0.2
+    omi <- par()$omi
     
     if(!is.null(pdfName)){
       # if the depthunit are "meters"
@@ -4190,8 +4191,29 @@ setMethod("relPos", "GPR", function(x){
 
 #' Reverse the trace position.
 #'
+#' @param x Object of the class \code{GPR} or \code{GPRsurvey}
+#' @param id Only if \code{x} is an object of the class \code{GPRsurvey}. If 
+#'           \code{id = NULL} and \code{x} has coordinates, \code{reverse()} 
+#'           will cluster the GPR data according to their names (e.g., 
+#'           cluster 1 = XLINE01, XLINE02, XLINE03; cluster 2 = YLINE01, 
+#'           YLINE02; cluster 3 = XYLINE1, XYLINE2, XYLINE3) and reverse the
+#'           data such that all GPR lines within the same cluster have the
+#'           same orientation (up to a tolerance value \code{tol}).
+#' @param to Length-one numeric vector. Tolerance angle in radian to determine
+#'           if the data have the same orientation. The first data of the 
+#'           cluster is set as reference angle \eqn{\alpha_0}, then for data 
+#'           \eqn{i} in the same cluster, if \eqn{\alpha_i} is not between
+#'           \eqn{\alpha_0 - \frac{\text{tol}{2}}} and 
+#'           \eqn{\alpha_0 + \frac{\text{tol}{2}}}, then the data is reversed.
 #' @name reverse
 #' @rdname reverse
+#' @examples 
+#' \dontrun{
+#' # SU class GPRsurvey
+#' SU <- reverse(SU, id = "zigzag")
+#' # identical to above
+#' SU <- reverse(SU, id = seq(from = 2, to = length(SU), by = 2))
+#' }
 #' @export
 setMethod("reverse", "GPR", function(x, id = NULL,  tol = 0.3){
     xnew <- x

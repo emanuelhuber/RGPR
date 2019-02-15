@@ -513,6 +513,8 @@ gprAngle <- function(x){
 }
 
 # is angle b between aref - 1/2*atol and aref + 1/2*atol?
+
+#' @export
 inBetAngle <- function(aref, b, atol = pi/10){
   dot <- cos(b)*cos(aref) + sin(b) * sin(aref)
   return(acos(dot) <= atol)

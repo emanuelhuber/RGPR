@@ -11,8 +11,34 @@
 
 \S4method{reverse}{GPRsurvey}(x, id = NULL, tol = 0.3)
 }
+\arguments{
+\item{x}{Object of the class \code{GPR} or \code{GPRsurvey}}
+
+\item{id}{Only if \code{x} is an object of the class \code{GPRsurvey}. If 
+\code{id = NULL} and \code{x} has coordinates, \code{reverse()} 
+will cluster the GPR data according to their names (e.g., 
+cluster 1 = XLINE01, XLINE02, XLINE03; cluster 2 = YLINE01, 
+YLINE02; cluster 3 = XYLINE1, XYLINE2, XYLINE3) and reverse the
+data such that all GPR lines within the same cluster have the
+same orientation (up to a tolerance value \code{tol}).}
+
+\item{to}{Length-one numeric vector. Tolerance angle in radian to determine
+if the data have the same orientation. The first data of the 
+cluster is set as reference angle \eqn{\alpha_0}, then for data 
+\eqn{i} in the same cluster, if \eqn{\alpha_i} is not between
+\eqn{\alpha_0 - \frac{\text{tol}{2}}} and 
+\eqn{\alpha_0 + \frac{\text{tol}{2}}}, then the data is reversed.}
+}
 \description{
 Reverse the trace position.
 
 Reverse the trace position.
+}
+\examples{
+\dontrun{
+# SU class GPRsurvey
+SU <- reverse(SU, id = "zigzag")
+# identical to above
+SU <- reverse(SU, id = seq(from = 2, to = length(SU), by = 2))
+}
 }

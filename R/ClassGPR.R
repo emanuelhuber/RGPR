@@ -2022,9 +2022,6 @@ setReplaceMethod(
 #' number of time samples (normally the samples before time-zero). Then, the
 #' direct-current shift of every trace is substracted from every trace.
 #' @param x An object of the class `GPR`.
-#' @param n [\code{integer(1)}]\cr
-#'   My argument.
-#'   Default is 1.
 #' @param u Number of time samples used to evaluate the DC-shift. 
 #' @param FUN A function to apply on the first `u` time samples (default is 
 #' `mean`; alternatively `median` could be used or any user defined function).
@@ -2032,23 +2029,24 @@ setReplaceMethod(
 #' @rdname dcshift
 #' @export
 setMethod("dcshift", "GPR", function(x, u = NULL, FUN = mean){
-  if(is.null(u) && all(time0(x) > x@depth[1])){
-    Dt <- min(time0(x)) - x@depth[1]  # time before time-zero
-    u <- x@depth[1] + 0:round((Dt*0.9)/x@dz)
-  }else{
-    stop("You must define 'u', default values do not work...")
+  if(is.null(u)){
+    if(all(time0(x) > x@depth[1])){
+      Dt <- min(time0(x)) - x@depth[1]  # time before time-zero
+      u <- x@depth[1] + 0:round((Dt*0.9)/x@dz)
+    }else{
+      stop("You must define 'u', default value does not work...")
+    }
   }
-    shift <- matrix(apply(x[u, ], 2, FUN), nrow = nrow(x), 
-                    ncol=ncol(x), byrow = TRUE)
-    x <-  x - shift
-    # funName <- getFunName(FUN)
-    # proc(x) <- getArgs(addArgs = c('FUN' = getFunName(FUN)))
-    proc(x) <- getArgs()
-    # proc(x) <- paste0("dcshift>u=", head(u,1),":",tail(u,1), "+", 
-                      # "FUN=",funName)
-    return(x)
-  } 
-)
+  shift <- matrix(apply(x[u, ], 2, FUN), nrow = nrow(x), 
+                  ncol=ncol(x), byrow = TRUE)
+  x <-  x - shift
+  # funName <- getFunName(FUN)
+  # proc(x) <- getArgs(addArgs = c('FUN' = getFunName(FUN)))
+  proc(x) <- getArgs()
+  # proc(x) <- paste0("dcshift>u=", head(u,1),":",tail(u,1), "+", 
+                    # "FUN=",funName)
+  return(x)
+})
 
 #----------------- FIRST-BREAK
 #' First wave break

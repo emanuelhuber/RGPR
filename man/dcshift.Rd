@@ -14,10 +14,6 @@
 
 \item{FUN}{A function to apply on the first `u` time samples (default is 
 `mean`; alternatively `median` could be used or any user defined function).}
-
-\item{n}{[\code{integer(1)}]\cr
-My argument.
-Default is 1.}
 }
 \description{
 The direct-current shift is estimated for each traces based on a specified 

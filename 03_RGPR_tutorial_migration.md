@@ -1,7 +1,7 @@
 ---
 layout: page
 title: GPR data migration
-date: 2018-05-25
+date: 2019-02-15
 ---
 
 <!--
@@ -66,6 +66,9 @@ Read GPR data
 A <- readGPR(fPath = "rawGPR/LINE00.DT1")   # the filepath is case sensitive!
 ```
 
+    ## Warning in readGPR(fPath = "rawGPR/LINE00.DT1"): Use argument 'dsn' instead
+    ## of 'fPath' because argument 'fPath' is deprecated.
+
 Pre-processing
 ==============
 
@@ -98,7 +101,7 @@ DC shift removal
 Remove the DC-offset estimated on the first n samples usind the function `dcshift()`. This function takes as argument the `GPR` object and the sample index used to estimate the DC shift (in this case, the first 110 samples):
 
 ``` r
-A1 <- dcshift(A, 1:110)   # new object A1 
+A1 <- dcshift(A, 1:110)   # new object A1
 ```
 
 First wave break estimation and set time-zero
@@ -143,7 +146,7 @@ Eliminate the high-frequency (noise) component of the GPR record with a bandpass
 A4 <- fFilter(A3, f = c(150, 260), type = "low", plotSpec = TRUE)
 ```
 
-![frequency filter](03_RGPR_tutorial_migration_files/figure-markdown_github/unnamed-chunk-10-1.png)
+![frequency filter](03_RGPR_tutorial_migration_tp_files/figure-markdown_github/unnamed-chunk-10-1.png)
 
 Time gain
 ---------
@@ -158,7 +161,7 @@ A6 <- gain(A5, type = "exp", alpha = 0.11, t0 = 0, te = 125)
 Topographic Kirchhoff migration
 ===============================
 
-See *Dujardin & Bano (2013, Topographic migration of GPR data: Examples from Chad and Mongolia, Comptes Rendus Géoscience, 345(2):73-80. Doi : 10.1016/j.crte.2013.01.003)*
+See *Dujardin & Bano (2013, Topographic migration of GPR data: Examples from Chad and Mongolia, Comptes Rendus Géoscience, 345(2):73-80. Doi: 10.1016/j.crte.2013.01.003)*
 
 Pre-processing
 --------------
@@ -178,7 +181,7 @@ A7 <- timeCorOffset(A6)
 plot(A7)
 ```
 
-![plot data](03_RGPR_tutorial_migration_files/figure-markdown_github/unnamed-chunk-12-1.png)
+![plot data](03_RGPR_tutorial_migration_tp_files/figure-markdown_github/unnamed-chunk-12-1.png)
 
 ### Time upsampling (sinc-interpolation) of the GPR data to reduce the aliasing risk.
 
@@ -214,12 +217,12 @@ vel(A8)  <- 0.09        # velocity in ns
 ```
 
 ``` r
-A9 <- migration(A8, type="kirchhoff", max_depth = 10, 
+A9 <- migration(A8, type="kirchhoff", max_depth = 20,
                  dz = 0.01, fdo = 80)
 plot(A9)
 ```
 
-![plot migrated data](03_RGPR_tutorial_migration_files/figure-markdown_github/unnamed-chunk-16-1.png)
+![plot migrated data](03_RGPR_tutorial_migration_tp_files/figure-markdown_github/unnamed-chunk-16-1.png)
 
 You don't see so much: we need some post-processing!
 
@@ -229,13 +232,13 @@ Post-processing
 Trace smoothing with a Gaussian filter
 
 ``` r
-A10 <- filter1D(A9, type="Gaussian", sigma=2.5) 
+A10 <- filter1D(A9, type="Gaussian", sigma=2.5)
 ```
 
 Automatic gain control
 
 ``` r
-A11 <- gain(A10, type="agc", w=0.55) 
+A11 <- gain(A10, type="agc", w=0.55)
 ```
 
 inverse normal transformations
@@ -253,7 +256,7 @@ Before migration
 plot(traceScaling(A8, type = "invNormal"))
 ```
 
-![before migration](03_RGPR_tutorial_migration_files/figure-markdown_github/unnamed-chunk-20-1.png)
+![before migration](03_RGPR_tutorial_migration_tp_files/figure-markdown_github/unnamed-chunk-20-1.png)
 
 After migration
 
@@ -261,4 +264,4 @@ After migration
 plot(A12)
 ```
 
-![after migration](03_RGPR_tutorial_migration_files/figure-markdown_github/unnamed-chunk-21-1.png)
+![after migration](03_RGPR_tutorial_migration_tp_files/figure-markdown_github/unnamed-chunk-21-1.png)

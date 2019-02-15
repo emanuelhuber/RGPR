@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Class GPR
-date: 2018-05-25
+date: 2019-02-15
 ---
 
 <!--
@@ -15,8 +15,6 @@ date: 2018-05-25
 
 -   This R-package is still in development, and therefore some of the functions may change in a near future.
 -   If you have any questions, comments or suggestions, feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
-
-
 
 Objectives of this tutorial
 ===========================
@@ -33,14 +31,6 @@ Preliminary
     if(!require("devtools")) install.packages("devtools")
     devtools::install_github("emanuelhuber/RGPR")
     library(RGPR)       # load RGPR in the current R session
-    ```
-
--   Set the working directory:
-
-    ``` r
-    myDir <- "~/2014_04_25_frenke"  # adapt that to your directory structure
-    setwd(myDir)    # set the working directory
-    getwd()         # Return the current working directory (just to check)
     ```
 
 -   Load the GPR data `frenkeLine00` that is included in the package `RGPR`:
@@ -125,7 +115,7 @@ str(A)            # let's have a look at the structure of A
 The strings after the `@` are the names of the elements that form `A`. These elements are called `slots`. To get the `slots` names enter:
 
 ``` r
-slotNames(A)      # return the slot names
+methods::slotNames(A)      # return the slot names
 ```
 
     ##  [1] "version"      "data"         "traces"       "depth"       

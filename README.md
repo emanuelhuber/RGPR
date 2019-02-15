@@ -10,7 +10,7 @@ RGPR was initially developed to compensate for shortcomings of commercial GPR da
 <!--ts-->
    * [How to cite](#how-to-cite)
    * [Notes](#notes)
-      * [Supported binary formats](#supported-binary-formats) 
+      * [Supported file formats](#supported-binary-formats) 
       * [Current limitations](#current-limitations)
       * [Yes, you can contribute](#yes-you-can-contribute)
    * [Online tutorials](#online-tutorials)
@@ -49,7 +49,7 @@ ISSN      = {2474-3844}}
 - [x] MALA file format (**\*.rd3**, **\*.rad**).
 - [x] RadSys Zond GPR file format (**\*.sgy**). **WARNING: it is not like the usual SEG-Y file format**).
 - [x] ImpulseRadar format (**\*.iprb**, **\*iprh**).
-- [X] DTZ format from GSSI (**\*.dtz**).
+- [X] GSSI file format (**\*.dtz**).
 - [X] ASCII (**\*.txt**): 
 	- either 3-column format (x, t, amplitude) 
     - or matrix-format (without header/rownames)

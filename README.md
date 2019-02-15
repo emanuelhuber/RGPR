@@ -1,7 +1,9 @@
 # RGPR: a free and open-source software package for ground-penetrating radar (GPR) data processing
 
 
-RGPR is a free and open-source software package to read, export, analyse, process and visualise *ground-penetrating radar* (GPR) data. RGPR is written in [R](https://cran.r-project.org/), a high-level  programming language for statistical computing and graphics that is freely available under the GNU General Public License and runs on Linux, Windows and MacOS.
+RGPR is a free and open-source software package to read, export, analyse, process and visualise *ground-penetrating radar* (GPR) data. RGPR is written in [R](https://cran.r-project.org/), a high-level  programming language for statistical computing and graphics that is freely available under the GNU General Public License and runs on Linux, Windows and MacOS. [R](https://cran.r-project.org/) is a interpreted scripting language (not compiled) in the same veine as python or matlab.
+
+RGPR was initially developed to compensate for shortcomings of commercial GPR data processing applications. The  ultimate  goal  of  RGPR  is  to  promote  GPR  related research   by   providing   access   to the flexible   and   rich   R environment.    RGPR    has    also    a    didactic    vocation    by encouraging  students  and   researchers  to  learn  about GPR  signal  processing  through  various  tutorials  available  on the RGPR GitHub repository and the R documentation.
 
 ## Table of content
 
@@ -22,6 +24,8 @@ RGPR is a free and open-source software package to read, export, analyse, proces
 
 > E. Huber and G. Hans (2018) RGPR — An open-source package to process and visualize GPR data. 17th International Conference on Ground Penetrating Radar (GPR), Switzerland, Rapperswil, 18-21 June 2018, pp. 1-4.
 > doi: [10.1109/ICGPR.2018.8441658](https://doi.org/10.1109/ICGPR.2018.8441658)
+
+[PDF](https://emanuelhuber.github.io/publications/2018_huber-and-hans_RGPR-new-R-package_notes.pdf) [Poster](https://emanuelhuber.github.io/publications/poster_2018_huber-and-hans_RGPR-new-open-source-package.pdf)
 
 Bibtex format
 

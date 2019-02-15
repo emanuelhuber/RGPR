@@ -61,8 +61,9 @@ date: 2018-02-12
 - [x] MALA file format (.rd3, .rad)
 - [x] SEG-Y file format from RadSys Zond GPR device (.sgy) (it is not like the usual SEG-Y file format)
 - [x] ImpulseRadar format (.iprb, iprh) 
-- [ ] DTZ format from GSSI (.dtz) -> we are working on it
-- [ ] SEG-Y -> we are working on it
+- [X] DTZ format from GSSI (.dtz)
+- [X] TXT: either 4-column format (x,t,amplitude) or matrix-format (without header/rownames)
+- [ ] SEG-Y -> **we are working on it**
     
 Do you miss your preferred file format? Send me the file format description with a test file and I will adapt the RGPR-package to support this file format. 
 

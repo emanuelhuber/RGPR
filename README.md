@@ -41,7 +41,7 @@ ISSN      = {2474-3844}}
 
 ### Supported file formats:
 
-- [x] Sensors & Software file format (.DT1, .HD)
+- [x] Sensors & Software file format (***.dt1, *.hd**)
 - [x] MALA file format (.rd3, .rad)
 - [x] SEG-Y file format from RadSys Zond GPR device (.sgy) (it is not like the usual SEG-Y file format)
 - [x] ImpulseRadar format (.iprb, iprh) 

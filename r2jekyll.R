@@ -1,6 +1,9 @@
 #!/usr/bin/env Rscript
 
-#Be sure to make r2jekyll.R executable with chmod +x r2jekyll.R. Then, to convert my .Rmd file to a .md file and take care of any .png file housekeeping, I navigate to my _drafts directory and execute in the terminal:
+# Be sure to make r2jekyll.R executable with chmod +x r2jekyll.R. 
+# Then, to convert my .Rmd file to a .md file 
+# and take care of any .png file housekeeping, I navigate 
+# to my _drafts directory and execute in the terminal:
 
 # Rscript --vanilla r2jekyll.R 00_RGPR_import_data.Rmd
 # Rscript --vanilla r2jekyll.R 01_RGPR_tutorial_basic-processing.Rmd
@@ -54,7 +57,8 @@ x4 <- strsplit(x3, split="!@#:", fixed = TRUE)
 writeLines(x4[[1]], tempfile)
 
 
-
+message("run 'rmarkdown::render', tempfile = ",tempfile, 
+        ", output_file = ", mdtempfile)
 
 rmarkdown::render(tempfile, output_format = 'all', output_file = mdtempfile)
 

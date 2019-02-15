@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Basic GPR data processing
-date: 2018-06-29
+date: 2019-02-15
 ---
 
 <!--
@@ -72,6 +72,12 @@ To read the GPR data, enter
 
 ``` r
 A <- readGPR(fPath = "rawGPR/LINE00.DT1")   # the filepath is case sensitive!
+```
+
+    ## Warning in readGPR(fPath = "rawGPR/LINE00.DT1"): Use argument 'dsn' instead
+    ## of 'fPath' because argument 'fPath' is deprecated.
+
+``` r
 class(A)
 ```
 
@@ -202,86 +208,22 @@ Check the help for more details on the `plot()` function:
 Basic processing steps
 ======================
 
-DC shift removal
-----------------
-
-Plot a single trace:
-
-``` r
-plot(A[, 15])  # plot the 15th trace of the GPR-line
-```
-
-![plot single trace](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/dcShift_plot1D_15-1.png)
-
-Notice how the trace samples before the first wave arrival (before $t = 0\,ns$) are slightly shifted below $0\,mV$? This shift is called direct current offset (DC-offset) and you will remove it from the data. The direct current offset is estimated on trace samples before time-zero.
-
-1.  Determine which samples will be used to estimate the direct current offset (i.e., the samples before the first wave arrival). Identify the samples before $t = 0\,ns$     by ploting the first $n$     samples of the traces. For example, for $n = 110$:
-
-``` r
-# plot the first 110 samples of the 15th trace of the GPR profile
-plot(A[1:110, 15])
-```
-
-![plot single trace, first 110 samples](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/dcShift_plot_first_samples-1.png)
-
-1.  Remove the DC-offset estimated on the first n samples usind the function `dcshift()`. This function takes as argument the `GPR` object and the sample index used to estimate the DC shift (in this case, the first $110$     samples):
-
-``` r
-A1 <- dcshift(A, 1:110)   # new object A1
-```
-
-You can visualise the DC-offset on the trace plot by adding an horizontal lines (`abline(h=...)`) with the argument `h` equal the DC-offset, i.e., the mean of the first $110$ samples (`mean(A[1:110,15]`):
-
-``` r
-plot(A[, 15])  # plot the 15th trace of the GPR-line
-# add a green horizontal line
-abline(h = mean(A[1:110, 15]), col = "green")
-```
-
-![plot single trace + dc-shift](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/dcShift_check_results_1D-1.png)
-
-Have a look at A1:
-
-``` r
-A1
-```
-
-    ## *** Class GPR ***
-    ##  name        = LINE00
-    ##  filepath    = rawGPR/LINE00.DT1
-    ##  1 fiducial(s)
-    ##  description =
-    ##  survey date = 2014-04-25
-    ##  Reflection, 100 MHz, Window length = 399.6 ns, dz = 0.4 ns
-    ##  223 traces, 55.5 m
-    ##  ****************
-
-Compared with `A` or `print(A)`, two additional lines are displayed. The second line shows the applied processing step, `dcshift`, with the arguments passed to the function. Each time a GPR object is processed with a function, the name of the function as well as some of its arguments are stored in the GPR object. This enables to track the data processing, i.e., to know exactly which processing steps where applied to the data. This is a first step toward reproducible research.
-
-The processing steps can be extracted with the function `processing()`:
-
-``` r
-proc(A1)
-```
-
-    ## character(0)
-
-First wave break estimation and time-zero correction
-----------------------------------------------------
+First wave break and time zero estimation
+-----------------------------------------
 
 Here, we define time-zero, $t_0$ as the time at which the transmitter starts to emit the wave.
 
-Maybe is time-zero not correctly set. To get the time-zero for each traces of `A1` use the function `time0()`:
+Maybe is time zero not correctly set. To get the time-zero for each traces of `A` use the function `time0()`:
 
 ``` r
-time0(A1)
+time0(A)
 ```
 
-The first wave break, $t_{\mathrm{fb}}$, is estimated for each traces (it is the time of the first wave record)
+The first wave break, $t_{\mathrm{fb}}$, is estimated for each traces (it is the time of the first wave record) with `firstBreak()`:
 
 ``` r
-tfb <- firstBreak(A1)   # take some time
-plot(pos(A1), tfb, pch = 20, ylab = "first wave break",
+tfb <- firstBreak(A, w = 20, method = "coppens", thr = 0.05) # take some time
+plot(pos(A), tfb, pch = 20, ylab = "first wave break",
      xlab = "position (m)")
 ```
 
@@ -298,32 +240,106 @@ $$
 where $a$ is the distance between the transmitter and receiver and $c_0$ is the wave velocity in the media between the transmitter and receiver (in our case, air). The value $a/c_0$ corresponds to the wave travel time from the transmitter to the receiver.
 
 ``` r
-t0 <- firstBreakToTime0(tfb, A1)
-time0(A1) <- t0     # set time0 to A1
+t0 <- firstBreakToTime0(tfb, A)
+time0(A) <- t0     # set time0 to A
 ```
 
-Note that if `t0` is too noisy, you can set `time0(A1) <- mean(t0)`.
+Note that if `t0` is too noisy, you can set `time0(A) <- mean(t0)`.
 
-Check the results (do you see the difference between time-zero in red and first wave break time in blue?):
+Check the results (do you see the difference between time zero in red and first wave break time in blue?):
 
 ``` r
-plot(A1[, 15])  # plot the 15th trace of the GPR-line
+plot(A[, 15], xlim = c(0, 100))  # plot the 15th trace of the GPR-line
 abline(v = tfb[15], col = "blue")  # first wave break time
 ```
 
 ![plot single trace with time0 and first wave break time](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/time0_check-1.png)
 
+Time zero correction
+--------------------
+
 To shift the traces to time-zero, use the function `time0Cor` (the `method` argument defines the type of interpolation method)
 
 ``` r
-A2 <- time0Cor(A1, method = "pchip")
+A1 <- time0Cor(A, method = "pchip")
 ```
 
 ``` r
-plot(A2)
+plot(A1)
 ```
 
 ![plot after time0Cor()](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/time0Cor_check-1.png)
+
+Have a look at A1:
+
+``` r
+A1
+```
+
+    ## *** Class GPR ***
+    ##  name        = LINE00
+    ##  filepath    = rawGPR/LINE00.DT1
+    ##  1 fiducial(s)
+    ##  description =
+    ##  survey date = 2014-04-25
+    ##  Reflection, 100 MHz, Window length = 354.8 ns, dz = 0.4 ns
+    ##  223 traces, 55.5 m
+    ##  > PROCESSING
+    ##    1. time0<-
+    ##  ****************
+
+Compared with `A` or `print(A)`, three additional lines are displayed. The two last line show the applied processing step:
+
+-   set time zero with `time0<-`
+-   time zero correction with `time0Cor`. The arguments passed to the function are listed after the double slashes `//`
+
+Each time a GPR object is processed with a function, the name of the function as well as some of its arguments are stored in the GPR object. This enables to track the data processing, i.e., to know exactly which processing steps where applied to the data. This is a first step toward reproducible research.
+
+The processing steps can be extracted with the function `processing()`:
+
+``` r
+proc(A1)
+```
+
+    ## [1] "time0<-"
+
+DC shift removal
+----------------
+
+Plot a single trace:
+
+``` r
+plot(A1[, 15])  # plot the 15th trace of the GPR-line
+```
+
+![plot single trace](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/dcShift_plot1D_15-1.png)
+
+Notice how the trace samples before the first wave arrival (before $t = 0\,ns$) are slightly shifted below $0\,mV$? This shift is called direct current offset (DC-offset) and you will remove it from the data. The direct current offset is estimated on trace samples before time-zero.
+
+1.  Determine which samples will be used to estimate the direct current offset (i.e., the samples before the first wave arrival). Identify the samples before $t = 0\,ns$     by ploting the first $n$     samples of the traces. For example, for $n = 110$:
+
+    ``` r
+    # plot the first 110 samples of the 15th trace of the GPR profile
+    plot(A1[1:110, 15])
+    ```
+
+![plot single trace, first 110 samples](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/dcShift_plot_first_samples-1.png)
+
+    You can visualise the DC-offset on the trace plot by adding an horizontal lines (`abline(h=...)`) with the argument `h` equal the DC-offset, i.e., the mean of the first $110$     samples (`mean(A[1:110,15]`):
+
+    ``` r
+    plot(A1[, 15])  # plot the 15th trace of the GPR-line
+    # add a green horizontal line
+    abline(h = mean(A1[1:110, 15]), col = "green")
+    ```
+
+![plot single trace + dc-shift](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/dcShift_check_results_1D-1.png)
+
+2.  Remove the DC-offset estimated on the first n samples usind the function `dcshift()`. This function takes as argument the `GPR` object and the sample index used to estimate the DC shift (in this case, the first $110$     samples):
+
+    ``` r
+    A2 <- dcshift(A1, 1:110)   # new object A2
+    ```
 
 Dewow
 -----
@@ -620,11 +636,11 @@ writeGPR(A9, fPath = file.path(getwd(), "processing", paste0(name(A9), ".rds")),
 
     ## *** Class GPR ***
     ##  name        = LINE00
-    ##  filepath    = /media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/processing/LINE00.dt1
+    ##  filepath    = /media/huber/Seagate1TB/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/processing/LINE00.dt1
     ##  1 fiducial(s)
     ##  description =
     ##  survey date = 2014-04-25
-    ##  Reflection, 100 MHz, Window length = 352 ns, dz = 0.4 ns
+    ##  Reflection, 100 MHz, Window length = 354.8 ns, dz = 0.4 ns
     ##  223 traces, 55.5 m
     ##  > PROCESSING
     ##    1. time0<-

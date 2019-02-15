@@ -35,7 +35,7 @@ or seq(x@antsep, by = x@dx, length.out = length(x))
 \describe{
   \item{semblance}{also described as the ratio of input to output
         energy (Niedell and Taner, 1971)}
-  \item{semblance2}{windowed semblance}       
+  \item{winsemblance}{windowed semblance}       
   \item{wincoherence}{Windowed coherence measure based on 
         eigen-decomposition that estimates the 
         signal-to-noise ratio for high resolution velocity analysis

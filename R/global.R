@@ -1102,11 +1102,12 @@ setGenericVerif("regInterpPos", function(x, type = c("linear", "cosine"),
 setGenericVerif("relPos", function(x) 
     standardGeneric("relPos"))
     
-#' @name readGPR
-#' @rdname readGPR
-#' @export
-setGenericVerif("readGPR", function(fPath, desc = "") standardGeneric("readGPR")
-)
+# #' @name readGPR
+# #' @rdname readGPR
+# #' @export
+# setGenericVerif("readGPR", function(fPath, desc = "", ...) 
+#   standardGeneric("readGPR")
+# )
 
 #' @name writeGPR
 #' @rdname writeGPR
@@ -4004,14 +4005,24 @@ inPoly <- function(x, y, vertx, verty){
 # @return list((hd = headerHD, dt1hd = headerDT1, data=myData))
 # -------------------------------------------
 
-readDT1 <- function( fPath){
-  fName <- getFName(fPath, ext = c(".HD", ".DT1"))
-  #dirName     <- dirname(fPath)
-  #baseName    <- .fNameWExt(fPath)
-  #fileNameHD  <- file.path(dirName, paste0(baseName,".HD"))
-  #fileNameDT1 <- file.path(dirName, paste0(baseName,".DT1"))
-  #--- read header file
-  headHD <- scan( fName$hd, what = character(), strip.white = TRUE,
+readDT1 <- function(fPath, dsn2 = NULL){
+  
+  if( inherits(fPath, "connection") ){
+    if(!inherits(dsn2, "connection")){
+      stop("Please add an additional connection to 'readGPR()' for ",
+           "the header file '*.hd'")
+    }
+    con <- fPath
+  }else if(is.character(fPath)){
+    fName <- getFName(fPath, ext = c(".HD", ".DT1"))
+    # open dt1 file
+    con <- file(fName$dt1 , "rb")
+    dsn2 <- fName$hd
+  }else{
+    stop("check this error")
+  }
+  # scan header file
+  headHD <- scan(dsn2, what = character(), strip.white = TRUE,
                   quiet = TRUE, fill = TRUE, blank.lines.skip = TRUE, 
                   flush = TRUE, sep = "\n")
   nHD <- length(headHD)
@@ -4028,6 +4039,7 @@ readDT1 <- function( fPath){
   }
   nTr <- .getHD(hHD, "NUMBER OF TRACES")
   nPt <- .getHD(hHD, "NUMBER OF PTS/TRC")
+  
   #--- READ DT1
   tags <- c("traces", "position", "samples","topo", "NA1", "bytes",
             "tracenb", "stack","window","NA2", "NA3", "NA4",
@@ -4035,7 +4047,7 @@ readDT1 <- function( fPath){
             "transz","time0","zeroflag", "NA7", "time","x8","com")  
   hDT1 <- list()
   dataDT1 <- matrix(NA, nrow = nPt, ncol = nTr)
-  con <- file(fName$dt1 , "rb")
+
   for(i in 1:nTr){
     for(j in 1:25){
       hDT1[[tags[j]]][i] <- readBin(con, what = numeric(), n = 1L, size = 4)
@@ -4045,7 +4057,9 @@ readDT1 <- function( fPath){
     # read the nPt * 2 bytes trace data
     dataDT1[,i] <- readBin(con, what=integer(), n = nPt, size = 2)
   }
-  close(con)
+  if( !inherits(fPath, "connection") ){
+    close(con)
+  }
   return( list(hd = hHD, dt1hd = hDT1, data = dataDT1) )
 }
 #-----------------
@@ -4074,8 +4088,22 @@ readDT1 <- function( fPath){
 
   
 #--------------- read MALA files -------------------#
-readRD3 <- function(fPath){
-  fName <- getFName(fPath, ext = c(".rad", ".rd3"))
+readRD3 <- function(fPath, dsn2 = NULL){
+  if( inherits(fPath, "connection") ){
+    if(!inherits(dsn2, "connection")){
+      stop("Please add an additional connection to 'readGPR()' for ",
+           "the header file '*.hd'")
+    }
+    con <- fPath
+  }else if(is.character(fPath)){
+    fName <- getFName(fPath, ext = c(".rad", ".rd3"))
+    # open dt1 file
+    con <- file(fName$rd3 , "rb")
+    dsn2 <- fName$rad
+  }else{
+    stop("check this error")
+  }
+  
   #dirName     <- dirname(fPath)
   #baseName    <- .fNameWExt(fPath)
   #fNameRAD    <- file.path(dirName, paste0(baseName, ".rad"))
@@ -4083,7 +4111,7 @@ readRD3 <- function(fPath){
   #fNameCOR    <- file.path(dirName, paste0(baseName, ".cor"))
 
   ##---- RAD file
-  headRAD <- scan(fName$rad, what = character(), strip.white = TRUE,
+  headRAD <- scan(dsn2, what = character(), strip.white = TRUE,
                   quiet = TRUE, fill = TRUE, blank.lines.skip = TRUE, 
                   flush = TRUE, sep = "\n")
                   
@@ -4099,11 +4127,13 @@ readRD3 <- function(fPath){
   
   ##---- RD3 file
   dataRD3 <- matrix(NA, nrow = nPt, ncol = nTr)
-  con <- file(fName$rd3 , "rb")
   for(i in seq_len(nTr)){
     dataRD3[, i] <- readBin(con, what = integer(), n = nPt, size = 2)
   }
-  close(con)
+  
+  if( !inherits(fPath, "connection") ){
+    close(con)
+  }
   
   ##---- COR file
   #if(file.exists(fNameCOR)){
@@ -4371,10 +4401,24 @@ readSEGY <- function(fPath){
 
   
 
-readImpulseRadar <- function( fPath){
-  fName <- getFName(fPath, ext = c(".iprh", ".iprb"))
+readImpulseRadar <- function( fPath, dsn2 = NULL){
+  
+  if( inherits(fPath, "connection") ){
+    if(!inherits(dsn2, "connection")){
+      stop("Please add an additional connection to 'readGPR()' for ",
+           "the header file '*.hd'")
+    }
+    con <- fPath
+  }else if(is.character(fPath)){
+    fName <- getFName(fPath, ext = c(".iprh", ".iprb"))
+    con <- file(fName$iprb , "rb")
+    dsn2 <- fName$iprh
+  }else{
+    stop("check this error")
+  }
+  
   #--- read header file
-  headHD <- scan( fName$iprh, what = character(), strip.white = TRUE,
+  headHD <- scan( dsn2, what = character(), strip.white = TRUE,
                   quiet = TRUE, fill = TRUE, blank.lines.skip = TRUE, 
                   flush = TRUE, sep = "\n")
   nHD <- length(headHD)
@@ -4395,26 +4439,29 @@ readImpulseRadar <- function( fPath){
   
   #--- READ .IPRB
   bind <- matrix(NA, nrow = nPt, ncol = nTr)
-  con <- file(fName$iprb , "rb")
+  
   for(i in 1:nTr){
     bind[,i] <- readBin(con, what=integer(), n = nPt, size = 2)
   }
-  close(con)
-  #--- READ OPTIONAL FILES
-  fName <- getFName(fPath, ext = c(".cor", ".time", ".mrk"), 
-                    throwError = FALSE)
-  # TIME: trace_numer date(yyyy-mm-dd) time(hh:mm:sss)
   hTime <- NULL
-  if(!is.null(fName$time))  hTime <- read.table(fName$time, 
-                                                stringsAsFactors = FALSE)
-  # GPS POSITION: trace date time north N East E Elevation M Quality
   hCor <- NULL
-  if(!is.null(fName$cor)) hCor <- read.table(fName$cor,
-                                             stringsAsFactors = FALSE)
-  # marker
   hMrk <- NULL
-  if(!is.null(fName$mrk)) hMrk <- read.table(fName$mrk, 
-                                             stringsAsFactors = FALSE)
+  
+  if( !inherits(fPath, "connection") ){
+    close(con)
+    #--- READ OPTIONAL FILES
+    fName <- getFName(fPath, ext = c(".cor", ".time", ".mrk"), 
+                      throwError = FALSE)
+    # TIME: trace_numer date(yyyy-mm-dd) time(hh:mm:sss)
+    if(!is.null(fName$time))  hTime <- read.table(fName$time, 
+                                                  stringsAsFactors = FALSE)
+    # GPS POSITION: trace date time north N East E Elevation M Quality
+    if(!is.null(fName$cor)) hCor <- read.table(fName$cor,
+                                               stringsAsFactors = FALSE)
+    # marker
+    if(!is.null(fName$mrk)) hMrk <- read.table(fName$mrk, 
+                                               stringsAsFactors = FALSE)
+  }
   
   return( list(hd = hHD, data = bind, time = hTime, cor = hCor, mkr = hMrk) )
 }  
@@ -4515,6 +4562,8 @@ readTXT <- function(fPath){
     if(length(XampPos) > 1){
       cat("Error")
     }
+    
+    
     XnTemp <- Xn
     XnTemp[[Xamp]] <- NULL
     pos <- pos[-Xamp]
@@ -4564,11 +4613,14 @@ readTXT <- function(fPath){
 
 
 
-
 readDZT <- function(fPath){
-  fName <- getFName(fPath, ext = c(".dzt"))
+  if( inherits(fPath, "connection") ){
+    DZT <- fPath
+  }else if(is.character(fPath)){
+    fName <- getFName(fPath, ext = c(".dzt"))
+    DZT <- file(fName$dzt , "rb")
+  }
   hd <- c()
-  DZT <- file(fName$dzt , "rb")
   MINHEADSIZE <- 1024  # absolute minimum total header size
   nScans <- 0
   #--------------------------------- READ HEADER ------------------------------#  
@@ -4664,8 +4716,9 @@ readDZT <- function(fPath){
   tt <- (seq_len(hd$NSAMP) - 1) * hd$RANGE /  (hd$NSAMP - 1 )
   yy <- 1/hd$SPM * (seq_len(ncol(A)) - 1)
   #plot3D::image2D(x = tt, y = yy, z = A)
-  
-  close(DZT)
+  if( !inherits(fPath, "connection") ){
+    close(DZT)
+  }
   return(list(hd = hd, data = A, depth = tt, pos = yy))
 }
 

@@ -72,7 +72,8 @@ without extension}
 }
 \description{
 \code{plot}: If the GPR object consists of a single trace, wiggle plot 
-is shown.
+is shown. For CMP, the position of the traces on the x-axis is defined
+by the antenna separation (\code{antsep(x)}).
 
 \code{contour} extends \code{plot3D::contour2D} and creates a contour plot.
 

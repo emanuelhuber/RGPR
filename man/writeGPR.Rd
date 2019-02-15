@@ -12,6 +12,23 @@ writeGPR(x, fPath = NULL, type = c("DT1", "rds", "ASCII", "xta", "xyza"),
 \S4method{writeGPR}{GPR}(x, fPath = NULL, type = c("DT1", "rds", "ASCII",
   "xta", "xyza"), overwrite = FALSE, ...)
 }
+\arguments{
+\item{x}{Object of the class \code{GPR} or \code{GPRsurvey}}
+
+\item{type}{Format type. See Details.}
+
+\item{overwrite}{Boolean. If \code{TRUE} existing files will be overwritten,
+if \code{FALSE} an error will be thrown if the file(s) 
+already exist(s).}
+
+\item{fPaht}{Filepath (Length-one character vector). If \code{fPath = NULL},
+the file will be save in the current working directory with
+the name of x (\code{name(x)}) with the extension depending 
+of \code{type}.}
+}
 \description{
 Write the GPR object in a file.
+}
+\seealso{
+\code{\link{readGPR}}
 }

@@ -93,7 +93,7 @@ setClass(
     pos = "numeric",    # position  of the traces
     time0 = "numeric",  # time-zero (first air-wave arrival)
     time = "numeric",   # time of the trace recording
-    fid = "character",   # fiducial marks
+    fid = "character",   # fiducial marks, defaults = rep("", ncol(x))!
     ann = "character",  # annotation (e.g. intersections)
     coord = "matrix",   # coordinates (x,y,z) of each traces
     rec = "matrix",     # coordinates (x,y,z) of the receiver antenna
@@ -493,7 +493,7 @@ setClass(
   new("GPR",   version="0.2",
         data = byte2volt()*x$data,
         traces = 1:ncol(x$data),
-        fid = character(0),
+        fid = rep("", ncol(x$data)),
         #coord = coord,
         coord = matrix(nrow=0, ncol = 0),
         pos = seq(0, by = dx[1], length.out = ncol(x$data)),
@@ -590,7 +590,7 @@ setClass(
   new("GPR",   version="0.2",
         data = byte2volt()*x$data,
         traces = 1:ncol(x$data),
-        fid = character(0),
+        fid = rep("", ncol(x$data)),
         #coord = coord,
         coord = x_coord,
         pos = x_pos,
@@ -678,7 +678,7 @@ setClass(
   new("GPR",   version="0.2",
       data = byte2volt(nBytes = x$hd$BITS) * x$data,
       traces = 1:ncol(x$data),
-      fid = character(0),
+      fid = rep("", ncol(x$data)),
       #coord = coord,
       coord = matrix(nrow=0, ncol = 0),
       pos = x$pos,
@@ -708,109 +708,172 @@ setClass(
 
 #' Read a GPR data file
 #' 
-#' @param fPath Filepath (character).
+#' Note: argument \code{fPath} is depreacted. Use \code{dsn} instead.
+#' 
+#' Supported file format
+#' \itemize{
+#'   \item Sensors & Software file format (*.dt1 , *.hd).
+#'         \code{readGPR(dsn = 'xline.dt1')}
+#'   \item MALA file format (*.rd3, *.rad).
+#'         \code{readGPR(dsn = 'xline.rd3')}
+#'   \item RadSys Zond GPR device (*.sgy). 
+#'         \strong{Note: it is not the usual SEG-Y file format)}.
+#'         \code{readGPR(dsn = 'xline.sgy')}  
+#'   \item GSSI file format (*.dtz).
+#'         \code{readGPR(dsn = 'xline.dzt')}
+#'   \item ASCII file format (*.txt): either 4-column format 
+#'         (x,t,amplitude) or matrix-format (without header/rownames).
+#'         \code{readGPR(dsn = 'xline.txt')}  
+#'   \item R object file format (*rds). These files are created by saving the
+#'         \code{GPR} object with 
+#'         \code{writeGPR(x, fPath = 'xline.rds', type = "rds")}.
+#'         \code{readGPR(dsn = 'xline.txt')}  
+#' }
+#' @param dsn data source name: either the filepath to the GPR data (character),
+#'            or an open file connection.
 #' @param desc Short description of the file (character).
-#' @param coordfile Filepath of a text file containing the coordinates (x,y,z)
-#'                   of each traces.
-#' @param crs Coordinate reference system (character)
-#' @param intfile Filepath of a text file containing the intersection.
+#' @param dsn data source name for additional file connection if \code{dsn} is
+#'            an open file connection (e.g., open file connection to '*.hd'
+#'            file if \code{ds} is an open file connection to a '*.dt1' file).
+#' @param format lenth-one character vector required if the file extension is
+#'               not appearent in the filepath or the connection (either
+#'               \code{dt1}, \code{rad}, \code{dzt}, \code{sgy}, \code{iprb},
+#'               \code{txt}, \code{rds})
+#' @param fPath Filepath (character). DEPRECATED. Use \code{dsn} instead.
 #' @return The GPR data as object of the class RGPR.
+#' @seealso \code{\link{writeGPR}}
 #' @examples
-#' NULL
+#' \dontrun{
+#' # argument dsn is a file path
+#' x1 <- readGPR(dsn = "data/RD3/DAT_0052.rd3")
+#' y1 <- readGPR("data/FILE____050.DZT")
+#' 
+#' # argument dsn is a connection
+#' con <- file("data/RD3/DAT_0052.rd3", "rb")   # binary mode
+#' con2 <- file("data/RD3/DAT_0052.rad", "rt")  # text mode
+#' x2 <- readGPR(dsn = con, dsn2 = con2)
+#' close(con)
+#' close(con2)
+#' 
+#' con <- file(dsn = "data/FILE____050.DZT", "rb")
+#' y1 <- readGPR(con)
+#' close(con)
+#' }
 #' @name readGPR
 #' @rdname readGPR
+#' @export
+readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, fPath){
 # @aliases readGPR-methods
-setMethod("readGPR", "character", function(fPath, desc = ""){
-    ext <- .fExt(fPath)
-    # DT1
-    if("DT1" == toupper(ext)){
-      fName <- .fNameWExt(fPath)
-      A <- readDT1(fPath)
-      x <- .gpr(A, fName = fName, fPath = fPath, desc = desc)
-    }else if("rds" == tolower(ext)){
-      x <- readRDS(fPath)
-      if(class(x) == "GPR"){
-        x@filepath <- fPath
-      }else if(class(x) == "list"){
-        versRGPR <- x[["version"]]
-        if(versRGPR == "0.1"){
-          for(i in seq_along(x[['delineations']])){
-            x[['delineations']][[i]][, 5] <- -x[['delineations']][[i]][, 5]
-          }
-        }
-        y <- new("GPR",
-          version = x[['version']],
-          data = x[['data']],
-          traces = x[['traces']],           # x$dt1$traces
-          depth = x[['depth']],
-          pos = x[['pos']],                 # x$dt1$position of the traces
-          time0 = x[['time0']],             # x$dt1$time0
-          time = x[['time']],               # x$dt1$time
-          fid = trimStr(x[['fid']]),        # x$dt1$fid <-> x$dt1$x8
-          ann = trimStr(x[['ann']]),        # x$dt1$fid <-> x$dt1$x8
-          coord = x[['coord']],             # x$dt1$topo  of the traces
-          rec = x[['rec']],                # x$dt1$recx,x$dt1$recy,x$dt1$recz
-          trans = x[['trans']],
-          coordref = x[['coordref']],       # x$dt1$topo of the traces
-          freq = x[['freq']], 
-          dz = x[['dz']], 
-          dx = x[['dx']], 
-          antsep = x[['antsep']], 
-          name = x[['name']],
-          description = x[['description']],
-          filepath =x[['filepath']],
-          depthunit = x[['depthunit']],
-          posunit = x[['posunit']],
-          surveymode = x[['surveymode']],
-          date = x[['date']],
-          crs = x[['crs']],
-          proc = x[['proc']],               # processing steps
-          vel = x[['vel']],                 # m/ns
-          delineations = x[['delineations']],
-          hd =  x[['hd']]                   # header
-        )
-        y@filepath <- fPath
-        x <- y
-      }
-    }else if("RD3" == toupper(ext)){
-      fName <- .fNameWExt(fPath)
-      A <- readRD3(fPath)
-      x <- .gprRD3(A, fName = fName, fPath = fPath, desc = desc)
-    }else if("SGY" == toupper(ext) || "SEGY" == toupper(ext)){
-      fName <- .fNameWExt(fPath)
-      A <- readSEGY(fPath)
-      x <- .gprSEGY(A, fName = fName, fPath = fPath, desc = desc)
-    }else if("IPRB" == toupper(ext) || "IPRH" == toupper(ext)){
-      fName <- .fNameWExt(fPath)
-      A <- readImpulseRadar(fPath)
-      x <- .gprImpulseRadar(A, fName = fName, fPath = fPath, 
-                             desc = desc)
-    }else if("DZT" == toupper(ext)){
-      fName <- .fNameWExt(fPath)
-      A <- readDZT(fPath)
-      x <- .gprDZT(A, fName = fName, fPath = fPath, 
-                            desc = desc)
-    }else if("TXT" == toupper(ext)){
-      fName <- .fNameWExt(fPath)
-      A <- readTXT(fPath)
-      x <- .gprTXT(A, fName = fName, fPath = fPath, 
-                   desc = desc)
+# setMethod("readGPR", "character", function(fPath, desc = "", ...){
+  if(!missing(fPath)){
+    if(missing(dsn)){
+      dsn <- fPath
+    }
+    warning("Use argument 'dsn' instead of 'fPath' because ",
+            "argument 'fPath' is deprecated.")
+  }
+  if( inherits(dsn, "connection") ){
+    summaryCon <- summary.connection(dsn)
+    fPath <- summaryCon$description
+    if(!is.null(format)){
+      ext <- format[1]
     }else{
-      stop(paste0("File extension not recognised!\n",
-                  "Must be '.DT1', '.rd3', 'sgy', 'segy', '.rds'\n",
-                  "'iprb' or 'iprh"))
+      ext <- .fExt(summaryCon$description)
     }
-    if(grepl("CMP", x@surveymode)){
-      x@surveymode <- "CMP"
-      if(length(x@rec) == 0 || length(x@trans) == 0){
-        x@antsep <- seq(x@antsep, by = x@dx, length.out = length(x))
-      }else{
-        x@antsep <- sqrt(colSums((x@rec - x@trans)^2))
+    fName <- .fNameWExt(fPath)
+  }else{
+    fPath <- dsn
+    ext <- .fExt(fPath)
+    fName <- .fNameWExt(fPath)
+  }
+  # DT1
+  if("DT1" == toupper(ext)){
+    # fName <- .fNameWExt(fPath)
+    A <- readDT1(dsn, dsn2)
+    x <- .gpr(A, fName = fName, fPath = fPath, desc = desc)
+  }else if("rds" == tolower(ext)){
+    x <- readRDS(dsn)
+    if(class(x) == "GPR"){
+      x@filepath <- fPath
+    }else if(class(x) == "list"){
+      versRGPR <- x[["version"]]
+      if(versRGPR == "0.1"){
+        for(i in seq_along(x[['delineations']])){
+          x[['delineations']][[i]][, 5] <- -x[['delineations']][[i]][, 5]
+        }
       }
+      y <- new("GPR",
+        version = x[['version']],
+        data = x[['data']],
+        traces = x[['traces']],           # x$dt1$traces
+        depth = x[['depth']],
+        pos = x[['pos']],                 # x$dt1$position of the traces
+        time0 = x[['time0']],             # x$dt1$time0
+        time = x[['time']],               # x$dt1$time
+        fid = trimStr(x[['fid']]),        # x$dt1$fid <-> x$dt1$x8
+        ann = trimStr(x[['ann']]),        # x$dt1$fid <-> x$dt1$x8
+        coord = x[['coord']],             # x$dt1$topo  of the traces
+        rec = x[['rec']],                # x$dt1$recx,x$dt1$recy,x$dt1$recz
+        trans = x[['trans']],
+        coordref = x[['coordref']],       # x$dt1$topo of the traces
+        freq = x[['freq']], 
+        dz = x[['dz']], 
+        dx = x[['dx']], 
+        antsep = x[['antsep']], 
+        name = x[['name']],
+        description = x[['description']],
+        filepath =x[['filepath']],
+        depthunit = x[['depthunit']],
+        posunit = x[['posunit']],
+        surveymode = x[['surveymode']],
+        date = x[['date']],
+        crs = x[['crs']],
+        proc = x[['proc']],               # processing steps
+        vel = x[['vel']],                 # m/ns
+        delineations = x[['delineations']],
+        hd =  x[['hd']]                   # header
+      )
+      y@filepath <- fPath
+      x <- y
     }
-    return(x)
-  } 
-)
+  }else if("RD3" == toupper(ext)){
+    # fName <- .fNameWExt(fPath)
+    A <- readRD3(dsn, dsn2)
+    x <- .gprRD3(A, fName = fName, fPath = fPath, desc = desc)
+  }else if("SGY" == toupper(ext) || "SEGY" == toupper(ext)){
+    # fName <- .fNameWExt(fPath)
+    A <- readSEGY(dsn)
+    x <- .gprSEGY(A, fName = fName, fPath = fPath, desc = desc)
+  }else if("IPRB" == toupper(ext) || "IPRH" == toupper(ext)){
+    # fName <- .fNameWExt(fPath)
+    A <- readImpulseRadar(dsn, dsn2)
+    x <- .gprImpulseRadar(A, fName = fName, fPath = fPath, 
+                           desc = desc)
+  }else if("DZT" == toupper(ext)){
+    # fName <- .fNameWExt(fPath)
+    A <- readDZT(dsn)
+    x <- .gprDZT(A, fName = fName, fPath = fPath, 
+                          desc = desc)
+  }else if("TXT" == toupper(ext)){
+    # fName <- .fNameWExt(fPath)
+    A <- readTXT(dsn)
+    x <- .gprTXT(A, fName = fName, fPath = fPath, 
+                 desc = desc)
+  }else{
+    stop(paste0("File extension not recognised!\n",
+                "Must be '.DT1', '.rd3', 'sgy', 'segy', '.rds'\n",
+                "'iprb' or 'iprh"))
+  }
+  if(grepl("CMP", x@surveymode)){
+    x@surveymode <- "CMP"
+    if(length(x@rec) == 0 || length(x@trans) == 0){
+      x@antsep <- seq(x@antsep, by = x@dx, length.out = length(x))
+    }else{
+      x@antsep <- sqrt(colSums((x@rec - x@trans)^2))
+    }
+  }
+  return(x)
+}
 
 #------------------------------------------#
 #---------------- COERCION ----------------#
@@ -5192,8 +5255,18 @@ setMethod("strTensor", "GPR", function(x,  blksze = c(2, 4),
 #----------------------- SAVE/EXPORT ------------------------#
 #' Write the GPR object in a file.
 #'
+#' @param x Object of the class \code{GPR} or \code{GPRsurvey}
+#' @param fPaht Filepath (Length-one character vector). If \code{fPath = NULL},
+#'              the file will be save in the current working directory with
+#'              the name of x (\code{name(x)}) with the extension depending 
+#'              of \code{type}.
+#' @param type Format type. See Details.
+#' @param overwrite Boolean. If \code{TRUE} existing files will be overwritten,
+#'                  if \code{FALSE} an error will be thrown if the file(s) 
+#'                  already exist(s).
 #' @name writeGPR
 #' @rdname writeGPR
+#' @seealso \code{\link{readGPR}}
 #' @export
 setMethod("writeGPR", "GPR", function(x, fPath = NULL, 
       type = c("DT1", "rds", "ASCII", "xta", "xyza"),

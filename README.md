@@ -46,7 +46,9 @@ ISSN      = {2474-3844}}
 - [x] RadSys Zond GPR file format (**\*.sgy**). **WARNING: it is not like the usual SEG-Y file format**).
 - [x] ImpulseRadar format (**\*.iprb**, **\*iprh**).
 - [X] DTZ format from GSSI (**\*.dtz**).
-- [X] ASCII (**\*.txt**): either 4-column format (x,t,amplitude) or matrix-format (without header/rownames)
+- [X] ASCII (**\*.txt**): 
+	- either 3-column format (x, t, amplitude) 
+    - or matrix-format (without header/rownames)
 - [X] R internal format (**\*.rds**).
 - [ ] SEG-Y -> **we are working on it**
     

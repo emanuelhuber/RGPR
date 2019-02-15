@@ -8,6 +8,8 @@
 # Rscript --vanilla r2jekyll.R 00_RGPR_import_data.Rmd
 # Rscript --vanilla r2jekyll.R 01_RGPR_tutorial_basic-processing.Rmd
 # Rscript --vanilla r2jekyll.R 02_RGPR_tutorial_RGPR-survey.Rmd
+# Rscript --vanilla r2jekyll.R 03_RGPR_tutorial_migration.Rmd
+# Rscript --vanilla r2jekyll.R 04_RGPR_tutorial_RGPR-object.Rmd
 
 # CHECK
 # https://gist.github.com/emanuelhuber/11835e6840868029d7c4721b7f7bf465

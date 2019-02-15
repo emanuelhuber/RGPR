@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Import GPR data
-date: 2018-11-08
+date: 2019-02-15
 ---
 
 <!--
@@ -37,7 +37,7 @@ library(RGPR)       # load RGPR in the current R session
 Read/import GPR data
 ====================
 
-Use the function `readGPR()` to import GPR data into R. While the filepath (given to the argument `fPath`) is case sensitive, the extension is not. That means that you can write: `XLINE00.DT1` or `XLINE00.dt1`. Note that the filepath must correspond to the binary data (not to the ASCII header file data)
+Use the function `readGPR()` to import GPR data into R. While the filepath (given to the argument `dsn`) is case sensitive, the extension is not. That means that you can write: `XLINE00.DT1` or `XLINE00.dt1`. Note that the filepath must correspond to the binary data (not to the ASCII header file data)
 
 Note that the coordinates collected with GPS in the same time as the GPR data and stored in a specific file are not directly imported by the function `readGPR()`. You must add the coordinates separatly following the explanations of the tutorial '[Adding coordinates to GPR data](http://emanuelhuber.github.io/RGPR/02_RGPR_tutorial_RGPR-survey/)'.
 
@@ -52,7 +52,17 @@ Each GPR data consists at least of
 To read the GPR data, enter
 
 ``` r
-x <- readGPR(fPath = "XLINE00.DT1")
+x <- readGPR(dsn = "XLINE00.DT1")
+plot(x)
+```
+
+GSSI data (`.dtz`)
+------------------
+
+To read the GPR data, enter
+
+``` r
+x <- readGPR(dsn = "XLINE00.dtz")
 plot(x)
 ```
 
@@ -67,7 +77,7 @@ Each GPR data consists at least of
 To read the GPR data, enter
 
 ``` r
-x <- readGPR(fPath = "XLINE00.rd3")
+x <- readGPR(dsn = "XLINE00.rd3")
 plot(x)
 ```
 
@@ -82,12 +92,12 @@ Each GPR data consists at least of
 To read the GPR data, enter
 
 ``` r
-x <- readGPR(fPath = "XLINE00.iprb")
+x <- readGPR(dsn = "XLINE00.iprb")
 plot(x)
 ```
 
-ImpulseRadar data (`.segy`)
----------------------------
+RadSys Zond GPR data (`.segy`)
+------------------------------
 
 Each GPR data consists of
 
@@ -98,9 +108,21 @@ Each GPR data consists of
 To read the GPR data, enter
 
 ``` r
-x <- readGPR(fPath = "XLINE00.sgy")
+x <- readGPR(dsn = "XLINE00.sgy")
 # or
-x <- readGPR(fPath = "XLINE00.segy")
+x <- readGPR(dsn = "XLINE00.segy")
+plot(x)
+```
+
+ASCII data (`.txt`)
+-------------------
+
+Either 3-column format (x, t, amplitude) or matrix-format (without header/rownames). `readGPR()` should be able to detect the format as well as the separator.
+
+To read the GPR data, enter
+
+``` r
+x <- readGPR(dsn = "XLINE00.txt")
 plot(x)
 ```
 

@@ -41,13 +41,13 @@ ISSN      = {2474-3844}}
 
 ### Supported file formats:
 
-- [x] Sensors & Software file format (**\*.dt1, \*.hd**)
-- [x] MALA file format (.rd3, .rad)
-- [x] SEG-Y file format from RadSys Zond GPR device (.sgy) (it is not like the usual SEG-Y file format)
-- [x] ImpulseRadar format (.iprb, iprh) 
-- [X] DTZ format from GSSI (.dtz)
-- [X] ASCII (.txt): either 4-column format (x,t,amplitude) or matrix-format (without header/rownames)
-- [X] R internal format *.rds
+- [x] Sensors & Software file format (**\*.dt1**, **\*.hd**).
+- [x] MALA file format (**\*.rd3**, **\*.rad**).
+- [x] SEG-Y file format from RadSys Zond GPR device (**\*.sgy**). **WARNING: it is not like the usual SEG-Y file format**).
+- [x] ImpulseRadar format (**\*.iprb**, **\*iprh**).
+- [X] DTZ format from GSSI (**\*.dtz**).
+- [X] ASCII (**\*.txt**): either 4-column format (x,t,amplitude) or matrix-format (without header/rownames)
+- [X] R internal format (**\*.rds**).
 - [ ] SEG-Y -> **we are working on it**
     
 

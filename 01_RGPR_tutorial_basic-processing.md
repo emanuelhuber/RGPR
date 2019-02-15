@@ -97,7 +97,7 @@ To plot the GPR record as a raster image (default mode), enter
 plot(A)
 ```
 
-![plot(A)](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/plot-1.png)
+![plot(A)](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/plot-1.png)
 
 The green line indicates the position of time-zero. The yellow triangle indicates the position of a fiducial marker that was set during the survey to mark something (such as a specific object close to the GPR line, a change in morphology/topography/sedimentology or an intersection with another GPR line). These markers are very useful to add topographic data to the GPR profile, particularly when the fiducial markers correspond to the locations where the (x,y,z) coordinates were measured.
 
@@ -107,7 +107,7 @@ Plot wiggles
 plot(A, type = "wiggles")
 ```
 
-![plot(A) with wiggles](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/plot_wiggles-1.png)
+![plot(A) with wiggles](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/plot_wiggles-1.png)
 
 To plot only a part of the GPR data, use `xlim` and `ylim`.
 
@@ -115,7 +115,7 @@ To plot only a part of the GPR data, use `xlim` and `ylim`.
 plot(A, ylim = c(50, 100), xlim = c(30, 40))
 ```
 
-![plot(A) with xlim and ylim](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/plot_xlim_ylim-1.png)
+![plot(A) with xlim and ylim](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/plot_xlim_ylim-1.png)
 
 To set the origin of the vertical axis at time-zero, set the argument `relTime0` equal to `TRUE`.
 
@@ -123,7 +123,7 @@ To set the origin of the vertical axis at time-zero, set the argument `relTime0`
 plot(A, relTime0 = TRUE, ylim = c(0, 200), xlim = c(30, 50))
 ```
 
-![plot(A) relative to time0](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/relTime0-1.png)
+![plot(A) relative to time0](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/relTime0-1.png)
 
 Another way to plot only a part of the GPR data is to extract a part of the GPR data. The object `A` can be manipulated in the same way as a matrix without losing the meta-data (e.g., trace coordinates, antenna separation).
 
@@ -172,7 +172,7 @@ Plot a section/subset of the GPR record (like zooming)
 plot(A[100:300, 15:150])
 ```
 
-![plot(A) subset](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/plot_subset-1.png)
+![plot(A) subset](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/plot_subset-1.png)
 
 1D plot: trace plot
 -------------------
@@ -183,7 +183,7 @@ Plot a signal trace, notice that the signal is clipped to $\pm50\,mV$ (between $
 plot(A[, 15])      # plot the 15th trace of the GPR-line
 ```
 
-![plot single trace](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/plot1D-1.png)
+![plot single trace](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/plot1D-1.png)
 
 Note: the `@3.5m` in the plot title indicate the relative position of the trace on the GPR profile.
 
@@ -194,7 +194,7 @@ Plot the first 40 trace samples:
 plot(A[1:40, 15])
 ```
 
-![plot single trace, fist 40 samples](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/plot1D_subset-1.png)
+![plot single trace, fist 40 samples](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/plot1D_subset-1.png)
 
 More infos
 ----------
@@ -227,7 +227,7 @@ plot(pos(A), tfb, pch = 20, ylab = "first wave break",
      xlab = "position (m)")
 ```
 
-![plot first wave break time](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/first_wave_break-1.png)
+![plot first wave break time](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/first_wave_break-1.png)
 
 Convert the first wave break time $t_{\mathrm{fb}}$ into time-zero $t_0$ with `firstBreakToTime0()`.
 
@@ -253,7 +253,7 @@ plot(A[, 15], xlim = c(0, 100))  # plot the 15th trace of the GPR-line
 abline(v = tfb[15], col = "blue")  # first wave break time
 ```
 
-![plot single trace with time0 and first wave break time](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/time0_check-1.png)
+![plot single trace with time0 and first wave break time](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/time0_check-1.png)
 
 Time zero correction
 --------------------
@@ -268,7 +268,7 @@ A1 <- time0Cor(A, method = "pchip")
 plot(A1)
 ```
 
-![plot after time0Cor()](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/time0Cor_check-1.png)
+![plot after time0Cor()](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/time0Cor_check-1.png)
 
 Have a look at A1:
 
@@ -312,7 +312,7 @@ Plot a single trace:
 plot(A1[, 15])  # plot the 15th trace of the GPR-line
 ```
 
-![plot single trace](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/dcShift_plot1D_15-1.png)
+![plot single trace](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/dcShift_plot1D_15-1.png)
 
 Notice how the trace samples before the first wave arrival (before $t = 0\,ns$) are slightly shifted below $0\,mV$? This shift is called direct current offset (DC-offset) and you will remove it from the data. The direct current offset is estimated on trace samples before time-zero.
 
@@ -323,7 +323,7 @@ Notice how the trace samples before the first wave arrival (before $t = 0\,ns$) 
     plot(A1[1:110, 15])
     ```
 
-![plot single trace, first 110 samples](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/dcShift_plot_first_samples-1.png)
+![plot single trace, first 110 samples](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/dcShift_plot_first_samples-1.png)
 
     You can visualise the DC-offset on the trace plot by adding an horizontal lines (`abline(h=...)`) with the argument `h` equal the DC-offset, i.e., the mean of the first $110$     samples (`mean(A[1:110,15]`):
 
@@ -333,7 +333,7 @@ Notice how the trace samples before the first wave arrival (before $t = 0\,ns$) 
     abline(h = mean(A1[1:110, 15]), col = "green")
     ```
 
-![plot single trace + dc-shift](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/dcShift_check_results_1D-1.png)
+![plot single trace + dc-shift](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/dcShift_check_results_1D-1.png)
 
 2.  Remove the DC-offset estimated on the first n samples usind the function `dcshift()`. This function takes as argument the `GPR` object and the sample index used to estimate the DC shift (in this case, the first $110$     samples):
 
@@ -356,7 +356,7 @@ A3 <- dewow(A2, type = "MAD", w = 50)     # dewowing: take some time
 plot(A3)                                  # plot the result
 ```
 
-![plot after dewow](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/dewow-1.png)
+![plot after dewow](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/dewow-1.png)
 
 Can you see the difference with `A1`? Plot `A2 - A1` to see the removed "wow".
 
@@ -364,7 +364,7 @@ Can you see the difference with `A1`? Plot `A2 - A1` to see the removed "wow".
 plot(A3 - A2)                           # plot the difference
 ```
 
-![plot difference after dewow](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/dewow_diff-1.png)
+![plot difference after dewow](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/dewow_diff-1.png)
 
 See the dewowing by comparing the traces before (blue line) and after (red line):
 
@@ -373,7 +373,7 @@ plot(A2[,15], col = "blue")      # before dewowing
 lines(A3[,15], col = "red")      # after dewowing
 ```
 
-![plot single trace dewow](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/dewow_check_1D-1.png)
+![plot single trace dewow](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/dewow_check_1D-1.png)
 
 Frequency filter
 ----------------
@@ -384,7 +384,7 @@ Let's have a look at the amplitude-frequency and phase-frequency plot (the spect
 spec(A3)
 ```
 
-![plot spectrum](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/fFilter_spectrum-1.png)
+![plot spectrum](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/fFilter_spectrum-1.png)
 
 The curve in red is the averaged amplitude/phase over all the trace amplitudes/phases.
 
@@ -400,13 +400,13 @@ Eliminate the high-frequency (noise) component of the GPR record with a bandpass
 A4 <- fFilter(A3, f = c(150, 260), type = "low", plotSpec = TRUE)
 ```
 
-![plot frequency filter](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/fFilter_fFilter-1.png)
+![plot frequency filter](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/fFilter_fFilter-1.png)
 
 ``` r
 plot(A4)
 ```
 
-![plot frequency filter](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/fFilter_fFilter-2.png)
+![plot frequency filter](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/fFilter_fFilter-2.png)
 
 Let see the difference
 
@@ -414,7 +414,7 @@ Let see the difference
 plot(A4 - A3, clip = 50)
 ```
 
-![plot difference](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/fFilter_diff-1.png)
+![plot difference](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/fFilter_diff-1.png)
 
 Ideally, the objective of processing is to remove the noise component without altering the signal component to improve the signal/noise ratio. When ploting the difference in processing (after - before), one should only observe the noise that is filtered out. Here, removing and attenuating some frequencies change the signal amplitude.
 
@@ -445,7 +445,7 @@ We will first apply a power gain and then an exponential gain. To visualise the 
 plotAmpl(A4, col = "black")          # plot amplitude as a function of time
 ```
 
-![plot amplitude](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/plotAmpl-1.png)
+![plot amplitude](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/plotAmpl-1.png)
 
 On the previous plot, there is a sharp amplitude increase at about $20\,ns$ corresponding to the first wave arrival. Then the amplitude decreases until a plateau at about $200\,\mathit{ns}$. This plateau corresponds to the signal noise. There is little hope to extract some useful information above 150 ns because above $150\,ns$ the signal/noise ratio is much smaller than $1$ (i.e., more noise than signal).
 
@@ -465,13 +465,13 @@ plotAmpl(A4, col = "black")
 plotAmpl(A5, col = "red", add = TRUE)
 ```
 
-![plot amplitude after power gain](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/ampl_check-1.png)
+![plot amplitude after power gain](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/ampl_check-1.png)
 
 ``` r
 plot(A5)      # how does it look after the gain?
 ```
 
-![plot amplitude after power gain](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/ampl_check-2.png)
+![plot amplitude after power gain](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/ampl_check-2.png)
 
 ### Exponential gain
 
@@ -482,7 +482,7 @@ A6 <- gain(A5, type ="exp",  alpha = 0.2, t0 = 0, te = 125)
 plotAmpl(A6, col = "green")
 ```
 
-![plot ampliude exponential gain](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/gain_exp-1.png)
+![plot ampliude exponential gain](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/gain_exp-1.png)
 
 Oops! Set `alpha` to a smaller value!
 
@@ -493,13 +493,13 @@ plotAmpl(A5, col = "red", add = TRUE)
 plotAmpl(A6, col = "green", add = TRUE)
 ```
 
-![plot amplitude after exponential gain](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/gain_check2-1.png)
+![plot amplitude after exponential gain](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/gain_check2-1.png)
 
 ``` r
 plot(A6)    # how does it look after the gain?
 ```
 
-![plot amplitude after exponential gain](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/gain_check2-2.png)
+![plot amplitude after exponential gain](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/gain_check2-2.png)
 
 Plot the gained GPR record and clip the amplitude values to $50\,\mathit{mV}$ using the argument `clip`:
 
@@ -507,7 +507,7 @@ Plot the gained GPR record and clip the amplitude values to $50\,\mathit{mV}$ us
 plot(A6, clip = 50)    # how does it look after the gain?
 ```
 
-![plot after gain](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/gain_diff-1.png)
+![plot after gain](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/gain_diff-1.png)
 
 inverse normal transformations
 ------------------------------
@@ -518,7 +518,7 @@ Have a look at the histogram of the values of `A6`
 hist(A6[], breaks = 50)
 ```
 
-![plot hist](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/invnorm-1.png)
+![plot hist](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/invnorm-1.png)
 
 This histogram is very narrow, meaning that a lot of values are very close to zero and therefore many details are not really visible. To widen this histogram, we can transform it to make it more normally distributed with a rank-based inverse normal transformation:
 
@@ -534,13 +534,13 @@ hist(A6[], breaks = 50)
 hist(A7[], breaks = 50)
 ```
 
-![plot histogram comparison](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/hist_diff-1.png) Have a look at the results of the transformation:
+![plot histogram comparison](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/hist_diff-1.png) Have a look at the results of the transformation:
 
 ``` r
 plot(A7)
 ```
 
-![plot inverse normal transformation results](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/invnorm_check-1.png)
+![plot inverse normal transformation results](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/invnorm_check-1.png)
 
 Median filter (spatial filter)
 ------------------------------
@@ -552,7 +552,7 @@ A8 <- filter2D(A7, type = "median3x3")
 plot(A8)
 ```
 
-![plot median filter](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/median_filter-1.png)
+![plot median filter](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/median_filter-1.png)
 
 Let see the difference
 
@@ -560,7 +560,7 @@ Let see the difference
 plot(A8 - A7)
 ```
 
-![plot difference after median filter](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/median_filter_diff-1.png)
+![plot difference after median filter](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/median_filter_diff-1.png)
 
 Frequency-wavenumber filter (f-k-filter)
 ----------------------------------------
@@ -574,7 +574,7 @@ area <- list(x = c(0, min(FKSpec$wnb), min(FKSpec$wnb), max(FKSpec$wnb), max(FKS
 lines(area, type="o")
 ```
 
-![plot fk-filter](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/fkspec-1.png)
+![plot fk-filter](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/fkspec-1.png)
 
 ``` r
 A9 <- fkFilter(A8, fk = area)
@@ -586,13 +586,13 @@ With the f-k-filter you can successfully remove the artifacts but still the info
 plot(A9, clip = 50)
 ```
 
-![plot fk-spectrum](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/fk_plot-1.png)
+![plot fk-spectrum](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/fk_plot-1.png)
 
 ``` r
 spec(A9, type = "f-k")
 ```
 
-![plot fk-spectrum](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/fk_plot-2.png)
+![plot fk-spectrum](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/fk_plot-2.png)
 
 Let see the difference
 
@@ -600,7 +600,7 @@ Let see the difference
 plot(A9 - A8)
 ```
 
-![plot difference after fk-filter](01_RGPR_tutorial_basic-processing_deleteme_files/figure-markdown_github-tex_math_single_backslash/fK_diff-1.png)
+![plot difference after fk-filter](01_RGPR_tutorial_basic-processing_tp_files/figure-markdown_github-tex_math_single_backslash/fK_diff-1.png)
 
 Processing overview
 -------------------
@@ -610,8 +610,6 @@ Let review the processing step applied on the GPR record:
 ``` r
 proc(A9)
 ```
-
-    ## [1] "time0<-"
 
 Other processing functions
 --------------------------

@@ -34,7 +34,7 @@ if(!grepl(".Rmd", filename)) {
 }
 
 tempfile <- sub('.Rmd', '_deleteme.Rmd', filename)
-mdtempfile <- sub('.Rmd', '_deleteme.md', filename)
+mdtempfile <- sub('.Rmd', '_tp.md', filename)
 mdfile <- sub('.Rmd', '.md', filename)
 
 #knit(filename, mdfile)

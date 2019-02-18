@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Basic GPR data processing
-date: 2019-02-15
+date: 2019-02-18
 ---
 
 <!--
@@ -622,6 +622,42 @@ Check the help page for the function `traceAverage`
 ?traceAverage
 ```
 
+``` r
+A10 <- traceAverage(A9, FUN = mean)  # compute average trace of all traces
+A10 <- traceAverage(A9, FUN = median)  # compute average trace of all traces
+A10 <- traceAverage(A9, FUN = median)  # compute average trace of all traces
+# compute windowed average trace (average of 20 traces)
+A10 <- traceAverage(A9, w = 20, FUN = median)
+```
+
+### Eigen Image Filter
+
+``` r
+?eigenFilter
+
+# remove first eigenimage = keep all except the first one
+plot(eigenFilter(A9, eigenvalue = c(2:ncol(x1))))
+plot(eigenFilter(A9, eigenvalue = 1)) # the removed eigenvalue
+
+# remove the first two eigenimages
+plot(eigenFilter(A9, eigenvalue = c(3:ncol(x1))))
+plot(eigenFilter(A9, eigenvalue = 1:2)) # the removed eigenvalue
+```
+
+### Background matrix substraction
+
+See See Rashed and Harbi (2014) Background matrix subtraction (BMS): A novel background removal algorithm for GPR data doi: [10.1016/j.jappgeo.2014.04.022](https://doi.org/10.1016/j.jappgeo.2014.04.022)
+
+It is a **slow** function!
+
+``` r
+?backgroundSub
+
+A10 <- backgroundSub(A9, width = 21, trim = 0.2, s = 1, eps = 1, itmax = 5)
+plot(A10)
+plot(A10 - A9)
+```
+
 Save and export
 ---------------
 
@@ -634,7 +670,7 @@ writeGPR(A9, fPath = file.path(getwd(), "processing", paste0(name(A9), ".rds")),
 
     ## *** Class GPR ***
     ##  name        = LINE00
-    ##  filepath    = /media/huber/Seagate1TB/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke/processing/LINE00.dt1
+    ##  filepath    = /media/huber/Seagate1TB/UNIBAS/PROJECTS/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/processing/LINE00.dt1
     ##  1 fiducial(s)
     ##  description =
     ##  survey date = 2014-04-25

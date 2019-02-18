@@ -4,13 +4,17 @@
 \name{time0}
 \alias{time0}
 \alias{time0<-}
+\alias{setTime0}
 \alias{time0}
 \alias{time0<-}
+\alias{setTime0}
 \title{'time-zero' of every traces}
 \usage{
 \S4method{time0}{GPR}(x)
 
 \S4method{time0}{GPR}(x) <- value
+
+\S4method{setTime0}{GPR}(x, t0)
 }
 \arguments{
 \item{x}{An object of the class GPR.}
@@ -22,6 +26,8 @@ A vector containing the time-zero values of each traces.
 \code{time0} returns the 'time-zero' of every traces. Generally, 
 'time-zero' corresponds to the first wave arrival (also called first wave
 break).
+
+Wrapper for \code{time0()<-}
 }
 \examples{
 data(frenkeLine00)

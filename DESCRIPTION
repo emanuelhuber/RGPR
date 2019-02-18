@@ -43,7 +43,8 @@ Imports:
     mmand,
     e1071,
     plot3D,
-	  adimpro,
-	  raster,
-	  fields
+	adimpro,
+	raster,
+	fields,
+    magrittr
 RoxygenNote: 6.0.1

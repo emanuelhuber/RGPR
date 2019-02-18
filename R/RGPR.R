@@ -46,7 +46,7 @@
 #' @import graphics
 #' @import utils 
 #' @import grDevices 
-#' @import methods 
+#' @import methods
 #' @references Several books!
 "_PACKAGE"
 #> [1] "_PACKAGE"

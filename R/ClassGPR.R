@@ -123,20 +123,20 @@ setClass(
 #-------------- CONSTRUCTOR ---------------#
 # x = classical GPR list
 .gpr <- function(x, fName = character(0), desc = character(0),
-                    fPath = character(0)){
+                 fPath = character(0)){
   rec_coord <- cbind(x$dt1$recx, x$dt1$recy, x$dt1$recz)
   trans_coord <- cbind(x$dt1$transx, x$dt1$transy, x$dt1$transz)
   if(sum(is.na(rec_coord)) > 0){
     warning(paste(fName,": ",sum(is.na(rec_coord)), 
-                "NA's in the receiver coordinates\n"))
+                  "NA's in the receiver coordinates\n"))
   }
   if(sum(is.na(trans_coord)) > 0){
     warning(paste(fName,": ",sum(is.na(trans_coord)), 
-                "NA's in the transmitter coordinates\n"))
+                  "NA's in the transmitter coordinates\n"))
   }
   if(sum(is.na(x$dt1$topo)) > 0){
     warning(paste(fName,": ",sum(is.na(x$dt1$topo)), 
-                "NA's in the topo coordinates\n"))
+                  "NA's in the topo coordinates\n"))
   }
   if(sum(abs(rec_coord),na.rm = TRUE) == 0 ){
     rec_coord <- matrix(nrow = 0, ncol = 0) 
@@ -231,9 +231,9 @@ setClass(
   # 10/06/2011 (old PulseEkko format)
   ddmmyyyy <- "^([0-9]{2})([^0-9])([0-9]{2})([^0-9])([0-9]{4})"
   surveyDate <- gsub(pattern ="[^0-9]", replacement = "-", 
-                      x$hd[freepos, 2])
+                     x$hd[freepos, 2])
   testDate <- nchar(surveyDate) == 10 & 
-              (grepl(yyyymmdd, surveyDate) | grepl(ddmmyyyy, surveyDate))
+    (grepl(yyyymmdd, surveyDate) | grepl(ddmmyyyy, surveyDate))
   if(any(testDate)){
     surveyDate <- surveyDate[testDate][1]
     if(grepl(yyyymmdd, surveyDate)){
@@ -249,7 +249,7 @@ setClass(
   }
   #--- device type
   freepos <- which(pos_used[1:5] == 0)
-#   GPR_device <-  paste(x$hd[2,1],x$hd[2,2],sep="")
+  #   GPR_device <-  paste(x$hd[2,1],x$hd[2,2],sep="")
   GPR_device <-  x$hd[freepos, 2]
   testDevice <- grepl("^(Data.)", GPR_device)
   if(any(testDevice)){
@@ -270,35 +270,35 @@ setClass(
   }
   dorigin <- d
   if(length(dorigin) == 0){
-	dorigin <- "1970-01-01"
+    dorigin <- "1970-01-01"
   }
   traceTime <- as.double(as.POSIXct(x$dt1$time, origin = as.Date(dorigin)))
   new("GPR",   version="0.2",
-        data = byte2volt()*x$data,
-        traces = x$dt1$traces,            # x$dt1$traces
-        fid = trimStr(x$dt1$com),         # x$dt1$fid    <-> x$dt1$x8
-        coord = coord,                    # x$dt1$topo  of the traces
-        pos = x$dt1$pos,                  # x$dt1$position  of the traces
-        depth = seq(0,by=dz,length.out=nrow(x$data)),
-        rec = rec_coord,                  # x$dt1$recx,x$dt1$recy,x$dt1$recz
-        trans = trans_coord,
-        time0 = time_0,                   # x$dt1$time0
-        time = traceTime,                       # x$dt1$time
-        proc = character(0),              # processing steps
-        vel = list(0.1),                  # m/ns
-        name = fName,
-        description = desc,
-        filepath = fPath,
-        dz = dz, 
-        dx = dx[1],                       # "STEP SIZE USED"
-        depthunit = "ns",
-        posunit = posunit[1],
-        freq = freq[1], 
-        antsep = antsep[1], 
-        surveymode = surveymode[1],
-        date = d,
-        crs = character(0),
-        hd = sup_hd                      # header
+      data = byte2volt()*x$data,
+      traces = x$dt1$traces,            # x$dt1$traces
+      fid = trimStr(x$dt1$com),         # x$dt1$fid    <-> x$dt1$x8
+      coord = coord,                    # x$dt1$topo  of the traces
+      pos = x$dt1$pos,                  # x$dt1$position  of the traces
+      depth = seq(0,by=dz,length.out=nrow(x$data)),
+      rec = rec_coord,                  # x$dt1$recx,x$dt1$recy,x$dt1$recz
+      trans = trans_coord,
+      time0 = time_0,                   # x$dt1$time0
+      time = traceTime,                       # x$dt1$time
+      proc = character(0),              # processing steps
+      vel = list(0.1),                  # m/ns
+      name = fName,
+      description = desc,
+      filepath = fPath,
+      dz = dz, 
+      dx = dx[1],                       # "STEP SIZE USED"
+      depthunit = "ns",
+      posunit = posunit[1],
+      freq = freq[1], 
+      antsep = antsep[1], 
+      surveymode = surveymode[1],
+      date = d,
+      crs = character(0),
+      hd = sup_hd                      # header
   )
 }
 
@@ -408,12 +408,12 @@ setClass(
                     fPath = character(0)){  
   #coord <- matrix(nrow = 0, ncol = 0) 
   #if(!is.null(x$coords)){
-    #coord <- cbind(ll2dc(x$coords$latitude),
-    #               ll2dc(x$coords$longitude),
-    #               as.numeric(gsub('[^0-9.]', "", x$coords$height)))
-    #coord <- cbind(x$coords$latitude,
-    #               x$coords$longitude,
-    #               x$coords$height)
+  #coord <- cbind(ll2dc(x$coords$latitude),
+  #               ll2dc(x$coords$longitude),
+  #               as.numeric(gsub('[^0-9.]', "", x$coords$height)))
+  #coord <- cbind(x$coords$latitude,
+  #               x$coords$longitude,
+  #               x$coords$height)
   #}
   #====== HEADER DATA (FILE *.HD) ======#
   pos_used <- integer(nrow(x$hd))
@@ -491,37 +491,37 @@ setClass(
     sup_hd <- c(sup_hd, sup_hd2)
   }
   new("GPR",   version="0.2",
-        data = byte2volt()*x$data,
-        traces = 1:ncol(x$data),
-        fid = rep("", ncol(x$data)),
-        #coord = coord,
-        coord = matrix(nrow=0, ncol = 0),
-        pos = seq(0, by = dx[1], length.out = ncol(x$data)),
-        depth = seq(0, by = dz, length.out = nrow(x$data)),
-        rec = matrix(nrow = 0, ncol = 0),
-        trans = matrix(nrow = 0, ncol = 0),
-        time0 = rep(0, ncol(x$data)),
-        time = numeric(0),
-        proc = character(0),
-        vel = list(0.1),
-        name = fName,
-        description = desc,
-        filepath = fPath,
-        dz = dz, 
-        dx = dx[1],
-        depthunit = "ns",
-        posunit = "m",
-        freq = freq[1], 
-        antsep = antsep[1], 
-        surveymode = "reflection",
-        date = character(0), #format(Sys.time(), "%d/%m/%Y"),
-        crs = character(0),
-        hd = sup_hd
+      data = byte2volt()*x$data,
+      traces = 1:ncol(x$data),
+      fid = rep("", ncol(x$data)),
+      #coord = coord,
+      coord = matrix(nrow=0, ncol = 0),
+      pos = seq(0, by = dx[1], length.out = ncol(x$data)),
+      depth = seq(0, by = dz, length.out = nrow(x$data)),
+      rec = matrix(nrow = 0, ncol = 0),
+      trans = matrix(nrow = 0, ncol = 0),
+      time0 = rep(0, ncol(x$data)),
+      time = numeric(0),
+      proc = character(0),
+      vel = list(0.1),
+      name = fName,
+      description = desc,
+      filepath = fPath,
+      dz = dz, 
+      dx = dx[1],
+      depthunit = "ns",
+      posunit = "m",
+      freq = freq[1], 
+      antsep = antsep[1], 
+      surveymode = "reflection",
+      date = character(0), #format(Sys.time(), "%d/%m/%Y"),
+      crs = character(0),
+      hd = sup_hd
   )
 }
-  
+
 .gprSEGY <- function(x, fName = character(0), desc = character(0),
-                    fPath = character(0)){  
+                     fPath = character(0)){  
   
   if( all(diff(x$hdt[4,]) > 0) || all(diff(x$hdt[5,]) > 0)){
     x_coord <- matrix(0, nrow = ncol(x$data), ncol = 3)
@@ -550,7 +550,7 @@ setClass(
   }
   # Antenna frequency
   antfreq0 <- grep("(antenna).*([0-9])+", x$hd$EBCDIC, ignore.case = TRUE, 
-                    value = TRUE)
+                   value = TRUE)
   antfreq <- as.numeric(gsub("[^0-9]", "", antfreq0))
   if(length(antfreq) > 0){
     ant <- list(f = c(12.5, 25, 50, 100, 110, 200, 225, 450,   900, 1200),
@@ -567,7 +567,7 @@ setClass(
   # Date
   dd <- character(0)
   traceTime <- as.double(as.POSIXct(x$hdt[1,] * 3600 + x$hdt[2,] * 60 + 
-                                    x$hdt[3,], origin = "1960-01-01"))
+                                      x$hdt[3,], origin = "1960-01-01"))
   dateSurvey <- grep("(date).*([0-9])+", x$hd$EBCDIC, ignore.case = TRUE, 
                      value = TRUE)
   dateSurvey2 <- gsub("date", "-", dateSurvey, ignore.case = TRUE)
@@ -584,37 +584,37 @@ setClass(
         dd <- as.Date(dateSurvey3, format = "%d/%m/%y")
       }
       traceTime <- as.double(as.POSIXct(x$hdt[1,] * 3600 + x$hdt[2,] * 60 + 
-                                        x$hdt[3,], origin = dd))
+                                          x$hdt[3,], origin = dd))
     }
   }
   new("GPR",   version="0.2",
-        data = byte2volt()*x$data,
-        traces = 1:ncol(x$data),
-        fid = rep("", ncol(x$data)),
-        #coord = coord,
-        coord = x_coord,
-        pos = x_pos,
-        depth = x_depth,
-        rec = matrix(nrow = 0, ncol = 0),
-        trans = matrix(nrow = 0, ncol = 0),
-        time0 = rep(0, ncol(x$data)),
-        # time = x$hdt[1,] * 3600 + x$hdt[2,] * 60 + x$hdt[3,],
-        time = traceTime,
-        proc = character(0),
-        vel = list(0.1),
-        name = x_name,
-        description = desc,
-        filepath = fPath,
-        dz = x_dz, 
-        dx = x_dx,
-        depthunit = "ns",
-        posunit = x_posunit,
-        freq = antfreq, 
-        antsep = antsep,     # check
-        surveymode = "reflection",
-        date = as.character(dd), #format(Sys.time(), "%d/%m/%Y"),
-        crs = character(0),
-        hd = x$hd
+      data = byte2volt()*x$data,
+      traces = 1:ncol(x$data),
+      fid = rep("", ncol(x$data)),
+      #coord = coord,
+      coord = x_coord,
+      pos = x_pos,
+      depth = x_depth,
+      rec = matrix(nrow = 0, ncol = 0),
+      trans = matrix(nrow = 0, ncol = 0),
+      time0 = rep(0, ncol(x$data)),
+      # time = x$hdt[1,] * 3600 + x$hdt[2,] * 60 + x$hdt[3,],
+      time = traceTime,
+      proc = character(0),
+      vel = list(0.1),
+      name = x_name,
+      description = desc,
+      filepath = fPath,
+      dz = x_dz, 
+      dx = x_dx,
+      depthunit = "ns",
+      posunit = x_posunit,
+      freq = antfreq, 
+      antsep = antsep,     # check
+      surveymode = "reflection",
+      date = as.character(dd), #format(Sys.time(), "%d/%m/%Y"),
+      crs = character(0),
+      hd = x$hd
   )
 }
 
@@ -623,10 +623,10 @@ setClass(
   
   if(!is.null(A$depth) && !is.null(A$pos)){
     x <- list(data = A$data,
-            pos = A$pos,
-            depth = A$depth,
-            name = fName,
-            filepath = fPath)
+              pos = A$pos,
+              depth = A$depth,
+              name = fName,
+              filepath = fPath)
   }else{
     x <- list(data = A$data)
   }
@@ -636,11 +636,11 @@ setClass(
 }
 
 .gprDZT <- function(x, fName = character(0), desc = character(0),
-                     fPath = character(0)){  
+                    fPath = character(0)){  
   dd <- as.Date(x$hd$DATE, format = "%Y-%m-%d")
   traceTime <- as.double(as.POSIXct(
-                    strptime(paste(x$hd$DATE, "01:30:00"), "%Y-%m-%d %H:%M:%S")
-                    )) + 1:ncol(x$data)
+    strptime(paste(x$hd$DATE, "01:30:00"), "%Y-%m-%d %H:%M:%S")
+  )) + 1:ncol(x$data)
   if(length(fName) == 0){
     x_name <- "LINE"
   }else{
@@ -763,8 +763,8 @@ setClass(
 #' @rdname readGPR
 #' @export
 readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, fPath){
-# @aliases readGPR-methods
-# setMethod("readGPR", "character", function(fPath, desc = "", ...){
+  # @aliases readGPR-methods
+  # setMethod("readGPR", "character", function(fPath, desc = "", ...){
   if(!missing(fPath)){
     if(missing(dsn)){
       dsn <- fPath
@@ -803,35 +803,35 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, fPath){
         }
       }
       y <- new("GPR",
-        version = x[['version']],
-        data = x[['data']],
-        traces = x[['traces']],           # x$dt1$traces
-        depth = x[['depth']],
-        pos = x[['pos']],                 # x$dt1$position of the traces
-        time0 = x[['time0']],             # x$dt1$time0
-        time = x[['time']],               # x$dt1$time
-        fid = trimStr(x[['fid']]),        # x$dt1$fid <-> x$dt1$x8
-        ann = trimStr(x[['ann']]),        # x$dt1$fid <-> x$dt1$x8
-        coord = x[['coord']],             # x$dt1$topo  of the traces
-        rec = x[['rec']],                # x$dt1$recx,x$dt1$recy,x$dt1$recz
-        trans = x[['trans']],
-        coordref = x[['coordref']],       # x$dt1$topo of the traces
-        freq = x[['freq']], 
-        dz = x[['dz']], 
-        dx = x[['dx']], 
-        antsep = x[['antsep']], 
-        name = x[['name']],
-        description = x[['description']],
-        filepath =x[['filepath']],
-        depthunit = x[['depthunit']],
-        posunit = x[['posunit']],
-        surveymode = x[['surveymode']],
-        date = x[['date']],
-        crs = x[['crs']],
-        proc = x[['proc']],               # processing steps
-        vel = x[['vel']],                 # m/ns
-        delineations = x[['delineations']],
-        hd =  x[['hd']]                   # header
+               version = x[['version']],
+               data = x[['data']],
+               traces = x[['traces']],           # x$dt1$traces
+               depth = x[['depth']],
+               pos = x[['pos']],                 # x$dt1$position of the traces
+               time0 = x[['time0']],             # x$dt1$time0
+               time = x[['time']],               # x$dt1$time
+               fid = trimStr(x[['fid']]),        # x$dt1$fid <-> x$dt1$x8
+               ann = trimStr(x[['ann']]),        # x$dt1$fid <-> x$dt1$x8
+               coord = x[['coord']],             # x$dt1$topo  of the traces
+               rec = x[['rec']],                # x$dt1$recx,x$dt1$recy,x$dt1$recz
+               trans = x[['trans']],
+               coordref = x[['coordref']],       # x$dt1$topo of the traces
+               freq = x[['freq']], 
+               dz = x[['dz']], 
+               dx = x[['dx']], 
+               antsep = x[['antsep']], 
+               name = x[['name']],
+               description = x[['description']],
+               filepath =x[['filepath']],
+               depthunit = x[['depthunit']],
+               posunit = x[['posunit']],
+               surveymode = x[['surveymode']],
+               date = x[['date']],
+               crs = x[['crs']],
+               proc = x[['proc']],               # processing steps
+               vel = x[['vel']],                 # m/ns
+               delineations = x[['delineations']],
+               hd =  x[['hd']]                   # header
       )
       y@filepath <- fPath
       x <- y
@@ -848,12 +848,12 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, fPath){
     # fName <- .fNameWExt(fPath)
     A <- readImpulseRadar(dsn, dsn2)
     x <- .gprImpulseRadar(A, fName = fName, fPath = fPath, 
-                           desc = desc)
+                          desc = desc)
   }else if("DZT" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
     A <- readDZT(dsn)
     x <- .gprDZT(A, fName = fName, fPath = fPath, 
-                          desc = desc)
+                 desc = desc)
   }else if("TXT" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
     A <- readTXT(dsn)
@@ -912,7 +912,7 @@ setMethod("as.SpatialLines", signature(x = "GPR"), function(x){
   myLines <- sp::Lines(list(myLine), ID=x@name)
   mySpatLines <- sp::SpatialLines(list(myLines))
   if(length(crs(x)) == 0){
-  warning("no CRS defined!\n")
+    warning("no CRS defined!\n")
   }else{
     sp::proj4string(mySpatLines) <- sp::CRS(crs(x))
   }
@@ -934,7 +934,7 @@ setMethod("as.SpatialPoints", signature(x = "GPR"), function(x){
   names(myPoints) <- c("E", "N", "Z")
   sp::coordinates(myPoints) = ~E + N
   if(length(crs(x)) == 0){
-  warning("no CRS defined!\n")
+    warning("no CRS defined!\n")
   }else{
     sp::proj4string(myPoints) <- sp::CRS(crs(x))
   }
@@ -960,28 +960,28 @@ setAs(from = "matrix", to = "GPR", def = function (from) as.GPR.matrix(from))
 #' @export
 as.GPR.matrix <- function (x, ...){
   new("GPR", 
-    version = "0.2",
-    data = x,
-    traces = 1:ncol(x),           # x$dt1$traces
-    pos = (1:ncol(x) -1)*0.25,    # x$dt1$position  of the traces
-    depth = (1:nrow(x) -1)*0.8,
-    time0 = rep(0,ncol(x)),       # x$dt1$time0
-    time = rep(0,ncol(x)),        # x$dt1$time
-    proc = character(0),          # processing steps
-    vel = list(0.1),              # m/ns
-    name = character(0),
-    description = character(0),
-    filepath = character(0),
-    dz = 0.8, 
-    dx = 0.25, 
-    depthunit = "ns",
-    posunit = "m",
-    freq = 100, 
-    antsep = 1, 
-    surveymode = "reflection",
-    date = format(Sys.time(), "%d/%m/%Y"),
-    crs = character(0),
-    hd = list()                   # header
+      version = "0.2",
+      data = x,
+      traces = 1:ncol(x),           # x$dt1$traces
+      pos = (1:ncol(x) -1)*0.25,    # x$dt1$position  of the traces
+      depth = (1:nrow(x) -1)*0.8,
+      time0 = rep(0,ncol(x)),       # x$dt1$time0
+      time = rep(0,ncol(x)),        # x$dt1$time
+      proc = character(0),          # processing steps
+      vel = list(0.1),              # m/ns
+      name = character(0),
+      description = character(0),
+      filepath = character(0),
+      dz = 0.8, 
+      dx = 0.25, 
+      depthunit = "ns",
+      posunit = "m",
+      freq = 100, 
+      antsep = 1, 
+      surveymode = "reflection",
+      date = format(Sys.time(), "%d/%m/%Y"),
+      crs = character(0),
+      hd = list()                   # header
   )
 }
 
@@ -1019,34 +1019,34 @@ as.GPR.list <- function (x, ...){
       x[["vel"]] <- list(x[["vel"]])
     }
     myArg <- as.list(match.call(definition = sys.function(-2),
-           call = sys.call(-2),
-           expand.dots = FALSE )
-           )
+                                call = sys.call(-2),
+                                expand.dots = FALSE )
+    )
     d_name <- paste(eval(myArg[2]))
     y <- new("GPR", 
-              version     = "0.2",
-              data        = x[["data"]],
-              traces      = 1:ncol(x[["data"]]),       # trace numbering
-              pos         = x[["pos"]],                # trace position
-              depth       = x[["depth"]],
-              time0       = rep(0, ncol(x[["data"]])),  
-              time        = rep(0, ncol(x[["data"]])), # time of trace records
-              proc        =  character(0),       
-              vel         = list(0.1),                 # m/ns
-              name        = as.character(d_name),
-              description = paste0("coercion of ", as.character(d_name), 
-                                   " (",typeof(x), ") into GPR"),
-              filepath    = character(0),
-              dz          = x[["dz"]], 
-              dx          = x[["dx"]], 
-              depthunit   = "ns",
-              posunit     = "m",
-              freq        = 100,
-              antsep      = 1, 
-              surveymode  = "reflection",
-              date        = format(Sys.time(), "%d/%m/%Y"),
-              crs         = character(0),
-              hd          = list())
+             version     = "0.2",
+             data        = x[["data"]],
+             traces      = 1:ncol(x[["data"]]),       # trace numbering
+             pos         = x[["pos"]],                # trace position
+             depth       = x[["depth"]],
+             time0       = rep(0, ncol(x[["data"]])),  
+             time        = rep(0, ncol(x[["data"]])), # time of trace records
+             proc        =  character(0),       
+             vel         = list(0.1),                 # m/ns
+             name        = as.character(d_name),
+             description = paste0("coercion of ", as.character(d_name), 
+                                  " (",typeof(x), ") into GPR"),
+             filepath    = character(0),
+             dz          = x[["dz"]], 
+             dx          = x[["dx"]], 
+             depthunit   = "ns",
+             posunit     = "m",
+             freq        = 100,
+             antsep      = 1, 
+             surveymode  = "reflection",
+             date        = format(Sys.time(), "%d/%m/%Y"),
+             crs         = character(0),
+             hd          = list())
     sNames <- slotNames(y)
     sNames <- sNames[ !(sNames %in% c("data", "pos", "depth", "dz", "dx"))]
     for(i in seq_along(sNames)){
@@ -1065,13 +1065,13 @@ as.GPR.list <- function (x, ...){
 setMethod("length", "GPR", function(x) ncol(x@data))
 #' @export
 setMethod("summary", "GPR", function(object, ...) 
-#' @export
-summary(as.vector(object@data)))
+  #' @export
+  summary(as.vector(object@data)))
 #' @export
 setMethod("mean", "GPR", function(x, ...) mean(as.vector(x@data)))
 #' @export
 setMethod("median", "GPR", function(x, na.rm = FALSE) 
-        median(as.vector(x@data),na.rm = FALSE))
+  median(as.vector(x@data),na.rm = FALSE))
 # setMethod("range", "GPR", function(..., na.rm=FALSE) 
 # range(as.matrix(...),na.rm=na.rm))
 
@@ -1146,7 +1146,7 @@ setMethod(
     }
   }
 )
-          
+
 # getGroupMembers("Math")
 #' Basic mathematical functions
 #'
@@ -1168,30 +1168,30 @@ setMethod(
   signature="GPR",
   definition=function(x){
     x@data <- switch(.Generic,
-      abs = abs(x@data),
-      sign = sign(x@data),
-      sqrt =  sign(x@data)*sqrt(abs(x@data)),
-      ceiling = ceiling(x@data),
-      floor = floor(x@data),
-      trunc = trunc(x@data),
-      cummax = paste("not allowed"),  
-      cumprod =paste("not allowed"),  
-      cumsum =paste("not allowed"),  
-      exp  = exp(x@data),
-      expm1 =expm1( x@data),
-      log = sign(x@data) *log(abs(x@data)),
-      log10 = sign(x@data) *log10(abs(x@data)),
-      log2 = sign(x@data) *log2(abs(x@data)), 
-      log1p = sign(x@data) *log1p(abs(x@data)), 
-      cos = cos(x@data),
-      cosh = cosh(x@data),
-      sin = sin(x@data),
-      sinh = sinh(x@data),
-      tan = tan(x@data),
-      tanh = tanh(x@data),
-        # "acos" "acosh" "asin" "asinh" "atan" "atanh" "gamma" "lgamma"
-        # "digamma" "trigamma"
-      stop(paste(.Generic, "not allowed on GPR objects"))
+                     abs = abs(x@data),
+                     sign = sign(x@data),
+                     sqrt =  sign(x@data)*sqrt(abs(x@data)),
+                     ceiling = ceiling(x@data),
+                     floor = floor(x@data),
+                     trunc = trunc(x@data),
+                     cummax = paste("not allowed"),  
+                     cumprod =paste("not allowed"),  
+                     cumsum =paste("not allowed"),  
+                     exp  = exp(x@data),
+                     expm1 =expm1( x@data),
+                     log = sign(x@data) *log(abs(x@data)),
+                     log10 = sign(x@data) *log10(abs(x@data)),
+                     log2 = sign(x@data) *log2(abs(x@data)), 
+                     log1p = sign(x@data) *log1p(abs(x@data)), 
+                     cos = cos(x@data),
+                     cosh = cosh(x@data),
+                     sin = sin(x@data),
+                     sinh = sinh(x@data),
+                     tan = tan(x@data),
+                     tanh = tanh(x@data),
+                     # "acos" "acosh" "asin" "asinh" "atan" "atanh" "gamma" "lgamma"
+                     # "digamma" "trigamma"
+                     stop(paste(.Generic, "not allowed on GPR objects"))
     )
     proc(x) <- getArgs()
     return(x)
@@ -1272,12 +1272,12 @@ setMethod(
 
 .GPR.arith <- function(e1,e2){
   switch(.Generic,
-    "+" = .GPR.add(e1, e2),
-    "-" = .GPR.sub(e1, e2),
-    "*" = .GPR.mul(e1, e2),
-    "/" = .GPR.div(e1, e2),
-    "^" = .GPR.pow(e1, e2),
-    stop(paste("binary operator \"", .Generic, "\" not defined for GPR"))
+         "+" = .GPR.add(e1, e2),
+         "-" = .GPR.sub(e1, e2),
+         "*" = .GPR.mul(e1, e2),
+         "/" = .GPR.div(e1, e2),
+         "^" = .GPR.pow(e1, e2),
+         stop(paste("binary operator \"", .Generic, "\" not defined for GPR"))
   )
 }
 
@@ -1412,18 +1412,18 @@ setReplaceMethod(
 #' @rdname gethd
 #' @export
 setMethod("gethd", "GPR", function(x,hd=NULL){
-    if(is.null(hd)){
-      return(x@hd)
-    }else{
-      if(!is.null(x@hd[[hd]])){
-        if(is.character(x@hd[[hd]])){
-          as.character(x@hd[[hd]])
-        }else{
-          as.numeric(x@hd[[hd]])
-        }
+  if(is.null(hd)){
+    return(x@hd)
+  }else{
+    if(!is.null(x@hd[[hd]])){
+      if(is.character(x@hd[[hd]])){
+        as.character(x@hd[[hd]])
+      }else{
+        as.numeric(x@hd[[hd]])
       }
     }
-  } 
+  }
+} 
 )
 
 #' Name of the GPR data
@@ -1526,8 +1526,8 @@ setReplaceMethod(
 #' @rdname filepath-methods
 #' @aliases filepath,GPR-method
 setMethod("filepath", "GPR", function(x){
-    return(x@filepath)
-  } 
+  return(x@filepath)
+} 
 )
 
 #' @rdname filepath-methods
@@ -1548,8 +1548,8 @@ setReplaceMethod(
 #' @rdname ann
 #' @export
 setMethod("ann", "GPR", function(x){
-    return(x@ann)
-  } 
+  return(x@ann)
+} 
 )
 
 #' @name ann<-
@@ -1567,7 +1567,7 @@ setReplaceMethod(
     annnames <- as.character(value[,2])
     valuesList <- (tapply(annnames, traces, identity))
     test <- unlist(lapply(valuesList, paste, sep = "", collapse = "#"), 
-                    use.names = FALSE)
+                   use.names = FALSE)
     x@ann <- character(length(x))
     x@ann[as.numeric(names(test))] <- test
     x@proc <- c(x@proc, "ann<-")
@@ -1581,15 +1581,15 @@ setReplaceMethod(
 #' @rdname coord-methods
 #' @aliases coord,GPR-method
 setMethod("coord", "GPR", function(x, i, ...){
-#     if(is.integer(i) && i > 0 && i < 4)
-    if(length(x@coord) == 0){
-      return(x@coord)
-    }
-    if(missing(i)){
-      i <- 1:3
-    }
-    return(x@coord[, i, ...])
-  } 
+  #     if(is.integer(i) && i > 0 && i < 4)
+  if(length(x@coord) == 0){
+    return(x@coord)
+  }
+  if(missing(i)){
+    i <- 1:3
+  }
+  return(x@coord[, i, ...])
+} 
 )
 
 
@@ -1619,12 +1619,12 @@ setReplaceMethod(
 #' @rdname svDate
 #' @export
 setMethod("svDate", "GPR", function(x){
-    if(length(x@date) > 0){
-	  return(as.Date(x@date))
-    }else{
-	  return(NULL)
-	}
-  } 
+  if(length(x@date) > 0){
+    return(as.Date(x@date))
+  }else{
+    return(NULL)
+  }
+} 
 )
 
 #' @param x An object of the class 'GPR'
@@ -1643,7 +1643,7 @@ setReplaceMethod(
       return(x)
     }else{
       stop("'value' must be from the class 'Date'!")
-	}
+    }
   }
 )
 
@@ -1653,8 +1653,8 @@ setReplaceMethod(
 #' @rdname crs
 #' @export
 setMethod("crs", "GPR", function(x){
-    return(x@crs)
-  } 
+  return(x@crs)
+} 
 )
 
 #' @name crs<-
@@ -1702,13 +1702,13 @@ setReplaceMethod(
 )
 
 setMethod("trTime", "GPR", function(x){
-    dorigin <- x@date
-    if(length(dorigin) == 0){
-      dorigin <- "1970-01-01"
-    }
-    traceTime <- as.double(as.POSIXct(x@time, origin = as.Date(dorigin)))
-    return(traceTime)
-  } 
+  dorigin <- x@date
+  if(length(dorigin) == 0){
+    dorigin <- "1970-01-01"
+  }
+  traceTime <- as.double(as.POSIXct(x@time, origin = as.Date(dorigin)))
+  return(traceTime)
+} 
 )
 
 
@@ -1729,8 +1729,8 @@ setMethod("trTime", "GPR", function(x){
 #' @export
 # @aliases time0-methods time0<- time0<--methods
 setMethod("time0", "GPR", function(x){
-    return(x@time0)
-  } 
+  return(x@time0)
+} 
 )
 
 
@@ -1751,6 +1751,16 @@ setReplaceMethod(
   }
 )
 
+#' Wrapper for \code{time0()<-}
+#'
+#' @name setTime0
+#' @rdname time0
+#' @export
+setMethod("setTime0", "GPR", function(x, t0){
+  time0(x) <- t0
+  return(x)
+})
+
 #' Depth/time of the GPR data
 #' 
 #' @name depth
@@ -1758,8 +1768,8 @@ setReplaceMethod(
 #' @export
 setMethod("depth", "GPR", function(x){
   return(x@depth)
-} 
-)
+})
+
 #' @name depth<-
 #' @rdname depth
 #' @export
@@ -1872,7 +1882,7 @@ setReplaceMethod(
     }
     x@proc <- c(x@proc, "surveymode<-")
     return(x)
-  }
+    }
 )
 
 #' Return TRUE is surveymode is CMP
@@ -1882,8 +1892,8 @@ setReplaceMethod(
 #' @export
 setMethod("isCMP", "GPR", function(x){
   (grepl("CMP", toupper(x@surveymode)) || 
-    grepl("WARR", toupper(x@surveymode))) && 
-      !grepl("CMPANALYSIS", toupper(x@surveymode))
+     grepl("WARR", toupper(x@surveymode))) && 
+    !grepl("CMPANALYSIS", toupper(x@surveymode))
 } 
 )
 
@@ -1910,8 +1920,8 @@ setReplaceMethod(
 #' @rdname fid
 #' @export
 setMethod("fid", "GPR", function(x){
-    return(x@fid)
-  } 
+  return(x@fid)
+} 
 )
 
 #' Values of the GPR data
@@ -1920,8 +1930,8 @@ setMethod("fid", "GPR", function(x){
 #' @rdname values
 #' @export
 setMethod("values", "GPR", function(x){
-    return(x@data)
-  } 
+  return(x@data)
+} 
 )
 
 #' @name values<-
@@ -1937,7 +1947,7 @@ setReplaceMethod(
       return(x)
     }else{
       stop("x [",nrow(x),"x",ncol(x),"] and A [",nrow(value),"x",ncol(value),
-            "] should have the same size\n")
+           "] should have the same size\n")
     }
   } 
 )
@@ -1948,12 +1958,12 @@ setReplaceMethod(
 #' @rdname ampl
 #' @export
 setMethod("ampl", "GPR", function(x, FUN = mean, ...){
-    x@data[] <- apply(abs(x@data), 1, FUN, ...)
-    # funName <- getFunName(FUN)
-    # proc(x) <- getArgs( addArgs = c('FUN' = funName))
-    proc(x) <- getArgs()
-    return(x)
-  } 
+  x@data[] <- apply(abs(x@data), 1, FUN, ...)
+  # funName <- getFunName(FUN)
+  # proc(x) <- getArgs( addArgs = c('FUN' = funName))
+  proc(x) <- getArgs()
+  return(x)
+} 
 )
 
 #' DEPRECATED - Processing steps applied to the data
@@ -1973,9 +1983,9 @@ setMethod("ampl", "GPR", function(x, FUN = mean, ...){
 #' @rdname processing
 #' @export
 setMethod("processing", "GPR", function(x){
-    warning("DEPRECATED! Use 'proc()' instead!")
-    return(x@proc)
-  } 
+  warning("DEPRECATED! Use 'proc()' instead!")
+  return(x@proc)
+} 
 )
 
 
@@ -1995,8 +2005,8 @@ setMethod("processing", "GPR", function(x){
 #' @rdname proc
 #' @export
 setMethod("proc", "GPR", function(x){
-    return(x@proc)
-  } 
+  return(x@proc)
+} 
 )
 
 #' Add a processing step
@@ -2044,7 +2054,7 @@ setMethod("dcshift", "GPR", function(x, u = NULL, FUN = mean){
   # proc(x) <- getArgs(addArgs = c('FUN' = getFunName(FUN)))
   proc(x) <- getArgs()
   # proc(x) <- paste0("dcshift>u=", head(u,1),":",tail(u,1), "+", 
-                    # "FUN=",funName)
+  # "FUN=",funName)
   return(x)
 })
 
@@ -2092,58 +2102,58 @@ setMethod("dcshift", "GPR", function(x, u = NULL, FUN = mean){
 #' @rdname firstBreak
 #' @export
 setMethod("firstBreak", "GPR", function(x, method = c("coppens", "coppens2",
-  "threshold",  "MER"), thr = 0.12, w = 11, ns = NULL, bet = NULL){
-    method <- match.arg(method, c("coppens", "coppens2", "threshold", "MER"))
-    if(method == "coppens"){
-      w <- round(w / x@dz)
-      if( (w %% 2) == 0){
-        w <- w + 1
-      }
-      if(is.null(ns)){
-        ns <- round(1.5 * w)
-      }
-      if( ns %% 2 == 0){
-        ns <- ns + 1
-      }
-      xs <- x@data^2
-      if(is.null(bet)){
-        bet <- 0.2 * max(xs)
-      }
-      fb <- apply(xs, 2, .firstBreakModCoppens, w = w, ns = ns, bet = bet)
-      fb <- x@depth[fb] # fb * x@dz
-    }else if(method == "coppens2"){
-      w <- round(w / x@dz)
-      if( (w %% 2) == 0){
-        w <- w + 1
-      }
-      if(is.null(ns)){
-        ns <- round(1.5 * w)
-      }
-      if( ns %% 2 == 0){
-        ns <- ns + 1
-      }
-      xs <- x@data^2
-      if(is.null(bet)){
-        bet <- 0.2 * max(xs)
-      }
-      fb <- .firstBreakModCoppens2(xs, w = w, ns = ns, bet = bet)
-      fb <- x@depth[fb] # fb * x@dz
-    }else if(method == "threshold"){
-      thres <- thr * max(x)
-      fb <- apply(abs(x@data), 2, .firstBreakThres, thr = thres, x@depth)
-    }else if(method == "MER"){
-      w <- round(w / x@dz)
-      fb <- .firstBreakMER(x@data, w)
-      fb <- x@depth[fb]
+                                                      "threshold",  "MER"), thr = 0.12, w = 11, ns = NULL, bet = NULL){
+  method <- match.arg(method, c("coppens", "coppens2", "threshold", "MER"))
+  if(method == "coppens"){
+    w <- round(w / x@dz)
+    if( (w %% 2) == 0){
+      w <- w + 1
     }
-    if(any(is.na(fb))){
-      warning("First break could not be picked for some traces. \n",
-              "That's no luck, but good news is you can try with another ",
-              "method.\n", "This is probably because your traces have a ",
-              "too low S/N ratio." )
+    if(is.null(ns)){
+      ns <- round(1.5 * w)
     }
-    return(fb)
-  } 
+    if( ns %% 2 == 0){
+      ns <- ns + 1
+    }
+    xs <- x@data^2
+    if(is.null(bet)){
+      bet <- 0.2 * max(xs)
+    }
+    fb <- apply(xs, 2, .firstBreakModCoppens, w = w, ns = ns, bet = bet)
+    fb <- x@depth[fb] # fb * x@dz
+  }else if(method == "coppens2"){
+    w <- round(w / x@dz)
+    if( (w %% 2) == 0){
+      w <- w + 1
+    }
+    if(is.null(ns)){
+      ns <- round(1.5 * w)
+    }
+    if( ns %% 2 == 0){
+      ns <- ns + 1
+    }
+    xs <- x@data^2
+    if(is.null(bet)){
+      bet <- 0.2 * max(xs)
+    }
+    fb <- .firstBreakModCoppens2(xs, w = w, ns = ns, bet = bet)
+    fb <- x@depth[fb] # fb * x@dz
+  }else if(method == "threshold"){
+    thres <- thr * max(x)
+    fb <- apply(abs(x@data), 2, .firstBreakThres, thr = thres, x@depth)
+  }else if(method == "MER"){
+    w <- round(w / x@dz)
+    fb <- .firstBreakMER(x@data, w)
+    fb <- x@depth[fb]
+  }
+  if(any(is.na(fb))){
+    warning("First break could not be picked for some traces. \n",
+            "That's no luck, but good news is you can try with another ",
+            "method.\n", "This is probably because your traces have a ",
+            "too low S/N ratio." )
+  }
+  return(fb)
+} 
 )
 
 #--------------- DATA EDITING FUNCTIONS
@@ -2166,29 +2176,29 @@ setMethod("firstBreak", "GPR", function(x, method = c("coppens", "coppens2",
 #' @rdname traceShift
 #' @export
 setMethod("traceShift", "GPR", function(x,  ts, method = c("spline", 
-            "linear", "nearest", "pchip", "cubic", "none"), crop = TRUE){
-    method <- match.arg(method, c("spline", "linear", "nearest", "pchip", 
-                                  "cubic", "none"))
-    if(length(ts) == 1){
-      ts <- rep(ts, ncol(x))
-    }
-    if(any(ts != 0)){
-      #x <- upsample(x, n = c(2,1))
-      x@data <- .traceShift(x@data, ts = ts, tt = x@depth, 
-                                 dz = x@dz, method = method)
-      #x@data <- xshift@data[seq(1, length.out = nrow(x), by = 2), ]
-    }else{
-      warning("Nothing shifted because all 'ts' values are equal to zero!")
-    }
-    if(crop == TRUE){
-      testCrop <- apply(abs(x@data),1,sum)
-      x <- x[!is.na(testCrop), ]
-    }
-    # x <- .shiftThisTrace( x,  ts, method, crop = TRUE)
-    proc(x) <- getArgs()
-    # x@proc <- c(x@proc, proc)
-    return(x)
+                                                           "linear", "nearest", "pchip", "cubic", "none"), crop = TRUE){
+  method <- match.arg(method, c("spline", "linear", "nearest", "pchip", 
+                                "cubic", "none"))
+  if(length(ts) == 1){
+    ts <- rep(ts, ncol(x))
   }
+  if(any(ts != 0)){
+    #x <- upsample(x, n = c(2,1))
+    x@data <- .traceShift(x@data, ts = ts, tt = x@depth, 
+                          dz = x@dz, method = method)
+    #x@data <- xshift@data[seq(1, length.out = nrow(x), by = 2), ]
+  }else{
+    warning("Nothing shifted because all 'ts' values are equal to zero!")
+  }
+  if(crop == TRUE){
+    testCrop <- apply(abs(x@data),1,sum)
+    x <- x[!is.na(testCrop), ]
+  }
+  # x <- .shiftThisTrace( x,  ts, method, crop = TRUE)
+  proc(x) <- getArgs()
+  # x@proc <- c(x@proc, proc)
+  return(x)
+}
 )
 
 .shiftThisTrace <- function(x,  ts, method = c("spline", "linear", "nearest", 
@@ -2249,38 +2259,38 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("spline",
 #' @rdname time0Cor
 #' @export
 setMethod("time0Cor", "GPR", function(x, t0 = NULL,  method = c("spline", 
-                      "linear", "nearest", "pchip", "cubic", "none"), 
-                      crop = TRUE, keep = 0){
-    method <- match.arg(method, c("spline", "linear", "nearest", "pchip", 
-                                  "cubic", "none"))
-    if(is.null(t0)){
-      ts <- -x@time0 + keep
+                                                                "linear", "nearest", "pchip", "cubic", "none"), 
+                                      crop = TRUE, keep = 0){
+  method <- match.arg(method, c("spline", "linear", "nearest", "pchip", 
+                                "cubic", "none"))
+  if(is.null(t0)){
+    ts <- -x@time0 + keep
+  }else{
+    if(any(is.na(t0))){
+      stop("Woops, time zero selected have NA values. \n",
+           "This is not acceptable, time zero must have a numeric value in ",
+           "order to be corrected. \n",
+           "If this is because first break could not be picked, \n",
+           "you might want to consider removing these traces from your ",
+           "radargram.")
     }else{
-      if(any(is.na(t0))){
-        stop("Woops, time zero selected have NA values. \n",
-             "This is not acceptable, time zero must have a numeric value in ",
-             "order to be corrected. \n",
-             "If this is because first break could not be picked, \n",
-             "you might want to consider removing these traces from your ",
-             "radargram.")
-      }else{
-        if(length(t0) == 1){
-          t0 <- rep(t0, length(x@time0))
-        }
-        ts <- -t0 + keep
+      if(length(t0) == 1){
+        t0 <- rep(t0, length(x@time0))
       }
+      ts <- -t0 + keep
     }
-    if( any(ts != 0) ){
-      x <- traceShift( x,  ts, method, crop = TRUE)
-      x@time0 <- x@time0 + ts
-      proc(x) <- getArgs()
-    }else{
-      warning("Nothing shifted because all 't0' or 'time0(x)' values ",
-              "as well as all 'keep' values are ",
-              "equal to zero!")
-    }
-    return(x)
   }
+  if( any(ts != 0) ){
+    x <- traceShift( x,  ts, method, crop = TRUE)
+    x@time0 <- x@time0 + ts
+    proc(x) <- getArgs()
+  }else{
+    warning("Nothing shifted because all 't0' or 'time0(x)' values ",
+            "as well as all 'keep' values are ",
+            "equal to zero!")
+  }
+  return(x)
+}
 )
 
 
@@ -2320,7 +2330,7 @@ setMethod("timeCorOffset", "GPR", function(x, t0 = NULL){
   #----------------------------------------------------------------------------#
   #FIXME > use here
   if(!is.null(t0)){
-   time0(x) <- t0
+    time0(x) <- t0
   }
   time0Cor(x, method = "spline")
   # !!! pb if negative values in sqrt()!!!!
@@ -2417,10 +2427,10 @@ setMethod("dewow", "GPR", function(x, type = c("MAD", "Gaussian"), w){
       A <- matrix(A,ncol=1,nrow=length(A))
     }
     x@data[!before_t0,] <- A[!before_t0,] - 
-    mmand::gaussianSmooth(A,w)[!before_t0,]
+      mmand::gaussianSmooth(A,w)[!before_t0,]
   }
   proc(x) <- getArgs()
-#   x@proc <- c(x@proc, proc)
+  #   x@proc <- c(x@proc, proc)
   return(x) 
 })
 
@@ -2431,7 +2441,7 @@ setMethod("dewow", "GPR", function(x, type = c("MAD", "Gaussian"), w){
 #' @rdname gain
 #' @export
 setMethod("gain", "GPR", function(x, 
-          type = c("power", "exp", "agc"),...){
+                                  type = c("power", "exp", "agc"),...){
   type <- match.arg(type, c("power", "exp", "agc"))
   x@data[is.na(x@data)] <-0
   if(type=="power"){
@@ -2442,9 +2452,9 @@ setMethod("gain", "GPR", function(x,
     x@data <- .gainAgc(x@data, dts = x@dz, ...)
   }
   proc(x) <- getArgs()
-#   x@proc <- c(x@proc, proc)
+  #   x@proc <- c(x@proc, proc)
   return(x)
-  } 
+} 
 )
 
 #----------------- 1D-FILTER
@@ -2454,60 +2464,60 @@ setMethod("gain", "GPR", function(x,
 #' @rdname filter1D
 #' @export
 setMethod("filter1D", "GPR", function(x, type = c("median", "hampel", 
-          "Gaussian"), ...){
-    type <- match.arg(type, c("median", "hampel", "Gaussian"))
-    w <- 50 * x@dz   # argument initialization
-    if(type == "median"){
-      if( length(dots <- list(...)) ){
-#         dots <- list(...)
-        if( !is.null(dots$w)){
-          w <- dots$w
-          w <- round(w / x@dz)
-        }
-      }  
-      if(w %% 2 == 1){
-        w <- w + 1  # uneven window
+                                                  "Gaussian"), ...){
+  type <- match.arg(type, c("median", "hampel", "Gaussian"))
+  w <- 50 * x@dz   # argument initialization
+  if(type == "median"){
+    if( length(dots <- list(...)) ){
+      #         dots <- list(...)
+      if( !is.null(dots$w)){
+        w <- dots$w
+        w <- round(w / x@dz)
       }
-      w <- (w-1)/2
-      x@data <-  apply(x@data, 2, .medianFilter1D, w)
-    }else if(type == "hampel"){
-      if( length(dots <-  list(...)) ){
-#         dots <- list(...)
-        if( !is.null(dots$w)){
-          w <- dots$w
-          w <- round(w / x@dz)
-        }
-      }
-      A <- x@data
-      if(length(dim(A))<2){
-        A <- matrix(A,ncol=1,nrow=length(A))
-      }
-      X <- rbind(matrix(0,ncol=ncol(A),nrow=w), A, 
-                matrix(0,ncol=ncol(A),nrow=w))
-      n <- nrow(X)
-      Y <- X
-      for (i in (w + 1):(n - w)) {
-        Xmed <- apply( X[(i - w):(i + w),,drop=FALSE],2, median)
-        # S0 <- 1.4826 * apply( abs(X[(i - w):(i + w),,drop=FALSE] - Xmed),
-        # 2, median)
-        # test <- abs(X[i,] - Xmed) > x0 * S0
-        # Y[i,test] <- Xmed[test]
-        Y[i,] <- Xmed
-      }
-      x@data <- Y[(w+1):(n-w),]
-    }else if(type == "Gaussian"){
-      if( length(dots <-  list(...)) ){
-#         dots <- list(...)
-        if( !is.null(dots$w)){
-          w <- dots$w
-        }
-      }
-      x@data <- mmand::gaussianSmooth(x@data, sigma = w)
+    }  
+    if(w %% 2 == 1){
+      w <- w + 1  # uneven window
     }
-    proc(x) <- getArgs()
-#     x@proc <- c(x@proc, proc)
-    return(x)
-  } 
+    w <- (w-1)/2
+    x@data <-  apply(x@data, 2, .medianFilter1D, w)
+  }else if(type == "hampel"){
+    if( length(dots <-  list(...)) ){
+      #         dots <- list(...)
+      if( !is.null(dots$w)){
+        w <- dots$w
+        w <- round(w / x@dz)
+      }
+    }
+    A <- x@data
+    if(length(dim(A))<2){
+      A <- matrix(A,ncol=1,nrow=length(A))
+    }
+    X <- rbind(matrix(0,ncol=ncol(A),nrow=w), A, 
+               matrix(0,ncol=ncol(A),nrow=w))
+    n <- nrow(X)
+    Y <- X
+    for (i in (w + 1):(n - w)) {
+      Xmed <- apply( X[(i - w):(i + w),,drop=FALSE],2, median)
+      # S0 <- 1.4826 * apply( abs(X[(i - w):(i + w),,drop=FALSE] - Xmed),
+      # 2, median)
+      # test <- abs(X[i,] - Xmed) > x0 * S0
+      # Y[i,test] <- Xmed[test]
+      Y[i,] <- Xmed
+    }
+    x@data <- Y[(w+1):(n-w),]
+  }else if(type == "Gaussian"){
+    if( length(dots <-  list(...)) ){
+      #         dots <- list(...)
+      if( !is.null(dots$w)){
+        w <- dots$w
+      }
+    }
+    x@data <- mmand::gaussianSmooth(x@data, sigma = w)
+  }
+  proc(x) <- getArgs()
+  #     x@proc <- c(x@proc, proc)
+  return(x)
+} 
 )
 
 #----------------- SPATIAL-FILTER
@@ -2535,25 +2545,25 @@ setMethod("filter1D", "GPR", function(x, type = c("median", "hampel",
 #' @export
 setMethod("filter2D", "GPR", function(x, type = c("median3x3", "adimpro"), 
                                       ...){
-    type <- match.arg(type, c("median3x3", "adimpro"))
-    if(type == "median3x3"){
-      x@data <-  .medianFilter3x3(x@data)
-    }else if( type == "adimpro"){
-      IMG <- x@data
-      IMG <- (IMG-min(IMG))/(max(IMG)-min(IMG))
-      adimg <- adimpro::make.image(IMG)
-      # img.smooth <- adimpro::awsimage(adimg, hmax = 2)
-      # img.smooth <- adimpro::awsimage(adimg, hmax = 2)
-      # img.smooth <- adimpro::awsaniso(adimg, hmax = 2,...)
-      img.smooth <- adimpro::awspimage(adimg,...)
-      AA <- adimpro::extract.image(img.smooth)
-      AAA <- ( (AA - mean(AA))/sd(AA) ) * sd(x@data)
-      x@data <- AAA
-    }
-    proc(x) <- getArgs()
-#     x@proc <- c(x@proc, proc)
-    return(x)
-  } 
+  type <- match.arg(type, c("median3x3", "adimpro"))
+  if(type == "median3x3"){
+    x@data <-  .medianFilter3x3(x@data)
+  }else if( type == "adimpro"){
+    IMG <- x@data
+    IMG <- (IMG-min(IMG))/(max(IMG)-min(IMG))
+    adimg <- adimpro::make.image(IMG)
+    # img.smooth <- adimpro::awsimage(adimg, hmax = 2)
+    # img.smooth <- adimpro::awsimage(adimg, hmax = 2)
+    # img.smooth <- adimpro::awsaniso(adimg, hmax = 2,...)
+    img.smooth <- adimpro::awspimage(adimg,...)
+    AA <- adimpro::extract.image(img.smooth)
+    AAA <- ( (AA - mean(AA))/sd(AA) ) * sd(x@data)
+    x@data <- AAA
+  }
+  proc(x) <- getArgs()
+  #     x@proc <- c(x@proc, proc)
+  return(x)
+} 
 )
 
 #----------------- CLIP/GAMMA/NORMALIZE
@@ -2565,9 +2575,9 @@ setMethod("filter2D", "GPR", function(x, type = c("median3x3", "adimpro"),
 setMethod("clip", "GPR", function(x,Amax=NULL,Amin=NULL){
   x@data <- .clip(x@data,Amax,Amin)
   proc(x) <- getArgs()
-#   x@proc <- c(x@proc, proc)
+  #   x@proc <- c(x@proc, proc)
   return(x)
-  } 
+} 
 )
 #' Gamma correction of the amplitude
 #' 
@@ -2577,9 +2587,9 @@ setMethod("clip", "GPR", function(x,Amax=NULL,Amin=NULL){
 setMethod("gammaCorrection", "GPR", function(x,a=1,b=1){
   x@data <- .gammaCorrection(x@data,a,b)
   proc(x) <- getArgs()
-#   x@proc <- c(x@proc, proc)
+  #   x@proc <- c(x@proc, proc)
   return(x)
-  } 
+} 
 )
 
 #' Trace scaling
@@ -2588,13 +2598,13 @@ setMethod("gammaCorrection", "GPR", function(x,a=1,b=1){
 #' @rdname traceScaling
 #' @export
 setMethod("traceScaling", "GPR", function(x, 
-            type = c("stat","min-max","95","eq","sum", "rms", 
-                     "mad", "invNormal")){
-    x@data <- scaleCol(x@data, type = type)
-    proc(x) <- getArgs()
-#   x@proc <- c(x@proc, proc)
-    return(x)
-  }
+                                          type = c("stat","min-max","95","eq","sum", "rms", 
+                                                   "mad", "invNormal")){
+  x@data <- scaleCol(x@data, type = type)
+  proc(x) <- getArgs()
+  #   x@proc <- c(x@proc, proc)
+  return(x)
+}
 )
 
 #' Trace average
@@ -2636,25 +2646,25 @@ setMethod("traceScaling", "GPR", function(x,
 #' @rdname traceAverage
 #' @export
 setMethod("traceAverage", "GPR", function(x, w = NULL, FUN = mean, ...){
-    FUN <- match.fun(FUN)
-    if(is.null(w)){
-      xdata <- x@data
-      x <- x[,1]
-      x@data <- as.matrix(apply(xdata, 1, mean, ...))
-      x@time0 <- mean(x@time0)
-      x@time <- mean(x@time)
-      x@coord <- matrix(ncol = 0, nrow = 0)
-      x@rec <- matrix(ncol = 0, nrow = 0)
-      x@trans <- matrix(ncol = 0, nrow = 0)
-    }else{
-      x@data <- wapplyMat(x@data, width = w, by = 1, FUN = FUN, MARGIN = 1, ...)
-    }
-    # funName <- getFunName(FUN)
-    # proc(x) <- getArgs( addArgs = c('FUN' = funName))
-    proc(x) <- getArgs()
-#   x@proc <- c(x@proc, proc)
-    return(x)
+  FUN <- match.fun(FUN)
+  if(is.null(w)){
+    xdata <- x@data
+    x <- x[,1]
+    x@data <- as.matrix(apply(xdata, 1, mean, ...))
+    x@time0 <- mean(x@time0)
+    x@time <- mean(x@time)
+    x@coord <- matrix(ncol = 0, nrow = 0)
+    x@rec <- matrix(ncol = 0, nrow = 0)
+    x@trans <- matrix(ncol = 0, nrow = 0)
+  }else{
+    x@data <- wapplyMat(x@data, width = w, by = 1, FUN = FUN, MARGIN = 1, ...)
   }
+  # funName <- getFunName(FUN)
+  # proc(x) <- getArgs( addArgs = c('FUN' = funName))
+  proc(x) <- getArgs()
+  #   x@proc <- c(x@proc, proc)
+  return(x)
+}
 )
 
 #' Background matrix substraction
@@ -2684,7 +2694,7 @@ setMethod("traceAverage", "GPR", function(x, w = NULL, FUN = mean, ...){
 #' @rdname backgroundSub
 #' @export
 setMethod("backgroundSub", "GPR", function(x, width = 21, trim = 0.2,
-                                          s = 1, eps = 1, itmax = 5){
+                                           s = 1, eps = 1, itmax = 5){
   if(is.null(width)){
     stop("Set a value to 'width'")
   }
@@ -2729,7 +2739,7 @@ setMethod("backgroundSub", "GPR", function(x, width = 21, trim = 0.2,
   w_norm <- length(x_hat) * w/sum(w, na.rm = TRUE)
   return(mean(w_norm * x_hat, na.rm = TRUE))
 }  
-  
+
 #----------------- FREQUENCY FILTERS
 #' Frequency filter
 #'
@@ -2737,13 +2747,13 @@ setMethod("backgroundSub", "GPR", function(x, width = 21, trim = 0.2,
 #' @rdname fFilter
 #' @export
 setMethod("fFilter", "GPR", function(x, f = 100, type = 
-c('low','high','bandpass'),L = 257, plotSpec = FALSE){
-    x@data <- .fFilter1D(x@data, f = f,  type = type, L = L, dT = x@dz, 
-                        plotSpec = plotSpec)
-    proc(x) <- getArgs()
-#   x@proc <- c(x@proc, proc)
-    return(x)
-  } 
+                                       c('low','high','bandpass'),L = 257, plotSpec = FALSE){
+  x@data <- .fFilter1D(x@data, f = f,  type = type, L = L, dT = x@dz, 
+                       plotSpec = plotSpec)
+  proc(x) <- getArgs()
+  #   x@proc <- c(x@proc, proc)
+  return(x)
+} 
 )
 
 #' Frequency-wavenumber filter
@@ -2752,35 +2762,35 @@ c('low','high','bandpass'),L = 257, plotSpec = FALSE){
 #' @rdname fkFilter
 #' @export
 setMethod("fkFilter", "GPR", function(x, fk = NULL, L = c(5 , 5), npad = 1){
-    if(is.null(fk)) stop("fk argument has to be specified")
-    # if polygon
-    if(is.list(fk) && length(fk) == 2){
-      areaunclosed <- t(do.call("rbind", fk))
-      nk <- npad*(nextpower2(ncol(x@data)))
-      nf <- npad*(nextpower2(nrow(x@data)))
-      # frequency
-      Ts = x@dz*10^(-9)    # [s] Sample time
-      fac = 1000000
-      fre = (1/Ts)*seq(0,nf/2)/nf/fac
-      
-      # wavenumber
-      Ks <- 1/x@dx      # [1/m] Sampling frequency
-      knu <- 1:(nk/2)/(2*(nk/2)) * Ks  #[1/m]
-      knutot <- c(-rev(knu),knu)
-      fk <- outer(fre, knutot, inPoly,
-                  vertx = areaunclosed[,2],
-                  verty = areaunclosed[,1])
-    }else if(!is.matrix(fk)){
-      stop("fk should be either of type 'list' or 'matrix'\n")
-    }else if(is.matrix(fk)){
-      cat("# FIXME! function to transform matrix into polygon\n")
-    }
-    x@data <- .FKFilter(x@data, fk = fk, L = L, npad = npad)
-    proc(x) <- getArgs()
-#   x@proc <- c(x@proc, proc)
-    return(x)
+  if(is.null(fk)) stop("fk argument has to be specified")
+  # if polygon
+  if(is.list(fk) && length(fk) == 2){
+    areaunclosed <- t(do.call("rbind", fk))
+    nk <- npad*(nextpower2(ncol(x@data)))
+    nf <- npad*(nextpower2(nrow(x@data)))
+    # frequency
+    Ts = x@dz*10^(-9)    # [s] Sample time
+    fac = 1000000
+    fre = (1/Ts)*seq(0,nf/2)/nf/fac
     
-  } 
+    # wavenumber
+    Ks <- 1/x@dx      # [1/m] Sampling frequency
+    knu <- 1:(nk/2)/(2*(nk/2)) * Ks  #[1/m]
+    knutot <- c(-rev(knu),knu)
+    fk <- outer(fre, knutot, inPoly,
+                vertx = areaunclosed[,2],
+                verty = areaunclosed[,1])
+  }else if(!is.matrix(fk)){
+    stop("fk should be either of type 'list' or 'matrix'\n")
+  }else if(is.matrix(fk)){
+    cat("# FIXME! function to transform matrix into polygon\n")
+  }
+  x@data <- .FKFilter(x@data, fk = fk, L = L, npad = npad)
+  proc(x) <- getArgs()
+  #   x@proc <- c(x@proc, proc)
+  return(x)
+  
+} 
 )
 
 
@@ -2839,24 +2849,24 @@ setMethod("fkFilter", "GPR", function(x, fk = NULL, L = c(5 , 5), npad = 1){
 #' @export
 setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA, center = TRUE, 
                                          scale = FALSE){
-
+  
   ev <- unique(eigenvalue)
   X <- scale(x@data, center = center, scale = scale)
   Xsvd <- svd(X)
   lambda <- Xsvd$d^2
-
+  
   if(is.null(ev)){
     ev <- c(seq_len(ncol(X)))
   }else if(!any(is.na(ev))){
     if(max(ev) > ncol(X)){
       stop("The number of eigenvalues selected cannot exceed the number ",
-         "of GPR traces.")
+           "of GPR traces.")
     }
     if(min(ev) < 0){
       stop("The eigenvalues number must be strictly positive.")
     }
   }
-
+  
   if(any(is.na(ev))){
     plot(seq_along(lambda), lambda, type = "b", col = "blue", pch = 16,
          xlab = "Eigenvalue Index", ylab = "Eigenvalue", 
@@ -2873,11 +2883,11 @@ setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA, center = TRUE,
            "either '2:12' or '1,2,3,4' or '10'.")
     }
   }
-
+  
   d <- numeric(length(Xsvd$d))
   d[ev] <- Xsvd$d[ev]
   Xnew <- Xsvd$u %*% diag(d) %*% t(Xsvd$v)
-
+  
   # Xeigen <- array(NA, dim = c(dim(Xsvd$u), length(ev)))
   # for(i in seq_along(ev)){
   #   Xeigen[,,i] <- Xsvd$d[ev[i]] * Xsvd$u[,ev[i]] %*% t(Xsvd$v[,ev[i]])
@@ -2888,8 +2898,8 @@ setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA, center = TRUE,
   # } else{
   #   Xnew <- Xeigen[,,1]
   # }
-
-
+  
+  
   # if(!is.null(attr(X, 'scaled:scale')) && !is.null(attr(X, 'scaled:center'))){
   #   Xnew <- t(apply(Xnew, 1, function(r) r * attr(X, 'scaled:scale') + 
   #                     attr(X, 'scaled:center')))
@@ -2900,9 +2910,9 @@ setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA, center = TRUE,
   #          is.null(attr(X, 'scaled:center'))){
   #   Xnew <- t(apply(Xnew , 1, function(r) r * attr(X, 'scaled:scale')))
   # }
-
+  
   x@data <- unscale(X, Xnew)
-
+  
   # if(is.null(eigenvalue)){
   #   proc(x) <- getArgs(addArgs = list('eigenvalue' = eigenvalue, 
   #                                     'center' = as.character(center), 
@@ -2913,7 +2923,7 @@ setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA, center = TRUE,
   #                                     'scale' = as.character(scale)))
   # }
   proc(x) <- getArgs()
-
+  
   return(x)
 } 
 )
@@ -2934,10 +2944,10 @@ setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA, center = TRUE,
 #' @rdname rotatePhase
 #' @export
 setMethod("rotatePhase", "GPR", function(x, phi){
-    x@data <- apply(x@data, 2, phaseRotation, phi)
-    proc(x) <- getArgs()
-    return(x)
-  }
+  x@data <- apply(x@data, 2, phaseRotation, phi)
+  proc(x) <- getArgs()
+  return(x)
+}
 )
 
 #' Trace convolution (1D)
@@ -2952,11 +2962,11 @@ setMethod("rotatePhase", "GPR", function(x, phi){
 #' @export
 setMethod("conv1D", "GPR", function(x, w){
   # rotatePhase <- function(x,phi){
-    x@data <- convolution(x@data, w)
-#     x@proc <- c(x@proc,"conv1D")
-    proc(x) <- "conv1D"
-    return(x)
-  }
+  x@data <- convolution(x@data, w)
+  #     x@proc <- c(x@proc,"conv1D")
+  proc(x) <- "conv1D"
+  return(x)
+}
 )
 #' 2D onvolution
 #'
@@ -2969,10 +2979,10 @@ setMethod("conv1D", "GPR", function(x, w){
 #' @export
 setMethod("conv2D", "GPR", function(x, w){
   # rotatePhase <- function(x,phi){
-    x@data <- convolution2D(x@data, w)
-    x@proc <- c(x@proc, "conv2D")
-    return(x)
-  }
+  x@data <- convolution2D(x@data, w)
+  x@proc <- c(x@proc, "conv2D")
+  return(x)
+}
 )
 
 #' Deconvolution
@@ -3007,94 +3017,94 @@ setMethod("conv2D", "GPR", function(x, w){
 #' @rdname deconv
 #' @export
 setMethod("deconv", "GPR", function(x, 
-            method=c("spiking", "wavelet", "min-phase", "mixed-phase"),...){
-    method <- match.arg(method, c("spiking", "wavelet", "min-phase",
-                                  "mixed-phase"))
-    toReturn <- list()
-    dots <- list(...)
-    if(method == "spiking" || method == "mixed-phase"){
-      if(length(dots) == 0){
-        stop(paste0("spiking deconvolution requires the following arguments:",
-                    "W, wtr, nf, mu\n"))
-      }
-      # deconvSpiking <- function(x,W,wtr,nf,mu){
-      if(is.null(dots$W)){
-        stop(paste0("W must be defined\n"))
-      }else{
-        W <- dots$W
-      }
-      if(is.null(dots$wtr)){
-        stop(paste0("wtr must be defined\n"))
-      }else{
-        wtr <- dots$wtr
-      }
-      if(is.null(dots$nf)){
-        stop(paste0("nf must be defined\n"))
-      }else{
-        nf <- dots$nf
-      }
-      if(is.null(dots$mu)){
-        stop(paste0("mu must be defined\n"))
-      }else{
-        mu <- dots$mu
-      }
-      if(is.null(dots$shft)){
-        shft <- 1
-      }else{
-        shft <- dots$shft
-      }
-
-      W <- seq(W[1],W[2])
-      X <- traceScaling(x, type="rms")@data
-      # X <- X / apply(as.matrix(X),2,RMS)
-      Xdec <- matrix(nrow=nrow(X),ncol=ncol(X))
-      Fmin <- matrix(nrow=nf,ncol=ncol(X))
-      Wmin <- matrix(nrow=nf,ncol=ncol(X))
-      for(i in 1:ncol(X)){
-        ww <- (i-wtr):(i+wtr)
-        ww <- ww[ww <= ncol(X) & ww >= 1]
-        supertrace <- as.vector(X[W,ww])
-        # inverse minimum-phase wavelet estimation # variante 1 (Emanuel)
-        Fmin[,i] <- .spikingFilter(supertrace,nf=nf ,mu=mu, shft=shft)
-        # Wmin[,i] <- deconv(c(1,rep(0,nf-1)),Fmin[,i], nf=nf,mu=mu)
-        Wmin[,i] <- deconvolve(c(1,rep(0,nf-1)), Fmin[,i], mu=mu)
-        # minimum-phase deconvolued data
-        Xdec[,i] <- convolution(X[,i],Fmin[,i])[1:nrow(X)]
-      }
-      # estimated min-phase wavelet
-      w_0 <- matrix(0, nrow=round(nf/3),ncol=ncol(Wmin))
-      w_min <- list(x = seq(-round(nf/3),to =  nf , by = 1)*x@dz,
-                    y = rbind(w_0, Wmin, rep(0, ncol(Wmin))))
-      x@data <- Xdec
-      toReturn <- list("fmin" = Fmin, "wmin" = w_min)
-    }else if(method == "wavelet"){
-      if(length(dots) == 0 || (is.null(dots[["h"]]) || is.null(dots[["mu"]]))){
-        stop(paste0("wavelet deconvolution requires the following arguments:",
-                    "h and mu\n"))
-      }
-      x <- traceScaling(x, type="rms")
-      x@data <- apply(x@data, 2, deconvolve, dots[["h"]], dots[["mu"]])      
-    }else if(method== "min-phase"){
-      stop("min-phase deconvolution has to be first written!!!\n")
+                                    method=c("spiking", "wavelet", "min-phase", "mixed-phase"),...){
+  method <- match.arg(method, c("spiking", "wavelet", "min-phase",
+                                "mixed-phase"))
+  toReturn <- list()
+  dots <- list(...)
+  if(method == "spiking" || method == "mixed-phase"){
+    if(length(dots) == 0){
+      stop(paste0("spiking deconvolution requires the following arguments:",
+                  "W, wtr, nf, mu\n"))
     }
-    if(method == "mixed-phase"){
-      # optimal phase shift
-      phi <- optPhaseRotation(x@data[W,], rot = 0.05, plot=TRUE)
-      # phase rotation
-      x@data <-  apply(x@data, 2, phaseRotation, phi)
-      # mixed phase wavelet
-      w_mix <- w_min
-      w_mix$y <- apply(w_min$y, 2 , phaseRotation, - phi)
-      toReturn[["optRot"]] <- phi
-      toReturn[["wmix"]] <- w_mix
+    # deconvSpiking <- function(x,W,wtr,nf,mu){
+    if(is.null(dots$W)){
+      stop(paste0("W must be defined\n"))
+    }else{
+      W <- dots$W
     }
-    # gprdec <- gpr
-#     x@data <- Xdec
-    proc(x) <- getArgs()
-#     x@proc <- c(x@proc, proc)
-    toReturn[["x"]] <- x
-    return(toReturn)
+    if(is.null(dots$wtr)){
+      stop(paste0("wtr must be defined\n"))
+    }else{
+      wtr <- dots$wtr
+    }
+    if(is.null(dots$nf)){
+      stop(paste0("nf must be defined\n"))
+    }else{
+      nf <- dots$nf
+    }
+    if(is.null(dots$mu)){
+      stop(paste0("mu must be defined\n"))
+    }else{
+      mu <- dots$mu
+    }
+    if(is.null(dots$shft)){
+      shft <- 1
+    }else{
+      shft <- dots$shft
+    }
+    
+    W <- seq(W[1],W[2])
+    X <- traceScaling(x, type="rms")@data
+    # X <- X / apply(as.matrix(X),2,RMS)
+    Xdec <- matrix(nrow=nrow(X),ncol=ncol(X))
+    Fmin <- matrix(nrow=nf,ncol=ncol(X))
+    Wmin <- matrix(nrow=nf,ncol=ncol(X))
+    for(i in 1:ncol(X)){
+      ww <- (i-wtr):(i+wtr)
+      ww <- ww[ww <= ncol(X) & ww >= 1]
+      supertrace <- as.vector(X[W,ww])
+      # inverse minimum-phase wavelet estimation # variante 1 (Emanuel)
+      Fmin[,i] <- .spikingFilter(supertrace,nf=nf ,mu=mu, shft=shft)
+      # Wmin[,i] <- deconv(c(1,rep(0,nf-1)),Fmin[,i], nf=nf,mu=mu)
+      Wmin[,i] <- deconvolve(c(1,rep(0,nf-1)), Fmin[,i], mu=mu)
+      # minimum-phase deconvolued data
+      Xdec[,i] <- convolution(X[,i],Fmin[,i])[1:nrow(X)]
+    }
+    # estimated min-phase wavelet
+    w_0 <- matrix(0, nrow=round(nf/3),ncol=ncol(Wmin))
+    w_min <- list(x = seq(-round(nf/3),to =  nf , by = 1)*x@dz,
+                  y = rbind(w_0, Wmin, rep(0, ncol(Wmin))))
+    x@data <- Xdec
+    toReturn <- list("fmin" = Fmin, "wmin" = w_min)
+  }else if(method == "wavelet"){
+    if(length(dots) == 0 || (is.null(dots[["h"]]) || is.null(dots[["mu"]]))){
+      stop(paste0("wavelet deconvolution requires the following arguments:",
+                  "h and mu\n"))
+    }
+    x <- traceScaling(x, type="rms")
+    x@data <- apply(x@data, 2, deconvolve, dots[["h"]], dots[["mu"]])      
+  }else if(method== "min-phase"){
+    stop("min-phase deconvolution has to be first written!!!\n")
   }
+  if(method == "mixed-phase"){
+    # optimal phase shift
+    phi <- optPhaseRotation(x@data[W,], rot = 0.05, plot=TRUE)
+    # phase rotation
+    x@data <-  apply(x@data, 2, phaseRotation, phi)
+    # mixed phase wavelet
+    w_mix <- w_min
+    w_mix$y <- apply(w_min$y, 2 , phaseRotation, - phi)
+    toReturn[["optRot"]] <- phi
+    toReturn[["wmix"]] <- w_mix
+  }
+  # gprdec <- gpr
+  #     x@data <- Xdec
+  proc(x) <- getArgs()
+  #     x@proc <- c(x@proc, proc)
+  toReturn[["x"]] <- x
+  return(toReturn)
+}
 )
 
 
@@ -3122,10 +3132,10 @@ setMethod("deconv", "GPR", function(x,
     topaste <- c(topaste, paste0("survey date = ", x@date,"\n"))
   }
   topaste <- c(topaste, paste0(x@surveymode,", ",x@freq, " MHz, ", 
-                "Window length = ",(nrow(x@data)-1)*x@dz, " ", x@depthunit,
-                ", dz = ",x@dz, " ", x@depthunit, "\n"))
+                               "Window length = ",(nrow(x@data)-1)*x@dz, " ", x@depthunit,
+                               ", dz = ",x@dz, " ", x@depthunit, "\n"))
   topaste <- c(topaste, paste0(ncol(x@data), " traces, ", 
-                diff(range(x@pos))," ",x@posunit,"\n"))
+                               diff(range(x@pos))," ",x@posunit,"\n"))
   if(length(x@proc)>0){
     topaste <- c(topaste, paste("> PROCESSING\n"))
     for(i in seq_along(x@proc)){
@@ -3179,11 +3189,11 @@ lines.GPR <- function(x, relTime0 = FALSE, ...){
     # z <- seq(-x@time0, by = x@dz, length.out = length(x@data))
     #z <- x@depth - x@time0
     lines(z, x@data,...)
-   }else{
+  }else{
     stop("x must a vector!")
   }
 }
-      
+
 #' Add a GPR trace points on a plot
 #'
 #' @method points GPR 
@@ -3197,10 +3207,10 @@ points.GPR <- function(x, ...){
     v <- 0
   }
   if(any(dim(x) == 1)){
-#     z <- seq(-x@time0, by = x@dz, length.out = length(x@data))
+    #     z <- seq(-x@time0, by = x@dz, length.out = length(x@data))
     z <- x@depth - x@time0
     points(z, x@data,...)
-   }else{
+  }else{
     stop("x must a vector!")
   }
 }
@@ -3312,13 +3322,13 @@ plot.GPR <- function(x,
       if(is.null(dots$xaxt)) dots$xaxt <- "n"
       if(is.null(dots$main)){
         myMain <- paste0(x@name, ": trace #", x@traces," @", round(x@pos,2), 
-                                              x@posunit)
+                         x@posunit)
       }else{
         myMain <- dots$main
         dots$main <- NULL
       } 
-        
-        
+      
+      
       do.call(plot, c(list(x = z, y = x@data), dots))
       
       if(is.null(dots$ann) || dots$ann != FALSE){
@@ -3328,7 +3338,7 @@ plot.GPR <- function(x,
           if(grepl("[m]$", x@depthunit)){
             # axis(side = 3, at = x_axis, labels = x_axis, tck = +0.02)
             axis(side = 3, tck = +0.02)
-          #FIXME: use fx .depthAxis()
+            #FIXME: use fx .depthAxis()
           }else if(grepl("[s]$", x@depthunit)){
             if(length(x@antsep) > 0 && x@antsep > 0){
               depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
@@ -3357,7 +3367,7 @@ plot.GPR <- function(x,
       if(isTRUE(addAmpl0))  abline(h = 0, lty = 3, col = "grey")
       if(isTRUE(addTime0))  abline(v = t0, col = "red")
     }
-  #------------------------ radargram plot (2D) -------------------------------#
+    #------------------------ radargram plot (2D) -------------------------------#
   }else{
     if(grepl("[s]$", x@depthunit) && addTopo){
       x <- migration(x)
@@ -3371,7 +3381,7 @@ plot.GPR <- function(x,
     }else if(is.null(clip)){
       # clip below the 0.01-quantile and above the 0.99-quantile
       x@data <- .clip(x@data, quantile(as.vector(x@data), 0.99, na.rm = TRUE),
-                       quantile(as.vector(x@data), 0.01, na.rm = TRUE))
+                      quantile(as.vector(x@data), 0.01, na.rm = TRUE))
     }
     if(addFid == FALSE){
       x@fid <- character(length(x@fid))
@@ -3425,8 +3435,8 @@ plot.GPR <- function(x,
         note <- ""
       }
     }
-      
-      
+    
+    
     # if(is.null(xlim)){
     #   xlim <- range(xvalues)
     # }
@@ -3438,7 +3448,7 @@ plot.GPR <- function(x,
     if(is.null(dots$ylim)) dots$ylim <- rev(range(yvalues))
     if(dots$ylim[1] < dots$ylim[2]) dots$ylim <- rev(dots$ylim)
     if(is.null(dots$xlim)) dots$xlim <- range(xvalues)
-
+    
     op <- par(no.readonly=TRUE)
     
     colkeyDist <- 0.05
@@ -3468,12 +3478,12 @@ plot.GPR <- function(x,
       if(grepl("[m]$", x@depthunit)){
         heightPDF <- fac * abs(diff(ylim)) + sum(omi[c(1,3)] + mai[c(1,3)])
         widthPDF <- fac * abs(diff(xlim)) * ratio +  
-                        sum(omi[c(2,4)] + mai[c(2,4)])
+          sum(omi[c(2,4)] + mai[c(2,4)])
       }else{
         heightPDF <- fac * abs(diff(ylim)) * v/2 + 
-                        sum(omi[c(1,3)] + mai[c(1,3)])
+          sum(omi[c(1,3)] + mai[c(1,3)])
         widthPDF <- fac * abs(diff(xlim)) * ratio + 
-                        sum(omi[c(2,4)] + mai[c(2,4)])
+          sum(omi[c(2,4)] + mai[c(2,4)])
       }
       Cairo::CairoPDF(file = paste0(pdfName, ".pdf"),
                       width = widthPDF,
@@ -3495,7 +3505,7 @@ plot.GPR <- function(x,
           dots$rasterImage <- FALSE
         }
       }
-
+      
       if(is.null(dots$zlim)){
         if( min(z, na.rm = TRUE) >= 0 ){
           # to plot amplitudes for example...
@@ -3503,7 +3513,7 @@ plot.GPR <- function(x,
           # if I use 'dots$col', R returns 'dots$colkey'!!!!
           if(is.null(dots[["col"]])) dots[["col"]] <- palGPR("slice")
         }else if(!is.null(x@surveymode) && 
-                  tolower(x@surveymode) %in% c("cmp", "reflection")){
+                 tolower(x@surveymode) %in% c("cmp", "reflection")){
           dots$zlim <- c(-1, 1) * max(abs(z), na.rm = TRUE)
         }else{
           dots$zlim <- range(z[is.finite(z)], na.rm = TRUE)
@@ -3564,12 +3574,12 @@ plot.GPR <- function(x,
         do.call(plot3D::image2D, c(list(x = xvalues, y = yvalues, z = z), dots))
       }
       
-
-    #------------------------------ WIGGLES -----------------------------------#
+      
+      #------------------------------ WIGGLES -----------------------------------#
     }else if(dots$type == "wiggles"){
       dots$type <- NULL
       barscale <- FALSE
-
+      
       op <- par(no.readonly = TRUE) 
       dx <- mean(diff(xvalues)) # estimated x-step
       z <- x@data
@@ -3579,7 +3589,7 @@ plot.GPR <- function(x,
       nc <- ncol(z)
       y0 <- 0
       topo <- rep(0L,nc)
-    
+      
       xlim <- dots$xlim + c(-1,1)*dx
       dots$xlim <- NULL
       
@@ -3595,13 +3605,13 @@ plot.GPR <- function(x,
       if(is.null(dots$col)) col <- "black"
       lwd  <- dots$lwd
       if(is.null(dots$lwd)) lwd <- 0.5
-
+      
       par(mai = mai, omi = omi, mgp = mgp)
       
       do.call(plot, c( list( x = 0, type = "n", xaxs = "i", yaxs = "i", 
                              yaxt = "n", xlim = xlim, ylim = ylim, bty = "n"),
                        dots))
-
+      
       if(wside > 0){
         for(i in rev(seq_along(xvalues))){
           y2 <- yvalues + topo[i]
@@ -3658,7 +3668,7 @@ plot.GPR <- function(x,
         }
       }
     }
-
+    
     if(isTRUE(addTime0) && !grepl("CMPANALYSIS", toupper(x@surveymode))){
       dx <- diff(xvalues)/2
       xt0 <- c(xvalues[1] - dx[1],  xvalues + c(dx,  tail(dx, 1)))
@@ -3694,10 +3704,10 @@ plot.GPR <- function(x,
     if(barscale){
       # op2 <- par(no.readonly=TRUE)
       plot3D::colkey (col = dots$col, clim = clim, clab = dots$clab, clog = FALSE, 
-              add = TRUE, cex.clab = 0.75, dist = colkeyDist)
-              
+                      add = TRUE, cex.clab = 0.75, dist = colkeyDist)
+      
       # .barScale(clim = clim, y = yvalues, col = dots$col, 
-                # clab = dots$clab, clabcex = 0.8)
+      # clab = dots$clab, clabcex = 0.8)
       # par(op2)
     }
     # par(op)
@@ -3756,72 +3766,72 @@ contour.GPR <- function(x,
 #' @rdname plot3DRGL
 #' @export
 setMethod("plot3DRGL", "GPR", 
-function(x, addTopo = FALSE, clip = NULL, normalize = NULL, 
-         nupspl = NULL, add = TRUE, xlim = NULL, ylim = NULL, 
-         zlim = NULL, ...){
-    if(length(x@vel) > 0){  
-      velo <- x@vel[[1]]
-    }else{
-      velo <- 0
-    }
-    xsel <- rep(TRUE,length(x))
-    if(!is.null(xlim)){
-      xlim <- sort(xlim)
-      xsel <- coord(x, 1) >= xlim[1] & coord(x, 1) <= xlim[2]
-    }
-    ysel <- rep(TRUE,length(x))
-    if(!is.null(ylim)){
-      ylim <- sort(ylim)
-      ysel <- coord(x, 2) >= ylim[1] & coord(x, 2) <= ylim[2]
-      cat(ylim,"  range = ", range(coord(x, 2)),"\n")
-    }
-    xysel <- xsel & ysel
-    if(sum(xysel) <= 2){
-      return(NULL)
-    }
-    x <- x[,xysel]
-    if(!is.null(nupspl)){
-      cat("upsample...")
-      x <- upsample(x, n = nupspl)
-    }
-    if(!is.null(normalize)){
-      x@data <- normalize(x@data, type = normalize)
-    }
-    # warning("First upsample then addTopo. 
-    # Problem: interpolate also coord!!!")
-    if(!is.null(clip) && is.numeric(clip)){
-      if(length(clip)>1){
-        x@data <- .clip(x@data, clip[2], clip[1])
-      }else if(length(clip) == 1){
-        x@data <- .clip(x@data, clip[1])
-      }
-    }else if(is.null(clip)){
-      # clip below the 0.01-quantile and above the 0.99-quantile
-      x@data <- .clip(x@data, quantile(as.vector(x@data), 0.99, na.rm = TRUE),
-                       quantile(as.vector(x@data), 0.01, na.rm = TRUE))
-    }
-    if(length(x@coordref)!=3 ){
-      refCoord <- apply(coord(x),2,min)
-    }else{
-      refCoord <-x@coordref
-    }
-    z0 <- coord(x, 3) - refCoord[3]
-    if(addTopo){
-      x <- migration(x)
-      z0 <- rep(max(coord(x, 3)), length(x)) - refCoord[3]
-    }
-    cat(refCoord,max(coord(x, 3)),"\n")
-    A <-as.matrix(x)
-    # cat(refCoord,"\n")
-    xpos <- coord(x, 1) - refCoord[1]
-    ypos <- coord(x, 2) - refCoord[2]
-    zpos <- x@depth
-    if(add==FALSE){
-      # rgl.open()
-      rgl::open3d()
-    }
-    .plot3DRGL(A, xpos, ypos, zpos, z0, ...)
-  }
+          function(x, addTopo = FALSE, clip = NULL, normalize = NULL, 
+                   nupspl = NULL, add = TRUE, xlim = NULL, ylim = NULL, 
+                   zlim = NULL, ...){
+            if(length(x@vel) > 0){  
+              velo <- x@vel[[1]]
+            }else{
+              velo <- 0
+            }
+            xsel <- rep(TRUE,length(x))
+            if(!is.null(xlim)){
+              xlim <- sort(xlim)
+              xsel <- coord(x, 1) >= xlim[1] & coord(x, 1) <= xlim[2]
+            }
+            ysel <- rep(TRUE,length(x))
+            if(!is.null(ylim)){
+              ylim <- sort(ylim)
+              ysel <- coord(x, 2) >= ylim[1] & coord(x, 2) <= ylim[2]
+              cat(ylim,"  range = ", range(coord(x, 2)),"\n")
+            }
+            xysel <- xsel & ysel
+            if(sum(xysel) <= 2){
+              return(NULL)
+            }
+            x <- x[,xysel]
+            if(!is.null(nupspl)){
+              cat("upsample...")
+              x <- upsample(x, n = nupspl)
+            }
+            if(!is.null(normalize)){
+              x@data <- normalize(x@data, type = normalize)
+            }
+            # warning("First upsample then addTopo. 
+            # Problem: interpolate also coord!!!")
+            if(!is.null(clip) && is.numeric(clip)){
+              if(length(clip)>1){
+                x@data <- .clip(x@data, clip[2], clip[1])
+              }else if(length(clip) == 1){
+                x@data <- .clip(x@data, clip[1])
+              }
+            }else if(is.null(clip)){
+              # clip below the 0.01-quantile and above the 0.99-quantile
+              x@data <- .clip(x@data, quantile(as.vector(x@data), 0.99, na.rm = TRUE),
+                              quantile(as.vector(x@data), 0.01, na.rm = TRUE))
+            }
+            if(length(x@coordref)!=3 ){
+              refCoord <- apply(coord(x),2,min)
+            }else{
+              refCoord <-x@coordref
+            }
+            z0 <- coord(x, 3) - refCoord[3]
+            if(addTopo){
+              x <- migration(x)
+              z0 <- rep(max(coord(x, 3)), length(x)) - refCoord[3]
+            }
+            cat(refCoord,max(coord(x, 3)),"\n")
+            A <-as.matrix(x)
+            # cat(refCoord,"\n")
+            xpos <- coord(x, 1) - refCoord[1]
+            ypos <- coord(x, 2) - refCoord[2]
+            zpos <- x@depth
+            if(add==FALSE){
+              # rgl.open()
+              rgl::open3d()
+            }
+            .plot3DRGL(A, xpos, ypos, zpos, z0, ...)
+          }
 )
 
 #' Plot the trace amplitude
@@ -3846,8 +3856,8 @@ function(x, addTopo = FALSE, clip = NULL, normalize = NULL,
 #' @rdname plotAmpl
 #' @export
 setMethod("plotAmpl", "GPR", function(x, FUN = mean, add = FALSE, 
-            all = FALSE, plotLog = TRUE, ...){
-#   op <- par(no.readonly=TRUE)
+                                      all = FALSE, plotLog = TRUE, ...){
+  #   op <- par(no.readonly=TRUE)
   AMP <- apply(abs(x@data), 1, FUN, ...)
   ylab <- "mV"
   if(plotLog == TRUE){
@@ -3857,14 +3867,14 @@ setMethod("plotAmpl", "GPR", function(x, FUN = mean, add = FALSE,
   z <- depth(x)
   if(!add){
     par(mar=c(5, 4, 4, 2)+0.1)
-      plot(z, AMP, type = "l", xlab = x@depthunit, ylab = ylab, ...)
+    plot(z, AMP, type = "l", xlab = x@depthunit, ylab = ylab, ...)
     if(all == TRUE){
       if(plotLog == TRUE){
         invisible(apply(log(abs(x@data)), 2, lines, x = z, 
-                          col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
+                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
       }else{
         invisible(apply((abs(x@data)), 2, lines, x = z, 
-                          col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
+                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
       }
     }
     title(x@name)
@@ -3872,16 +3882,16 @@ setMethod("plotAmpl", "GPR", function(x, FUN = mean, add = FALSE,
     if(all == TRUE){
       if(plotLog == TRUE){
         invisible(apply(log(abs(x@data)), 2, lines, x = z, 
-                          col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
+                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
       }else{
         invisible(apply((abs(x@data)), 2, lines, x = z, 
-                          col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
+                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
       }
     }
     lines(z, AMP, ...)
   }
-#   par(op)
-  } 
+  #   par(op)
+} 
 )
 
 
@@ -3891,17 +3901,17 @@ setMethod("plotAmpl", "GPR", function(x, FUN = mean, add = FALSE,
 #' @rdname spec
 #' @export
 setMethod("spec", "GPR", function(x, type = c("f-x","f-k"), plotSpec = TRUE, 
-        unwrapPhase = TRUE, ...){
-    type <- match.arg(type, c("f-x","f-k"))
-    if(type == "f-x"){
-      S <- powSpec(x@data, dT = x@dz, fac = 1000000, 
-                  plotSpec = plotSpec, titleSpec = x@name)
-    }else if(type == "f-k"){
-      S <- .FKSpectrum(x@data,dx=x@dx,dz=x@dz, plotSpec=plotSpec,...)
-    }
-    invisible(S)
-#     return(S)
-  } 
+                                  unwrapPhase = TRUE, ...){
+  type <- match.arg(type, c("f-x","f-k"))
+  if(type == "f-x"){
+    S <- powSpec(x@data, dT = x@dz, fac = 1000000, 
+                 plotSpec = plotSpec, titleSpec = x@name)
+  }else if(type == "f-k"){
+    S <- .FKSpectrum(x@data,dx=x@dx,dz=x@dz, plotSpec=plotSpec,...)
+  }
+  invisible(S)
+  #     return(S)
+} 
 )
 
 
@@ -4006,113 +4016,113 @@ setMethod("trRmDuplicates", "GPR", function(x, tol = NULL, verbose = TRUE){
 setMethod("interpPos", "GPR", 
           function(x, topo, plot = FALSE, r = NULL, tol = NULL, 
                    method = c("linear", "spline", "pchip"), ...){
-  if(all(is.na(topo[,"TRACE"]))){
-    stop(paste0(x@name, ": no link between the measured points",
-                   "and the GPR traces!\n"))
-  }
-  # if we have measured some points before the line start or 
-  # after the end of the GPR Line, we delete them
-  test <- which(!is.na(topo[,"TRACE"]))
-  #trueEnd <- max(which(test))
-  #trueBeg <- min(which(test))
-  topo <- topo[min(test):max(test), ]
-  #--- 3D topo Distance ---#
-  if(!is.null(r)){
-    topo[,"Z"] <- raster::extract(r, topo[, c("E","N")], method = "bilinear")
-    if(sum(is.na(topo[, "Z"])) > 0){
-      stop("\n'extract(r, topo[, c(\"E\",\"N\")], method = \"bilinear\")' ",
-           "returns 'NA' values!\n", 
-           "Not all GPR positions fall within raster extent or\n",
-           "there are 'NA' values in raster 'r'!")
-    }
-  }
-  # check for duplicates in TRACE ID and remove them!
-  topo <- rmRowDuplicates(topo, topo[, "TRACE"])
-  # order topo by increasing traceNb
-  topo <- topo[order(topo[, "TRACE"]), ]
-  #--- REMOVE DUPLICATED TRACES (TRACES WITH (ALMOST) SAME POSITIONS) ---#
-  dist2D <- posLine(topo[, c("N", "E")], last = FALSE)
-  # in 'x' and 'topo'
-  if(is.null(tol))  tol <- sqrt(.Machine$double.eps)
-  tdbl <- which(abs(diff(dist2D)) < tol)
-  if(length(tdbl) > 0){
-    check <- 0
-    for(i in seq_along(tdbl)){
-      dtr <- topo[tdbl[i]+1, "TRACE"] - topo[tdbl[i], "TRACE"]
-      # traces to remove
-      w <- topo[tdbl[i], "TRACE"] + seq_len(dtr)
-      x <- x[, -w]  # remove trace in x
-      # remove traces in topo and actualise the trace numbers
-      topo <- topo[-(tdbl[i] + 1), ] 
-      v <- (tdbl[i] + 1):nrow(topo)
-      topo[v, "TRACE"] <- topo[v, "TRACE"] -  dtr
-      #dist3D <- dist3D[-tdbl[i]]
-      tdbl <- tdbl - 1
-      check <- check + dtr
-    }
-    message(length(tdbl), " duplicate trace position(s) removed from 'topo'!")
-    message("Accordingly, ", check, " trace(s) removed from 'x'!")
-  }
-  dist3D <- posLine(topo[, c("N", "E", "Z")], last = FALSE)
-  # if there are points measured with the total station
-  # that do not have an fiducial (FID) > interpolate them!
-  myWarning <- ""
-  if(anyNA(topo[,"TRACE"])){
-    # dist3D[topo$PNAME %in% FID$PNAME] > distance for the points 
-    # also recorded in FID
-    myWarning <- "\npoints total station without fiducials"
-    test <- !is.na(topo[,"TRACE"])
-    intMeth <- ifelse(sum(test) > 2, method[1], "linear")
-    traceNb <- signal::interp1(x      = dist3D[test], 
-                               y      = topo[test, "TRACE"], 
-                               xi     = dist3D,
-                               method = intMeth,
-                               extrap = TRUE)
-    topo[, "TRACE"] <- as.integer(round(traceNb))
-    # check for duplicates in TRACE ID and remove them!
-    topo <- rmRowDuplicates(topo, topo[, "TRACE"])
-  }
-  if(all(seq_along(x@pos) %in% topo[, "TRACE"])){
-    A <- topo[topo[, "TRACE"] %in% seq_along(x@pos), c("E", "N", "Z")]
-    message("No interpolation required because the trace positions\n",
-            "of all GPR traces is already available (in object 'topo')!")
-  }else{
-    #--- INTERPOLATION ---#
-    A <- interp3DPath(x = topo[, c("E", "N", "Z")], pos = topo[, "TRACE"], 
-                      posi = seq_along(x@pos), r =r,
-                      method = method)
-    colnames(A) <- c("E", "N", "Z")
-  }
-  dist3Dint <- posLine(A, last = FALSE)
-  message(x@name, ": mean dx = ", round( mean(diff(dist3Dint)), 3 ), 
-          ", range dx = [", round( min(diff(dist3Dint)), 3 ),", ", 
-          round( max(diff(dist3Dint)), 3 ),"]", myWarning)
-  if(plot == TRUE){
-    op <- par(no.readonly=TRUE)
-    par(mfrow=c(1, 3))
-    plot(topo[, "TRACE"], dist3D, pch = 20, col = "red", cex = 2, asp = 1,
-         xlab = "trace number", ylab = "trace spacing (3D)",
-         xlim = range(seq_along(x@pos)), ylim = range(dist3Dint), 
-         main = paste( x@name))
-    points(seq_along(x@pos), dist3Dint, pch = 20, col = "blue", cex = 0.6)
-    plot(dist3Dint, A[, "Z"], type = "l", asp = 10, 
-         xlab = "interpolated trace spacing", 
-         ylab = "interpolated elevation",
-         main = paste0(x@name, " min dx = ", round(min(diff(dist3Dint)), 2), 
-                       "  max dx = ", round(max(diff(dist3Dint)), 2)))
-    points(dist3D, topo[,"Z"], pch = 20, col = "red")
-    plot(topo[, c("E","N")], col = 1, type = "l", lwd = 2, asp = 1,
-         ylim = range(A[, "N"]), xlim = range(A[, "E"]), 
-         main = paste0(x@name, " mean dx=", round(mean(diff(dist3Dint)),2)))
-    points(topo[, c("E","N")], col = 1, pch = 20, cex = 2)
-    lines(A[, "E"], A[, "N"], col = 2, lwd = 1)
-    Sys.sleep(1)
-    par(op)
-  }
-  x@coord <- A
-  x@proc <- c(x@proc, "interpPos")
-  return(x)
-}
+            if(all(is.na(topo[,"TRACE"]))){
+              stop(paste0(x@name, ": no link between the measured points",
+                          "and the GPR traces!\n"))
+            }
+            # if we have measured some points before the line start or 
+            # after the end of the GPR Line, we delete them
+            test <- which(!is.na(topo[,"TRACE"]))
+            #trueEnd <- max(which(test))
+            #trueBeg <- min(which(test))
+            topo <- topo[min(test):max(test), ]
+            #--- 3D topo Distance ---#
+            if(!is.null(r)){
+              topo[,"Z"] <- raster::extract(r, topo[, c("E","N")], method = "bilinear")
+              if(sum(is.na(topo[, "Z"])) > 0){
+                stop("\n'extract(r, topo[, c(\"E\",\"N\")], method = \"bilinear\")' ",
+                     "returns 'NA' values!\n", 
+                     "Not all GPR positions fall within raster extent or\n",
+                     "there are 'NA' values in raster 'r'!")
+              }
+            }
+            # check for duplicates in TRACE ID and remove them!
+            topo <- rmRowDuplicates(topo, topo[, "TRACE"])
+            # order topo by increasing traceNb
+            topo <- topo[order(topo[, "TRACE"]), ]
+            #--- REMOVE DUPLICATED TRACES (TRACES WITH (ALMOST) SAME POSITIONS) ---#
+            dist2D <- posLine(topo[, c("N", "E")], last = FALSE)
+            # in 'x' and 'topo'
+            if(is.null(tol))  tol <- sqrt(.Machine$double.eps)
+            tdbl <- which(abs(diff(dist2D)) < tol)
+            if(length(tdbl) > 0){
+              check <- 0
+              for(i in seq_along(tdbl)){
+                dtr <- topo[tdbl[i]+1, "TRACE"] - topo[tdbl[i], "TRACE"]
+                # traces to remove
+                w <- topo[tdbl[i], "TRACE"] + seq_len(dtr)
+                x <- x[, -w]  # remove trace in x
+                # remove traces in topo and actualise the trace numbers
+                topo <- topo[-(tdbl[i] + 1), ] 
+                v <- (tdbl[i] + 1):nrow(topo)
+                topo[v, "TRACE"] <- topo[v, "TRACE"] -  dtr
+                #dist3D <- dist3D[-tdbl[i]]
+                tdbl <- tdbl - 1
+                check <- check + dtr
+              }
+              message(length(tdbl), " duplicate trace position(s) removed from 'topo'!")
+              message("Accordingly, ", check, " trace(s) removed from 'x'!")
+            }
+            dist3D <- posLine(topo[, c("N", "E", "Z")], last = FALSE)
+            # if there are points measured with the total station
+            # that do not have an fiducial (FID) > interpolate them!
+            myWarning <- ""
+            if(anyNA(topo[,"TRACE"])){
+              # dist3D[topo$PNAME %in% FID$PNAME] > distance for the points 
+              # also recorded in FID
+              myWarning <- "\npoints total station without fiducials"
+              test <- !is.na(topo[,"TRACE"])
+              intMeth <- ifelse(sum(test) > 2, method[1], "linear")
+              traceNb <- signal::interp1(x      = dist3D[test], 
+                                         y      = topo[test, "TRACE"], 
+                                         xi     = dist3D,
+                                         method = intMeth,
+                                         extrap = TRUE)
+              topo[, "TRACE"] <- as.integer(round(traceNb))
+              # check for duplicates in TRACE ID and remove them!
+              topo <- rmRowDuplicates(topo, topo[, "TRACE"])
+            }
+            if(all(seq_along(x@pos) %in% topo[, "TRACE"])){
+              A <- topo[topo[, "TRACE"] %in% seq_along(x@pos), c("E", "N", "Z")]
+              message("No interpolation required because the trace positions\n",
+                      "of all GPR traces is already available (in object 'topo')!")
+            }else{
+              #--- INTERPOLATION ---#
+              A <- interp3DPath(x = topo[, c("E", "N", "Z")], pos = topo[, "TRACE"], 
+                                posi = seq_along(x@pos), r =r,
+                                method = method)
+              colnames(A) <- c("E", "N", "Z")
+            }
+            dist3Dint <- posLine(A, last = FALSE)
+            message(x@name, ": mean dx = ", round( mean(diff(dist3Dint)), 3 ), 
+                    ", range dx = [", round( min(diff(dist3Dint)), 3 ),", ", 
+                    round( max(diff(dist3Dint)), 3 ),"]", myWarning)
+            if(plot == TRUE){
+              op <- par(no.readonly=TRUE)
+              par(mfrow=c(1, 3))
+              plot(topo[, "TRACE"], dist3D, pch = 20, col = "red", cex = 2, asp = 1,
+                   xlab = "trace number", ylab = "trace spacing (3D)",
+                   xlim = range(seq_along(x@pos)), ylim = range(dist3Dint), 
+                   main = paste( x@name))
+              points(seq_along(x@pos), dist3Dint, pch = 20, col = "blue", cex = 0.6)
+              plot(dist3Dint, A[, "Z"], type = "l", asp = 10, 
+                   xlab = "interpolated trace spacing", 
+                   ylab = "interpolated elevation",
+                   main = paste0(x@name, " min dx = ", round(min(diff(dist3Dint)), 2), 
+                                 "  max dx = ", round(max(diff(dist3Dint)), 2)))
+              points(dist3D, topo[,"Z"], pch = 20, col = "red")
+              plot(topo[, c("E","N")], col = 1, type = "l", lwd = 2, asp = 1,
+                   ylim = range(A[, "N"]), xlim = range(A[, "E"]), 
+                   main = paste0(x@name, " mean dx=", round(mean(diff(dist3Dint)),2)))
+              points(topo[, c("E","N")], col = 1, pch = 20, cex = 2)
+              lines(A[, "E"], A[, "N"], col = 2, lwd = 1)
+              Sys.sleep(1)
+              par(op)
+            }
+            x@coord <- A
+            x@proc <- c(x@proc, "interpPos")
+            return(x)
+          }
 )
 
 # remove rows of x with duplicated element in v
@@ -4148,7 +4158,7 @@ interp3DPath <- function(x, pos, posi, r = NULL,
                               method = intMeth, extrap = NA)
   ENA <- is.na(ENZ[, 1])
   ENZ[ENA, 1] <- signal::interp1(dist3D, x[, 1], dist3DInt[ENA], 
-                              method = "linear", extrap = TRUE)
+                                 method = "linear", extrap = TRUE)
   ENZ[, 2] <- signal::interp1(dist3D, x[, 2], dist3DInt, 
                               method = intMeth , extrap = NA)
   ZNA <- is.na(ENZ[, 2])
@@ -4183,8 +4193,8 @@ interp3DPath <- function(x, pos, posi, r = NULL,
 #' @rdname relPos
 #' @export
 setMethod("relPos", "GPR", function(x){
-    return(posLine(x@coord))
-  } 
+  return(posLine(x@coord))
+} 
 )
 
 #' Reverse the trace position.
@@ -4214,24 +4224,24 @@ setMethod("relPos", "GPR", function(x){
 #' }
 #' @export
 setMethod("reverse", "GPR", function(x, id = NULL,  tol = 0.3){
-    xnew <- x
-    xnew@data <- x@data[,length(x):1]
-    xnew@time0 <- rev(x@time0)
-    xnew@time <- rev(x@time)
-    xnew@fid <- rev(x@fid)
-    xnew@ann <- rev(x@ann)
-    if(length(x@coord)>0){
-      xnew@coord <- x@coord[nrow(x@coord):1,]
-    }
-    if(length(x@rec)>0){
-      xnew@rec <- x@rec[nrow(x@rec):1,]
-    }
-    if(length(x@trans)>0){
-      xnew@trans <- x@trans[nrow(x@trans):1,]
-    }
-    proc(xnew) <- getArgs()
-    return(xnew)
+  xnew <- x
+  xnew@data <- x@data[,length(x):1]
+  xnew@time0 <- rev(x@time0)
+  xnew@time <- rev(x@time)
+  xnew@fid <- rev(x@fid)
+  xnew@ann <- rev(x@ann)
+  if(length(x@coord)>0){
+    xnew@coord <- x@coord[nrow(x@coord):1,]
   }
+  if(length(x@rec)>0){
+    xnew@rec <- x@rec[nrow(x@rec):1,]
+  }
+  if(length(x@trans)>0){
+    xnew@trans <- x@trans[nrow(x@trans):1,]
+  }
+  proc(xnew) <- getArgs()
+  return(xnew)
+}
 )
 
 #' Shift estimation between two GPR profiles.
@@ -4240,7 +4250,7 @@ setMethod("reverse", "GPR", function(x, id = NULL,  tol = 0.3){
 #' @rdname shiftEst
 #' @export
 setMethod("shiftEst", "GPR", function(x, y = NULL, 
-          method=c("phase", "WSSD"), dxy = NULL, ...){
+                                      method=c("phase", "WSSD"), dxy = NULL, ...){
   return( displacement(x@data, y@data, method=method, dxy = dxy) )
 })
 
@@ -4251,76 +4261,76 @@ setMethod("shiftEst", "GPR", function(x, y = NULL,
 #' @rdname delineation
 #' @export
 setMethod("delineate", "GPR", 
-function(x,name=NULL,type=c("raster","wiggles"),addTopo=FALSE,
-        nupspl=NULL,n = 10000, ...){
-    if(is.null(dev.list())){
-      stop(paste0("You must first plot the GPR profile",
-                  "with the function \"plot\"!\n"))
-    }
-    xsave <- x
-    itp <- locator(type="l", n=n)
-    if(length(itp)>0){
-      if(length(x@vel)>0){  
-        velo <- x@vel[[1]]
-      }else{
-        velo <- 0
-      }
-      if(!is.null(nupspl)){
-        x <- upsample(x,n=nupspl)
-      }
-      topo <- rep(0,length(x))
-      type <- match.arg(type, c("raster","wiggles"))
-      if(type=="raster"){
-        if(addTopo){
-          x <- migration(x)
-        }
-        # yvalues <- -rev(x@depth) 
-        yvalues <- -(x@depth) 
-        yvalues <- yvalues + mean(x@time0)
-      }else if(type=="wiggles"){
-        yvalues <- -rev(x@depth) 
-        if(addTopo){
-          topo <- x@coord[,3]
-          topo <- topo - max(topo)
-          yvalues <- yvalues * velo/ 2
-          time_0 <- mean(x@time0)
-          depth_0 <- depthToTime(z = 0, time_0, v = velo, antsep = x@antsep) * 
-                                  velo/ 2
-          yvalues <- yvalues + depth_0
-        }
-      }
-      if(length(x@coord) == 0){
-        x@coord <- matrix(0,nrow=ncol(x),ncol=3)
-        x@coord[,1] <- x@pos
-      }
-      xvalues <- posLine(x@coord)
-      posxOnPlot <- sapply(itp$x, .whichMin, xvalues)
-      posyOnPlot <- sapply(itp$y, .whichMin, yvalues)
-      mySel <- posxOnPlot >= 0 & posxOnPlot <= length(x) & 
-               posyOnPlot >= 0 & posyOnPlot <= nrow(x)
-      posxOnPlot2 <- posxOnPlot[mySel]
-      posPts <- posyOnPlot[mySel]
-      posTrace <- x@traces[posxOnPlot2]
-      xpos <- x@coord[posxOnPlot2,1]
-      ypos <- x@coord[posxOnPlot2,2]
-      # zpos <- x@coord[posPts,3]
-      zpos <- itp$y[mySel]
-      if(is.null(name)){
-        xsave@delineations <- c(xsave@delineations, 
-                    list(cbind(posTrace,posPts,xpos,ypos,zpos)))
-      }else{
-        name <- as.character(name)
-        if(length(xsave@delineations[[name]])>0){
-          xsave@delineations[[name]] <- c(xsave@delineations[[name]], 
-                    list(cbind(posTrace,posPts,xpos,ypos,zpos)))
-        }else{
-          xsave@delineations[[name]] <- 
+          function(x,name=NULL,type=c("raster","wiggles"),addTopo=FALSE,
+                   nupspl=NULL,n = 10000, ...){
+            if(is.null(dev.list())){
+              stop(paste0("You must first plot the GPR profile",
+                          "with the function \"plot\"!\n"))
+            }
+            xsave <- x
+            itp <- locator(type="l", n=n)
+            if(length(itp)>0){
+              if(length(x@vel)>0){  
+                velo <- x@vel[[1]]
+              }else{
+                velo <- 0
+              }
+              if(!is.null(nupspl)){
+                x <- upsample(x,n=nupspl)
+              }
+              topo <- rep(0,length(x))
+              type <- match.arg(type, c("raster","wiggles"))
+              if(type=="raster"){
+                if(addTopo){
+                  x <- migration(x)
+                }
+                # yvalues <- -rev(x@depth) 
+                yvalues <- -(x@depth) 
+                yvalues <- yvalues + mean(x@time0)
+              }else if(type=="wiggles"){
+                yvalues <- -rev(x@depth) 
+                if(addTopo){
+                  topo <- x@coord[,3]
+                  topo <- topo - max(topo)
+                  yvalues <- yvalues * velo/ 2
+                  time_0 <- mean(x@time0)
+                  depth_0 <- depthToTime(z = 0, time_0, v = velo, antsep = x@antsep) * 
+                    velo/ 2
+                  yvalues <- yvalues + depth_0
+                }
+              }
+              if(length(x@coord) == 0){
+                x@coord <- matrix(0,nrow=ncol(x),ncol=3)
+                x@coord[,1] <- x@pos
+              }
+              xvalues <- posLine(x@coord)
+              posxOnPlot <- sapply(itp$x, .whichMin, xvalues)
+              posyOnPlot <- sapply(itp$y, .whichMin, yvalues)
+              mySel <- posxOnPlot >= 0 & posxOnPlot <= length(x) & 
+                posyOnPlot >= 0 & posyOnPlot <= nrow(x)
+              posxOnPlot2 <- posxOnPlot[mySel]
+              posPts <- posyOnPlot[mySel]
+              posTrace <- x@traces[posxOnPlot2]
+              xpos <- x@coord[posxOnPlot2,1]
+              ypos <- x@coord[posxOnPlot2,2]
+              # zpos <- x@coord[posPts,3]
+              zpos <- itp$y[mySel]
+              if(is.null(name)){
+                xsave@delineations <- c(xsave@delineations, 
+                                        list(cbind(posTrace,posPts,xpos,ypos,zpos)))
+              }else{
+                name <- as.character(name)
+                if(length(xsave@delineations[[name]])>0){
+                  xsave@delineations[[name]] <- c(xsave@delineations[[name]], 
+                                                  list(cbind(posTrace,posPts,xpos,ypos,zpos)))
+                }else{
+                  xsave@delineations[[name]] <- 
                     list(cbind(posTrace,posPts,xpos,ypos,zpos))
-        }
-      }
-    }
-    return(xsave)
-  }
+                }
+              }
+            }
+            return(xsave)
+          }
 )
 
 # add "manually" delineation to GPR data
@@ -4330,69 +4340,69 @@ function(x,name=NULL,type=c("raster","wiggles"),addTopo=FALSE,
 #' @rdname delineation
 #' @export
 setMethod("addDelineation", "GPR", function(x, itp, 
-          name = NULL, type = c("raster", "wiggles"), addTopo = FALSE, ...){
-    if(is.null(dev.list())){
-      stop("You must first plot the GPR profile with the function \"plot\"!\n")
-    }
-    xsave <- x
-    # itp <- locator(type="l", n=n)
-    topo <- rep(0,length(x))
-    type <- match.arg(type, c("raster","wiggles"))
-    if(type=="raster"){
-      if(addTopo){
-        x <- migration(x)
-      }
-      # yvalues <- -rev(x@depth) 
-      yvalues <- -(x@depth) 
-      yvalues <- yvalues + mean(x@time0)
-    }else if(type=="wiggles"){
-      yvalues <- -rev(x@depth) 
-      if(addTopo){
-        if(length(x@vel)>0){  
-          velo <- x@vel[[1]]
-        }else{
-          velo <- 0
-        }
-        topo <- x@coord[,3]
-        topo <- topo - max(topo)
-        yvalues <- yvalues * velo/ 2
-        time_0 <- mean(x@time0)
-        depth_0 <- depthToTime(z = 0, time_0, v = velo, antsep = x@antsep) * 
-                                      velo/ 2
-        yvalues <- yvalues + depth_0
-      }
-    }
-    if(length(x@coord) == 0){
-      x@coord <- matrix(0,nrow=ncol(x),ncol=3)
-      x@coord[,1] <- x@pos
-    }
-    xvalues <- posLine(x@coord)      
-    posxOnPlot <- sapply(itp$x, .whichMin, xvalues)
-    posyOnPlot <- sapply(itp$y, .whichMin, yvalues)
-    mySel <- posxOnPlot >= 0 & posxOnPlot <= length(x) & 
-             posyOnPlot >= 0 & posyOnPlot <= nrow(x)
-    posxOnPlot2 <- posxOnPlot[mySel]
-    posPts <- posyOnPlot[mySel]
-    posTrace <- x@traces[posxOnPlot2]
-    xpos <- x@coord[posxOnPlot2,1]
-    ypos <- x@coord[posxOnPlot2,2]
-    # zpos <- x@coord[posPts,3]
-    zpos <- itp$y[mySel]
-    if(is.null(name)){
-      xsave@delineations <- c(xsave@delineations, 
-            list(cbind(posTrace,posPts,xpos,ypos,zpos)))
-    }else{
-      name <- as.character(name)
-      if(length(xsave@delineations[[name]])>0){
-        xsave@delineations[[name]] <- c(xsave@delineations[[name]], 
-            list(cbind(posTrace,posPts,xpos,ypos,zpos)))
-      }else{
-        xsave@delineations[[name]] <- 
-            list(cbind(posTrace,posPts,xpos,ypos,zpos))
-      }
-    }
-    return(xsave)
+                                            name = NULL, type = c("raster", "wiggles"), addTopo = FALSE, ...){
+  if(is.null(dev.list())){
+    stop("You must first plot the GPR profile with the function \"plot\"!\n")
   }
+  xsave <- x
+  # itp <- locator(type="l", n=n)
+  topo <- rep(0,length(x))
+  type <- match.arg(type, c("raster","wiggles"))
+  if(type=="raster"){
+    if(addTopo){
+      x <- migration(x)
+    }
+    # yvalues <- -rev(x@depth) 
+    yvalues <- -(x@depth) 
+    yvalues <- yvalues + mean(x@time0)
+  }else if(type=="wiggles"){
+    yvalues <- -rev(x@depth) 
+    if(addTopo){
+      if(length(x@vel)>0){  
+        velo <- x@vel[[1]]
+      }else{
+        velo <- 0
+      }
+      topo <- x@coord[,3]
+      topo <- topo - max(topo)
+      yvalues <- yvalues * velo/ 2
+      time_0 <- mean(x@time0)
+      depth_0 <- depthToTime(z = 0, time_0, v = velo, antsep = x@antsep) * 
+        velo/ 2
+      yvalues <- yvalues + depth_0
+    }
+  }
+  if(length(x@coord) == 0){
+    x@coord <- matrix(0,nrow=ncol(x),ncol=3)
+    x@coord[,1] <- x@pos
+  }
+  xvalues <- posLine(x@coord)      
+  posxOnPlot <- sapply(itp$x, .whichMin, xvalues)
+  posyOnPlot <- sapply(itp$y, .whichMin, yvalues)
+  mySel <- posxOnPlot >= 0 & posxOnPlot <= length(x) & 
+    posyOnPlot >= 0 & posyOnPlot <= nrow(x)
+  posxOnPlot2 <- posxOnPlot[mySel]
+  posPts <- posyOnPlot[mySel]
+  posTrace <- x@traces[posxOnPlot2]
+  xpos <- x@coord[posxOnPlot2,1]
+  ypos <- x@coord[posxOnPlot2,2]
+  # zpos <- x@coord[posPts,3]
+  zpos <- itp$y[mySel]
+  if(is.null(name)){
+    xsave@delineations <- c(xsave@delineations, 
+                            list(cbind(posTrace,posPts,xpos,ypos,zpos)))
+  }else{
+    name <- as.character(name)
+    if(length(xsave@delineations[[name]])>0){
+      xsave@delineations[[name]] <- c(xsave@delineations[[name]], 
+                                      list(cbind(posTrace,posPts,xpos,ypos,zpos)))
+    }else{
+      xsave@delineations[[name]] <- 
+        list(cbind(posTrace,posPts,xpos,ypos,zpos))
+    }
+  }
+  return(xsave)
+}
 )
 
 # Remove manually delineation from the GPR data
@@ -4401,54 +4411,54 @@ setMethod("addDelineation", "GPR", function(x, itp,
 #' @rdname delineation
 #' @export
 setReplaceMethod("rmDelineations", "GPR", function(x,value=NULL){
-    deli <- x@delineations
-    n_d <- length(deli)
-    if(!is.null(value) && n_d > 0 && value != "all"){
-      n_tot <- sum(sapply(deli, .lengthList))
-      it <- 0
-      value <- n_tot - value + 1
-      for(i in n_d:1){
-        if(typeof(deli[[i]]) == "list"){
-          n_sub_d <- length(deli[[i]])
-          for(j in n_sub_d:1){
-            it <- it + 1
-            # itdel <- 0
-            if(it %in% value){
-            # if(value==it){
-              # x@delineations[[i]][[j]] <- NULL
-              # j <- j - itdel
-              # cat("---- j=", j,"  ,   j-itdel=",j- itdel,"\n")
-              x@delineations[[i]][j] <- NULL
-              # itdel <- itdel + 1
-              if(length(x@delineations[[i]])==0 || 
-                  is.null(unlist(x@delineations[[i]], use.names = FALSE))){
-                x@delineations[i] <- NULL
-                # i<-i-1
-                break
-              }
-              # print(x@delineations[[i]])
-            }
-          }
-        }else{
+  deli <- x@delineations
+  n_d <- length(deli)
+  if(!is.null(value) && n_d > 0 && value != "all"){
+    n_tot <- sum(sapply(deli, .lengthList))
+    it <- 0
+    value <- n_tot - value + 1
+    for(i in n_d:1){
+      if(typeof(deli[[i]]) == "list"){
+        n_sub_d <- length(deli[[i]])
+        for(j in n_sub_d:1){
           it <- it + 1
+          # itdel <- 0
           if(it %in% value){
-          # if(value==it){
-            x@delineations[i] <- NULL
-            # i <- i-1
-            # break
-            # print(x@delineations)
+            # if(value==it){
+            # x@delineations[[i]][[j]] <- NULL
+            # j <- j - itdel
+            # cat("---- j=", j,"  ,   j-itdel=",j- itdel,"\n")
+            x@delineations[[i]][j] <- NULL
+            # itdel <- itdel + 1
+            if(length(x@delineations[[i]])==0 || 
+               is.null(unlist(x@delineations[[i]], use.names = FALSE))){
+              x@delineations[i] <- NULL
+              # i<-i-1
+              break
+            }
+            # print(x@delineations[[i]])
           }
         }
+      }else{
+        it <- it + 1
+        if(it %in% value){
+          # if(value==it){
+          x@delineations[i] <- NULL
+          # i <- i-1
+          # break
+          # print(x@delineations)
+        }
       }
-    }else if(n_d <1){
-      warning("No delineation to delete\n")
-    }else if(is.null(value)){
-      stop("You must specified the no of the delineation you want to delete!\n")
-    }else if(value=="all"){
-      x@delineations <- list()
     }
-    return(x)
+  }else if(n_d <1){
+    warning("No delineation to delete\n")
+  }else if(is.null(value)){
+    stop("You must specified the no of the delineation you want to delete!\n")
+  }else if(value=="all"){
+    x@delineations <- list()
   }
+  return(x)
+}
 )
 
 # Show the list of delineation of the GPR data
@@ -4457,46 +4467,46 @@ setReplaceMethod("rmDelineations", "GPR", function(x,value=NULL){
 #' @rdname delineation
 #' @export
 setMethod("delineations", "GPR", function(x,sel=NULL,...){
-    deli <- x@delineations
-    n_d <- length(deli)
-    if(n_d >0){
-      if(length(x@coord) == 0){
-        x@coord <- matrix(0,nrow=ncol(x),ncol=3)
-        x@coord[,1] <- x@pos
-      }
-      x_dist <- posLine(x@coord)
-      message("*** delineated lines ****")
-      it <- 0
-      for(i in 1:n_d){
-        if(typeof(deli[[i]])=="list"){
-          n_sub_d <- length(deli[[i]])
-          message(names(deli[i]))
-          for(j in 1:n_sub_d){
-            it <- it + 1
-            tracePos <- sapply( deli[[i]][[j]][,1], .which, x@traces)
-            xpos <- x_dist[tracePos]
-            zpos <- deli[[i]][[j]][,4]
-            message(it, ". length = ", round(diff(range(xpos)), 2), 
-                    ";  depth = ", round(diff(range(zpos)), 2),
-                    ";  ", length(xpos), " pts")
-            # lines(xpos, zpos,col=col[i],...)
-          }
-        }else{
+  deli <- x@delineations
+  n_d <- length(deli)
+  if(n_d >0){
+    if(length(x@coord) == 0){
+      x@coord <- matrix(0,nrow=ncol(x),ncol=3)
+      x@coord[,1] <- x@pos
+    }
+    x_dist <- posLine(x@coord)
+    message("*** delineated lines ****")
+    it <- 0
+    for(i in 1:n_d){
+      if(typeof(deli[[i]])=="list"){
+        n_sub_d <- length(deli[[i]])
+        message(names(deli[i]))
+        for(j in 1:n_sub_d){
           it <- it + 1
-          tracePos <- sapply( deli[[i]][,1], .which, x@traces)
+          tracePos <- sapply( deli[[i]][[j]][,1], .which, x@traces)
           xpos <- x_dist[tracePos]
-          zpos <- deli[[i]][,4]
-          message(it, ". length =", round(diff(range(xpos)), 2),
-                  "; depth =", round(diff(range(zpos)), 2),
-                  "; number of pts =", length(xpos))
+          zpos <- deli[[i]][[j]][,4]
+          message(it, ". length = ", round(diff(range(xpos)), 2), 
+                  ";  depth = ", round(diff(range(zpos)), 2),
+                  ";  ", length(xpos), " pts")
           # lines(xpos, zpos,col=col[i],...)
         }
-        message("- - - - - - - - - - -")
+      }else{
+        it <- it + 1
+        tracePos <- sapply( deli[[i]][,1], .which, x@traces)
+        xpos <- x_dist[tracePos]
+        zpos <- deli[[i]][,4]
+        message(it, ". length =", round(diff(range(xpos)), 2),
+                "; depth =", round(diff(range(zpos)), 2),
+                "; number of pts =", length(xpos))
+        # lines(xpos, zpos,col=col[i],...)
       }
-    }else{
-      message("No lines were delineated!")
+      message("- - - - - - - - - - -")
     }
+  }else{
+    message("No lines were delineated!")
   }
+}
 )
 
 # Export the coordinates of the delineations
@@ -4505,44 +4515,44 @@ setMethod("delineations", "GPR", function(x,sel=NULL,...){
 #' @rdname delineation
 #' @export
 setMethod("exportDelineations", "GPR", function(x, dirpath=""){
-    if(length(x@coord) == 0){
-      x@coord <- matrix(0,nrow=ncol(x),ncol=3)
-      x@coord[,1] <- x@pos
-    }
-    x_dist <- posLine(x@coord)
-    deli <- x@delineations
-    z0 <- max(coord(x, 3)) 
-    it <- 0
-    for(i in seq_along(deli)){
-      if(typeof(deli[[i]])=="list"){
-        n_sub_d <- length(deli[[i]])
-          for(j in n_sub_d:1){
-            it<-it+1
-            tracePos <- sapply( deli[[i]][[j]][,1], .which, x@traces)
-            xprofile <- x_dist[tracePos]
-            zabs <- z0 + deli[[i]][[j]][,5] 
-            # zpos <- deli[[i]][[j]][,5]
-            table_path_name <- paste0(dirpath, name(x), "_", it, "_", 
-                                        names(deli[i]), ".txt")
-            write.table(cbind(deli[[i]][[j]][, c("xpos","ypos","zpos")], zabs, 
-                        xprofile),file=table_path_name, sep = ";", 
-                        row.names = FALSE, 
-                        col.names = c("x","y","zr","z","xprofile"))
-          }
-      }else{
-        it <- it+1
-        tracePos <- sapply( deli[[i]][,1], .which, x@traces)
+  if(length(x@coord) == 0){
+    x@coord <- matrix(0,nrow=ncol(x),ncol=3)
+    x@coord[,1] <- x@pos
+  }
+  x_dist <- posLine(x@coord)
+  deli <- x@delineations
+  z0 <- max(coord(x, 3)) 
+  it <- 0
+  for(i in seq_along(deli)){
+    if(typeof(deli[[i]])=="list"){
+      n_sub_d <- length(deli[[i]])
+      for(j in n_sub_d:1){
+        it<-it+1
+        tracePos <- sapply( deli[[i]][[j]][,1], .which, x@traces)
         xprofile <- x_dist[tracePos]
         zabs <- z0 + deli[[i]][[j]][,5] 
+        # zpos <- deli[[i]][[j]][,5]
         table_path_name <- paste0(dirpath, name(x), "_", it, "_", 
                                   names(deli[i]), ".txt")
         write.table(cbind(deli[[i]][[j]][, c("xpos","ypos","zpos")], zabs, 
-                    xprofile), file = table_path_name, sep = ";", 
+                          xprofile),file=table_path_name, sep = ";", 
                     row.names = FALSE, 
-                    col.names =  c("x","y","zr","z","xprofile"))
+                    col.names = c("x","y","zr","z","xprofile"))
       }
+    }else{
+      it <- it+1
+      tracePos <- sapply( deli[[i]][,1], .which, x@traces)
+      xprofile <- x_dist[tracePos]
+      zabs <- z0 + deli[[i]][[j]][,5] 
+      table_path_name <- paste0(dirpath, name(x), "_", it, "_", 
+                                names(deli[i]), ".txt")
+      write.table(cbind(deli[[i]][[j]][, c("xpos","ypos","zpos")], zabs, 
+                        xprofile), file = table_path_name, sep = ";", 
+                  row.names = FALSE, 
+                  col.names =  c("x","y","zr","z","xprofile"))
     }
   }
+}
 )
 
 # Plot the delineation on RGL
@@ -4551,41 +4561,41 @@ setMethod("exportDelineations", "GPR", function(x, dirpath=""){
 #' @rdname delineation
 #' @export
 setMethod("plotDelineations3D", "GPR", 
-function(x, sel = NULL, col = NULL, add = TRUE, ...){
-    deli <- x@delineations
-    n_d <- length(deli)
-    if(n_d >0){
-      if(is.null(col)){
-        col <- 1:n_d
-      }
-      if(length(col)<=n_d){
-        col <- rep(col, n_d)
-      }
-      if(add==FALSE){
-        rgl::open3d()
-      }
-      for(i in 1:n_d){
-        if(typeof(deli[[i]])=="list"){
-          n_sub_d <- length(deli[[i]])
-          for(j in 1:n_sub_d){
-            tracePos <- sapply( deli[[i]][[j]][,1], .which, x@traces)
-            xpos <- x@coord[tracePos,1] - x@coordref[1]
-            ypos <- x@coord[tracePos,2] - x@coordref[2]
-            z0 <- max(coord(x,3))   -   x@coordref[3]
-            zpos <- z0 + deli[[i]][[j]][,5] 
-            rgl::lines3d(ypos, zpos, xpos, col = col[i], ...)
+          function(x, sel = NULL, col = NULL, add = TRUE, ...){
+            deli <- x@delineations
+            n_d <- length(deli)
+            if(n_d >0){
+              if(is.null(col)){
+                col <- 1:n_d
+              }
+              if(length(col)<=n_d){
+                col <- rep(col, n_d)
+              }
+              if(add==FALSE){
+                rgl::open3d()
+              }
+              for(i in 1:n_d){
+                if(typeof(deli[[i]])=="list"){
+                  n_sub_d <- length(deli[[i]])
+                  for(j in 1:n_sub_d){
+                    tracePos <- sapply( deli[[i]][[j]][,1], .which, x@traces)
+                    xpos <- x@coord[tracePos,1] - x@coordref[1]
+                    ypos <- x@coord[tracePos,2] - x@coordref[2]
+                    z0 <- max(coord(x,3))   -   x@coordref[3]
+                    zpos <- z0 + deli[[i]][[j]][,5] 
+                    rgl::lines3d(ypos, zpos, xpos, col = col[i], ...)
+                  }
+                }else{
+                  tracePos <- sapply( deli[[i]][,1], .which, x@traces)
+                  xpos <- x@coord[tracePos,1] - x@coordref[1]
+                  ypos <- x@coord[tracePos,2] - x@coordref[2]
+                  z0 <- max(coord(x, 3))   -   x@coordref[3]
+                  zpos <- z0 + deli[[i]][,5] 
+                  rgl::lines3d(ypos, zpos, xpos, col = col[i], ...)
+                }
+              }
+            }
           }
-        }else{
-          tracePos <- sapply( deli[[i]][,1], .which, x@traces)
-          xpos <- x@coord[tracePos,1] - x@coordref[1]
-          ypos <- x@coord[tracePos,2] - x@coordref[2]
-          z0 <- max(coord(x, 3))   -   x@coordref[3]
-          zpos <- z0 + deli[[i]][,5] 
-          rgl::lines3d(ypos, zpos, xpos, col = col[i], ...)
-        }
-      }
-    }
-  }
 )
 
 # Plot the delineation on a 2D plot
@@ -4594,43 +4604,43 @@ function(x, sel = NULL, col = NULL, add = TRUE, ...){
 #' @rdname delineation
 #' @export
 setMethod("plotDelineations", "GPR", function(x,sel=NULL,col=NULL,...){
-    if(is.null(dev.list())){
-      stop("You must first plot the GPR profile with the function \"plot\"!\n")
+  if(is.null(dev.list())){
+    stop("You must first plot the GPR profile with the function \"plot\"!\n")
+  }
+  deli <- x@delineations
+  n_d <- length(deli)
+  if(n_d >0){
+    if(length(x@coord) == 0){
+      x@coord <- matrix(0,nrow=ncol(x),ncol=3)
+      x@coord[,1] <- x@pos
     }
-    deli <- x@delineations
-    n_d <- length(deli)
-    if(n_d >0){
-      if(length(x@coord) == 0){
-        x@coord <- matrix(0,nrow=ncol(x),ncol=3)
-        x@coord[,1] <- x@pos
-      }
-      x_dist <- posLine(x@coord)
-      if(is.null(col)){
-        col <- 1:n_d
-      }
-      if(length(col)<=n_d){
-        col <- rep(col, n_d)
-      }
-      for(i in 1:n_d){
-        if(typeof(deli[[i]])=="list"){
-          n_sub_d <- length(deli[[i]])
-          for(j in 1:n_sub_d){
-            tracePos <- sapply( deli[[i]][[j]][,1], .which, x@traces)
-            xpos <- x_dist[tracePos]
-            zpos <- deli[[i]][[j]][,5]
-            lines(xpos, zpos,col=col[i],...)
-          }
-        }else{
-          tracePos <- sapply( deli[[i]][,1], .which, x@traces)
+    x_dist <- posLine(x@coord)
+    if(is.null(col)){
+      col <- 1:n_d
+    }
+    if(length(col)<=n_d){
+      col <- rep(col, n_d)
+    }
+    for(i in 1:n_d){
+      if(typeof(deli[[i]])=="list"){
+        n_sub_d <- length(deli[[i]])
+        for(j in 1:n_sub_d){
+          tracePos <- sapply( deli[[i]][[j]][,1], .which, x@traces)
           xpos <- x_dist[tracePos]
-          zpos <- deli[[i]][,5]
+          zpos <- deli[[i]][[j]][,5]
           lines(xpos, zpos,col=col[i],...)
         }
+      }else{
+        tracePos <- sapply( deli[[i]][,1], .which, x@traces)
+        xpos <- x_dist[tracePos]
+        zpos <- deli[[i]][,5]
+        lines(xpos, zpos,col=col[i],...)
       }
-    }else{
-      message("No lines were delineated!")
     }
+  }else{
+    message("No lines were delineated!")
   }
+}
 )
 
 # Identify the delineation on a 2D plot
@@ -4639,47 +4649,47 @@ setMethod("plotDelineations", "GPR", function(x,sel=NULL,col=NULL,...){
 #' @rdname delineation
 #' @export
 setMethod("identifyDelineation", "GPR", function(x,sel=NULL,...){
-    if(is.null(dev.list())){
-      stop("You must first plot the GPR profile with the function \"plot\"!\n")
+  if(is.null(dev.list())){
+    stop("You must first plot the GPR profile with the function \"plot\"!\n")
+  }
+  XY <- list()
+  deli <- x@delineations
+  n_d <- length(deli)
+  it <- 0
+  if(n_d >0){
+    if(length(x@coord) == 0){
+      x@coord <- matrix(0,nrow=ncol(x),ncol=3)
+      x@coord[,1] <- x@pos
     }
-    XY <- list()
-    deli <- x@delineations
-    n_d <- length(deli)
-    it <- 0
-    if(n_d >0){
-      if(length(x@coord) == 0){
-        x@coord <- matrix(0,nrow=ncol(x),ncol=3)
-        x@coord[,1] <- x@pos
-      }
-      x_dist <- posLine(x@coord)
-      for(i in 1:n_d){
-        if(typeof(deli[[i]])=="list"){
-          n_sub_d <- length(deli[[i]])
-          for(j in 1:n_sub_d){
-            tracePos <- sapply( deli[[i]][[j]][,1], .which, x@traces)
-            xpos <- x_dist[tracePos]
-            zpos <- deli[[i]][[j]][,5]
-            it <- it + 1
-            XY[[it]] <- cbind(xpos,zpos,rep(it,length(xpos)))
-            # it <- it + 1
-            # lines(xpos, zpos,col=col[i],...)
-          }
-        }else{
-          tracePos <- sapply( deli[[i]][,1], .which, x@traces)
+    x_dist <- posLine(x@coord)
+    for(i in 1:n_d){
+      if(typeof(deli[[i]])=="list"){
+        n_sub_d <- length(deli[[i]])
+        for(j in 1:n_sub_d){
+          tracePos <- sapply( deli[[i]][[j]][,1], .which, x@traces)
           xpos <- x_dist[tracePos]
-          zpos <- deli[[i]][,5]
+          zpos <- deli[[i]][[j]][,5]
           it <- it + 1
           XY[[it]] <- cbind(xpos,zpos,rep(it,length(xpos)))
+          # it <- it + 1
           # lines(xpos, zpos,col=col[i],...)
         }
+      }else{
+        tracePos <- sapply( deli[[i]][,1], .which, x@traces)
+        xpos <- x_dist[tracePos]
+        zpos <- deli[[i]][,5]
+        it <- it + 1
+        XY[[it]] <- cbind(xpos,zpos,rep(it,length(xpos)))
+        # lines(xpos, zpos,col=col[i],...)
       }
-      XY <- do.call(rbind,XY)
-      A<-identify(XY, labels=XY[,3])
-      return(XY[A,3])
-    }else{
-      message("No lines were delineated!")
     }
+    XY <- do.call(rbind,XY)
+    A<-identify(XY, labels=XY[,3])
+    return(XY[A,3])
+  }else{
+    message("No lines were delineated!")
   }
+}
 )
 
 #------------------------- CMP ANALYSIS -----------------------------------#
@@ -4739,7 +4749,7 @@ setMethod("NMOCor", "GPR", function(x, v = NULL){
   x <- .NMOCor(x, v = v, asep = x@antsep)
   proc(x) <- getArgs()
   return(x)
-  }
+}
 )
 
 .NMOCor <- function(x, v = NULL, asep = NULL){
@@ -4781,7 +4791,7 @@ setMethod("NMOCor", "GPR", function(x, v = NULL){
 
 winsemblance <- function(x){
   S <- sum(rowSums(x, na.rm = TRUE)^2) / 
-           sum(rowSums(x^2, na.rm = TRUE)) * nrow(x)
+    sum(rowSums(x^2, na.rm = TRUE)) * nrow(x)
   #S <- sum((apply(x, 1, sum, na.rm = TRUE))^2) /
   #  sum(apply((x)^2, 1, sum, na.rm = TRUE)) * nrow(x)
   return(S)
@@ -4804,7 +4814,7 @@ signalNoiseRatio <- function(x){
   P <- (ysvd$d[1] - x_sig2)/n
   return( P/x_sig2 )
 }
-	
+
 signalNoiseRatio2 <- function(x){
   ysvd <- svd(x)
   m <- nrow(x)
@@ -4863,9 +4873,9 @@ signalNoiseRatio2 <- function(x){
 #' }
 #' @export
 setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance", 
-                                         "winsemblance",   "wincoherence", 
-                                         "wincoherence2"), v = NULL, 
-                                          w = NULL){
+                                                       "winsemblance",   "wincoherence", 
+                                                       "wincoherence2"), v = NULL, 
+                                         w = NULL){
   method <- match.arg(method, c("semblance", "winsemblance", 
                                 "wincoherence", "wincoherence2"))
   if(is.null(v)){
@@ -4894,14 +4904,14 @@ setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance",
       for(i in seq_along(v)){
         y <- .NMOCor(x, v = v[i], asep = x@antsep)
         x_velAna@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, 
-                                     FUN = signalNoiseRatio)
+                                        FUN = signalNoiseRatio)
         # x_velAna@data[floor(w/2) + seq_along(test),i] <- test
       }
     }else if(method == "wincoherence2"){
       for(i in seq_along(v)){
         y <- .NMOCor(x, v = v[i], asep = x@antsep)
         x_velAna@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, 
-                                     FUN = signalNoiseRatio2)
+                                        FUN = signalNoiseRatio2)
         # x_velAna@data[floor(w/2) + seq_along(test),i] <- test
       }
     }else if(method == "winsemblance"){
@@ -4946,14 +4956,14 @@ setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance",
 #' @rdname migration
 #' @export
 setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
-    if(length(x@antsep) == 0 || (!is.numeric(x@antsep))){
+  if(length(x@antsep) == 0 || (!is.numeric(x@antsep))){
     stop("You must first define the antenna separation ",
-          "with 'antsep(x) <- 1' for example!")
-    }
-    if(is.null(x@vel) || length(x@vel)==0){
-      stop("You must first define the EM wave velocity ",
-          "with 'vel(x) <- 0.1' for example!")
-    }
+         "with 'antsep(x) <- 1' for example!")
+  }
+  if(is.null(x@vel) || length(x@vel)==0){
+    stop("You must first define the EM wave velocity ",
+         "with 'vel(x) <- 0.1' for example!")
+  }
   if(length(x@coord) != 0 && ncol(x@coord) == 3){
     topo <- x@coord[1:ncol(x@data), 3]
     # stop("You must first set coordinates to the traces ",
@@ -4977,9 +4987,9 @@ setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
       x@dz <-  x@dz * x@vel[[1]]/ 2
       x@depth <- seq(from = 0, to = tail(z, 1), by = x@dz)
       funInterp <- function(x, z, zreg){
-                    signal::interp1(x = z, y = x, xi = zreg, 
+        signal::interp1(x = z, y = x, xi = zreg, 
                         method = "pchip", extrap = TRUE)
-                  }
+      }
       x@data <- apply(x@data, 2, funInterp, 
                       z = z[!is.na(z)], zreg = x@depth)
       x@depthunit <- "m"
@@ -5054,80 +5064,80 @@ setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
 #' @rdname upsample
 #' @export
 setMethod("upsample", "GPR", function(x,n){
-    n <- abs(round(n))
-    if(length(n) == 1){
-      n <- rep(n,2)
-    }
-    x@data <- .upsample(x@data, n=n, type=c("DFT"))
-    x@data <- x@data[,1:(ncol(x@data))]
-    yvalues <-  (seq(0,by=x@dz,length.out=nrow(x@data)))
-    
-    xvalues  <- .doubleVector(x@pos,n=n[2])
-    yvalues  <- .doubleVector(x@depth,n=n[1])
-    #  
-    # image(xvalues,yvalues,t(x@data))
-
-    ntr <- ncol(x@data)  # number of traces
-    if(ntr != length(xvalues)) stop("ntr!=length(xvalues)")
-    if(length(x@coord)>0){
-      coord_new <- matrix(ncol=3,nrow=ntr)
-      coord_new[,1] <- signal::interp1(x@pos, x@coord[,1], xi = xvalues,   
-                                      method = c( "linear"), extrap = TRUE)
-      coord_new[,2] <- signal::interp1(x@pos, x@coord[,2], xi = xvalues,   
-                                      method = c( "linear"), extrap = TRUE)
-      coord_new[,3] <- signal::interp1(x@pos, x@coord[,3], xi = xvalues,   
-                                      method = c( "linear"), extrap = TRUE)
-      x@coord <- coord_new
-    }
-    if(length(x@rec)>0){
-      rec_new <- matrix(ncol=3,nrow=ntr)
-      rec_new[,1] <- signal::interp1(x@pos, x@rec[,1], xi = xvalues,   
-                                    method = c( "linear"), extrap = TRUE)
-      rec_new[,2] <- signal::interp1(x@pos, x@rec[,2], xi = xvalues,
-                                    method = c( "linear"), extrap = TRUE)
-      rec_new[,3] <- signal::interp1(x@pos, x@rec[,3], xi = xvalues,   
-                                    method = c( "linear"), extrap = TRUE)
-      x@rec <- rec_new
-    }
-    if(length(x@trans)>0){
-      trans_new <- matrix(ncol=3,nrow=ntr)
-      trans_new[,1] <- signal::interp1(x@pos, x@trans[,1], xi = xvalues,   
-                                      method = c( "linear"), extrap = TRUE)
-      trans_new[,2] <- signal::interp1(x@pos, x@trans[,2], xi = xvalues,   
-                                      method = c( "linear"), extrap = TRUE)
-      trans_new[,3] <- signal::interp1(x@pos, x@trans[,3], xi = xvalues,   
-                                      method = c( "linear"), extrap = TRUE)
-      x@trans <- trans_new
-    }
-    
-    x@traces <- seq.int(1L,by=1L,length.out=ntr)
-    #fiducial markers (fid, comments)
-    if(length(x@fid) >0){ #&& sum(x@fid != "")>0){
-      newfid <- character(length(x@fid)*n[2])
-      newfidPos <- which(x@fid!="")
-      newfid[newfidPos*n[2]] <- x@fid[newfidPos]
-      x@fid <- newfid[1:ntr]
-    }
-    #annotations
-    if(length(x@ann) >0){ # && sum(x@ann != "")>0){
-      newAnn <- character(length(x@ann)*n[2])
-      newAnnPos <- which(x@ann!="")
-      newAnn[newAnnPos*n[2]] <- x@ann[newAnnPos]
-      x@ann <- newAnn[1:ntr]
-    }
-    # trace positions
-    x@pos <- xvalues
-    # depth/time
-    x@depth <- .doubleVector(x@depth,n=n[1])
-
-    x@dx <- x@dx / n[2]
-    x@dz <- x@dz / n[1]
-#     x@ntr <- ntr
-    
-    proc <- getArgs()
-    x@proc <- c(x@proc, proc)
-    return(x)
-  } 
+  n <- abs(round(n))
+  if(length(n) == 1){
+    n <- rep(n,2)
+  }
+  x@data <- .upsample(x@data, n=n, type=c("DFT"))
+  x@data <- x@data[,1:(ncol(x@data))]
+  yvalues <-  (seq(0,by=x@dz,length.out=nrow(x@data)))
+  
+  xvalues  <- .doubleVector(x@pos,n=n[2])
+  yvalues  <- .doubleVector(x@depth,n=n[1])
+  #  
+  # image(xvalues,yvalues,t(x@data))
+  
+  ntr <- ncol(x@data)  # number of traces
+  if(ntr != length(xvalues)) stop("ntr!=length(xvalues)")
+  if(length(x@coord)>0){
+    coord_new <- matrix(ncol=3,nrow=ntr)
+    coord_new[,1] <- signal::interp1(x@pos, x@coord[,1], xi = xvalues,   
+                                     method = c( "linear"), extrap = TRUE)
+    coord_new[,2] <- signal::interp1(x@pos, x@coord[,2], xi = xvalues,   
+                                     method = c( "linear"), extrap = TRUE)
+    coord_new[,3] <- signal::interp1(x@pos, x@coord[,3], xi = xvalues,   
+                                     method = c( "linear"), extrap = TRUE)
+    x@coord <- coord_new
+  }
+  if(length(x@rec)>0){
+    rec_new <- matrix(ncol=3,nrow=ntr)
+    rec_new[,1] <- signal::interp1(x@pos, x@rec[,1], xi = xvalues,   
+                                   method = c( "linear"), extrap = TRUE)
+    rec_new[,2] <- signal::interp1(x@pos, x@rec[,2], xi = xvalues,
+                                   method = c( "linear"), extrap = TRUE)
+    rec_new[,3] <- signal::interp1(x@pos, x@rec[,3], xi = xvalues,   
+                                   method = c( "linear"), extrap = TRUE)
+    x@rec <- rec_new
+  }
+  if(length(x@trans)>0){
+    trans_new <- matrix(ncol=3,nrow=ntr)
+    trans_new[,1] <- signal::interp1(x@pos, x@trans[,1], xi = xvalues,   
+                                     method = c( "linear"), extrap = TRUE)
+    trans_new[,2] <- signal::interp1(x@pos, x@trans[,2], xi = xvalues,   
+                                     method = c( "linear"), extrap = TRUE)
+    trans_new[,3] <- signal::interp1(x@pos, x@trans[,3], xi = xvalues,   
+                                     method = c( "linear"), extrap = TRUE)
+    x@trans <- trans_new
+  }
+  
+  x@traces <- seq.int(1L,by=1L,length.out=ntr)
+  #fiducial markers (fid, comments)
+  if(length(x@fid) >0){ #&& sum(x@fid != "")>0){
+    newfid <- character(length(x@fid)*n[2])
+    newfidPos <- which(x@fid!="")
+    newfid[newfidPos*n[2]] <- x@fid[newfidPos]
+    x@fid <- newfid[1:ntr]
+  }
+  #annotations
+  if(length(x@ann) >0){ # && sum(x@ann != "")>0){
+    newAnn <- character(length(x@ann)*n[2])
+    newAnnPos <- which(x@ann!="")
+    newAnn[newAnnPos*n[2]] <- x@ann[newAnnPos]
+    x@ann <- newAnn[1:ntr]
+  }
+  # trace positions
+  x@pos <- xvalues
+  # depth/time
+  x@depth <- .doubleVector(x@depth,n=n[1])
+  
+  x@dx <- x@dx / n[2]
+  x@dz <- x@dz / n[1]
+  #     x@ntr <- ntr
+  
+  proc <- getArgs()
+  x@proc <- c(x@proc, proc)
+  return(x)
+} 
 )
 
 #' Trace interpolation at regularly spaced positions 
@@ -5136,139 +5146,139 @@ setMethod("upsample", "GPR", function(x,n){
 #' @rdname regInterpPos
 #' @export
 setMethod("regInterpPos", "GPR", function(x, type = c("linear", "cosine"), 
-          dx = NULL){
-    type <- match.arg(type, c("linear", "cosine"))
-    if(length(x@coord)>0){
-      xpos <- posLine(x@coord)
+                                          dx = NULL){
+  type <- match.arg(type, c("linear", "cosine"))
+  if(length(x@coord)>0){
+    xpos <- posLine(x@coord)
+  }else{
+    xpos <- x@pos
+  }
+  if(is.null(dx)){
+    dx <- min(abs(diff(xpos)))
+  }
+  xo <- seq(min(xpos), max(xpos), by = dx)
+  xnew <- x[,rep(1, length(xo))]
+  for(k in seq_along(xo)){
+    if( any(di <- abs(xo[k] - xpos) < 10^-3) ){
+      ki <- which(di)[1]
+      xnew@data[, k] <- x@data[,ki]
+      xnew@time[k] <- x@time[ki]
+      xnew@time0[k] <- x@time0[ki]
+      if(length(x@coord) > 0){
+        xnew@coord[k,] <- x@coord[ki,]
+      }
+      if(length(x@rec) > 0){
+        xnew@rec[k,] <- x@rec[ki,]
+      }
+      if(length(x@trans) > 0){
+        xnew@trans[k,] <- x@trans[ki,]
+      }
     }else{
-      xpos <- x@pos
-    }
-    if(is.null(dx)){
-      dx <- min(abs(diff(xpos)))
-    }
-    xo <- seq(min(xpos), max(xpos), by = dx)
-    xnew <- x[,rep(1, length(xo))]
-    for(k in seq_along(xo)){
-      if( any(di <- abs(xo[k] - xpos) < 10^-3) ){
-        ki <- which(di)[1]
-        xnew@data[, k] <- x@data[,ki]
-        xnew@time[k] <- x@time[ki]
-        xnew@time0[k] <- x@time0[ki]
-        if(length(x@coord) > 0){
-          xnew@coord[k,] <- x@coord[ki,]
-        }
-        if(length(x@rec) > 0){
-          xnew@rec[k,] <- x@rec[ki,]
-        }
-        if(length(x@trans) > 0){
-          xnew@trans[k,] <- x@trans[ki,]
-        }
-      }else{
-        testm <- xpos < xo[k]
-        testp <- xpos > xo[k]
-        km <- ifelse(any(testm), tail(which(testm),1), 0)
-        kp <- ifelse(any(testm), which(testp)[1], 0)
-        w <- (xpos[kp] - xo[k])/(xpos[kp] - xpos[km])
-  #       wm <- 1/(xo[k] - xpos[km]) 
-  #       wp <- 1/(xpos[kp] - xo[k])
-  #       xnew@data[, k] <- (wm*x@data[,km] + wp*x@data[,kp])/(wm + wp)
-        if(type == "linear"){
-        }else if(type == "cosine"){
-          w <- (1-cos(w*pi))/2
-        }
-        xnew@data[,k] <- w * x@data[,km] + (1 - w) * x@data[,kp]
-        xnew@time[k] <- round( w * x@time[km] + (1 - w) * x@time[kp] )
-        xnew@time0[k] <- w * x@time0[km] + (1 - w) * x@time0[kp]
-        if(length(x@coord) > 0){
-          xnew@coord[k,] <- w * x@coord[km,] + (1 - w) * x@coord[kp,]
-        }
-        if(length(x@rec) > 0){
-          xnew@rec[k,] <- w * x@rec[km,] + (1 - w) * x@rec[kp,]
-        }
-        if(length(x@trans) > 0){
-          xnew@trans[k,] <- w * x@trans[km,] + (1 - w) * x@trans[kp,]
-        }
+      testm <- xpos < xo[k]
+      testp <- xpos > xo[k]
+      km <- ifelse(any(testm), tail(which(testm),1), 0)
+      kp <- ifelse(any(testm), which(testp)[1], 0)
+      w <- (xpos[kp] - xo[k])/(xpos[kp] - xpos[km])
+      #       wm <- 1/(xo[k] - xpos[km]) 
+      #       wp <- 1/(xpos[kp] - xo[k])
+      #       xnew@data[, k] <- (wm*x@data[,km] + wp*x@data[,kp])/(wm + wp)
+      if(type == "linear"){
+      }else if(type == "cosine"){
+        w <- (1-cos(w*pi))/2
+      }
+      xnew@data[,k] <- w * x@data[,km] + (1 - w) * x@data[,kp]
+      xnew@time[k] <- round( w * x@time[km] + (1 - w) * x@time[kp] )
+      xnew@time0[k] <- w * x@time0[km] + (1 - w) * x@time0[kp]
+      if(length(x@coord) > 0){
+        xnew@coord[k,] <- w * x@coord[km,] + (1 - w) * x@coord[kp,]
+      }
+      if(length(x@rec) > 0){
+        xnew@rec[k,] <- w * x@rec[km,] + (1 - w) * x@rec[kp,]
+      }
+      if(length(x@trans) > 0){
+        xnew@trans[k,] <- w * x@trans[km,] + (1 - w) * x@trans[kp,]
       }
     }
-    xnew@traces <- seq_along(xo)
-    xnew@pos <- xo
-    xnew@fid <- interpFid(xpos, xo, x@fid)
-    xnew@ann <- interpFid(xpos, xo, x@ann)
-    xnew@dx <- round(dx,3)
-    proc(xnew) <- getArgs()
-#     xnew@proc <- c(xnew@proc, proc)
-    return(xnew)
   }
+  xnew@traces <- seq_along(xo)
+  xnew@pos <- xo
+  xnew@fid <- interpFid(xpos, xo, x@fid)
+  xnew@ann <- interpFid(xpos, xo, x@ann)
+  xnew@dx <- round(dx,3)
+  proc(xnew) <- getArgs()
+  #     xnew@proc <- c(xnew@proc, proc)
+  return(xnew)
+}
 )
 
 # interpolate position fiducial/annotation
-  interpFid <- function(xposold, xposnew, fidOld){
-    fidNew <- rep("", length(xposnew))
-    fids <- which(fidOld != "")
-    for(i in seq_along(fids)){
-      fidpos <- which.min(abs(xposold[fids[i]] - xposnew))
-      fidNew[fidpos] <- fidOld[fids[i]]
-    }
-    return(fidNew)
+interpFid <- function(xposold, xposnew, fidOld){
+  fidNew <- rep("", length(xposnew))
+  fids <- which(fidOld != "")
+  for(i in seq_along(fids)){
+    fidpos <- which.min(abs(xposold[fids[i]] - xposnew))
+    fidNew[fidpos] <- fidOld[fids[i]]
   }
+  return(fidNew)
+}
 
-  
+
 #---------------------- STRUCTURE TENSOR ---------------------#
 setMethod("strTensor", "GPR", function(x,  blksze = c(2, 4),
-                        kBlur   = list(n = 1, m = 1, sd = 1), 
-                        kEdge   = list(n = 5, m = 5, sd = 1), 
-                        kTensor = list(n = 5, m = 5, sd = 1),
-                        thresh = 0.02, what = c("tensor", "mask"), ...){
-    O <- .strucTensor(P = x@data, dxy = c(x@dx, x@dz), 
-                blksze = blksze,
-                kBlur   = kBlur, 
-                kEdge   = kEdge, 
-                kTensor = kTensor,
-                thresh = thresh)  
-    output <- list()
-    whatref <- c("tensor", "vectors", "values", "polar", "mask")
-    what <- what[what %in% whatref]
-    if(length(what) == 0){
-      stop(paste0("argument 'what' only accepts a character vector composed of",
-          " at least one of the following words:\n",
-          "'tensor', 'vectors', 'values', 'polar', 'mask'"))
-    }
-    if( "orientation" %in% what){ 
-      xOrient <- x
-      xAni    <- x
-      xEnergy <- x
-      xOrient@data       <- O$polar$orientation
-      xOrient@surveymode <- "orientation"
-      xEnergy@data       <- O$polar$energy
-      xEnergy@surveymode <- "energy"
-      xAni@data          <- O$polar$anisotropy
-      xAni@surveymode    <- "anisotropy"
-      output[["orientation"]] <- list("energy"      = xEnergy,
-                                      "anisotropy"  = xAni,
-                                      "orientation" = xOrient)
-    }
-    if( "tensor" %in% what){
-      xJxx <- x
-      xJyy <- x
-      xJxy <- x
-      xJxx@data <- O$tensor$xx
-      xJyy@data <- O$tensor$yy
-      xJxy@data <- O$tensor$xy
-      xJxx@surveymode <- "tensorxx"
-      xJyy@surveymode <- "tensoryy"
-      xJxy@surveymode <- "tensorxy"
-      output[["tensor"]] <- list("xx" = xJxx,
-                                 "yy" = xJyy,
-                                 "xy" = xJxy)
-    }
-    if( "mask" %in% what){
-      mask <- x
-      mask@data <- O$mask
-      mask@surveymode <- "mask"
-      output[["mask"]] <- mask
-    }
-    return(output)
+                                       kBlur   = list(n = 1, m = 1, sd = 1), 
+                                       kEdge   = list(n = 5, m = 5, sd = 1), 
+                                       kTensor = list(n = 5, m = 5, sd = 1),
+                                       thresh = 0.02, what = c("tensor", "mask"), ...){
+  O <- .strucTensor(P = x@data, dxy = c(x@dx, x@dz), 
+                    blksze = blksze,
+                    kBlur   = kBlur, 
+                    kEdge   = kEdge, 
+                    kTensor = kTensor,
+                    thresh = thresh)  
+  output <- list()
+  whatref <- c("tensor", "vectors", "values", "polar", "mask")
+  what <- what[what %in% whatref]
+  if(length(what) == 0){
+    stop(paste0("argument 'what' only accepts a character vector composed of",
+                " at least one of the following words:\n",
+                "'tensor', 'vectors', 'values', 'polar', 'mask'"))
   }
+  if( "orientation" %in% what){ 
+    xOrient <- x
+    xAni    <- x
+    xEnergy <- x
+    xOrient@data       <- O$polar$orientation
+    xOrient@surveymode <- "orientation"
+    xEnergy@data       <- O$polar$energy
+    xEnergy@surveymode <- "energy"
+    xAni@data          <- O$polar$anisotropy
+    xAni@surveymode    <- "anisotropy"
+    output[["orientation"]] <- list("energy"      = xEnergy,
+                                    "anisotropy"  = xAni,
+                                    "orientation" = xOrient)
+  }
+  if( "tensor" %in% what){
+    xJxx <- x
+    xJyy <- x
+    xJxy <- x
+    xJxx@data <- O$tensor$xx
+    xJyy@data <- O$tensor$yy
+    xJxy@data <- O$tensor$xy
+    xJxx@surveymode <- "tensorxx"
+    xJyy@surveymode <- "tensoryy"
+    xJxy@surveymode <- "tensorxy"
+    output[["tensor"]] <- list("xx" = xJxx,
+                               "yy" = xJyy,
+                               "xy" = xJxy)
+  }
+  if( "mask" %in% what){
+    mask <- x
+    mask@data <- O$mask
+    mask@surveymode <- "mask"
+    output[["mask"]] <- mask
+  }
+  return(output)
+}
 )
 
 
@@ -5289,52 +5299,52 @@ setMethod("strTensor", "GPR", function(x,  blksze = c(2, 4),
 #' @seealso \code{\link{readGPR}}
 #' @export
 setMethod("writeGPR", "GPR", function(x, fPath = NULL, 
-      type = c("DT1", "rds", "ASCII", "xta", "xyza"),
-      overwrite = FALSE, ...){
-    type <- match.arg(tolower(type), c("dt1", "rds", "ascii", "xta", "xyza"))
-    fPath <- ifelse(is.null(fPath), x@name, 
-                    file.path(dirname(fPath), .fNameWExt(fPath)))
-    ext <- switch(type,
-                  "dt1" = ".dt1",
-                  "rds" = ".rds",
-                  "ascii" = ".txt",
-                  "xta" = ".txt",
-                  "xyza" = ".txt")
-    fPath <- paste0(fPath, ext)
-    testFile <- file.exists(fPath)
-    if(isTRUE(overwrite)){
-      if(testFile) message("File overwritten\n")
-    }else if(testFile){
-      stop("File already exists. Cannot overwrite!\n")
-    }
-    x@filepath <- fPath
-    switch(type,
-           "dt1" = {.writeDT1(x, fPath)},
-           "rds" = {namesSlot <- slotNames(x)
-                    xList <- list()
-                    # xList[["version"]] <- "0.1"
-                    for(i in seq_along(namesSlot)){
-                      xList[[namesSlot[i]]] <- slot(x, namesSlot[i])
-                    }
-                    saveRDS(xList, fPath)},
-            # idea: add header data
-            "ascii" = {write.table(as.matrix(x), file = fPath, 
-                       quote = FALSE, col.names = x@pos, row.names = x@depth,
-                       ...)},
-            "xyza" = {if(length(x@coord) == 0){
-                        stop("This data has no coordinates!")
-                      }
-                      xyzv <- matrix(nrow=prod(dim(x)), ncol = 4)
-                      colnames(xyzv) <- c("x", "y", "z", "a")
-                      xyzv[, 4]  <- as.vector(as.matrix(x))
-                      xyzv[,1:3] <-  kronecker(x@coord, matrix(1,nrow(x),1))
-                      xyzv[,3]   <- rep(max(xyzv[,3]), ncol(x)) - 
-                                        rep(x@depth, times = ncol(x))
-                      write.table(xyzv, file = fPath, quote = FALSE, 
-                      col.names = TRUE, row.names = FALSE, ...)}
-          )
-    invisible(return(x))
-  } 
+                                      type = c("DT1", "rds", "ASCII", "xta", "xyza"),
+                                      overwrite = FALSE, ...){
+  type <- match.arg(tolower(type), c("dt1", "rds", "ascii", "xta", "xyza"))
+  fPath <- ifelse(is.null(fPath), x@name, 
+                  file.path(dirname(fPath), .fNameWExt(fPath)))
+  ext <- switch(type,
+                "dt1" = ".dt1",
+                "rds" = ".rds",
+                "ascii" = ".txt",
+                "xta" = ".txt",
+                "xyza" = ".txt")
+  fPath <- paste0(fPath, ext)
+  testFile <- file.exists(fPath)
+  if(isTRUE(overwrite)){
+    if(testFile) message("File overwritten\n")
+  }else if(testFile){
+    stop("File already exists. Cannot overwrite!\n")
+  }
+  x@filepath <- fPath
+  switch(type,
+         "dt1" = {.writeDT1(x, fPath)},
+         "rds" = {namesSlot <- slotNames(x)
+         xList <- list()
+         # xList[["version"]] <- "0.1"
+         for(i in seq_along(namesSlot)){
+           xList[[namesSlot[i]]] <- slot(x, namesSlot[i])
+         }
+         saveRDS(xList, fPath)},
+         # idea: add header data
+         "ascii" = {write.table(as.matrix(x), file = fPath, 
+                                quote = FALSE, col.names = x@pos, row.names = x@depth,
+                                ...)},
+         "xyza" = {if(length(x@coord) == 0){
+           stop("This data has no coordinates!")
+         }
+           xyzv <- matrix(nrow=prod(dim(x)), ncol = 4)
+           colnames(xyzv) <- c("x", "y", "z", "a")
+           xyzv[, 4]  <- as.vector(as.matrix(x))
+           xyzv[,1:3] <-  kronecker(x@coord, matrix(1,nrow(x),1))
+           xyzv[,3]   <- rep(max(xyzv[,3]), ncol(x)) - 
+             rep(x@depth, times = ncol(x))
+           write.table(xyzv, file = fPath, quote = FALSE, 
+                       col.names = TRUE, row.names = FALSE, ...)}
+  )
+  invisible(return(x))
+} 
 )
 
 
@@ -5345,17 +5355,17 @@ setMethod("writeGPR", "GPR", function(x, fPath = NULL,
 #' @rdname exportPDF
 #' @export
 setMethod("exportPDF", "GPR", 
-function(x, fPath = NULL, addTopo = FALSE, clip = NULL, normalize = NULL, 
-        nupspl = NULL,  type = "wiggles",...){
-    if(is.null(fPath)){
-      stop("fPath must be given\n")
-    }
-    if(any(dim(x) == 1)){
-      stop("no export because dim = 1\n")
-    }
-    plot(x, clip = clip, addTopo = addTopo, type = type, 
-          pdfName = fPath, normalize = normalize, nupspl = nupspl, ...)
-  }
+          function(x, fPath = NULL, addTopo = FALSE, clip = NULL, normalize = NULL, 
+                   nupspl = NULL,  type = "wiggles",...){
+            if(is.null(fPath)){
+              stop("fPath must be given\n")
+            }
+            if(any(dim(x) == 1)){
+              stop("no export because dim = 1\n")
+            }
+            plot(x, clip = clip, addTopo = addTopo, type = type, 
+                 pdfName = fPath, normalize = normalize, nupspl = nupspl, ...)
+          }
 )
 
 #' Export fiducial markers
@@ -5364,49 +5374,49 @@ function(x, fPath = NULL, addTopo = FALSE, clip = NULL, normalize = NULL,
 #' @rdname exportFid
 #' @export
 setMethod("exportFid", "GPR", function(x,fPath=NULL){
-    # Trace  Position  Comment  PNAME
-    if(length(x@fid) > 0){
-      tr_start <- 1
-      tr_end <- length(x)
-      tr <- which(fid(x) != "" & fid(x) != "skip")
-      trfid <- fid(x)[tr]
-      if(!(tr_start %in% tr)){  
-        tr <- c(tr_start,tr)
-        trfid <- c("START",trfid)
-      }
-      if(!(tr_end %in% tr)){
-        tr <- c(tr,tr_end)
-#         lastF <-regmatches(trfid[length(trfid)], 
-#                         regexpr(pattern="[[:digit:]]+", 
-#                         trfid[length(trfid)]))
-#         if(length(lastF)>0){
-#           trfid <- c(trfid, paste0("F", as.numeric(lastF)+1))
-#         }else{
-          trfid <- c(trfid,"END")
-#         }
-      }
-      trpos <- x@pos[tr]
-      FID <- data.frame("TRACE" = tr,"POSITION" = trpos, "COMMENT" = trfid)
-      if(length(x@coord) > 0 && ncol(x@coord) == 3){
-        FID$E <- x@coord[tr,1]
-        FID$N <- x@coord[tr,2]
-        FID$Z <- x@coord[tr,3]
-      }
-      if(is.null(fPath)){
-        return(FID)
-      }else{
-        write.table(FID, fPath, sep=",",row.names = FALSE, 
-                    col.names = TRUE, quote=FALSE)
-      }
-    }else{
-      if(length(x@name)>0){
-        cat("No fiducials for",x@name,"\n")
-      }else{
-        cat("No fiducials\n")
-      }
-      return(NULL)
+  # Trace  Position  Comment  PNAME
+  if(length(x@fid) > 0){
+    tr_start <- 1
+    tr_end <- length(x)
+    tr <- which(fid(x) != "" & fid(x) != "skip")
+    trfid <- fid(x)[tr]
+    if(!(tr_start %in% tr)){  
+      tr <- c(tr_start,tr)
+      trfid <- c("START",trfid)
     }
-  } 
+    if(!(tr_end %in% tr)){
+      tr <- c(tr,tr_end)
+      #         lastF <-regmatches(trfid[length(trfid)], 
+      #                         regexpr(pattern="[[:digit:]]+", 
+      #                         trfid[length(trfid)]))
+      #         if(length(lastF)>0){
+      #           trfid <- c(trfid, paste0("F", as.numeric(lastF)+1))
+      #         }else{
+      trfid <- c(trfid,"END")
+      #         }
+    }
+    trpos <- x@pos[tr]
+    FID <- data.frame("TRACE" = tr,"POSITION" = trpos, "COMMENT" = trfid)
+    if(length(x@coord) > 0 && ncol(x@coord) == 3){
+      FID$E <- x@coord[tr,1]
+      FID$N <- x@coord[tr,2]
+      FID$Z <- x@coord[tr,3]
+    }
+    if(is.null(fPath)){
+      return(FID)
+    }else{
+      write.table(FID, fPath, sep=",",row.names = FALSE, 
+                  col.names = TRUE, quote=FALSE)
+    }
+  }else{
+    if(length(x@name)>0){
+      cat("No fiducials for",x@name,"\n")
+    }else{
+      cat("No fiducials\n")
+    }
+    return(NULL)
+  }
+} 
 )
 
 
@@ -5416,36 +5426,36 @@ setMethod("exportFid", "GPR", function(x,fPath=NULL){
 #' @rdname exportCoord
 #' @export
 setMethod("exportCoord", "GPR", 
-  function(x, type = c("SpatialPoints", "SpatialLines", "ASCII"),
-  fPath = NULL, driver = "ESRI Shapefile", ...){
-  type <- match.arg(type, c("SpatialPoints", "SpatialLines", "ASCII"))
-  fPath <- ifelse(is.null(fPath), x@name, 
-                    file.path(dirname(fPath), .fNameWExt(fPath))) 
-  if(type=="SpatialLines"){  
-    mySpatLines <- as.SpatialLines(x)
-    dfl <- data.frame(z=c(1), row.names = x@name)
-    spldf <- sp::SpatialLinesDataFrame(mySpatLines, dfl , 
-                      match.ID = TRUE)
-    rgdal::writeOGR(obj = spldf, dsn = dirname(fPath), layer = basename(fPath), 
-                    driver = driver, check_exists = TRUE, 
-                    overwrite_layer = TRUE, delete_dsn = TRUE)
-  }else if(type=="SpatialPoints"){  
-    spp <- as.SpatialPoints(x)
-    rgdal::writeOGR(obj = spp, dsn = dirname(fPath), layer = basename(fPath), 
-                    driver = driver, check_exists = TRUE, 
-                    overwrite_layer = TRUE, delete_dsn = TRUE)
-  }else if(type == "points"){
-    stop("use type = SpatialPoints instead.\n")
-  }else if(type == "lines"){
-    stop("use type = SpatialLines instead.\n")
-  }else if(type == "ASCII"){
-    xCoord <- x@coord
-    colnames(xCoord) <- c("E","N","Z")
-    fPath <- paste0(fPath, ".txt")
-    write.table(xCoord, fPath, row.names = FALSE, 
-                    col.names = TRUE, quote = FALSE, ...)
-  }
-})
+          function(x, type = c("SpatialPoints", "SpatialLines", "ASCII"),
+                   fPath = NULL, driver = "ESRI Shapefile", ...){
+            type <- match.arg(type, c("SpatialPoints", "SpatialLines", "ASCII"))
+            fPath <- ifelse(is.null(fPath), x@name, 
+                            file.path(dirname(fPath), .fNameWExt(fPath))) 
+            if(type=="SpatialLines"){  
+              mySpatLines <- as.SpatialLines(x)
+              dfl <- data.frame(z=c(1), row.names = x@name)
+              spldf <- sp::SpatialLinesDataFrame(mySpatLines, dfl , 
+                                                 match.ID = TRUE)
+              rgdal::writeOGR(obj = spldf, dsn = dirname(fPath), layer = basename(fPath), 
+                              driver = driver, check_exists = TRUE, 
+                              overwrite_layer = TRUE, delete_dsn = TRUE)
+            }else if(type=="SpatialPoints"){  
+              spp <- as.SpatialPoints(x)
+              rgdal::writeOGR(obj = spp, dsn = dirname(fPath), layer = basename(fPath), 
+                              driver = driver, check_exists = TRUE, 
+                              overwrite_layer = TRUE, delete_dsn = TRUE)
+            }else if(type == "points"){
+              stop("use type = SpatialPoints instead.\n")
+            }else if(type == "lines"){
+              stop("use type = SpatialLines instead.\n")
+            }else if(type == "ASCII"){
+              xCoord <- x@coord
+              colnames(xCoord) <- c("E","N","Z")
+              fPath <- paste0(fPath, ".txt")
+              write.table(xCoord, fPath, row.names = FALSE, 
+                          col.names = TRUE, quote = FALSE, ...)
+            }
+          })
 
 #' Export the process steps.
 #'
@@ -5453,7 +5463,7 @@ setMethod("exportCoord", "GPR",
 #' @rdname exportProc
 #' @export
 setMethod("exportProc", "GPR", function(x,fPath=NULL,sep="\t", row.names=FALSE,
-  col.names=FALSE, ...){
+                                        col.names=FALSE, ...){
   write.table(x@proc, file = fPath, row.names = row.names,
-            col.names = col.names,...)
+              col.names = col.names,...)
 })

@@ -9,9 +9,593 @@
                                "emanuel.huber@alumni.ethz.ch"))
 }
 
-
-
 # check lockBinding  (bibliotheque/documents/R/manuel-S4)
+
+#--------------------------------------------#
+#---------------- SETGENERIC ----------------#
+# setGenericVerif <- function(x,y){
+#   if(!isGeneric(x)){
+#     setGeneric(x,y)
+#   }else{
+#     cat("setGeneric", x,"already exists!\n")
+#   }
+# }
+setGenericVerif <- function(x,y){setGeneric(x,y)}
+
+
+#------------------------------
+
+setGenericVerif("as.SpatialPoints", function(x) 
+standardGeneric("as.SpatialPoints"))
+
+setGenericVerif("as.SpatialLines", function(x) 
+standardGeneric("as.SpatialLines"))
+
+
+#' @importFrom magrittr %>%
+#' @export
+magrittr::'%>%'
+
+#' @importFrom magrittr %T>%
+#' @export
+magrittr::'%T>%'
+
+
+#------------------------------
+#' @name coordref
+#' @rdname coordref-methods
+#' @exportMethod coordref
+setGenericVerif("coordref", function(x) standardGeneric("coordref"))
+
+
+#' @name coordref<-
+#' @rdname coordref-methods
+#' @exportMethod coordref
+setGenericVerif("coordref<-", function(x, value) standardGeneric("coordref<-"))
+
+#' @name intersections
+#' @rdname intersections-methods
+#' @exportMethod intersections
+setGenericVerif("intersections", function(x) standardGeneric("intersections"))
+
+#' @name filepath
+#' @rdname filepath-methods
+#' @exportMethod filepath
+setGenericVerif("filepath", function(x) standardGeneric("filepath"))
+
+#' @name filepath<-
+#' @rdname filepath-methods
+#' @exportMethod filepath<-
+setGenericVerif("filepath<-", function(x, value) standardGeneric("filepath<-"))
+
+#' @name coords
+#' @rdname coords-methods
+#' @exportMethod coords
+setGenericVerif("coords", function(x,i) standardGeneric("coords"))
+
+#' @name coords<-
+#' @rdname coords-methods
+#' @exportMethod coords<-
+setGenericVerif("coords<-",function(x,value){standardGeneric("coords<-")})
+
+#' @name coord
+#' @rdname coord-methods
+#' @exportMethod coord
+setGenericVerif("coord", function(x, i, ...) standardGeneric("coord"))
+
+#' @name coord<-
+#' @rdname coord-methods
+#' @exportMethod coord<-
+setGenericVerif("coord<-",function(x,value){standardGeneric("coord<-")})
+
+
+#' @name svDate
+#' @rdname svDate
+#' @export
+setGenericVerif("svDate", function(x, i, ...) standardGeneric("svDate"))
+
+#' @name svDate<-
+#' @rdname svDate
+#' @export
+setGenericVerif("svDate<-",function(x,value){standardGeneric("svDate<-")})
+
+
+#' @name vel
+#' @rdname vel
+#' @export
+setGenericVerif("vel", function(x) standardGeneric("vel"))
+
+#' @name vel<-
+#' @rdname vel
+#' @export
+setGenericVerif("vel<-",function(x,value){standardGeneric("vel<-")})
+
+#' @name ann
+#' @rdname ann
+#' @export
+setGenericVerif("ann", function(x) standardGeneric("ann"))
+
+#' @name ann<-
+#' @rdname ann
+#' @export
+setGenericVerif("ann<-",function(x,value){standardGeneric("ann<-")})
+
+#' @name name
+#' @rdname name
+#' @export
+setGenericVerif("name", function(x) standardGeneric("name"))
+
+#' @name name<-
+#' @rdname name
+#' @export
+setGenericVerif("name<-",function(x,value){standardGeneric("name<-")})
+
+#' @name depthunit
+#' @rdname depthunit
+#' @export
+setGenericVerif("depthunit", function(x) standardGeneric("depthunit"))
+
+#' @name depthunit<-
+#' @rdname depthunit
+#' @export
+setGenericVerif("depthunit<-",function(x,value){standardGeneric("depthunit<-")})
+
+#' @name posunit
+#' @rdname posunit
+#' @export
+setGenericVerif("posunit", function(x) standardGeneric("posunit"))
+
+#' @name posunit<-
+#' @rdname posunit
+#' @export
+setGenericVerif("posunit<-",function(x,value){standardGeneric("posunit<-")})
+
+#' @name crs
+#' @rdname crs
+#' @export
+setGenericVerif("crs", function(x) standardGeneric("crs"))
+
+#' @name crs<-
+#' @rdname crs
+#' @export
+setGenericVerif("crs<-",function(x,value){standardGeneric("crs<-")})
+
+#' @name depth
+#' @rdname depth
+#' @export
+setGenericVerif("depth", function(x) standardGeneric("depth"))
+
+#' @name depth<-
+#' @rdname depth
+#' @export
+setGenericVerif("depth<-", function(x,value) standardGeneric("depth<-"))
+
+#' @name pos
+#' @rdname pos
+#' @export
+setGenericVerif("pos", function(x) standardGeneric("pos"))
+
+#' @name pos<-
+#' @rdname pos
+#' @export
+setGenericVerif("pos<-", function(x, value) standardGeneric("pos<-"))
+
+#' @name time0
+#' @rdname time0
+#' @export
+setGenericVerif("time0", function(x) standardGeneric("time0"))
+
+#' @name time0<-
+#' @rdname time0
+#' @export
+setGenericVerif("time0<-",function(x, value){standardGeneric("time0<-")})
+
+#' @name setTime0
+#' @rdname time0
+#' @export
+setGenericVerif("setTime0", function(x, t0) standardGeneric("setTime0"))
+
+
+#' Time of data collection for each trace
+#'
+#' @name trTime
+#' @rdname trTime
+#' @export
+setGenericVerif("trTime", function(x) standardGeneric("trTime"))
+
+#' @name fid
+#' @rdname fid
+#' @export
+setGenericVerif("fid", function(x) standardGeneric("fid"))
+
+#' @name fid<-
+#' @rdname fid
+#' @export
+setGenericVerif("fid<-",function(x,value){standardGeneric("fid<-")})
+
+#' @name values
+#' @rdname values
+#' @export
+setGenericVerif("values", function(x) standardGeneric("values"))
+
+#' @name values<-
+#' @rdname values
+#' @export
+setGenericVerif("values<-", function(x,value) standardGeneric("values<-"))
+
+#' @name processing
+#' @rdname processing
+#' @export
+setGenericVerif("processing", function(x) standardGeneric("processing"))
+
+#' @name proc
+#' @rdname proc
+#' @export
+setGenericVerif("proc", function(x) standardGeneric("proc"))
+
+
+#' @name proc<-
+#' @rdname proc
+#' @export
+setGenericVerif("proc<-",function(x,value){standardGeneric("proc<-")})
+
+#' @name antsep
+#' @rdname antsep
+#' @export
+setGenericVerif("antsep", function(x) standardGeneric("antsep"))
+
+#' @name antsep<-
+#' @rdname antsep
+#' @export
+setGenericVerif("antsep<-",function(x,value){standardGeneric("antsep<-")})                
+                
+
+#' @name surveymode
+#' @rdname surveymode
+#' @export
+setGenericVerif("surveymode", function(x) standardGeneric("surveymode"))
+
+#' @name surveymode<-
+#' @rdname surveymode
+#' @export
+setGenericVerif("surveymode<-",
+                function(x, value){standardGeneric("surveymode<-")})    
+
+#' @name isCMP
+#' @rdname isCMP
+#' @export
+setGenericVerif("isCMP", function(x) standardGeneric("isCMP"))
+
+
+
+#' @name description
+#' @rdname description
+#' @export
+setGenericVerif("description", function(x) standardGeneric("description"))
+
+#' @name description<-
+#' @rdname description
+#' @export
+setGenericVerif("description<-", function(x, value) 
+standardGeneric("description<-"))
+#####
+setGenericVerif("papply", function(x, prc = NULL) standardGeneric("papply"))
+##########
+                  
+#------------------------------GPR
+#' @name gethd
+#' @rdname gethd
+#' @export
+setGenericVerif("gethd", function(x,hd=NULL) standardGeneric("gethd"))
+
+#' @name plotAmpl
+#' @rdname plotAmpl
+#' @export
+setGenericVerif("plotAmpl", function(x, FUN = mean, add = FALSE, 
+                all = FALSE,...) standardGeneric("plotAmpl"))
+setGenericVerif("ampl", function(x, FUN=mean, ...) standardGeneric("ampl"))
+
+#' @name trRmDuplicates
+#' @rdname trRmDuplicates
+#' @export
+setGenericVerif("trRmDuplicates", function(x, tol = NULL, verbose = TRUE) 
+  standardGeneric("trRmDuplicates"))
+
+#' @name interpPos
+#' @rdname interpPos
+#' @export
+setGenericVerif("interpPos", function(x, topo, plot = FALSE, r = NULL, tol = NULL, 
+                   method = c("linear", "spline", "pchip"), ...) 
+    standardGeneric("interpPos"))
+
+#' @name regInterpPos
+#' @rdname regInterpPos
+#' @export
+setGenericVerif("regInterpPos", function(x, type = c("linear", "cosine"), 
+          dx = NULL)  standardGeneric("regInterpPos"))
+
+#' @name relPos
+#' @rdname relPos
+#' @export
+setGenericVerif("relPos", function(x) 
+    standardGeneric("relPos"))
+    
+# #' @name readGPR
+# #' @rdname readGPR
+# #' @export
+# setGenericVerif("readGPR", function(fPath, desc = "", ...) 
+#   standardGeneric("readGPR")
+# )
+
+#' @name writeGPR
+#' @rdname writeGPR
+#' @export
+setGeneric("writeGPR", function(x, fPath = NULL, 
+                type = c("DT1", "rds", "ASCII", "xta", "xyza"),
+                overwrite = FALSE, ...){ standardGeneric("writeGPR")})
+
+#' @name exportCoord
+#' @rdname exportCoord
+#' @export
+setGenericVerif("exportCoord",  
+          function(x, type = c("SpatialPoints", "SpatialLines", "ASCII"),
+  fPath = NULL, driver = "ESRI Shapefile", ...) standardGeneric("exportCoord"))
+#' @name exportFid
+#' @rdname exportFid
+#' @export
+setGenericVerif("exportFid", function(x, fPath = NULL) 
+                  standardGeneric("exportFid"))
+
+#' @name exportProc
+#' @rdname exportProc
+#' @export
+setGenericVerif("exportProc",  function(x,fPath=NULL,sep="\t", row.names=FALSE,
+              col.names=FALSE, ...) standardGeneric("exportProc"))
+
+#' @name reverse
+#' @rdname reverse
+#' @export
+setGenericVerif("reverse", function(x, id = NULL,  tol = 0.3) 
+                standardGeneric("reverse"))
+
+
+#' @name setGridCoord
+#' @rdname setGridCoord-methods
+#' @export
+setGeneric("setGridCoord<-",function(x,value){standardGeneric("setGridCoord<-")})
+
+
+#' @name shiftEst
+#' @rdname shiftEst
+#' @export
+setGenericVerif("shiftEst", function(x, y = NULL, 
+                method=c("phase", "WSSD"), dxy = NULL, ...) 
+                standardGeneric("shiftEst"))
+
+#' @name NMOCor
+#' @rdname NMOCor-methods
+#' @exportMethod NMOCor
+setGenericVerif("NMOCor", function(x, v = NULL) 
+  standardGeneric("NMOCor"))
+
+
+#' @name CMPAnalysis
+#' @rdname CMPAnalysis-methods
+#' @exportMethod CMPAnalysis
+setGenericVerif("CMPAnalysis", function(x, method = c("semblance", 
+               "winsemblance", "wincoherence", "wincoherence2"), v = NULL, 
+               w = NULL) standardGeneric("CMPAnalysis"))
+
+setGenericVerif("migration", function(x,type=c("static","kirchhoff"), ...) 
+standardGeneric("migration"))
+setGenericVerif("upsample", function(x,n) standardGeneric("upsample"))
+setGenericVerif("timeCorOffset", function(x, t0 = NULL, c0 = 0.299) 
+  standardGeneric("timeCorOffset"))
+
+#' @name filter1D
+#' @rdname filter1D
+setGenericVerif("filter1D", function(x, type = c("median", "hampel", 
+                "Gaussian"), ...) standardGeneric("filter1D"))
+
+#' @name filter2D
+#' @rdname filter2D
+#' @export
+setGenericVerif("filter2D", function(x, type=c("median3x3", "adimpro"), ...) 
+                standardGeneric("filter2D"))
+                
+setGenericVerif("dewow", function(x, type=c("MAD", "Gaussian"), w ) 
+                standardGeneric("dewow"))
+                
+setGenericVerif("gain", function(x, type=c("power", "exp", "agc"), ...) 
+                standardGeneric("gain")) 
+
+setGenericVerif("trAmplCor", 
+                function(x, type=c("power", "exp", "agc"),  ...) 
+                standardGeneric("trAmplCor"))
+                
+setGenericVerif("dcshift", function(x, u = NULL, FUN = mean) 
+                standardGeneric("dcshift"))
+                
+setGenericVerif("firstBreak", function(x, method = c("coppens", "coppens2",
+                "threshold",  "MER"), thr = 0.12, w = 11, ns = NULL, 
+                bet = NULL)
+                standardGeneric("firstBreak"))
+
+setGenericVerif("clip", function(x, Amax=NULL,Amin=NULL) 
+                standardGeneric("clip"))
+                
+setGenericVerif("gammaCorrection", function(x, a = 1, b = 1) 
+                standardGeneric("gammaCorrection"))
+                
+setGenericVerif("traceScaling", function(x, 
+                  type = c("stat", "min-max", "95", "eq", "sum", "rms", 
+                           "mad", "invNormal")) 
+                  standardGeneric("traceScaling"))
+
+setGenericVerif("spec", function(x, type = c("f-x", "f-k"), plotSpec = TRUE, 
+                unwrapPhase = TRUE, ...) standardGeneric("spec"))
+                
+setGenericVerif("fFilter", function(x, f = 100, 
+                type = c('low', 'high', 'bandpass'),
+                L = 257, plotSpec = FALSE) standardGeneric("fFilter"))
+                
+setGenericVerif("fkFilter", function(x, fk = NULL, L = c(5, 5), npad = 1) 
+                standardGeneric("fkFilter"))
+
+setGenericVerif("eigenFilter", function(x, eigenvalue = NA, center = TRUE, 
+                                        scale = FALSE) 
+                standardGeneric("eigenFilter"))
+
+setGenericVerif("traceShift", function(x,  ts, method = c("spline", "linear", 
+                "nearest", "pchip", "cubic", "none"), crop = TRUE) 
+                standardGeneric("traceShift"))
+                
+setGenericVerif("traceAverage", function(x, w = NULL, FUN = mean, ...) 
+                standardGeneric("traceAverage"))
+                
+setGenericVerif("backgroundSub", function(x, width = 21, trim = 0.2,
+                                          s = 1, eps = 1, itmax = 5)
+                standardGeneric("backgroundSub"))
+
+setGenericVerif("time0Cor",  function(x, t0 = NULL, 
+                method = c("spline", "linear", "nearest", "pchip", "cubic", 
+                "none"), crop = TRUE, keep = 0) 
+                standardGeneric("time0Cor"))
+
+setGenericVerif("deconv", function(x, method=c("spiking", "wavelet",
+                "min-phase", "mixed-phase"), ...) standardGeneric("deconv"))
+setGenericVerif("conv1D", function(x, w) standardGeneric("conv1D"))
+setGenericVerif("conv2D", function(x, w) standardGeneric("conv2D"))
+setGenericVerif("rotatePhase", function(x, phi) standardGeneric("rotatePhase"))
+
+
+#------------------------------GRPsurvey
+#' @name getGPR
+#' @rdname getGPR
+#' @export
+setGenericVerif("getGPR", function(x,id) standardGeneric("getGPR"))
+
+#' @name surveyIntersect
+#' @rdname surveyIntersect
+#' @export
+setGenericVerif("surveyIntersect", function(x) 
+                standardGeneric("surveyIntersect"))
+#' @name writeSurvey
+#' @rdname writeSurvey
+#' @export
+setGenericVerif("writeSurvey", function(x, fPath, overwrite=FALSE){ 
+                standardGeneric("writeSurvey")})
+
+#' Georeferencing
+#'
+#' Perform on a set of x,y coordinates
+#' (1) a translation by \code{-cloc}, then
+#' (2) a rotation by \code{alpha} (radian), and (3)
+#' a translation by \code{creg}. If \code{creg}
+#' is \code{NULL}, then \code{creg} is set equal
+#' to \code{cloc}.
+#' @param x A matrix with the first two columns corresponding
+#'          to coordinates.
+#' @param alpha A length-one numeric vector corresponding to 
+#'              the rotation angle in radians. If \code{alpha = NULL},
+#'              \code{alpha} is estimated from the pairs of points in
+#'              the local reference system (\code{ploc}) and in the
+#'              regional reference system (\code{preg}).
+#' @param cloc A length-two numeric vector corresponding to the coordinate
+#'             center of the local reference system
+#' @param creg A length-two numeric vector corresponding to the coordinate
+#'             center of the regional reference system. Setting 
+#'             \code{creg = NULL} (default) is equivalent to apply a rotation
+#'             of angle \code{alpha} and center \code{cloc}.
+#' @param ploc A matrix with the first two columns corresponding
+#'             to coordinates in the local reference system.
+#' @param preg A matrix with the first two columns corresponding
+#'             to coordinates in the regional reference system.
+#' @param FUN If \code{alpha = NULL}, a function to estimate the rotation angle
+#'            from the angles computed for each pairs of coordinates of
+#'            \code{ploc}-\code{preg}.
+#' @export
+#' @name georef
+#' @rdname georef
+setGenericVerif("georef", function(x, alpha = NULL, cloc = c(0,0), creg = NULL,
+                   ploc = NULL, preg = NULL, FUN = mean){ 
+                standardGeneric("georef")})
+                
+#------------------------------BOTH
+setGenericVerif("plot3DRGL", 
+          function(x, addTopo = FALSE, clip = NULL, normalize = NULL, 
+                  nupspl = NULL, add = TRUE, xlim = NULL, ylim = NULL, 
+                  zlim = NULL,...) 
+standardGeneric("plot3DRGL"))
+
+setGenericVerif("exportPDF", function(x, fPath = NULL, addTopo = FALSE, 
+                clip = NULL, normalize = NULL, nupspl = NULL, ...) 
+standardGeneric("exportPDF"))
+
+#setGenericVerif("adimproSmooth", function(x,hmax=2,...) standardGeneric("
+# adimproSmooth"))
+
+#---------------------- DELINEATIONS ---------------------#
+#' @name delineate
+#' @rdname delineation
+#' @export
+setGenericVerif("delineate", function(x, name = NULL,
+                type = c("raster", "wiggles"),
+                addTopo = FALSE, nupspl = NULL, n = 10000, ...) 
+                  standardGeneric("delineate"))
+#' @name rmDelineations<-
+#' @rdname delineation
+#' @export
+setGenericVerif("rmDelineations<-", function(x,value=NULL) 
+                  standardGeneric("rmDelineations<-"))
+#' @name delineations
+#' @rdname delineation
+#' @export
+setGenericVerif("delineations", function(x,sel=NULL,...) 
+                  standardGeneric("delineations"))
+#' @name addDelineation
+#' @rdname delineation
+#' @export
+setGenericVerif("addDelineation", function(x,...) 
+                  standardGeneric("addDelineation"))
+setGenericVerif("showDelineations", function(x,sel=NULL,...) 
+                  standardGeneric("showDelineations"))
+#' @name exportDelineations
+#' @rdname delineation
+#' @export
+setGenericVerif("exportDelineations", function(x, dirpath="") 
+                  standardGeneric("exportDelineations"))
+#' @name plotDelineations3D
+#' @rdname delineation
+#' @export
+setGenericVerif("plotDelineations3D", 
+                function(x,sel=NULL,col=NULL,add=TRUE,...)
+                standardGeneric("plotDelineations3D"))
+#' @name plotDelineations
+#' @rdname delineation
+#' @export
+setGenericVerif("plotDelineations", function(x,sel=NULL,col=NULL,...) 
+                  standardGeneric("plotDelineations"))
+#' @name identifyDelineation
+#' @rdname delineation
+#' @export
+setGenericVerif("identifyDelineation", function(x,sel=NULL,...) 
+                  standardGeneric("identifyDelineation"))
+
+#' Structure tensor field of GPR data 
+#'
+#' @name strTensor
+#' @rdname strTensor
+#' @export
+setGenericVerif("strTensor", function(x,  blksze = c(2, 4),
+                        kBlur   = list(n = 1, m = 1, sd = 1), 
+                        kEdge   = list(n = 5, m = 5, sd = 1), 
+                        kTensor = list(n = 5, m = 5, sd = 1),
+                        thresh = 0.02, what = c("tensor", "mask"), ...)
+                        standardGeneric("strTensor"))
+                  
+                  
+                  
 
 
 ################## GPR PROCESSING ######################3
@@ -810,576 +1394,7 @@ LineToLines <- function(i,pp, myNames){
 }
 
 
-#--------------------------------------------#
-#---------------- SETGENERIC ----------------#
-# setGenericVerif <- function(x,y){
-#   if(!isGeneric(x)){
-#     setGeneric(x,y)
-#   }else{
-#     cat("setGeneric", x,"already exists!\n")
-#   }
-# }
-setGenericVerif <- function(x,y){setGeneric(x,y)}
 
-
-#------------------------------
-
-setGenericVerif("as.SpatialPoints", function(x) 
-standardGeneric("as.SpatialPoints"))
-
-setGenericVerif("as.SpatialLines", function(x) 
-standardGeneric("as.SpatialLines"))
-
-
-#------------------------------
-#' @name coordref
-#' @rdname coordref-methods
-#' @exportMethod coordref
-setGenericVerif("coordref", function(x) standardGeneric("coordref"))
-
-
-#' @name coordref<-
-#' @rdname coordref-methods
-#' @exportMethod coordref
-setGenericVerif("coordref<-", function(x, value) standardGeneric("coordref<-"))
-
-#' @name intersections
-#' @rdname intersections-methods
-#' @exportMethod intersections
-setGenericVerif("intersections", function(x) standardGeneric("intersections"))
-
-#' @name filepath
-#' @rdname filepath-methods
-#' @exportMethod filepath
-setGenericVerif("filepath", function(x) standardGeneric("filepath"))
-
-#' @name filepath<-
-#' @rdname filepath-methods
-#' @exportMethod filepath<-
-setGenericVerif("filepath<-", function(x, value) standardGeneric("filepath<-"))
-
-#' @name coords
-#' @rdname coords-methods
-#' @exportMethod coords
-setGenericVerif("coords", function(x,i) standardGeneric("coords"))
-
-#' @name coords<-
-#' @rdname coords-methods
-#' @exportMethod coords<-
-setGenericVerif("coords<-",function(x,value){standardGeneric("coords<-")})
-
-#' @name coord
-#' @rdname coord-methods
-#' @exportMethod coord
-setGenericVerif("coord", function(x, i, ...) standardGeneric("coord"))
-
-#' @name coord<-
-#' @rdname coord-methods
-#' @exportMethod coord<-
-setGenericVerif("coord<-",function(x,value){standardGeneric("coord<-")})
-
-
-#' @name svDate
-#' @rdname svDate
-#' @export
-setGenericVerif("svDate", function(x, i, ...) standardGeneric("svDate"))
-
-#' @name svDate<-
-#' @rdname svDate
-#' @export
-setGenericVerif("svDate<-",function(x,value){standardGeneric("svDate<-")})
-
-
-#' @name vel
-#' @rdname vel
-#' @export
-setGenericVerif("vel", function(x) standardGeneric("vel"))
-
-#' @name vel<-
-#' @rdname vel
-#' @export
-setGenericVerif("vel<-",function(x,value){standardGeneric("vel<-")})
-
-#' @name ann
-#' @rdname ann
-#' @export
-setGenericVerif("ann", function(x) standardGeneric("ann"))
-
-#' @name ann<-
-#' @rdname ann
-#' @export
-setGenericVerif("ann<-",function(x,value){standardGeneric("ann<-")})
-
-#' @name name
-#' @rdname name
-#' @export
-setGenericVerif("name", function(x) standardGeneric("name"))
-
-#' @name name<-
-#' @rdname name
-#' @export
-setGenericVerif("name<-",function(x,value){standardGeneric("name<-")})
-
-#' @name depthunit
-#' @rdname depthunit
-#' @export
-setGenericVerif("depthunit", function(x) standardGeneric("depthunit"))
-
-#' @name depthunit<-
-#' @rdname depthunit
-#' @export
-setGenericVerif("depthunit<-",function(x,value){standardGeneric("depthunit<-")})
-
-#' @name posunit
-#' @rdname posunit
-#' @export
-setGenericVerif("posunit", function(x) standardGeneric("posunit"))
-
-#' @name posunit<-
-#' @rdname posunit
-#' @export
-setGenericVerif("posunit<-",function(x,value){standardGeneric("posunit<-")})
-
-#' @name crs
-#' @rdname crs
-#' @export
-setGenericVerif("crs", function(x) standardGeneric("crs"))
-
-#' @name crs<-
-#' @rdname crs
-#' @export
-setGenericVerif("crs<-",function(x,value){standardGeneric("crs<-")})
-
-#' @name depth
-#' @rdname depth
-#' @export
-setGenericVerif("depth", function(x) standardGeneric("depth"))
-
-#' @name depth<-
-#' @rdname depth
-#' @export
-setGenericVerif("depth<-", function(x,value) standardGeneric("depth<-"))
-
-#' @name pos
-#' @rdname pos
-#' @export
-setGenericVerif("pos", function(x) standardGeneric("pos"))
-
-#' @name pos<-
-#' @rdname pos
-#' @export
-setGenericVerif("pos<-", function(x,value) standardGeneric("pos<-"))
-
-#' @name time0
-#' @rdname time0
-#' @export
-setGenericVerif("time0", function(x) standardGeneric("time0"))
-
-#' @name time0<-
-#' @rdname time0
-#' @export
-setGenericVerif("time0<-",function(x,value){standardGeneric("time0<-")})
-
-#' Time of data collection for each trace
-#'
-#' @name trTime
-#' @rdname trTime
-#' @export
-setGenericVerif("trTime", function(x) standardGeneric("trTime"))
-
-#' @name fid
-#' @rdname fid
-#' @export
-setGenericVerif("fid", function(x) standardGeneric("fid"))
-
-#' @name fid<-
-#' @rdname fid
-#' @export
-setGenericVerif("fid<-",function(x,value){standardGeneric("fid<-")})
-
-#' @name values
-#' @rdname values
-#' @export
-setGenericVerif("values", function(x) standardGeneric("values"))
-
-#' @name values<-
-#' @rdname values
-#' @export
-setGenericVerif("values<-", function(x,value) standardGeneric("values<-"))
-
-#' @name processing
-#' @rdname processing
-#' @export
-setGenericVerif("processing", function(x) standardGeneric("processing"))
-
-#' @name proc
-#' @rdname proc
-#' @export
-setGenericVerif("proc", function(x) standardGeneric("proc"))
-
-
-#' @name proc<-
-#' @rdname proc
-#' @export
-setGenericVerif("proc<-",function(x,value){standardGeneric("proc<-")})
-
-#' @name antsep
-#' @rdname antsep
-#' @export
-setGenericVerif("antsep", function(x) standardGeneric("antsep"))
-
-#' @name antsep<-
-#' @rdname antsep
-#' @export
-setGenericVerif("antsep<-",function(x,value){standardGeneric("antsep<-")})                
-                
-
-#' @name surveymode
-#' @rdname surveymode
-#' @export
-setGenericVerif("surveymode", function(x) standardGeneric("surveymode"))
-
-#' @name surveymode<-
-#' @rdname surveymode
-#' @export
-setGenericVerif("surveymode<-",
-                function(x, value){standardGeneric("surveymode<-")})    
-
-#' @name isCMP
-#' @rdname isCMP
-#' @export
-setGenericVerif("isCMP", function(x) standardGeneric("isCMP"))
-
-
-
-#' @name description
-#' @rdname description
-#' @export
-setGenericVerif("description", function(x) standardGeneric("description"))
-
-#' @name description<-
-#' @rdname description
-#' @export
-setGenericVerif("description<-", function(x, value) 
-standardGeneric("description<-"))
-#####
-setGenericVerif("papply", function(x, prc = NULL) standardGeneric("papply"))
-##########
-                  
-#------------------------------GPR
-#' @name gethd
-#' @rdname gethd
-#' @export
-setGenericVerif("gethd", function(x,hd=NULL) standardGeneric("gethd"))
-
-#' @name plotAmpl
-#' @rdname plotAmpl
-#' @export
-setGenericVerif("plotAmpl", function(x, FUN = mean, add = FALSE, 
-                all = FALSE,...) standardGeneric("plotAmpl"))
-setGenericVerif("ampl", function(x, FUN=mean, ...) standardGeneric("ampl"))
-
-#' @name trRmDuplicates
-#' @rdname trRmDuplicates
-#' @export
-setGenericVerif("trRmDuplicates", function(x, tol = NULL, verbose = TRUE) 
-  standardGeneric("trRmDuplicates"))
-
-#' @name interpPos
-#' @rdname interpPos
-#' @export
-setGenericVerif("interpPos", function(x, topo, plot = FALSE, r = NULL, tol = NULL, 
-                   method = c("linear", "spline", "pchip"), ...) 
-    standardGeneric("interpPos"))
-
-#' @name regInterpPos
-#' @rdname regInterpPos
-#' @export
-setGenericVerif("regInterpPos", function(x, type = c("linear", "cosine"), 
-          dx = NULL)  standardGeneric("regInterpPos"))
-
-#' @name relPos
-#' @rdname relPos
-#' @export
-setGenericVerif("relPos", function(x) 
-    standardGeneric("relPos"))
-    
-# #' @name readGPR
-# #' @rdname readGPR
-# #' @export
-# setGenericVerif("readGPR", function(fPath, desc = "", ...) 
-#   standardGeneric("readGPR")
-# )
-
-#' @name writeGPR
-#' @rdname writeGPR
-#' @export
-setGeneric("writeGPR", function(x, fPath = NULL, 
-                type = c("DT1", "rds", "ASCII", "xta", "xyza"),
-                overwrite = FALSE, ...){ standardGeneric("writeGPR")})
-
-#' @name exportCoord
-#' @rdname exportCoord
-#' @export
-setGenericVerif("exportCoord",  
-          function(x, type = c("SpatialPoints", "SpatialLines", "ASCII"),
-  fPath = NULL, driver = "ESRI Shapefile", ...) standardGeneric("exportCoord"))
-#' @name exportFid
-#' @rdname exportFid
-#' @export
-setGenericVerif("exportFid", function(x, fPath = NULL) 
-                  standardGeneric("exportFid"))
-
-#' @name exportProc
-#' @rdname exportProc
-#' @export
-setGenericVerif("exportProc",  function(x,fPath=NULL,sep="\t", row.names=FALSE,
-              col.names=FALSE, ...) standardGeneric("exportProc"))
-
-#' @name reverse
-#' @rdname reverse
-#' @export
-setGenericVerif("reverse", function(x, id = NULL,  tol = 0.3) 
-                standardGeneric("reverse"))
-
-
-#' @name setGridCoord
-#' @rdname setGridCoord-methods
-#' @export
-setGeneric("setGridCoord<-",function(x,value){standardGeneric("setGridCoord<-")})
-
-
-#' @name shiftEst
-#' @rdname shiftEst
-#' @export
-setGenericVerif("shiftEst", function(x, y = NULL, 
-                method=c("phase", "WSSD"), dxy = NULL, ...) 
-                standardGeneric("shiftEst"))
-
-#' @name NMOCor
-#' @rdname NMOCor-methods
-#' @exportMethod NMOCor
-setGenericVerif("NMOCor", function(x, v = NULL) 
-  standardGeneric("NMOCor"))
-
-
-#' @name CMPAnalysis
-#' @rdname CMPAnalysis-methods
-#' @exportMethod CMPAnalysis
-setGenericVerif("CMPAnalysis", function(x, method = c("semblance", 
-               "winsemblance", "wincoherence", "wincoherence2"), v = NULL, 
-               w = NULL) standardGeneric("CMPAnalysis"))
-
-setGenericVerif("migration", function(x,type=c("static","kirchhoff"), ...) 
-standardGeneric("migration"))
-setGenericVerif("upsample", function(x,n) standardGeneric("upsample"))
-setGenericVerif("timeCorOffset", function(x, t0 = NULL, c0 = 0.299) 
-  standardGeneric("timeCorOffset"))
-
-#' @name filter1D
-#' @rdname filter1D
-setGenericVerif("filter1D", function(x, type = c("median", "hampel", 
-                "Gaussian"), ...) standardGeneric("filter1D"))
-
-#' @name filter2D
-#' @rdname filter2D
-#' @export
-setGenericVerif("filter2D", function(x, type=c("median3x3", "adimpro"), ...) 
-                standardGeneric("filter2D"))
-                
-setGenericVerif("dewow", function(x, type=c("MAD", "Gaussian"), w ) 
-                standardGeneric("dewow"))
-                
-setGenericVerif("gain", function(x, type=c("power", "exp", "agc"), ...) 
-                standardGeneric("gain")) 
-
-setGenericVerif("trAmplCor", 
-                function(x, type=c("power", "exp", "agc"),  ...) 
-                standardGeneric("trAmplCor"))
-                
-setGenericVerif("dcshift", function(x, u = NULL, FUN = mean) 
-                standardGeneric("dcshift"))
-                
-setGenericVerif("firstBreak", function(x, method = c("coppens", "coppens2",
-                "threshold",  "MER"), thr = 0.12, w = 11, ns = NULL, 
-                bet = NULL)
-                standardGeneric("firstBreak"))
-
-setGenericVerif("clip", function(x, Amax=NULL,Amin=NULL) 
-                standardGeneric("clip"))
-                
-setGenericVerif("gammaCorrection", function(x, a = 1, b = 1) 
-                standardGeneric("gammaCorrection"))
-                
-setGenericVerif("traceScaling", function(x, 
-                  type = c("stat", "min-max", "95", "eq", "sum", "rms", 
-                           "mad", "invNormal")) 
-                  standardGeneric("traceScaling"))
-
-setGenericVerif("spec", function(x, type = c("f-x", "f-k"), plotSpec = TRUE, 
-                unwrapPhase = TRUE, ...) standardGeneric("spec"))
-                
-setGenericVerif("fFilter", function(x, f = 100, 
-                type = c('low', 'high', 'bandpass'),
-                L = 257, plotSpec = FALSE) standardGeneric("fFilter"))
-                
-setGenericVerif("fkFilter", function(x, fk = NULL, L = c(5, 5), npad = 1) 
-                standardGeneric("fkFilter"))
-
-setGenericVerif("eigenFilter", function(x, eigenvalue = NA, center = TRUE, 
-                                        scale = FALSE) 
-                standardGeneric("eigenFilter"))
-
-setGenericVerif("traceShift", function(x,  ts, method = c("spline", "linear", 
-                "nearest", "pchip", "cubic", "none"), crop = TRUE) 
-                standardGeneric("traceShift"))
-                
-setGenericVerif("traceAverage", function(x, w = NULL, FUN = mean, ...) 
-                standardGeneric("traceAverage"))
-                
-setGenericVerif("backgroundSub", function(x, width = 21, trim = 0.2,
-                                          s = 1, eps = 1, itmax = 5)
-                standardGeneric("backgroundSub"))
-
-setGenericVerif("time0Cor",  function(x, t0 = NULL, 
-                method = c("spline", "linear", "nearest", "pchip", "cubic", 
-                "none"), crop = TRUE, keep = 0) 
-                standardGeneric("time0Cor"))
-
-setGenericVerif("deconv", function(x, method=c("spiking", "wavelet",
-                "min-phase", "mixed-phase"), ...) standardGeneric("deconv"))
-setGenericVerif("conv1D", function(x, w) standardGeneric("conv1D"))
-setGenericVerif("conv2D", function(x, w) standardGeneric("conv2D"))
-setGenericVerif("rotatePhase", function(x, phi) standardGeneric("rotatePhase"))
-
-
-#------------------------------GRPsurvey
-#' @name getGPR
-#' @rdname getGPR
-#' @export
-setGenericVerif("getGPR", function(x,id) standardGeneric("getGPR"))
-
-#' @name surveyIntersect
-#' @rdname surveyIntersect
-#' @export
-setGenericVerif("surveyIntersect", function(x) 
-                standardGeneric("surveyIntersect"))
-#' @name writeSurvey
-#' @rdname writeSurvey
-#' @export
-setGenericVerif("writeSurvey", function(x, fPath, overwrite=FALSE){ 
-                standardGeneric("writeSurvey")})
-
-#' Georeferencing
-#'
-#' Perform on a set of x,y coordinates
-#' (1) a translation by \code{-cloc}, then
-#' (2) a rotation by \code{alpha} (radian), and (3)
-#' a translation by \code{creg}. If \code{creg}
-#' is \code{NULL}, then \code{creg} is set equal
-#' to \code{cloc}.
-#' @param x A matrix with the first two columns corresponding
-#'          to coordinates.
-#' @param alpha A length-one numeric vector corresponding to 
-#'              the rotation angle in radians. If \code{alpha = NULL},
-#'              \code{alpha} is estimated from the pairs of points in
-#'              the local reference system (\code{ploc}) and in the
-#'              regional reference system (\code{preg}).
-#' @param cloc A length-two numeric vector corresponding to the coordinate
-#'             center of the local reference system
-#' @param creg A length-two numeric vector corresponding to the coordinate
-#'             center of the regional reference system. Setting 
-#'             \code{creg = NULL} (default) is equivalent to apply a rotation
-#'             of angle \code{alpha} and center \code{cloc}.
-#' @param ploc A matrix with the first two columns corresponding
-#'             to coordinates in the local reference system.
-#' @param preg A matrix with the first two columns corresponding
-#'             to coordinates in the regional reference system.
-#' @param FUN If \code{alpha = NULL}, a function to estimate the rotation angle
-#'            from the angles computed for each pairs of coordinates of
-#'            \code{ploc}-\code{preg}.
-#' @export
-#' @name georef
-#' @rdname georef
-setGenericVerif("georef", function(x, alpha = NULL, cloc = c(0,0), creg = NULL,
-                   ploc = NULL, preg = NULL, FUN = mean){ 
-                standardGeneric("georef")})
-                
-#------------------------------BOTH
-setGenericVerif("plot3DRGL", 
-          function(x, addTopo = FALSE, clip = NULL, normalize = NULL, 
-                  nupspl = NULL, add = TRUE, xlim = NULL, ylim = NULL, 
-                  zlim = NULL,...) 
-standardGeneric("plot3DRGL"))
-
-setGenericVerif("exportPDF", function(x, fPath = NULL, addTopo = FALSE, 
-                clip = NULL, normalize = NULL, nupspl = NULL, ...) 
-standardGeneric("exportPDF"))
-
-#setGenericVerif("adimproSmooth", function(x,hmax=2,...) standardGeneric("
-# adimproSmooth"))
-
-#---------------------- DELINEATIONS ---------------------#
-#' @name delineate
-#' @rdname delineation
-#' @export
-setGenericVerif("delineate", function(x, name = NULL,
-                type = c("raster", "wiggles"),
-                addTopo = FALSE, nupspl = NULL, n = 10000, ...) 
-                  standardGeneric("delineate"))
-#' @name rmDelineations<-
-#' @rdname delineation
-#' @export
-setGenericVerif("rmDelineations<-", function(x,value=NULL) 
-                  standardGeneric("rmDelineations<-"))
-#' @name delineations
-#' @rdname delineation
-#' @export
-setGenericVerif("delineations", function(x,sel=NULL,...) 
-                  standardGeneric("delineations"))
-#' @name addDelineation
-#' @rdname delineation
-#' @export
-setGenericVerif("addDelineation", function(x,...) 
-                  standardGeneric("addDelineation"))
-setGenericVerif("showDelineations", function(x,sel=NULL,...) 
-                  standardGeneric("showDelineations"))
-#' @name exportDelineations
-#' @rdname delineation
-#' @export
-setGenericVerif("exportDelineations", function(x, dirpath="") 
-                  standardGeneric("exportDelineations"))
-#' @name plotDelineations3D
-#' @rdname delineation
-#' @export
-setGenericVerif("plotDelineations3D", 
-                function(x,sel=NULL,col=NULL,add=TRUE,...)
-                standardGeneric("plotDelineations3D"))
-#' @name plotDelineations
-#' @rdname delineation
-#' @export
-setGenericVerif("plotDelineations", function(x,sel=NULL,col=NULL,...) 
-                  standardGeneric("plotDelineations"))
-#' @name identifyDelineation
-#' @rdname delineation
-#' @export
-setGenericVerif("identifyDelineation", function(x,sel=NULL,...) 
-                  standardGeneric("identifyDelineation"))
-
-#' Structure tensor field of GPR data 
-#'
-#' @name strTensor
-#' @rdname strTensor
-#' @export
-setGenericVerif("strTensor", function(x,  blksze = c(2, 4),
-                        kBlur   = list(n = 1, m = 1, sd = 1), 
-                        kEdge   = list(n = 5, m = 5, sd = 1), 
-                        kTensor = list(n = 5, m = 5, sd = 1),
-                        thresh = 0.02, what = c("tensor", "mask"), ...)
-                        standardGeneric("strTensor"))
-                  
-                  
-                  
                   
                   
 # http://stackoverflow.com/questions/6836409/finding-local-maxima-and-minima

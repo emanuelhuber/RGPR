@@ -48,14 +48,16 @@ ISSN      = {2474-3844}}
 - [x] Sensors & Software file format (**\*.dt1**, **\*.hd**).
 - [x] MALA file format (**\*.rd3**, **\*.rad**).
 - [x] RadSys Zond GPR file format (**\*.sgy**). **WARNING: it is not like the usual SEG-Y file format**).
-- [x] ImpulseRadar format (**\*.iprb**, **\*iprh**).
+- [x] ImpulseRadar format (**\*.iprb**, **\*.iprh**).
 - [X] GSSI file format (**\*.dtz**).
 - [X] ASCII (**\*.txt**): 
-	- either 3-column format (x, t, amplitude) 
+  	- either 3-column format (x, t, amplitude) 
     - or matrix-format (without header/rownames)
 - [X] R internal format (**\*.rds**).
+- [X] ENVI band sequential file format (**\*.dat**, **\*.hdr**).
 - [ ] SEG-Y -> **we are working on it**
     
+See tutorial [Import GPR data](http://emanuelhuber.github.io/RGPR/00_RGPR_import_data/).
 
     
 Do you miss your preferred file format? Send me the file format description with a test file and I will adapt the RGPR-package to support this file format. 

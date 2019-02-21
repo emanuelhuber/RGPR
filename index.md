@@ -68,8 +68,10 @@ date: 2018-02-12
 - [x] ImpulseRadar format (**\*.iprb**, **\*.iprh**).
 - [X] GSSI file format (**\*.dtz**).
 - [X] ASCII (**\*.txt**): 
+  	
   	- either 3-column format (x, t, amplitude) 
     - or matrix-format (without header/rownames)
+    
 - [X] R internal format (**\*.rds**).
 - [X] ENVI band sequential file format (**\*.dat**, **\*.hdr**).
 - [ ] SEG-Y -> **we are working on it**

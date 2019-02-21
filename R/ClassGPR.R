@@ -405,7 +405,7 @@ setClass(
 
 
 .gprRD3 <- function(x, fName = character(0), desc = character(0),
-                    fPath = character(0)){  
+                    fPath = character(0), nBytes = 16){  
   #coord <- matrix(nrow = 0, ncol = 0) 
   #if(!is.null(x$coords)){
   #coord <- cbind(ll2dc(x$coords$latitude),
@@ -491,7 +491,7 @@ setClass(
     sup_hd <- c(sup_hd, sup_hd2)
   }
   new("GPR",   version="0.2",
-      data = byte2volt()*x$data,
+      data = byte2volt(nBytes = nBytes)*x$data,
       traces = 1:ncol(x$data),
       fid = rep("", ncol(x$data)),
       #coord = coord,
@@ -840,6 +840,10 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, fPath){
     # fName <- .fNameWExt(fPath)
     A <- readRD3(dsn, dsn2)
     x <- .gprRD3(A, fName = fName, fPath = fPath, desc = desc)
+  }else if("RD7" == toupper(ext)){
+    # fName <- .fNameWExt(fPath)
+    A <- readRD7(dsn, dsn2)
+    x <- .gprRD3(A, fName = fName, fPath = fPath, desc = desc, nBytes = 32)
   }else if("SGY" == toupper(ext) || "SEGY" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
     A <- readSEGY(dsn)

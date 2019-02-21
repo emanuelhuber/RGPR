@@ -46,7 +46,7 @@ ISSN      = {2474-3844}}
 ### Supported file formats:
 
 - [x] Sensors & Software file format (**\*.dt1**, **\*.hd**).
-- [x] MALA file format (**\*.rd3**, **\*.rad**).
+- [x] MALA file format (**\*.rd3**, **\*.rd7**, **\*.rad**).
 - [x] RadSys Zond GPR file format (**\*.sgy**). **WARNING: it is not like the usual SEG-Y file format**).
 - [x] ImpulseRadar format (**\*.iprb**, **\*.iprh**).
 - [X] GSSI file format (**\*.dtz**).

@@ -2864,7 +2864,7 @@ phaseRotation <- function(x,phi){
 #'       
 #' Convert bytes to volt values
 #' @export
-byte2volt <- function ( V=c(-50,50), nBytes = 16) {
+byte2volt <- function( V = c(-50, 50), nBytes = 16) {
   abs(diff(V))/(2^nBytes)
 }
 
@@ -4105,6 +4105,48 @@ readDT1 <- function(fPath, dsn2 = NULL){
 
   
 #--------------- read MALA files -------------------#
+readRD7 <- function(fPath, dsn2 = NULL){
+  if( inherits(fPath, "connection") ){
+    if(!inherits(dsn2, "connection")){
+      stop("Please add an additional connection to 'readGPR()' for ",
+           "the header file '*.hd'")
+    }
+    con <- fPath
+  }else if(is.character(fPath)){
+    fName <- getFName(fPath, ext = c(".rad", ".rd7"))
+    # open dt1 file
+    con <- file(fName$rd7 , "rb")
+    dsn2 <- fName$rad
+  }else{
+    stop("check this error")
+  }
+  ##---- RAD file
+  headRAD <- scan(dsn2, what = character(), strip.white = TRUE,
+                  quiet = TRUE, fill = TRUE, blank.lines.skip = TRUE, 
+                  flush = TRUE, sep = "\n")
+  
+  nRAD <- length(headRAD)
+  hRAD <- data.frame( tag = character(), val = character(), 
+                      stringsAsFactors = FALSE)
+  for(i in seq_along(headRAD)){
+    hdline <- strsplit(headRAD[i], ":")[[1]]
+    hRAD[i,1:2] <-  as.character(sapply(hdline[1:2],trimStr))
+  }
+  nTr <- .getHD(hRAD, "LAST TRACE")
+  nPt <- .getHD(hRAD, "SAMPLES")
+  ##---- RD7 file
+  dataRD7 <- matrix(NA, nrow = nPt, ncol = nTr)
+  for(i in seq_len(nTr)){
+    dataRD7[, i] <- readBin(con, what = integer(), n = nPt, size = 4)
+  }
+  
+  if( !inherits(fPath, "connection") ){
+    close(con)
+  }
+  return(list(hd = hRAD, data = dataRD7))
+}
+
+  
 readRD3 <- function(fPath, dsn2 = NULL){
   if( inherits(fPath, "connection") ){
     if(!inherits(dsn2, "connection")){

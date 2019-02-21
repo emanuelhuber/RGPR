@@ -18,6 +18,12 @@
 
 Open a new issue on github or send me an email: emanuel.huber@alumni.ethz.ch
 
+## Share R, Matlab or Python code
+
+You wrote some functions in R, Matlab or Python and you would like to make them
+available to RGPR? Send me the files with some graphics (before, after) and
+I will try to convert them in R or run directly from R.
+
 ## Make changes
 
 You are welcome to improve the code and add new functionalities. 

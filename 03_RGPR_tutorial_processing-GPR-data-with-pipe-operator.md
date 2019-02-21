@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Pipe processing
-date: 2019-02-19
+date: 2019-02-21
 ---
 
 <!--
@@ -26,8 +26,8 @@ Preliminary
 
 -   Read the tutorial [Basic GPR data processing](http://emanuelhuber.github.io/RGPR/01_RGPR_tutorial_basic-processing/) to learn more about the processing methods
 
-Install/load `RGPR` and set the working directory
--------------------------------------------------
+Install/load `RGPR`
+-------------------
 
 ``` r
 # install "devtools" if not already done
@@ -46,7 +46,7 @@ x <- frenkeLine00
 plot(x)
 ```
 
-![plot(x)](01_zRGPR_tutorial_processing-with-pipe-operator_tp_files/figure-markdown_github-tex_math_single_backslash/x-1.png)
+![plot(x)](03_RGPR_tutorial_processing-GPR-data-with-pipe-operator_tp_files/figure-markdown_github-tex_math_single_backslash/x-1.png)
 
 Compute time zero
 -----------------
@@ -58,7 +58,7 @@ t0 <- firstBreakToTime0(tfb[1], x[,1])
 abline(v = c(tfb[1], t0[1]), col = c("green", "blue"))
 ```
 
-![time zero](01_zRGPR_tutorial_processing-with-pipe-operator_tp_files/figure-markdown_github-tex_math_single_backslash/time_zero-1.png)
+![time zero](03_RGPR_tutorial_processing-GPR-data-with-pipe-operator_tp_files/figure-markdown_github-tex_math_single_backslash/time_zero-1.png)
 
 Using the pipe operators with RPGR
 ==================================
@@ -134,6 +134,6 @@ xnew <- x %>%
   gain(type = "agc", w =  5)
 ```
 
-![plot(dewow(x))](01_zRGPR_tutorial_processing-with-pipe-operator_tp_files/figure-markdown_github-tex_math_single_backslash/w_tee_pipe-1.png)
+![plot(dewow(x))](03_RGPR_tutorial_processing-GPR-data-with-pipe-operator_tp_files/figure-markdown_github-tex_math_single_backslash/w_tee_pipe-1.png)
 
 In this example `dewow(type = "MAD", w = 50) %T>%  plot()` returns the output of the `dewow()` function.

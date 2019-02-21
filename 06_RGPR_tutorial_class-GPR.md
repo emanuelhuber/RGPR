@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Class GPR
-date: 2019-02-15
+date: 2019-02-21
 ---
 
 <!--
@@ -115,7 +115,7 @@ str(A)            # let's have a look at the structure of A
 The strings after the `@` are the names of the elements that form `A`. These elements are called `slots`. To get the `slots` names enter:
 
 ``` r
-methods::slotNames(A)      # return the slot names
+slotNames(A)      # return the slot names
 ```
 
     ##  [1] "version"      "data"         "traces"       "depth"       

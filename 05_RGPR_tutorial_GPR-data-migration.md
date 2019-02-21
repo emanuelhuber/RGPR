@@ -1,7 +1,7 @@
 ---
 layout: page
 title: GPR data migration
-date: 2019-02-15
+date: 2019-02-21
 ---
 
 <!--
@@ -146,7 +146,7 @@ Eliminate the high-frequency (noise) component of the GPR record with a bandpass
 A4 <- fFilter(A3, f = c(150, 260), type = "low", plotSpec = TRUE)
 ```
 
-![frequency filter](03_RGPR_tutorial_migration_tp_files/figure-markdown_github/unnamed-chunk-10-1.png)
+![frequency filter](05_RGPR_tutorial_GPR-data-migration_tp_files/figure-markdown_github/unnamed-chunk-10-1.png)
 
 Time gain
 ---------
@@ -181,7 +181,7 @@ A7 <- timeCorOffset(A6)
 plot(A7)
 ```
 
-![plot data](03_RGPR_tutorial_migration_tp_files/figure-markdown_github/unnamed-chunk-12-1.png)
+![plot data](05_RGPR_tutorial_GPR-data-migration_tp_files/figure-markdown_github/unnamed-chunk-12-1.png)
 
 ### Time upsampling (sinc-interpolation) of the GPR data to reduce the aliasing risk.
 
@@ -222,7 +222,7 @@ A9 <- migration(A8, type="kirchhoff", max_depth = 20,
 plot(A9)
 ```
 
-![plot migrated data](03_RGPR_tutorial_migration_tp_files/figure-markdown_github/unnamed-chunk-16-1.png)
+![plot migrated data](05_RGPR_tutorial_GPR-data-migration_tp_files/figure-markdown_github/unnamed-chunk-16-1.png)
 
 You don't see so much: we need some post-processing!
 
@@ -256,7 +256,7 @@ Before migration
 plot(traceScaling(A8, type = "invNormal"))
 ```
 
-![before migration](03_RGPR_tutorial_migration_tp_files/figure-markdown_github/unnamed-chunk-20-1.png)
+![before migration](05_RGPR_tutorial_GPR-data-migration_tp_files/figure-markdown_github/unnamed-chunk-20-1.png)
 
 After migration
 
@@ -264,4 +264,4 @@ After migration
 plot(A12)
 ```
 
-![after migration](03_RGPR_tutorial_migration_tp_files/figure-markdown_github/unnamed-chunk-21-1.png)
+![after migration](05_RGPR_tutorial_GPR-data-migration_tp_files/figure-markdown_github/unnamed-chunk-21-1.png)

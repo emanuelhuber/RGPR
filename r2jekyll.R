@@ -5,12 +5,13 @@
 # and take care of any .png file housekeeping, I navigate 
 # to my _drafts directory and execute in the terminal:
 
-# Rscript --vanilla r2jekyll.R 00_RGPR_import_data.Rmd
-# Rscript --vanilla r2jekyll.R 01_RGPR_tutorial_basic-processing.Rmd
-# Rscript --vanilla r2jekyll.R 01_zRGPR_tutorial_processing-with-pipe-operator.Rmd
-# Rscript --vanilla r2jekyll.R 02_RGPR_tutorial_RGPR-survey.Rmd
-# Rscript --vanilla r2jekyll.R 03_RGPR_tutorial_migration.Rmd
-# Rscript --vanilla r2jekyll.R 04_RGPR_tutorial_RGPR-object.Rmd
+# Rscript --vanilla r2jekyll.R 00_RGPR_tutorial_import-GPR-data.Rmd
+# Rscript --vanilla r2jekyll.R 01_RGPR_tutorial_plot-GPR-data.Rmd
+# Rscript --vanilla r2jekyll.R 02_RGPR_tutorial_basic-GPR-data-processing.Rmd
+# Rscript --vanilla r2jekyll.R 03_RGPR_tutorial_processing-GPR-data-with-pipe-operator.Rmd
+# Rscript --vanilla r2jekyll.R 04_RGPR_tutorial_GPR-data-survey.Rmd
+# Rscript --vanilla r2jekyll.R 05_RGPR_tutorial_GPR-data-migration.Rmd
+# Rscript --vanilla r2jekyll.R 06_RGPR_tutorial_class-GPR.Rmd
 
 # CHECK
 # https://gist.github.com/emanuelhuber/11835e6840868029d7c4721b7f7bf465

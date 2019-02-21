@@ -152,7 +152,7 @@ Notice how the trace samples before the first wave arrival (before $t = 0\,ns$) 
 ![plot single trace, first 110 samples](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/dcShift_plot_first_samples-1.png)
 
    
-    You can visualise the DC-offset on the trace plot by adding an horizontal lines (`abline(h=...)`) with the argument `h` equal the DC-offset, i.e., the mean of the first $110$     samples (`mean(x[1:110,15]`):
+You can visualise the DC-offset on the trace plot by adding an horizontal lines (`abline(h=...)`) with the argument `h` equal the DC-offset, i.e., the mean of the first $110$     samples (`mean(x[1:110,15]`):
 
     ``` r
     plot(x[, 15])  # plot the 15th trace of the GPR-line

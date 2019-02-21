@@ -41,7 +41,13 @@ A <- frenkeLine00
 plot(A)
 ```
 
-![plot(x)](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github-tex_math_single_backslash/x-1.png)\# Plot the GPR data\#\# 2D plot: radargramm
+![plot(x)](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github-tex_math_single_backslash/x-1.png)
+
+Plot the GPR data
+=================
+
+2D plot: radargramm
+-------------------
 
 To plot the GPR record as a raster image (default mode), enter
 

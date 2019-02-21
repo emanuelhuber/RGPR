@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Basic GPR data processing
-date: 2019-02-21
+date: 2019-02-22
 ---
 
 <!--
@@ -164,7 +164,7 @@ Notice how the trace samples before the first wave arrival (before $t = 0\,ns$) 
 2.  Remove the DC-offset estimated on the first n samples usind the function `dcshift()`. This function takes as argument the `GPR` object and the sample index used to estimate the DC shift (in this case, the first $110$     samples):
 
     ``` r
-    x1 <- dcshift(x, 1:110)   # new object x2
+    x1 <- dcshift(x, u = 1:110)   # new object x1
     ```
 
 Have a look at x1:
@@ -183,6 +183,7 @@ x1
     ##  223 traces, 55.5 m
     ##  > PROCESSING
     ##    1. time0<-
+    ##    2. dcshift//u=1:110
     ##  ****************
 
 Compared with `x` or `print(x)`, three additional lines are displayed. The two last line show the applied processing step:
@@ -199,6 +200,8 @@ proc(x1)
 ```
 
     ## [1] "time0<-"
+    ## [2] "dcshift//u=1:110""
+    
 
 Time zero correction
 --------------------

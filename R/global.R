@@ -4856,6 +4856,7 @@ readDZT <- function(fPath){
 # Ryan Grannell
 # website   twitter.com/RyanGrannell
 # location   Galway, Ireland
+#' @export
 getArgs <- function (returnCharacter = TRUE, addArgs = NULL) {
   if(sys.nframe() == 3){
     arg <- as.list(match.call(definition = sys.function( -1 ),

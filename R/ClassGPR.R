@@ -3398,7 +3398,7 @@ plot.GPR <- function(x,
     
     xvalues <- x@pos
     yvalues <- x@depth
-    myxlab <- x@posunit
+    myxlab <- paste0("length (", x@posunit, ")")
     myclab <- "mV"
     mymain <- x@name
     if(isCMP(x)){

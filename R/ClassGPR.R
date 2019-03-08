@@ -1675,6 +1675,22 @@ setReplaceMethod(
   }
 )
 
+#' Trace projection
+#'
+#' Project the trace coordinates give a coordinate reference system.
+#' @param x Object of the class GPR
+#' @param CRSobj object of class \link{CRS}, or of class \code{character} in
+#'               which case it is converted to \link{CRS}.
+#' @name trProject
+#' @rdname trProject
+#' @export
+setMethod("trProject", "GPR", function(x, CRSobj){
+  xsp <- as(x, "SpatialLines")
+  xsptrsf <- spTransform(xsp, CRSobj)
+  x@coord[, 1:2] <- coordinates(xsptrsf)[[1]][[1]]
+  return(x)
+})
+
 #' Velocity model of the GPR data
 #' 
 #' @name vel

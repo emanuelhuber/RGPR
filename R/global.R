@@ -281,6 +281,14 @@ standardGeneric("description<-"))
 #####
 setGenericVerif("papply", function(x, prc = NULL) standardGeneric("papply"))
 ##########
+
+
+#' @name trProject
+#' @rdname trProject
+#' @export
+setGenericVerif("trProject", function(x, CRSobj) standardGeneric("trProject"))
+
+
                   
 #------------------------------GPR
 #' @name gethd

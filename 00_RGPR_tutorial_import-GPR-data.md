@@ -56,13 +56,13 @@ x <- readGPR(dsn = "XLINE00.DT1")
 plot(x)
 ```
 
-GSSI data (`.dtz`)
+GSSI data (`.dzt`)
 ------------------
 
 To read the GPR data, enter
 
 ``` r
-x <- readGPR(dsn = "XLINE00.dtz")
+x <- readGPR(dsn = "XLINE00.dzt")
 plot(x)
 ```
 

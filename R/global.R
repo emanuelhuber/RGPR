@@ -2873,7 +2873,14 @@ phaseRotation <- function(x,phi){
 #' Convert bytes to volt values
 #' @export
 byte2volt <- function( V = c(-50, 50), nBytes = 16) {
-  abs(diff(V))/(2^nBytes)
+  if(is.null(V)){
+    return(1L)
+  }else{
+    if(length(V) == 1){
+      V <- c(-1, 1) * abs(V)
+    }
+   return( abs(diff(V))/(2^nBytes) )
+  }
 }
 
 #-------------------------------------
@@ -4080,7 +4087,7 @@ readDT1 <- function(fPath, dsn2 = NULL){
     # read the 28 characters long comment
     hDT1[[tags[26]]][i] <- readChar(con, 28)
     # read the nPt * 2 bytes trace data
-    dataDT1[,i] <- readBin(con, what=integer(), n = nPt, size = 2)
+    dataDT1[,i] <- readBin(con, what = integer(), n = nPt, size = 2)
   }
   if( !inherits(fPath, "connection") ){
     close(con)
@@ -4585,8 +4592,8 @@ readTXT <- function(fPath){
   #--------------------------- number of columns ------------------------------#
   #----------------------------------------------------------------------------#
   z <- strsplit(x0, split = "[^[:alnum:]]+")
-  nCol <- unique(sapply(z, length))
-  if(length(nCol) > 1){
+  nCols <- unique(sapply(z, length))
+  if(length(nCols) > 1){
     # only first row has one element less -> first row = trace position
     #                                     -> first col = trace depth
     if( length(unique(nCols[-1])) == 1 && nCols[1] == nCols[2] - 1){
@@ -4600,7 +4607,7 @@ readTXT <- function(fPath){
       stop("Error, not same number of elements per line.")
     }
   }else{
-    #message(nCol, " columns")
+    #message(nCols, " columns")
   }
   
   #----------------------------------------------------------------------------#
@@ -4609,7 +4616,7 @@ readTXT <- function(fPath){
   rmNaCol <- function(x){
     # remove NA columns
     rmCol <- which(apply(x, 2, function(x) sum(is.na(x))) > 0)
-    x <- x[, - rmCol]
+    if(length(rmCol) > 0)    x <- x[, - rmCol]
     return(x)
   }
   
@@ -4618,7 +4625,9 @@ readTXT <- function(fPath){
   # remove NA columns
   X <- rmNaCol(X)
 
-  if(ncol(X) == 3){
+  if(ncol(X) < 3){
+    stop("The data are not correctly formated.")
+  }else if(ncol(X) == 3){
     Xn <- list()
     Xn[[1]] <- unique(rle(X[,1])$lengths)
     Xn[[2]] <- unique(rle(X[,2])$lengths)
@@ -4626,7 +4635,7 @@ readTXT <- function(fPath){
     pos <- 1:3
     
     Xamp <- which(lapply(Xn, length) > 2)
-    if(length(XampPos) > 1){
+    if(length(Xamp) > 1){
       cat("Error")
     }
     
@@ -4645,6 +4654,7 @@ readTXT <- function(fPath){
   
     A <- matrix(X[, Xamp][seq_len(nc * nr)], nrow = nr, ncol = nc, byrow = FALSE)
     return(list(data = A, pos = unique(X[, Xpos]), depth = unique(X[, Xt])))
+    
   # }else if(ncol(X) == 4){
   #   # case xyza!!!
   #   Xn <- list()

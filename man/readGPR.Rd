@@ -4,7 +4,7 @@
 \alias{readGPR}
 \title{Read a GPR data file}
 \usage{
-readGPR(dsn, desc = "", dsn2 = NULL, format = NULL, fPath)
+readGPR(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50, fPath)
 }
 \arguments{
 \item{dsn}{data source name: either the filepath to the GPR data (character),
@@ -16,6 +16,9 @@ or an open file connection.}
 not appearent in the filepath or the connection (either
 \code{dt1}, \code{rad}, \code{dzt}, \code{sgy}, \code{iprb},
 \code{txt}, \code{rds})}
+
+\item{Vmax}{length-one numeric vector: nominal analog input voltage. 
+It assumes that \code{Vmin = -Vmax}.}
 
 \item{fPath}{Filepath (character). DEPRECATED. Use \code{dsn} instead.}
 
@@ -39,7 +42,7 @@ Supported file format
   \item RadSys Zond GPR device (*.sgy). 
         \strong{Note: it is not the usual SEG-Y file format)}.
         \code{readGPR(dsn = 'xline.sgy')}  
-  \item GSSI file format (*.dtz).
+  \item GSSI file format (*.dzt).
         \code{readGPR(dsn = 'xline.dzt')}
   \item ASCII file format (*.txt): either 4-column format 
         (x,t,amplitude) or matrix-format (without header/rownames).

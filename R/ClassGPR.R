@@ -123,7 +123,7 @@ setClass(
 #-------------- CONSTRUCTOR ---------------#
 # x = classical GPR list
 .gpr <- function(x, fName = character(0), desc = character(0),
-                 fPath = character(0)){
+                 fPath = character(0), Vmax = 50){
   rec_coord <- cbind(x$dt1$recx, x$dt1$recy, x$dt1$recz)
   trans_coord <- cbind(x$dt1$transx, x$dt1$transy, x$dt1$transz)
   if(sum(is.na(rec_coord)) > 0){
@@ -274,7 +274,7 @@ setClass(
   }
   traceTime <- as.double(as.POSIXct(x$dt1$time, origin = as.Date(dorigin)))
   new("GPR",   version="0.2",
-      data = byte2volt()*x$data,
+      data = byte2volt(V = Vmax)*x$data,
       traces = x$dt1$traces,            # x$dt1$traces
       fid = trimStr(x$dt1$com),         # x$dt1$fid    <-> x$dt1$x8
       coord = coord,                    # x$dt1$topo  of the traces
@@ -304,7 +304,7 @@ setClass(
 
 
 .gprImpulseRadar <- function(x, fName = character(0), desc = character(0),
-                             fPath = character(0)){ 
+                             fPath = character(0), Vmax = 50){ 
   rec_coord <- matrix(nrow = 0, ncol = 0)
   trans_coord <- matrix(nrow = 0, ncol = 0)
   coord <- matrix(nrow = 0, ncol = 0)
@@ -375,7 +375,7 @@ setClass(
   }
   
   new("GPR",   version="0.2",
-      data = byte2volt(nBytes = nBytes[1])*x$data,
+      data = byte2volt(V = Vmax, nBytes = nBytes[1])*x$data,
       traces = seq_len(nTr),                       # trace number
       fid = rep("", nTr),                          # markes/fid
       coord = coord,                               # trace coordinates
@@ -405,7 +405,7 @@ setClass(
 
 
 .gprRD3 <- function(x, fName = character(0), desc = character(0),
-                    fPath = character(0), nBytes = 16){  
+                    fPath = character(0), nBytes = 16, Vmax = 50){  
   #coord <- matrix(nrow = 0, ncol = 0) 
   #if(!is.null(x$coords)){
   #coord <- cbind(ll2dc(x$coords$latitude),
@@ -491,7 +491,7 @@ setClass(
     sup_hd <- c(sup_hd, sup_hd2)
   }
   new("GPR",   version="0.2",
-      data = byte2volt(nBytes = nBytes)*x$data,
+      data = byte2volt(V = Vmax, nBytes = nBytes)*x$data,
       traces = 1:ncol(x$data),
       fid = rep("", ncol(x$data)),
       #coord = coord,
@@ -521,7 +521,7 @@ setClass(
 }
 
 .gprSEGY <- function(x, fName = character(0), desc = character(0),
-                     fPath = character(0)){  
+                     fPath = character(0), Vmax = 50){  
   
   if( all(diff(x$hdt[4,]) > 0) || all(diff(x$hdt[5,]) > 0)){
     x_coord <- matrix(0, nrow = ncol(x$data), ncol = 3)
@@ -588,7 +588,7 @@ setClass(
     }
   }
   new("GPR",   version="0.2",
-      data = byte2volt()*x$data,
+      data = byte2volt(V = Vmax)*x$data,
       traces = 1:ncol(x$data),
       fid = rep("", ncol(x$data)),
       #coord = coord,
@@ -618,17 +618,17 @@ setClass(
   )
 }
 
-.gprTXT <- function(x, fName = character(0), desc = character(0),
-                    fPath = character(0)){  
+.gprTXT <- function(A, fName = character(0), desc = character(0),
+                    fPath = character(0), Vmax = NULL){  
   
   if(!is.null(A$depth) && !is.null(A$pos)){
-    x <- list(data = A$data,
+    x <- list(data = byte2volt(V = Vmax)*A$data,
               pos = A$pos,
               depth = A$depth,
               name = fName,
               filepath = fPath)
   }else{
-    x <- list(data = A$data)
+    x <- list(data = byte2volt(V = Vmax)*A$data)
   }
   y <- as(x, "GPR") 
   if(desc != "") description(y) <- desc
@@ -636,7 +636,7 @@ setClass(
 }
 
 .gprDZT <- function(x, fName = character(0), desc = character(0),
-                    fPath = character(0)){  
+                    fPath = character(0), Vmax = 50){  
   dd <- as.Date(x$hd$DATE, format = "%Y-%m-%d")
   traceTime <- as.double(as.POSIXct(
     strptime(paste(x$hd$DATE, "01:30:00"), "%Y-%m-%d %H:%M:%S")
@@ -676,7 +676,7 @@ setClass(
                     numeric(0))  # 800,300,
   
   new("GPR",   version="0.2",
-      data = byte2volt(nBytes = x$hd$BITS) * x$data,
+      data = byte2volt(V = Vmax, nBytes = x$hd$BITS) * x$data,
       traces = 1:ncol(x$data),
       fid = rep("", ncol(x$data)),
       #coord = coord,
@@ -719,7 +719,7 @@ setClass(
 #'   \item RadSys Zond GPR device (*.sgy). 
 #'         \strong{Note: it is not the usual SEG-Y file format)}.
 #'         \code{readGPR(dsn = 'xline.sgy')}  
-#'   \item GSSI file format (*.dtz).
+#'   \item GSSI file format (*.dzt).
 #'         \code{readGPR(dsn = 'xline.dzt')}
 #'   \item ASCII file format (*.txt): either 4-column format 
 #'         (x,t,amplitude) or matrix-format (without header/rownames).
@@ -739,6 +739,8 @@ setClass(
 #'               not appearent in the filepath or the connection (either
 #'               \code{dt1}, \code{rad}, \code{dzt}, \code{sgy}, \code{iprb},
 #'               \code{txt}, \code{rds})
+#' @param Vmax length-one numeric vector: nominal analog input voltage. 
+#'             It assumes that \code{Vmin = -Vmax}.
 #' @param fPath Filepath (character). DEPRECATED. Use \code{dsn} instead.
 #' @return The GPR data as object of the class RGPR.
 #' @seealso \code{\link{writeGPR}}
@@ -762,7 +764,8 @@ setClass(
 #' @name readGPR
 #' @rdname readGPR
 #' @export
-readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, fPath){
+readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
+                    fPath){
   # @aliases readGPR-methods
   # setMethod("readGPR", "character", function(fPath, desc = "", ...){
   if(!missing(fPath)){
@@ -790,7 +793,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, fPath){
   if("DT1" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
     A <- readDT1(dsn, dsn2)
-    x <- .gpr(A, fName = fName, fPath = fPath, desc = desc)
+    x <- .gpr(A, fName = fName, fPath = fPath, desc = desc, Vmax = Vmax)
   }else if("rds" == tolower(ext)){
     x <- readRDS(dsn)
     if(class(x) == "GPR"){
@@ -839,34 +842,35 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, fPath){
   }else if("RD3" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
     A <- readRD3(dsn, dsn2)
-    x <- .gprRD3(A, fName = fName, fPath = fPath, desc = desc)
+    x <- .gprRD3(A, fName = fName, fPath = fPath, desc = desc, Vmax = Vmax)
   }else if("RD7" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
     A <- readRD7(dsn, dsn2)
-    x <- .gprRD3(A, fName = fName, fPath = fPath, desc = desc, nBytes = 32)
+    x <- .gprRD3(A, fName = fName, fPath = fPath, desc = desc, nBytes = 32, 
+                 Vmax = Vmax)
   }else if("SGY" == toupper(ext) || "SEGY" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
     A <- readSEGY(dsn)
-    x <- .gprSEGY(A, fName = fName, fPath = fPath, desc = desc)
+    x <- .gprSEGY(A, fName = fName, fPath = fPath, desc = desc, Vmax = Vmax)
   }else if("IPRB" == toupper(ext) || "IPRH" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
     A <- readImpulseRadar(dsn, dsn2)
     x <- .gprImpulseRadar(A, fName = fName, fPath = fPath, 
-                          desc = desc)
+                          desc = desc, Vmax = Vmax)
   }else if("DZT" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
     A <- readDZT(dsn)
     x <- .gprDZT(A, fName = fName, fPath = fPath, 
-                 desc = desc)
+                 desc = desc, Vmax = Vmax)
   }else if("TXT" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
     A <- readTXT(dsn)
     x <- .gprTXT(A, fName = fName, fPath = fPath, 
-                 desc = desc)
+                 desc = desc, Vmax = Vmax)
   }else{
     stop(paste0("File extension not recognised!\n",
-                "Must be '.DT1', '.rd3', 'sgy', 'segy', '.rds'\n",
-                "'iprb' or 'iprh"))
+                "Must be '.DT1', '.dzt', '.rd3', '.sgy', '.segy', '.rds'\n",
+                "'.iprb' or '.iprh"))
   }
   if(grepl("CMP", x@surveymode)){
     x@surveymode <- "CMP"

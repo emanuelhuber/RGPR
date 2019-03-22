@@ -958,6 +958,14 @@ setMethod("as.SpatialPoints", signature(x = "GPR"), function(x){
 #' @export
 setMethod("as.numeric", "GPR",  function(x, ...) as.numeric(x@data))
 
+
+#' Coercion to integer
+#'
+#' @name as.integer
+#' @rdname GPRcoercion
+#' @export
+setMethod("as.integer", "GPR",  function(x, ...) as.integer(x@data))
+
 setMethod("as.double", "GPR",  function(x, ...) as.double(x@data))
 
 ###--- Coercion from ... to GPR

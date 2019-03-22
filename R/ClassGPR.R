@@ -274,7 +274,7 @@ setClass(
   }
   traceTime <- as.double(as.POSIXct(x$dt1$time, origin = as.Date(dorigin)))
   new("GPR",   version="0.2",
-      data = byte2volt(V = Vmax)*x$data,
+      data = byte2volt(Vmax = Vmax)*x$data,
       traces = x$dt1$traces,            # x$dt1$traces
       fid = trimStr(x$dt1$com),         # x$dt1$fid    <-> x$dt1$x8
       coord = coord,                    # x$dt1$topo  of the traces
@@ -375,7 +375,7 @@ setClass(
   }
   
   new("GPR",   version="0.2",
-      data = byte2volt(V = Vmax, nBytes = nBytes[1])*x$data,
+      data = byte2volt(Vmax = Vmax, nBytes = nBytes[1])*x$data,
       traces = seq_len(nTr),                       # trace number
       fid = rep("", nTr),                          # markes/fid
       coord = coord,                               # trace coordinates
@@ -491,7 +491,7 @@ setClass(
     sup_hd <- c(sup_hd, sup_hd2)
   }
   new("GPR",   version="0.2",
-      data = byte2volt(V = Vmax, nBytes = nBytes)*x$data,
+      data = byte2volt(Vmax = Vmax, nBytes = nBytes)*x$data,
       traces = 1:ncol(x$data),
       fid = rep("", ncol(x$data)),
       #coord = coord,
@@ -588,7 +588,7 @@ setClass(
     }
   }
   new("GPR",   version="0.2",
-      data = byte2volt(V = Vmax)*x$data,
+      data = byte2volt(Vmax = Vmax)*x$data,
       traces = 1:ncol(x$data),
       fid = rep("", ncol(x$data)),
       #coord = coord,
@@ -622,13 +622,13 @@ setClass(
                     fPath = character(0), Vmax = NULL){  
   
   if(!is.null(A$depth) && !is.null(A$pos)){
-    x <- list(data = byte2volt(V = Vmax)*A$data,
+    x <- list(data = byte2volt(Vmax = Vmax)*A$data,
               pos = A$pos,
               depth = A$depth,
               name = fName,
               filepath = fPath)
   }else{
-    x <- list(data = byte2volt(V = Vmax)*A$data)
+    x <- list(data = byte2volt(Vmax = Vmax)*A$data)
   }
   y <- as(x, "GPR") 
   if(desc != "") description(y) <- desc
@@ -676,7 +676,7 @@ setClass(
                     numeric(0))  # 800,300,
   
   new("GPR",   version="0.2",
-      data = byte2volt(V = Vmax, nBytes = x$hd$BITS) * x$data,
+      data = byte2volt(Vmax = Vmax, nBytes = x$hd$BITS) * x$data,
       traces = 1:ncol(x$data),
       fid = rep("", ncol(x$data)),
       #coord = coord,
@@ -739,8 +739,10 @@ setClass(
 #'               not appearent in the filepath or the connection (either
 #'               \code{dt1}, \code{rad}, \code{dzt}, \code{sgy}, \code{iprb},
 #'               \code{txt}, \code{rds})
-#' @param Vmax length-one numeric vector: nominal analog input voltage. 
-#'             It assumes that \code{Vmin = -Vmax}.
+#' @param Vmax length-one numeric vector: nominal analog input voltage used 
+#'             for the byte to volt transformation. 
+#'             It assumes that \code{Vmin = -Vmax}. If \code{Vmax = NULL},
+#'             no bytes to Volt transformation is applied.
 #' @param fPath Filepath (character). DEPRECATED. Use \code{dsn} instead.
 #' @return The GPR data as object of the class RGPR.
 #' @seealso \code{\link{writeGPR}}

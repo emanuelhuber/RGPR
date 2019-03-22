@@ -2871,15 +2871,21 @@ phaseRotation <- function(x,phi){
 #' Bytes to volt conversion
 #'       
 #' Convert bytes to volt values
+#' @param Vmax length-one numeric vector: maximal nominal analog input voltage. 
+#'             If \code{Vmax = NULL} it returns \code{1} (no bytes to volt 
+#'             transformation)
+#' @param Vmin length-one numeric vector: minimal nominal analog input voltage. 
+#'             If missing, then \code{Vmin = -Vmax}.
+#' @param nBytes Length-one numeric vector: number of bytes
 #' @export
-byte2volt <- function( V = c(-50, 50), nBytes = 16) {
-  if(is.null(V)){
+byte2volt <- function( Vmax = 50, Vmin = 50, nBytes = 16) {
+  if(is.null(Vmax)){
     return(1L)
   }else{
-    if(length(V) == 1){
-      V <- c(-1, 1) * abs(V)
+    if( missing(Vmin) ){
+      Vmin <- -Vmax
     }
-   return( abs(diff(V))/(2^nBytes) )
+   return( abs(Vmax - Vmin) / ( 2^nBytes ) )
   }
 }
 

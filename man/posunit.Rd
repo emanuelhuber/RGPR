@@ -4,8 +4,6 @@
 \name{posunit}
 \alias{posunit}
 \alias{posunit<-}
-\alias{posunit}
-\alias{posunit<-}
 \title{Position unit of the GPR data}
 \usage{
 \S4method{posunit}{GPR}(x)

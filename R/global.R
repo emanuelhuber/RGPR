@@ -394,9 +394,14 @@ setGenericVerif("CMPAnalysis", function(x, method = c("semblance",
                "winsemblance", "wincoherence", "wincoherence2"), v = NULL, 
                w = NULL) standardGeneric("CMPAnalysis"))
 
-setGenericVerif("migration", function(x,type=c("static","kirchhoff"), ...) 
+#' @name migration
+#' @rdname migration
+#' @export
+setGenericVerif("migration", function(x, type = c("static", "kirchhoff"), ...) 
 standardGeneric("migration"))
+
 setGenericVerif("upsample", function(x,n) standardGeneric("upsample"))
+
 setGenericVerif("timeCorOffset", function(x, t0 = NULL, c0 = 0.299) 
   standardGeneric("timeCorOffset"))
 
@@ -744,7 +749,7 @@ addFid <- function(xyz, fid, tt, pos, fidx){
     dn <- nrow(xyz) - nrow(fid)
     if(length(idtime) > 0){
       # en fait il faudrait regarder au cas par cas pour chaque
-      # coordonnée auquelle il manque un fiducial
+       # coordonnee auquelle il manque un fiducial
       if(length(idtime) >= dn){ 
         posTopo <- posLine(xyz[, 1:2])
         vx <- combn(seq_along(idtime), dn)
@@ -1239,8 +1244,8 @@ latlongToUTM <- function(lat, long, zone = NULL, south = FALSE){
   #       decimal with the function 'll2dc()' (see below)
   if(is.null(zone)){
     # see https://stackoverflow.com/a/9188972
-    #  The formula is to simple: it does not work for the both 
-    # UTM Zone Exceptions in Norway and Svalbard –
+    # The formula is to simple: it does not work for the both 
+    # UTM Zone Exceptions in Norway and Svalbard
     zone <- (floor((long + 180)/6) %% 60) + 1
     zone <- unique(zone)[1]
   }

@@ -4,8 +4,6 @@
 \name{antsep}
 \alias{antsep}
 \alias{antsep<-}
-\alias{antsep}
-\alias{antsep<-}
 \title{Antenna separation}
 \usage{
 \S4method{antsep}{GPR}(x)

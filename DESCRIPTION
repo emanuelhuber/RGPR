@@ -19,6 +19,7 @@ License: GPL (>= 2)
 URL: https://github.com/emanuelhuber/RGPR
 BugReports: https://github.com/emanuelhuber/RGPR/issues
 LazyData: true
+Encoding: UTF-8
 Collate:
 	'RGPR.R'
 	'global.R'    
@@ -47,4 +48,4 @@ Imports:
 	raster,
 	fields,
     magrittr
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1

@@ -4,8 +4,6 @@
 \name{surveymode}
 \alias{surveymode}
 \alias{surveymode<-}
-\alias{surveymode}
-\alias{surveymode<-}
 \title{Survey mode of the GPR data}
 \usage{
 \S4method{surveymode}{GPR}(x)

@@ -5,8 +5,9 @@
 \alias{exportPDF}
 \title{Export a PDF showing the GPR profile.}
 \usage{
-\S4method{exportPDF}{GPR}(x, fPath = NULL, addTopo = FALSE, clip = NULL,
-  normalize = NULL, nupspl = NULL, type = "wiggles", ...)
+\S4method{exportPDF}{GPR}(x, fPath = NULL, addTopo = FALSE,
+  clip = NULL, normalize = NULL, nupspl = NULL, type = "wiggles",
+  ...)
 }
 \description{
 Export a PDF showing the GPR profile.

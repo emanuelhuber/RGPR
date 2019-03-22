@@ -3,7 +3,6 @@
 \docType{methods}
 \name{processing}
 \alias{processing}
-\alias{processing}
 \title{DEPRECATED - Processing steps applied to the data}
 \usage{
 \S4method{processing}{GPR}(x)

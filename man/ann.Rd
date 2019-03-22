@@ -4,8 +4,6 @@
 \name{ann}
 \alias{ann}
 \alias{ann<-}
-\alias{ann}
-\alias{ann<-}
 \title{Annotations of the GPR data}
 \usage{
 \S4method{ann}{GPR}(x)

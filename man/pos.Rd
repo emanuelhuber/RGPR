@@ -4,8 +4,6 @@
 \name{pos}
 \alias{pos}
 \alias{pos<-}
-\alias{pos}
-\alias{pos<-}
 \title{Position of the GPR traces}
 \usage{
 \S4method{pos}{GPR}(x)

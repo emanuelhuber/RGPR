@@ -3,7 +3,6 @@
 \docType{methods}
 \name{isCMP}
 \alias{isCMP}
-\alias{isCMP}
 \title{Return TRUE is surveymode is CMP}
 \usage{
 \S4method{isCMP}{GPR}(x)

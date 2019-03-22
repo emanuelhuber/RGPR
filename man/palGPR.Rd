@@ -14,8 +14,6 @@ displayPalGPR()
 }
 \description{
 source: vignette of the R-package "colorspace" (Color Space Manipulation)
-
-Colour palette
 }
 \examples{
 plotPal(palGPR("hcl_5"))

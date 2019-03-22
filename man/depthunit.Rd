@@ -4,8 +4,6 @@
 \name{depthunit}
 \alias{depthunit}
 \alias{depthunit<-}
-\alias{depthunit}
-\alias{depthunit<-}
 \title{Depth unit of the GPR data}
 \usage{
 \S4method{depthunit}{GPR}(x)

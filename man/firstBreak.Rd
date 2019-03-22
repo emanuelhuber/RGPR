@@ -5,8 +5,8 @@
 \alias{firstBreak}
 \title{First wave break}
 \usage{
-\S4method{firstBreak}{GPR}(x, method = c("coppens", "coppens2", "threshold",
-  "MER"), thr = 0.12, w = 11, ns = NULL, bet = NULL)
+\S4method{firstBreak}{GPR}(x, method = c("coppens", "coppens2",
+  "threshold", "MER"), thr = 0.12, w = 11, ns = NULL, bet = NULL)
 }
 \arguments{
 \item{x}{An object of the class \code{GPR}}

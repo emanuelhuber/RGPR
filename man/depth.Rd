@@ -4,8 +4,6 @@
 \name{depth}
 \alias{depth}
 \alias{depth<-}
-\alias{depth}
-\alias{depth<-}
 \title{Depth/time of the GPR data}
 \usage{
 \S4method{depth}{GPR}(x)

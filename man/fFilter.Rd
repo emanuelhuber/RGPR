@@ -5,8 +5,8 @@
 \alias{fFilter}
 \title{Frequency filter}
 \usage{
-\S4method{fFilter}{GPR}(x, f = 100, type = c("low", "high", "bandpass"),
-  L = 257, plotSpec = FALSE)
+\S4method{fFilter}{GPR}(x, f = 100, type = c("low", "high",
+  "bandpass"), L = 257, plotSpec = FALSE)
 }
 \description{
 Frequency filter

@@ -10,18 +10,10 @@
 \alias{plotDelineations3D}
 \alias{plotDelineations}
 \alias{identifyDelineation}
-\alias{delineate}
-\alias{addDelineation}
-\alias{rmDelineations<-}
-\alias{delineations}
-\alias{exportDelineations}
-\alias{plotDelineations3D}
-\alias{plotDelineations}
-\alias{identifyDelineation}
 \title{Delineate structure on GPR data}
 \usage{
-\S4method{delineate}{GPR}(x, name = NULL, type = c("raster", "wiggles"),
-  addTopo = FALSE, nupspl = NULL, n = 10000, ...)
+\S4method{delineate}{GPR}(x, name = NULL, type = c("raster",
+  "wiggles"), addTopo = FALSE, nupspl = NULL, n = 10000, ...)
 
 \S4method{addDelineation}{GPR}(x, itp, name = NULL, type = c("raster",
   "wiggles"), addTopo = FALSE, ...)
@@ -32,8 +24,8 @@
 
 \S4method{exportDelineations}{GPR}(x, dirpath = "")
 
-\S4method{plotDelineations3D}{GPR}(x, sel = NULL, col = NULL, add = TRUE,
-  ...)
+\S4method{plotDelineations3D}{GPR}(x, sel = NULL, col = NULL,
+  add = TRUE, ...)
 
 \S4method{plotDelineations}{GPR}(x, sel = NULL, col = NULL, ...)
 

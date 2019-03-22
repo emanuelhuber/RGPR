@@ -3,8 +3,6 @@
 \docType{methods}
 \name{reverse}
 \alias{reverse}
-\alias{reverse}
-\alias{reverse}
 \title{Reverse the trace position.}
 \usage{
 \S4method{reverse}{GPR}(x, id = NULL, tol = 0.3)

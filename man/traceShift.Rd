@@ -6,8 +6,8 @@
 \title{Shift traces vertically by an amount of depth (time) units. New traces 
 are interpolated.}
 \usage{
-\S4method{traceShift}{GPR}(x, ts, method = c("spline", "linear", "nearest",
-  "pchip", "cubic", "none"), crop = TRUE)
+\S4method{traceShift}{GPR}(x, ts, method = c("spline", "linear",
+  "nearest", "pchip", "cubic", "none"), crop = TRUE)
 }
 \arguments{
 \item{x}{A object of the class GPR}

@@ -5,8 +5,8 @@
 \alias{traceScaling}
 \title{Trace scaling}
 \usage{
-\S4method{traceScaling}{GPR}(x, type = c("stat", "min-max", "95", "eq", "sum",
-  "rms", "mad", "invNormal"))
+\S4method{traceScaling}{GPR}(x, type = c("stat", "min-max", "95", "eq",
+  "sum", "rms", "mad", "invNormal"))
 }
 \description{
 Trace scaling

@@ -4,8 +4,6 @@
 \name{svDate}
 \alias{svDate}
 \alias{svDate<-}
-\alias{svDate}
-\alias{svDate<-}
 \title{Survey date}
 \usage{
 \S4method{svDate}{GPR}(x)

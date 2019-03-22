@@ -5,7 +5,6 @@
 \alias{plot.GPR}
 \alias{contour}
 \alias{contour.GPR}
-\alias{plot}
 \alias{plot.GPRsurvey}
 \title{Plot the GPR object.}
 \usage{
@@ -74,8 +73,6 @@ without extension}
 \code{plot}: If the GPR object consists of a single trace, wiggle plot 
 is shown. For CMP, the position of the traces on the x-axis is defined
 by the antenna separation (\code{antsep(x)}).
-
-\code{contour} extends \code{plot3D::contour2D} and creates a contour plot.
 
 Plot GPR suvey lines
 }

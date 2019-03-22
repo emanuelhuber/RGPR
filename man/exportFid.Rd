@@ -3,7 +3,6 @@
 \docType{methods}
 \name{exportFid}
 \alias{exportFid}
-\alias{exportFid}
 \title{Export fiducial markers}
 \usage{
 \S4method{exportFid}{GPR}(x, fPath = NULL)

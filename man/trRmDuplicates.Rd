@@ -3,7 +3,6 @@
 \docType{methods}
 \name{trRmDuplicates}
 \alias{trRmDuplicates}
-\alias{trRmDuplicates}
 \title{Remove traces with duplicated trace positions}
 \usage{
 \S4method{trRmDuplicates}{GPR}(x, tol = NULL, verbose = TRUE)

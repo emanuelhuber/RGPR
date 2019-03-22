@@ -3,14 +3,13 @@
 \docType{methods}
 \name{writeGPR}
 \alias{writeGPR}
-\alias{writeGPR}
 \title{Write the GPR object in a file.}
 \usage{
-writeGPR(x, fPath = NULL, type = c("DT1", "rds", "ASCII", "xta", "xyza"),
-  overwrite = FALSE, ...)
+writeGPR(x, fPath = NULL, type = c("DT1", "rds", "ASCII", "xta",
+  "xyza"), overwrite = FALSE, ...)
 
-\S4method{writeGPR}{GPR}(x, fPath = NULL, type = c("DT1", "rds", "ASCII",
-  "xta", "xyza"), overwrite = FALSE, ...)
+\S4method{writeGPR}{GPR}(x, fPath = NULL, type = c("DT1", "rds",
+  "ASCII", "xta", "xyza"), overwrite = FALSE, ...)
 }
 \arguments{
 \item{x}{Object of the class \code{GPR} or \code{GPRsurvey}}

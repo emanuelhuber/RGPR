@@ -5,7 +5,6 @@
 \alias{Arith,GPR,ANY-method}
 \alias{Arith}
 \alias{Arith,GPR,GPR-method}
-\alias{Arith}
 \alias{Arith,ANY,GPR-method}
 \title{Basic arithmetical functions}
 \usage{

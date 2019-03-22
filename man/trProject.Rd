@@ -3,7 +3,6 @@
 \docType{methods}
 \name{trProject}
 \alias{trProject}
-\alias{trProject}
 \title{Trace projection}
 \usage{
 \S4method{trProject}{GPR}(x, CRSobj)

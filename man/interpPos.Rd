@@ -3,11 +3,10 @@
 \docType{methods}
 \name{interpPos}
 \alias{interpPos}
-\alias{interpPos}
 \title{Interpolate trace positions from measurement (e.g., GPS).}
 \usage{
-\S4method{interpPos}{GPR}(x, topo, plot = FALSE, r = NULL, tol = NULL,
-  method = c("linear", "spline", "pchip"), ...)
+\S4method{interpPos}{GPR}(x, topo, plot = FALSE, r = NULL,
+  tol = NULL, method = c("linear", "spline", "pchip"), ...)
 }
 \arguments{
 \item{x}{An object of the class GPR.}

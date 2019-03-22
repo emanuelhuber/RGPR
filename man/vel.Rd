@@ -4,8 +4,6 @@
 \name{vel}
 \alias{vel}
 \alias{vel<-}
-\alias{vel}
-\alias{vel<-}
 \title{Velocity model of the GPR data}
 \usage{
 \S4method{vel}{GPR}(x)

@@ -1692,7 +1692,7 @@ setReplaceMethod(
 #' @export
 setMethod("trProject", "GPR", function(x, CRSobj){
   xsp <- as(x, "SpatialLines")
-  xsptrsf <- spTransform(xsp, CRSobj)
+  xsptrsf <- sp::spTransform(xsp, CRSobj)
   x@coord[, 1:2] <- coordinates(xsptrsf)[[1]][[1]]
   return(x)
 })
@@ -4981,7 +4981,7 @@ setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance",
 #' @name migration
 #' @rdname migration
 #' @export
-setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"),...){
+setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"), ...){
   if(length(x@antsep) == 0 || (!is.numeric(x@antsep))){
     stop("You must first define the antenna separation ",
          "with 'antsep(x) <- 1' for example!")
@@ -5493,3 +5493,4 @@ setMethod("exportProc", "GPR", function(x,fPath=NULL,sep="\t", row.names=FALSE,
   write.table(x@proc, file = fPath, row.names = row.names,
               col.names = col.names,...)
 })
+

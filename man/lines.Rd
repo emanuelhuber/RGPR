@@ -3,7 +3,6 @@
 \name{lines}
 \alias{lines}
 \alias{lines.GPR}
-\alias{lines}
 \alias{lines.GPRsurvey}
 \title{Add a GPR trace on a plot}
 \usage{
@@ -12,7 +11,5 @@
 \method{lines}{GPRsurvey}(x, ...)
 }
 \description{
-Add a GPR trace on a plot
-
 Plot the GPR survey as lines
 }

@@ -5,8 +5,8 @@
 \title{Plot structure tensor on GPR data}
 \usage{
 plotTensor0(alpha, l1, l2, x, y, col = NULL, type = c("vectors",
-  "ellipses"), normalise = FALSE, spacing = c(6, 4), len = 1.9, n = 10,
-  ratio = 1, ...)
+  "ellipses"), normalise = FALSE, spacing = c(6, 4), len = 1.9,
+  n = 10, ratio = 1, ...)
 }
 \description{
 Plot structure tensor on GPR data

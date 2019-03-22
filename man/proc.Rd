@@ -4,8 +4,6 @@
 \name{proc}
 \alias{proc}
 \alias{proc<-}
-\alias{proc}
-\alias{proc}
 \title{Processing steps applied to the data}
 \usage{
 \S4method{proc}{GPR}(x)
@@ -22,8 +20,6 @@ GPR data.
 }
 \description{
 \code{processing} returns all the processing steps applied to the data.
-
-Add a processing step
 }
 \examples{
 data(frenkeLine00)

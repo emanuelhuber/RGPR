@@ -14,6 +14,4 @@
 }
 \description{
 Return coordinates
-
-Set coordinates
 }

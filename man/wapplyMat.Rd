@@ -4,8 +4,8 @@
 \alias{wapplyMat}
 \title{windowing with centered window}
 \usage{
-wapplyMat(x = NULL, width = NULL, by = NULL, FUN = NULL, MARGIN = 1,
-  ...)
+wapplyMat(x = NULL, width = NULL, by = NULL, FUN = NULL,
+  MARGIN = 1, ...)
 }
 \description{
 based on wapply and modified by Manu.

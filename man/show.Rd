@@ -6,9 +6,7 @@
 \alias{print.GPR}
 \alias{show}
 \alias{show-method}
-\alias{print}
 \alias{print.GPRsurvey}
-\alias{show}
 \title{Print GPR}
 \usage{
 \method{print}{GPR}(x, ...)
@@ -20,11 +18,7 @@
 \S4method{show}{GPRsurvey}(object)
 }
 \description{
-Print GPR
-
 Identical to print().
-
-Print GPR survey
 
 Identical to print().
 }

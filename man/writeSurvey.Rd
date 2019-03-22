@@ -3,7 +3,6 @@
 \docType{methods}
 \name{writeSurvey}
 \alias{writeSurvey}
-\alias{writeSurvey}
 \title{Write GPRsurvey object}
 \usage{
 \S4method{writeSurvey}{GPRsurvey}(x, fPath, overwrite = FALSE)

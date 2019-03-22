@@ -7,6 +7,7 @@
 \alias{as.SpatialLines}
 \alias{as.SpatialPoints}
 \alias{as.numeric}
+\alias{as.integer}
 \alias{as.GPR.matrix}
 \alias{as.GPR.list}
 \title{Coercion to matrix}
@@ -20,6 +21,8 @@
 \S4method{as.SpatialPoints}{GPR}(x)
 
 \S4method{as.numeric}{GPR}(x, ...)
+
+\S4method{as.integer}{GPR}(x, ...)
 
 as.GPR.matrix(x, ...)
 
@@ -35,6 +38,8 @@ Coercion to SpatialLines
 Coercion to SpatialPoints
 
 Coercion to numeric
+
+Coercion to integer
 
 Coercion from matrix to GPR
 

@@ -964,7 +964,7 @@ setMethod("as.numeric", "GPR",  function(x, ...) as.numeric(x@data))
 #' @name as.integer
 #' @rdname GPRcoercion
 #' @export
-setMethod("as.integer", "GPR",  function(x, ...) as.integer(x@data))
+setMethod("as.integer", "GPR",  function(x, ...) as.integer(as.numeric(x@data)))
 
 
 setMethod("as.double", "GPR",  function(x, ...) as.double(x@data))

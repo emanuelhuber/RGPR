@@ -1702,7 +1702,7 @@ setReplaceMethod(
 setMethod("trProject", "GPR", function(x, CRSobj){
   xsp <- as(x, "SpatialLines")
   xsptrsf <- sp::spTransform(xsp, CRSobj)
-  x@coord[, 1:2] <- coordinates(xsptrsf)[[1]][[1]]
+  x@coord[, 1:2] <- sp::coordinates(xsptrsf)[[1]][[1]]
   return(x)
 })
 

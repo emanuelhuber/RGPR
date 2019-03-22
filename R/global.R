@@ -4794,8 +4794,8 @@ readDZT <- function(fPath){
     A <- matrix(nrow = hd$NSAMP, ncol = nNumScans * hd$NCHAN)
     A[] <- readBin(DZT, what = "int", n = prod(dim(A)),  size = 2)
     test <- A > 0
-    A[ test] <- A[ test] - 32768
-    A[!test] <- A[!test] + 32768
+    A[ test] <- A[ test] - 32769
+    A[!test] <- A[!test] + 32767
   }else if(hd$BITS == 32){
     A <- matrix(nrow = hd$NSAMP, ncol = nNumScans * hd$NCHAN)
     A[] <- readBin(DZT, what = "int", n = prod(dim(A)),  size = 4) 

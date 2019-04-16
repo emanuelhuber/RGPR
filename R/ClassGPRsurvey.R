@@ -2,23 +2,27 @@
 #------------------------------------------#
 #----------- CLASS DEFINITION -------------#
 setClass(
-  Class="GPRsurvey",  
-  slots=c(
-    version = "character",     # version of the class
-    filepaths = "character",     # filepath of the GPR data
-    names = "character",      # names of the GPR profiles
-    descriptions = "character",  # descriptions of the GPR profiles
-    freqs = "numeric",       # frequencies of the GPR profiles
-    lengths = "numeric",      # length in metres of the GPR profiles = [n]
-    surveymodes ="character",  # survey mode (reflection/CMP)
-    dates ="character",      # dates  of the GPR profiles
-    antseps ="numeric",      # antenna separation of the GPR profiles
-    posunit = "character",    # position units 
-    crs ="character",      # coordinates reference system
-    coordref="numeric",      # reference position
-    coords="list",        # (x,y,z) coordinates for each profiles
-    intersections="list",    # (x,y) position of the profile intersections
-    fids="list"          # fiducials of the GPR profiles
+  Class = "GPRsurvey",  
+  slots = c(
+    version       = "character",     # version of the class
+    filepaths     = "character",     # filepath of the GPR data
+    names         = "character",      # names of the GPR profiles
+    descriptions  = "character",  # descriptions of the GPR profiles
+    freqs         = "numeric",       # frequencies of the GPR profiles
+    lengths       = "numeric",      # length in metres of the GPR profiles = [n]
+    surveymodes   = "character",  # survey mode (reflection/CMP)
+    dates         = "character",      # dates  of the GPR profiles
+    antseps       = "numeric",      # antenna separation of the GPR profiles
+    posunits     = "character",     # position units  !!!length = 1!!!
+    crs           = "character",      # coordinates reference system
+    coordref      = "numeric",    # reference position
+    coords        = "list",      # (x,y,z) coordinates for each profiles
+    intersections = "list",      # (x,y) position of the profile intersections
+    fids          = "list",      # fiducials of the GPR profiles
+    ntraces       = "integer",   # to control if nrow(@coord) == ncol(x[[i]])
+    nz            = "integer",
+    dz            = "numeric",     # depth/time window (vertical)
+    zunits        = "character"   # time/depth unit  !!!length = 1!!!
   )
 )
 
@@ -39,14 +43,21 @@ GPRsurvey <- function(LINES){
   line_freq <- numeric(n)
   line_antsep <- numeric(n)
   line_lengths <- numeric(n)
-  posunit <- character(n)
-  crs <- character(n)
+  line_posunits <- character(n)
+  line_crs <- character(n)
   xyzCoords <- list()
-  fids <- list()
+  line_fids <- list()
+  line_traces <- integer(n)
+  line_nz <- integer(n)
+  line_dz <- integer(n)
+  line_depthunits <- character(n)
   for(i in seq_along(LINES)){
     gpr <- readGPR(LINES[[i]])
     # FIX ME!
     #  > check if name(gpr) is unique
+    line_traces[i]       <- ncol(gpr)
+    line_nz[i]           <- nrow(gpr)
+    line_dz[i]           <- mean(diff(gpr@depth))
     line_names[i]        <- name(gpr)[1]
     line_descriptions[i] <- description(gpr)
     line_surveymodes[i]  <- gpr@surveymode
@@ -65,8 +76,9 @@ GPRsurvey <- function(LINES){
     }else{
       line_antsep[i]        <- gpr@antsep
     }
-    posunit[i]           <- gpr@posunit[1]
-    crs[i] <- ifelse(length(gpr@crs) > 0, gpr@crs[1], character(1))
+    line_posunits[i]        <- gpr@posunit
+    line_depthunits[i]      <- gpr@depthunit  
+    line_crs[i] <- ifelse(length(gpr@crs) > 0, gpr@crs[1], character(1))
     if(length(gpr@coord)>0){
       if(is.null(colnames(gpr@coord))){
         xyzCoords[[line_names[i] ]] <- gpr@coord
@@ -81,39 +93,39 @@ GPRsurvey <- function(LINES){
     }else{
       line_lengths[i]    <- gpr@dx * ncol(gpr@data)
     }
-    fids[[line_names[i] ]]    <- trimStr(gpr@fid)
+    line_fids[[line_names[i] ]]    <- trimStr(gpr@fid)
   }
-  if(length(unique(posunit)) == 1){
-    posunit <- posunit[1]  
-    if(posunit == "") posunit <- character(0)
-  }else{
-    stop("Unit positions are not the same: \n",
-         paste0(unique(posunit), collaspe = ", "),
-         "!!\n")
+  if( length(unique(line_posunits)) > 1 ){
+    warning("Position units are not identical: \n",
+            paste0(unique(line_posunits), collaspe = ", "), "!")
   }
-  if(length(unique(crs)) == 1){
-    crs <- crs[1]  
-    if(crs == "") crs <- character(0)
-  }else{
-    crs <- names(which.max(table(crs))[1])
-    warning("Not all the coordinate reference systems are identical!",
-            "I take ", crs , "!\n")
+  if(length(unique(line_depthunits)) > 1){
+    warning("Depth units are not identical: \n",
+            paste0(unique(line_depthunits), collaspe = ", "), "!\n")
+  }
+  if(length(unique(line_crs)) > 1){
+    warning("Not all the coordinate reference systems are identica: \n",
+            paste0(unique(line_crs), collaspe = ", "), "!\n")
   }
   x <- new("GPRsurvey",
-        version     = "0.1",
-        filepaths    = LINES,       # vector of [n] file names
-        names      = line_names,      # length = [n]
-        descriptions   = line_descriptions,  # length = [n]
+        version       = "0.1",
+        filepaths     = LINES,       # vector of [n] file names
+        names         = line_names,      # length = [n]
+        descriptions  = line_descriptions,  # length = [n]
+        freqs         = line_freq,       # length = [n]
+        lengths       = line_lengths,       # length = [n]
         surveymodes   = line_surveymodes,    # length = [n]
-        dates       = line_dates,      # length = [n]
-        freqs       = line_freq,       # length = [n]
-        lengths     = line_lengths,       # length = [n]
-        antseps     = line_antsep,      # length = [n]
-        posunit     = posunit,    # length = 1
-        crs       = crs,      # length = 1
-        coords      = xyzCoords,    # header
-        fids      = fids,
-        intersections  = list()
+        dates         = line_dates,      # length = [n]
+        antseps       = line_antsep,      # length = [n]
+        posunits      = line_posunits,    # length = 1
+        crs           = line_crs,      # length = 1
+        coords        = xyzCoords,    # header
+        fids          = line_fids,
+        intersections = list(),
+        ntraces       = line_traces,   # to control if nrow(@coord) == ncol(x[[i]])
+        nz            = line_nz,
+        dz            = line_dz,     # depth/time window (vertical)
+        zunits        = line_depthunits   # time/depth unit
   )
   x <- coordref(x)
   return(x)
@@ -126,6 +138,21 @@ setAs(from = "GPRsurvey", to = "SpatialLines",
 #' @export
 setAs(from = "GPRsurvey", to = "SpatialPoints",
       def = function (from) as.SpatialPoints(from))    
+
+
+
+
+.getCheckedCRS <- function(x){
+  if(length(x@crs) == 0 || all(x@crs == "")){
+    warning("no CRS defined!\n")
+  }else{
+    if(length(unique(x@crs)) > 1){
+      stop( "Not all the coordinate reference systems are identica: \n",
+            paste0(unique(x@crs), collaspe = ", "), "!\n") 
+    } 
+  }
+  return( sp::CRS(x@crs[1]) )
+}
 
 #' Coerce to SpatialLines
 #'
@@ -141,17 +168,17 @@ setMethod("as.SpatialLines", signature(x = "GPRsurvey"), function(x){
     linesList <- lapply(seq_along(lineList), LineToLines, lineList, 
                         names(xyz))
     mySpatLines <- sp::SpatialLines(linesList)
-    if(length(x@crs) == 0){
-      warning("no CRS defined!\n")
-    }else{
-      sp::proj4string(mySpatLines) <- sp::CRS(crs(x))
-    }
+    
+    sp::proj4string(mySpatLines) <- .getCheckedCRS(x)
+    
     return(mySpatLines)
   }else{
     warning("no coordinates!")
     return(NULL)   
   }
 })
+
+
 
 #' Coerce to SpatialPoints
 #'
@@ -163,11 +190,9 @@ setMethod("as.SpatialPoints", signature(x = "GPRsurvey"), function(x){
   allTopo2 <- as.data.frame(allTopo)
   names(allTopo2) <- c("E", "N", "Z")
   sp::coordinates(allTopo2) <- ~ E + N
-  if(length(x@crs) == 0){
-    warning("no CRS defined!\n")
-  }else{
-    sp::proj4string(allTopo2) <- sp::CRS(crs(x))
-  }
+  
+  sp::proj4string(allTopo2) <- .getCheckedCRS(x)
+  
   return(allTopo2)
 })
 
@@ -215,8 +240,8 @@ setReplaceMethod(
   f="crs",
   signature="GPRsurvey",
   definition=function(x,value){
-    value <- as.character(value)[1]
-    x@crs <- value
+    value <- as.character(value)
+    x@crs[] <- value
     return(x)
   }
 )
@@ -246,15 +271,20 @@ setMethod(
     y@filepaths      <- x@filepaths[i]
     y@names          <- x@names[i]
     y@descriptions   <- x@descriptions[i]
-    y@surveymodes    <- x@surveymodes[i]
-    y@dates          <- x@dates[i]
     y@freqs          <- x@freqs[i]
     y@lengths        <- x@lengths[i]
+    y@surveymodes    <- x@surveymodes[i]
+    y@dates          <- x@dates[i]
     y@antseps        <- x@antseps[i]
-    y@crs            <- x@crs
+    y@crs            <- x@crs[i]
     y@coords         <- x@coords[x@names[i]]
     y@fids           <- x@fids[x@names[i]]
     y@intersections  <- x@intersections[x@names[i]]
+    y@ntraces        <- x@ntraces[i]
+    y@nz             <- x@nz[i]
+    y@dz             <- x@dz[i]
+    y@zunits         <- x@zunits[i]
+    y@posunits       <- x@posunits[i]
     return(y)
   }
 )
@@ -282,6 +312,8 @@ setMethod(
 )
     
 #-------------------------------
+# todo: check posunit!!
+# todo: check posunit!!
 #' @rdname GPRsurvey-subsubset
 setReplaceMethod(
   f = "[[",
@@ -332,6 +364,11 @@ setReplaceMethod(
       names(x@fids) <- x@names
     }
     x@intersections <- list()
+    x@ntraces[i]        <- ncol(value)
+    x@nz[i]             <- nrow(value)
+    x@dz[i]             <- mean(diff(value@depth))
+    x@zunits[i]         <- value@depthunit
+    x@posunits[i]       <- value@posunit
     x <- coordref(x)
     return (x)
   }
@@ -348,13 +385,14 @@ setMethod("getGPR", "GPRsurvey", function(x,id){
       id <- id[1]
     }
     if(is.numeric(id)){
+      no <- id
       gpr <- readGPR(x@filepaths[[id]])
     }else if(is.character(id)){
       no <- which(x@names == trimStr(id))
       if(length(no > 0)){
         gpr <- readGPR(x@filepaths[[no]])
       }else{
-        stop("There is no GPR lines with name '", trimStr(id),"'\n")
+        stop("There is no GPR data with the name '", trimStr(id),"'\n")
       }
     }
     if(length(x@coords[[gpr@name]])>0){
@@ -365,6 +403,7 @@ setMethod("getGPR", "GPRsurvey", function(x,id){
       ann(gpr) <- cbind(x@intersections[[gpr@name]]$trace,
                         x@intersections[[gpr@name]]$name)
     }
+    gpr@crs <- x@crs[no]
     if(length(x@coordref)>0){
       gpr@coordref <- x@coordref
     }
@@ -399,7 +438,7 @@ print.GPRsurvey <- function(x, ...){
     testLength <- sapply(x@coords, length)
     testCoords[names(testLength)] <- testLength
   }
-  testCoords <- as.numeric(testCoords > 0)+1
+  testCoords <- as.numeric(testCoords > 0) + 1
   testIntersecs <- rep(0,n)
   names(testIntersecs) <- x@names
   if(length(x@intersections)>0){
@@ -411,19 +450,23 @@ print.GPRsurvey <- function(x, ...){
   is_test <- c("NO","YES")
   cat("- - - - - - - - - - - - - - -\n")
   #overview <- data.frame("name" = .fNameWExt(x@filepaths),
-  overview <- data.frame("name" = x@names,
-              "length" = round(x@lengths,2),
-              "units" = rep(x@posunit, n),
-              "date" = x@dates,
-              "freq" = x@freqs,
-              "coord" = is_test[testCoords],
-              "int" = is_test[testIntersecs],
-              "filename" = basename(x@filepaths))
+  overview <- data.frame("name"    = x@names,
+                        "length"   = round(x@lengths,2),
+                        "units"    = x@posunits,
+                        "date"     = x@dates,
+                        "freq"     = x@freqs,
+                        "coord"    = is_test[testCoords],
+                        "int"      = is_test[testIntersecs],
+                        "filename" = basename(x@filepaths))
   print(overview)
   if(length(x@coords)>0 ){
     cat("- - - - - - - - - - - - - - -\n")
     if(length(x@crs) > 0 ){
-      cat("Coordinate system:", x@crs,"\n")
+      if(length(unique(x@crs)) == 1){
+        cat("Coordinate system:", x@crs,"\n")
+      }else{
+        cat("Coordinate systems:\n", paste0(x@crs, collapse = "\n"))
+      }
     }else{
       cat("Coordinate system: undefined\n")
     }
@@ -485,6 +528,7 @@ plot.GPRsurvey <- function(x, y, ...){
       }
       if( !is.null(dots$add) && isTRUE(dots$add) ){
         add <- TRUE
+        dots$add <- NULL
       }
       if(!is.null(dots$main)){
         main <- dots$main
@@ -554,7 +598,7 @@ plot.GPRsurvey <- function(x, y, ...){
         for(i in seq_along(shp_files)){
           shp <- rgdal::readOGR(DIRName[i], BASEName[i])
           message(DIRName[i], BASEName[i])
-          plot(shp, add = TRUE,pch=13,col="darkblue")
+          plot(shp, add = TRUE, pch = 13, col = "darkblue")
         }
       }
     }
@@ -793,6 +837,7 @@ setMethod("reverse", "GPRsurvey", function(x, id = NULL, tol = 0.3){
       stop("id must be between 1 and ", length(x),"!")
     }
   }
+  # if is.character(id) (<- name of data)
 })
 
 
@@ -999,6 +1044,23 @@ setMethod("shiftEst", "GPRsurvey", function(x, y = NULL,
 
   return( Dshift )
 })    
+
+
+#' Shift trace positions of one GPR data
+#'
+#' Shift trace positions of GPR data \code{i} by \code{dx} along x-axis and
+#' by \code{dy} along y-axis.
+#' @name tpShift
+#' @rdname tpShift
+#' @export
+setMethod("tpShift", "GPRsurvey", function(x, i, dx = 0, dy = 0){
+  # if you want to shift the coordinates by 1 m along x-direction, 
+  # 0.5 m along the y-direction
+  # for your 3rd GPR data line, do that
+  coords(x)[[names(x)[i]]] <- t(t(coords(x)[[names(x)[i]]]) + c(dx, dy , 0))
+  return(x)
+})
+                                            
     
 #' @export
 setMethod("plot3DRGL", "GPRsurvey", 
@@ -1218,8 +1280,37 @@ setMethod("papply", "GPRsurvey", function(x, prc = NULL){
     message('Processing ', y@name, '...', appendLF = FALSE)
     for(k in seq_along(prc)){
       y <- do.call(names(prc[k]), c(x = y,  prc[[k]]))
-      if(length(y@coord) > 0)   x@coords[[y@name]] <- y@coord
     }
+    x@names[[i]]        <- y@name
+    x@descriptions[[i]] <- y@description
+    x@lengths[[i]]      <- y@dx * ncol(y@data)
+    x@surveymodes[[i]]  <- y@surveymode
+    x@posunits[[i]]     <- y@posunit
+    x@crs[[i]]          <- y@crs
+    x@fids[[i]]         <- y@fid
+    x@ntraces[[i]]      <- ncol(y)
+    x@nz[[i]]           <- nrow(y)
+    x@dz[[i]]           <- mean(diff(y@depth))
+    x@zunits[[i]]       <- y@depthunit
+    if(length(y@date) == 0){
+      x@dates[[i]]        <- NA
+    }else{
+      x@dates[[i]]        <- y@date
+    }
+    if(length(y@freq) == 0){
+      x@freqs[[i]]        <- NA
+    }else{
+      x@freqs[[i]]        <- y@freq
+    }
+    if(length(y@antsep) == 0){
+      x@antseps[[i]]        <- NA
+    }else{
+      x@antseps[[i]]      <- y@antsep
+    }
+    if(length(y@coord) > 0){
+      x@coords[[y@name]] <- y@coord
+      x@lengths[[i]]      <- posLine(y[,1:2],last=TRUE)
+    } 
     x@filepaths[[i]] <- .saveTempFile(y)
     message(' done!', appendLF = TRUE)
   }
@@ -1230,5 +1321,23 @@ setMethod("papply", "GPRsurvey", function(x, prc = NULL){
 )
 
 
+#' Return TRUE is the data are a function of time
+#' 
+#' @name isTimeUnit
+#' @rdname isTimeUnit
+#' @export
+setMethod("isTimeUnit", "GPRsurvey", function(x){
+  grepl("[s]$", x@zunits)
+} 
+)
 
+#' Return TRUE is the data are a function of length
+#' 
+#' @name isLengthUnit
+#' @rdname isLengthUnit
+#' @export
+setMethod("isLengthUnit", "GPRsurvey", function(x){
+  !isTimeUnit(x)
+} 
+)
 

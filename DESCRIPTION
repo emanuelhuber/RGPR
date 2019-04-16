@@ -24,9 +24,10 @@ Collate:
 	'RGPR.R'
 	'global.R'    
 	'ClassGPR.R'
-    'ClassGPRsurvey.R'
-    'ClassMisc.R'
-    'data.R'
+  'ClassGPRsurvey.R'
+  'ClassGPRcube.R'
+  'ClassMisc.R'
+  'data.R'
 Imports:
     methods,
     graphics,
@@ -47,5 +48,6 @@ Imports:
 	adimpro,
 	raster,
 	fields,
-    magrittr
+    magrittr,
+    MBA
 RoxygenNote: 6.1.1

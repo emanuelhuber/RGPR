@@ -266,6 +266,15 @@ setGenericVerif("surveymode<-",
 #' @export
 setGenericVerif("isCMP", function(x) standardGeneric("isCMP"))
 
+#' @name isTimeUnit
+#' @rdname isTimeUnit
+#' @export
+setGenericVerif("isTimeUnit", function(x) standardGeneric("isTimeUnit"))
+
+#' @name isLengthUnit
+#' @rdname isLengthUnit
+#' @export
+setGenericVerif("isLengthUnit", function(x) standardGeneric("isLengthUnit"))
 
 
 #' @name description
@@ -278,6 +287,8 @@ setGenericVerif("description", function(x) standardGeneric("description"))
 #' @export
 setGenericVerif("description<-", function(x, value) 
 standardGeneric("description<-"))
+
+
 #####
 setGenericVerif("papply", function(x, prc = NULL) standardGeneric("papply"))
 ##########
@@ -313,7 +324,7 @@ setGenericVerif("trRmDuplicates", function(x, tol = NULL, verbose = TRUE)
 #' @rdname interpPos
 #' @export
 setGenericVerif("interpPos", function(x, topo, plot = FALSE, r = NULL, tol = NULL, 
-                   method = c("linear", "spline", "pchip"), ...) 
+                   method = c("linear", "linear", "linear"), ...) 
     standardGeneric("interpPos"))
 
 #' @name regInterpPos
@@ -493,11 +504,26 @@ setGenericVerif("getGPR", function(x,id) standardGeneric("getGPR"))
 #' @export
 setGenericVerif("surveyIntersect", function(x) 
                 standardGeneric("surveyIntersect"))
+
 #' @name writeSurvey
 #' @rdname writeSurvey
 #' @export
 setGenericVerif("writeSurvey", function(x, fPath, overwrite=FALSE){ 
                 standardGeneric("writeSurvey")})
+
+
+#' @name interpSlices
+#' @rdname interpSlices
+#' @export
+setGenericVerif("interpSlices", function(x, nx, ny, dz, h = 6){ 
+  standardGeneric("interpSlices")})
+
+#' @name tpShift
+#' @rdname tpShift
+#' @export
+setGenericVerif("tpShift", function(x, i, dx = 0, dy = 0){ 
+  standardGeneric("tpShift")})
+
 
 #' Georeferencing
 #'
@@ -4787,7 +4813,15 @@ readDZT <- function(fPath){
   
   nNumSkipScans <- 0
   
-  if(hd$BITS == 16){
+  if(hd$BITS == 8){
+    invisible(readBin(DZT, "integer", n = hd$NSAMP * nNumSkipScans * hd$NCHAN,
+                      size = 2L))
+    A <- matrix(nrow = hd$NSAMP, ncol = nNumScans * hd$NCHAN)
+    A[] <- readBin(DZT, what = "int", n = prod(dim(A)),  size = 1)
+    test <- A > 0
+    A[ test] <- A[ test] - 129
+    A[!test] <- A[!test] + 127
+  }else if(hd$BITS == 16){
     #.skipBin(DZT, hd$NSAMP * nNumSkipScans * hd$NCHAN, size = 2)
     invisible(readBin(DZT, "integer", n = hd$NSAMP * nNumSkipScans * hd$NCHAN, 
                       size = 2L))
@@ -4797,6 +4831,8 @@ readDZT <- function(fPath){
     A[ test] <- A[ test] - 32769
     A[!test] <- A[!test] + 32767
   }else if(hd$BITS == 32){
+    # invisible(readBin(DZT, "integer", n = hd$NSAMP * nNumSkipScans * hd$NCHAN, 
+    #                   size = 2L))
     A <- matrix(nrow = hd$NSAMP, ncol = nNumScans * hd$NCHAN)
     A[] <- readBin(DZT, what = "int", n = prod(dim(A)),  size = 4) 
   }

@@ -1932,7 +1932,25 @@ setMethod("isCMP", "GPR", function(x){
 } 
 )
 
+#' Return TRUE is the data are a function of time
+#' 
+#' @name isTimeUnit
+#' @rdname isTimeUnit
+#' @export
+setMethod("isTimeUnit", "GPR", function(x){
+  grepl("[s]$", x@depthunit)
+} 
+)
 
+#' Return TRUE is the data are a function of length
+#' 
+#' @name isLengthUnit
+#' @rdname isLengthUnit
+#' @export
+setMethod("isLengthUnit", "GPR", function(x){
+  !isTimeUnit(x)
+} 
+)
 
 #' Fiducial markers of the GPR data
 #' 
@@ -2067,7 +2085,9 @@ setReplaceMethod(
 #' number of time samples (normally the samples before time-zero). Then, the
 #' direct-current shift of every trace is substracted from every trace.
 #' @param x An object of the class `GPR`.
-#' @param u Number of time samples used to evaluate the DC-shift. 
+#' @param u Number of time samples used to evaluate the DC-shift. If 
+#'          \code{u = NULL}, the function take the first 90% of the 
+#'          samples before time-zero.  
 #' @param FUN A function to apply on the first `u` time samples (default is 
 #' `mean`; alternatively `median` could be used or any user defined function).
 #' @name dcshift
@@ -2079,7 +2099,7 @@ setMethod("dcshift", "GPR", function(x, u = NULL, FUN = mean){
       Dt <- min(time0(x)) - x@depth[1]  # time before time-zero
       u <- x@depth[1] + 0:round((Dt*0.9)/x@dz)
     }else{
-      stop("You must define 'u', default value does not work...")
+      stop("You must define 'u', not enough samples before time-zero...")
     }
   }
   shift <- matrix(apply(x[u, ], 2, FUN), nrow = nrow(x), 
@@ -2236,24 +2256,24 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("spline",
 }
 )
 
-.shiftThisTrace <- function(x,  ts, method = c("spline", "linear", "nearest", 
-                                               "pchip", "cubic", "none"), 
-                            crop = TRUE){
-  method <- match.arg(method, c("spline", "linear", "nearest", "pchip", 
-                                "cubic", "none"))
-  if(length(ts) == 1){
-    ts <- rep(ts, ncol(x))
-  }
-  xshift <- upsample(x, n = c(2,1))
-  xshift@data <- .traceShift(xshift@data, ts = ts, tt = xshift@depth, 
-                             dz = xshift@dz, method = method)
-  x@data <- xshift@data[seq(1, length.out = nrow(x), by = 2), ]
-  if(crop == TRUE){
-    testCrop <- apply(abs(x@data),1,sum)
-    x <- x[!is.na(testCrop),]
-  }
-  return(x)
-}
+# .shiftThisTrace <- function(x,  ts, method = c("spline", "linear", "nearest", 
+#                                                "pchip", "cubic", "none"), 
+#                             crop = TRUE){
+#   method <- match.arg(method, c("spline", "linear", "nearest", "pchip", 
+#                                 "cubic", "none"))
+#   if(length(ts) == 1){
+#     ts <- rep(ts, ncol(x))
+#   }
+#   xshift <- upsample(x, n = c(2,1))
+#   xshift@data <- .traceShift(xshift@data, ts = ts, tt = xshift@depth, 
+#                              dz = xshift@dz, method = method)
+#   x@data <- xshift@data[seq(1, length.out = nrow(x), by = 2), ]
+#   if(crop == TRUE){
+#     testCrop <- apply(abs(x@data),1,sum)
+#     x <- x[!is.na(testCrop),]
+#   }
+#   return(x)
+# }
 
 #' Time zero correction
 #'
@@ -4049,8 +4069,8 @@ setMethod("trRmDuplicates", "GPR", function(x, tol = NULL, verbose = TRUE){
 #' @rdname interpPos
 #' @export
 setMethod("interpPos", "GPR", 
-          function(x, topo, plot = FALSE, r = NULL, tol = NULL, 
-                   method = c("linear", "spline", "pchip"), ...){
+          function(x, topo, plot = FALSE, r = NULL, tol = NULL,
+                   method = c("linear", "linear", "linear"), ...){
             if(all(is.na(topo[,"TRACE"]))){
               stop(paste0(x@name, ": no link between the measured points",
                           "and the GPR traces!\n"))

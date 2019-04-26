@@ -5,7 +5,7 @@
 \alias{GPRcube-subset}
 \title{extract parts of GPRsurvey}
 \usage{
-\S4method{[}{GPRsurvey,ANY,ANY,ANY}(x, i, j, drop)
+\S4method{[}{GPRcube,ANY,ANY,ANY}(x, i, j, k, drop = TRUE)
 }
 \description{
 Return an object of class GPR slice

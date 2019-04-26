@@ -11,6 +11,8 @@ setClass(
   slots=c(
     version = "character",      # version of the class
     
+    name = "character",         # name of the cube
+    
     date = "character",          # date of creation, format %Y-%m-%d
     freq = "numeric",            # antenna frequency (if unique)
 
@@ -38,45 +40,23 @@ setClass(
 
 
 
-
-
-#' Class GPRcube
+#' Class GPRslice
 #' 
-#' An S4 class to represent 3D ground-penetrating radar (GPR) data.
+#' An S4 class to represent time/depth slices of 
+#' ground-penetrating radar (GPR) data.
 #' 
-#' @name GPRcube-class
-#' @rdname GPRcube-class
+#' @name GPRslice-class
+#' @rdname GPRslice-class
 #' @export
 setClass(
-  Class="GPRcube",  
-  #### extend= "GPRsurvey"
-  slots=c(
-    version = "character",      # version of the class
-    
-    date = "character",          # date of creation, format %Y-%m-%d
-    freq = "numeric",            # antenna frequency (if unique)
-    
-    filepaths = "character",     # filepath of the profile
-    
-    x = "numeric",      # trace position along x-axes (local crs)
-    y = "numeric",      # trace position along y-axes (local crs)
-    data = "array",     # 3D [x, y, z] one column per trace
-    
-    coord = "numeric",      # coordinates grid corner bottom left (0,0)
-    posunit = "character",  # spatial unit
-    crs = "character",      # coordinate reference system of coord
-    
-    depth = "numeric",         # depth position
-    depthunit = "character",   # time/depth unit
-    
-    vel = "list",                # velocity model
-    delineations = "list",       # delineated lines
-    
-    obs = "list",                # observation points used for interpolation 
-    
-    transf = "numeric"          # affine transformation
-  )
+  Class = "GPRslice",  
+  contains = "GPRcube"
 )
+
+#' @export
+newFUnction <- function(x){
+ x
+}
 
 #------------------------------
 # "["
@@ -87,34 +67,272 @@ setClass(
 #' @docType methods
 #' @rdname GPRcube-subset
 setMethod(
-  f= "[",
-  signature="GPRsurvey",
-  definition=function(x,i,j,drop){
-    if(missing(i)) i <- j
-    # cat(typeof(i),"\n")
-    # cat(j,"\n")
-    # i <- as.numeric(i)
-    y <- x
-    y@filepaths      <- x@filepaths[i]
-    y@names          <- x@names[i]
-    y@descriptions   <- x@descriptions[i]
-    y@freqs          <- x@freqs[i]
-    y@lengths        <- x@lengths[i]
-    y@surveymodes    <- x@surveymodes[i]
-    y@dates          <- x@dates[i]
-    y@antseps        <- x@antseps[i]
-    y@crs            <- x@crs[i]
-    y@coords         <- x@coords[x@names[i]]
-    y@fids           <- x@fids[x@names[i]]
-    y@intersections  <- x@intersections[x@names[i]]
-    y@ntraces        <- x@ntraces[i]
-    y@nz             <- x@nz[i]
-    y@dz             <- x@dz[i]
-    y@zunits         <- x@zunits[i]
-    y@posunits       <- x@posunits[i]
+  f = "[",
+  signature = "GPRcube",
+  definition = function(x, i, j, k, drop = TRUE){
+    if(missing(i) || length(i) == 0){
+      i <- 1:dim(x@data)[1]
+    } 
+    if(missing(j) || length(j) == 0){
+      j <- 1:dim(x@data)[2]
+    }
+    # dots <- list(...)
+    # if(length(dots) > 0){
+    #   k <- as.integer(dots[[1]])
+    # }
+    # print(dots)
+    if(missing(k) || length(k) == 0){
+      k <- 1:dim(x@data)[3]
+    }
+    # extract slice k
+    if(length(k) == 1){
+      y <- new("GPRslice",
+               version      = "0.1",
+               name         = x@name,
+               date         = x@date,  
+               freq         = x@freq,
+               filepaths    = x@filepaths,
+               x            = x@x[i],
+               y            = x@y[j],
+               data         = x@data[i, j, k, drop = TRUE],
+               coord        = x@coord,
+               posunit      = x@posunit,
+               crs          = x@crs,
+               depth        = x@depth[k],
+               depthunit    = x@depthunit
+              )
+    # extract GPR alons x or y axis
+    }else if(length(i) == 1 || length(j) == 1){
+      u <- which(c(length(i), length(j)) == 1)[1]
+      if(u == 1){
+        dx <- mean(abs(diff(x@y)))
+        xpos <- x@y[j]
+      }else{
+        dx <- mean(abs(diff(x@x)))
+        xpos <- x@x[i]
+      }
+      xdata <- x@data[i, j, k]
+      if(is.null(dim(xdata))){
+        n <- 1L
+        dim(xdata) <- c(length(xdata), 1)
+      }else{
+        xdata <- t(xdata)
+        n <- ncol(xdata)
+      }
+      y <- new("GPR",   
+            version     = "0.2",
+            data        = xdata,
+            traces      = seq_len(n),
+            fid         = rep("", n),
+            #coord      = coord,            FIXME!
+            pos         = xpos,        
+            depth       = x@depth,
+            #rec        = rec_coord,         
+            #trans      = trans_coord,
+            time0       = rep(0, n),          
+            #time       = traceTime,        
+            #proc       = character(0),     
+            vel         = list(0.1),         
+            name        = x@name,
+            #description = "",
+            #filepath    = "",
+            dz          = abs(diff(x@depth)), 
+            dx          = dx,              
+            depthunit   = x@depthunit,
+            posunit     = x@posunit,
+            freq        = x@freq, 
+            #antsep      = antsep[1], 
+            surveymode  = "reflection",
+            date        = x@date,
+            crs         = character(0)
+            #hd          = sup_hd                      # header
+        )
+    # extract sub-cuve
+    }else{
+      y <- new("GPRcube",
+               version      = x@version,
+               name         = x@name,
+               date         = x@date,  
+               freq         = x@freq,
+               filepaths    = x@filepaths,
+               x            = x@x[i],
+               y            = x@y[j],
+               data         = x@data[i, j, k, drop = FALSE],
+               coord        = x@coord,
+               posunit      = x@posunit,
+               crs          = x@crs,
+               depth        = x@depth[k],
+               depthunit    = x@depthunit,
+               vel          = x@vel,               
+               delineations = x@delineations,
+               obs          = x@obs,
+               transf       = x@transf
+      )
+    }
+    
     return(y)
   }
 )
+
+
+#' Plot a GPR cube
+#'
+#' @param x Object of class \code{GPRcube}
+#' @param add logical. If \code{TRUE}, add to current plot
+#' @param ratio logical. Add fiducial markes
+#' @param barscale logical. Add a colorbar scale
+#' @param main character. Plot title.
+#' @method plot GPRcube 
+#' @name plot
+#' @rdname plot
+#' @export
+plot.GPRcube <- function(x, 
+                         i = NULL, 
+                         j = NULL,
+                         k = NULL,
+                         xlim = NULL,
+                         ylim = NULL,
+                         zlim = NULL,
+                         clim = NULL,
+                         colkey = NULL,
+                         add = FALSE,
+                         col = NULL,
+                         inttype = 2,
+                          ...){
+
+  rnxyz <- dim(x@data)
+  nx <- rnxyz[1]
+  ny <- rnxyz[2]
+  nz <- rnxyz[3]
+  
+  if(is.null(i)) i <- c(1, nx)
+  if(is.null(j)) j <- c(1, ny)
+  if(is.null(k)) k <- c(1, nz)
+  
+  if(is.null(xlim)) xlim <- range(x@x) 
+  if(is.null(ylim)) ylim <- range(x@y)
+  if(is.null(zlim)) zlim <- range(x@depth)
+  
+  if( min(x@data, na.rm = TRUE) >= 0 ){
+      # to plot amplitudes for example...
+      if(is.null(clim)) clim <- c(0, max(x@data, na.rm = TRUE))
+      if(is.null(col))  col <- palGPR("slice")
+  }else{
+      if(is.null(clim)) clim <- c(-1, 1) * max(abs(x@data), na.rm = TRUE)
+      if(is.null(col))  col <-  palGPR(n = 101)
+  }
+  
+  # y-0: x x z (100 x 102) at y = 0
+  for(vj in seq_along(j)){
+    vx <- x@x
+    vy <- rep(x@y[j[vj]], nz)
+    vz <- matrix(rep(x@depth, each = nx), ncol = nz, 
+                 nrow = nx, byrow = FALSE)
+    M1 <- plot3D::mesh(vx, vy)
+    
+    plot3D::surf3D(M1$x, M1$y, vz, colvar = (x@data[, j[vj], nz:1]),  
+                   add = add, colkey = colkey,
+                   xlim = xlim, 
+                   ylim = ylim,
+                   zlim = zlim,
+                   clim = clim, inttype = inttype,
+                   col = col, ...)
+    if(!isTRUE(add)) add <- TRUE
+    if(is.null(colkey)) colkey <- list(plot = FALSE)
+  }
+  
+  
+  # x-0: y x z () at x = 0
+  for(vi in seq_along(i)){
+    vx <- rep(x@x[i[vi]], nz)
+    vy <- x@y
+    vz <- matrix(rep(x@depth, each = ny), ncol = nz, 
+                 nrow = ny, byrow = FALSE)
+    M1 <- plot3D::mesh(vx, vy)
+    
+    plot3D::surf3D(M1$x, M1$y, t(vz), colvar = t(x@data[i[vi],,nz:1]),  
+                   add = add, colkey = colkey,
+                   xlim = xlim, 
+                   ylim = ylim,
+                   zlim = zlim,
+                   clim = clim,  inttype = inttype,
+                   col = col, ...)
+    if(!isTRUE(add)) add <- TRUE
+    if(is.null(colkey)) colkey <- list(plot = FALSE)
+    
+  }
+  
+  
+  # y-max: y x z () at x = 0
+  for(vk in seq_along(k)){
+    vx <- x@x
+    vy <- x@y
+    vz <- matrix(rep(rep(rev(x@depth)[k[vk]], nx), each = ny), 
+                 ncol = ny, nrow = nx, byrow = TRUE)
+    M1 <- plot3D::mesh(vx, vy)
+    
+    plot3D::surf3D(M1$x, M1$y, vz, colvar = (x@data[,,k[vk]]),  
+                   add = add, colkey = colkey,
+                   xlim = xlim, 
+                   ylim = ylim,
+                   zlim = zlim,
+                   clim = clim,  inttype = inttype,
+                   col = col, ...)
+    if(!isTRUE(add)) add <- TRUE
+    if(is.null(colkey)) colkey <- list(plot = FALSE)
+    
+  }
+}
+
+#' Plot a slice.
+#'
+#' @param x Object of class \code{GPRslice}
+#' @param add logical. If \code{TRUE}, add to current plot
+#' @param ratio logical. Add fiducial markes
+#' @param barscale logical. Add a colorbar scale
+#' @param main character. Plot title.
+#' @method plot GPRslice 
+#' @name plot
+#' @rdname plot
+#' @export
+plot.GPRslice <- function(x, 
+                     main = NULL, 
+                     xlab = NULL,
+                     ylab = NULL,
+                     col = NULL,
+                     clim = NULL,
+                     ...){
+  if(is.null(main)){
+    main <- paste0("time = ", x@depth)
+  }
+  if(is.null(xlab)){
+    xlab <- paste0("x (", x@posunit, ")")
+  }
+  if(is.null(ylab)){
+    ylab <- paste0("y (", x@posunit, ")")
+  }
+  
+  if( min(x@data, na.rm = TRUE) >= 0 ){
+    # to plot amplitudes for example...
+    if(is.null(clim)) clim <- c(0, max(x@data, na.rm = TRUE))
+    if(is.null(col))  col <- palGPR("slice")
+  }else{
+    if(is.null(clim)) clim <- c(-1, 1) * max(abs(x@data), na.rm = TRUE)
+    if(is.null(col))  col <-  palGPR(n = 101)
+  }
+  
+  plot3D::image2D(x = x@x, y = x@y, z = x@data,
+                main = main, xlab, ylab, clim = clim, col = col, ...)
+}
+
+
+
+
+
+
+
+
+
 
 
 defVz <- function(x){
@@ -230,14 +448,24 @@ setMethod("interpSlices", "GPRsurvey", function(x, nx, ny, dz, h = 6){
   # plot3D::points2D(x = SXY$x0, y = SXY$y0, colvar = SXY$z0[[k]],
   #                  add = TRUE, pch = 20, clim = zlim, col = palGPR("slice"))
   
-  x <- new("GPRcube",
+  # FIXME : if only one slice -> create slice object !!!!
+  if(dim(SXY$z)[3] == 1){
+    className <- "GPRslice"
+    ddata <- SXY$z[,,1]
+  }else{
+    className <- "GPRcube"
+    ddata <- SXY$z
+  }
+  
+  x <- new(className,
            version      = "0.1",
+           name         = "",
            date         = as.character(Sys.Date()),  
            freq         = xfreq,
            filepaths    = x@filepaths,
            x            = xpos,
            y            = ypos,
-           data         = SXY$z,
+           data         = ddata,
            coord        = xyref,
            posunit      = x@posunits[1],
            crs          = x@crs,

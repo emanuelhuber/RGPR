@@ -6,6 +6,4 @@
 \title{Class GPRcube}
 \description{
 An S4 class to represent 3D ground-penetrating radar (GPR) data.
-
-An S4 class to represent 3D ground-penetrating radar (GPR) data.
 }

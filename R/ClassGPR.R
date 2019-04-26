@@ -1354,7 +1354,7 @@ setMethod(
 setMethod(
   f= "[",
   signature="GPR",
-  definition=function(x,i,j,drop){
+  definition=function(x, i, j, drop){
     rval <- x@data
     if(missing(i) && missing(j)){
       return(as.vector(x@data))
@@ -3293,7 +3293,7 @@ points.GPR <- function(x, ...){
 #'                 If time-zero varies from trace to trace, the vertical axis
 #'                 is adjusted to the mean time-zero. Apply first the function
 #'                 \code{time0Cor()} to shift the traces to their time-zero.
-#' @param addFid logical. Add fiducial markes
+#' @param addFid logical. Add fiducial marks
 #' @param addAnn logical. Add GPR annotations (line intersections)
 #' @param addTime0 logical. Add time-zero line
 #' @param addDepth0 logical. Add depth-zero line
@@ -3308,7 +3308,7 @@ points.GPR <- function(x, ...){
 #'                      \code{clip[2]}. Per default, values below the 
 #'                      0.01-quantile and above the 0.99-quantile are clipped.
 #'                      If \code{clip = FALSE} the data are not clipped.
-#' @param ratio logical. Add fiducial markes
+#' @param ratio logical.
 #' @param barscale logical. Add a colorbar scale
 #' @param wsize length-one numeric. Size of the wiggles (default = \code{1}).
 #' @param wside length-one numeric. If positive the right part of the wavelet

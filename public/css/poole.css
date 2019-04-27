@@ -172,13 +172,14 @@ pre.highlight {
   word-break: break-all;
   word-wrap: break-word;
   background-color: #f9f9f9;
-  overflow-x: scroll
+  overflow-x: scroll;
 }
 pre code {
   padding: 0;
   font-size: 100%;
   color: inherit;
   background-color: transparent;
+  overflow-x: scroll;
 }
 /* add Manu */
 pre {

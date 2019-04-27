@@ -158,6 +158,7 @@ code {
   color: #bf616a;
   background-color: #f9f9f9;
   border-radius: 3px;
+  overflow-x: scroll;
 }
 
 pre.highlight {
@@ -165,21 +166,19 @@ pre.highlight {
   margin-top: 0;
   margin-bottom: 1rem;
   padding: 1rem;
-  font-size: .8rem;
+  font-size: .7rem;
   line-height: 1.4;
   white-space: pre;
   white-space: pre-wrap;
   word-break: break-all;
   word-wrap: break-word;
   background-color: #f9f9f9;
-  overflow-x: scroll;
 }
 pre code {
   padding: 0;
   font-size: 100%;
   color: inherit;
   background-color: transparent;
-  overflow-x: scroll;
 }
 /* add Manu */
 pre {

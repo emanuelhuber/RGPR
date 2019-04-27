@@ -31,7 +31,8 @@ Install/load `RGPR`
 # install "devtools" if not already done
 if(!require("devtools")) install.packages("devtools")
 devtools::install_github("emanuelhuber/RGPR")
-library(RGPR)       # load RGPR in the current R session
+# load RGPR in the current R session
+library(RGPR)
 ```
 
 Read/import GPR data
@@ -134,8 +135,8 @@ ENVI band-sequential files (`.dat`, `.hdr`)
     ``` r
     library(caTools)
 
-    mydata <- read.ENVI("Multi-01_LINE001-CH1-01.dat",
-                         headerfile = "Multi-01_LINE001-CH1-01.hdr")
+    mydata <- read.ENVI("LINE001.dat",
+                        headerfile = "LINE001.dat.hdr")
     class(mydata)
     ```
 
@@ -143,10 +144,10 @@ ENVI band-sequential files (`.dat`, `.hdr`)
 
     ``` r
     x <- list(data = mydata,
-               freq = 250,                  # MHz (antenna frequency)
-               dx = 0.025,                  # metres (spatial sampling)
-               dz = 0.1000,                 # ns (vertical sampling)
-               antsep = 1                   # antenna separation 1 m
+               freq = 250,       # MHz (antenna frequency)
+               dx = 0.025,       # metres (spatial sampling)
+               dz = 0.1000,      # ns (vertical sampling)
+               antsep = 1        # antenna separation 1 m
 )
 
     # convert this list into a GPR object
@@ -162,18 +163,18 @@ Pickle files (`.pkl`, serialized Python object)
     # install package reticulare if necessary
     if(!require("reticulate")) install.packages("reticulate")
 
-    mydata <- reticulate::py_load_object("simulation_data_400mesurements_angle_x_signal.pkl")
+    mydata <- reticulate::py_load_object("sim.pkl")
     class(mydata)
     ```
 
 2.  Convert this matrix into a GPR object according to the Section [Convert a matrix object into a GPR data](#convert-a-matrix-object-into-a-gpr-data). Create a list (minimum list format below) and convert it into a GPR object:
 
     ``` r
-    x <- list(data = t(mydata),             # transpose the data if necessary
-               freq = 250,                  # MHz (antenna frequency)
-               dx = 0.025,                  # metres (spatial sampling)
-               dz = 0.1000,                 # ns (vertical sampling)
-               antsep = 1                   # antenna separation 1 m
+    x <- list(data = t(mydata),     # transpose the data if necessary
+               freq = 250,          # MHz (antenna frequency)
+               dx = 0.025,          # metres (spatial sampling)
+               dz = 0.1000,         # ns (vertical sampling)
+               antsep = 1           # antenna separation 1 m
 )
 
     # convert this list into a GPR object
@@ -193,10 +194,10 @@ Convert a matrix object into a GPR data
 
     ``` r
     x <- list(data = mydata,
-               freq = 250,            # MHz (antenna frequency)
-               dx = 0.025,            # metres (spatial sampling)
-               dz = 0.1000,           # ns (vertical sampling)
-               antsep = 1             # antenna separation 1 m
+               freq = 250,      # MHz (antenna frequency)
+               dx = 0.025,      # metres (spatial sampling)
+               dz = 0.1000,     # ns (vertical sampling)
+               antsep = 1       # antenna separation 1 m
 )
     ```
 

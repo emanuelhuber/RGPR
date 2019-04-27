@@ -105,6 +105,8 @@ is shown. For CMP, the position of the traces on the x-axis is defined
 by the antenna separation (\code{antsep(x)}).
 
 Plot GPR suvey lines
+
+Plot GPR data cube.
 }
 \details{
 Additional arguments
@@ -114,4 +116,10 @@ Additional arguments
              For 2D plot: \code{"raster"} (default) or \code{"wiggles"}.
   \item \code{col}: Color. Default 1D: "black". 2D: \code{palGPR(n = 101)}
 }
+
+i, j and k define the sections of the cube that are plotted. 
+With the default value (e.g., i = NULL, the first and the last sections 
+of all dimensions are plotted). The additional arguments (...) correspond 
+to the arguments of the function 'plot3D::surf3D()' (with argument 'theta' 
+and 'phi' you can define the orientation of the cube).
 }

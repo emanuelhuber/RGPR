@@ -177,6 +177,14 @@ setMethod(
 
 #' Plot a GPR cube
 #'
+#' Plot GPR data cube.
+#' 
+#' i, j and k define the sections of the cube that are plotted. 
+#' With the default value (e.g., i = NULL, the first and the last sections 
+#' of all dimensions are plotted). The additional arguments (...) correspond 
+#' to the arguments of the function 'plot3D::surf3D()' (with argument 'theta' 
+#' and 'phi' you can define the orientation of the cube).
+#' 
 #' @param x Object of class \code{GPRcube}
 #' @param add logical. If \code{TRUE}, add to current plot
 #' @param ratio logical. Add fiducial markes

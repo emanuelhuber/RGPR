@@ -1890,6 +1890,7 @@ setReplaceMethod(
     }
     if(length(value) == length(x@pos)){
       x@pos <- value
+      dx <- mean(abs(diff(values)))
     }else{
       stop("length(value) != length(x@depth)")
     }

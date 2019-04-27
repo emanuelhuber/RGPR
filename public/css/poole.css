@@ -159,6 +159,7 @@ code {
   background-color: #f9f9f9;
   border-radius: 3px;
 }
+
 pre.highlight {
   display: block;
   margin-top: 0;
@@ -171,7 +172,7 @@ pre.highlight {
   word-break: break-all;
   word-wrap: break-word;
   background-color: #f9f9f9;
-  overflow: hidden;
+  overflow-x: scroll
 }
 pre code {
   padding: 0;

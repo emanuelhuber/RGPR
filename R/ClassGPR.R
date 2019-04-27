@@ -119,8 +119,45 @@ setClass(
 )
 
 
+
+
 #------------------------------------------#
 #-------------- CONSTRUCTOR ---------------#
+
+#' Extract frequency from string
+#' 
+#' Extract with regex the antenna frequency in a string
+#' @export
+freqFromString <- function(s){
+  if(grepl("MHz", s, ignore.case = TRUE)){
+    a <- regexpr("[0-9]+.MHZ",  s, ignore.case = TRUE, perl = TRUE)
+  }else{
+    a <- regexpr("[0-9]+",  s, ignore.case = TRUE, perl = TRUE)
+  }
+  b <- regmatches(s,  a)
+  as.numeric(gsub("[^0-9]", "", b))
+}
+# s <- "1230 fds 200-MHZ 12.3"
+# s <- "1230MLF"
+# s <- "D1230MLF"
+# freqFromString(s)
+
+
+#' @export
+antSepFromAntFreq <- function(antfreq, verbose = TRUE){
+  ant <- list(f = c(12.5, 25, 50, 100, 110, 200, 225, 450,   900, 1200),
+              s = c( 8,    4,  2,   1,   1, 0.5, 0.5, 0.25, 0.17, 0.075))
+  antsep <- approx(ant$f, ant$s, xout = antfreq)$y
+  if(verbose){
+    message("Antenna separation (", antsep, " m) estimated from antenna", 
+            "frequency (", antfreq, " MHz).",
+            "\nCorrect if wrong with 'antsep(x) <- ...'")
+  }
+  return(antsep)
+}
+
+
+
 # x = classical GPR list
 .gpr <- function(x, fName = character(0), desc = character(0),
                  fPath = character(0), Vmax = 50){
@@ -182,17 +219,17 @@ setClass(
   }else{
     posunit <- "m"
   }
-  freq <- .getHD(x$hd, "NOMINAL FREQUENCY", position=TRUE)
-  if(!is.null(freq)){
-    pos_used[freq[2]] <- 1L
+  antfreq <- freqFromString(.getHD(x$hd, "NOMINAL FREQUENCY", position=TRUE))
+  if(!is.null(antfreq)){
+    pos_used[antfreq[2]] <- 1L
   }else{
-    freq <- 100
+    antfreq <- 100
   }
   antsep <- .getHD(x$hd, "ANTENNA SEPARATION", position=TRUE)[1]
   if(!is.null(antsep)){
     pos_used[antsep[2]] <- 1L
   }else{
-    antsep <- 1.00
+    antsep <- antSepFromAntFreq(antfreq)
   }
   surveymode = .getHD(x$hd, "SURVEY MODE",number=FALSE, position=TRUE)
   if(!is.null(surveymode)){
@@ -344,7 +381,7 @@ setClass(
   }
   afreq <- .getHD(x$hd, "ANTENNA", position = TRUE, number = FALSE)
   if(!is.null(afreq)){
-    antfreq <- as.numeric(gsub("[^0-9]", "", afreq[1]))
+    antfreq <- freqFromString(afreq[1])
     pos_used[as.integer(afreq[2])] <- 1L
   }else{
     antfreq <- 100
@@ -353,7 +390,7 @@ setClass(
   if(!is.null(antsep)){
     pos_used[antsep[2]] <- 1L
   }else{
-    antsep[1] <- 1
+    antsep[1] <- antSepFromAntFreq(antfreq)
   }
   surveyDate <- .getHD(x$hd, "DATE", position = TRUE, number = FALSE)
   if(!is.null(surveyDate)){
@@ -458,25 +495,26 @@ setClass(
   }
   
   # OK
-  # X <- "GX450 HDR (v.1)=3" 
+  # s <- "GX450 HDR (v.1)=3" 
   X <- .getHD(x$hd, "ANTENNAS", position = TRUE, number = FALSE)
-  X2 <- strsplit(X[1], " ")
-  gsubwrap <- function(x, ...){
-    grep('[0-9]{2,3}', x, value = TRUE)
-  }
-  freq <- as.numeric(gsub('[^0-9]', '', sapply(X2, gsubwrap)))
+  # X2 <- strsplit(X[1], " ")
+  # gsubwrap <- function(x, ...){
+  #   grep('[0-9]{2,3}', x, value = TRUE)
+  # }
+  # antfreq <- as.numeric(gsub('[^0-9]', '', sapply(X2, gsubwrap)))
+  antfreq <- freqFromString(X[1])
   # freq <- as.numeric(gsub('[^0-9]', '', freqS[1]))
-  if(!is.null(freq) && !is.na(freq)){
+  if(!is.null(antfreq) && !is.na(antfreq)){
     pos_used[X[2]] <- 1L
   }else{
-    freq <- 100
+    antfreq <- 100
   }
   # OK
   antsep <- .getHD(x$hd, "ANTENNA SEPARATION", position=TRUE)
   if(!is.null(antsep)){
     pos_used[antsep[2]] <- 1L
   }else{
-    antsep <- 1.00
+    antsep <- antSepFromAntFreq(antfreq)
   }
   x$hd2 <- x$hd[!pos_used,]
   if(nrow(x$hd2)>0){
@@ -520,6 +558,8 @@ setClass(
   )
 }
 
+
+
 .gprSEGY <- function(x, fName = character(0), desc = character(0),
                      fPath = character(0), Vmax = 50){  
   
@@ -552,13 +592,9 @@ setClass(
   antfreq0 <- grep("(antenna).*([0-9])+", x$hd$EBCDIC, ignore.case = TRUE, 
                    value = TRUE)
   antfreq <- as.numeric(gsub("[^0-9]", "", antfreq0))
+  # antfreq <- freqFromString(x$hd$EBCDIC) FIXME.
   if(length(antfreq) > 0){
-    ant <- list(f = c(12.5, 25, 50, 100, 110, 200, 225, 450,   900, 1200),
-                s = c( 8,    4,  2,   1,   1, 0.5, 0.5, 0.25, 0.17, 0.075))
-    antsep <- approx(ant$f, ant$s, xout = antfreq)$y
-    message("Antenna separation (", antsep,
-            " m) estimated from antenna frequency (", antfreq, " MHz).",
-            "\nCorrect if wrong.")
+    antsep <- antSepFromAntFreq(antfreq)
   }else{
     antfreq <- numeric(0)
     antsep <- numeric(0)
@@ -674,7 +710,17 @@ setClass(
                     '52600S' = 2600,
                     'D50800' = 800,
                     numeric(0))  # 800,300,
-  
+  if(length(antfreq) == 0){
+    antfreq <- freqFromString(x$hd$ANT)
+  }
+  if(length(antfreq) == 0){
+    message("I could not identify the antenna frequency. Please set the ",
+            "correct antenna frequency value with 'antsep(x) <- ...")
+    antsep <- numeric(0)
+  }else{
+    antsep <- antSepFromAntFreq(antfreq)
+  }
+  v <- 2 * x$hd$DEPTH / x$hd$RANGE
   new("GPR",   version="0.2",
       data = byte2volt(Vmax = Vmax, nBytes = x$hd$BITS) * x$data,
       traces = 1:ncol(x$data),
@@ -689,7 +735,7 @@ setClass(
       # time = x$hdt[1,] * 3600 + x$hdt[2,] * 60 + x$hdt[3,],
       time = traceTime,
       proc = character(0),
-      vel = list(0.1),
+      vel = list(v),
       name = x_name,
       description = desc,
       filepath = fPath,
@@ -698,7 +744,7 @@ setClass(
       depthunit = "ns",
       posunit = "m",
       freq = antfreq, 
-      antsep = numeric(0),     # check
+      antsep = antsep,     # check
       surveymode = "reflection",
       date = as.character(dd), #format(Sys.time(), "%d/%m/%Y"),
       crs = character(0),
@@ -3716,7 +3762,7 @@ plot.GPR <- function(x,
           axis(side = 4, at = depth_0, labels = "0", tick = FALSE)
           if(isTRUE(addDepth0)) abline(h = depth_0, col = "grey", lty = 3)
           # mtext(paste0("depth (m),   v=", v, "m/ns"), side = 4, line = 2)
-          mtext(paste0("depth (", x@posunit, "),   v = ", v, " ", x@posunit, 
+          mtext(paste0("depth (", x@posunit, "),   v = ", round(v, 3), " ", x@posunit, 
                        "/",  x@depthunit), side = 4, line = 2.5)
         }else{
           axis(side = 4)

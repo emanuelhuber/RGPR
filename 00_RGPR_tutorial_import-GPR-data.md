@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Import GPR data
-date: 2019-02-21
+date: 2019-04-27
 ---
 
 <!--
@@ -56,13 +56,13 @@ x <- readGPR(dsn = "XLINE00.DT1")
 plot(x)
 ```
 
-GSSI data (`.dzt`)
+GSSI data (`.dtz`)
 ------------------
 
 To read the GPR data, enter
 
 ``` r
-x <- readGPR(dsn = "XLINE00.dzt")
+x <- readGPR(dsn = "XLINE00.dtz")
 plot(x)
 ```
 
@@ -126,42 +126,91 @@ x <- readGPR(dsn = "XLINE00.txt")
 plot(x)
 ```
 
+ENVI band-sequential files (`.dat`, `.hdr`)
+-------------------------------------------
+
+1.  Read the ENVI file
+
+    ``` r
+    library(caTools)
+
+    mydata <- read.ENVI("Multi-01_LINE001-CH1-01.dat",
+                         headerfile = "Multi-01_LINE001-CH1-01.hdr")
+    class(mydata)
+    ```
+
+2.  Convert this matrix into a GPR object according to the Section [Convert a matrix object into a GPR data](#convert-a-matrix-object-into-a-gpr-data). Create a list (minimum list format below) and convert it into a GPR object:
+
+    ``` r
+    x <- list(data = mydata,
+               freq = 250,                  # MHz (antenna frequency)
+               dx = 0.025,                  # metres (spatial sampling)
+               dz = 0.1000,                 # ns (vertical sampling)
+               antsep = 1                   # antenna separation 1 m
+)
+
+    # convert this list into a GPR object
+    gprdata <- as(x, "GPR")
+    ```
+
+Pickle files (`.pkl`, serialized Python object)
+-----------------------------------------------
+
+1.  Read the pickle file
+
+    ``` r
+    # install package reticulare if necessary
+    if(!require("reticulate")) install.packages("reticulate")
+
+    mydata <- reticulate::py_load_object("simulation_data_400mesurements_angle_x_signal.pkl")
+    class(mydata)
+    ```
+
+2.  Convert this matrix into a GPR object according to the Section [Convert a matrix object into a GPR data](#convert-a-matrix-object-into-a-gpr-data). Create a list (minimum list format below) and convert it into a GPR object:
+
+    ``` r
+    x <- list(data = t(mydata),             # transpose the data if necessary
+               freq = 250,                  # MHz (antenna frequency)
+               dx = 0.025,                  # metres (spatial sampling)
+               dz = 0.1000,                 # ns (vertical sampling)
+               antsep = 1                   # antenna separation 1 m
+)
+
+    # convert this list into a GPR object
+    gprdata <- as(x, "GPR")
+    ```
+
 Convert a matrix object into a GPR data
 =======================================
 
-We create a matrix data object:
+1.  We create a matrix data object:
 
-``` r
-A <- as.matrix(frenkeLine00)
-```
+    ``` r
+    mydata <- as.matrix(frenkeLine00)
+    ```
 
-1. Create a list (minimum list format below)
---------------------------------------------
+2.  Create a list (minimum list format below)
 
-``` r
-x <- list(data = mydata,
-           freq = 250,            # MHz (antenna frequency)
-           dx = 0.025,            # metres (spatial sampling)
-           dz = 0.1000,           # ns (vertical sampling)
-           antsep = 1             # antenna separation 1 m
+    ``` r
+    x <- list(data = mydata,
+               freq = 250,            # MHz (antenna frequency)
+               dx = 0.025,            # metres (spatial sampling)
+               dz = 0.1000,           # ns (vertical sampling)
+               antsep = 1             # antenna separation 1 m
 )
-```
+    ```
 
-2. Convert this list into a GPR object
---------------------------------------
+3.  Convert this list into a GPR object
 
-``` r
-gprdata <- as(x, "GPR")
-# plot to check
-plot(gprdata, main = "test")
-# get an overview of the slots (attributes) of the object
-str(gprdata)
-```
+    ``` r
+    gprdata <- as(x, "GPR")
+    # plot to check
+    plot(gprdata, main = "test")
+    # get an overview of the slots (attributes) of the object
+    str(gprdata)
+    ```
 
-You can also define some additional attributes.
------------------------------------------------
-
-See examples below:
+You can also define some additional attributes, see examples below:
 
 ``` r
 x2 <- list(data = mydata,
@@ -204,31 +253,4 @@ x3 <- list(data = mydata,
 
 gprdata3 <- as(x3, "GPR")
 plot(gprdata3, main = "test3")
-```
-
-Convert ENVI band-sequential files (`.dat`, `.hdr`) into GPR objects
-====================================================================
-
-``` r
-library(caTools)
-
-mydata <- read.ENVI("Multi-01_LINE001-CH1-01.dat",
-                     headerfile = "Multi-01_LINE001-CH1-01.hdr")
-class(mydata)
-```
-
-Convert this matrix into a GPR object according to the Section [Convert a matrix object into a GPR data](#convert-a-matrix-object-into-a-gpr-data).
-
-Create a list (minimum list format below) and convert it into a GPR object:
-
-``` r
-x <- list(data = mydata,
-           freq = 250,                          # MHz (antenna frequency)
-           dx = 0.025,                          # metres (spatial sampling)
-           dz = 0.1000,                         # ns (vertical sampling)
-           antsep = 1                           # antenna separation 1 m
-)
-
-# convert this list into a GPR object
-gprdata <- as(x, "GPR")
 ```

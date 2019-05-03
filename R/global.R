@@ -1261,33 +1261,74 @@ posLine <- function(loc,last=FALSE){
   }
 }
   
+
+
 #' latitude-longitude to UTM
 #' 
 #' see https://stackoverflow.com/a/30225804
+#' https://stackoverflow.com/questions/18639967/converting-latitude-and-longitude-points-to-utm
 #' @export
-latlongToUTM <- function(lat, long, zone = NULL, south = FALSE){
+llToUTM <- function(lat, lon, zone = NULL, south = NULL){
   # todo: check if lat/long in hh:mm:ss and convert them into
   #       decimal with the function 'll2dc()' (see below)
+  lat_mean <- median(lat)
+  lon_mean <- median(lon)
   if(is.null(zone)){
-    # see https://stackoverflow.com/a/9188972
-    # The formula is to simple: it does not work for the both 
-    # UTM Zone Exceptions in Norway and Svalbard
-    zone <- (floor((long + 180)/6) %% 60) + 1
-    zone <- unique(zone)[1]
+    zone <- getUTMzone(lat = lat_mean, lon = lon_mean)
   }
-  ll <- data.frame(ID = 1:length(lat), X = long, Y = lat)
-  sp::coordinates(ll) <- c("X", "Y")
-  sp::proj4string(ll) <- sp::CRS("+proj=longlat +datum=WGS84")
-  if(isTRUE(south)){
+  if(is.null(south)){
+    south <- ifelse(lat_mean > 0, "", "+south")
+  }else if(isTRUE(south)){
     south <- "+south "
   }else{
     south <- ""
   }
-  xy <- sp::spTransform(ll, sp::CRS(paste0("+proj=utm ", south, "+zone=", zone,
-                                           " ellps=WGS84")))
-  return(as.matrix(as.data.frame(xy)[,2:3]))
+  ll <- data.frame(ID = 1:length(lat), X = lon, Y = lat)
+  sp::coordinates(ll) <- c("X", "Y")
+  sp::proj4string(ll) <- sp::CRS("+proj=longlat +datum=WGS84")
+  xy_crs <- paste0("+proj=utm ", south, "+zone=", zone, " +datum=WGS84",
+                   " +units=m +no_defs", " +ellps=WGS84 +towgs84=0,0,0")
+  xy <- sp::spTransform(ll, sp::CRS(xy_crs))
+  return(list(xy = as.matrix(as.data.frame(xy)[,2:3]), crs = xy_crs))
 }
-  
+
+#' Get UTM zone from lattidue and longitude
+#'
+#' @export
+getUTMzone <- function(lat, lon){
+  # see https://stackoverflow.com/a/9188972
+  # The formula is to simple: it does not work for the both 
+  # UTM Zone Exceptions in Norway and Svalbard
+  # Special zones for Svalbard and Norway
+  lat <- median(lat)
+  lon <- median(lon)
+  if (lat >= 72.0 && lat < 84.0 ) 
+    if (lon >= 0.0  && lon <  9.0) 
+      return(31)
+  if (lon >= 9.0  && lon < 21.0)
+    return(33)
+  if (lon >= 21.0 && lon < 33.0)
+    return(35)
+  if (lon >= 33.0 && lon < 42.0) 
+    return(37)
+  zone <- (floor((lon + 180)/6) %% 60) + 1
+  return(unique(zone)[1])
+}
+
+#' UTM to latitude-longitude
+#' 
+#' @export
+UTMToll <- function(xy, xy_crs = NULL){
+  if(is.null(xy_crs)){
+    xy_crs <- "+proj=utm +zone=0 +ellps=WGS84"
+  } 
+  ll <- data.frame(ID = 1:nrow(xy), X = xy[,1], Y = xy[,2])
+  sp::coordinates(ll) <- c("X", "Y")
+  sp::proj4string(ll) <- sp::CRS(xy_crs)
+  xy <- sp::spTransform(ll, sp::CRS("+init=epsg:4326"))
+  as.matrix(as.data.frame(xy)[,2:3])
+}
+
 # conversion latitude longitude (hh:mm:ss into decimal
 ll2dc <- function(x){
   NS <- gsub('[^[:alpha:]]', "", x)

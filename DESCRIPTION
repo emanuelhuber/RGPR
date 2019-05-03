@@ -49,5 +49,7 @@ Imports:
 	raster,
 	fields,
     magrittr,
-    MBA
+    MBA,
+    geojsonsf,
+    sf
 RoxygenNote: 6.1.1

@@ -4119,8 +4119,8 @@ setMethod("interpPos", "GPR",
           function(x, topo, plot = FALSE, r = NULL, tol = NULL,
                    method = c("linear", "linear", "linear"), ...){
             if(all(is.na(topo[,"TRACE"]))){
-              stop(paste0(x@name, ": no link between the measured points",
-                          "and the GPR traces!\n"))
+              stop(x@name, ": no link between the measured points",
+                          " and the GPR traces!")
             }
             # if we have measured some points before the line start or 
             # after the end of the GPR Line, we delete them
@@ -4150,7 +4150,7 @@ setMethod("interpPos", "GPR",
             if(length(tdbl) > 0){
               check <- 0
               for(i in seq_along(tdbl)){
-                dtr <- topo[tdbl[i]+1, "TRACE"] - topo[tdbl[i], "TRACE"]
+                dtr <- topo[tdbl[i] + 1, "TRACE"] - topo[tdbl[i], "TRACE"]
                 # traces to remove
                 w <- topo[tdbl[i], "TRACE"] + seq_len(dtr)
                 x <- x[, -w]  # remove trace in x
@@ -4288,6 +4288,68 @@ interp3DPath <- function(x, pos, posi, r = NULL,
   return(ENZ)
 }
 
+#' Interpolate GPR coordinates from geoJSON data
+#'
+#' @param x Object of the class GPR
+#' @param geojson Either a geojson string or a filepath pointing to a 
+#'                geojson file
+#' @export
+interpPosFromGeoJSON <- function(x, geojson, tol = NULL, backproject = TRUE){
+  #---- 1. Read geoJSON
+  xyz <- geojsonsf::geojson_sf(geojson)
+  # sf::st_crs(xyz)
+  
+  #---- 2. convert to UTM
+  XY <- sf::st_coordinates(xyz)
+  XY <- XY[XY[, "L1"] == XY[1, "L1"], ]       # take the first structure
+  u <- llToUTM(lat = XY[,2], lon = XY[,1])
+  #plot(u$xy, type = "l", asp = 1)
+  
+  #---- 3. create "topo" file
+  topo <- cbind(u$xy, 0, NA)
+  colnames(topo) <- c("E", "N", "Z", "TRACE")
+  
+  #---- 4. remove duplicates
+  dist2D <- posLine(topo[, c("N", "E")], last = FALSE)
+  # in 'x' and 'topo'
+  if(is.null(tol))  tol <- sqrt(.Machine$double.eps)
+  tdbl <- which(abs(diff(dist2D)) < tol)
+  while(length(tdbl) > 0){
+    topo <- topo[ -(tdbl + 1), ]
+    dist2D <- posLine(topo[, c("N", "E")], last = FALSE)
+    tdbl <- which(abs(diff(dist2D)) < tol)
+  }
+  
+  #---- 5. trace interpolation
+  # a) interpolate shape points to traces
+  trFIDPos <- approx(x = c(0, tail(dist2D, 1)),
+                     y = c(1, length(x)),
+                     xout = dist2D)
+  
+  # b) interpolate coordinates
+  tr_xyz <- matrix(0, nrow = ncol(x), ncol = 3)
+  tx_x <- approx(x = trFIDPos$y,
+                 y = topo[,"E"],
+                 xout = seq_along(x))
+  tx_y <- approx(x = trFIDPos$y,
+                 y = topo[,"N"],
+                 xout = seq_along(x))
+  tr_xyz[,1] <- tx_x$y
+  tr_xyz[,2] <- tx_y$y
+  # plot(u$xy, type = "l", asp = 1)
+  # lines(tx_x$y, tx_y$y, type = "p")
+  
+  if(backproject == TRUE){
+    tr_xyz[,1:2] <- UTMToll(xy = tr_xyz[,1:2], xy_crs = u$crs)
+  }
+  
+  # utr <- sf::st_as_sf(as.data.frame(uu), coords = c(1,2))
+  # plot(sf::st_coordinates(xyz), asp = 1, type = "l")
+  # points(sf::st_coordinates(utr), pch = 20)
+  # plot(utr, add = TRUE, pch = 20)
+  
+  return(tr_xyz)
+}
 
 #' Relative trace position on the GPR profile.
 #'

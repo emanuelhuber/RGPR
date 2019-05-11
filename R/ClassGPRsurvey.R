@@ -131,6 +131,39 @@ GPRsurvey <- function(LINES){
   return(x)
 }
 
+
+#' Create empty GPR object
+#' 
+#' Create empty GPR object of length n
+#' 
+#' @export
+GPRsurveyEmpty <- function(n = 1){
+  n <- as.integer(round(n))
+  if(n < 1) stop("'n' must be strictly positiv!")
+  new("GPRsurvey",
+      version       = "0.1",
+      filepaths     = character(n),       # vector of [n] file names
+      names         = character(n),      # length = [n]
+      descriptions  = character(n),  # length = [n]
+      freqs         = numeric(n),       # length = [n]
+      lengths       = numeric(n),       # length = [n]
+      surveymodes   = character(n),    # length = [n]
+      dates         = character(n),      # length = [n]
+      antseps       = numeric(n),      # length = [n]
+      posunits      = character(n),    # length = 1
+      crs           = character(n),      # length = 1
+      coordref      = numeric(1),
+      coords        = list(),   # vector(mode = "list", length = n),    # header
+      fids          = list(),   # vector(mode = "list", length = n),
+      intersections = list(),   # vector(mode = "list", length = n),
+      ntraces       = integer(n),   # to control if nrow(@coord) == ncol(x[[i]])
+      nz            = integer(n),
+      dz            = numeric(n),     # depth/time window (vertical)
+      zunits        = character(n)   # time/depth unit
+  )
+}
+
+  
 #' @export
 setAs(from = "GPRsurvey", to = "SpatialLines",
       def = function (from) as.SpatialLines(from))
@@ -201,7 +234,8 @@ setMethod("as.SpatialPoints", signature(x = "GPRsurvey"), function(x){
 #' @rdname coordref-methods
 #' @aliases coordref,GPRsurvey-method
 setMethod("coordref", "GPRsurvey", function(x){
-    if(length(x@coords) > 0){
+  if(length(x@coords) > 0 && all(sapply(x@coords, length) > 0 )){
+    xcoords <- Filter(Negate(is.null), x@coords)
       A <- do.call("rbind", x@coords)
       A <- apply(round(A),2,range)
       Evalue <- .minCommon10(A[1,1],A[2,1])
@@ -312,8 +346,8 @@ setMethod(
 )
     
 #-------------------------------
-# todo: check posunit!!
-# todo: check posunit!!
+# CHECKME: check posunit!!
+# CHECKME: i = new index!!
 #' @rdname GPRsurvey-subsubset
 setReplaceMethod(
   f = "[[",
@@ -343,18 +377,40 @@ setReplaceMethod(
     x@filepaths[[i]] <- .saveTempFile(value)
     x@descriptions[i] <- value@description
     x@freqs[i] <- value@freq
-    x@lengths[i] <- posLine(value@coord[,1:2], last = TRUE)
+    if(length(value@coord) > 0){
+      x@lengths[i] <- posLine(value@coord[,1:2], last = TRUE)
+    }else{
+      x@lengths[i] <- abs(value@pos[length(value@pos)] - value@pos[1])
+    }
     x@surveymodes[i] <- value@surveymode
     x@dates[i] <-  value@date
     x@antseps[i] <- value@antsep
-    if(length(x@coords) > 0){
-      x@coords[[oldName]] <- value@coord
-      names(x@coords)[i] <- newName
-    }else if(length(value@coord) > 0){
-      x@coords <- vector(mode = "list", length = length(x))
-      x@coords[[i]] <- value@coord
-      names(x@coords) <- x@names
+    # if value has coordinates, update x
+    if(length(value@coord) > 0){
+      if(dim(value@coord) != c(nrow(value), 3)){
+        stop('coordinates not correct...')
+      }
+      if(length(x@coords) > 0){
+        x@coords[[oldName]] <- value@coord
+        names(x@coords)[i] <- newName
+      }else{
+        x@coords <- vector(mode = "list", length = length(x))
+        x@coords[[i]] <- value@coord
+        names(x@coords) <- x@names
+      }
+    }else{
+      if(all(sapply(x@coords, length) == 0)){
+        x@coords <- list()
+      }
     }
+    # if(length(x@coords) > 0){
+    #   x@coords[[oldName]] <- value@coord
+    #   names(x@coords)[i] <- newName
+    # }else if(length(value@coord) > 0){
+    #   x@coords <- vector(mode = "list", length = length(x))
+    #   x@coords[[i]] <- value@coord
+    #   names(x@coords) <- x@names
+    # }
     if(length(x@fids) > 0){
       x@fids[[oldName]] <- value@fid
       names(x@fids)[i] <- newName
@@ -757,7 +813,8 @@ setMethod("trRmDuplicates", "GPRsurvey", function(x, tol = NULL){
 #' @export
 setMethod("interpPos", "GPRsurvey",
           function(x, topo, plot = FALSE, r = NULL, tol = NULL, 
-                   method = c("linear", "spline", "pchip"), ...){
+                   method = c("linear", "spline", "pchip"), crs = NULL,
+                   ...){
     for(i in seq_along(x)){
       gpr <- readGPR(x@filepaths[[i]])
       # topoLine <- topo[[i]]

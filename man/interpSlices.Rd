@@ -5,7 +5,8 @@
 \alias{interpSlices}
 \title{Interpolate horizontal slices}
 \usage{
-\S4method{interpSlices}{GPRsurvey}(x, nx, ny, dz, h = 6)
+\S4method{interpSlices}{GPRsurvey}(x, dx = NULL, dy = NULL,
+  dz = NULL, h = 6)
 }
 \description{
 Interpolate horizontal slices

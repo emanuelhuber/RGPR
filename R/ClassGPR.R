@@ -148,9 +148,10 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
   ant <- list(f = c(12.5, 25, 50, 100, 110, 200, 225, 450,   900, 1200),
               s = c( 8,    4,  2,   1,   1, 0.5, 0.5, 0.25, 0.17, 0.075))
   antsep <- approx(ant$f, ant$s, xout = antfreq)$y
+  antsep <- round(antsep, 3)
   if(verbose){
     message("Antenna separation (", antsep, " m) estimated from antenna", 
-            "frequency (", antfreq, " MHz).",
+            " frequency (", antfreq, " MHz).",
             "\nCorrect if wrong with 'antsep(x) <- ...'")
   }
   return(antsep)
@@ -219,17 +220,19 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
   }else{
     posunit <- "m"
   }
-  antfreq <- freqFromString(.getHD(x$hd, "NOMINAL FREQUENCY", position=TRUE))
+  # antfreq <- freqFromString(.getHD(x$hd, "NOMINAL FREQUENCY", position=TRUE))
+  antfreq <- .getHD(x$hd, "NOMINAL FREQUENCY", position=TRUE)
   if(!is.null(antfreq)){
     pos_used[antfreq[2]] <- 1L
+    freq <- freqFromString(antfreq[1])
   }else{
-    antfreq <- 100
+    freq <- 100
   }
   antsep <- .getHD(x$hd, "ANTENNA SEPARATION", position=TRUE)[1]
   if(!is.null(antsep)){
     pos_used[antsep[2]] <- 1L
   }else{
-    antsep <- antSepFromAntFreq(antfreq)
+    antsep <- antSepFromAntFreq(antfreq[1])
   }
   surveymode = .getHD(x$hd, "SURVEY MODE",number=FALSE, position=TRUE)
   if(!is.null(surveymode)){
@@ -282,7 +285,7 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
     }
   }else{
     warnings("Could not understand the survey date\n")
-    d <- character(0)
+    d <- format(Sys.time(), "%Y-%m-%d")
   }
   #--- device type
   freepos <- which(pos_used[1:5] == 0)
@@ -310,32 +313,33 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
     dorigin <- "1970-01-01"
   }
   traceTime <- as.double(as.POSIXct(x$dt1$time, origin = as.Date(dorigin)))
-  new("GPR",   version="0.2",
-      data = byte2volt(Vmax = Vmax)*x$data,
-      traces = x$dt1$traces,            # x$dt1$traces
-      fid = trimStr(x$dt1$com),         # x$dt1$fid    <-> x$dt1$x8
-      coord = coord,                    # x$dt1$topo  of the traces
-      pos = x$dt1$pos,                  # x$dt1$position  of the traces
-      depth = seq(0,by=dz,length.out=nrow(x$data)),
-      rec = rec_coord,                  # x$dt1$recx,x$dt1$recy,x$dt1$recz
-      trans = trans_coord,
-      time0 = time_0,                   # x$dt1$time0
-      time = traceTime,                       # x$dt1$time
-      proc = character(0),              # processing steps
-      vel = list(0.1),                  # m/ns
-      name = fName,
+  new("GPR",   
+      version     = "0.2",
+      data        = byte2volt(Vmax = Vmax)*x$data,
+      traces      = x$dt1$traces,            # x$dt1$traces
+      fid         = trimStr(x$dt1$com),         # x$dt1$fid    <-> x$dt1$x8
+      coord       = coord,                    # x$dt1$topo  of the traces
+      pos         = x$dt1$pos,                  # x$dt1$position  of the traces
+      depth       = seq(0, by = dz, length.out = nrow(x$data)),
+      rec         = rec_coord,      # x$dt1$recx,x$dt1$recy,x$dt1$recz
+      trans       = trans_coord,
+      time0       = time_0,                   # x$dt1$time0
+      time        = traceTime,                       # x$dt1$time
+      proc        = character(0),              # processing steps
+      vel         = list(0.1),                  # m/ns
+      name        = fName,
       description = desc,
-      filepath = fPath,
-      dz = dz, 
-      dx = dx[1],                       # "STEP SIZE USED"
-      depthunit = "ns",
-      posunit = posunit[1],
-      freq = freq[1], 
-      antsep = antsep[1], 
-      surveymode = surveymode[1],
-      date = d,
-      crs = character(0),
-      hd = sup_hd                      # header
+      filepath    = fPath,
+      dz          = dz,  
+      dx          = dx[1],                       # "STEP SIZE USED"
+      depthunit   = "ns",
+      posunit     = posunit[1],
+      freq        = freq[1], 
+      antsep      = antsep[1], 
+      surveymode  = surveymode[1],
+      date        = d,
+      crs         = character(0),
+      hd          = sup_hd                      # header
   )
 }
 
@@ -528,33 +532,34 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
     sup_hd2 <- as.list(nameL)
     sup_hd <- c(sup_hd, sup_hd2)
   }
-  new("GPR",   version="0.2",
-      data = byte2volt(Vmax = Vmax, nBytes = nBytes)*x$data,
-      traces = 1:ncol(x$data),
-      fid = rep("", ncol(x$data)),
+  new("GPR",   
+      version     = "0.2",
+      data        = byte2volt(Vmax = Vmax, nBytes = nBytes)*x$data,
+      traces      = 1:ncol(x$data),
+      fid         = rep("", ncol(x$data)),
       #coord = coord,
-      coord = matrix(nrow=0, ncol = 0),
-      pos = seq(0, by = dx[1], length.out = ncol(x$data)),
-      depth = seq(0, by = dz, length.out = nrow(x$data)),
-      rec = matrix(nrow = 0, ncol = 0),
-      trans = matrix(nrow = 0, ncol = 0),
-      time0 = rep(0, ncol(x$data)),
-      time = numeric(0),
-      proc = character(0),
-      vel = list(0.1),
-      name = fName,
+      coord       = matrix(nrow=0, ncol = 0),
+      pos         = seq(0, by = dx[1], length.out = ncol(x$data)),
+      depth       = seq(0, by = dz, length.out = nrow(x$data)),
+      rec         = matrix(nrow = 0, ncol = 0),
+      trans       = matrix(nrow = 0, ncol = 0),
+      time0       = rep(0, ncol(x$data)),
+      time        = numeric(0),
+      proc        = character(0),
+      vel         = list(0.1),
+      name        = fName,
       description = desc,
-      filepath = fPath,
-      dz = dz, 
-      dx = dx[1],
-      depthunit = "ns",
-      posunit = "m",
-      freq = freq[1], 
-      antsep = antsep[1], 
-      surveymode = "reflection",
-      date = character(0), #format(Sys.time(), "%d/%m/%Y"),
-      crs = character(0),
-      hd = sup_hd
+      filepath    = fPath,
+      dz          = dz, 
+      dx          = dx[1],
+      depthunit   = "ns",
+      posunit     = "m",
+      freq        = antfreq[1], 
+      antsep      = antsep[1], 
+      surveymode  = "reflection",
+      date        = format(Sys.time(), "%Y-%m-%d"),
+      crs         = character(0),
+      hd         = sup_hd
   )
 }
 
@@ -601,7 +606,7 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
     message("Please, add antenna frequency and antenna separation.")
   }
   # Date
-  dd <- character(0)
+  dd <- format(Sys.time(), "%Y-%m-%d")
   traceTime <- as.double(as.POSIXct(x$hdt[1,] * 3600 + x$hdt[2,] * 60 + 
                                       x$hdt[3,], origin = "1960-01-01"))
   dateSurvey <- grep("(date).*([0-9])+", x$hd$EBCDIC, ignore.case = TRUE, 
@@ -674,8 +679,12 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
 .gprDZT <- function(x, fName = character(0), desc = character(0),
                     fPath = character(0), Vmax = 50){  
   dd <- as.Date(x$hd$DATE, format = "%Y-%m-%d")
+  dd <- as.character(dd)
+  if(is.na(dd)){
+    dd <- format(Sys.time(), "%Y-%m-%d")
+  }
   traceTime <- as.double(as.POSIXct(
-    strptime(paste(x$hd$DATE, "01:30:00"), "%Y-%m-%d %H:%M:%S")
+    strptime(paste(dd, "01:30:00"), "%Y-%m-%d %H:%M:%S")
   )) + 1:ncol(x$data)
   if(length(fName) == 0){
     x_name <- "LINE"
@@ -721,34 +730,35 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
     antsep <- antSepFromAntFreq(antfreq)
   }
   v <- 2 * x$hd$DEPTH / x$hd$RANGE
-  new("GPR",   version="0.2",
-      data = byte2volt(Vmax = Vmax, nBytes = x$hd$BITS) * x$data,
-      traces = 1:ncol(x$data),
-      fid = rep("", ncol(x$data)),
+  new("GPR",   
+      version      = "0.2",
+      data        = byte2volt(Vmax = Vmax, nBytes = x$hd$BITS) * x$data,
+      traces      = 1:ncol(x$data),
+      fid         = rep("", ncol(x$data)),
       #coord = coord,
-      coord = matrix(nrow=0, ncol = 0),
-      pos = x$pos,
-      depth = x$depth,
-      rec = matrix(nrow = 0, ncol = 0),
-      trans = matrix(nrow = 0, ncol = 0),
-      time0 = rep(0, ncol(x$data)),
+      coord       = matrix(nrow=0, ncol = 0),
+      pos         = x$pos,
+      depth       = x$depth,
+      rec         = matrix(nrow = 0, ncol = 0),
+      trans       = matrix(nrow = 0, ncol = 0),
+      time0       = rep(0, ncol(x$data)),
       # time = x$hdt[1,] * 3600 + x$hdt[2,] * 60 + x$hdt[3,],
-      time = traceTime,
-      proc = character(0),
-      vel = list(v),
-      name = x_name,
+      time        = traceTime,
+      proc        = character(0),
+      vel         = list(v),
+      name        = x_name,
       description = desc,
-      filepath = fPath,
-      dz =  x$hd$RANGE /  (x$hd$NSAMP - 1 ), 
-      dx = 1 / x$hd$SPM,
-      depthunit = "ns",
-      posunit = "m",
-      freq = antfreq, 
-      antsep = antsep,     # check
-      surveymode = "reflection",
-      date = as.character(dd), #format(Sys.time(), "%d/%m/%Y"),
-      crs = character(0),
-      hd = x$hd
+      filepath    = fPath,
+      dz          =  x$hd$RANGE /  (x$hd$NSAMP - 1 ), 
+      dx          = 1 / x$hd$SPM,
+      depthunit   = "ns",
+      posunit     = "m",
+      freq        = antfreq, 
+      antsep      = antsep,     # check
+      surveymode  = "reflection",
+      date        = as.character(dd), #format(Sys.time(), "%d/%m/%Y"),
+      crs         = character(0),
+      hd          = x$hd
   )
 }
 
@@ -778,7 +788,7 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
 #' @param dsn data source name: either the filepath to the GPR data (character),
 #'            or an open file connection.
 #' @param desc Short description of the file (character).
-#' @param dsn data source name for additional file connection if \code{dsn} is
+#' @param dsn2 data source name for additional file connection if \code{dsn} is
 #'            an open file connection (e.g., open file connection to '*.hd'
 #'            file if \code{ds} is an open file connection to a '*.dt1' file).
 #' @param format lenth-one character vector required if the file extension is
@@ -1044,7 +1054,7 @@ as.GPR.matrix <- function (x, ...){
       freq = 100, 
       antsep = 1, 
       surveymode = "reflection",
-      date = format(Sys.time(), "%d/%m/%Y"),
+      date = format(Sys.time(), "%Y-%m-%d"),
       crs = character(0),
       hd = list()                   # header
   )
@@ -1109,7 +1119,7 @@ as.GPR.list <- function (x, ...){
              freq        = 100,
              antsep      = 1, 
              surveymode  = "reflection",
-             date        = format(Sys.time(), "%d/%m/%Y"),
+             date        = format(Sys.time(), "%Y-%m-%d"),
              crs         = character(0),
              hd          = list())
     sNames <- slotNames(y)
@@ -1128,12 +1138,16 @@ as.GPR.list <- function (x, ...){
 
 #' @export
 setMethod("length", "GPR", function(x) ncol(x@data))
+
 #' @export
 setMethod("summary", "GPR", function(object, ...) 
+  
   #' @export
   summary(as.vector(object@data)))
+
 #' @export
 setMethod("mean", "GPR", function(x, ...) mean(as.vector(x@data)))
+
 #' @export
 setMethod("median", "GPR", function(x, na.rm = FALSE) 
   median(as.vector(x@data),na.rm = FALSE))
@@ -1144,10 +1158,15 @@ setMethod("median", "GPR", function(x, na.rm = FALSE)
 setMethod(
   f="apply", 
   signature="GPR", 
-  definition=function(X,MARGIN,FUN,...){
-    apply(X@data,MARGIN,FUN,...)
+  definition=function(X, MARGIN, FUN, ...){
+    x_apply <- apply(X@data, MARGIN, FUN,...)
+    if(MARGIN == 1 && is.null(dim(x_apply)) && length(x_apply) == nrow(X)){
+      X[, 1:ncol(x_apply)] <- x_apply
+    }
+    return(x_apply)
   }
 )
+
 #' @export
 setMethod(
   f="nrow", 
@@ -1156,6 +1175,7 @@ setMethod(
     nrow(x@data)
   }
 )
+
 #' @export
 setMethod(
   f="ncol", 
@@ -2052,17 +2072,206 @@ setReplaceMethod(
   } 
 )
 
-#' Amplitude of the GPR data
+#' Amplitude envelope
+#' 
+#' Estimate for each trace the amplitude envelope with the Hilbert 
+#' transform (instataneous amplitude).
+#' @param x An object of the class GPR.
+#' @param npad Integer. Padding to avoid Gibbs effect at the begining and
+#'             end of the data because of the Hilbert transform.
+#' @param FUN DEPRECATED. A function to be applied on each row of the GPR data 
+#'            to estimate the wave amplitude as a function of time/depth.
+#' @name envelope
+#' @rdname envelope
+#' @export
+setMethod("envelope", "GPR", function(x, npad = 100, FUN = NULL, ...){
+  if(is.null(FUN)){
+    xmax <- max(abs(x), na.rm = TRUE)
+    xH <- apply(x, 2, HilbertTransf, npad = npad)
+    x <- sqrt(x^2 + base::Re(xH)^2)
+    x@data[abs(x@data) > xmax] <- xmax
+  }else{
+    funName <- getFunName(FUN)
+    x@data[] <- apply(x, 1, FUN, ...)
+  }
+  # 
+  # proc(x) <- getArgs( addArgs = c('FUN' = funName))
+  proc(x) <- getArgs()
+  return(x)
+} 
+)
+
+#' Amplitude (deprecated)
 #' 
 #' @name ampl
 #' @rdname ampl
 #' @export
-setMethod("ampl", "GPR", function(x, FUN = mean, ...){
-  x@data[] <- apply(abs(x@data), 1, FUN, ...)
-  # funName <- getFunName(FUN)
+setMethod("ampl", "GPR", function(x, npad = 100, FUN = NULL, ...){
+  warning("Deprecated! Use 'envelope()' instead.")
+  if(is.null(FUN)){
+    xmax <- max(abs(x), na.rm = TRUE)
+    xH <- apply(x, 2, HilbertTransf, npad = npad)
+    x <- sqrt(x^2 + base::Re(xH)^2)
+    x@data[abs(x@data) > xmax] <- xmax
+  }else{
+    #funName <- getFunName(FUN)
+    x@data[] <- apply(x, 1, FUN, ...)
+  }
+  # 
   # proc(x) <- getArgs( addArgs = c('FUN' = funName))
   proc(x) <- getArgs()
   return(x)
+} 
+)
+
+
+# Hilbert transform
+# https://github.com/cran/spectral/blob/master/R/hilbert.R
+HilbertTransf <- function(x, npad = 10){
+  x <- as.numeric(x)
+  n <- length(x)
+  # x <- c(x, rep(0, npad))   # add MANU
+  x <- c(rev(head(x, npad)), x, rev(tail(x, npad)))   # add MANU
+  # first calculate the normalized FFT
+  X <- fft(x) / length(x)
+  
+  # then we need a virtual spatial vector which is symmetric with respect to
+  # f = 0. The signum function will do that. The advantage is, that we need not
+  # take care of the odd-/evenness of the length of our dataset
+  xf <- 0:(length(X) - 1)
+  xf <- xf - mean(xf)
+  
+  # because the negative Frequencies are located in the upper half of the
+  # FFT-data vector it is nesccesary to use "-sign". This will mirror the relation
+  # The "-0.5" effect is that the Nyquist frequency, in case of odd data set lenghts,
+  # is not rejected.
+  Xh <- -1i * X * -sign(xf - 0.5)
+  xh <- fft(Xh, inverse = TRUE)
+  # return(xh[1:n])   # add MANU
+  return(xh[npad + 1:n])   # add MANU
+}
+
+
+#' Plot the trace plotEnvelope
+#' 
+#' Plot the amplitude envelope of each trace. See \code{envelope}.
+#' 
+#' @param x An object of the class GPR.
+#' @param npad Integer. Padding to avoid Gibbs effect at the begining and
+#'             end of the data because of the Hilbert transform.
+#' @param FUN DEPRECATED. A function to be applied on each row of the GPR data 
+#'            to estimate the wave amplitude as a function of time/depth.
+#' @param add A length-one boolean vector. If TRUE the amplitude is plotted
+#'            on the previous plot. If FALSE (default) a new plot is created.
+#' @param all A length-one boolean vector. If TRUE all trace envelope are 
+#'            plotted, if FALSE only the mean.
+#' @param plotLog A length-one boolean vector. If TRUE the logarithm of the 
+#'              amplitude of every trace is ploted on the estimate amplitude.
+#'              Default is FALSE.
+#' @examples
+#' data(frenkeLine00)
+#' plotAmpl(frenkeLine00, FUN = median)
+#' @name plotEnvelope
+#' @rdname envelope
+#' @export
+setMethod("plotEnvelope", "GPR", function(x, npad = 100, FUN = NULL, add = FALSE, 
+                                      all = FALSE, plotLog = TRUE, ...){
+  #   op <- par(no.readonly=TRUE)
+  xAMP <- ampl(x, npad = npad, FUN = FUN, ...)
+  AMP <- xAMP@data
+  ylab <- "mV"
+  if(plotLog == TRUE){
+    AMP <- log(AMP)
+    ylab <- "log(mV)"
+  }
+  z <- depth(x)
+  if(!add){
+    par(mar=c(5, 4, 4, 2)+0.1)
+    plot(z, AMP, type = "l", xlab = x@depthunit, ylab = ylab, ...)
+    if(all == TRUE){
+      if(plotLog == TRUE){
+        invisible(apply(log(abs(x@data)), 2, lines, x = z, 
+                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
+      }else{
+        invisible(apply((abs(x@data)), 2, lines, x = z, 
+                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
+      }
+    }
+    title(x@name)
+  }else{
+    if(all == TRUE){
+      if(plotLog == TRUE){
+        invisible(apply(log(abs(x@data)), 2, lines, x = z, 
+                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
+      }else{
+        invisible(apply((abs(x@data)), 2, lines, x = z, 
+                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
+      }
+    }
+    lines(z, AMP, ...)
+  }
+  #   par(op)
+} 
+)
+
+#' Plot the trace amplitude
+#' 
+#' Plot the amplitude estimated over the whole GPR data as a function of 
+#'  time/depth.
+#' 
+#' @param x An object of the class GPR.
+#' @param FUN A function to be applied on each row of the GPR data to 
+#'            estimate the wave amplitude as a function of time/depth.
+#' @param add A length-one boolean vector. If TRUE the amplitude is plotted
+#'            on the previous plot. If FALSE (default) a new plot is created.
+#' @param all A length-one boolean vector. If TRUE the logarithm of the 
+#'              amplitude of every trace is ploted on the estimate amplitude.
+#'              Default is FALSE.
+#' processing functions with their arguments applied previously on the
+#' GPR data.
+#' @examples
+#' data(frenkeLine00)
+#' plotAmpl(frenkeLine00, FUN = median)
+#' @name plotAmpl
+#' @rdname plotAmpl
+#' @export
+setMethod("plotAmpl", "GPR", function(x, npad = 100, FUN = NULL, add = FALSE, 
+                                      all = FALSE, plotLog = TRUE, ...){
+  #   op <- par(no.readonly=TRUE)
+  xAMP <- ampl(x, npad = npad, FUN = FUN, ...)
+  AMP <- xAMP@data
+  ylab <- "mV"
+  if(plotLog == TRUE){
+    AMP <- log(AMP)
+    ylab <- "log(mV)"
+  }
+  z <- depth(x)
+  if(!add){
+    par(mar=c(5, 4, 4, 2)+0.1)
+    plot(z, AMP, type = "l", xlab = x@depthunit, ylab = ylab, ...)
+    if(all == TRUE){
+      if(plotLog == TRUE){
+        invisible(apply(log(abs(x@data)), 2, lines, x = z, 
+                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
+      }else{
+        invisible(apply((abs(x@data)), 2, lines, x = z, 
+                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
+      }
+    }
+    title(x@name)
+  }else{
+    if(all == TRUE){
+      if(plotLog == TRUE){
+        invisible(apply(log(abs(x@data)), 2, lines, x = z, 
+                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
+      }else{
+        invisible(apply((abs(x@data)), 2, lines, x = z, 
+                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
+      }
+    }
+    lines(z, AMP, ...)
+  }
+  #   par(op)
 } 
 )
 
@@ -2709,7 +2918,69 @@ setMethod("traceScaling", "GPR", function(x,
 }
 )
 
-#' Trace average
+#' Trace statistic
+#'
+#' \code{traceStat} is a generic function used to produce results defined
+#' by an user function. The user function is applied accross traces (horizontal) 
+#' using a moving window. Note that if the moving window length is not defined, 
+#' all traces are averaged into one single trace (the results is similar to
+#' \code{apply(x, 1, FUN, ...)}.
+#' 
+#' @param x An object of the class GPR
+#' @param w A length-one integer vector equal to the window length of the 
+#'          average window. If \code{w = NULL} a single trace corresponding to
+#'          the average trace of the whole profile is returned.
+#' @param FUN A function to compute the average (default is \code{mean})
+#' @param ... Additional parameters for the FUN functions
+#' @return An object of the class GPR. When \code{w = NULL}, this function 
+#'         returns a GPR object with a single trace corresponding to the 
+#'         average trace of the whole radargram. When \code{w} is equal to a
+#'         strictly positive interger this function returns a GPR object with
+#'         a size identical to x where each trace corresponds to the average
+#'         of the \code{w} neighbouring traces centered on the considered trace.
+#' @examples
+#' data("frenkeLine00")
+#' 
+#' f0 <- frenkeLine00
+#' 
+#' f1 <- traceStat(f0)
+#' plot(f1)
+#' # substract the average trace
+#' plot(f0 - f1)
+#' 
+#' f2 <- traceStat(f0, w = 20)
+#' plot(f2)
+#' plot(f0 - f2)
+#' 
+#' f3 <- traceStat(f0, w = 20, FUN = median)
+#' plot(f3)
+#' plot(f0 - f3)
+#' @name traceStat
+#' @rdname traceStat
+#' @export
+setMethod("traceStat", "GPR", function(x, w = NULL, FUN = mean, ...){
+  FUN <- match.fun(FUN)
+  if(is.null(w)){
+    xdata <- x@data
+    x <- x[,1]
+    x@data <- as.matrix(apply(xdata, 1, FUN, ...))
+    x@time0 <- mean(x@time0)
+    x@time <- mean(x@time)
+    x@coord <- matrix(ncol = 0, nrow = 0)
+    x@rec <- matrix(ncol = 0, nrow = 0)
+    x@trans <- matrix(ncol = 0, nrow = 0)
+  }else{
+    x@data <- wapplyMat(x@data, width = w, by = 1, FUN = FUN, MARGIN = 1, ...)
+  }
+  # funName <- getFunName(FUN)
+  # proc(x) <- getArgs( addArgs = c('FUN' = funName))
+  proc(x) <- getArgs()
+  #   x@proc <- c(x@proc, proc)
+  return(x)
+}
+)
+
+#' Trace average (rename in 'traceStat' because you can compute anything)
 #'
 #' Average traces in a radargram along the distance (horizontal) axis using
 #' a moving window. This can be used to increase signal to noise ratio. Note that if 
@@ -2752,7 +3023,7 @@ setMethod("traceAverage", "GPR", function(x, w = NULL, FUN = mean, ...){
   if(is.null(w)){
     xdata <- x@data
     x <- x[,1]
-    x@data <- as.matrix(apply(xdata, 1, mean, ...))
+    x@data <- as.matrix(apply(xdata, 1, FUN, ...))
     x@time0 <- mean(x@time0)
     x@time <- mean(x@time)
     x@coord <- matrix(ncol = 0, nrow = 0)
@@ -3317,6 +3588,39 @@ points.GPR <- function(x, ...){
   }
 }
 
+#' Plot all the traces in one 1D plot
+#' 
+#' @param x Object of the class GPR
+#' @param ... Arguments to be passed to \code{plot}/\code{line}
+#' @name trPlot
+#' @rdname trPlot
+#' @export
+setMethod(
+  f="trPlot",
+  signature="GPR",
+  definition=function(x, ...){
+    dots <- alist(...)
+    if(is.null(dots[["ylim"]])){
+      ylim <- range(x)
+      if(ylim[1] > 0){
+        ylim[1] <- 0
+      }else{
+        ylim <- max(abs(ylim)) * c(-1, 1)
+      }
+    }
+    dots[["ylim"]] <- NULL
+    if(is.null(dots[["ylim"]])){
+      xlim <- range(depth(x))
+    }
+    dots[["xlim"]] <- NULL
+    plot(x[,1], type = "n", ylim = ylim, xlim = range(depth(x)))
+    dots[["X"]] <- x
+    dots[["MARGIN"]] <- 2
+    dots[["FUN"]] <- lines
+    dots[["x"]] <- depth(x)
+    invisible(do.call(apply, dots))
+  }
+)
 
 
 
@@ -3936,65 +4240,6 @@ setMethod("plot3DRGL", "GPR",
           }
 )
 
-#' Plot the trace amplitude
-#' 
-#' Plot the amplitude estimated over the whole GPR data as a function of 
-#'  time/depth.
-#' 
-#' @param x An object of the class GPR.
-#' @param FUN A function to be applied on each row of the GPR data to 
-#'            estimate the wave amplitude as a function of time/depth.
-#' @param add A length-one boolean vector. If TRUE the amplitude is plotted
-#'            on the previous plot. If FALSE (default) a new plot is created.
-#' @param all A length-one boolean vector. If TRUE the logarithm of the 
-#'              amplitude of every trace is ploted on the estimate amplitude.
-#'              Default is FALSE.
-#' processing functions with their arguments applied previously on the
-#' GPR data.
-#' @examples
-#' data(frenkeLine00)
-#' plotAmpl(frenkeLine00, FUN = median)
-#' @name plotAmpl
-#' @rdname plotAmpl
-#' @export
-setMethod("plotAmpl", "GPR", function(x, FUN = mean, add = FALSE, 
-                                      all = FALSE, plotLog = TRUE, ...){
-  #   op <- par(no.readonly=TRUE)
-  AMP <- apply(abs(x@data), 1, FUN, ...)
-  ylab <- "mV"
-  if(plotLog == TRUE){
-    AMP <- log(AMP)
-    ylab <- "log(mV)"
-  }
-  z <- depth(x)
-  if(!add){
-    par(mar=c(5, 4, 4, 2)+0.1)
-    plot(z, AMP, type = "l", xlab = x@depthunit, ylab = ylab, ...)
-    if(all == TRUE){
-      if(plotLog == TRUE){
-        invisible(apply(log(abs(x@data)), 2, lines, x = z, 
-                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
-      }else{
-        invisible(apply((abs(x@data)), 2, lines, x = z, 
-                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
-      }
-    }
-    title(x@name)
-  }else{
-    if(all == TRUE){
-      if(plotLog == TRUE){
-        invisible(apply(log(abs(x@data)), 2, lines, x = z, 
-                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
-      }else{
-        invisible(apply((abs(x@data)), 2, lines, x = z, 
-                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
-      }
-    }
-    lines(z, AMP, ...)
-  }
-  #   par(op)
-} 
-)
 
 
 #' Return the amplitude spectrum of the GPR object.
@@ -4115,9 +4360,11 @@ setMethod("trRmDuplicates", "GPR", function(x, tol = NULL, verbose = TRUE){
 #' @name interpPos 
 #' @rdname interpPos
 #' @export
+### handle crs -> if geogrphic -> projection
 setMethod("interpPos", "GPR", 
           function(x, topo, plot = FALSE, r = NULL, tol = NULL,
-                   method = c("linear", "linear", "linear"), ...){
+                   method = c("linear", "linear", "linear"), crs = NULL,
+                   ...){
             if(all(is.na(topo[,"TRACE"]))){
               stop(x@name, ": no link between the measured points",
                           " and the GPR traces!")
@@ -4147,7 +4394,8 @@ setMethod("interpPos", "GPR",
             # in 'x' and 'topo'
             if(is.null(tol))  tol <- sqrt(.Machine$double.eps)
             tdbl <- which(abs(diff(dist2D)) < tol)
-            if(length(tdbl) > 0){
+            #if(length(tdbl) > 0){
+            while(length(tdbl) > 0){    # add
               check <- 0
               for(i in seq_along(tdbl)){
                 dtr <- topo[tdbl[i] + 1, "TRACE"] - topo[tdbl[i], "TRACE"]
@@ -4164,6 +4412,7 @@ setMethod("interpPos", "GPR",
               }
               message(length(tdbl), " duplicate trace position(s) removed from 'topo'!")
               message("Accordingly, ", check, " trace(s) removed from 'x'!")
+              tdbl <- which(abs(diff(dist2D)) < tol)
             }
             dist3D <- posLine(topo[, c("N", "E", "Z")], last = FALSE)
             # if there are points measured with the total station
@@ -4316,7 +4565,7 @@ interpPosFromGeoJSON <- function(x, geojson, tol = NULL, backproject = TRUE){
   tdbl <- which(abs(diff(dist2D)) < tol)
   while(length(tdbl) > 0){
     topo <- topo[ -(tdbl + 1), ]
-    dist2D <- posLine(topo[, c("N", "E")], last = FALSE)
+    dist2D <- posLine(topo[, c("N", "E", "Z")], last = FALSE) # mod
     tdbl <- which(abs(diff(dist2D)) < tol)
   }
   
@@ -4334,8 +4583,12 @@ interpPosFromGeoJSON <- function(x, geojson, tol = NULL, backproject = TRUE){
   tx_y <- approx(x = trFIDPos$y,
                  y = topo[,"N"],
                  xout = seq_along(x))
+  tx_z <- approx(x = trFIDPos$y,
+                 y = topo[,"Z"],
+                 xout = seq_along(x))
   tr_xyz[,1] <- tx_x$y
   tr_xyz[,2] <- tx_y$y
+  tr_xyz[,3] <- tx_z$y
   # plot(u$xy, type = "l", asp = 1)
   # lines(tx_x$y, tx_y$y, type = "p")
   

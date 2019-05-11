@@ -3,10 +3,10 @@
 \docType{methods}
 \name{ampl}
 \alias{ampl}
-\title{Amplitude of the GPR data}
+\title{Amplitude (deprecated)}
 \usage{
-\S4method{ampl}{GPR}(x, FUN = mean, ...)
+\S4method{ampl}{GPR}(x, npad = 100, FUN = NULL, ...)
 }
 \description{
-Amplitude of the GPR data
+Amplitude (deprecated)
 }

@@ -13,6 +13,10 @@ or an open file connection.}
 
 \item{desc}{Short description of the file (character).}
 
+\item{dsn2}{data source name for additional file connection if \code{dsn} is
+an open file connection (e.g., open file connection to '*.hd'
+file if \code{ds} is an open file connection to a '*.dt1' file).}
+
 \item{format}{lenth-one character vector required if the file extension is
 not appearent in the filepath or the connection (either
 \code{dt1}, \code{rad}, \code{dzt}, \code{sgy}, \code{iprb},
@@ -24,10 +28,6 @@ It assumes that \code{Vmin = -Vmax}. If \code{Vmax = NULL},
 no bytes to Volt transformation is applied.}
 
 \item{fPath}{Filepath (character). DEPRECATED. Use \code{dsn} instead.}
-
-\item{dsn}{data source name for additional file connection if \code{dsn} is
-an open file connection (e.g., open file connection to '*.hd'
-file if \code{ds} is an open file connection to a '*.dt1' file).}
 }
 \value{
 The GPR data as object of the class RGPR.

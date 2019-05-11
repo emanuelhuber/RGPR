@@ -6,7 +6,8 @@
 \title{Interpolate trace positions from measurement (e.g., GPS).}
 \usage{
 \S4method{interpPos}{GPR}(x, topo, plot = FALSE, r = NULL,
-  tol = NULL, method = c("linear", "linear", "linear"), ...)
+  tol = NULL, method = c("linear", "linear", "linear"), crs = NULL,
+  ...)
 }
 \arguments{
 \item{x}{An object of the class GPR.}

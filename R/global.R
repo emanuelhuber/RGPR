@@ -40,6 +40,12 @@ magrittr::'%>%'
 #' @export
 magrittr::'%T>%'
 
+#' @name trPlot
+#' @rdname trPlot
+#' @export
+setGeneric("trPlot", function(x, ...)
+  standardGeneric("trPlot"))
+
 
 #------------------------------
 #' @name coordref
@@ -307,12 +313,21 @@ setGenericVerif("trProject", function(x, CRSobj) standardGeneric("trProject"))
 #' @export
 setGenericVerif("gethd", function(x,hd=NULL) standardGeneric("gethd"))
 
-#' @name plotAmpl
-#' @rdname plotAmpl
-#' @export
-setGenericVerif("plotAmpl", function(x, FUN = mean, add = FALSE, 
+
+setGenericVerif("plotAmpl", function(x, npad = 100, FUN = NULL, add = FALSE, 
                 all = FALSE,...) standardGeneric("plotAmpl"))
-setGenericVerif("ampl", function(x, FUN=mean, ...) standardGeneric("ampl"))
+
+
+setGenericVerif("ampl", function(x, npad = 100, FUN = NULL, ...) 
+  standardGeneric("ampl"))
+
+
+setGenericVerif("plotEnvelope", function(x, npad = 100, FUN = NULL, add = FALSE, 
+                              all = FALSE,...) standardGeneric("plotEnvelope"))
+
+setGenericVerif("envelope", function(x, npad = 100, FUN = NULL, ...) 
+  standardGeneric("envelope"))
+
 
 #' @name trRmDuplicates
 #' @rdname trRmDuplicates
@@ -324,7 +339,7 @@ setGenericVerif("trRmDuplicates", function(x, tol = NULL, verbose = TRUE)
 #' @rdname interpPos
 #' @export
 setGenericVerif("interpPos", function(x, topo, plot = FALSE, r = NULL, tol = NULL, 
-                   method = c("linear", "linear", "linear"), ...) 
+                   method = c("linear", "linear", "linear"), crs = NULL, ...) 
     standardGeneric("interpPos"))
 
 #' @name regInterpPos
@@ -476,6 +491,9 @@ setGenericVerif("traceShift", function(x,  ts, method = c("spline", "linear",
                 
 setGenericVerif("traceAverage", function(x, w = NULL, FUN = mean, ...) 
                 standardGeneric("traceAverage"))
+
+setGenericVerif("traceStat", function(x, w = NULL, FUN = mean, ...) 
+  standardGeneric("traceStat"))
                 
 setGenericVerif("backgroundSub", function(x, width = 21, trim = 0.2,
                                           s = 1, eps = 1, itmax = 5)
@@ -515,7 +533,8 @@ setGenericVerif("writeSurvey", function(x, fPath, overwrite=FALSE){
 #' @name interpSlices
 #' @rdname interpSlices
 #' @export
-setGenericVerif("interpSlices", function(x, nx, ny, dz, h = 6){ 
+setGenericVerif("interpSlices", function(x, dx = NULL, dy = NULL, dz = NULLL, 
+                                         h = 6){ 
   standardGeneric("interpSlices")})
 
 #' @name tpShift
@@ -4176,9 +4195,9 @@ readDT1 <- function(fPath, dsn2 = NULL){
 #-----------------
 
 # A = GPR$hd
-# if position = TRUE, return the row number
-# if number = TRUE, try to convert
-.getHD <- function(A,string,number=TRUE,position=FALSE){
+# if position = TRUE, return in addition the row number
+# if number = TRUE, try to convert the value into a number
+.getHD <- function(A, string, number = TRUE, position = FALSE){
   if(number){
     value <- as.numeric(A[trimStr(A[,1]) == string, 2])
   }else{
@@ -4187,7 +4206,7 @@ readDT1 <- function(fPath, dsn2 = NULL){
   if(length(value)>0){
     if(position){
       pos <- which((trimStr(A[,1]) == string ) == TRUE)[1]
-      return(c(value,pos))
+      return(c(value, pos))
     }else{
       return(value)
     }
@@ -4319,7 +4338,7 @@ readSEGY <- function(fPath){
   con <- file(fName$sgy , "rb")
   ##---- SEGY file
   uu <- readBin(con, what = character(), n = 1, size = 1)
-  vv <- strsplit(uu, split ="\r\n")
+  vv <- strsplit(uu, split ="\r\n", perl = TRUE)
   hd$EBCDIC <- sub("\\s+$", "", vv[[1]])
   invisible(seek(con, where = 3200, origin = "start"))
   # Job identification number
@@ -4587,14 +4606,20 @@ readImpulseRadar <- function( fPath, dsn2 = NULL){
   }
   nTr    <- .getHD(hHD, "LAST TRACE")
   nPt    <- .getHD(hHD, "SAMPLES")
-  nBytes <- .getHD(hHD, "DATA VERSION")
+  nBits <- .getHD(hHD, "DATA VERSION")
+  if(nBits == 16){
+    nBytes <- 2
+  }else if(nBits == 32){
+    nBytes <- 4
+  }
   
   #--- READ .IPRB
   bind <- matrix(NA, nrow = nPt, ncol = nTr)
   
   for(i in 1:nTr){
-    bind[,i] <- readBin(con, what=integer(), n = nPt, size = 2)
+    bind[,i] <- readBin(con, what=integer(), n = nPt, size = nBytes)
   }
+  
   hTime <- NULL
   hCor <- NULL
   hMrk <- NULL

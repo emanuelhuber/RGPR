@@ -383,12 +383,12 @@ trInterp <- function(x, z, zi){
 }
 
 # x = GPRsurvey object
-# nx = resolution along x-axis (e.g., 0.5 [m])
-# ny = resolution along y-axis (e.g., 0.5 [m])
-# nz = resolution along z-axis (e.g., 2 [ns])
+# dx = resolution along x-axis (e.g., 0.5 [m])
+# dy = resolution along y-axis (e.g., 0.5 [m])
+# dz = resolution along z-axis (e.g., 2 [ns])
 # h = Number of levels in the hierarchical construction 
 #     See the function 'mba.surf' of the MBA package
-.sliceInterp <- function(x, nx, ny, nz, h = 6){
+.sliceInterp <- function(x, dx = NULL, dy = NULL, dz = NULL, h = 6){
   if(!all(sapply(x@coords, length) > 0) ){
     stop("Some of the data have no coordinates. Please set first coordinates to all data.")
   }
@@ -397,8 +397,18 @@ trInterp <- function(x, z, zi){
   if(all(isLengthUnit(X)) ){
     x_zi <- sort(x_zi, decreasing = TRUE)
   }
-  xpos <- unlist(lapply(X@coords, function(x) x[,1]))
-  ypos <- unlist(lapply(X@coords, function(x) x[,2]))
+  if(is.null(dx)){
+    dx <- mean(sapply(x@coords, function(x) mean(diff(posLine(x)))))
+    # nx <- (max(sapply(x@coords, function(x) max(x[,1]))) -
+    #          min(sapply(x@coords, function(x) min(x[,1])) )) / dxy
+    # nx <- round(nx)
+  }
+  if(is.null(dy)){
+    dy <- dx
+  }
+  if(is.null(dz)){
+    dz <- abs(diff(x_zi))
+  }
   #Z <- list()
   V <- list()
   for(i in seq_along(X)){
@@ -417,11 +427,15 @@ trInterp <- function(x, z, zi){
     # Z[[i]] <- x_zi   # X[[i]]@depth
     
   }
-  vj <- seq(nz, by = nz, to = length(x_zi))
+  vj <- seq(dz, by = dz, to = length(x_zi))
   
   SL <- array(dim = c(nx, ny, length(vj)))
   val <- list()
   vz <- x_zi[vj]
+  xpos <- unlist(lapply(X@coords, function(x) x[,1]))
+  ypos <- unlist(lapply(X@coords, function(x) x[,2]))
+  nx <- abs(diff(xpos)) / dx
+  ny  <- abs(diff(ypos)) / dy
   for(u in  seq_along(vj)){
     j <- vj[u]
     #z <- rep(sapply(Z, function(x, i = j) x[i]), sapply(V, ncol))
@@ -439,8 +453,8 @@ trInterp <- function(x, z, zi){
 #' @name interpSlices 
 #' @rdname interpSlices
 #' @export
-setMethod("interpSlices", "GPRsurvey", function(x, nx, ny, dz, h = 6){
-  SXY <- .sliceInterp(x = x, nx = nx, ny = ny, nz = dz, h = h)
+setMethod("interpSlices", "GPRsurvey", function(x, dx = NULL, dy = NULL, dz = NULL, h = 6){
+  SXY <- .sliceInterp(x = x, dx = dx, dy = dy, dz = dz, h = h)
   
   xyref <- c(min(SXY$x), min(SXY$y))
   xpos <- SXY$x - min(SXY$x)

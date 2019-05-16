@@ -325,7 +325,7 @@ setGenericVerif("ampl", function(x, npad = 100, FUN = NULL, ...)
 setGenericVerif("plotEnvelope", function(x, npad = 100, FUN = NULL, add = FALSE, 
                               all = FALSE,...) standardGeneric("plotEnvelope"))
 
-setGenericVerif("envelope", function(x, npad = 100, FUN = NULL, ...) 
+setGenericVerif("envelope", function(x, npad = 100) 
   standardGeneric("envelope"))
 
 
@@ -2657,7 +2657,7 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
     par(mfrow=c(2,1))
     par(mar=c(0, 4, 4, 2) + 0.1, oma=c(1,1,1,1) )
     plot(fre,pow_mean, type="n",
-#           xaxt = "n",
+          xaxt = "n",
           ylim=c(0,max(pow)),
           ylab="amplitude",xlab="")
       if(!is.null(dim(A))){
@@ -2665,13 +2665,14 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
                 col=rgb(0.2,0.2,0.2,7/max(ncol(A),7))) )
       }
       lines(fre,pow_mean,col="red")
-#       Axis(side = 1, tcl = +0.3,  labels=FALSE ,at=m)
+      axis(side = 1, tcl = +0.3,  labels = FALSE)
       if(!is.null(titleSpec)){
         title(titleSpec)
       }
+      grid()
     par(mar=c(4, 4, 0.3, 2))
     plot(fre,pha_mean, type="n", 
-#           xaxt = "n",
+          xaxt = "n",
           ylim=range(pha), 
           xlab = "frequency MHz", ylab="phase") 
       if(!is.null(dim(A))){
@@ -2679,7 +2680,8 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
                   col = rgb(0.2,0.2,0.2,7/max(ncol(A), 7))) )
       }
       lines(fre,pha_mean,col="red")
-#       Axis(side = 1, tcl = +0.3,  labels=m ,at=m)
+      axis(side = 1, tcl = +0.3,  labels = TRUE)
+      grid()
     par(op)
   }
   return(list(freq = fre, pow = pow, pha = pha))

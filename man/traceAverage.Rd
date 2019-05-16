@@ -3,7 +3,7 @@
 \docType{methods}
 \name{traceAverage}
 \alias{traceAverage}
-\title{Trace average (rename in 'traceStat' because you can compute anything)}
+\title{Trace average (DEPRECATED, use 'traceStat' instead)}
 \usage{
 \S4method{traceAverage}{GPR}(x, w = NULL, FUN = mean, ...)
 }

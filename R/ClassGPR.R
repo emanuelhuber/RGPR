@@ -2084,16 +2084,16 @@ setReplaceMethod(
 #' @name envelope
 #' @rdname envelope
 #' @export
-setMethod("envelope", "GPR", function(x, npad = 100, FUN = NULL, ...){
-  if(is.null(FUN)){
+setMethod("envelope", "GPR", function(x, npad = 100){# }, FUN = NULL, ...){
+ #if(is.null(FUN)){
     xmax <- max(abs(x), na.rm = TRUE)
     xH <- apply(x, 2, HilbertTransf, npad = npad)
     x <- sqrt(x^2 + base::Re(xH)^2)
     x@data[abs(x@data) > xmax] <- xmax
-  }else{
-    funName <- getFunName(FUN)
-    x@data[] <- apply(x, 1, FUN, ...)
-  }
+  # }else{
+  #   funName <- getFunName(FUN)
+  #   x@data[] <- apply(x, 1, FUN, ...)
+  # }
   # 
   # proc(x) <- getArgs( addArgs = c('FUN' = funName))
   proc(x) <- getArgs()
@@ -2177,8 +2177,9 @@ HilbertTransf <- function(x, npad = 10){
 setMethod("plotEnvelope", "GPR", function(x, npad = 100, FUN = NULL, add = FALSE, 
                                       all = FALSE, plotLog = TRUE, ...){
   #   op <- par(no.readonly=TRUE)
-  xAMP <- ampl(x, npad = npad, FUN = FUN, ...)
-  AMP <- xAMP@data
+  
+  AMP <- envelope(x, npad = npad, FUN = FUN, ...)
+  # AMP <- xAMP@data
   ylab <- "mV"
   if(plotLog == TRUE){
     AMP <- log(AMP)
@@ -2186,6 +2187,7 @@ setMethod("plotEnvelope", "GPR", function(x, npad = 100, FUN = NULL, add = FALSE
   }
   z <- depth(x)
   if(!add){
+    trPlot(AMP, xlab = x@depthunit, ylab = ylab)
     par(mar=c(5, 4, 4, 2)+0.1)
     plot(z, AMP, type = "l", xlab = x@depthunit, ylab = ylab, ...)
     if(all == TRUE){
@@ -2238,7 +2240,8 @@ setMethod("plotEnvelope", "GPR", function(x, npad = 100, FUN = NULL, add = FALSE
 setMethod("plotAmpl", "GPR", function(x, npad = 100, FUN = NULL, add = FALSE, 
                                       all = FALSE, plotLog = TRUE, ...){
   #   op <- par(no.readonly=TRUE)
-  xAMP <- ampl(x, npad = npad, FUN = FUN, ...)
+  warning("Deprecated! Use 'plotEnvelope()' instead.")
+  xAMP <- suppressWarnings( ampl(x, npad = npad, FUN = FUN, ...) )
   AMP <- xAMP@data
   ylab <- "mV"
   if(plotLog == TRUE){
@@ -2918,7 +2921,7 @@ setMethod("traceScaling", "GPR", function(x,
 }
 )
 
-#' Trace statistic
+#' Trace statistics
 #'
 #' \code{traceStat} is a generic function used to produce results defined
 #' by an user function. The user function is applied accross traces (horizontal) 
@@ -2980,7 +2983,7 @@ setMethod("traceStat", "GPR", function(x, w = NULL, FUN = mean, ...){
 }
 )
 
-#' Trace average (rename in 'traceStat' because you can compute anything)
+#' Trace average (DEPRECATED, use 'traceStat' instead)
 #'
 #' Average traces in a radargram along the distance (horizontal) axis using
 #' a moving window. This can be used to increase signal to noise ratio. Note that if 
@@ -3561,7 +3564,15 @@ lines.GPR <- function(x, relTime0 = FALSE, ...){
     }
     # z <- seq(-x@time0, by = x@dz, length.out = length(x@data))
     #z <- x@depth - x@time0
-    lines(z, x@data,...)
+    dots <- list(...)
+    if(!is.null(dots[["log"]]) && dots[["log"]] == "y"){
+      dots[["log"]] <- NULL
+      x@data <- log(x@data)
+    }
+    dots[["x"]] <- z
+    dots[["y"]] <- x@data
+    invisible( do.call(lines, dots) )
+    #lines(z, x@data,...)
   }else{
     stop("x must a vector!")
   }
@@ -3596,29 +3607,57 @@ points.GPR <- function(x, ...){
 #' @rdname trPlot
 #' @export
 setMethod(
-  f="trPlot",
-  signature="GPR",
-  definition=function(x, ...){
-    dots <- alist(...)
-    if(is.null(dots[["ylim"]])){
-      ylim <- range(x)
-      if(ylim[1] > 0){
-        ylim[1] <- 0
-      }else{
-        ylim <- max(abs(ylim)) * c(-1, 1)
+  f = "trPlot",
+  signature = "GPR",
+  definition = function(x, ...){
+    dots <- list(...)
+
+   
+    if(!is.null(dots[["log"]]) && dots[["log"]] == "y"){
+      dots[["log"]] <- ""
+      x <- log(x)
+      if(is.null(dots[["ylab"]])){
+        dots[["ylab"]] <- "log(amplitude envelope mV)"
       }
     }
-    dots[["ylim"]] <- NULL
+    if(is.null(dots[["ylab"]])) dots[["ylab"]] <- "amplitude envelope (mV)"
+    
+    dotsLine <- list()
+    dotsLine[["X"]] <- x
+    dotsLine[["MARGIN"]] <- 2
+    dotsLine[["FUN"]] <- lines
+    dotsLine[["x"]] <- depth(x)
+    
+    dotsLine[["lty"]] <- dots[["lty"]]
+    dotsLine[["lwd"]] <- dots[["lwd"]]
+    dotsLine[["col"]] <- dots[["col"]]
+    # be carefull (dots$type redefined below)
+    dotsLine[["type"]] <- dots[["type"]]  
+    dotsLine[["pch"]] <- dots[["pch"]]
+    
     if(is.null(dots[["ylim"]])){
-      xlim <- range(depth(x))
+      dots[["ylim"]] <- range(x)
+      if(dots[["ylim"]][1] > 0){
+        dots[["ylim"]][1] <- 0
+      }else{
+        dots[["ylim"]] <- max(abs(dots[["ylim"]])) * c(-1, 1)
+      }
     }
-    dots[["xlim"]] <- NULL
-    plot(x[,1], type = "n", ylim = ylim, xlim = range(depth(x)))
-    dots[["X"]] <- x
-    dots[["MARGIN"]] <- 2
-    dots[["FUN"]] <- lines
-    dots[["x"]] <- depth(x)
-    invisible(do.call(apply, dots))
+    if(is.null(dots[["ylim"]])){
+      dots[["ylim"]] <- range(depth(x))
+    }
+    if(!is.null(dots[["ylog"]])){
+      xlab <- "sdf"
+    }
+    dots[["x"]] <- x[,1]
+    dots[["y"]] <- NULL
+    dots[["type"]] <- "n"
+    invisible( do.call(plot, dots) )
+    #plot(x[,1], type = "n", ylim = ylim, xlim = range(depth(x)), ...)
+    
+    # lty, line width, lwd, color, col and for type = "b", pch.
+    invisible(do.call(apply, dotsLine))
+    
   }
 )
 
@@ -3733,6 +3772,10 @@ plot.GPR <- function(x,
         myMain <- dots$main
         dots$main <- NULL
       } 
+      if(!is.null(dots[["log"]]) && dots[["log"]] == "y"){
+        dots[["log"]] <- ""
+        x@data <- log(x@data)
+      }
       
       
       do.call(plot, c(list(x = z, y = x@data), dots))

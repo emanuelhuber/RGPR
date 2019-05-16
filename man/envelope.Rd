@@ -6,7 +6,7 @@
 \alias{plotEnvelope}
 \title{Amplitude envelope}
 \usage{
-\S4method{envelope}{GPR}(x, npad = 100, FUN = NULL, ...)
+\S4method{envelope}{GPR}(x, npad = 100)
 
 \S4method{plotEnvelope}{GPR}(x, npad = 100, FUN = NULL, add = FALSE,
   all = FALSE, plotLog = TRUE, ...)

@@ -3,7 +3,7 @@
 \docType{methods}
 \name{traceStat}
 \alias{traceStat}
-\title{Trace statistic}
+\title{Trace statistics}
 \usage{
 \S4method{traceStat}{GPR}(x, w = NULL, FUN = mean, ...)
 }

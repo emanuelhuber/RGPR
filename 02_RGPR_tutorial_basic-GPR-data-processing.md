@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Basic GPR data processing
-date: 2019-05-16
+date: 2019-05-17
 ---
 
 <!--
@@ -338,7 +338,7 @@ Compare the amplitude before (red) and after (green) the power gain:
 
 ``` r
 plot(traceStat(x4_env), log = "y", col = "red", lwd = 2)
-lines(traceStat(traceStat(envelope(x5))), log = "y", col = "green", lwd = 2)
+lines(traceStat(envelope(x5)), log = "y", col = "green", lwd = 2)
 ```
 
 ![plot amplitude after power gain](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/ampl_check-1.png)
@@ -355,7 +355,7 @@ Ideally, the parameter $\alpha$ in the exponential gain should be close to the s
 
 ``` r
 x6 <- gain(x5, type ="exp",  alpha = 0.2, t0 = 0, te = 125)
-plot(traceStat(traceStat(envelope(x6))), log = "y", col = "blue", lwd = 2)
+plot(traceStat(envelope(x6)), log = "y", col = "blue", lwd = 2)
 ```
 
 ![plot ampliude exponential gain](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/gain_exp-1.png)
@@ -365,8 +365,8 @@ Oops! Set `alpha` to a smaller value!
 ``` r
 x6 <- gain(x5, type = "exp", alpha = 0.11, t0 = 0, te = 125)
 plot(traceStat(x4_env), log = "y", col = "red", lwd = 2)
-lines(traceStat(traceStat(envelope(x5))), log = "y", col = "green", lwd = 2)
-lines(traceStat(traceStat(envelope(x6))), log = "y", col = "blue", lwd = 2)
+lines(traceStat(envelope(x5)), log = "y", col = "green", lwd = 2)
+lines(traceStat(envelope(x6)), log = "y", col = "blue", lwd = 2)
 ```
 
 ![plot amplitude after exponential gain](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/gain_check2-1.png)
@@ -496,6 +496,8 @@ x10 <- traceStat(x9, FUN = median)  # compute average trace of all traces
 x10 <- traceStat(x9, FUN = median)  # compute average trace of all traces
 # compute windowed average trace (average of 20 traces)
 x10 <- traceStat(x9, w = 20, FUN = median)
+
+plot(x10)
 ```
 
 ### Eigen Image Filter

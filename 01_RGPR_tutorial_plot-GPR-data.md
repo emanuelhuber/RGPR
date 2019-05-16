@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Plot GPR data
-date: 2019-02-21
+date: 2019-05-16
 ---
 
 <!--
@@ -37,11 +37,19 @@ The GPR data
 `RPGR` comes along with a GPR data called `frenkeLine00`. Because this name is long, we set `A` equal to `frenkeLine00`:
 
 ``` r
-A <- frenkeLine00
-plot(A)
+x <- frenkeLine00
+x
 ```
 
-![plot(x)](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github-tex_math_single_backslash/x-1.png)
+    ## *** Class GPR ***
+    ##  name        = LINE00
+    ##  filepath    = data-raw/LINE00.DT1
+    ##  1 fiducial(s)
+    ##  description =
+    ##  survey date = 2014-04-25
+    ##  Reflection, 100 MHz, Window length = 399.6 ns, dz = 0.4 ns
+    ##  223 traces, 55.5 m
+    ##  ****************
 
 Plot the GPR data
 =================
@@ -52,36 +60,36 @@ Plot the GPR data
 To plot the GPR record as a raster image (default mode), enter
 
 ``` r
-plot(A)
+plot(x)
 ```
 
-![plot(A)](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github-tex_math_single_backslash/plot-1.png)
+![plot(A)](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot-1.png)
 
 The green line indicates the position of time-zero. The yellow triangle indicates the position of a fiducial marker that was set during the survey to mark something (such as a specific object close to the GPR line, a change in morphology/topography/sedimentology or an intersection with another GPR line). These markers are very useful to add topographic data to the GPR profile, particularly when the fiducial markers correspond to the locations where the (x,y,z) coordinates were measured.
 
 Plot wiggles
 
 ``` r
-plot(A, type = "wiggles")
+plot(x, type = "wiggles")
 ```
 
-![plot(A) with wiggles](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github-tex_math_single_backslash/plot_wiggles-1.png)
+![plot(A) with wiggles](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_wiggles-1.png)
 
 To plot only a part of the GPR data, use `xlim` and `ylim`.
 
 ``` r
-plot(A, ylim = c(50, 100), xlim = c(30, 40))
+plot(x, ylim = c(50, 100), xlim = c(30, 40))
 ```
 
-![plot(A) with xlim and ylim](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github-tex_math_single_backslash/plot_xlim_ylim-1.png)
+![plot(A) with xlim and ylim](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_xlim_ylim-1.png)
 
 To set the origin of the vertical axis at time-zero, set the argument `relTime0` equal to `TRUE`.
 
 ``` r
-plot(A, relTime0 = TRUE, ylim = c(0, 200), xlim = c(30, 50))
+plot(x, relTime0 = TRUE, ylim = c(0, 200), xlim = c(30, 50))
 ```
 
-![plot(A) relative to time0](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github-tex_math_single_backslash/relTime0-1.png)
+![plot(A) relative to time0](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/relTime0-1.png)
 
 Another way to plot only a part of the GPR data is to extract a part of the GPR data. The object `A` can be manipulated in the same way as a matrix without losing the meta-data (e.g., trace coordinates, antenna separation).
 
@@ -89,8 +97,8 @@ To extract the samples 100 to 300 of the $15^{th}$ to $150^{th}$:
 
 ``` r
 # extract the 100 to 300 samples of the traces 15 to 150
-A0 <- A[100:300, 15:150]
-A
+x0 <- x[100:300, 15:150]
+x
 ```
 
     ## *** Class GPR ***
@@ -104,7 +112,7 @@ A
     ##  ****************
 
 ``` r
-A0
+x0
 ```
 
     ## *** Class GPR ***
@@ -119,40 +127,94 @@ A0
 Check the depth/time and positions values
 
 ``` r
-depth(A)
-pos(A)
+depth(x)
+pos(x)
 ```
 
 Plot a section/subset of the GPR record (like zooming)
 
 ``` r
 # plot the 100 to 300 samples of the traces 15 to 150
-plot(A[100:300, 15:150])
+plot(x[100:300, 15:150])
 ```
 
-![plot(A) subset](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github-tex_math_single_backslash/plot_subset-1.png)
+![plot(A) subset](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_subset-1.png)
 
-1D plot: trace plot
--------------------
+1D plot
+-------
+
+### Single trace plot
 
 Plot a signal trace, notice that the signal is clipped to $\pm50\,mV$ (between $0$ and $20\,ns$):
 
 ``` r
-plot(A[, 15])      # plot the 15th trace of the GPR-line
+plot(x[, 15])      # plot the 15th trace of the GPR-line
 ```
 
-![plot single trace](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github-tex_math_single_backslash/plot1D-1.png)
+![plot single trace](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot1D-1.png)
 
 Note: the `@3.5m` in the plot title indicate the relative position of the trace on the GPR profile.
+
+To add another trace, use the function `lines()`
+
+``` r
+plot(x[, 15])      # plot the 15th trace of the GPR-line
+lines(x[, 16], col = "red", lwd = 2)
+```
+
+![plot single trace](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot1D_lines-1.png)
 
 Plot the first 40 trace samples:
 
 ``` r
 # plot the first 40 samples of the 15th trace of the GPR profile
-plot(A[1:40, 15])
+plot(x[1:40, 15])
 ```
 
-![plot single trace, fist 40 samples](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github-tex_math_single_backslash/plot1D_subset-1.png)
+![plot single trace, fist 40 samples](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot1D_subset-1.png)
+
+### Multiple trace plot
+
+Plot all the traces within a single plot:
+
+``` r
+trPlot(x, col = rgb(0.2, 0.2, 0.2, 7/100))     # plot all the traces
+```
+
+![plot multiple traces](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_multi_1D-1.png)
+
+Add the average trace
+
+``` r
+trPlot(x, col = rgb(0.2, 0.2, 0.2, 7/100))     # plot all the traces
+lines(traceStat(x), lwd = "2", col = "red")
+```
+
+![plot multiple traces with average trace](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_multi_1D_average-1.png)
+
+Frequency plots
+---------------
+
+### Frequency/Phase-Amplitude (1D)
+
+Let's have a look at the amplitude-frequency and phase-frequency plot (the spectrum given by the Fourier decomposition):
+
+``` r
+spec(x)
+```
+
+![plot spectrum](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/fFilter_spectrum-1.png)
+
+Frequency-wavenumber filter (f-k-filter)
+----------------------------------------
+
+The function `spec()` with the argument `type = "f-k` returns a list containing the frequencies (f), the wavenumbers (k), the amplitude of the GPR data.
+
+``` r
+spec(x, type = "f-k")
+```
+
+![plot fk-filter](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/fkspec-1.png)
 
 More infos
 ----------
@@ -161,4 +223,5 @@ Check the help for more details on the `plot()` function:
 
 ``` r
 ?plot.GPR
+?trPlot
 ```

@@ -1,7 +1,7 @@
 ---
 layout: page
 title: GPR data migration
-date: 2019-02-21
+date: 2019-05-16
 ---
 
 <!--
@@ -246,6 +246,675 @@ inverse normal transformations
 ``` r
 A12 <- traceScaling(A11, type = "invNormal")
 ```
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
+
+    ## Warning in regularize.values(x, y, ties, missing(ties)): collapsing to
+    ## unique 'x' values
 
 Comparison before/after migration
 ---------------------------------

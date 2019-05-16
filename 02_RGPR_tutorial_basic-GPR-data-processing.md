@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Basic GPR data processing
-date: 2019-02-22
+date: 2019-05-16
 ---
 
 <!--
@@ -101,7 +101,7 @@ plot(pos(x), tfb, pch = 20, ylab = "first wave break",
      xlab = "position (m)")
 ```
 
-![plot first wave break time](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/first_wave_break-1.png)
+![plot first wave break time](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/first_wave_break-1.png)
 
 Convert the first wave break time $t_{\mathrm{fb}}$ into time-zero $t_0$ with `firstBreakToTime0()`.
 
@@ -127,7 +127,7 @@ plot(x[, 15], xlim = c(0, 100))  # plot the 15th trace of the GPR-line
 abline(v = tfb[15], col = "blue")  # first wave break time
 ```
 
-![plot single trace with time0 and first wave break time](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/time0_check-1.png)
+![plot single trace with time0 and first wave break time](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/time0_check-1.png)
 
 DC shift removal
 ----------------
@@ -138,7 +138,7 @@ Plot a single trace:
 plot(x[, 15])  # plot the 15th trace of the GPR-line
 ```
 
-![plot single trace](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/dcShift_plot1D_15-1.png)
+![plot single trace](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/dcShift_plot1D_15-1.png)
 
 Notice how the trace samples before the first wave arrival (before $t = 0\,ns$) are slightly shifted below $0\,mV$? This shift is called direct current offset (DC-offset) and you will remove it from the data. The direct current offset is estimated on trace samples before time-zero.
 
@@ -149,20 +149,19 @@ Notice how the trace samples before the first wave arrival (before $t = 0\,ns$) 
     plot(x[1:110, 15])
     ```
 
-![plot single trace, first 110 samples](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/dcShift_plot_first_samples-1.png)
+![plot single trace, first 110 samples](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/dcShift_plot_first_samples-1.png)
 
-   
-You can visualise the DC-offset on the trace plot by adding an horizontal lines (`abline(h=...)`) with the argument `h` equal the DC-offset, i.e., the mean of the first $110$     samples (`mean(x[1:110,15]`):
+You can visualise the DC-offset on the trace plot by adding an horizontal lines (`abline(h=...)`) with the argument `h` equal the DC-offset, i.e., the mean of the first $110$ samples (`mean(x[1:110,15]`):
 
-    ``` r
+    ```r
     plot(x[, 15])  # plot the 15th trace of the GPR-line
     # add a green horizontal line
     abline(h = mean(x[1:110, 15]), col = "green")
     ```
 
-![plot single trace + dc-shift](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/dcShift_check_results_1D-1.png)
+![plot single trace + dc-shift](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/dcShift_check_results_1D-1.png)
 
-2.  Remove the DC-offset estimated on the first n samples usind the function `dcshift()`. This function takes as argument the `GPR` object and the sample index used to estimate the DC shift (in this case, the first $110$     samples):
+1.  Remove the DC-offset estimated on the first n samples usind the function `dcshift()`. This function takes as argument the `GPR` object and the sample index used to estimate the DC shift (in this case, the first $110$     samples):
 
     ``` r
     x1 <- dcshift(x, u = 1:110)   # new object x1
@@ -184,7 +183,6 @@ x1
     ##  223 traces, 55.5 m
     ##  > PROCESSING
     ##    1. time0<-
-    ##    2. dcshift//u=1:110
     ##  ****************
 
 Compared with `x` or `print(x)`, three additional lines are displayed. The two last line show the applied processing step:
@@ -201,8 +199,6 @@ proc(x1)
 ```
 
     ## [1] "time0<-"
-    ## [2] "dcshift//u=1:110""
-    
 
 Time zero correction
 --------------------
@@ -217,7 +213,7 @@ x2 <- time0Cor(x1, method = "pchip")
 plot(x2)
 ```
 
-![plot after time0Cor()](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/time0Cor_check-1.png)
+![plot after time0Cor()](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/time0Cor_check-1.png)
 
 Dewow
 -----
@@ -234,7 +230,7 @@ x3 <- dewow(x2, type = "MAD", w = 50)     # dewowing: take some time
 plot(x3)                                  # plot the result
 ```
 
-![plot after dewow](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/dewow-1.png)
+![plot after dewow](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/dewow-1.png)
 
 Can you see the difference with `x1`? Plot `x3 - x2` to see the removed "wow".
 
@@ -242,7 +238,7 @@ Can you see the difference with `x1`? Plot `x3 - x2` to see the removed "wow".
 plot(x3 - x2)                           # plot the difference
 ```
 
-![plot difference after dewow](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/dewow_diff-1.png)
+![plot difference after dewow](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/dewow_diff-1.png)
 
 See the dewowing by comparing the traces before (blue line) and after (red line):
 
@@ -251,7 +247,7 @@ plot(x2[,15], col = "blue")      # before dewowing
 lines(x3[,15], col = "red")      # after dewowing
 ```
 
-![plot single trace dewow](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/dewow_check_1D-1.png)
+![plot single trace dewow](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/dewow_check_1D-1.png)
 
 Frequency filter
 ----------------
@@ -262,7 +258,7 @@ Let's have a look at the amplitude-frequency and phase-frequency plot (the spect
 spec(x3)
 ```
 
-![plot spectrum](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/fFilter_spectrum-1.png)
+![plot spectrum](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/fFilter_spectrum-1.png)
 
 The curve in red is the averaged amplitude/phase over all the trace amplitudes/phases.
 
@@ -278,13 +274,13 @@ Eliminate the high-frequency (noise) component of the GPR record with a bandpass
 x4 <- fFilter(x3, f = c(150, 260), type = "low", plotSpec = TRUE)
 ```
 
-![plot frequency filter](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/fFilter_fFilter-1.png)
+![plot frequency filter](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/fFilter_fFilter-1.png)
 
 ``` r
 plot(x4)
 ```
 
-![plot frequency filter](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/fFilter_fFilter-2.png)
+![plot frequency filter](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/fFilter_fFilter-2.png)
 
 Let see the difference
 
@@ -292,7 +288,7 @@ Let see the difference
 plot(x4 - x3, clip = 50)
 ```
 
-![plot difference](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/fFilter_diff-1.png)
+![plot difference](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/fFilter_diff-1.png)
 
 Ideally, the objective of processing is to remove the noise component without altering the signal component to improve the signal/noise ratio. When ploting the difference in processing (after - before), one should only observe the noise that is filtered out. Here, removing and attenuating some frequencies change the signal amplitude.
 
@@ -317,75 +313,69 @@ Apply a gain to compensate the signal attenuation. Three types of gain are avail
 
 -   Automatic gain control (`type = "agc"`): make gain equal to the local root mean squared signal.
 
-We will first apply a power gain and then an exponential gain. To visualise the amplitude of the GPR signal as a function of time, use the function `plotAmpl()` as follows:
+We will first apply a power gain and then an exponential gain. To visualise the amplitude envelope of the GPR signal as a function of time, use the function `plotAmpl()` as follows:
 
 ``` r
-plotAmpl(x4, col = "black")          # plot amplitude as a function of time
+# compute the trace amplitude envelopes (with Hilbert transform)
+x4_env <- envelope(x4)
+# plot all the trace amplitude envelopes as a function of time
+trPlot(x4_env, log = "y", col = rgb(0.2,0.2,0.2,7/100))
+# plot the log average amplitude envelope
+lines(traceStat(x4_env), log = "y", col = "red", lwd = 2)
 ```
 
-![plot amplitude](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/plotAmpl-1.png)
+![plot amplitude](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/plotAmpl-1.png)
 
-On the previous plot, there is a sharp amplitude increase at about $20\,ns$ corresponding to the first wave arrival. Then the amplitude decreases until a plateau at about $200\,\mathit{ns}$. This plateau corresponds to the signal noise. There is little hope to extract some useful information above 150 ns because above $150\,ns$ the signal/noise ratio is much smaller than $1$ (i.e., more noise than signal).
+On the plot above, there is a sharp increase of the amplitude envelope at the begining of the signal. This sharp increase corresponds to the first wave arrival. Then the amplitude decreases until about $220\,\mathit{ns}$.
 
 ### Power gain
 
-The power gain is set constant until `tcst = 100` ns and applied from $100\,ns$ to `te = 200` ns, with $\alpha = 1$.
-
-``` r
-x5 <- gain(x4, type = "power", alpha = 1, te = 150, tcst = 20)
+From $0\,\mathit{ns}$ to $20\,\mathit{ns}$ the power gain is set equal to the gain at $20\,\mathit{ns}$, i.e., $x_g(20)$ (constant value, `tcst = 20`). The gain is only applied up to $220\,\mathit{ns}$ ``` r
+x5 <- gain(x4, type = "power", alpha = 1, te = 220, tcst = 20)
 ```
 
-Compare the amplitude before and after the power gain:
+Compare the amplitude before (red) and after (green) the power gain:
 
 ``` r
-plotAmpl(x4, col = "black")
-# set add=TRUE to add the amplitude on the previous plot
-plotAmpl(x5, col = "red", add = TRUE)
+plot(traceStat(x4_env), log = "y", col = "red", lwd = 2)
+lines(traceStat(traceStat(envelope(x5))), log = "y", col = "green", lwd = 2)
 ```
 
-![plot amplitude after power gain](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/ampl_check-1.png)
+![plot amplitude after power gain](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/ampl_check-1.png)
 
 ``` r
 plot(x5)      # how does it look after the gain?
 ```
 
-![plot amplitude after power gain](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/ampl_check-2.png)
+![plot amplitude after power gain](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/ampl_check-2.png)
 
 ### Exponential gain
 
-Ideally, the parameter $\alpha$ in the exponential gain should be close to the slope of the amplitude decrease. This slope could be estimated by fitting a straight line to the amplitude decrease. We only want to apply the filter between $0\,\mathit{ns}$ (`t0`) and $125\,\mathit{ns}$ (`te` for $t_\mathit{end}$):
+Ideally, the parameter $\alpha$ in the exponential gain should be close to the slope of the log amplitude decrease. This slope could be estimated by fitting a straight line to the amplitude decrease. After some trials, we apply the exponential gain only between $0\,\mathit{ns}$ (`t0`) and $125\,\mathit{ns}$ (`te` for $t_\mathit{end}$):
 
 ``` r
 x6 <- gain(x5, type ="exp",  alpha = 0.2, t0 = 0, te = 125)
-plotAmpl(x6, col = "green")
+plot(traceStat(traceStat(envelope(x6))), log = "y", col = "blue", lwd = 2)
 ```
 
-![plot ampliude exponential gain](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/gain_exp-1.png)
+![plot ampliude exponential gain](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/gain_exp-1.png)
 
 Oops! Set `alpha` to a smaller value!
 
 ``` r
 x6 <- gain(x5, type = "exp", alpha = 0.11, t0 = 0, te = 125)
-plotAmpl(x4, col = "black")
-plotAmpl(x5, col = "red", add = TRUE)
-plotAmpl(x6, col = "green", add = TRUE)
+plot(traceStat(x4_env), log = "y", col = "red", lwd = 2)
+lines(traceStat(traceStat(envelope(x5))), log = "y", col = "green", lwd = 2)
+lines(traceStat(traceStat(envelope(x6))), log = "y", col = "blue", lwd = 2)
 ```
 
-![plot amplitude after exponential gain](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/gain_check2-1.png)
+![plot amplitude after exponential gain](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/gain_check2-1.png)
 
 ``` r
 plot(x6)    # how does it look after the gain?
 ```
 
-![plot amplitude after exponential gain](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/gain_check2-2.png)
-
-Plot the gained GPR record and clip the amplitude values to $50\,\mathit{mV}$ using the argument `clip`:
-
-``` r
-plot(x6, clip = 50)    # how does it look after the gain?
-```
-
-![plot after gain](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/gain_diff-1.png)
+![plot amplitude after exponential gain](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/gain_check2-2.png)
 
 inverse normal transformations
 ------------------------------
@@ -396,7 +386,7 @@ Have a look at the histogram of the values of `x6`
 hist(x6[], breaks = 50)
 ```
 
-![plot hist](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/invnorm-1.png)
+![plot hist](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/invnorm-1.png)
 
 This histogram is very narrow, meaning that a lot of values are very close to zero and therefore many details are not really visible. To widen this histogram, we can transform it to make it more normally distributed with a rank-based inverse normal transformation:
 
@@ -412,13 +402,13 @@ hist(x6[], breaks = 50)
 hist(x7[], breaks = 50)
 ```
 
-![plot histogram comparison](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/hist_diff-1.png) Have a look at the results of the transformation:
+![plot histogram comparison](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/hist_diff-1.png) Have a look at the results of the transformation:
 
 ``` r
 plot(x7)
 ```
 
-![plot inverse normal transformation results](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/invnorm_check-1.png)
+![plot inverse normal transformation results](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/invnorm_check-1.png)
 
 Median filter (spatial filter)
 ------------------------------
@@ -430,7 +420,7 @@ x8 <- filter2D(x7, type = "median3x3")
 plot(x8)
 ```
 
-![plot median filter](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/median_filter-1.png)
+![plot median filter](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/median_filter-1.png)
 
 Let see the difference
 
@@ -438,7 +428,7 @@ Let see the difference
 plot(x8 - x7)
 ```
 
-![plot difference after median filter](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/median_filter_diff-1.png)
+![plot difference after median filter](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/median_filter_diff-1.png)
 
 Frequency-wavenumber filter (f-k-filter)
 ----------------------------------------
@@ -452,7 +442,7 @@ area <- list(x = c(0, min(FKSpec$wnb), min(FKSpec$wnb), max(FKSpec$wnb), max(FKS
 lines(area, type="o")
 ```
 
-![plot fk-filter](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/fkspec-1.png)
+![plot fk-filter](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/fkspec-1.png)
 
 ``` r
 x9 <- fkFilter(x8, fk = area)
@@ -464,13 +454,13 @@ With the f-k-filter you can successfully remove the artifacts but still the info
 plot(x9, clip = 50)
 ```
 
-![plot fk-spectrum](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/fk_plot-1.png)
+![plot fk-spectrum](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/fk_plot-1.png)
 
 ``` r
 spec(x9, type = "f-k")
 ```
 
-![plot fk-spectrum](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/fk_plot-2.png)
+![plot fk-spectrum](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/fk_plot-2.png)
 
 Let see the difference
 
@@ -478,7 +468,7 @@ Let see the difference
 plot(x9 - x8)
 ```
 
-![plot difference after fk-filter](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github-tex_math_single_backslash/fK_diff-1.png)
+![plot difference after fk-filter](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/fK_diff-1.png)
 
 Processing overview
 -------------------
@@ -494,18 +484,18 @@ Other processing functions
 
 ### Trace average removal
 
-Check the help page for the function `traceAverage`
+Check the help page for the function `traceStat`
 
 ``` r
-?traceAverage
+?traceStat
 ```
 
 ``` r
-x10 <- traceAverage(x9, FUN = mean)  # compute average trace of all traces
-x10 <- traceAverage(x9, FUN = median)  # compute average trace of all traces
-x10 <- traceAverage(x9, FUN = median)  # compute average trace of all traces
+x10 <- traceStat(x9, FUN = mean)  # compute average trace of all traces
+x10 <- traceStat(x9, FUN = median)  # compute average trace of all traces
+x10 <- traceStat(x9, FUN = median)  # compute average trace of all traces
 # compute windowed average trace (average of 20 traces)
-x10 <- traceAverage(x9, w = 20, FUN = median)
+x10 <- traceStat(x9, w = 20, FUN = median)
 ```
 
 ### Eigen Image Filter

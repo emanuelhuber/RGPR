@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Class GPR
-date: 2019-02-21
+date: 2019-05-16
 ---
 
 <!--
@@ -38,7 +38,7 @@ Preliminary
     ``` r
     data("frenkeLine00")
     # just because it is simplier to enter 'A' instead of 'frenkeLine00'
-    A <- frenkeLine00   
+    A <- frenkeLine00
     ```
 
 An object of the class `RGPR`
@@ -54,7 +54,7 @@ A                 # let's have a look at the object A
     ##  name        = LINE00
     ##  filepath    = data-raw/LINE00.DT1
     ##  1 fiducial(s)
-    ##  description = 
+    ##  description =
     ##  survey date = 2014-04-25
     ##  Reflection, 100 MHz, Window length = 399.6 ns, dz = 0.4 ns
     ##  223 traces, 55.5 m
@@ -67,50 +67,50 @@ str(A)            # let's have a look at the structure of A
 ```
 
     ## Formal class 'GPR' [package "RGPR"] with 29 slots
-    ##   ..@ version     : chr "0.1"
-    ##   ..@ data        : num [1:1000, 1:223] -1.05 -1.44 -1.48 -1.5 -1.54 ...
-    ##   ..@ traces      : num [1:223] 1 2 3 4 5 6 7 8 9 10 ...
-    ##   ..@ depth       : num [1:1000] 0 0.4 0.8 1.2 1.6 2 2.4 2.8 3.2 3.6 ...
-    ##   ..@ pos         : num [1:223] 0 0.25 0.5 0.75 1 1.25 1.5 1.75 2 2.25 ...
-    ##   ..@ time0       : num [1:223] 52.2 52.2 52.2 52.2 52.2 ...
-    ##   ..@ time        : num [1:223] 1.4e+09 1.4e+09 1.4e+09 1.4e+09 1.4e+09 ...
-    ##   ..@ fid         : chr [1:223] "" "" "" "" ...
-    ##   ..@ ann         : chr(0) 
-    ##   ..@ coord       : logi[0 , 0 ] 
-    ##   ..@ rec         : logi[0 , 0 ] 
-    ##   ..@ trans       : logi[0 , 0 ] 
-    ##   ..@ coordref    : num(0) 
-    ##   ..@ freq        : num 100
-    ##   ..@ dz          : num 0.4
-    ##   ..@ dx          : num 0.25
-    ##   ..@ antsep      : num 1
-    ##   ..@ name        : chr "LINE00"
-    ##   ..@ description : chr ""
-    ##   ..@ filepath    : chr "data-raw/LINE00.DT1"
-    ##   ..@ depthunit   : chr "ns"
-    ##   ..@ posunit     : chr "m"
-    ##   ..@ surveymode  : chr "Reflection"
-    ##   ..@ date        : chr "2014-04-25"
-    ##   ..@ crs         : chr(0) 
-    ##   ..@ proc        : chr(0) 
-    ##   ..@ vel         :List of 1
-    ##   .. ..$ : num 0.1
-    ##   ..@ delineations: list()
-    ##   ..@ hd          :List of 14
-    ##   .. ..$ startpos          : num 55.5
-    ##   .. ..$ gprdevice         : chr "Data Collected with pE PRO (2011-00114-00)"
-    ##   .. ..$ ANTENNA_SEPARATION: chr "1.000000"
-    ##   .. ..$ PULSER_VOLTAGE_V  : chr "400"
-    ##   .. ..$ NUMBER_OF_STACKS  : chr "16"
-    ##   .. ..$ ODOMETER_CAL_tm   : chr "979.599976"
-    ##   .. ..$ STACKING_TYPE     : chr "F1, P16, DynaQ OFF"
-    ##   .. ..$ DVL_Serial        : chr "0051-6870-0001"
-    ##   .. ..$ Control_Mod_Serial: chr "0022-3009-0014"
-    ##   .. ..$ Transmitter_Serial: chr "0026-3171-0008"
-    ##   .. ..$ Receiver_Serial   : chr "0025-3172-0014"
-    ##   .. ..$ Start_DVL_Battery : chr "12.68V"
-    ##   .. ..$ Start_Rx_Battery  : chr "12.71V"
-    ##   .. ..$ Start_Tx_Battery  : chr "12.78V 12.78V"
+    ##..@ version: chr "0.1"
+    ##..@ data: num [1:1000, 1:223] -1.05 -1.44 -1.48 -1.5 -1.54...
+    ##..@ traces: num [1:223] 1 2 3 4 5 6 7 8 9 10...
+    ##..@ depth: num [1:1000] 0 0.4 0.8 1.2 1.6 2 2.4 2.8 3.2 3.6...
+    ##..@ pos: num [1:223] 0 0.25 0.5 0.75 1 1.25 1.5 1.75 2 2.25...
+    ##..@ time0: num [1:223] 52.2 52.2 52.2 52.2 52.2...
+    ##..@ time: num [1:223] 1.4e+09 1.4e+09 1.4e+09 1.4e+09 1.4e+09...
+    ##..@ fid: chr [1:223] "" "" "" ""...
+    ##..@ ann: chr(0)
+    ##..@ coord: logi[0, 0 ]
+    ##..@ rec: logi[0, 0 ]
+    ##..@ trans: logi[0, 0 ]
+    ##..@ coordref: num(0)
+    ##..@ freq: num 100
+    ##..@ dz: num 0.4
+    ##..@ dx: num 0.25
+    ##..@ antsep: num 1
+    ##..@ name: chr "LINE00"
+    ##..@ description: chr ""
+    ##..@ filepath: chr "data-raw/LINE00.DT1"
+    ##..@ depthunit: chr "ns"
+    ##..@ posunit: chr "m"
+    ##..@ surveymode: chr "Reflection"
+    ##..@ date: chr "2014-04-25"
+    ##..@ crs: chr(0)
+    ##..@ proc: chr(0)
+    ##..@ vel:List of 1
+    ##....$: num 0.1
+    ##..@ delineations: list()
+    ##..@ hd:List of 14
+    ##....$ startpos: num 55.5
+    ##....$ gprdevice: chr "Data Collected with pE PRO (2011-00114-00)"
+    ##....$ ANTENNA_SEPARATION: chr "1.000000"
+    ##....$ PULSER_VOLTAGE_V: chr "400"
+    ##....$ NUMBER_OF_STACKS: chr "16"
+    ##....$ ODOMETER_CAL_tm: chr "979.599976"
+    ##....$ STACKING_TYPE: chr "F1, P16, DynaQ OFF"
+    ##....$ DVL_Serial: chr "0051-6870-0001"
+    ##....$ Control_Mod_Serial: chr "0022-3009-0014"
+    ##....$ Transmitter_Serial: chr "0026-3171-0008"
+    ##....$ Receiver_Serial: chr "0025-3172-0014"
+    ##....$ Start_DVL_Battery: chr "12.68V"
+    ##....$ Start_Rx_Battery: chr "12.71V"
+    ##....$ Start_Tx_Battery: chr "12.78V 12.78V"
 
 The strings after the `@` are the names of the elements that form `A`. These elements are called `slots`. To get the `slots` names enter:
 
@@ -118,12 +118,12 @@ The strings after the `@` are the names of the elements that form `A`. These ele
 slotNames(A)      # return the slot names
 ```
 
-    ##  [1] "version"      "data"         "traces"       "depth"       
-    ##  [5] "pos"          "time0"        "time"         "fid"         
-    ##  [9] "ann"          "coord"        "rec"          "trans"       
-    ## [13] "coordref"     "freq"         "dz"           "dx"          
-    ## [17] "antsep"       "name"         "description"  "filepath"    
-    ## [21] "depthunit"    "posunit"      "surveymode"   "date"        
+    ##  [1] "version"      "data"         "traces"       "depth"
+    ##  [5] "pos"          "time0"        "time"         "fid"
+    ##  [9] "ann"          "coord"        "rec"          "trans"
+    ## [13] "coordref"     "freq"         "dz"           "dx"
+    ## [17] "antsep"       "name"         "description"  "filepath"
+    ## [21] "depthunit"    "posunit"      "surveymode"   "date"
     ## [25] "crs"          "proc"         "vel"          "delineations"
     ## [29] "hd"
 
@@ -216,19 +216,19 @@ Furthermore, it is possible to extract a portion of the GPR data without losing 
 ``` r
 # Extract a portion of A that only contains
 # the time samples 90 to 200 of the traces 5 to 10
-B <- A[90:200, 5:10]          
+B <- A[90:200, 5:10]
 ```
 
 Note that `B` is also an object of the class `RGPR` consisting of 6 traces with each 111 time samples:
 
 ``` r
-B        
+B
 ```
 
     ## *** Class GPR ***
     ##  name        = LINE00
     ##  filepath    = data-raw/LINE00.DT1
-    ##  description = 
+    ##  description =
     ##  survey date = 2014-04-25
     ##  Reflection, 100 MHz, Window length = 44 ns, dz = 0.4 ns
     ##  6 traces, 1.25 m

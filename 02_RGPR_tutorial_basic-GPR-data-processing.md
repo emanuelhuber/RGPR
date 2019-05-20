@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Basic GPR data processing
-date: 2019-05-17
+date: 2019-05-20
 ---
 
 <!--
@@ -330,7 +330,9 @@ On the plot above, there is a sharp increase of the amplitude envelope at the be
 
 ### Power gain
 
-From $0\,\mathit{ns}$ to $20\,\mathit{ns}$ the power gain is set equal to the gain at $20\,\mathit{ns}$, i.e., $x_g(20)$ (constant value, `tcst = 20`). The gain is only applied up to $220\,\mathit{ns}$ ``` r
+From $0\,\mathit{ns}$ to $20\,\mathit{ns}$ the power gain is set equal to the gain at $20\,\mathit{ns}$, i.e., $x_g(20)$ (constant value, `tcst = 20`). The gain is only applied up to $220\,\mathit{ns}$.
+
+``` r
 x5 <- gain(x4, type = "power", alpha = 1, te = 220, tcst = 20)
 ```
 

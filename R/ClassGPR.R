@@ -2244,39 +2244,39 @@ setMethod("plotAmpl", "GPR", function(x, npad = 100, FUN = mean, add = FALSE,
   warning("Deprecated!\nUse 'trPlot(envelope(x))' or ",
           "'trPlot(traceStat(envelope(x)))' instead.")
   trPlot(traceStat(envelope(x), FUN = FUN), ...)
-  xAMP <- suppressWarnings( ampl(x, npad = npad, FUN = FUN, ...) )
-  AMP <- xAMP@data
-  ylab <- "mV"
-  if(plotLog == TRUE){
-    AMP <- log(AMP)
-    ylab <- "log(mV)"
-  }
-  z <- depth(x)
-  if(!add){
-    par(mar=c(5, 4, 4, 2)+0.1)
-    plot(z, AMP, type = "l", xlab = x@depthunit, ylab = ylab, ...)
-    if(all == TRUE){
-      if(plotLog == TRUE){
-        invisible(apply(log(abs(x@data)), 2, lines, x = z, 
-                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
-      }else{
-        invisible(apply((abs(x@data)), 2, lines, x = z, 
-                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
-      }
-    }
-    title(x@name)
-  }else{
-    if(all == TRUE){
-      if(plotLog == TRUE){
-        invisible(apply(log(abs(x@data)), 2, lines, x = z, 
-                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
-      }else{
-        invisible(apply((abs(x@data)), 2, lines, x = z, 
-                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
-      }
-    }
-    lines(z, AMP, ...)
-  }
+  # xAMP <- suppressWarnings( ampl(x, npad = npad, FUN = FUN, ...) )
+  # AMP <- xAMP@data
+  # ylab <- "mV"
+  # if(plotLog == TRUE){
+  #   AMP <- log(AMP)
+  #   ylab <- "log(mV)"
+  # }
+  # z <- depth(x)
+  # if(!add){
+  #   par(mar=c(5, 4, 4, 2)+0.1)
+  #   plot(z, AMP, type = "l", xlab = x@depthunit, ylab = ylab, ...)
+  #   if(all == TRUE){
+  #     if(plotLog == TRUE){
+  #       invisible(apply(log(abs(x@data)), 2, lines, x = z, 
+  #                       col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
+  #     }else{
+  #       invisible(apply((abs(x@data)), 2, lines, x = z, 
+  #                       col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
+  #     }
+  #   }
+  #   title(x@name)
+  # }else{
+  #   if(all == TRUE){
+  #     if(plotLog == TRUE){
+  #       invisible(apply(log(abs(x@data)), 2, lines, x = z, 
+  #                       col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
+  #     }else{
+  #       invisible(apply((abs(x@data)), 2, lines, x = z, 
+  #                       col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
+  #     }
+  #   }
+  #   lines(z, AMP, ...)
+  # }
   #   par(op)
 } 
 )

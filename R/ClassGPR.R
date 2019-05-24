@@ -2243,6 +2243,7 @@ setMethod("plotAmpl", "GPR", function(x, npad = 100, FUN = mean, add = FALSE,
   #   op <- par(no.readonly=TRUE)
   warning("Deprecated!\nUse 'trPlot(envelope(x))' or ",
           "'trPlot(traceStat(envelope(x)))' instead.")
+  FUN <- match.fun(FUN)
   trPlot(traceStat(envelope(x), FUN = FUN), ...)
   # xAMP <- suppressWarnings( ampl(x, npad = npad, FUN = FUN, ...) )
   # AMP <- xAMP@data
@@ -3611,52 +3612,55 @@ setMethod(
   f = "trPlot",
   signature = "GPR",
   definition = function(x, ...){
-    dots <- list(...)
-    if(!is.null(dots[["log"]]) && dots[["log"]] == "y"){
-      dots[["log"]] <- ""
-      x <- log(x)
-      if(is.null(dots[["ylab"]])){
-        dots[["ylab"]] <- "log(amplitude envelope mV)"
+    if(ncol(x) = 1){
+      plot(x, ...)
+    }else{
+      dots <- list(...)
+      if(!is.null(dots[["log"]]) && dots[["log"]] == "y"){
+        dots[["log"]] <- ""
+        x <- log(x)
+        if(is.null(dots[["ylab"]])){
+          dots[["ylab"]] <- "log(amplitude envelope mV)"
+        }
       }
-    }
-    if(is.null(dots[["ylab"]])) dots[["ylab"]] <- "amplitude envelope (mV)"
-    
-    dotsLine <- list()
-    dotsLine[["X"]] <- x
-    dotsLine[["MARGIN"]] <- 2
-    dotsLine[["FUN"]] <- lines
-    dotsLine[["x"]] <- depth(x)
-    
-    dotsLine[["lty"]] <- dots[["lty"]]
-    dotsLine[["lwd"]] <- dots[["lwd"]]
-    dotsLine[["col"]] <- dots[["col"]]
-    # be carefull (dots$type redefined below)
-    dotsLine[["type"]] <- dots[["type"]]  
-    dotsLine[["pch"]] <- dots[["pch"]]
-    
-    if(is.null(dots[["ylim"]])){
-      dots[["ylim"]] <- range(x)
-      if(dots[["ylim"]][1] > 0){
-        dots[["ylim"]][1] <- 0
-      }else{
-        dots[["ylim"]] <- max(abs(dots[["ylim"]])) * c(-1, 1)
+      if(is.null(dots[["ylab"]])) dots[["ylab"]] <- "amplitude envelope (mV)"
+      
+      dotsLine <- list()
+      dotsLine[["X"]] <- x
+      dotsLine[["MARGIN"]] <- 2
+      dotsLine[["FUN"]] <- lines
+      dotsLine[["x"]] <- depth(x)
+      
+      dotsLine[["lty"]] <- dots[["lty"]]
+      dotsLine[["lwd"]] <- dots[["lwd"]]
+      dotsLine[["col"]] <- dots[["col"]]
+      # be carefull (dots$type redefined below)
+      dotsLine[["type"]] <- dots[["type"]]  
+      dotsLine[["pch"]] <- dots[["pch"]]
+      
+      if(is.null(dots[["ylim"]])){
+        dots[["ylim"]] <- range(x)
+        if(dots[["ylim"]][1] > 0){
+          dots[["ylim"]][1] <- 0
+        }else{
+          dots[["ylim"]] <- max(abs(dots[["ylim"]])) * c(-1, 1)
+        }
       }
+      if(is.null(dots[["ylim"]])){
+        dots[["ylim"]] <- range(depth(x))
+      }
+      if(!is.null(dots[["ylog"]])){
+        xlab <- "sdf"
+      }
+      dots[["x"]] <- x[,1]
+      dots[["y"]] <- NULL
+      dots[["type"]] <- "n"
+      invisible( do.call(plot, dots) )
+      #plot(x[,1], type = "n", ylim = ylim, xlim = range(depth(x)), ...)
+      
+      # lty, line width, lwd, color, col and for type = "b", pch.
+      invisible(do.call(apply, dotsLine))
     }
-    if(is.null(dots[["ylim"]])){
-      dots[["ylim"]] <- range(depth(x))
-    }
-    if(!is.null(dots[["ylog"]])){
-      xlab <- "sdf"
-    }
-    dots[["x"]] <- x[,1]
-    dots[["y"]] <- NULL
-    dots[["type"]] <- "n"
-    invisible( do.call(plot, dots) )
-    #plot(x[,1], type = "n", ylim = ylim, xlim = range(depth(x)), ...)
-    
-    # lty, line width, lwd, color, col and for type = "b", pch.
-    invisible(do.call(apply, dotsLine))
-    
   }
 )
 

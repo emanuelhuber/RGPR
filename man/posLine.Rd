@@ -2,10 +2,10 @@
 % Please edit documentation in R/global.R
 \name{posLine}
 \alias{posLine}
-\title{Position on a multiline}
+\title{Relative position on a multiline}
 \usage{
 posLine(loc, last = FALSE)
 }
 \description{
-Position on a multiline
+Relative position on a multiline
 }

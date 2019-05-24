@@ -348,12 +348,20 @@ setGenericVerif("interpPos", function(x, topo, plot = FALSE, r = NULL, tol = NUL
 setGenericVerif("regInterpPos", function(x, type = c("linear", "cosine"), 
           dx = NULL)  standardGeneric("regInterpPos"))
 
-#' @name relPos
-#' @rdname relPos
+#' @name relTrPos
+#' @rdname relTrPos
 #' @export
-setGenericVerif("relPos", function(x) 
-    standardGeneric("relPos"))
-    
+setGenericVerif("relTrPos", function(x, last = FALSE) 
+    standardGeneric("relTrPos"))
+
+#' @name relTrPos3D
+#' @rdname relTrPos
+#' @export
+setGenericVerif("relTrPos3D", function(x, last = FALSE) 
+  standardGeneric("relTrPos3D"))
+
+
+
 # #' @name readGPR
 # #' @rdname readGPR
 # #' @export
@@ -1266,20 +1274,22 @@ selectBBox <- function(border="red",lwd=2,...){
   return(x)
 }
 
-#' Position on a multiline
+#' Relative position on a multiline
 #'
-#' Position on a multiline
+#' Relative position on a multiline
 #' @export
-posLine <- function(loc,last=FALSE){
+posLine <- function(loc, last = FALSE){
   loc <- as.matrix(loc)
-  all_dist <- cumsum(c(0,sqrt(apply(diff(loc)^2,1,sum))))
+  all_dist <- cumsum(c(0, sqrt(apply(diff(loc)^2, 1, sum))))
   if(last){
-        return(tail(all_dist,1))
+        return(tail(all_dist, 1))
   }else{
         return(as.numeric(all_dist))
   }
 }
-  
+
+
+
 #' Closest trace
 #' 
 #' Return the indice of the closest trace to the point \code{y}
@@ -1294,6 +1304,7 @@ closestTr <- function(x, y){
                  byrow = TRUE)
   which.min(rowSums((ymat - x@coord[,1:2])^2))
 }
+
 
 
 #' latitude-longitude to UTM

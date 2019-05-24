@@ -4650,13 +4650,30 @@ interpPosFromGeoJSON <- function(x, geojson, tol = NULL, backproject = TRUE){
 
 #' Relative trace position on the GPR profile.
 #'
-#' @name relPos
-#' @rdname relPos
+#' Trace position computed from (x, y)
+#' @name relTrPos
+#' @rdname relTrPos
 #' @export
-setMethod("relPos", "GPR", function(x){
-  return(posLine(x@coord))
+setMethod("relTrPos", "GPR", function(x, last = FALSE){
+  return(posLine(x@coord[ ,1:2], last = last))
 } 
 )
+
+#' Relative trace position acounting for elevation.
+#'
+#' Trace position computed from (x, y, z)
+#' @name relTrPos3D
+#' @rdname relTrPos
+#' @export
+setMethod("relTrPos3D", "GPR", function(x, last = FALSE){
+  return(posLine(x@coord, last = last))
+} 
+)
+
+#' @export
+relPos <- function(x){
+  stop("Use 'relPos()' instead!")
+}
 
 #' Reverse the trace position.
 #'
@@ -4722,8 +4739,8 @@ setMethod("shiftEst", "GPR", function(x, y = NULL,
 #' @rdname delineation
 #' @export
 setMethod("delineate", "GPR", 
-          function(x,name=NULL,type=c("raster","wiggles"),addTopo=FALSE,
-                   nupspl=NULL,n = 10000, ...){
+          function(x,name = NULL, type = c("raster", "wiggles"), 
+                   addTopo = FALSE, nupspl = NULL, n = 10000, ...){
             if(is.null(dev.list())){
               stop(paste0("You must first plot the GPR profile",
                           "with the function \"plot\"!\n"))

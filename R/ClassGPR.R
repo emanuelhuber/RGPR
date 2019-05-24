@@ -2152,7 +2152,7 @@ HilbertTransf <- function(x, npad = 10){
 }
 
 
-#' Plot the trace plotEnvelope
+#' DEPRECATED - Plot the trace plotEnvelope
 #' 
 #' Plot the amplitude envelope of each trace. See \code{envelope}.
 #' 
@@ -2174,10 +2174,11 @@ HilbertTransf <- function(x, npad = 10){
 #' @name plotEnvelope
 #' @rdname envelope
 #' @export
-setMethod("plotEnvelope", "GPR", function(x, npad = 100, FUN = NULL, add = FALSE, 
+setMethod("plotEnvelope", "GPR", function(x, npad = 100, FUN = mean, add = FALSE, 
                                       all = FALSE, plotLog = TRUE, ...){
   #   op <- par(no.readonly=TRUE)
-  stop("Deprecated!\nUse 'trPlot(envelope(x))'.")
+  stop("Deprecated!\nUse 'trPlot(envelope(x))' or ",
+       "'trPlot(traceStat(envelope(x)))' instead.")
   # AMP <- envelope(x, npad = npad, FUN = FUN, ...)
   # # AMP <- xAMP@data
   # ylab <- "mV"
@@ -2216,7 +2217,7 @@ setMethod("plotEnvelope", "GPR", function(x, npad = 100, FUN = NULL, add = FALSE
 } 
 )
 
-#' Plot the trace amplitude
+#' DEPRECATED - Plot the trace amplitude
 #' 
 #' Plot the amplitude estimated over the whole GPR data as a function of 
 #'  time/depth.
@@ -2237,7 +2238,7 @@ setMethod("plotEnvelope", "GPR", function(x, npad = 100, FUN = NULL, add = FALSE
 #' @name plotAmpl
 #' @rdname plotAmpl
 #' @export
-setMethod("plotAmpl", "GPR", function(x, npad = 100, FUN = NULL, add = FALSE, 
+setMethod("plotAmpl", "GPR", function(x, npad = 100, FUN = mean, add = FALSE, 
                                       all = FALSE, plotLog = TRUE, ...){
   #   op <- par(no.readonly=TRUE)
   warning("Deprecated!\nUse 'trPlot(envelope(x))' or ",

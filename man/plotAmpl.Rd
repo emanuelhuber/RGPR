@@ -3,9 +3,9 @@
 \docType{methods}
 \name{plotAmpl}
 \alias{plotAmpl}
-\title{Plot the trace amplitude}
+\title{DEPRECATED - Plot the trace amplitude}
 \usage{
-\S4method{plotAmpl}{GPR}(x, npad = 100, FUN = NULL, add = FALSE,
+\S4method{plotAmpl}{GPR}(x, npad = 100, FUN = mean, add = FALSE,
   all = FALSE, plotLog = TRUE, ...)
 }
 \arguments{

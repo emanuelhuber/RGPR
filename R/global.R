@@ -314,15 +314,15 @@ setGenericVerif("trProject", function(x, CRSobj) standardGeneric("trProject"))
 setGenericVerif("gethd", function(x,hd=NULL) standardGeneric("gethd"))
 
 
-setGenericVerif("plotAmpl", function(x, npad = 100, FUN = NULL, add = FALSE, 
+setGenericVerif("plotAmpl", function(x, npad = 100, FUN = mean, add = FALSE, 
                 all = FALSE,...) standardGeneric("plotAmpl"))
 
 
-setGenericVerif("ampl", function(x, npad = 100, FUN = NULL, ...) 
+setGenericVerif("ampl", function(x, npad = 100, FUN = mean, ...) 
   standardGeneric("ampl"))
 
 
-setGenericVerif("plotEnvelope", function(x, npad = 100, FUN = NULL, add = FALSE, 
+setGenericVerif("plotEnvelope", function(x, npad = 100, FUN = mean, add = FALSE, 
                               all = FALSE,...) standardGeneric("plotEnvelope"))
 
 setGenericVerif("envelope", function(x, npad = 100) 

@@ -8,7 +8,7 @@
 \usage{
 \S4method{envelope}{GPR}(x, npad = 100)
 
-\S4method{plotEnvelope}{GPR}(x, npad = 100, FUN = NULL, add = FALSE,
+\S4method{plotEnvelope}{GPR}(x, npad = 100, FUN = mean, add = FALSE,
   all = FALSE, plotLog = TRUE, ...)
 }
 \arguments{

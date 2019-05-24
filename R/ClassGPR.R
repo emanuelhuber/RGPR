@@ -2240,7 +2240,9 @@ setMethod("plotEnvelope", "GPR", function(x, npad = 100, FUN = NULL, add = FALSE
 setMethod("plotAmpl", "GPR", function(x, npad = 100, FUN = NULL, add = FALSE, 
                                       all = FALSE, plotLog = TRUE, ...){
   #   op <- par(no.readonly=TRUE)
-  warning("Deprecated!\nUse 'trPlot(envelope(x))' instead.")
+  warning("Deprecated!\nUse 'trPlot(envelope(x))' or ",
+          "'trPlot(traceStat(envelope(x)))' instead.")
+  trPlot(traceStat(envelope(x), FUN = FUN), ...)
   xAMP <- suppressWarnings( ampl(x, npad = npad, FUN = FUN, ...) )
   AMP <- xAMP@data
   ylab <- "mV"
@@ -2975,10 +2977,7 @@ setMethod("traceStat", "GPR", function(x, w = NULL, FUN = mean, ...){
   }else{
     x@data <- wapplyMat(x@data, width = w, by = 1, FUN = FUN, MARGIN = 1, ...)
   }
-  # funName <- getFunName(FUN)
-  # proc(x) <- getArgs( addArgs = c('FUN' = funName))
   proc(x) <- getArgs()
-  #   x@proc <- c(x@proc, proc)
   return(x)
 }
 )
@@ -3022,6 +3021,7 @@ setMethod("traceStat", "GPR", function(x, w = NULL, FUN = mean, ...){
 #' @rdname traceAverage
 #' @export
 setMethod("traceAverage", "GPR", function(x, w = NULL, FUN = mean, ...){
+  warning("Deprecated!\n Use 'traceStat()' instead. Check the help.")
   FUN <- match.fun(FUN)
   if(is.null(w)){
     xdata <- x@data

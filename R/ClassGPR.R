@@ -3639,7 +3639,7 @@ setMethod(
       dotsLine[["pch"]] <- dots[["pch"]]
       
       if(is.null(dots[["ylim"]])){
-        dots[["ylim"]] <- range(x)
+        dots[["ylim"]] <- range(x, na.rm = TRUE)
         if(dots[["ylim"]][1] > 0){
           dots[["ylim"]][1] <- 0
         }else{

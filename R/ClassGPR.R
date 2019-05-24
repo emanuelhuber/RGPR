@@ -3612,7 +3612,7 @@ setMethod(
   f = "trPlot",
   signature = "GPR",
   definition = function(x, ...){
-    if(ncol(x) = 1){
+    if(ncol(x) == 1){
       plot(x, ...)
     }else{
       dots <- list(...)

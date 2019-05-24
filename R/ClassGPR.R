@@ -3859,7 +3859,8 @@ plot.GPR <- function(x,
       myclab <- ""
       myxlab <- paste0("velocity (", x@posunit, "/", x@depthunit, ")")
     }else if( length(x@coord) > 0 ){
-      xvalues <- posLine(x@coord)
+      # xvalues <- posLine(x@coord)
+      xvalues <- relTrPos(x)
     }
     if(grepl("[m]$",x@depthunit)){
       myylab <- paste0("depth (", x@depthunit, ")")
@@ -4345,7 +4346,8 @@ setMethod("trRmDuplicates", "GPR", function(x, tol = NULL, verbose = TRUE){
     warning("No trace coordinates!")
     return(x)
   }
-  dist2D <- posLine(x@coord[, 1:2], last = FALSE)
+  #dist2D <- posLine(x@coord[, 1:2], last = FALSE)
+  dist2D <- relTrPos(x)
   # in 'x' and 'topo'
   if(is.null(tol))  tol <- sqrt(.Machine$double.eps)
   tdbl <- which(abs(diff(dist2D)) < tol)
@@ -4364,7 +4366,8 @@ setMethod("trRmDuplicates", "GPR", function(x, tol = NULL, verbose = TRUE){
       check <- check + 1L
     }
     x <- x[, -rmTr]  # remove trace in x
-    dist2D <- posLine(x@coord[, 1:2], last = FALSE)
+    # dist2D <- posLine(x@coord[, 1:2], last = FALSE)
+    dist2D <- relTrPos(x)
     tdbl <- which(abs(diff(dist2D)) < tol)
   }
   if(verbose){
@@ -4781,7 +4784,8 @@ setMethod("delineate", "GPR",
                 x@coord <- matrix(0,nrow=ncol(x),ncol=3)
                 x@coord[,1] <- x@pos
               }
-              xvalues <- posLine(x@coord)
+              # xvalues <- posLine(x@coord)
+              xvalues <- relTrPos(x)
               posxOnPlot <- sapply(itp$x, .whichMin, xvalues)
               posyOnPlot <- sapply(itp$y, .whichMin, yvalues)
               mySel <- posxOnPlot >= 0 & posxOnPlot <= length(x) & 
@@ -4854,7 +4858,8 @@ setMethod("addDelineation", "GPR", function(x, itp,
     x@coord <- matrix(0,nrow=ncol(x),ncol=3)
     x@coord[,1] <- x@pos
   }
-  xvalues <- posLine(x@coord)      
+  #xvalues <- posLine(x@coord)      
+  xvalues <- relTrPos(x)      
   posxOnPlot <- sapply(itp$x, .whichMin, xvalues)
   posyOnPlot <- sapply(itp$y, .whichMin, yvalues)
   mySel <- posxOnPlot >= 0 & posxOnPlot <= length(x) & 
@@ -4952,7 +4957,8 @@ setMethod("delineations", "GPR", function(x,sel=NULL,...){
       x@coord <- matrix(0,nrow=ncol(x),ncol=3)
       x@coord[,1] <- x@pos
     }
-    x_dist <- posLine(x@coord)
+    # x_dist <- posLine(x@coord)
+    x_dist <- relTrPos(x)
     message("*** delineated lines ****")
     it <- 0
     for(i in 1:n_d){
@@ -4997,7 +5003,8 @@ setMethod("exportDelineations", "GPR", function(x, dirpath=""){
     x@coord <- matrix(0,nrow=ncol(x),ncol=3)
     x@coord[,1] <- x@pos
   }
-  x_dist <- posLine(x@coord)
+  #x_dist <- posLine(x@coord)
+  x_dist <- relTrPos(x)
   deli <- x@delineations
   z0 <- max(coord(x, 3)) 
   it <- 0
@@ -5092,7 +5099,8 @@ setMethod("plotDelineations", "GPR", function(x,sel=NULL,col=NULL,...){
       x@coord <- matrix(0,nrow=ncol(x),ncol=3)
       x@coord[,1] <- x@pos
     }
-    x_dist <- posLine(x@coord)
+    #x_dist <- posLine(x@coord)
+    x_dist <- relTrPos(x)
     if(is.null(col)){
       col <- 1:n_d
     }
@@ -5139,7 +5147,8 @@ setMethod("identifyDelineation", "GPR", function(x,sel=NULL,...){
       x@coord <- matrix(0,nrow=ncol(x),ncol=3)
       x@coord[,1] <- x@pos
     }
-    x_dist <- posLine(x@coord)
+    #x_dist <- posLine(x@coord)
+    x_dist <- relTrPos(x)
     for(i in 1:n_d){
       if(typeof(deli[[i]])=="list"){
         n_sub_d <- length(deli[[i]])
@@ -5627,7 +5636,8 @@ setMethod("regInterpPos", "GPR", function(x, type = c("linear", "cosine"),
                                           dx = NULL){
   type <- match.arg(type, c("linear", "cosine"))
   if(length(x@coord)>0){
-    xpos <- posLine(x@coord)
+    #xpos <- posLine(x@coord)
+    xpos <- relTrPos(x)
   }else{
     xpos <- x@pos
   }

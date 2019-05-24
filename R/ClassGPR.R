@@ -2177,41 +2177,41 @@ HilbertTransf <- function(x, npad = 10){
 setMethod("plotEnvelope", "GPR", function(x, npad = 100, FUN = NULL, add = FALSE, 
                                       all = FALSE, plotLog = TRUE, ...){
   #   op <- par(no.readonly=TRUE)
-  
-  AMP <- envelope(x, npad = npad, FUN = FUN, ...)
-  # AMP <- xAMP@data
-  ylab <- "mV"
-  if(plotLog == TRUE){
-    AMP <- log(AMP)
-    ylab <- "log(mV)"
-  }
-  z <- depth(x)
-  if(!add){
-    trPlot(AMP, xlab = x@depthunit, ylab = ylab)
-    par(mar=c(5, 4, 4, 2)+0.1)
-    plot(z, AMP, type = "l", xlab = x@depthunit, ylab = ylab, ...)
-    if(all == TRUE){
-      if(plotLog == TRUE){
-        invisible(apply(log(abs(x@data)), 2, lines, x = z, 
-                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
-      }else{
-        invisible(apply((abs(x@data)), 2, lines, x = z, 
-                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
-      }
-    }
-    title(x@name)
-  }else{
-    if(all == TRUE){
-      if(plotLog == TRUE){
-        invisible(apply(log(abs(x@data)), 2, lines, x = z, 
-                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
-      }else{
-        invisible(apply((abs(x@data)), 2, lines, x = z, 
-                        col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
-      }
-    }
-    lines(z, AMP, ...)
-  }
+  stop("Deprecated!\nUse 'trPlot(envelope(x))'.")
+  # AMP <- envelope(x, npad = npad, FUN = FUN, ...)
+  # # AMP <- xAMP@data
+  # ylab <- "mV"
+  # if(plotLog == TRUE){
+  #   AMP <- log(AMP)
+  #   ylab <- "log(mV)"
+  # }
+  # z <- depth(x)
+  # if(!add){
+  #   trPlot(AMP, xlab = x@depthunit, ylab = ylab)
+  #   par(mar=c(5, 4, 4, 2)+0.1)
+  #   plot(z, AMP, type = "l", xlab = x@depthunit, ylab = ylab, ...)
+  #   if(all == TRUE){
+  #     if(plotLog == TRUE){
+  #       invisible(apply(log(abs(x@data)), 2, lines, x = z, 
+  #                       col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
+  #     }else{
+  #       invisible(apply((abs(x@data)), 2, lines, x = z, 
+  #                       col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
+  #     }
+  #   }
+  #   title(x@name)
+  # }else{
+  #   if(all == TRUE){
+  #     if(plotLog == TRUE){
+  #       invisible(apply(log(abs(x@data)), 2, lines, x = z, 
+  #                       col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
+  #     }else{
+  #       invisible(apply((abs(x@data)), 2, lines, x = z, 
+  #                       col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
+  #     }
+  #   }
+  #   lines(z, AMP, ...)
+  # }
   #   par(op)
 } 
 )
@@ -2240,7 +2240,7 @@ setMethod("plotEnvelope", "GPR", function(x, npad = 100, FUN = NULL, add = FALSE
 setMethod("plotAmpl", "GPR", function(x, npad = 100, FUN = NULL, add = FALSE, 
                                       all = FALSE, plotLog = TRUE, ...){
   #   op <- par(no.readonly=TRUE)
-  warning("Deprecated! Use 'plotEnvelope()' instead.")
+  warning("Deprecated!\nUse 'trPlot(envelope(x))' instead.")
   xAMP <- suppressWarnings( ampl(x, npad = npad, FUN = FUN, ...) )
   AMP <- xAMP@data
   ylab <- "mV"
@@ -2295,7 +2295,7 @@ setMethod("plotAmpl", "GPR", function(x, npad = 100, FUN = NULL, add = FALSE,
 #' @rdname processing
 #' @export
 setMethod("processing", "GPR", function(x){
-  warning("DEPRECATED! Use 'proc()' instead!")
+  stop("DEPRECATED! Use 'proc()' instead!")
   return(x@proc)
 } 
 )
@@ -3611,8 +3611,6 @@ setMethod(
   signature = "GPR",
   definition = function(x, ...){
     dots <- list(...)
-
-   
     if(!is.null(dots[["log"]]) && dots[["log"]] == "y"){
       dots[["log"]] <- ""
       x <- log(x)
@@ -5526,14 +5524,14 @@ setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"), ...){
 setMethod("upsample", "GPR", function(x,n){
   n <- abs(round(n))
   if(length(n) == 1){
-    n <- rep(n,2)
+    n <- rep(n, 2)
   }
-  x@data <- .upsample(x@data, n=n, type=c("DFT"))
-  x@data <- x@data[,1:(ncol(x@data))]
-  yvalues <-  (seq(0,by=x@dz,length.out=nrow(x@data)))
+  x@data <- .upsample(x@data, n = n, type = c("DFT"))
+  x@data <- x@data[, 1:(ncol(x@data))]
+  yvalues <- (seq(0, by=x@dz,length.out=nrow(x@data)))
   
-  xvalues  <- .doubleVector(x@pos,n=n[2])
-  yvalues  <- .doubleVector(x@depth,n=n[1])
+  xvalues  <- .doubleVector(x@pos, n = n[2])
+  yvalues  <- .doubleVector(x@depth, n = n[1])
   #  
   # image(xvalues,yvalues,t(x@data))
   
@@ -5588,7 +5586,7 @@ setMethod("upsample", "GPR", function(x,n){
   # trace positions
   x@pos <- xvalues
   # depth/time
-  x@depth <- .doubleVector(x@depth,n=n[1])
+  x@depth <- .doubleVector(x@depth, n = n[1])
   
   x@dx <- x@dx / n[2]
   x@dz <- x@dz / n[1]

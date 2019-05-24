@@ -3639,19 +3639,17 @@ setMethod(
       dotsLine[["pch"]] <- dots[["pch"]]
       
       if(is.null(dots[["ylim"]])){
-        dots[["ylim"]] <- range(x, na.rm = TRUE)
+        dots[["ylim"]] <- range(depth(x), na.rm = TRUE)
         if(dots[["ylim"]][1] > 0){
           dots[["ylim"]][1] <- 0
         }else{
           dots[["ylim"]] <- max(abs(dots[["ylim"]])) * c(-1, 1)
         }
       }
-      if(is.null(dots[["ylim"]])){
-        dots[["ylim"]] <- range(depth(x))
-      }
-      if(!is.null(dots[["ylog"]])){
-        xlab <- "sdf"
-      }
+      # if(is.null(dots[["ylim"]])){
+      #   dots[["ylim"]] <- range(depth(x))
+      # }
+
       dots[["x"]] <- x[,1]
       dots[["y"]] <- NULL
       dots[["type"]] <- "n"

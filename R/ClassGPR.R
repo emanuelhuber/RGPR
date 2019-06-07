@@ -1871,8 +1871,8 @@ setMethod("time0Estimation", "GPR",
           function(x, method = c("coppens", "coppens2", "threshold", "MER"), 
           thr = 0.12, w = 11, ns = NULL, bet = NULL, c0 = 0.299, FUN){
   tfb <- firstBreak(x, method = method, thr = thr, w = w, 
-                    ns = ns, bet = bet, c0 = c0)
-  t0 <- firstBreakToTime0(tfb, x)
+                    ns = ns, bet = bet)
+  t0 <- firstBreakToTime0(tfb, x, c0 = c0)
   time0(x) <- t0
   return(x)
 })

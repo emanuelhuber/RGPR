@@ -201,6 +201,14 @@ setGenericVerif("time0<-",function(x, value){standardGeneric("time0<-")})
 #' @export
 setGenericVerif("setTime0", function(x, t0) standardGeneric("setTime0"))
 
+#' @name time0Estimation
+#' @rdname time0Estimation
+#' @export
+setGenericVerif("time0Estimation",
+          function(x, method = c("coppens", "coppens2", "threshold", "MER"), 
+                   thr = 0.12, w = 11, ns = NULL, bet = NULL, c0 = 0.299, FUN)
+            standardGeneric("time0Estimation"))
+
 
 #' Time of data collection for each trace
 #'

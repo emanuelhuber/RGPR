@@ -1862,6 +1862,21 @@ setMethod("setTime0", "GPR", function(x, t0){
   return(x)
 })
 
+#' Estimate and set time-zero
+#' 
+#' @name time0Estimation
+#' @rdname time0Estimation
+#' @export
+setMethod("time0Estimation", "GPR", 
+          function(x, method = c("coppens", "coppens2", "threshold", "MER"), 
+          thr = 0.12, w = 11, ns = NULL, bet = NULL, c0 = 0.299, FUN){
+  tfb <- firstBreak(x, method = method, thr = thr, w = w, 
+                    ns = ns, bet = bet, c0 = c0)
+  t0 <- firstBreakToTime0(tfb, x)
+  time0(x) <- t0
+  return(x)
+})
+  
 #' Depth/time of the GPR data
 #' 
 #' @name depth
@@ -2362,7 +2377,8 @@ setMethod("dcshift", "GPR", function(x, u = NULL, FUN = mean){
       Dt <- min(time0(x)) - x@depth[1]  # time before time-zero
       u <- x@depth[1] + 0:round((Dt*0.9)/x@dz)
     }else{
-      stop("You must define 'u', not enough samples before time-zero...")
+      warning("You must define 'u', not enough samples before time-zero...")
+      return(x)
     }
   }
   shift <- matrix(apply(x[u, ], 2, FUN), nrow = nrow(x), 

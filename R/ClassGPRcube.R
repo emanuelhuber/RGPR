@@ -429,13 +429,13 @@ trInterp <- function(x, z, zi){
   }
   vj <- seq(dz, by = dz, to = length(x_zi))
   
-  SL <- array(dim = c(nx, ny, length(vj)))
   val <- list()
   vz <- x_zi[vj]
   xpos <- unlist(lapply(X@coords, function(x) x[,1]))
   ypos <- unlist(lapply(X@coords, function(x) x[,2]))
   nx <- abs(diff(xpos)) / dx
   ny  <- abs(diff(ypos)) / dy
+  SL <- array(dim = c(nx, ny, length(vj)))
   for(u in  seq_along(vj)){
     j <- vj[u]
     #z <- rep(sapply(Z, function(x, i = j) x[i]), sapply(V, ncol))

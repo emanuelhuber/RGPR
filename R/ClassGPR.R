@@ -154,6 +154,7 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
             " frequency (", antfreq, " MHz).",
             "\nCorrect if wrong with 'antsep(x) <- ...'")
   }
+  if(is.na(antsep)) antsep <- numeric(0)
   return(antsep)
 }
 
@@ -677,21 +678,28 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
 }
 
 .gprDZT <- function(x, fName = character(0), desc = character(0),
-                    fPath = character(0), Vmax = 50){  
+                    fPath = character(0), Vmax = 50, ch = 1){
+  
+  #  take the channel ch
+  if(ch > length(x$data)){
+    stop("The data has only ", length(x$data), "channel(s)")
+  }
+  x$data <- x$data[[ch]]
+  antName <- x$hd$ANT[ch]
+  
   dd <- as.Date(x$hd$DATE, format = "%Y-%m-%d")
   dd <- as.character(dd)
   if(is.na(dd)){
     dd <- format(Sys.time(), "%Y-%m-%d")
   }
-  traceTime <- as.double(as.POSIXct(
-    strptime(paste(dd, "01:30:00"), "%Y-%m-%d %H:%M:%S")
-  )) + 1:ncol(x$data)
+  traceTime <- as.double(as.POSIXct(strptime(paste(dd, "01:30:00"), 
+                               "%Y-%m-%d %H:%M:%S") )) + 1:ncol(x$data)
   if(length(fName) == 0){
     x_name <- "LINE"
   }else{
     x_name <- fName
   }
-  antfreq <- switch(x$hd$ANT,
+  antfreq <- switch(antName,
                     '3200'   = numeric(0), # adjustable
                     '3200MLF' = numeric(0), # adjustable
                     '500MHz' = 500,
@@ -720,11 +728,14 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
                     'D50800' = 800,
                     numeric(0))  # 800,300,
   if(length(antfreq) == 0){
-    antfreq <- freqFromString(x$hd$ANT)
+    antfreq <- freqFromString(antName)
   }
   if(length(antfreq) == 0){
     message("I could not identify the antenna frequency. Please set the ",
-            "correct antenna frequency value with 'antsep(x) <- ...")
+            "correct antenna frequency value with 'antfreq(x) <- ...")
+    message("Please set also the correct antenna seaparation",
+            "distance value with 'antsep(x) <- ...")
+    
     antsep <- numeric(0)
   }else{
     antsep <- antSepFromAntFreq(antfreq)
@@ -737,8 +748,8 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
       fid         = rep("", ncol(x$data)),
       #coord = coord,
       coord       = matrix(nrow=0, ncol = 0),
-      pos         = x$pos,
-      depth       = x$depth,
+      pos         = x$pos[1:ncol(x$data)],
+      depth       = x$depth[1:nrow(x$data)],
       rec         = matrix(nrow = 0, ncol = 0),
       trans       = matrix(nrow = 0, ncol = 0),
       time0       = rep(0, ncol(x$data)),
@@ -800,6 +811,7 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
 #'             It assumes that \code{Vmin = -Vmax}. If \code{Vmax = NULL},
 #'             no bytes to Volt transformation is applied.
 #' @param fPath Filepath (character). DEPRECATED. Use \code{dsn} instead.
+#' @param ch For multi-frequency GSSI files (*.dzt), which channel is red.
 #' @return The GPR data as object of the class RGPR.
 #' @seealso \code{\link{writeGPR}}
 #' @examples
@@ -823,7 +835,7 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
 #' @rdname readGPR
 #' @export
 readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
-                    fPath){
+                    fPath, ch = 1){
   # @aliases readGPR-methods
   # setMethod("readGPR", "character", function(fPath, desc = "", ...){
   if(!missing(fPath)){
@@ -919,7 +931,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
     # fName <- .fNameWExt(fPath)
     A <- readDZT(dsn)
     x <- .gprDZT(A, fName = fName, fPath = fPath, 
-                 desc = desc, Vmax = Vmax)
+                 desc = desc, Vmax = Vmax, ch = ch)
   }else if("TXT" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
     A <- readTXT(dsn)
@@ -1971,6 +1983,31 @@ setReplaceMethod(
   }
 )
 
+
+#' Antenna frequency in MHz
+#' 
+#' Antenna frequency of the antennas in MHz
+#' @name antfreq
+#' @rdname antfreq
+#' @export
+setMethod("antfreq", "GPR", function(x){
+  return(x@antfreq)
+} 
+)
+#' @name antfreq<-
+#' @rdname antfreq
+#' @export
+setReplaceMethod(
+  f = "antfreq",
+  signature = "GPR",
+  definition = function(x, value){
+  # not CMP, not WARR => common-offset
+  if(length(value) > 1) warning("Only first element is used!")
+  x@antfreq <- as.numeric(value[1])
+  x@proc <- c(x@proc, "antfreq<-")
+  return(x)
+})
+
 #' Survey mode of the GPR data
 #' 
 #' @name surveymode
@@ -2801,33 +2838,42 @@ setMethod("filter1D", "GPR", function(x, type = c("median", "hampel",
                                                   "Gaussian"), ...){
   type <- match.arg(type, c("median", "hampel", "Gaussian"))
   w <- 50 * x@dz   # argument initialization
+  if( length(dots <- list(...)) ){
+    #         dots <- list(...)
+    if( !is.null(dots$w)){
+      w <- dots$w
+    }
+  }
+  w <- w / x@dz
   if(type == "median"){
-    if( length(dots <- list(...)) ){
-      #         dots <- list(...)
-      if( !is.null(dots$w)){
-        w <- dots$w
-        w <- round(w / x@dz)
-      }
-    }  
+    # if( length(dots <- list(...)) ){
+    #   #         dots <- list(...)
+    #   if( !is.null(dots$w)){
+    #     w <- dots$w
+    #   }
+    #   w <- round(w / x@dz)
+    # }  
+    w <- round(w)
     if(w %% 2 == 1){
       w <- w + 1  # uneven window
     }
     w <- (w-1)/2
     x@data <-  apply(x@data, 2, .medianFilter1D, w)
   }else if(type == "hampel"){
-    if( length(dots <-  list(...)) ){
-      #         dots <- list(...)
-      if( !is.null(dots$w)){
-        w <- dots$w
-        w <- round(w / x@dz)
-      }
-    }
+    # if( length(dots <-  list(...)) ){
+    #   #         dots <- list(...)
+    #   if( !is.null(dots$w)){
+    #     w <- dots$w
+    #   }
+    #   w <- round(w / x@dz)
+    # }
+    w <- round(w)
     A <- x@data
     if(length(dim(A))<2){
-      A <- matrix(A,ncol=1,nrow=length(A))
+      A <- matrix(A, ncol = 1, nrow = length(A))
     }
-    X <- rbind(matrix(0,ncol=ncol(A),nrow=w), A, 
-               matrix(0,ncol=ncol(A),nrow=w))
+    X <- rbind(matrix(0, ncol = ncol(A), nrow = w), A, 
+               matrix(0, ncol = ncol(A), nrow = w))
     n <- nrow(X)
     Y <- X
     for (i in (w + 1):(n - w)) {
@@ -2840,12 +2886,12 @@ setMethod("filter1D", "GPR", function(x, type = c("median", "hampel",
     }
     x@data <- Y[(w+1):(n-w),]
   }else if(type == "Gaussian"){
-    if( length(dots <-  list(...)) ){
-      #         dots <- list(...)
-      if( !is.null(dots$w)){
-        w <- dots$w
-      }
-    }
+    # if( length(dots <-  list(...)) ){
+    #   #         dots <- list(...)
+    #   if( !is.null(dots$w)){
+    #     w <- dots$w
+    #   }
+    # }
     x@data <- mmand::gaussianSmooth(x@data, sigma = w)
   }
   proc(x) <- getArgs()

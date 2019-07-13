@@ -262,7 +262,19 @@ setGenericVerif("antsep", function(x) standardGeneric("antsep"))
 #' @rdname antsep
 #' @export
 setGenericVerif("antsep<-",function(x,value){standardGeneric("antsep<-")})                
-                
+
+
+#' @name antfreq
+#' @rdname antfreq
+#' @export
+setGenericVerif("antfreq", function(x) standardGeneric("antfreq"))
+
+#' @name antfreq<-
+#' @rdname antfreq
+#' @export
+setGenericVerif("antfreq<-",function(x,value){standardGeneric("antfreq<-")})                
+
+
 
 #' @name surveymode
 #' @rdname surveymode
@@ -4891,7 +4903,14 @@ readDZT <- function(fPath){
   # range in meters
   hd$DEPTH <- .readBin_float(DZT)        # rhf_depth
   seek(DZT, where = 98, origin = "start")
-  hd$ANT <- readChar(DZT, nchars = 14, useBytes = TRUE)
+  # antenna name
+  ant_name <- character(hd$NCHAN)
+  for(i in seq_len(hd$NCHAN)){
+    seek(DZT, where = 98 + MINHEADSIZE * (i - 1), origin = "start")
+    ant_name[i] <- readChar(DZT, nchars = 14, useBytes = FALSE)
+  }
+  # hd$ANT <- readChar(DZT, nchars = 14, useBytes = TRUE)
+  hd$ANT <- ant_name
   # byte containing versioning bits
   hd$VSBYTE <- .readBin_ushort(DZT) 
 
@@ -4939,12 +4958,25 @@ readDZT <- function(fPath){
   }
   
   tt <- (seq_len(hd$NSAMP) - 1) * hd$RANGE /  (hd$NSAMP - 1 )
-  yy <- 1/hd$SPM * (seq_len(ncol(A)) - 1)
-  #plot3D::image2D(x = tt, y = yy, z = A)
+  # yy <- 1/hd$SPM * (seq_len(ncol(A) ) - 1)
+  # plot3D::image2D(x = tt, y = yy, z = A)
+  
+  yy <- 1/hd$SPM * (seq_len(ncol(A) / hd$NCHAN) - 1)
+  Adata <- vector(mode = "list", length = hd$NCHAN)
+  for(i in seq_len(hd$NCHAN)){
+    Adata[[i]] <- A[, seq(i, by = hd$NCHAN, to = ncol(A))]
+    if(i == 1){
+      hd$MRKS <- Adata[[i]][2,]
+      Adata[[i]] <- Adata[[i]][-c(1, 2), ]   
+    }
+    # plot3D::image2D(y = tt[1:nrow(Adata[[i]])], x = yy, 
+                    # z = t(Adata[[i]][nrow(Adata[[i]]):1,]))
+  }
+  
   if( !inherits(fPath, "connection") ){
     close(DZT)
   }
-  return(list(hd = hd, data = A, depth = tt, pos = yy))
+  return(list(hd = hd, data = Adata, depth = tt, pos = yy))
 }
 
 .readRFDate <- function(con, where = 31){

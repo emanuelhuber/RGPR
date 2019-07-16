@@ -86,35 +86,35 @@
 setClass(
   Class="GPR",  
   slots=c(
-    version = "character",   # version of the class
-    data = "matrix",     # one column per trace
-    traces = "numeric",  # numbering of each trace (from 1 to ntr)
-    depth = "numeric",  # depth position
-    pos = "numeric",    # position  of the traces
-    time0 = "numeric",  # time-zero (first air-wave arrival)
-    time = "numeric",   # time of the trace recording
-    fid = "character",   # fiducial marks, defaults = rep("", ncol(x))!
-    ann = "character",  # annotation (e.g. intersections)
-    coord = "matrix",   # coordinates (x,y,z) of each traces
-    rec = "matrix",     # coordinates (x,y,z) of the receiver antenna
-    trans = "matrix",   # coordinates (x,y,z) of the transmitter antenna
-    coordref = "numeric", # coordinates references
-    freq = "numeric",   # antenna frequency
-    dz = "numeric",   # time/depth sampling
-    dx = "numeric",     # spatial trace sampling
-    antsep = "numeric",   # antenna separation
-    name = "character",  # name of the profile
-    description = "character",  # description of the pro
-    filepath = "character",  # filepath of the profile
-    depthunit = "character", # time/depth unit
-    posunit = "character",  # spatial unit
-    surveymode = "character", # survey mode (reflection/CMP)
-    date = "character",    # date of the survey , format %Y-%m-%d
-    crs = "character",  # coordinate reference system of coord
-    proc= "character",  # processing steps
-    vel = "list",      # velocity model
+    version      = "character",   # version of the class
+    data         = "matrix",     # one column per trace
+    traces       = "numeric",  # numbering of each trace (from 1 to ntr)
+    depth        = "numeric",  # depth position
+    pos          = "numeric",    # position  of the traces
+    time0        = "numeric",  # time-zero (first air-wave arrival)
+    time         = "numeric",   # time of the trace recording
+    fid          = "character",   # fiducial marks, defaults = rep("", ncol(x))!
+    ann          = "character",  # annotation (e.g. intersections)
+    coord        = "matrix",   # coordinates (x,y,z) of each traces
+    rec          = "matrix",     # coordinates (x,y,z) of the receiver antenna
+    trans        = "matrix",   # coordinates (x,y,z) of the transmitter antenna
+    coordref     = "numeric", # coordinates references
+    freq         = "numeric",   # antenna frequency
+    dz           = "numeric",   # time/depth sampling
+    dx           = "numeric",     # spatial trace sampling
+    antsep       = "numeric",   # antenna separation
+    name         = "character",  # name of the profile
+    description  = "character",  # description of the pro
+    filepath     = "character",  # filepath of the profile
+    depthunit    = "character", # time/depth unit
+    posunit      = "character",  # spatial unit
+    surveymode   = "character", # survey mode (reflection/CMP)
+    date         = "character",    # date of the survey , format %Y-%m-%d
+    crs          = "character",  # coordinate reference system of coord
+    proc         = "character",  # processing steps
+    vel          = "list",      # velocity model
     delineations = "list",  # delineated lines
-    hd = "list"      # header from *.dt1 file
+    hd           = "list"      # header from *.dt1 file
   )
 )
 
@@ -1991,7 +1991,7 @@ setReplaceMethod(
 #' @rdname antfreq
 #' @export
 setMethod("antfreq", "GPR", function(x){
-  return(x@antfreq)
+  return(x@freq)
 } 
 )
 #' @name antfreq<-
@@ -2003,7 +2003,7 @@ setReplaceMethod(
   definition = function(x, value){
   # not CMP, not WARR => common-offset
   if(length(value) > 1) warning("Only first element is used!")
-  x@antfreq <- as.numeric(value[1])
+  x@freq <- as.numeric(value[1])
   x@proc <- c(x@proc, "antfreq<-")
   return(x)
 })

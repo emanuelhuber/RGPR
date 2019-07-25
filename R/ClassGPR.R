@@ -1853,11 +1853,11 @@ setMethod("time0", "GPR", function(x){
 setReplaceMethod(
   f="time0",
   signature="GPR",
-  definition=function(x,value){
+  definition=function(x, value){
     if(length(value) == length(x@time0)){
-      x@time0 <- value
+      x@time0 <- as.numeric(value)
     }else{
-      x@time0 <- rep(value[1], length(x@time0))
+      x@time0 <- rep(as.numeric(value[1]), length(x@time0))
     }
     x@proc <- c(x@proc, "time0<-")
     return(x)
@@ -1870,6 +1870,7 @@ setReplaceMethod(
 #' @rdname time0
 #' @export
 setMethod("setTime0", "GPR", function(x, t0){
+  t0 <- as.numeric(t0)
   time0(x) <- t0
   return(x)
 })

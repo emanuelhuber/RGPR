@@ -1874,20 +1874,80 @@ setMethod("setTime0", "GPR", function(x, t0){
   return(x)
 })
 
+
+time0Estimation <- function(...){
+  stop("DEPRECATED!\n",
+       "Use 'estimateTime0()' instead.")
+}
+
 #' Estimate and set time-zero
 #' 
-#' @name time0Estimation
-#' @rdname time0Estimation
+#' Pick the time corresponding to the first break of each trace in the GPR profile.
+#' Return a vector containing the first break times.
+#' 
+#' This function is a wrapper for the following commands
+#' \itemize{
+#'   \item \code{tfb <- firstBreak(x, ...)}
+#'   \item \code{t0 <- firstBreakToTime0(tfb, x)}
+#'   \item \code{time0(x) <- t0}
+#' }
+#'
+#' @param x An object of the class \code{GPR}
+#' @param method A length-one character vector. \code{"coppens"} corresponds to
+#'              the modified Coppens method, \code{"threshold"} to the 
+#'              threshold method, and \code{"MER"} to the modified energy ratio
+#'              method.
+#' @param thr A length-one numeric vector defining the threshold  signal 
+#'              amplitude (in \%) at which time zero is picked (only for the
+#'              threshold method).
+#' @param w A length-one numeric vector defining the length of leading window 
+#'          (only for the modified Coppens and modified energy ratio 
+#'          methods). Recommended value: about one period of the first-arrival 
+#'          waveform. w is defined on a time basis.
+#' @param ns A length-one numeric vector defining the length of the edge 
+#'           preserving smoothing window (only for the modified Coppens 
+#'           method). Recommended value: between one and two signal periods.
+#'           When \code{ns = NULL} the value of \code{ns} is set to 
+#'           \code{1.5 * w}.
+#' @param bet A length-one numeric vector defining the stabilisation 
+#'            constant (only for the modified Coppens method). Not critical. 
+#'            When \code{bet = NULL} the value of \code{bet} is set to 
+#'            20\% of the maximal signal amplitude. 
+#' @seealso \code{\link{time0}} to set time zero and 
+#'          \code{\link{time0Cor}} to shift the traces such that they start
+#'          at time zero.
+#' @references
+#' \describe{
+#'   \item{Modified Coppens method}{Sabbione J.I. and Velis D. (2010) 
+#'        Automatic first-breaks picking: New strategies and algorithms. 
+#'        Geophysics, 75(4): 67-76.}
+#'   \item{Modified Energy Ratio (MER) method}{Han L., Wong J., and John C. 
+#'        (2010) Time picking on noisy microseismograms. In: Proceedings of the
+#'        GeoCanada 2010 Convention - Working with the Earth, Calgary, AB, 
+#'        Canada, p. 4}
+#' }
+#' @seealso \code{\link{time0}} and \code{\link{setTime0}} to set time zero,
+#'          \code{\link{firstBreak}} to estimate the first wave break, and
+#'          \code{\link{firstBreakToTime0}} to convert the first wave break
+#'          into time zero.
+#' @name estimateTime0
+#' @rdname estimateTime0
 #' @export
-setMethod("time0Estimation", "GPR", 
-          function(x, method = c("coppens", "coppens2", "threshold", "MER"), 
-          thr = 0.12, w = 11, ns = NULL, bet = NULL, c0 = 0.299, FUN){
-  tfb <- firstBreak(x, method = method, thr = thr, w = w, 
-                    ns = ns, bet = bet)
-  t0 <- firstBreakToTime0(tfb, x, c0 = c0)
-  time0(x) <- t0
-  return(x)
-})
+setMethod("estimateTime0", "GPR", 
+          function(x, method = c("coppens", "threshold", "MER"), 
+                   thr = 0.12, w = 11, ns = NULL, bet = NULL, c0 = 0.299, 
+                   FUN, ...){
+            tfb <- firstBreak(x, method = method, thr = thr, w = w, 
+                              ns = ns, bet = bet)
+            t0 <- firstBreakToTime0(tfb, x, c0 = c0)
+            if(missing(FUN)){
+              time0(x) <- t0
+            }else{
+              time0(x) <- FUN(t0, ...)
+            }
+            return(x)
+          })
+
   
 #' Depth/time of the GPR data
 #' 
@@ -2036,11 +2096,12 @@ setReplaceMethod(
     }
     x@proc <- c(x@proc, "surveymode<-")
     return(x)
-    }
-)
+})
 
-#' Return TRUE is surveymode is CMP
+
+#' Return TRUE if surveymode is CMP
 #' 
+#' Return TRUE if surveymode is CMP
 #' @name isCMP
 #' @rdname isCMP
 #' @export
@@ -2048,8 +2109,8 @@ setMethod("isCMP", "GPR", function(x){
   (grepl("CMP", toupper(x@surveymode)) || 
      grepl("WARR", toupper(x@surveymode))) && 
     !grepl("CMPANALYSIS", toupper(x@surveymode))
-} 
-)
+})
+
 
 #' Return TRUE is the data are a function of time
 #' 
@@ -2058,8 +2119,7 @@ setMethod("isCMP", "GPR", function(x){
 #' @export
 setMethod("isTimeUnit", "GPR", function(x){
   grepl("[s]$", x@depthunit)
-} 
-)
+})
 
 #' Return TRUE is the data are a function of length
 #' 
@@ -2401,7 +2461,7 @@ setReplaceMethod(
 #' direct-current shift of every trace is substracted from every trace.
 #' @param x An object of the class `GPR`.
 #' @param u Number of time samples used to evaluate the DC-shift. If 
-#'          \code{u = NULL}, the function take the first 90% of the 
+#'          \code{u = NULL}, the function take the first 90\% of the 
 #'          samples before time-zero.  
 #' @param FUN A function to apply on the first `u` time samples (default is 
 #' `mean`; alternatively `median` could be used or any user defined function).
@@ -2472,9 +2532,20 @@ setMethod("dcshift", "GPR", function(x, u = NULL, FUN = mean){
 #' @name firstBreak
 #' @rdname firstBreak
 #' @export
-setMethod("firstBreak", "GPR", function(x, method = c("coppens", "coppens2",
-                                                      "threshold",  "MER"), thr = 0.12, w = 11, ns = NULL, bet = NULL){
-  method <- match.arg(method, c("coppens", "coppens2", "threshold", "MER"))
+setMethod("firstBreak", "GPR", function(x, method = c("coppens",
+                                                      "threshold",  "MER"), 
+                                        thr = 0.12, w = 11, ns = NULL, 
+                                        bet = NULL){
+  method <- match.arg(method, c("coppens", "threshold", "MER"))
+  
+  # shorten the file -> computation only up to the max value
+  tst <- which(as.matrix(x) == max(x), arr.ind = TRUE)
+  if(length(tst) > 0 ){
+    xrowmax <- max(tst[,"row"]) + w
+    if(xrowmax < nrow(x)){
+      x <- x[1:xrowmax,]
+    }
+  }
   if(method == "coppens"){
     w <- round(w / x@dz)
     if( (w %% 2) == 0){
@@ -2492,6 +2563,7 @@ setMethod("firstBreak", "GPR", function(x, method = c("coppens", "coppens2",
     }
     fb <- apply(xs, 2, .firstBreakModCoppens, w = w, ns = ns, bet = bet)
     fb <- x@depth[fb] # fb * x@dz
+  # the vectorized version of "coppens" (though not really faster)
   }else if(method == "coppens2"){
     w <- round(w / x@dz)
     if( (w %% 2) == 0){
@@ -2812,18 +2884,19 @@ setMethod("dewow", "GPR", function(x, type = c("MAD", "Gaussian"), w){
 #' @rdname gain
 #' @export
 setMethod("gain", "GPR", function(x, 
-                                  type = c("power", "exp", "agc"),...){
+                                  type = c("power", "exp", "agc"), ...){
   type <- match.arg(type, c("power", "exp", "agc"))
   x@data[is.na(x@data)] <-0
-  if(type=="power"){
+  if(type == "power"){
+    # alpha, dts, t0 = NULL, te = NULL, tcst = NULL
     x@data <- .gainPower(x@data, dts = x@dz, ...)
-  }else if(type=="exp"){
+  }else if(type == "exp"){
+    # alpha, dts, t0 = NULL, te = NULL
     x@data <- .gainExp(x@data, dts = x@dz, ...)
-  }else if(type=="agc"){
+  }else if(type == "agc"){
     x@data <- .gainAgc(x@data, dts = x@dz, ...)
   }
   proc(x) <- getArgs()
-  #   x@proc <- c(x@proc, proc)
   return(x)
 } 
 )
@@ -3182,12 +3255,49 @@ setMethod("backgroundSub", "GPR", function(x, width = 21, trim = 0.2,
 
 #----------------- FREQUENCY FILTERS
 #' Frequency filter
+#' 
+#' The frequency filter alters the signal amplitude with respect to frequency.
+#' \describe{
+#'   \item{Low-pass filter}{low frequencies are passed, high frequencies are attenuated.}
+#'   \item{High-pass filter}{high frequencies are passed, low frequencies are attenuated.}
+#'   \item{Band-pass filter}{only frequencies in a frequency band are passed.}
+#' }
 #'
+#' For the low- and high-pass filter, only one cut-off frequency can be defined
+#' while the argument \code{L} will define the filter length of the Hamming
+#' window (necessary to reduce ringing artifacts from the Gibbs phenomenon). 
+#' If two values are passed to the cut-off frequency argument \code{f}, 
+#' the value of \code{L} will be ignored.
+#' Example for low-pass filter: \code{f = c(150, 200)}.
+#' Example for high-pass filter: \code{f = c(10, 20)}
+#' 
+#' For the band-pass filter, only two cut-off frequency can be defined
+#' while the argument \code{L} will define the filter length of the Hamming
+#' window (necessary to reduce ringing artifacts from the Gibbs phenomenon). 
+#' If four values (the two first corner frequencies followed by the two last
+#' corner frequencies ) are passed to the cut-off frequency argument \code{f}, 
+#' the value of \code{L} will be ignored. 
+#' Example: \code{f = c(10, 20, 150, 200)}
+#' 
+#' See this free book: The Scientist and Engineer's Guide to Digital Signal 
+#' Processing By Steven W. Smith, Ph.D.
+#'
+#' @param x An object of the class GPR
+#' @param f numeric vector: cut-off frequencies. Cutoff frequency is the 
+#'          frequency beyond which the filter will not pass signals.
+#'           See Details.
+#' @param type length-one character vector: type of frequency vector. \code{low}
+#'             for low-pass filter, \code{high} for high-pass filter and 
+#'             \code{bandpass} for bandpass filter.
+#' @param L length-one numeric defining the filter length. See Details.
+#' @param plotSpec boolean. If \code{TRUE} plot the frequency spectrum as well.
 #' @name fFilter
 #' @rdname fFilter
 #' @export
 setMethod("fFilter", "GPR", function(x, f = 100, type = 
-                                       c('low','high','bandpass'),L = 257, plotSpec = FALSE){
+                                     c('low','high','bandpass'),
+                                     L = 257, 
+                                     plotSpec = FALSE){
   x@data <- .fFilter1D(x@data, f = f,  type = type, L = L, dT = x@dz, 
                        plotSpec = plotSpec)
   proc(x) <- getArgs()

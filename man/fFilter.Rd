@@ -8,6 +8,46 @@
 \S4method{fFilter}{GPR}(x, f = 100, type = c("low", "high",
   "bandpass"), L = 257, plotSpec = FALSE)
 }
+\arguments{
+\item{x}{An object of the class GPR}
+
+\item{f}{numeric vector: cut-off frequencies. Cutoff frequency is the 
+frequency beyond which the filter will not pass signals.
+ See Details.}
+
+\item{type}{length-one character vector: type of frequency vector. \code{low}
+for low-pass filter, \code{high} for high-pass filter and 
+\code{bandpass} for bandpass filter.}
+
+\item{L}{length-one numeric defining the filter length. See Details.}
+
+\item{plotSpec}{boolean. If \code{TRUE} plot the frequency spectrum as well.}
+}
 \description{
-Frequency filter
+The frequency filter alters the signal amplitude with respect to frequency.
+\describe{
+  \item{Low-pass filter}{low frequencies are passed, high frequencies are attenuated.}
+  \item{High-pass filter}{high frequencies are passed, low frequencies are attenuated.}
+  \item{Band-pass filter}{only frequencies in a frequency band are passed.}
+}
+}
+\details{
+For the low- and high-pass filter, only one cut-off frequency can be defined
+while the argument \code{L} will define the filter length of the Hamming
+window (necessary to reduce ringing artifacts from the Gibbs phenomenon). 
+If two values are passed to the cut-off frequency argument \code{f}, 
+the value of \code{L} will be ignored.
+Example for low-pass filter: \code{f = c(150, 200)}.
+Example for high-pass filter: \code{f = c(10, 20)}
+
+For the band-pass filter, only two cut-off frequency can be defined
+while the argument \code{L} will define the filter length of the Hamming
+window (necessary to reduce ringing artifacts from the Gibbs phenomenon). 
+If four values (the two first corner frequencies followed by the two last
+corner frequencies ) are passed to the cut-off frequency argument \code{f}, 
+the value of \code{L} will be ignored. 
+Example: \code{f = c(10, 20, 150, 200)}
+
+See this free book: The Scientist and Engineer's Guide to Digital Signal 
+Processing By Steven W. Smith, Ph.D.
 }

@@ -11,7 +11,7 @@
 \item{x}{An object of the class `GPR`.}
 
 \item{u}{Number of time samples used to evaluate the DC-shift. If 
-\code{u = NULL}, the function take the first 90% of the 
+\code{u = NULL}, the function take the first 90\% of the 
 samples before time-zero.}
 
 \item{FUN}{A function to apply on the first `u` time samples (default is 

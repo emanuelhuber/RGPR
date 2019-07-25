@@ -201,14 +201,22 @@ setGenericVerif("time0<-",function(x, value){standardGeneric("time0<-")})
 #' @export
 setGenericVerif("setTime0", function(x, t0) standardGeneric("setTime0"))
 
-#' @name time0Estimation
-#' @rdname time0Estimation
-#' @export
-setGenericVerif("time0Estimation",
-          function(x, method = c("coppens", "coppens2", "threshold", "MER"), 
-                   thr = 0.12, w = 11, ns = NULL, bet = NULL, c0 = 0.299, FUN)
-            standardGeneric("time0Estimation"))
+# #' @name time0Estimation
+# #' @rdname time0Estimation
+# #' @export
+# setGenericVerif("time0Estimation",
+#           function(x, method = c("coppens", "coppens2", "threshold", "MER"), 
+#                    thr = 0.12, w = 11, ns = NULL, bet = NULL, c0 = 0.299, FUN)
+#             standardGeneric("time0Estimation"))
 
+#' @name estimateTime0
+#' @rdname estimateTime0
+#' @export
+setGenericVerif("estimateTime0",
+                function(x, method = c("coppens", "threshold", "MER"), 
+                         thr = 0.12, w = 11, ns = NULL, bet = NULL, c0 = 0.299, 
+                         FUN, ...)
+                  standardGeneric("estimateTime0"))
 
 #' Time of data collection for each trace
 #'
@@ -483,7 +491,7 @@ setGenericVerif("trAmplCor",
 setGenericVerif("dcshift", function(x, u = NULL, FUN = mean) 
                 standardGeneric("dcshift"))
                 
-setGenericVerif("firstBreak", function(x, method = c("coppens", "coppens2",
+setGenericVerif("firstBreak", function(x, method = c("coppens",
                 "threshold",  "MER"), thr = 0.12, w = 11, ns = NULL, 
                 bet = NULL)
                 standardGeneric("firstBreak"))
@@ -2314,6 +2322,8 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
 }
 
 
+#----------------------- FIRST WAVE BREAK -------------------------------------#
+
 # Modified Energy ratio method
 .firstBreakMER <- function(x, w){
   E <- wapplyMat2(x, width = w, by = 1, FUN = function(x) sum(x^2), 
@@ -2366,6 +2376,7 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
   if(is.null(ns)){
     ns <- 1.5 * w
   }
+  
   E1all <- matrix(0, nrow=nrow(x), ncol= ncol(x))
   E1all[1:(nrow(E1all) - w +1),] <- wapplyMat2(x, width = w, by = 1, 
                                               FUN = sum, MARGIN=2)
@@ -2388,6 +2399,7 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
   if(is.null(ns)){
     ns <- 1.5 * w
   }
+  
   E1 <- c(wapply(x, width = w, by = 1, FUN = sum), rep(0, 2*floor(w/2)))
   E2 <- cumsum(x)
   Er <- E1/(E2 + bet)
@@ -2755,7 +2767,7 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
   # FIXME > write a function setFFilter(f, type=..., Fs)
   if(type == "low" || type == "high"){
     # Design the filter using the window method:
-    if(length(f)>1) {
+    if(length(f) > 1) {
         BW <- (f[2] - f[1])/Fs          # filter bandwidth
         fc <- f[1] + (f[2] - f[1])/2    # cut frequency
         L <- round(4 / BW)
@@ -2835,20 +2847,15 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
     #par(mfrow=c(2,1), mar=c(5, 4, 4, 6) + 0.1 )
     par( mar=c(0, 4, 0.3, 2) + 0.1, oma=c(3,2,1,2) )
     plot(fre,pow_A, type="l",
-#         xaxt = "n",
-        #  yaxt = "n", 
-          ylim=c(0,max(pow_A,pow_y)),
-          ylab="power",lwd=2)
+      ylim=c(0,max(pow_A,pow_y)),
+      ylab="power",lwd=2)
       lines(fre,pow_y, type="l",col="blue",lwd=2)
-#       Axis(side = 1, tcl = +0.3,  labels=m ,at=m)
       par(new=TRUE)
-      plot(fre,pow_h,type="l", col="red",
-        yaxt = "n",
-        ylab="")
-        legend("topright",c("input signal","filter","filtered signal"),
-              col = c("black", "red", "blue"), lwd=c(2,1,2),bg = "white")
-      abline(v=f/1000000, col="grey",lty=2)
-     par(op)
+    plot(fre, pow_h, type = "l", col = "red", yaxt = "n", ylab = "")
+      legend("topright", c("input signal", "filter", "filtered signal"),
+            col = c("black", "red", "blue"), lwd = c(2, 1, 2), bg = "white")
+    abline(v = f/1000000, col = "grey", lty = 2)
+   par(op)
   }
   a = (L-1)/2
   y = stats::mvfft(Y, inverse = TRUE)
@@ -2856,14 +2863,13 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
   return(Re(y))
 }
 
-winSincKernel <- function(L,f,type=c("low","high")){
-  type = match.arg(type)  # if L is even (because L - filter length - 
-#                             must be odd)
+winSincKernel <- function(L, f, type = c("low", "high")){
+  type = match.arg(type)  
+  # if L is even (because L - filter length - must be odd)
   x = (-(L-1)/2):((L-1)/2)
   # low-pass
   h = hammingWindow(L) * sincMod(x,2*pi*f)  # h is our filter
   h = h/sum(h)
-
   # high-pass
   if(type == "high"){
     h = -h

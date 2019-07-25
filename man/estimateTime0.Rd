@@ -36,6 +36,15 @@ When \code{ns = NULL} the value of \code{ns} is set to
 constant (only for the modified Coppens method). Not critical. 
 When \code{bet = NULL} the value of \code{bet} is set to 
 20\% of the maximal signal amplitude.}
+
+\item{c0}{Propagation speed of the GPR wave through air (used only when
+\code{keep = NULL}).}
+
+\item{FUN}{Optional: function to apply to the estimated time-zero (e.g., 
+\code{mean} or \code{median} to get set a single time-zero 
+value to the data).}
+
+\item{...}{Arguments of \code{FUN}.}
 }
 \description{
 Pick the time corresponding to the first break of each trace in the GPR profile.

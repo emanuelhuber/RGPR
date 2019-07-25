@@ -1913,6 +1913,12 @@ time0Estimation <- function(...){
 #'            constant (only for the modified Coppens method). Not critical. 
 #'            When \code{bet = NULL} the value of \code{bet} is set to 
 #'            20\% of the maximal signal amplitude. 
+#' @param c0 Propagation speed of the GPR wave through air (used only when
+#'           \code{keep = NULL}).
+#' @param FUN Optional: function to apply to the estimated time-zero (e.g., 
+#'            \code{mean} or \code{median} to get set a single time-zero 
+#'            value to the data).
+#' @param ... Arguments of \code{FUN}.
 #' @seealso \code{\link{time0}} to set time zero and 
 #'          \code{\link{time0Cor}} to shift the traces such that they start
 #'          at time zero.
@@ -2701,8 +2707,9 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("spline",
 #' @name time0Cor
 #' @rdname time0Cor
 #' @export
-setMethod("time0Cor", "GPR", function(x, t0 = NULL,  method = c("spline", 
-                                                                "linear", "nearest", "pchip", "cubic", "none"), 
+setMethod("time0Cor", "GPR", function(x, t0 = NULL, 
+                                      method = c("spline", "linear", "nearest", 
+                                                 "pchip", "cubic", "none"), 
                                       crop = TRUE, keep = 0){
   method <- match.arg(method, c("spline", "linear", "nearest", "pchip", 
                                 "cubic", "none"))

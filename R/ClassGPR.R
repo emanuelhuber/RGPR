@@ -1947,6 +1947,7 @@ setMethod("estimateTime0", "GPR",
             tfb <- firstBreak(x, method = method, thr = thr, w = w, 
                               ns = ns, bet = bet)
             t0 <- firstBreakToTime0(tfb, x, c0 = c0)
+            FUN <- match.fun(FUN)
             if(is.null(FUN)){
               time0(x) <- t0
             }else{

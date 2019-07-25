@@ -1943,11 +1943,11 @@ time0Estimation <- function(...){
 setMethod("estimateTime0", "GPR", 
           function(x, method = c("coppens", "threshold", "MER"), 
                    thr = 0.12, w = 11, ns = NULL, bet = NULL, c0 = 0.299, 
-                   FUN, ...){
+                   FUN = NULL, ...){
             tfb <- firstBreak(x, method = method, thr = thr, w = w, 
                               ns = ns, bet = bet)
             t0 <- firstBreakToTime0(tfb, x, c0 = c0)
-            if(missing(FUN)){
+            if(is.null(FUN)){
               time0(x) <- t0
             }else{
               time0(x) <- FUN(t0, ...)

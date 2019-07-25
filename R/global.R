@@ -215,7 +215,7 @@ setGenericVerif("setTime0", function(x, t0) standardGeneric("setTime0"))
 setGenericVerif("estimateTime0",
                 function(x, method = c("coppens", "threshold", "MER"), 
                          thr = 0.12, w = 11, ns = NULL, bet = NULL, c0 = 0.299, 
-                         FUN, ...)
+                         FUN = NULL, ...)
                   standardGeneric("estimateTime0"))
 
 #' Time of data collection for each trace

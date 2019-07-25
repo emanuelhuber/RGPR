@@ -7,7 +7,7 @@
 \usage{
 \S4method{estimateTime0}{GPR}(x, method = c("coppens", "threshold",
   "MER"), thr = 0.12, w = 11, ns = NULL, bet = NULL, c0 = 0.299,
-  FUN, ...)
+  FUN = NULL, ...)
 }
 \arguments{
 \item{x}{An object of the class \code{GPR}}

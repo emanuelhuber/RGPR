@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Basic GPR data processing
-date: 2019-05-20
+date: 2019-07-27
 ---
 
 <!--
@@ -49,6 +49,29 @@ Install/load `RGPR` and set the working directory
     # install "devtools" if not already done
     if(!require("devtools")) install.packages("devtools")
     devtools::install_github("emanuelhuber/RGPR")
+    ```
+
+\`\`\`\#\#\#\#
+    checking for file ‘/tmp/RtmpuIK1eJ/remotes10695b062f93/emanuelhuber-RGPR-ef59f99/DESCRIPTION’...
+
+✔ checking for file ‘/tmp/RtmpuIK1eJ/remotes10695b062f93/emanuelhuber-RGPR-ef59f99/DESCRIPTION’\#\#
+
+─ preparing ‘RGPR’:\#\#
+
+checking DESCRIPTION meta-information...
+
+✔ checking DESCRIPTION meta-information\#\#
+
+─ checking for LF line-endings in source and make files and shell scripts\#\#
+
+─ checking for empty or unneeded directories\#\# ─ looking to see if a ‘data/datalist’ file should be added\#\#
+
+─ building ‘RGPR\_0.0.5.tar.gz’\#\#
+
+    ##
+    ```
+
+    ```r
     library(RGPR)       # load RGPR in the current R session
     ```
 
@@ -96,7 +119,7 @@ time0(x)
 The first wave break, $t_{\mathrm{fb}}$, is estimated for each traces (it is the time of the first wave record) with `firstBreak()`:
 
 ``` r
-tfb <- firstBreak(x, w = 20, method = "coppens", thr = 0.05) # take some time
+tfb <- firstBreak(x, w = 20, method = "coppens", thr = 0.05)
 plot(pos(x), tfb, pch = 20, ylab = "first wave break",
      xlab = "position (m)")
 ```
@@ -118,7 +141,10 @@ t0 <- firstBreakToTime0(tfb, x)
 time0(x) <- t0     # set time0
 ```
 
-Note that if `t0` is too noisy, you can set `time0(x) <- mean(t0)`.
+Note that:
+
+-   if `t0` is too noisy, you can set `time0(x) <- mean(t0)`.
+-   you can use `x <- setTime0(x, t0)` instead of `time0(x) <- t0` (both are the same)
 
 Check the results (do you see the difference between time zero in red and first wave break time in blue?):
 
@@ -128,6 +154,12 @@ abline(v = tfb[15], col = "blue")  # first wave break time
 ```
 
 ![plot single trace with time0 and first wave break time](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/time0_check-1.png)
+
+You can apply at once all the previous steps (first wave break estimation + set time-zero) with the function `estimateTime0()` (which has the same arguments as the functions `firstBreak()`, `firstBreakToTime0()` plus an extra argument - `FUN` - for function to apply to the estimated time-zero, e.g. `mean()`; see the documentation), i.e.:
+
+``` r
+xx <- estimateTime0(x, w = 20, method = "coppens", thr = 0.05, FUN = mean)
+```
 
 DC shift removal
 ----------------
@@ -546,7 +578,7 @@ writeGPR(x9, fPath = file.path(getwd(), "processing", paste0(name(x9), ".rds")),
     ##  1 fiducial(s)
     ##  description =
     ##  survey date = 2014-04-25
-    ##  Reflection, 100 MHz, Window length = 354.8 ns, dz = 0.4 ns
+    ##  Reflection, 100 MHz, Window length = 352.4 ns, dz = 0.4 ns
     ##  223 traces, 55.5 m
     ##  > PROCESSING
     ##    1. time0<-

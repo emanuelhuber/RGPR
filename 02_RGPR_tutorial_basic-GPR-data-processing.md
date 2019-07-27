@@ -11,12 +11,11 @@ date: 2019-07-27
 Table of Contents
 -----------------
 
-    ## [1] "/media/huber/Seagate1TB/UNIBAS/PROJECTS/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke"
-
 -   [Objectives of this tutorial](#objectives-of-this-tutorial)
 -   [Preliminary](#preliminary)
     -   [File organisation](#file-organisation)
     -   [Install/load `RGPR` and set the working directory](#install/load-%60rgpr%60-and-set-the-working-directory)
+    -   [Getting help](#getting-help)
 -   [Read GPR data](#read-gpr-data)
 -   [Basic processing steps](#basic-processing-steps)
     -   [First wave break and time zero estimation](#first-wave-break-and-time-zero-estimation)
@@ -89,6 +88,15 @@ Install/load `RGPR` and set the working directory
     setwd(myDir)    # set the working directory
     getwd()         # Return the current working directory (just to check)
     ```
+
+Getting help
+------------
+
+If you need help about a specific function, check the documentation with either of `?FUNCTION_NAME`, example:
+
+``` r
+?traceStat
+```
 
 Read GPR data
 =============

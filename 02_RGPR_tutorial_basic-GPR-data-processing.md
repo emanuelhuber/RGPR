@@ -92,7 +92,7 @@ Install/load `RGPR` and set the working directory
 Getting help
 ------------
 
-If you need help about a specific function, check the documentation with either of `?FUNCTION_NAME`, example:
+If you need help about a specific function, check the documentation with either `help("FUNCTION_NAME")` of `?FUNCTION_NAME`, example:
 
 ``` r
 ?traceStat
@@ -230,6 +230,7 @@ x1
     ##  223 traces, 55.5 m
     ##  > PROCESSING
     ##    1. time0<-
+    ##    2. dcshift//u=1:110
     ##  ****************
 
 Compared with `x` or `print(x)`, three additional lines are displayed. The two last line show the applied processing step:
@@ -246,6 +247,7 @@ proc(x1)
 ```
 
     ## [1] "time0<-"
+    ## [2] "dcshift//u=1:110"
 
 Time zero correction
 --------------------

@@ -1,7 +1,22 @@
+---
+layout: page
+title: Basic GPR data processing
+date: 2019-07-27
+---
+
+<!--
+"/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
+"G:/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
+-->
+Table of Contents
+-----------------
+
+    ## [1] "/media/huber/Seagate1TB/UNIBAS/PROJECTS/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke"
+
 -   [Objectives of this tutorial](#objectives-of-this-tutorial)
 -   [Preliminary](#preliminary)
     -   [File organisation](#file-organisation)
-    -   [Install/load `RGPR` and set the working directory](#installload-rgpr-and-set-the-working-directory)
+    -   [Install/load `RGPR` and set the working directory](#install/load-%60rgpr%60-and-set-the-working-directory)
 -   [Read GPR data](#read-gpr-data)
 -   [Basic processing steps](#basic-processing-steps)
     -   [First wave break and time zero estimation](#first-wave-break-and-time-zero-estimation)
@@ -13,8 +28,8 @@
         -   [Power gain](#power-gain)
         -   [Exponential gain](#exponential-gain)
     -   [inverse normal transformations](#inverse-normal-transformations)
-    -   [Median filter (spatial filter)](#median-filter-spatial-filter)
-    -   [Frequency-wavenumber filter (f-k-filter)](#frequency-wavenumber-filter-f-k-filter)
+    -   [Median filter (spatial filter)](#median-filter-(spatial-filter))
+    -   [Frequency-wavenumber filter (f-k-filter)](#frequency-wavenumber-filter-(f-k-filter))
     -   [Processing overview](#processing-overview)
     -   [Other processing functions](#other-processing-functions)
         -   [Trace average removal](#trace-average-removal)
@@ -23,17 +38,6 @@
     -   [Save and export](#save-and-export)
     -   [Read the saved GPR data](#read-the-saved-gpr-data)
 -   [Some final thoughts](#some-final-thoughts)
-
----
-layout: page
-title: Basic GPR data processing
-date: 2019-07-27
----
-
-<!--
-"/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
-"G:/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
--->
 
 ------------------------------------------------------------------------
 

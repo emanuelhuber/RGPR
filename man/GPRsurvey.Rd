@@ -4,7 +4,7 @@
 \alias{GPRsurvey}
 \title{Create an object of the class GPRsurvey}
 \usage{
-GPRsurvey(LINES)
+GPRsurvey(LINES, verbose = TRUE)
 }
 \description{
 Create an object of the class GPRsurvey using a vector of GPR data filepath

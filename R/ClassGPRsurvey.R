@@ -1,4 +1,9 @@
 
+# RULE
+#  - warnings & messages suppressed in functions other than 'GPRsurvey()'
+
+
+
 #------------------------------------------#
 #----------- CLASS DEFINITION -------------#
 setClass(
@@ -34,7 +39,7 @@ setClass(
 #' @name GPRsurvey
 #' @export
 # LINES = list of datapath
-GPRsurvey <- function(LINES){
+GPRsurvey <- function(LINES, verbose = TRUE){
   n <- length(LINES)
   line_names <- character(n)
   line_descriptions <- character(n)
@@ -52,7 +57,7 @@ GPRsurvey <- function(LINES){
   line_dz <- integer(n)
   line_depthunits <- character(n)
   for(i in seq_along(LINES)){
-    gpr <- readGPR(LINES[[i]])
+    gpr <- readGPR(LINES[[i]], verbose = verbose)
     # FIX ME!
     #  > check if name(gpr) is unique
     line_traces[i]       <- ncol(gpr)
@@ -746,7 +751,7 @@ setMethod("surveyIntersect", "GPRsurvey", function(x){
   for(i in seq_along(x@coords)){
     if(!is.null(x@coords[[i]])){
       top0 <- x@coords[[i]]
-      Sa <- suppressWarnings(as.SpatialLines(x[i]))
+      Sa <- verboseF(as.SpatialLines(x[i]), verbose = FALSE)
       v <- seq_along(x@coords)[-i]
       int_coords <- c()
       int_traces <- c()
@@ -754,7 +759,7 @@ setMethod("surveyIntersect", "GPRsurvey", function(x){
       for(j in seq_along(v)){
         if(!is.null(x@coords[[v[j]]])){
           top1 <- x@coords[[v[j]]]
-          Sb <- suppressWarnings(as.SpatialLines(x[v[j]]))
+          Sb <- verboseF(as.SpatialLines(x[v[j]]), verbose = FALSE)
           pt_int <- rgeos::gIntersection(Sa,Sb)
           if(!is.null(pt_int) && class(pt_int) == "SpatialPoints"){
             # for each intersection points
@@ -795,9 +800,9 @@ setMethod("intersections", "GPRsurvey", function(x){
 setMethod("trRmDuplicates", "GPRsurvey", function(x, tol = NULL){
   nrm <- integer(length(x))
   for(i in seq_along(x)){
-    y <- x[[i]]
+    y <- verboseF(x[[i]], verbose = FALSE)
     n0 <- ncol(y)
-    y <- suppressMessages(trRmDuplicates(y))
+    y <- verboseF(trRmDuplicates(y), verbose = FALSE)
     if( (n0 - ncol(y)) > 0){
       message(n0 - ncol(y), " duplicated trace(s) removed from '", name(y), "'!")
       x@filepaths[[i]]     <- .saveTempFile(y)
@@ -845,7 +850,7 @@ setMethod("reverse", "GPRsurvey", function(x, id = NULL, tol = 0.3){
     angRef <- rep(NA, length = length(lnTypeUniq))
     # revTRUE <- rep(FALSE, length = length(x))
     for(i in seq_along(x)){
-      y <- x[[i]]
+      y <- verboseF( x[[i]], verbose = FALSE )
       typeNo <- which(lnTypeUniq %in% lnTypes[[i]] )
       if(is.na(angRef[typeNo])){
         angRef[typeNo] <- gprAngle(y)
@@ -877,7 +882,7 @@ setMethod("reverse", "GPRsurvey", function(x, id = NULL, tol = 0.3){
     id <- as.integer(id)
     if(max(id) <= length(x) && min(id) >= 1){
       for(i in seq_along(id)){
-        y <- getGPR(x, id = id[i])
+        y <- verboseF(getGPR(x, id = id[i]), verbose = FALSE)
         y <- reverse(y)
         x@filepaths[[id[i]]]     <- .saveTempFile(y)
         if(length(y@coord) > 0){
@@ -912,9 +917,9 @@ setMethod("reverse", "GPRsurvey", function(x, id = NULL, tol = 0.3){
 #' @rdname setGridCoord-methods
 #' @export
 setReplaceMethod(
-  f="setGridCoord",
-  signature="GPRsurvey",
-  definition=function(x, value){
+  f = "setGridCoord",
+  signature = "GPRsurvey",
+  definition = function(x, value){
     value$xlines <- unique(value$xlines)
     value$ylines <- unique(value$ylines)
     if( any(value$xlines %in% value$ylines) ){
@@ -942,7 +947,7 @@ setReplaceMethod(
         xNames <- value$xlines
       }
       for(i in seq_along(xNames)){
-        y <- getGPR(x, xNames[i])
+        y <- verboseF( getGPR(x, xNames[i]), verbose = FALSE )
         ntr <- ncol(y)
         x@coords[[xNames[i]]] <- matrix(0, nrow = ntr, ncol = 3)
         x@coords[[xNames[i]]][,1] <- value$xpos[i]
@@ -964,7 +969,7 @@ setReplaceMethod(
         xyNames <- value$ylines
       }
       for(i in seq_along(yNames)){
-        y <- getGPR(x, xNames[i])
+        y <- verboseF( getGPR(x, xNames[i]), verbose = FALSE)
         ntr <- ncol(y)
         x@coords[[yNames[i]]] <- matrix(0, nrow = ntr, ncol = 3)
         x@coords[[yNames[i]]][,1] <- y@pos
@@ -1011,7 +1016,7 @@ setReplaceMethod(
       stop("number of elements not equal to the number of gpr files!!\n")
     }
     for(i in seq_along(x)){
-      if( nrow(value[[i]]) != ncol(x[[i]]) ){
+      if( nrow(value[[i]]) != x@ntraces[i] ){
         stop("error with the ", i, "th element of 'value':",
              " number of coordinates is different from number of traces")
       } 
@@ -1064,7 +1069,7 @@ setMethod("shiftEst", "GPRsurvey", function(x, y = NULL,
     stop("dxy is either NULL or a length-two vector")
   }
   Dshift <- matrix(ncol = 2, nrow = length(x) - 1)
-  y <- x[[1]]
+  y <- verboseF( x[[1]], verbose = FALSE)
   ny <- nrow(y)
   my <- ncol(y)
   i0 <- NULL
@@ -1079,7 +1084,7 @@ setMethod("shiftEst", "GPRsurvey", function(x, y = NULL,
     }
   }
   for(k in seq_len(length(x)-1)){
-    z <- x[[k + 1]]
+    z <- verboseF( x[[k + 1]], verbose = FALSE)
     nz <- nrow(z)
     mz <- ncol(z)
     if(is.null(i0)){
@@ -1216,7 +1221,7 @@ setMethod("writeGPR", "GPRsurvey",
       dir.create(file.path(mainDir, subDir))
     }
     for(i in seq_along(x)){
-      gpr <- x[[i]]
+      gpr <- verboseF( x[[i]] , verbose = FALSE)
       if(length(x@coords[[gpr@name]])>0){
         gpr@coord <- x@coords[[gpr@name]]
       }
@@ -1253,7 +1258,7 @@ setMethod("exportCoord", "GPRsurvey",
   if(type == "SpatialLines"){
     fPath <- ifelse(is.null(fPath), x@names[1], 
                     file.path(dirname(fPath), .fNameWExt(fPath))) 
-    mySpatLines <- suppressWarnings(as.SpatialLines(x))
+    mySpatLines <- verboseF(as.SpatialLines(x), verbose = FALSE)
     dfl <- data.frame(z=seq_along(mySpatLines), 
                       row.names = sapply(slot(mySpatLines, "lines"), 
                       function(x) slot(x, "ID")))
@@ -1280,7 +1285,7 @@ setMethod("exportCoord", "GPRsurvey",
       dir.create(file.path(mainDir, subDir))
     }
     for( i in seq_along(x)){
-      gpr <- x[[i]]
+      gpr <- verboseF( x[[i]] , verbose = FALSE)
       fPath <- file.path(mainDir, subDir, gpr@name)
       exportCoord(gpr, fPath = fPath, type = "ASCII", ...)
     }
@@ -1290,7 +1295,8 @@ setMethod("exportCoord", "GPRsurvey",
 #' @export
 setMethod("exportDelineations", "GPRsurvey", function(x, dirpath=""){
   for(i in seq_along(x)){
-    exportDelineations(getGPR(x, id = i), dirpath = dirpath)
+    exportDelineations(verboseF(getGPR(x, id = i), verbose = FALSE),  
+                       dirpath = dirpath) 
   }
 })
 
@@ -1307,7 +1313,7 @@ setMethod("trAmplCor", "GPRsurvey", function(x,
           type = c("power", "exp", "agc"),...){
   type <- match.arg(type, c("power", "exp", "agc"))
   for(i in seq_along(x)){
-    y <- x[[i]]
+    y <- verboseF( x[[i]], verbose = FALSE )
     y@data[is.na(y@data)] <-0
     if(type=="power"){
       y@data <- .gainPower(y@data, dts = y@dz, ...)
@@ -1333,7 +1339,7 @@ setMethod("trAmplCor", "GPRsurvey", function(x,
 setMethod("papply", "GPRsurvey", function(x, prc = NULL){
   if(typeof(prc) != "list") stop("'prc' must be a list")
   for(i in seq_along(x)){
-    y <- x[[i]]
+    y <- verboseF( x[[i]], verbose = FALSE )
     message('Processing ', y@name, '...', appendLF = FALSE)
     for(k in seq_along(prc)){
       y <- do.call(names(prc[k]), c(x = y,  prc[[k]]))

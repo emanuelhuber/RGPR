@@ -812,6 +812,8 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
 #'             no bytes to Volt transformation is applied.
 #' @param fPath Filepath (character). DEPRECATED. Use \code{dsn} instead.
 #' @param ch For multi-frequency GSSI files (*.dzt), which channel is red.
+#' @param verbose (boolean). If \code{FALSE}, all messages and warnings are
+#'                suppressed (use with care).
 #' @return The GPR data as object of the class RGPR.
 #' @seealso \code{\link{writeGPR}}
 #' @examples
@@ -835,7 +837,7 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
 #' @rdname readGPR
 #' @export
 readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
-                    fPath, ch = 1){
+                    fPath, ch = 1, verbose = TRUE){
   # @aliases readGPR-methods
   # setMethod("readGPR", "character", function(fPath, desc = "", ...){
   if(!missing(fPath)){
@@ -862,10 +864,11 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
   # DT1
   if("DT1" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
-    A <- readDT1(dsn, dsn2)
-    x <- .gpr(A, fName = fName, fPath = fPath, desc = desc, Vmax = Vmax)
+    A <- verboseF( readDT1(dsn, dsn2), verbose = verbose)
+    x <- verboseF( .gpr(A, fName = fName, fPath = fPath, 
+                        desc = desc, Vmax = Vmax),  verbose = verbose)
   }else if("rds" == tolower(ext)){
-    x <- readRDS(dsn)
+    x <- verboseF( readRDS(dsn), verbose = verbose)
     if(class(x) == "GPR"){
       x@filepath <- fPath
     }else if(class(x) == "list"){
@@ -911,32 +914,34 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
     }
   }else if("RD3" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
-    A <- readRD3(dsn, dsn2)
-    x <- .gprRD3(A, fName = fName, fPath = fPath, desc = desc, Vmax = Vmax)
+    A <- verboseF( readRD3(dsn, dsn2), verbose = verbose)
+    x <- verboseF( .gprRD3(A, fName = fName, fPath = fPath, 
+                           desc = desc, Vmax = Vmax), verbose = verbose)
   }else if("RD7" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
-    A <- readRD7(dsn, dsn2)
-    x <- .gprRD3(A, fName = fName, fPath = fPath, desc = desc, nBytes = 32, 
-                 Vmax = Vmax)
+    A <- verboseF( readRD7(dsn, dsn2), verbose = verbose)
+    x <- verboseF( .gprRD3(A, fName = fName, fPath = fPath, desc = desc, 
+                           nBytes = 32, Vmax = Vmax), verbose = verbose)
   }else if("SGY" == toupper(ext) || "SEGY" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
-    A <- readSEGY(dsn)
-    x <- .gprSEGY(A, fName = fName, fPath = fPath, desc = desc, Vmax = Vmax)
+    A <- verboseF( readSEGY(dsn), verbose = verbose)
+    x <- verboseF( .gprSEGY(A, fName = fName, fPath = fPath, 
+                            desc = desc, Vmax = Vmax), verbose = verbose)
   }else if("IPRB" == toupper(ext) || "IPRH" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
-    A <- readImpulseRadar(dsn, dsn2)
-    x <- .gprImpulseRadar(A, fName = fName, fPath = fPath, 
-                          desc = desc, Vmax = Vmax)
+    A <- verboseF( readImpulseRadar(dsn, dsn2), verbose = verbose)
+    x <- verboseF( .gprImpulseRadar(A, fName = fName, fPath = fPath, 
+                          desc = desc, Vmax = Vmax), verbose = verbose)
   }else if("DZT" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
-    A <- readDZT(dsn)
-    x <- .gprDZT(A, fName = fName, fPath = fPath, 
-                 desc = desc, Vmax = Vmax, ch = ch)
+    A <- verboseF( readDZT(dsn), verbose = verbose)
+    x <- verboseF( .gprDZT(A, fName = fName, fPath = fPath, 
+                 desc = desc, Vmax = Vmax, ch = ch), verbose = verbose)
   }else if("TXT" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
-    A <- readTXT(dsn)
-    x <- .gprTXT(A, fName = fName, fPath = fPath, 
-                 desc = desc, Vmax = Vmax)
+    A <- verboseF( readTXT(dsn), verbose = verbose)
+    x <- verboseF( .gprTXT(A, fName = fName, fPath = fPath, 
+                 desc = desc, Vmax = Vmax), verbose = verbose)
   }else{
     stop(paste0("File extension not recognised!\n",
                 "Must be '.DT1', '.dzt', '.rd3', '.sgy', '.segy', '.rds'\n",
@@ -1947,10 +1952,10 @@ setMethod("estimateTime0", "GPR",
             tfb <- firstBreak(x, method = method, thr = thr, w = w, 
                               ns = ns, bet = bet)
             t0 <- firstBreakToTime0(tfb, x, c0 = c0)
-            FUN <- match.fun(FUN)
             if(is.null(FUN)){
               time0(x) <- t0
             }else{
+              FUN <- match.fun(FUN)
               time0(x) <- FUN(t0, ...)
             }
             return(x)
@@ -2120,7 +2125,7 @@ setMethod("isCMP", "GPR", function(x){
 })
 
 
-#' Return TRUE is the data are a function of time
+#' Return TRUE if the data are a function of time
 #' 
 #' @name isTimeUnit
 #' @rdname isTimeUnit
@@ -2129,7 +2134,7 @@ setMethod("isTimeUnit", "GPR", function(x){
   grepl("[s]$", x@depthunit)
 })
 
-#' Return TRUE is the data are a function of length
+#' Return TRUE if the data are a function of length
 #' 
 #' @name isLengthUnit
 #' @rdname isLengthUnit

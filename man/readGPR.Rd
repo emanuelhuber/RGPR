@@ -5,7 +5,7 @@
 \title{Read a GPR data file}
 \usage{
 readGPR(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
-  fPath, ch = 1)
+  fPath, ch = 1, verbose = TRUE)
 }
 \arguments{
 \item{dsn}{data source name: either the filepath to the GPR data (character),
@@ -30,6 +30,9 @@ no bytes to Volt transformation is applied.}
 \item{fPath}{Filepath (character). DEPRECATED. Use \code{dsn} instead.}
 
 \item{ch}{For multi-frequency GSSI files (*.dzt), which channel is red.}
+
+\item{verbose}{(boolean). If \code{FALSE}, all messages and warnings are
+suppressed (use with care).}
 }
 \value{
 The GPR data as object of the class RGPR.

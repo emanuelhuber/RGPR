@@ -5133,6 +5133,14 @@ getFunName <- function(FUN){
   return(funName)
 }
 
+# WRAPPER to suppress warnings & message
+verboseF <- function(g, verbose = TRUE){
+  if(verbose){
+    g
+  }else{
+    suppressWarnings(suppressMessages(g))
+  }
+}
 
 # -------------------------------------------
 # ------------writeDT1--------------------------

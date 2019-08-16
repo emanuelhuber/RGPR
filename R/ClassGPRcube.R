@@ -53,6 +53,25 @@ setClass(
   contains = "GPRcube"
 )
 
+#' Return TRUE if the data are a function of length
+#' 
+#' @name isLengthUnit
+#' @rdname isLengthUnit
+#' @export
+setMethod("isLengthUnit", "GPRslice", function(x){
+  !isTimeUnit(x)
+} 
+)
+
+#' Return TRUE if the data are a function of time
+#' 
+#' @name isTimeUnit
+#' @rdname isTimeUnit
+#' @export
+setMethod("isTimeUnit", "GPRslice", function(x){
+  grepl("[s]$", x@depthunit)
+})
+
 #' @export
 newFUnction <- function(x){
  x
@@ -311,7 +330,11 @@ plot.GPRslice <- function(x,
                      clim = NULL,
                      ...){
   if(is.null(main)){
-    main <- paste0("time = ", x@depth)
+    if(isTimeUnit(x)){
+      main <- paste0("time = ", x@depth, " ", x@depthunit)
+    }else{
+      main <- paste0("depth = ", x@depth, " ", x@depthunit)
+    }
   }
   if(is.null(xlab)){
     xlab <- paste0("x (", x@posunit, ")")
@@ -342,7 +365,7 @@ plot.GPRslice <- function(x,
 
 
 
-
+# define z
 defVz <- function(x){
   #if(x@zunit == "ns"){
   # time
@@ -378,7 +401,8 @@ trInterp <- function(x, z, zi){
   # isNA <- is.na(x)
   isNA <- is.na(x)
   # xi <- signal::interp1(z[!isNA], x[!isNA], zi, method = "pchip", extrap = 0)
-  xi <- signal::interp1(x = z[!isNA], y = x[!isNA], xi = zi, method = "spline", extrap = 0)
+  xi <- signal::interp1(x = z[!isNA], y = x[!isNA], xi = zi, method = "spline", 
+                        extrap = 0)
   return(xi)
 }
 
@@ -389,6 +413,68 @@ trInterp <- function(x, z, zi){
 # h = Number of levels in the hierarchical construction 
 #     See the function 'mba.surf' of the MBA package
 .sliceInterp <- function(x, dx = NULL, dy = NULL, dz = NULL, h = 6){
+  if(!all(sapply(x@coords, length) > 0) ){
+    stop("Some of the data have no coordinates. Please set first coordinates to all data.")
+  }
+  X <- x
+  # default z-values (get elevation range)
+  x_zi0 <- defVz(X)
+  x_zi <- seq(min(x_zi0), by = dz, to = max(x_zi0))
+  if(all(isLengthUnit(X)) ){
+    x_zi <- sort(x_zi, decreasing = TRUE)
+  }
+  
+  if(is.null(dx)){
+    dx <- mean(sapply(x@coords, function(x) mean(diff(posLine(x)))))
+    # nx <- (max(sapply(x@coords, function(x) max(x[,1]))) -
+    #          min(sapply(x@coords, function(x) min(x[,1])) )) / dxy
+    # nx <- round(nx)
+  }
+  if(is.null(dy)){
+    dy <- dx
+  }
+  if(is.null(dz)){
+    dz <- abs(diff(x_zi))
+  }
+  #Z <- list()
+  V <- list()
+  for(i in seq_along(X)){
+    if(isLengthUnit(X[[i]])){
+      if(length(unique(X[[i]]@coord[,3])) > 1){
+        stop("The traces have different elevation!")
+      } 
+      x_z   <- X[[i]]@coord[1,3] - X[[i]]@depth
+    }else{
+      x_z   <- X[[i]]@depth
+    }
+    x_data <- X[[i]]@data
+    x_data[is.na(x_data)] <- 0
+    # interpolation
+    V[[i]] <- apply(x_data, 2, trInterp, z = x_z, zi = x_zi )
+    # Z[[i]] <- x_zi   # X[[i]]@depth
+  }
+  
+  # vj <- seq(dz, by = dz, to = length(x_zi))
+  
+  val <- list()
+  # vz <- x_zi[vj]
+  xpos <- unlist(lapply(X@coords, function(x) x[,1]))
+  ypos <- unlist(lapply(X@coords, function(x) x[,2]))
+  nx <- abs(diff(range(xpos))) / dx
+  ny  <- abs(diff(range(ypos))) / dy
+  SL <- array(dim = c(nx, ny, length(x_zi)))
+  for(j in  seq_along(x_zi)){
+    # j <- vj[u]
+    #z <- rep(sapply(Z, function(x, i = j) x[i]), sapply(V, ncol))
+    val[[j]] <- unlist(lapply(V, function(v, k = j) v[k,]))
+    S <- MBA::mba.surf(cbind(xpos, ypos, val[[j]]), nx, ny, n = 1, m = 1, 
+                       extend = TRUE, h = h)$xyz.est
+    SL[,,j] <- S$z
+  }
+  return(list(x = S$x, y = S$y, z = SL, vz = x_zi, x0 = xpos, y0 = ypos, z0 = val))
+}
+  
+.sliceInterp_old <- function(x, dx = NULL, dy = NULL, dz = NULL, h = 6){
   if(!all(sapply(x@coords, length) > 0) ){
     stop("Some of the data have no coordinates. Please set first coordinates to all data.")
   }
@@ -433,8 +519,8 @@ trInterp <- function(x, z, zi){
   vz <- x_zi[vj]
   xpos <- unlist(lapply(X@coords, function(x) x[,1]))
   ypos <- unlist(lapply(X@coords, function(x) x[,2]))
-  nx <- abs(diff(xpos)) / dx
-  ny  <- abs(diff(ypos)) / dy
+  nx <- abs(diff(range(xpos))) / dx
+  ny  <- abs(diff(range(ypos))) / dy
   SL <- array(dim = c(nx, ny, length(vj)))
   for(u in  seq_along(vj)){
     j <- vj[u]
@@ -454,6 +540,14 @@ trInterp <- function(x, z, zi){
 #' @rdname interpSlices
 #' @export
 setMethod("interpSlices", "GPRsurvey", function(x, dx = NULL, dy = NULL, dz = NULL, h = 6){
+  
+  if(is.null(dx) || is.null(dy) || is.null(dz)){
+    stop("'dx', 'dy' and 'dz' must all be defined!")
+  }
+  if( dx <= 0 || dy <= 0 || dz <= 0 ){
+    stop("'dx', 'dy' and 'dz' must all be strickly positive!")
+  }
+  
   SXY <- .sliceInterp(x = x, dx = dx, dy = dy, dz = dz, h = h)
   
   xyref <- c(min(SXY$x), min(SXY$y))
@@ -479,7 +573,7 @@ setMethod("interpSlices", "GPRsurvey", function(x, dx = NULL, dy = NULL, dz = NU
     ddata <- SXY$z
   }
   
-  x <- new(className,
+  y <- new(className,
            version      = "0.1",
            name         = "",
            date         = as.character(Sys.Date()),  
@@ -492,7 +586,7 @@ setMethod("interpSlices", "GPRsurvey", function(x, dx = NULL, dy = NULL, dz = NU
            posunit      = x@posunits[1],
            crs          = x@crs,
            depth        = SXY$vz,
-           depthunit    = x@posunits[1],
+           depthunit    = x@zunits[1],
            #vel         = "list",               
            #delineations = "list",
            obs          = list(x = SXY$x0,
@@ -500,5 +594,5 @@ setMethod("interpSlices", "GPRsurvey", function(x, dx = NULL, dy = NULL, dz = NU
                                z = SXY$z0)
            #transf       = "numeric"
           )
-  
+   return(y)
 })

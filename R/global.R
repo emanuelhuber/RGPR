@@ -1391,8 +1391,10 @@ getUTMzone <- function(lat, lon){
 #' 
 #' @export
 UTMToll <- function(xy, xy_crs = NULL){
+  if(max(xy[,1]) > 834000) stop("y-values (northing) are larger than 834000")
+  if(min(xy[,1]) < 166000) stop("x-values (easting) are smaller than 166000")
   if(is.null(xy_crs)){
-    xy_crs <- "+proj=utm +zone=0 +ellps=WGS84"
+    xy_crs <- "+proj=utm +zone=32 +ellps=WGS84"
   } 
   ll <- data.frame(ID = 1:nrow(xy), X = xy[,1], Y = xy[,2])
   sp::coordinates(ll) <- c("X", "Y")

@@ -676,7 +676,7 @@ plot.GPRsurvey <- function(x, y, ...){
                            x1 = xyz[nrow(xyz),1],   y1 = xyz[nrow(xyz),2], 
                            parArrows))
         }
-        if(!is.null(parFid)){
+        if(!is.null(parFid) && length(x@fids) > 0){
           fidxyz <- x@coords[[x@names[i]]][trimStr(x@fids[[i]]) != "", , 
                                   drop = FALSE]
           if(length(fidxyz)>0){

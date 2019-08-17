@@ -65,7 +65,7 @@ date: 2018-02-12
 
 - [x] Sensors & Software file format (**\*.dt1**, **\*.hd**).
 - [x] MALA file format (**\*.rd3**, **\*.rd7**, **\*.rad**).
-- [x] RadSys Zond GPR file format (**\*.sgy**). **WARNING: it is not like the usual SEG-Y file format**).
+- [x] RadSys Zond GPR file format (**\*.sgy**). **WARNING: this format is not a version of the SEG-Y file format**).
 - [x] ImpulseRadar format (**\*.iprb**, **\*.iprh**).
 - [X] GSSI file format (**\*.dzt**).
 - [X] ASCII (**\*.txt**): 

@@ -67,7 +67,7 @@ date: 2018-02-12
 - [x] MALA file format (**\*.rd3**, **\*.rd7**, **\*.rad**).
 - [x] RadSys Zond GPR file format (**\*.sgy**). **WARNING: this format is not a version of the SEG-Y file format**).
 - [x] ImpulseRadar format (**\*.iprb**, **\*.iprh**).
-- [X] GSSI file format (**\*.dzt**).
+- [X] GSSI file format (**\*.dzt**), including multi-channels
 - [X] ASCII (**\*.txt**): 
   - either 3-column format (x, t, amplitude) 
   - or matrix-format (without header/rownames)

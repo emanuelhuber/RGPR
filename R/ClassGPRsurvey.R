@@ -392,7 +392,7 @@ setReplaceMethod(
     x@antseps[i] <- value@antsep
     # if value has coordinates, update x
     if(length(value@coord) > 0){
-      if(dim(value@coord) != c(ncol(value), 3)){
+      if(nrow(value@coord) != ncol(value) && ncol(value@coord) != 3){
         stop('coordinates not correct...')
       }
       if(length(x@coords) > 0){

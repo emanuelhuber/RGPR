@@ -390,6 +390,7 @@ setReplaceMethod(
     x@surveymodes[i] <- value@surveymode
     x@dates[i] <-  value@date
     x@antseps[i] <- value@antsep
+    x@crs[i] <- value@crs
     # if value has coordinates, update x
     if(length(value@coord) > 0){
       if(nrow(value@coord) != ncol(value) && ncol(value@coord) != 3){

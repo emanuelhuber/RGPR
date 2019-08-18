@@ -1029,6 +1029,16 @@ safeFPath <- function(fPath = NULL){
   return(newfPath)
 }
 
+safeName <- function(x, y){
+  xold <- x
+  k <- 1
+  while(any(x == y)){
+    x <- paste0(xold, "_", k)
+    k <- k + 1
+  }
+  return(safeName)
+}
+
 #' Trim string
 #'
 #' returns string w/o leading or trailing whitespace

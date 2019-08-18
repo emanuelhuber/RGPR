@@ -64,6 +64,10 @@ GPRsurvey <- function(LINES, verbose = TRUE){
     line_nz[i]           <- nrow(gpr)
     line_dz[i]           <- mean(diff(gpr@depth))
     line_names[i]        <- name(gpr)[1]
+    if(line_names[i] == ""){
+      line_names[i] <- "default_name"
+    }
+    line_names[i] <- safeName(x = line_names[i], y = line_names[1:i])
     line_descriptions[i] <- description(gpr)
     line_surveymodes[i]  <- gpr@surveymode
     if(length(gpr@date) == 0){
@@ -366,7 +370,14 @@ setReplaceMethod(
     }
     i <- as.integer(i[1])
     oldName <- x@names[i]
+    if(oldName == ""){
+      oldName <- i
+    }
     newName <- value@name
+    if(newName == ""){
+      newName <- "default_name"
+    }
+    newName <- safeName(x = newName, y = x@names[-i])
     ng <- x@names[-i]
     it <- 1
     while(newName %in% ng){

@@ -1036,7 +1036,7 @@ safeName <- function(x, y){
     x <- paste0(xold, "_", k)
     k <- k + 1
   }
-  return(safeName)
+  return(x)
 }
 
 #' Trim string

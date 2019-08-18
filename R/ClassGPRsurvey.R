@@ -68,6 +68,7 @@ GPRsurvey <- function(LINES, verbose = TRUE){
       line_names[i] <- "default_name"
     }
     line_names[i] <- safeName(x = line_names[i], y = line_names[1:i])
+    
     line_descriptions[i] <- description(gpr)
     line_surveymodes[i]  <- gpr@surveymode
     if(length(gpr@date) == 0){
@@ -378,12 +379,12 @@ setReplaceMethod(
       newName <- "default_name"
     }
     newName <- safeName(x = newName, y = x@names[-i])
-    ng <- x@names[-i]
-    it <- 1
-    while(newName %in% ng){
-      newName <- paste0(value@name, "_", it)
-      it <- it + 1
-    }
+    # ng <- x@names[-i]
+    # it <- 1
+    # while(newName %in% ng){
+    #   newName <- paste0(value@name, "_", it)
+    #   it <- it + 1
+    # }
     #tmpf <- tempfile(newName)
     value@name <- newName
     #writeGPR(value, type = "rds", overwrite = FALSE,

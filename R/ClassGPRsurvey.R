@@ -67,8 +67,10 @@ GPRsurvey <- function(LINES, verbose = TRUE){
     if(line_names[i] == ""){
       line_names[i] <- "default_name"
     }
-    line_names[i] <- safeName(x = line_names[i], y = line_names[1:i])
-    
+    if(i > 1){
+      line_names[i] <- safeName(x = line_names[i], 
+                                y = line_names[1:(i - 1)])
+    }
     line_descriptions[i] <- description(gpr)
     line_surveymodes[i]  <- gpr@surveymode
     if(length(gpr@date) == 0){
@@ -402,7 +404,9 @@ setReplaceMethod(
     x@surveymodes[i] <- value@surveymode
     x@dates[i] <-  value@date
     x@antseps[i] <- value@antsep
-    x@crs[i] <- value@crs
+    if(length(value@crs) > 0 && value@crs != ""){
+      x@crs[i] <- value@crs
+    }
     # if value has coordinates, update x
     if(length(value@coord) > 0){
       if(nrow(value@coord) != ncol(value) && ncol(value@coord) != 3){

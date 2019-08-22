@@ -15,7 +15,7 @@ date: 2018-02-12
 <p>I provides the following services to clients: </p>
 
 * GPR data processing
-* GPR data interpreation and 3D modeling
+* GPR data interpretation and 3D modeling
 * development of special code/functions to meet the client needs
 * GPR survey (in Switzerland only)
 

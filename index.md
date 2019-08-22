@@ -10,26 +10,31 @@ date: 2018-02-12
 
 # RGPR: a free and open-source software package for ground-penetrating radar (<acronym title="Ground Penetrating Radar">GPR</acronym>) data processing
 
-<p>I am developing this package on my free time as a gift to the GPR community. Any support will be appreciated!</p>
+<p class="message"> 
+I am developing this package on my free time as a gift to the GPR community. Any support will be appreciated!
+</p>
 
-<p>I provides the following services to clients: </p>
+<div class="message"> 
+<p>
+I provides the following services to clients:</p>
 
 * GPR data processing
 * GPR data interpretation and 3D modeling
 * development of special code/functions to meet the client needs
 * GPR survey (in Switzerland only)
+</div>
 
 ## About
 
-<p class="message">
+<p>
 <acronym title="a R package for Ground Penetrating Radar data processing">RGPR</acronym> is a free and open-source software package to read, export, analyse, process and visualise <strong>ground-penetrating radar (GPR)</strong> data.
  </p>
  
-<p class="message"> 
+<p> 
 <acronym title="a R package for Ground Penetrating Radar data processing">RGPR</acronym> is written in <a href="https://cran.r-project.org/" title="R Cran">R</a>, a high-level  programming language for statistical computing and graphics that is freely available under the GNU General Public License and runs on Linux, Windows and MacOS. <a href="https://cran.r-project.org/" title="R Cran">R</a> is a highly versatile and extensible language to which   C,   C++  and   Fortran   code  can  be   linked  and  run. Furthermore,  the  R  developer  community  is  very  active  and more  than  10'000  packages  are  hosted  on  the  official  global package    repository    CRAN    (Comprehensive    R    Archive Network, <a href="https://cran.r-project.org/" title="R Cran">https://cran.r-project.org</a>). In 2017, <a href="https://cran.r-project.org/" title="R Cran">R</a> was   ranked  as   the   sixth   top programming   language   by   the   Institute   of   Electrical   and  Electronics Engineers.
 </p>
 
-<p class="message">    
+<p>    
 <acronym title="a R package for Ground Penetrating Radar data processing">RGPR</acronym> is hosted on <a href="https://github.com/" title="GitHub">GitHub</a> at <a href="https://github.com/emanuelhuber/RGPR" title="RGPR on GitHub">https://github.com/emanuelhuber/RGPR</a>. 
 </p>
 

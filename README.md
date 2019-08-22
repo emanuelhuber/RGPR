@@ -45,17 +45,20 @@ ISSN      = {2474-3844}}
 
 ### Supported file formats:
 
-- [x] Sensors & Software file format (**\*.dt1**, **\*.hd**).
-- [x] MALA file format (**\*.rd3**, **\*.rd7**, **\*.rad**).
-- [x] RadSys Zond GPR file format (**\*.sgy**). **WARNING: it is not a version of thel SEG-Y file format**).
-- [x] ImpulseRadar format (**\*.iprb**, **\*.iprh**).
-- [X] GSSI file format (**\*.dzt**).
+- [x] [Sensors & Software](https://www.sensoft.ca) file format (**\*.dt1**, **\*.hd**).
+- [x] [MALA](https://www.malagpr.com.au) file format (**\*.rd3**, **\*.rd7**, **\*.rad**).
+- [x] [Radar Systems, Inc.](http://www.radsys.lv) Zond file format (**\*.sgy**). **WARNING: it is not a version of the SEG-Y file format**).
+- [x] [ImpulseRadar](https://www.impulseradar.se) file format (**\*.iprb**, **\*.iprh**).
+- [X] [GSSI](https://www.geophysical.com) file format (**\*.dzt**).
+- [X] [ENVI band sequential file format](https://www.harrisgeospatial.com/docs/ENVIImageFiles.html) (**\*.dat**, **\*.hdr**).
 - [X] ASCII (**\*.txt**): 
   	- either 3-column format (x, t, amplitude) 
     - or matrix-format (without header/rownames)
 - [X] R internal format (**\*.rds**).
-- [X] ENVI band sequential file format (**\*.dat**, **\*.hdr**).
-- [ ] SEG-Y -> **we are working on it**
+- [X] serialized Python object (**\*.pkl**).
+- [ ] [SEG-Y](https://en.wikipedia.org/wiki/SEG-Y) (filel format developed by the Society of Exploration Geophysicists (SEG) for storing geophysical data) -> **we are working on it**
+- [ ] [3dradar](http://3d-radar.com/) (**\*.3dra**) -> the manufacturer does not want to reveal the binary file format. Workaround: export the GPR data in binary VOL format (**\*.vol**)  with the examiner software -> **we are working on it**
+- [ ] [Terra Zond](http://terrazond.ru/) binary file format (**\*.trz**) -> **we are working on it**
     
 See tutorial [Import GPR data](http://emanuelhuber.github.io/RGPR/00_RGPR_import_data/).
 

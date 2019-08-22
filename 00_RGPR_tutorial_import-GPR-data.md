@@ -16,17 +16,10 @@ date: 2019-08-22
 -   This R-package is still in development, and therefore some of the functions may change in a near future.
 -   If you have any questions, comments or suggestions, feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
 
-Objectives of this tutorial
-===========================
+Table of content
+================
 
--   Learn some basics of ground-penetrating radar data processing with `RGPR`.
--   Learn how to manipulate objects of the class `RGPR`.
-
-Note that his tutorial will not explain you the math/algorithms behind the different processing methods.
-
-Content
-=======
-
+-   [Objectives of this tutorial](#objectives)
 -   [Install/load `RGPR`](#install)
 -   [Read/import GPR data](#read)
 -   [Sensors and software data (`.dt1`)](#read_dt1)
@@ -38,6 +31,14 @@ Content
 -   [ENVI band-sequential files (`.dat`, `.hdr`)](#read_envi)
 -   [Pickle files (`.pkl`, serialized Python object)](#read_pkl)
 -   [Convert a matrix object into a GPR data](#matrix2GPR)
+
+Objectives of this tutorial
+===========================
+
+-   Learn some basics of ground-penetrating radar data processing with `RGPR`.
+-   Learn how to manipulate objects of the class `RGPR`.
+
+Note that his tutorial will not explain you the math/algorithms behind the different processing methods.
 
 Install/load `RGPR`
 ===================

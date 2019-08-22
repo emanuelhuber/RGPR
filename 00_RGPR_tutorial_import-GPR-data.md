@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Import GPR data
-date: 2019-05-16
+date: 2019-08-22
 ---
 
 <!--
@@ -67,6 +67,24 @@ x <- readGPR(dsn = "XLINE00.dtz")
 plot(x)
 ```
 
+### Multi-channel data
+
+To read multi-channel data, simply specify the channel number you want to read by using the argument `ch` in the function `readGPR()`:
+
+-   read channel 1:
+
+    ``` r
+    x <- readGPR(dsn = "YLINE00.dtz", ch = 1)
+    plot(x)
+    ```
+
+-   read channel 2:
+
+    ``` r
+    x <- readGPR(dsn = "YLINE00.dtz", ch = 2)
+    plot(x)
+    ```
+
 MALA data (`.rd3`)
 ------------------
 
@@ -104,7 +122,7 @@ Each GPR data consists of
 
 -   a binary data file with the SEG-Y Sounding Data Format (extension `.sgy` or `.segy`, 16-bit or 32-bit).
 
-**NOTE THAT THIS SEG-Y DATA FORMAT IS NOT THE USUAL SEG-Y FORMAT.**
+**NOTE THAT THIS DATA FORMAT IS NOT A VERSION OF THE SEG-Y file format.**
 
 To read the GPR data, enter
 

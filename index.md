@@ -10,6 +10,17 @@ date: 2018-02-12
 
 # RGPR: a free and open-source software package for ground-penetrating radar (<acronym title="Ground Penetrating Radar">GPR</acronym>) data processing
 
+<p>I am developing this package on my free time as a gift to the GPR community. Any support will be appreciated!</p>
+
+<p>I provides the following services to clients: </p>
+
+* GPR data processing
+* GPR data interpreation and 3D modeling
+* development of special code/functions to meet the client needs
+* GPR survey (in Switzerland only)
+
+## About
+
 <p class="message">
 <acronym title="a R package for Ground Penetrating Radar data processing">RGPR</acronym> is a free and open-source software package to read, export, analyse, process and visualise <strong>ground-penetrating radar (GPR)</strong> data.
  </p>
@@ -25,6 +36,7 @@ date: 2018-02-12
 <p>This R package is still in development, and therefore some of the functions may change in a near future. </p>
 
 <p>To report bugs, contribute to the development of <acronym title="R-package for Ground Penetrating Radar data processing">RGPR</acronym>, see <a href="https://github.com/emanuelhuber/RGPR/blob/master/CONTRIBUTING.md" title="how to contribute">how to contribute</a>.</p>
+
 
 <p>If you have any questions, comments or suggestions, feel free to contact me (in english, french or german):<br/><a href="mailto:emanuel.huber@alumni.ethz.ch">emanuel.huber@alumni.ethz.ch</a></p>
 
@@ -63,21 +75,23 @@ date: 2018-02-12
 
 ### Supported file formats:
 
-- [x] Sensors & Software file format (**\*.dt1**, **\*.hd**).
-- [x] MALA file format (**\*.rd3**, **\*.rd7**, **\*.rad**).
-- [x] RadSys Zond GPR file format (**\*.sgy**). **WARNING: this format is not a version of the SEG-Y file format**).
-- [x] ImpulseRadar format (**\*.iprb**, **\*.iprh**).
-- [X] GSSI file format (**\*.dzt**), including multi-channels
+- [x] [Sensors & Software](https://www.sensoft.ca) file format (**\*.dt1**, **\*.hd**).
+- [x] [MALA](https://www.malagpr.com.au) file format (**\*.rd3**, **\*.rd7**, **\*.rad**).
+- [x] [Radar Systems, Inc.](http://www.radsys.lv) Zond file format (**\*.sgy**). **WARNING: it is not a version of the SEG-Y file format**).
+- [x] [ImpulseRadar](https://www.impulseradar.se) file format (**\*.iprb**, **\*.iprh**).
+- [X] [GSSI](https://www.geophysical.com) file format (**\*.dzt**).
+- [X] [ENVI band sequential file format](https://www.harrisgeospatial.com/docs/ENVIImageFiles.html) (**\*.dat**, **\*.hdr**).
 - [X] ASCII (**\*.txt**): 
-  - either 3-column format (x, t, amplitude) 
-  - or matrix-format (without header/rownames)
+  	- either 3-column format (x, t, amplitude) 
+    - or matrix-format (without header/rownames)
 - [X] R internal format (**\*.rds**).
-- [X] ENVI band sequential file format (**\*.dat**, **\*.hdr**).
-- [ ] SEG-Y -> **we are working on it**
-    
+- [X] serialized Python object (**\*.pkl**).
+- [ ] [SEG-Y](https://en.wikipedia.org/wiki/SEG-Y) (filel format developed by the Society of Exploration Geophysicists (SEG) for storing geophysical data) -> **we are working on it**
+- [ ] [3dradar](http://3d-radar.com/) (**\*.3dra**) -> the manufacturer does not want to reveal the binary file format. Workaround: export the GPR data in binary VOL format (**\*.vol**)  with the examiner software -> **we are working on it**
+- [ ] [Terra Zond](http://terrazond.ru/) binary file format (**\*.trz**) -> **we are working on it**
 
     
-Do you miss your preferred file format? Send me the file format description with a test file and I will adapt the RGPR-package to support this file format. 
+<p>Do you miss your preferred file format? Send me the file format description with a test file and I will adapt the RGPR-package to support this file format:<br/><a href="mailto:emanuel.huber@alumni.ethz.ch">emanuel.huber@alumni.ethz.ch</a></p>
 
 ### Current limitations
 

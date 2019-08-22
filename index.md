@@ -14,15 +14,15 @@ date: 2018-02-12
 I am developing this package on my free time as a gift to the GPR community. Any support will be appreciated!
 </p>
 
-<p class="message">
-I provides the following services to clients:</p>
 
-<ul class="message"> 
-<li> GPR data processing</li>
-<li> GPR data interpretation and 3D modeling</li>
-<li> development of special code/functions to meet the client needs</li>
-<li> GPR survey (in Switzerland only)</li>
-</ul>
+
+I provides the following services to clients:
+
+* GPR data processing
+* GPR data interpretation and 3D modeling
+* development of special code/functions to meet the client needs
+* GPR survey (in Switzerland only)
+
 
 ## About
 

@@ -1,9 +1,11 @@
 # [RGPR](http://emanuelhuber.github.io/RGPR): a free and open-source software package for ground-penetrating radar (GPR) data processing
 
+If you have any questions, comments or suggestions, feel free to contact me (in english, french or german):
+emanuel.huber@alumni.ethz.ch
 
 [RGPR](http://emanuelhuber.github.io/RGPR) is a free and open-source software package to read, export, analyse, process and visualise *ground-penetrating radar* (GPR) data. [RGPR](http://emanuelhuber.github.io/RGPR) is written in [R](https://cran.r-project.org/), a high-level  programming language for statistical computing and graphics that is freely available under the GNU General Public License and runs on Linux, Windows and MacOS. [R](https://cran.r-project.org/) is a interpreted scripting language (not compiled) in the same veine as python or matlab.
 
-[RGPR](http://emanuelhuber.github.io/RGPR) was initially developed to compensate for shortcomings of commercial GPR data processing applications. The  ultimate  goal  of  [RGPR](http://emanuelhuber.github.io/RGPR)  is  to  promote  GPR  related research   by   providing   access   to the flexible   and   rich   R environment.    [RGPR](http://emanuelhuber.github.io/RGPR)    has    also    a    didactic    vocation    by encouraging  students  and   researchers  to  learn  about GPR  signal  processing  through  various  tutorials  available  on the [RGPR](http://emanuelhuber.github.io/RGPR) GitHub repository and the R documentation (http://emanuelhuber.github.io/RGPR).
+[RGPR](http://emanuelhuber.github.io/RGPR) was initially developed to compensate for shortcomings of commercial GPR data processing applications. The  ultimate  goal  of  [RGPR](http://emanuelhuber.github.io/RGPR)  is  to  promote  GPR  related research   by   providing   access   to the flexible   and   rich   R environment.    [RGPR](http://emanuelhuber.github.io/RGPR)    has    also    a    didactic    vocation    by encouraging  students  and   researchers  to  learn  about GPR  signal  processing  through  various  tutorials  available  on the [RGPR](http://emanuelhuber.github.io/RGPR) GitHub repository and the R documentation (companion website with tutorials: http://emanuelhuber.github.io/RGPR).
 
 ## Table of content
 
@@ -67,14 +69,14 @@ Do you miss your preferred file format? Send me the file format description with
 
 ### Current limitations
 
-RGPR only support reflection data such as surface-based GPR data (no support for cross-borehole GPR data)
+[RGPR](http://emanuelhuber.github.io/RGPR) only support reflection data such as surface-based GPR data (no support for cross-borehole GPR data)
 
 
 ### Yes, you can contribute
 
 **This is an ongoing project.**
 
-To report bugs, contribute to the development of RGPR, see [how to contribute](https://github.com/emanuelhuber/RGPR/blob/master/CONTRIBUTING.md).
+To report bugs, contribute to the development of [RGPR](http://emanuelhuber.github.io/RGPR), see [how to contribute](https://github.com/emanuelhuber/RGPR/blob/master/CONTRIBUTING.md).
 
 If you have any questions, comments or suggestions, feel free to contact me (in english, french or german):
 emanuel.huber@alumni.ethz.ch

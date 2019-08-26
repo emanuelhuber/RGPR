@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Import GPR data
-date: 2019-08-22
+date: 2019-08-26
 ---
 
 <!--
@@ -19,17 +19,19 @@ date: 2019-08-22
 Table of content
 ================
 
--   [Objectives of this tutorial](#objectives)
--   [Install/load `RGPR`](#install)
--   [Read/import GPR data](#read)
--   [Sensors and software data (`.dt1`)](#read_dt1)
--   [GSSI data (`.dtz`)](#read_dtz)
--   [MALA data (`.rd3`)](#read_rd3)
--   [ImpulseRadar data (`.iprb`)](#read_iprb)
--   [RadSys Zond GPR data (`.segy`)](#read_segy)
--   [ASCII data (`.txt`)](#read_txt)
--   [ENVI band-sequential files (`.dat`, `.hdr`)](#read_envi)
--   [Pickle files (`.pkl`, serialized Python object)](#read_pkl)
+-   [Objectives of this tutorial](#objectives-of-this-tutorial)
+-   [Install/load `RGPR`](#installload-rgpr)
+-   [Read/import GPR data](#readimport-gpr-data)
+
+    -   [Sensors and software data (`.dt1`)](#sensors-and-software-data-dt1)
+    -   [GSSI data (`.dtz`)](#gssi-data-dtz)
+    -   [MALA data (`.rd3`)](#mala-data-rd3)
+    -   [ImpulseRadar data (`.iprb`)](#impulseradar-data-iprb)
+    -   [RadSys Zond GPR data (`.segy`)](#radsys-zond-gpr-data-segy)
+    -   [ASCII data (`.txt`)](#ascii-data-txt)
+    -   [ENVI band-sequential files (`.dat`, `.hdr`)](#envi-band-sequential-files-dat-hdr)
+    -   [Pickle files (`.pkl`, serialized Python object)](#pickle-files-pkl-serialized-python-object)
+
 -   [Convert a matrix object into a GPR data](#matrix2GPR)
 
 Objectives of this tutorial

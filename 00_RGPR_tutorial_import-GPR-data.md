@@ -22,7 +22,6 @@ Table of content
 -   [Objectives of this tutorial](#objectives-of-this-tutorial)
 -   [Install/load `RGPR`](#installload-rgpr)
 -   [Read/import GPR data](#readimport-gpr-data)
-
     -   [Sensors and software data (`.dt1`)](#sensors-and-software-data-dt1)
     -   [GSSI data (`.dtz`)](#gssi-data-dtz)
     -   [MALA data (`.rd3`)](#mala-data-rd3)
@@ -31,7 +30,6 @@ Table of content
     -   [ASCII data (`.txt`)](#ascii-data-txt)
     -   [ENVI band-sequential files (`.dat`, `.hdr`)](#envi-band-sequential-files-dat-hdr)
     -   [Pickle files (`.pkl`, serialized Python object)](#pickle-files-pkl-serialized-python-object)
-
 -   [Convert a matrix object into a GPR data](#matrix2GPR)
 
 Objectives of this tutorial

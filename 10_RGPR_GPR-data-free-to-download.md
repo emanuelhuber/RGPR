@@ -11,13 +11,10 @@ date: 2019-08-28
 
 ------------------------------------------------------------------------
 
-GPR data freely available
-=========================
-
 I plan to make freely available the GPR data I collected during my PhD thesis (that was financed by public funding).
 
-GPR data used to test the efficient deconvolution method of Schmelzbach and Huber (2015)
-----------------------------------------------------------------------------------------
+GPR data from [Schmelzbach and Huber (2015)](http://dx.doi.org/10.1109/TGRS.2015.2419235)
+-----------------------------------------------------------------------------------------
 
 [GPR data recorded with Pulse Ekko Pro from Sensors & Software on the river bed of the Tagliamento River (NE Italy)](https://doi.org/10.5281/zenodo.2586189). Avalaible on Zenodo: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2586189.svg)](https://doi.org/10.5281/zenodo.2586189)
 

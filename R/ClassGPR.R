@@ -741,11 +741,16 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
     antsep <- antSepFromAntFreq(antfreq)
   }
   v <- 2 * x$hd$DEPTH / x$hd$RANGE
+  
+  x_fid <- rep("", ncol(x$data))
+  if(!is.null(x$fid) && length(x$fid) == ncol(x$data)){
+    x_fid <- x$fid
+  }
   new("GPR",   
       version      = "0.2",
       data        = byte2volt(Vmax = Vmax, nBytes = x$hd$BITS) * x$data,
       traces      = 1:ncol(x$data),
-      fid         = rep("", ncol(x$data)),
+      fid         = x_fid,
       #coord = coord,
       coord       = matrix(nrow=0, ncol = 0),
       pos         = x$pos[1:ncol(x$data)],

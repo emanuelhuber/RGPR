@@ -4856,8 +4856,6 @@ readTXT <- function(fPath){
 }  
 
 
-
-
 readDZT <- function(fPath){
   if( inherits(fPath, "connection") ){
     DZT <- fPath
@@ -4991,10 +4989,63 @@ readDZT <- function(fPath){
                     # z = t(Adata[[i]][nrow(Adata[[i]]):1,]))
   }
   
+  # auxiliary file > DZX
+  fNameAux <- getFName(fPath, ext = c(".dzx"), throwError = FALSE)
+  if(!is.null(fNameAux$dzx)){
+    # return fid, pos and dx. The two last should be equal to the
+    # values from the .dzt file.
+    y <- readDZX(fNameAux$dzx)
+  } 
+  
   if( !inherits(fPath, "connection") ){
     close(DZT)
   }
-  return(list(hd = hd, data = Adata, depth = tt, pos = yy))
+  return(list(hd = hd, data = Adata, depth = tt, pos = yy, fid = y$markers))
+}
+
+#' Read GSSI's .dzx file
+#' 
+#' .dzx files are xml files
+#' @param fPath the filepath
+#' @return a list containing the markers, the trace position and the spatial
+#'         sampling.
+#' @export
+readDZX <- function(fPath){
+  doc <- verboseF(XML::xmlParse(fPath), verbose = FALSE)
+  # Scan range !!
+  s1 <- XML::xmlElementsByTagName(XML::xmlChildren(doc)$DZX[["File"]], 
+                                  "scanRange", 
+                                  recursive = TRUE)
+  if(length(s1) > 0){
+    s0 <- as.integer(strsplit(XML::xmlValue(s1[[1]]), split = ",")[[1]])
+    nscans <- length(s0[1]:s0[2])
+    
+    # distance
+    dst <- XML::xmlElementsByTagName(XML::xmlChildren(doc)$DZX[["File"]], 
+                                     "distance", 
+                                     recursive = TRUE)
+    if(length(dst) > 0){
+      d0 <- as.numeric(sapply(dst, XML::xmlValue))
+      dx <- (d0[2] - d0[1])/(nscans- 1)
+      pos <- seq(from = d0[1], by = dx, length.out = nscans)
+    }
+    
+    # marks !!
+    tst <- XML::xmlElementsByTagName(XML::xmlChildren(doc)$DZX[["File"]], 
+                                     "mark", 
+                                     recursive = TRUE)
+    if(length(tst) > 0){
+      markers_name <- as.character(sapply(tst, XML::xmlValue))
+      markers_pos <- as.numeric(sapply(tst, .xmlValueSibling ))
+      markers <- character(length = nscans)
+      markers[markers_pos] <- markers_name
+    }
+  }
+  return(list(markers = markers, pos = pos, dx = dx))
+}
+
+.xmlValueSibling <- function(x, after = FALSE){
+  XML::xmlValue(XML::getSibling(x, after = after))
 }
 
 .readRFDate <- function(con, where = 31){
@@ -5145,14 +5196,29 @@ getFunName <- function(FUN){
   return(funName)
 }
 
-# WRAPPER to suppress warnings & message
+
+#' Suppressing output from cat(), warnings & messages
+#' @export
 verboseF <- function(g, verbose = TRUE){
   if(verbose){
     g
   }else{
-    suppressWarnings(suppressMessages(g))
+    suppressWarnings(suppressMessages(quiet(g)))
   }
 }
+
+
+#' Suppressing output from cat() or print()
+#' 
+#' This function suppresses the output from cat() or print() in a function. 
+#' It was proposed by Hadley Wickham 
+#' https://r.789695.n4.nabble.com/Suppressing-output-e-g-from-cat-td859876.html
+#' @export
+quiet <- function(x) {
+  sink(tempfile())
+  on.exit(sink())
+  invisible(force(x))
+} 
 
 # -------------------------------------------
 # ------------writeDT1--------------------------

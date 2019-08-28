@@ -51,5 +51,6 @@ Imports:
     magrittr,
     MBA,
     geojsonsf,
-    sf
+    sf,
+    XML
 RoxygenNote: 6.1.1

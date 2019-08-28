@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Class GPR
+title: Free GPR data
 date: 2019-08-28
 ---
 
@@ -23,6 +23,4 @@ GPR data used to test the efficient deconvolution method of Schmelzbach and Hube
 
 This data was used to test the *efficient deconvolution* scheme of Schmelzbar and Huber (2015):
 
-C. Schmelzbach, E. Huber (2015) Efficient Deconvolution of Ground-Penetrating Radar Data. IEEE Transactions on Geoscience and Remote Sensing, 53(9): 5209 - 5217 doi: [10.1109/TGRS.2015.2419235](http://dx.doi.org/10.1109/TGRS.2015.2419235)
-
-[PDF](public/schmelzbach-and-huber_2015_GPR-efficient-deconvolution.pdf)
+> C. Schmelzbach, E. Huber (2015) Efficient Deconvolution of Ground-Penetrating Radar Data. IEEE Transactions on Geoscience and Remote Sensing, 53(9): 5209 - 5217. doi: [10.1109/TGRS.2015.2419235](http://dx.doi.org/10.1109/TGRS.2015.2419235). [PDF](public/schmelzbach-and-huber_2015_GPR-efficient-deconvolution.pdf)

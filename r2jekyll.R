@@ -12,6 +12,8 @@
 # Rscript --vanilla r2jekyll.R 04_RGPR_tutorial_GPR-data-survey.Rmd
 # Rscript --vanilla r2jekyll.R 05_RGPR_tutorial_GPR-data-migration.Rmd
 # Rscript --vanilla r2jekyll.R 06_RGPR_tutorial_class-GPR.Rmd
+# Rscript --vanilla r2jekyll.R 10_RGPR_GPR-data-free-to-download.Rmd
+
 
 # CHECK
 # https://gist.github.com/emanuelhuber/11835e6840868029d7c4721b7f7bf465

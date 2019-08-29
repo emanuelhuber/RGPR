@@ -413,7 +413,7 @@ setGenericVerif("exportCoord",
 #' @name exportFid
 #' @rdname exportFid
 #' @export
-setGenericVerif("exportFid", function(x, fPath = NULL) 
+setGenericVerif("exportFid", function(x, fPath = NULL, sep = " ") 
                   standardGeneric("exportFid"))
 
 #' @name exportProc
@@ -741,8 +741,8 @@ setGenericVerif("strTensor", function(x,  blksze = c(2, 4),
 readFID <- function(FID, sep = NULL, verbose = TRUE){
   myFid <- list() 
   for(i in seq_along(FID)){
-    verboseF(message("read ", FID[[i]], "..."), verbose = verbose)
-    pp <- detectASCIIProp(FID[[i]])
+    if(verbose) message("read ", FID[[i]], "...")
+    pp <- verboseF( detectASCIIProp(FID[[i]]), verbose = verbose)
     A <- read.table(file             = FID[[i]], 
                     sep              = pp$sep, 
                     stringsAsFactors = FALSE, 
@@ -781,8 +781,8 @@ readFID <- function(FID, sep = NULL, verbose = TRUE){
 readTopo <- function(TOPO, sep = NULL, verbose = TRUE){
   myTopo <- list() 
   for(i in seq_along(TOPO)){
-    verboseF(message("read ", TOPO[[i]], "..."), verbose = verbose)
-    pp <- detectASCIIProp(TOPO[[i]])
+    if(verbose) message("read ", TOPO[[i]], "...")
+    pp <- verboseF( detectASCIIProp(TOPO[[i]]), verbose = verbose)
     A <- read.table(file             = TOPO[[i]], 
                     sep              = pp$sep, 
                     stringsAsFactors = FALSE, 

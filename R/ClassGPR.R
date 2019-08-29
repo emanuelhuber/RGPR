@@ -6059,7 +6059,7 @@ setMethod("exportPDF", "GPR",
 #' @name exportFid
 #' @rdname exportFid
 #' @export
-setMethod("exportFid", "GPR", function(x,fPath=NULL){
+setMethod("exportFid", "GPR", function(x, fPath = NULL, sep = " "){
   # Trace  Position  Comment  PNAME
   if(length(x@fid) > 0){
     tr_start <- 1
@@ -6091,14 +6091,14 @@ setMethod("exportFid", "GPR", function(x,fPath=NULL){
     if(is.null(fPath)){
       return(FID)
     }else{
-      write.table(FID, fPath, sep=",",row.names = FALSE, 
-                  col.names = TRUE, quote=FALSE)
+      write.table(x = FID, file = fPath, sep = sep, row.names = FALSE, 
+                  col.names = TRUE, quote = FALSE)
     }
   }else{
     if(length(x@name)>0){
-      cat("No fiducials for",x@name,"\n")
+      message("No fiducials for ", x@name, "\n")
     }else{
-      cat("No fiducials\n")
+      message("No fiducials\n")
     }
     return(NULL)
   }

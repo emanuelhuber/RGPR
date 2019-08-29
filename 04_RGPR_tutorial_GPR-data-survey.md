@@ -8,6 +8,35 @@ date: 2019-08-29
 "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke")
 "G:/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
 -->
+Table of Contents
+-----------------
+
+-   [Objectives of this tutorial](#objectives-of-this-tutorial)
+-   [Preliminary](#preliminary)
+    -   [File organisation](#file-organisation)
+    -   [Install/load `RGPR` and set the working directory](#install/load-%60rgpr%60-and-set-the-working-directory)
+    -   [Getting help](#getting-help)
+-   [Read GPR data](#read-gpr-data)
+-   [Basic processing steps](#basic-processing-steps)
+    -   [First wave break and time zero estimation](#first-wave-break-and-time-zero-estimation)
+    -   [DC shift removal](#dc-shift-removal)
+    -   [Time zero correction](#time-zero-correction)
+    -   [Dewow](#dewow)
+    -   [Frequency filter](#frequency-filter)
+    -   [Amplitude gain](#amplitude-gain)
+        -   [Power gain](#power-gain)
+        -   [Exponential gain](#exponential-gain)
+    -   [inverse normal transformations](#inverse-normal-transformations)
+    -   [Median filter (spatial filter)](#median-filter-(spatial-filter))
+    -   [Frequency-wavenumber filter (f-k-filter)](#frequency-wavenumber-filter-(f-k-filter))
+    -   [Processing overview](#processing-overview)
+    -   [Other processing functions](#other-processing-functions)
+        -   [Trace average removal](#trace-average-removal)
+        -   [Eigen Image Filter](#eigen-image-filter)
+        -   [Background matrix substraction](#background-matrix-substraction)
+    -   [Save and export](#save-and-export)
+    -   [Read the saved GPR data](#read-the-saved-gpr-data)
+-   [Some final thoughts](#some-final-thoughts)
 
 ------------------------------------------------------------------------
 
@@ -96,50 +125,50 @@ Read all the GPR records (".DT1") located in the directory `/rawGPR` with the ex
 
 -   use a dialogue window
 
-``` r
-# select all the GPR files except CMP.DT1
-LINES <- rchoose.files(caption = " DT1 files", filters = c("dt1","*.dt1"))
-```
+    ``` r
+    # select all the GPR files except CMP.DT1
+    LINES <- rchoose.files(caption = " DT1 files", filters = c("dt1","*.dt1"))
+    ```
 
 -   write manually all the filepath in a list
 
-``` r
-# select all the GPR files except CMP.DT1
-LINES <- c()    # initialisation
-LINES[1] <- file.path(getwd(), "rawGPR/LINE00.DT1")
-LINES[2] <- file.path(getwd(), "rawGPR/LINE01.DT1")
-LINES[3] <- file.path(getwd(), "rawGPR/LINE02.DT1")
-LINES[4] <- file.path(getwd(), "rawGPR/LINE03.DT1")
-LINES[5] <- file.path(getwd(), "rawGPR/LINE04.DT1")
-```
+    ``` r
+    # select all the GPR files except CMP.DT1
+    LINES <- c()    # initialisation
+    LINES[1] <- file.path(getwd(), "rawGPR/LINE00.DT1")
+    LINES[2] <- file.path(getwd(), "rawGPR/LINE01.DT1")
+    LINES[3] <- file.path(getwd(), "rawGPR/LINE02.DT1")
+    LINES[4] <- file.path(getwd(), "rawGPR/LINE03.DT1")
+    LINES[5] <- file.path(getwd(), "rawGPR/LINE04.DT1")
+    ```
 
 -   take advantages of vectorized code
 
-``` r
-LINES <- file.path(getwd(), "rawGPR",
-                   paste0("LINE", sprintf("%02d", 0:4),".DT1"))
-```
+    ``` r
+    LINES <- file.path(getwd(), "rawGPR",
+                       paste0("LINE", sprintf("%02d", 0:4),".DT1"))
+    ```
 
 -   extract automatically all the GPR file from the directory
 
-``` r
-# list of the filepath
-allFilesinDir <- list.files(file.path(getwd(), "rawGPR"))
-allFilesinDir
-```
+    ``` r
+    # list of the filepath
+    allFilesinDir <- list.files(file.path(getwd(), "rawGPR"))
+    allFilesinDir
+    ```
 
-    ##  [1] "CMP.DT1"    "CMP.GPS"    "CMP.HD"     "LINE00.DT1" "LINE00.GPS"
-    ##  [6] "LINE00.HD"  "LINE01.DT1" "LINE01.GPS" "LINE01.HD"  "LINE02.DT1"
-    ## [11] "LINE02.GPS" "LINE02.HD"  "LINE03.DT1" "LINE03.GPS" "LINE03.HD"
-    ## [16] "LINE04.DT1" "LINE04.GPS" "LINE04.HD"
+        ##  [1] "CMP.DT1"    "CMP.GPS"    "CMP.HD"     "LINE00.DT1" "LINE00.GPS"
+        ##  [6] "LINE00.HD"  "LINE01.DT1" "LINE01.GPS" "LINE01.HD"  "LINE02.DT1"
+        ## [11] "LINE02.GPS" "LINE02.HD"  "LINE03.DT1" "LINE03.GPS" "LINE03.HD"
+        ## [16] "LINE04.DT1" "LINE04.GPS" "LINE04.HD"
 
-``` r
-# now, select only the file ending with.DT1 and without "CMP"
-# in their names
-selDT1 <- grepl("(.DT1)$", allFilesinDir, ignore.case = TRUE) &
+    ``` r
+    # now, select only the file ending with.DT1 and without "CMP"
+    # in their names
+    selDT1 <- grepl("(.DT1)$", allFilesinDir, ignore.case = TRUE) &
 !grepl("CMP", allFilesinDir, ignore.case = TRUE)
-LINES <- file.path(getwd(), "rawGPR", allFilesinDir[selDT1])
-```
+    LINES <- file.path(getwd(), "rawGPR", allFilesinDir[selDT1])
+    ```
 
 Create an object of the class `GPRsurvey`
 -----------------------------------------
@@ -175,35 +204,35 @@ Note that the object `mySurvey` only contains the meta-data and a link to the GP
 
 -   Either subset `mySurvey` with `[[ ]]`
 
-``` r
-A02 <- mySurvey[[3]]
-A02
-```
+    ``` r
+    A02 <- mySurvey[[3]]
+    A02
+    ```
 
-    ## *** Class GPR ***
-    ##  name        = LINE02
-    ##  filepath    = /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
-    ##  description =
-    ##  survey date = 2014-04-25
-    ##  Reflection, 100 MHz, Window length = 399.6 ns, dz = 0.4 ns
-    ##  275 traces, 68.5 m
-    ##  ****************
+        ## *** Class GPR ***
+        ##  name        = LINE02
+        ##  filepath    = /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
+        ##  description =
+        ##  survey date = 2014-04-25
+        ##  Reflection, 100 MHz, Window length = 399.6 ns, dz = 0.4 ns
+        ##  275 traces, 68.5 m
+        ##  ****************
 
 -   Or get the `GPR` object with the function `getGPR()`
 
-``` r
-A02 <- getGPR(mySurvey, id = "LINE02")
-A02
-```
+    ``` r
+    A02 <- getGPR(mySurvey, id = "LINE02")
+    A02
+    ```
 
-    ## *** Class GPR ***
-    ##  name        = LINE02
-    ##  filepath    = /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
-    ##  description =
-    ##  survey date = 2014-04-25
-    ##  Reflection, 100 MHz, Window length = 399.6 ns, dz = 0.4 ns
-    ##  275 traces, 68.5 m
-    ##  ****************
+        ## *** Class GPR ***
+        ##  name        = LINE02
+        ##  filepath    = /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
+        ##  description =
+        ##  survey date = 2014-04-25
+        ##  Reflection, 100 MHz, Window length = 399.6 ns, dz = 0.4 ns
+        ##  275 traces, 68.5 m
+        ##  ****************
 
 You can also directly plot the GPR data with:
 
@@ -226,33 +255,33 @@ We assume that for each GPR record there is a file containing the (x, y, z) coor
 
 1.  Define the filepaths to the topo files:
 
-``` r
-# select all the GPR files except CMP.DT1
-TOPO <- file.path(getwd(), "coord", "topo",
-                  paste0("LINE", sprintf("%02d", 0:4), ".txt"))
-```
+    ``` r
+    # select all the GPR files except CMP.DT1
+    TOPO <- file.path(getwd(), "coord", "topo",
+                      paste0("LINE", sprintf("%02d", 0:4), ".txt"))
+    ```
 
-1.  Read all the ASCII files with the function `readTopo()` that creates a list that contains the coordinates of every traces (`readTopo()` will automatically detect the column separator as well as the presence of header in the ASCII files):
+2.  Read all the ASCII files with the function `readTopo()` that creates a list that contains the coordinates of every traces (`readTopo()` will automatically detect the column separator as well as the presence of header in the ASCII files):
 
-``` r
-TOPOList <- readTopo(TOPO)
-```
+    ``` r
+    TOPOList <- readTopo(TOPO)
+    ```
 
-    ## read /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE00.txt...
+        ## read /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE00.txt...
 
-    ## read /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE01.txt...
+        ## read /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE01.txt...
 
-    ## read /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE02.txt...
+        ## read /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE02.txt...
 
-    ## read /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE03.txt...
+        ## read /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE03.txt...
 
-    ## read /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE04.txt...
+        ## read /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE04.txt...
 
-1.  Set the list of coordinates as the new coordinates to the GPRsurvey object:
+3.  Set the list of coordinates as the new coordinates to the GPRsurvey object:
 
-``` r
-coords(mySurvey) <- TOPOList
-```
+    ``` r
+    coords(mySurvey) <- TOPOList
+    ```
 
 Option 2: some trace coordinates exist
 --------------------------------------
@@ -289,79 +318,79 @@ You observe that the coordinates of the begining and end of each GPR profile are
 
 1.  Now, you have to indicate R to which traces the coordinates correspond. That means, for each GPR data you have to create a file that contains the coordinates with the associated trace number. This is a lot of work. To help you to create these files, use the function `exportFid()`. This function create for each GPR data a file containing the trace number, position for the start and end positions as well as for the fiducial makers.
 
-``` r
-exportFid(mySurvey, fPath = file.path(getwd(), "coord/FID/"))
-```
+    ``` r
+    exportFid(mySurvey, fPath = file.path(getwd(), "coord/FID/"))
+    ```
 
-Here is the FID file for the GPR data `LINE04` (`coord/FID/LINE04.txt`):
+    Here is the FID file for the GPR data `LINE04` (`coord/FID/LINE04.txt`):
 
-    TRACE POSITION COMMENT
-    1 0 START
-    91 22.5 F1
-    100 24.75 F2
-    122 30.25 F3
-    445 111 END
+        TRACE POSITION COMMENT
+        1 0 START
+        91 22.5 F1
+        100 24.75 F2
+        122 30.25 F3
+        445 111 END
 
-1.  Now, add to each FID files three columns corresponding to the trace coordinates. You have three posibilities:
+2.  Now, add to each FID files three columns corresponding to the trace coordinates. You have three posibilities:
 
--   The first 4 columns correspond to "x", "y", "z" and trace number ("TRACE"), e.g.
+    -   The first 4 columns correspond to "x", "y", "z" and trace number ("TRACE"), e.g.
 
-        u1 u2 u3 TRACE POSITION COMMENT
-        2622262.98 1256834.06 343.8 1 0 START
-        2622265.48 1256843.26 344 100 24.75 F2
-        2622300.41 1256921.53 343.5 445 111 END
+            u1 u2 u3 TRACE POSITION COMMENT
+            2622262.98 1256834.06 343.8 1 0 START
+            2622265.48 1256843.26 344 100 24.75 F2
+            2622300.41 1256921.53 343.5 445 111 END
 
--   The columns corresponding to "x", "y", "z" and trace number ("TRACE") have the column names "E", "N", "Z", and "TRACE" and the column position does not matter,e.g.
+    -   The columns corresponding to "x", "y", "z" and trace number ("TRACE") have the column names "E", "N", "Z", and "TRACE" and the column position does not matter,e.g.
 
-        TRACE POSITION COMMENT E N Z
-        1 0 START 2622262.98 1256834.06 343.8
-        100 24.75 F2 2622265.48 1256843.26 344
-        445 111 END 2622300.41 1256921.53 343.5
+            TRACE POSITION COMMENT E N Z
+            1 0 START 2622262.98 1256834.06 343.8
+            100 24.75 F2 2622265.48 1256843.26 344
+            445 111 END 2622300.41 1256921.53 343.5
 
--   The columns corresponding to "x", "y", "z" and trace number ("TRACE") have the column names "x", "y", "z", and "TRACE" (or "X", "Y", "Z", and "TRACE") and the column position does not matter,e.g.
+    -   The columns corresponding to "x", "y", "z" and trace number ("TRACE") have the column names "x", "y", "z", and "TRACE" (or "X", "Y", "Z", and "TRACE") and the column position does not matter,e.g.
 
-        TRACE POSITION COMMENT x y z
-        1 0 START 2622262.98 1256834.06 343.8
-        100 24.75 F2 2622265.48 1256843.26 344
-        445 111 END 2622300.41 1256921.53 343.5
+            TRACE POSITION COMMENT x y z
+            1 0 START 2622262.98 1256834.06 343.8
+            100 24.75 F2 2622265.48 1256843.26 344
+            445 111 END 2622300.41 1256921.53 343.5
 
-Note that the two lines with the fiducial markers F1 and F3 were removed as no coordinates are available for these markers. Save the modified files in the directory `coord/FIDmod`.
+    Note that the two lines with the fiducial markers F1 and F3 were removed as no coordinates are available for these markers. Save the modified files in the directory `coord/FIDmod`.
 
-1.  Read the modified fiducial marker files usind the funtion `readFID()`:
+3.  Read the modified fiducial marker files usind the funtion `readFID()`:
 
-``` r
-FidFiles <- file.path(getwd(), "coord", "FIDmod",
-                      paste0("LINE", sprintf("%02d", 0:4), ".txt"))
-```
+    ``` r
+    FidFiles <- file.path(getwd(), "coord", "FIDmod",
+                          paste0("LINE", sprintf("%02d", 0:4), ".txt"))
+    ```
 
-``` r
-FIDs <- readFID(FidFiles)
-```
+    ``` r
+    FIDs <- readFID(FidFiles)
+    ```
 
-1.  Interpolate the coordinates of the traces for all the GPR profiles according to the modified fiducial marker files. The function `interpPos()` interpolate the position of the traces from the known trace positions and add the interpolated trace position to the object `mySurvey`.
+4.  Interpolate the coordinates of the traces for all the GPR profiles according to the modified fiducial marker files. The function `interpPos()` interpolate the position of the traces from the known trace positions and add the interpolated trace position to the object `mySurvey`.
 
-``` r
-# interpolating the positions of the traces between the fiducials for each
-# GPR-lines and adding the position to the survey.
-# + compute the intersection between the GPR-lines
-# windows open for checking purposes
-# dx should be between 0.1 m and 0.5 m
-mySurvey <- interpPos(mySurvey, FIDs)
-```
+    ``` r
+    # interpolating the positions of the traces between the fiducials for each
+    # GPR-lines and adding the position to the survey.
+    # + compute the intersection between the GPR-lines
+    # windows open for checking purposes
+    # dx should be between 0.1 m and 0.5 m
+    mySurvey <- interpPos(mySurvey, FIDs)
+    ```
 
-    ## LINE00: mean dx = 0.258, range dx = [0.244, 0.337]
+        ## LINE00: mean dx = 0.258, range dx = [0.244, 0.337]
 
-    ## LINE01: mean dx = 0.249, range dx = [0.249, 0.249]
+        ## LINE01: mean dx = 0.249, range dx = [0.249, 0.249]
 
-    ## LINE02: mean dx = 0.229, range dx = [0.229, 0.229]
+        ## LINE02: mean dx = 0.229, range dx = [0.229, 0.229]
 
-    ## LINE03: mean dx = 0.12, range dx = [0.027, 0.18]
+        ## LINE03: mean dx = 0.12, range dx = [0.027, 0.18]
 
-    ## LINE04: mean dx = 0.215, range dx = [0.096, 0.253]
+        ## LINE04: mean dx = 0.215, range dx = [0.096, 0.253]
 
-    ## Coordinates of the local system: 2622000 1256834 0
+        ## Coordinates of the local system: 2622000 1256834 0
 
-The function `interpPos()` prints for every GPR record the mean trace spacing as well as the trace spacing range. Normally, these values should be close to the operating settings. In this case, the trace spacing was set equal to $0.25\,m$ on the field. The trace spacing values for `XLINE00`, `XLINE01` and `XLINE02` looks good. However, the trace spacing for `XLINE04` and more particularly for `XLINE03` could be critic (the smallest trace spacing values are very low). You should check and if necessary correct the topographic data...
+    The function `interpPos()` prints for every GPR record the mean trace spacing as well as the trace spacing range. Normally, these values should be close to the operating settings. In this case, the trace spacing was set equal to $0.25\,m$     on the field. The trace spacing values for `XLINE00`, `XLINE01` and `XLINE02` looks good. However, the trace spacing for `XLINE04` and more particularly for `XLINE03` could be critic (the smallest trace spacing values are very low). You should check and if necessary correct the topographic data...
 
 Setting the coordinate reference system
 ---------------------------------------

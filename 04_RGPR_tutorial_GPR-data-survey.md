@@ -293,23 +293,37 @@ You observe that the coordinates of the begining and end of each GPR profile are
 exportFid(mySurvey, fPath = file.path(getwd(), "coord/FID/"))
 ```
 
-1.  Now, add to each FID files three columns corresponding to the trace coordinates. These columns must have as header "N", "E" and "Z" (for North, East and vertical elevation). Why not "x", "y" and "z"? Because in topography, "x" defines sometimes the "North", so it may be confusing...
+Here is the FID file for the GPR data `LINE04` (`coord/FID/LINE04.txt`):
 
-Here is the FID for the GPR data `LINE04` (`coord/FID/LINE04.txt`):
+    TRACE POSITION COMMENT
+    1 0 START
+    91 22.5 F1
+    100 24.75 F2
+    122 30.25 F3
+    445 111 END
 
-    TRACE,POSITION,COMMENT
-    1,0,START
-    91,22.5,F1
-    100,24.75,F2
-    122,30.25,F3
-    445,111,END
+1.  Now, add to each FID files three columns corresponding to the trace coordinates. You have three posibilities:
 
-The same file with the three columns added:
+-   The first 4 columns correspond to "x", "y", "z" and trace number ("TRACE"), e.g.
 
-    TRACE,POSITION,COMMENT,E,N,Z
-    1,0,START,2622262.98,1256834.06,343.8
-    100,24.75,F2,2622265.48,1256843.26,344
-    445,111,END,2622300.41,1256921.53,343.5
+        u1 u2 u3 TRACE POSITION COMMENT
+        2622262.98 1256834.06 343.8 1 0 START
+        2622265.48 1256843.26 344 100 24.75 F2
+        2622300.41 1256921.53 343.5 445 111 END
+
+-   The columns corresponding to "x", "y", "z" and trace number ("TRACE") have the column names "E", "N", "Z", and "TRACE" and the column position does not matter,e.g.
+
+        TRACE POSITION COMMENT E N Z
+        1 0 START 2622262.98 1256834.06 343.8
+        100 24.75 F2 2622265.48 1256843.26 344
+        445 111 END 2622300.41 1256921.53 343.5
+
+-   The columns corresponding to "x", "y", "z" and trace number ("TRACE") have the column names "x", "y", "z", and "TRACE" (or "X", "Y", "Z", and "TRACE") and the column position does not matter,e.g.
+
+        TRACE POSITION COMMENT x y z
+        1 0 START 2622262.98 1256834.06 343.8
+        100 24.75 F2 2622265.48 1256843.26 344
+        445 111 END 2622300.41 1256921.53 343.5
 
 Note that the two lines with the fiducial markers F1 and F3 were removed as no coordinates are available for these markers. Save the modified files in the directory `coord/FIDmod`.
 
@@ -323,8 +337,6 @@ FidFiles <- file.path(getwd(), "coord", "FIDmod",
 ``` r
 FIDs <- readFID(FidFiles)
 ```
-
-If R throw the following error message "Error in readFID(FidFiles): The headers should be "E","N","Z","TRACE"!" check that the three columns have been added to all the files and that the headers of these columns are correctly set ("N", "E", "Z"; the order does not matter).
 
 1.  Interpolate the coordinates of the traces for all the GPR profiles according to the modified fiducial marker files. The function `interpPos()` interpolate the position of the traces from the known trace positions and add the interpolated trace position to the object `mySurvey`.
 

@@ -756,13 +756,20 @@ readFID <- function(FID,sep=","){
 #' 
 #' read topo file
 #' @export
-readTopo <- function(TOPO,sep=","){
+readTopo <- function(TOPO, sep = NULL, verbose = TRUE){
   myTopo <- list() 
   for(i in seq_along(TOPO)){
-    A <- read.table(TOPO[[i]], sep=sep, stringsAsFactors = FALSE, header = TRUE)
-    colnames(A) <- toupper(colnames(A))
+    pp <- detectASCIIProp(TOPO[[i]])
+    A <- read.table(file = TOPO[[i]], 
+                    sep = pp$sep, 
+                    stringsAsFactors = FALSE, 
+                    header = pp$header,
+                    skip = pp$skip)
+    #colnames(A) <- toupper(colnames(A))
     if(ncol(A) < 3){
-      stop("The headers should be \"E\",\"N\",\"Z\"!\n")
+      stop("The coordinates must have 3 columns: x, y and z!")
+    }else if(ncol(A) > 3 && verbose){
+      warning(TOPO[[i]], " has ", ncol(A), ". I take only the 3 first columns.")
     }
     myTopo[[i]] <- A[,1:3]
   }
@@ -4708,18 +4715,28 @@ readImpulseRadar <- function( fPath, dsn2 = NULL){
   return( list(hd = hHD, data = bind, time = hTime, cor = hCor, mkr = hMrk) )
 }  
 
-readTXT <- function(fPath){
-  fName <- getFName(fPath, ext = c(".txt"))
 
-  con <- file(fName$txt , "rt")
-  x <- readLines(con, n = 20, skipNul = TRUE)
+#' Get properties of ASCII file to read it with \code{read.table}
+#' 
+#' To get header, separator, column with na values, etc.
+#' 
+#' don't forget to skip blank line when reading fPath
+#' @param fPath (character) File path
+#' @param lns Number of lines to read to get the properties of the ASCII file
+#' @return 1) header, 2) skip, 3) 
+#' @export
+detectASCIIProp <- function(fPath, lns = 20){
+  
+  #---------------------- read first 'lns' lines ------------------------------#
+  con <- file(fPath , "rt")
+  x <- readLines(con, n = lns, skipNul = TRUE)
   close(con)
   x <- x[ x!= ""]
   
-  #----------------------------------------------------------------------------#
-  #------------------------------ find header ---------------------------------#
-  #----------------------------------------------------------------------------#
-  y <- strsplit(x, split = "[^[:alnum:]]+")
+  #------------------------------ detect header -------------------------------#
+  # y <- strsplit(x, split = "[^[:alnum:]]+")
+  # split at all punctuations signs except '-' and '-'
+  y <- strsplit(x, split = "[^[:alnum:]\\.\\-]+") 
   test0 <- suppressWarnings(lapply(y, as.numeric))
   test <- sapply(test0, function(x) sum(is.na(x)))
   if( all(test[-1] > 0) ){
@@ -4738,14 +4755,9 @@ readTXT <- function(fPath){
     header <- FALSE
     skip <- 0
   }
-  #----------------------------------------------------------------------------#
-  #--------------------------- find separator ---------------------------------#
-  #----------------------------------------------------------------------------#
-  captureSep <- function(x){ 
-    i <- gregexpr("[^[:alnum:]]+", x, perl = TRUE)
-    sep <- unique(substring(x, i[[1]], i[[1]]))
-  }
-  sep <- unique(unlist(lapply(x0, captureSep)))
+
+  #--------------------------- detect column separator ------------------------#
+  sep <- unique(unlist(lapply(x0, detectSep)))
   sepName <- sep
   if(sep == "\t"){
     sepName <- "\\t"
@@ -4756,21 +4768,54 @@ readTXT <- function(fPath){
     #message("Column delimiter is '", sepName, "'")
   }
   
-  #----------------------------------------------------------------------------#
   #--------------------------- number of columns ------------------------------#
-  #----------------------------------------------------------------------------#
-  z <- strsplit(x0, split = "[^[:alnum:]]+")
+  # z <- strsplit(x0, split = "[^[:alnum:]\\.\\-]+")
+  z <- strsplit(x0, split = sep)
   nCols <- unique(sapply(z, length))
-  if(length(nCols) > 1){
+  
+  return(list(header = header, skip = skip, sep = sep, nCols = nCols))
+}
+
+detectSep <- function(x){ 
+  # i <- gregexpr("[^[:alnum:]]+", x, perl = TRUE)
+  i <- gregexpr("[^[:alnum:]\\.\\-]+", x, perl = TRUE)
+  sep <- unique(substring(x, i[[1]], i[[1]]))
+}
+
+rmNaCol <- function(x){
+  # remove NA columns
+  rmCol <- which(apply(x, 2, function(x) sum(is.na(x))) > 0)
+  if(length(rmCol) > 0)    x <- x[, - rmCol]
+  return(x)
+}
+
+readTXT <- function(fPath){
+  fName <- getFName(fPath, ext = c(".txt"))
+  
+  # detect header, column separator, skip lines, number of columns.
+  pp <- detectASCIIProp(fName$txt)
+  
+  #------------------------------ Matrix file ----------------------------------#  
+  if(length(pp$nCols) > 1){
     # only first row has one element less -> first row = trace position
     #                                     -> first col = trace depth
-    if( length(unique(nCols[-1])) == 1 && nCols[1] == nCols[2] - 1){
-      A <- read.table(fPath, header = header, skip = skip + 1, sep = sep)
-      if(header == TRUE){
-        skip <- skip + 1
+    if( length(unique(pp$nCols[-1])) == 1 && pp$nCols[1] == (pp$nCols[2] - 1) ){
+      A <- read.table(file   = fPath, 
+                      header = pp$header, 
+                      skip   = pp$skip + 1, 
+                      sep    = pp$sep)
+      if(pp$header == TRUE){
+        pp$skip <- pp$skip + 1
       }
-      Apos <- scan(fPath, sep = sep, skip = skip, nlines = 1)
-      return(list(data = as.matrix(A[,-1]), pos = Apos, depth = A[,1]))
+      Apos <- scan(file   = fPath, 
+                   sep    = pp$sep, 
+                   skip   = pp$skip, 
+                   nlines = 1,
+                   quiet = TRUE)
+      
+      return(list(data  = as.matrix(A[,-1]), 
+                  pos   = Apos, 
+                  depth = A[,1]))
     }else{
       stop("Error, not same number of elements per line.")
     }
@@ -4778,17 +4823,11 @@ readTXT <- function(fPath){
     #message(nCols, " columns")
   }
   
-  #----------------------------------------------------------------------------#
   #---------------------------- 3 (or 4) column file --------------------------#
-  #----------------------------------------------------------------------------#
-  rmNaCol <- function(x){
-    # remove NA columns
-    rmCol <- which(apply(x, 2, function(x) sum(is.na(x))) > 0)
-    if(length(rmCol) > 0)    x <- x[, - rmCol]
-    return(x)
-  }
-  
-  X <- read.table(fPath, header = header, skip = skip, sep = sep)
+  X <- read.table(file   = fPath, 
+                  header = pp$header,
+                  skip   = pp$skip, 
+                  sep    = pp$sep)
   
   # remove NA columns
   X <- rmNaCol(X)
@@ -4807,7 +4846,6 @@ readTXT <- function(fPath){
       cat("Error")
     }
     
-    
     XnTemp <- Xn
     XnTemp[[Xamp]] <- NULL
     pos <- pos[-Xamp]
@@ -4820,8 +4858,14 @@ readTXT <- function(fPath){
       cat("Error")
     }
   
-    A <- matrix(X[, Xamp][seq_len(nc * nr)], nrow = nr, ncol = nc, byrow = FALSE)
-    return(list(data = A, pos = unique(X[, Xpos]), depth = unique(X[, Xt])))
+    A <- matrix(data  = X[, Xamp][seq_len(nc * nr)], 
+                nrow  = nr, 
+                ncol  = nc, 
+                byrow = FALSE)
+    
+    return(list(data  = A, 
+                pos   = unique(X[, Xpos]), 
+                depth = unique(X[, Xt])))
     
   # }else if(ncol(X) == 4){
   #   # case xyza!!!

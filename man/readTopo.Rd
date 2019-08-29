@@ -4,7 +4,7 @@
 \alias{readTopo}
 \title{read topo file}
 \usage{
-readTopo(TOPO, sep = ",")
+readTopo(TOPO, sep = NULL, verbose = TRUE)
 }
 \description{
 read topo file

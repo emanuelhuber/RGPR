@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Adding coordinates to GPR data
-date: 2019-02-21
+date: 2019-08-29
 ---
 
 <!--
@@ -98,7 +98,7 @@ Read all the GPR records (".DT1") located in the directory `/rawGPR` with the ex
 
 ``` r
 # select all the GPR files except CMP.DT1
-LINES <- rchoose.files(caption = " DT1 files",filters = c("dt1","*.dt1"))
+LINES <- rchoose.files(caption = " DT1 files", filters = c("dt1","*.dt1"))
 ```
 
 -   write manually all the filepath in a list
@@ -111,6 +111,13 @@ LINES[2] <- file.path(getwd(), "rawGPR/LINE01.DT1")
 LINES[3] <- file.path(getwd(), "rawGPR/LINE02.DT1")
 LINES[4] <- file.path(getwd(), "rawGPR/LINE03.DT1")
 LINES[5] <- file.path(getwd(), "rawGPR/LINE04.DT1")
+```
+
+-   take advantages of vectorized code
+
+``` r
+LINES <- file.path(getwd(), "rawGPR",
+                   paste0("LINE", sprintf("%02d", 0:4),".DT1"))
 ```
 
 -   extract automatically all the GPR file from the directory
@@ -148,7 +155,7 @@ mySurvey
 ```
 
     ## *** Class GPRsurvey ***
-    ## Unique directory: /media/huber/Seagate1TB/UNIBAS/PROJECTS/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/rawGPR
+    ## Unique directory: /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/rawGPR
     ## - - - - - - - - - - - - - - -
     ##     name length units       date freq coord int   filename
     ## 1 LINE00  55.75     m 2014-04-25  100    NO  NO LINE00.DT1
@@ -175,7 +182,7 @@ A02
 
     ## *** Class GPR ***
     ##  name        = LINE02
-    ##  filepath    = /media/huber/Seagate1TB/UNIBAS/PROJECTS/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
+    ##  filepath    = /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
     ##  description =
     ##  survey date = 2014-04-25
     ##  Reflection, 100 MHz, Window length = 399.6 ns, dz = 0.4 ns
@@ -191,7 +198,7 @@ A02
 
     ## *** Class GPR ***
     ##  name        = LINE02
-    ##  filepath    = /media/huber/Seagate1TB/UNIBAS/PROJECTS/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
+    ##  filepath    = /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
     ##  description =
     ##  survey date = 2014-04-25
     ##  Reflection, 100 MHz, Window length = 399.6 ns, dz = 0.4 ns
@@ -205,7 +212,7 @@ You can also directly plot the GPR data with:
 plot(mySurvey[[2]])
 ```
 
-![](04_RGPR_tutorial_GPR-data-survey_tp_files/figure-markdown_github-tex_math_single_backslash/unnamed-chunk-14-1.png)
+![](04_RGPR_tutorial_GPR-data-survey_tp_files/figure-markdown_github/unnamed-chunk-15-1.png)
 
 Add coordinates
 ===============
@@ -221,19 +228,25 @@ We assume that for each GPR record there is a file containing the (x, y, z) coor
 
 ``` r
 # select all the GPR files except CMP.DT1
-TOPO <- c()    # initialisation
-TOPO[1] <- file.path(getwd(), "coord/topo/LINE00.txt")
-TOPO[2] <- file.path(getwd(), "coord/topo/LINE01.txt")
-TOPO[3] <- file.path(getwd(), "coord/topo/LINE02.txt")
-TOPO[4] <- file.path(getwd(), "coord/topo/LINE03.txt")
-TOPO[5] <- file.path(getwd(), "coord/topo/LINE04.txt")
+TOPO <- file.path(getwd(), "coord", "topo",
+                  paste0("LINE", sprintf("%02d", 0:4), ".txt"))
 ```
 
-1.  Read all the files with the funciton `readTopo()` that creates a list whose elements correspond to the GPR record and contain all the trace coordinates:
+1.  Read all the ASCII files with the function `readTopo()` that creates a list that contains the coordinates of every traces (`readTopo()` will automatically detect the column separator as well as the presence of header in the ASCII files):
 
 ``` r
-TOPOList <- readTopo(TOPO, sep = "\t")
+TOPOList <- readTopo(TOPO)
 ```
+
+    ## read /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE00.txt...
+
+    ## read /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE01.txt...
+
+    ## read /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE02.txt...
+
+    ## read /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE03.txt...
+
+    ## read /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE04.txt...
 
 1.  Set the list of coordinates as the new coordinates to the GPRsurvey object:
 
@@ -303,12 +316,8 @@ Note that the two lines with the fiducial markers F1 and F3 were removed as no c
 1.  Read the modified fiducial marker files usind the funtion `readFID()`:
 
 ``` r
-FidFiles <- c()    # initialisation
-FidFiles[1] <- file.path(getwd(), "coord/FIDmod/LINE00.txt")
-FidFiles[2] <- file.path(getwd(), "coord/FIDmod/LINE01.txt")
-FidFiles[3] <- file.path(getwd(), "coord/FIDmod/LINE02.txt")
-FidFiles[4] <- file.path(getwd(), "coord/FIDmod/LINE03.txt")
-FidFiles[5] <- file.path(getwd(), "coord/FIDmod/LINE04.txt")
+FidFiles <- file.path(getwd(), "coord", "FIDmod",
+                      paste0("LINE", sprintf("%02d", 0:4), ".txt"))
 ```
 
 ``` r
@@ -383,7 +392,7 @@ Use the `plot()` function
 plot(mySurvey)
 ```
 
-![plot survey](04_RGPR_tutorial_GPR-data-survey_tp_files/figure-markdown_github-tex_math_single_backslash/unnamed-chunk-25-1.png) The red arrows indicate the direction of the survey, the red dots the fiducial markers and the circles the GPR profile intersections.
+![plot survey](04_RGPR_tutorial_GPR-data-survey_tp_files/figure-markdown_github/unnamed-chunk-26-1.png) The red arrows indicate the direction of the survey, the red dots the fiducial markers and the circles the GPR profile intersections.
 
 Plot the GPR data
 -----------------
@@ -396,7 +405,7 @@ plot(mySurvey[[1]], addTopo=TRUE)
 
     ## time to depth conversion with constant velocity (0.1 m/ns)
 
-![plot GPR data](04_RGPR_tutorial_GPR-data-survey_tp_files/figure-markdown_github-tex_math_single_backslash/unnamed-chunk-26-1.png)
+![plot GPR data](04_RGPR_tutorial_GPR-data-survey_tp_files/figure-markdown_github/unnamed-chunk-27-1.png)
 
 Three-dimensional plot of the GPR data
 --------------------------------------
@@ -418,7 +427,7 @@ Create a sub-directory in the `/processing` directory (name it `mySurveyProc`):
 
 ``` r
 procDir <- file.path(getwd(), "processing/mySurveyProc")
-dir.create(file.path(procDir),showWarnings = TRUE)
+dir.create(file.path(procDir), showWarnings = TRUE)
 ```
 
 Now apply the processing step with a loop to all GPR data indexed by `mySurvey`:
@@ -449,12 +458,7 @@ Next time you can directly load the processed files as follows:
 
 ``` r
 # select all the GPR files except CMP.DT1
-procLINES <- c()    # initialisation
-procLINES[1] <- file.path(procDir, "LINE00.rds")
-procLINES[2] <- file.path(procDir, "LINE01.rds")
-procLINES[3] <- file.path(procDir, "LINE02.rds")
-procLINES[4] <- file.path(procDir, "LINE03.rds")
-procLINES[5] <- file.path(procDir, "LINE04.rds")
+procLINES <- file.path(procDir, paste0("LINE", sprintf("%02d", 0:4), ".rds"))
 ```
 
 ``` r

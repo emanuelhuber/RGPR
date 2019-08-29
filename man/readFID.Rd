@@ -4,7 +4,7 @@
 \alias{readFID}
 \title{read fiducial marker files}
 \usage{
-readFID(FID, sep = ",")
+readFID(FID, sep = NULL, verbose = TRUE)
 }
 \description{
 read fiducial marker files

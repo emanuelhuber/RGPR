@@ -733,21 +733,43 @@ setGenericVerif("strTensor", function(x,  blksze = c(2, 4),
 ##----------- helper functions -------------------##
 # FID <- choose.files(caption = " txt files",filters = c("txt","*.txt"))
 # output = list of data frame (one for each file from FID) 
-#    with c("E","N","Z","TRACE") structure
+#    with c("x","y","z","trace_number") structure
 #' read fiducial marker files
 #' 
 #' read fiducial marker files
 #' @export
-readFID <- function(FID,sep=","){
+readFID <- function(FID, sep = NULL, verbose = TRUE){
   myFid <- list() 
   for(i in seq_along(FID)){
-    message("read ", FID[[i]], "...")
-    A <- read.table(FID[[i]], sep=",", stringsAsFactors=FALSE,header=TRUE)
-    colnames(A) <- toupper(colnames(A))
-    if(!all(c("E","N","Z","TRACE") %in% colnames(A))){
-      stop("The headers should be \"E\",\"N\",\"Z\",\"TRACE\"!\n")
+    verboseF(message("read ", FID[[i]], "..."), verbose = verbose)
+    pp <- detectASCIIProp(FID[[i]])
+    A <- read.table(file             = FID[[i]], 
+                    sep              = pp$sep, 
+                    stringsAsFactors = FALSE, 
+                    header           = pp$header,
+                    skip             = pp$skip)
+    # A <- read.table(FID[[i]], sep=",", stringsAsFactors=FALSE,header=TRUE)
+    # colnames(A) <- toupper(colnames(A))
+    # if(!all(c("E","N","Z","TRACE") %in% colnames(A))){
+    #   stop("The headers should be \"E\",\"N\",\"Z\",\"TRACE\"!\n")
+    # }
+    # myFid[[i]] <- A[,c("E","N","Z","TRACE")]
+    if(ncol(A) < 4){
+      stop(FID[[i]], " must have 4 columns: x, y, z and trace number!")
     }
-    myFid[[i]] <- A[,c("E","N","Z","TRACE")]
+    # else if(ncol(A) > 4 && verbose){
+    #   warning(FID[[i]], " has ", ncol(A), ". I take only the 4 first columns.")
+    # }
+    if(!is.null(colnames(A))){
+      colnames(A) <- toupper(colnames(A))
+      if(all(c("E", "N", "Z", "TRACE") %in% colnames(A))){
+        A <- A[, c("E", "N", "Z", "TRACE")]
+      }else if(all(c("X", "Y", "Z", "TRACE") %in% colnames(A))){
+        A <- A[, c("X", "Y", "Z", "TRACE")]
+      }
+    }
+    colnames(A)[1:4] <- c("x", "y", "z", "tn")
+    myFid[[i]] <- A[, 1:4]
   }
   return(myFid)
 }
@@ -759,18 +781,19 @@ readFID <- function(FID,sep=","){
 readTopo <- function(TOPO, sep = NULL, verbose = TRUE){
   myTopo <- list() 
   for(i in seq_along(TOPO)){
+    verboseF(message("read ", TOPO[[i]], "..."), verbose = verbose)
     pp <- detectASCIIProp(TOPO[[i]])
-    A <- read.table(file = TOPO[[i]], 
-                    sep = pp$sep, 
+    A <- read.table(file             = TOPO[[i]], 
+                    sep              = pp$sep, 
                     stringsAsFactors = FALSE, 
-                    header = pp$header,
-                    skip = pp$skip)
-    #colnames(A) <- toupper(colnames(A))
+                    header           = pp$header,
+                    skip             = pp$skip)
     if(ncol(A) < 3){
-      stop("The coordinates must have 3 columns: x, y and z!")
+      stop(TOPO[[i]], " must have 3 columns: x, y and z!")
     }else if(ncol(A) > 3 && verbose){
       warning(TOPO[[i]], " has ", ncol(A), ". I take only the 3 first columns.")
     }
+    colnames(A)[1:3] <- c("x", "y", "z")
     myTopo[[i]] <- A[,1:3]
   }
   return(myTopo)
@@ -4721,11 +4744,12 @@ readImpulseRadar <- function( fPath, dsn2 = NULL){
 #' To get header, separator, column with na values, etc.
 #' 
 #' don't forget to skip blank line when reading fPath
-#' @param fPath (character) File path
-#' @param lns Number of lines to read to get the properties of the ASCII file
+#' @param fPath   (character) File path
+#' @param lns     (numeric) Number of lines to read to get the properties of the ASCII file
+#' @param verbose (boolean) If \code{TRUE} print messages allowed.
 #' @return 1) header, 2) skip, 3) 
 #' @export
-detectASCIIProp <- function(fPath, lns = 20){
+detectASCIIProp <- function(fPath, lns = 20, verbose = TRUE){
   
   #---------------------- read first 'lns' lines ------------------------------#
   con <- file(fPath , "rt")
@@ -4740,7 +4764,15 @@ detectASCIIProp <- function(fPath, lns = 20){
   test0 <- suppressWarnings(lapply(y, as.numeric))
   test <- sapply(test0, function(x) sum(is.na(x)))
   if( all(test[-1] > 0) ){
-    stop("PROBLEM. Please contact me: emanuel.huber@alumni.ethz.ch")
+    if(length(unique(test)) == 1){
+      nHeader <- 0
+    }else{
+      nHeader <- 1
+      if(verbose){
+        warning("Cannot detect header with certitude. ",
+                "I assume that the first non-empty line it the header.")
+      }
+    }
   }else{
     nHeader <- which(test > 0)
     #message("there is ", length(nHeader), " header lines!")

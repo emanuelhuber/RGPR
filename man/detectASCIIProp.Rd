@@ -4,12 +4,14 @@
 \alias{detectASCIIProp}
 \title{Get properties of ASCII file to read it with \code{read.table}}
 \usage{
-detectASCIIProp(fPath, lns = 20)
+detectASCIIProp(fPath, lns = 20, verbose = TRUE)
 }
 \arguments{
 \item{fPath}{(character) File path}
 
-\item{lns}{Number of lines to read to get the properties of the ASCII file}
+\item{lns}{(numeric) Number of lines to read to get the properties of the ASCII file}
+
+\item{verbose}{(boolean) If \code{TRUE} print messages allowed.}
 }
 \value{
 1) header, 2) skip, 3)

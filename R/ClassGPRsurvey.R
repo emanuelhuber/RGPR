@@ -91,21 +91,24 @@ GPRsurvey <- function(LINES, verbose = TRUE){
     line_posunits[i]        <- gpr@posunit
     line_depthunits[i]      <- gpr@depthunit  
     line_crs[i] <- ifelse(length(gpr@crs) > 0, gpr@crs[1], character(1))
-    if(length(gpr@coord)>0){
-      if(is.null(colnames(gpr@coord))){
-        xyzCoords[[line_names[i] ]] <- gpr@coord
-      }else if(all(toupper(colnames(gpr@coord)) %in% c("E","N","Z"))){
-        xyzCoords[[line_names[i] ]] <- gpr@coord[,c("E","N","Z")]
-      }else if(all(toupper(colnames(gpr@coord)) %in% c("X","Y","Z"))){
-        xyzCoords[[line_names[i] ]] <- gpr@coord[,c("X","Y","Z")]
-      }else{
-        xyzCoords[[line_names[i] ]] <- gpr@coord
-      }
-      line_lengths[i]      <- posLine(gpr@coord[,1:2],last=TRUE)
+    if(length(gpr@coord) > 0){
+      # if(is.null(colnames(gpr@coord))){
+      #   xyzCoords[[line_names[i] ]] <- gpr@coord
+      # }else if(all(toupper(colnames(gpr@coord)) %in% c("E","N","Z"))){
+      #   xyzCoords[[line_names[i] ]] <- gpr@coord[,c("E","N","Z")]
+      # }else if(all(toupper(colnames(gpr@coord)) %in% c("X","Y","Z"))){
+      #   xyzCoords[[line_names[i] ]] <- gpr@coord[,c("X","Y","Z")]
+      # }else{
+      #   xyzCoords[[line_names[i] ]] <- gpr@coord
+      # }
+      xyzCoords[[line_names[i]]] <- as.matrix(value[[i]])
+      colnames(xyzCoords[[line_names[i]]]) <- c("x", "y", "z")
+      
+      line_lengths[i] <- posLine(gpr@coord[, 1:2], last = TRUE)
     }else{
-      line_lengths[i]    <- gpr@dx * ncol(gpr@data)
+      line_lengths[i] <- gpr@dx * ncol(gpr@data)
     }
-    line_fids[[line_names[i] ]]    <- trimStr(gpr@fid)
+    line_fids[[line_names[i] ]] <- trimStr(gpr@fid)
   }
   if( length(unique(line_posunits)) > 1 ){
     warning("Position units are not identical: \n",
@@ -233,8 +236,8 @@ setMethod("as.SpatialLines", signature(x = "GPRsurvey"), function(x){
 setMethod("as.SpatialPoints", signature(x = "GPRsurvey"), function(x){
   allTopo <- do.call(rbind, x@coords)  #  N, E, Z
   allTopo2 <- as.data.frame(allTopo)
-  names(allTopo2) <- c("E", "N", "Z")
-  sp::coordinates(allTopo2) <- ~ E + N
+  names(allTopo2) <- c("x", "y", "z")
+  sp::coordinates(allTopo2) <- ~ x + y
   
   sp::proj4string(allTopo2) <- .getCheckedCRS(x)
   
@@ -587,10 +590,10 @@ plot.GPRsurvey <- function(x, y, ...){
     add <- FALSE
     add_shp_files <- FALSE
     parArrows <- list(col = "red", length = 0.1)
-    parIntersect <- list(pch=1,cex=0.8)
-    parFid <- list(pch=21,col="black",bg="red",cex=0.7)
-    xlab <- "E"
-    ylab <- "N"
+    parIntersect <- list(pch = 1, cex = 0.8)
+    parFid <- list(pch = 21, col = "black", bg = "red", cex = 0.7)
+    xlab <- "x"
+    ylab <- "y"
     main <- ""
     asp <- 1
     lwd <- 1
@@ -1036,14 +1039,18 @@ setReplaceMethod(
       if( nrow(value[[i]]) != x@ntraces[i] ){
         stop("error with the ", i, "th element of 'value':",
              " number of coordinates is different from number of traces")
-      } 
-      if(is.null(colnames(value[[i]]))){
-        x@coords[[x@names[i]]] <- as.matrix(value[[i]])
-      }else if(all(toupper(colnames(value[[i]])) %in% c("E","N","Z"))){
-        x@coords[[x@names[i]]] <- as.matrix(value[[i]][c("E","N","Z")])
-      }else{
-        x@coords[[x@names[i]]] <- as.matrix(value[[i]])
       }
+      if(ncol(value[[i]]) < 3){
+        stop("error with the ", i, "th element of 'value':",
+             " number of column is smaller than 3!")
+      }else if(ncol(value[[i]]) > 3){
+        warning("the ", i, "th element of 'value' has more than 3 columns:",
+             " I take only the first 3 columns!")
+      }
+      
+      x@coords[[x@names[i]]] <- as.matrix(value[[i]])
+      colnames(x@coords[[x@names[i]]]) <- c("x", "y", "z")
+
       x@lengths[i] <- posLine(value[[i]][,1:2],last=TRUE)
     }
     # in coordref, the intersection is computed by 

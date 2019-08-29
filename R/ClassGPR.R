@@ -1019,8 +1019,8 @@ setAs(from = "GPR", to = "SpatialPoints",
 # as.SpatialPoints <- function (x, ...){
 setMethod("as.SpatialPoints", signature(x = "GPR"), function(x){
   myPoints <- as.data.frame(x@coord)
-  names(myPoints) <- c("E", "N", "Z")
-  sp::coordinates(myPoints) = ~E + N
+  names(myPoints) <- c("x", "y", "z")
+  sp::coordinates(myPoints) = ~x + y
   if(length(crs(x)) == 0){
     warning("no CRS defined!\n")
   }else{
@@ -1703,17 +1703,16 @@ setMethod("coord", "GPR", function(x, i, ...){
 #' @rdname coord-methods
 #' @aliases coord<-,GPR-method
 setReplaceMethod(
-  f="coord",
-  signature="GPR",
-  definition=function(x,value){
+  f = "coord",
+  signature = "GPR",
+  definition = function(x,value){
     value <- as.matrix(value)
     if(ncol(x@data) == nrow(value) && ncol(value) == 3){
       x@coord <- as.matrix(value)
       x <- trRmDuplicates(x, verbose = FALSE)
-      
       x@proc <- c(x@proc, "coord<-//")
     }else{
-      stop("Dimension problem!!")
+      stop("Dimension should be ", nrow(value), "x", ncol(value), "!!")
     }
     return(x)
   }
@@ -4574,13 +4573,17 @@ setMethod("trRmDuplicates", "GPR", function(x, tol = NULL, verbose = TRUE){
 #'
 #' @param x      An object of the class GPR.
 #' @param topo   A \eqn{m \times 4} numeric matrix, with \code{m} the number of 
-#'               traces in 'x'. The columns names of topo must be
-#'               "E", "N", "Z" and "TRACE".
-#' @param plot   A length-one boolean vector. If TRUE some control
-#'               plots are displayed.
+#'               traces in 'x'.
+#'               The first 3 columns are the 
+#'               coordinates (x, y, z) and the last column the trace number 
+#'               (the column names can now be freely chosen).
+#' @param plot   A length-one boolean vector. If \code{TRUE} some 
+#'               control/diagnostic plots are displayed.
 #' @param r      A 'RasterLayer' object from the package 'raster' from which
 #'               trace elevation \code{z} will be extracted based on the 
-#'               trace position \code{(x, y)} on the raster.
+#'               trace position \code{(x, y)} on the raster. The extracted 
+#'               trace elevation will overwrite the values from the third
+#'               column of \code{topo}.
 #' @param tol    Length-one numeric vector: if the horizontal distance between 
 #'               two consecutive trace positions is smaller than \code{tol}, 
 #'               then the traces in between as well as the second trace
@@ -4603,20 +4606,23 @@ setMethod("interpPos", "GPR",
           function(x, topo, plot = FALSE, r = NULL, tol = NULL,
                    method = c("linear", "linear", "linear"), crs = NULL,
                    ...){
-            if(all(is.na(topo[,"TRACE"]))){
+            if(all(is.na(topo[,4]))){
               stop(x@name, ": no link between the measured points",
                           " and the GPR traces!")
             }
+            if(ncol(topo) < 4){
+              stop("'topo' has less than 4 columns!")
+            }
             # if we have measured some points before the line start or 
             # after the end of the GPR Line, we delete them
-            test <- which(!is.na(topo[,"TRACE"]))
+            test <- which(!is.na(topo[, 4]))
             #trueEnd <- max(which(test))
             #trueBeg <- min(which(test))
             topo <- topo[min(test):max(test), ]
             #--- 3D topo Distance ---#
             if(!is.null(r)){
-              topo[,"Z"] <- raster::extract(r, topo[, c("E","N")], method = "bilinear")
-              if(sum(is.na(topo[, "Z"])) > 0){
+              topo[,3] <- raster::extract(r, topo[, 1:2], method = "bilinear")
+              if(sum(is.na(topo[, 3])) > 0){
                 stop("\n'extract(r, topo[, c(\"E\",\"N\")], method = \"bilinear\")' ",
                      "returns 'NA' values!\n", 
                      "Not all GPR positions fall within raster extent or\n",
@@ -4624,11 +4630,11 @@ setMethod("interpPos", "GPR",
               }
             }
             # check for duplicates in TRACE ID and remove them!
-            topo <- rmRowDuplicates(topo, topo[, "TRACE"])
+            topo <- rmRowDuplicates(topo, topo[, 4])
             # order topo by increasing traceNb
-            topo <- topo[order(topo[, "TRACE"]), ]
+            topo <- topo[order(topo[, 4]), ]
             #--- REMOVE DUPLICATED TRACES (TRACES WITH (ALMOST) SAME POSITIONS) ---#
-            dist2D <- posLine(topo[, c("N", "E")], last = FALSE)
+            dist2D <- posLine(topo[, 1:2], last = FALSE)
             # in 'x' and 'topo'
             if(is.null(tol))  tol <- sqrt(.Machine$double.eps)
             tdbl <- which(abs(diff(dist2D)) < tol)
@@ -4636,14 +4642,14 @@ setMethod("interpPos", "GPR",
             while(length(tdbl) > 0){    # add
               check <- 0
               for(i in seq_along(tdbl)){
-                dtr <- topo[tdbl[i] + 1, "TRACE"] - topo[tdbl[i], "TRACE"]
+                dtr <- topo[tdbl[i] + 1, 4] - topo[tdbl[i], 4]
                 # traces to remove
-                w <- topo[tdbl[i], "TRACE"] + seq_len(dtr)
+                w <- topo[tdbl[i], 4] + seq_len(dtr)
                 x <- x[, -w]  # remove trace in x
                 # remove traces in topo and actualise the trace numbers
                 topo <- topo[-(tdbl[i] + 1), ] 
                 v <- (tdbl[i] + 1):nrow(topo)
-                topo[v, "TRACE"] <- topo[v, "TRACE"] -  dtr
+                topo[v, 4] <- topo[v, 4] -  dtr
                 #dist3D <- dist3D[-tdbl[i]]
                 tdbl <- tdbl - 1
                 check <- check + dtr
@@ -4652,36 +4658,37 @@ setMethod("interpPos", "GPR",
               message("Accordingly, ", check, " trace(s) removed from 'x'!")
               tdbl <- which(abs(diff(dist2D)) < tol)
             }
-            dist3D <- posLine(topo[, c("N", "E", "Z")], last = FALSE)
+            dist3D <- posLine(topo[, 1:3], last = FALSE)
             # if there are points measured with the total station
             # that do not have an fiducial (FID) > interpolate them!
             myWarning <- ""
-            if(anyNA(topo[,"TRACE"])){
+            if(anyNA(topo[,4])){
               # dist3D[topo$PNAME %in% FID$PNAME] > distance for the points 
               # also recorded in FID
               myWarning <- "\npoints total station without fiducials"
-              test <- !is.na(topo[,"TRACE"])
+              test <- !is.na(topo[,4])
               intMeth <- ifelse(sum(test) > 2, method[1], "linear")
               traceNb <- signal::interp1(x      = dist3D[test], 
-                                         y      = topo[test, "TRACE"], 
+                                         y      = topo[test, 4], 
                                          xi     = dist3D,
                                          method = intMeth,
                                          extrap = TRUE)
-              topo[, "TRACE"] <- as.integer(round(traceNb))
+              topo[, 4] <- as.integer(round(traceNb))
               # check for duplicates in TRACE ID and remove them!
-              topo <- rmRowDuplicates(topo, topo[, "TRACE"])
+              topo <- rmRowDuplicates(topo, topo[, 4])
             }
-            if(all(seq_along(x@pos) %in% topo[, "TRACE"])){
-              A <- topo[topo[, "TRACE"] %in% seq_along(x@pos), c("E", "N", "Z")]
+            if(all(seq_along(x@pos) %in% topo[, 4])){
+              A <- topo[topo[, 4] %in% seq_along(x@pos), 1:3]
               message("No interpolation required because the trace positions\n",
                       "of all GPR traces is already available (in object 'topo')!")
             }else{
               #--- INTERPOLATION ---#
-              A <- interp3DPath(x = topo[, c("E", "N", "Z")], pos = topo[, "TRACE"], 
+              A <- interp3DPath(x = topo[, 1:3], pos = topo[, 4], 
                                 posi = seq_along(x@pos), r =r,
                                 method = method)
-              colnames(A) <- c("E", "N", "Z")
+              colnames(A) <- c("x", "y", "z")
             }
+            # diagnostic plots
             dist3Dint <- posLine(A, last = FALSE)
             message(x@name, ": mean dx = ", round( mean(diff(dist3Dint)), 3 ), 
                     ", range dx = [", round( min(diff(dist3Dint)), 3 ),", ", 
@@ -4689,22 +4696,22 @@ setMethod("interpPos", "GPR",
             if(plot == TRUE){
               op <- par(no.readonly=TRUE)
               par(mfrow=c(1, 3))
-              plot(topo[, "TRACE"], dist3D, pch = 20, col = "red", cex = 2, asp = 1,
+              plot(topo[, 4], dist3D, pch = 20, col = "red", cex = 2, asp = 1,
                    xlab = "trace number", ylab = "trace spacing (3D)",
                    xlim = range(seq_along(x@pos)), ylim = range(dist3Dint), 
                    main = paste( x@name))
               points(seq_along(x@pos), dist3Dint, pch = 20, col = "blue", cex = 0.6)
-              plot(dist3Dint, A[, "Z"], type = "l", asp = 10, 
+              plot(dist3Dint, A[, 3], type = "l", asp = 10, 
                    xlab = "interpolated trace spacing", 
                    ylab = "interpolated elevation",
                    main = paste0(x@name, " min dx = ", round(min(diff(dist3Dint)), 2), 
                                  "  max dx = ", round(max(diff(dist3Dint)), 2)))
-              points(dist3D, topo[,"Z"], pch = 20, col = "red")
-              plot(topo[, c("E","N")], col = 1, type = "l", lwd = 2, asp = 1,
-                   ylim = range(A[, "N"]), xlim = range(A[, "E"]), 
+              points(dist3D, topo[,3], pch = 20, col = "red")
+              plot(topo[, c(1,2)], col = 1, type = "l", lwd = 2, asp = 1,
+                   ylim = range(A[, 2]), xlim = range(A[, 1]), 
                    main = paste0(x@name, " mean dx=", round(mean(diff(dist3Dint)),2)))
-              points(topo[, c("E","N")], col = 1, pch = 20, cex = 2)
-              lines(A[, "E"], A[, "N"], col = 2, lwd = 1)
+              points(topo[, c(1,2)], col = 1, pch = 20, cex = 2)
+              lines(A[, 1], A[, 2], col = 2, lwd = 1)
               Sys.sleep(1)
               par(op)
             }
@@ -4794,16 +4801,16 @@ interpPosFromGeoJSON <- function(x, geojson, tol = NULL, backproject = TRUE){
   
   #---- 3. create "topo" file
   topo <- cbind(u$xy, 0, NA)
-  colnames(topo) <- c("E", "N", "Z", "TRACE")
+  colnames(topo) <- c("x", "y", "z", "tn")
   
   #---- 4. remove duplicates
-  dist2D <- posLine(topo[, c("N", "E")], last = FALSE)
+  dist2D <- posLine(topo[, c("x", "y")], last = FALSE)
   # in 'x' and 'topo'
   if(is.null(tol))  tol <- sqrt(.Machine$double.eps)
   tdbl <- which(abs(diff(dist2D)) < tol)
   while(length(tdbl) > 0){
     topo <- topo[ -(tdbl + 1), ]
-    dist2D <- posLine(topo[, c("N", "E", "Z")], last = FALSE) # mod
+    dist2D <- posLine(topo[, c("x", "y", "z")], last = FALSE) # mod
     tdbl <- which(abs(diff(dist2D)) < tol)
   }
   
@@ -4816,13 +4823,13 @@ interpPosFromGeoJSON <- function(x, geojson, tol = NULL, backproject = TRUE){
   # b) interpolate coordinates
   tr_xyz <- matrix(0, nrow = ncol(x), ncol = 3)
   tx_x <- approx(x = trFIDPos$y,
-                 y = topo[,"E"],
+                 y = topo[,"x"],
                  xout = seq_along(x))
   tx_y <- approx(x = trFIDPos$y,
-                 y = topo[,"N"],
+                 y = topo[,"y"],
                  xout = seq_along(x))
   tx_z <- approx(x = trFIDPos$y,
-                 y = topo[,"Z"],
+                 y = topo[,"z"],
                  xout = seq_along(x))
   tr_xyz[,1] <- tx_x$y
   tr_xyz[,2] <- tx_y$y
@@ -6129,7 +6136,7 @@ setMethod("exportCoord", "GPR",
               stop("use type = SpatialLines instead.\n")
             }else if(type == "ASCII"){
               xCoord <- x@coord
-              colnames(xCoord) <- c("E","N","Z")
+              colnames(xCoord) <- c("x", "y", "z")
               fPath <- paste0(fPath, ".txt")
               write.table(xCoord, fPath, row.names = FALSE, 
                           col.names = TRUE, quote = FALSE, ...)

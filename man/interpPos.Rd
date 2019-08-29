@@ -13,15 +13,19 @@
 \item{x}{An object of the class GPR.}
 
 \item{topo}{A \eqn{m \times 4} numeric matrix, with \code{m} the number of 
-traces in 'x'. The columns names of topo must be
-"E", "N", "Z" and "TRACE".}
+traces in 'x'.
+The first 3 columns are the 
+coordinates (x, y, z) and the last column the trace number 
+(the column names can now be freely chosen).}
 
-\item{plot}{A length-one boolean vector. If TRUE some control
-plots are displayed.}
+\item{plot}{A length-one boolean vector. If \code{TRUE} some 
+control/diagnostic plots are displayed.}
 
 \item{r}{A 'RasterLayer' object from the package 'raster' from which
 trace elevation \code{z} will be extracted based on the 
-trace position \code{(x, y)} on the raster.}
+trace position \code{(x, y)} on the raster. The extracted 
+trace elevation will overwrite the values from the third
+column of \code{topo}.}
 
 \item{tol}{Length-one numeric vector: if the horizontal distance between 
 two consecutive trace positions is smaller than \code{tol}, 

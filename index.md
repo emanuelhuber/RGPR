@@ -15,13 +15,8 @@ I am developing this package on my free time as a gift to the GPR community. Any
 </p>
 
 
+[![](https://bmc-cdn.nyc3.digitaloceanspaces.com/BMC-button-images/custom_images/orange_img.png)](https://www.buymeacoffee.com/EmanuelHuber)
 
-I provides the following services to clients:
-
-* GPR data processing
-* GPR data interpretation and 3D modeling
-* development of special code/functions to meet the client needs
-* GPR survey (in Switzerland only)
 
 
 ## About

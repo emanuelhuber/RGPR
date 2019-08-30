@@ -692,8 +692,9 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
   if(is.na(dd)){
     dd <- format(Sys.time(), "%Y-%m-%d")
   }
+  ttime <- yy <- 1/x$hd$SPS * (seq_len(ncol(x$data)) - 1)
   traceTime <- as.double(as.POSIXct(strptime(paste(dd, "01:30:00"), 
-                               "%Y-%m-%d %H:%M:%S") )) + 1:ncol(x$data)
+                                             "%Y-%m-%d %H:%M:%S") )) + ttime
   if(length(fName) == 0){
     x_name <- "LINE"
   }else{
@@ -733,7 +734,7 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
   if(length(antfreq) == 0){
     message("I could not identify the antenna frequency. Please set the ",
             "correct antenna frequency value with 'antfreq(x) <- ...")
-    message("Please set also the correct antenna seaparation",
+    message("Please set also the correct antenna seaparation ",
             "distance value with 'antsep(x) <- ...")
     
     antsep <- numeric(0)
@@ -742,9 +743,51 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
   }
   v <- 2 * x$hd$DEPTH / x$hd$RANGE
   
-  x_fid <- rep("", ncol(x$data))
-  if(!is.null(x$fid) && length(x$fid) == ncol(x$data)){
-    x_fid <- x$fid
+  # defaults
+  x_posunit   <- "ns"
+  x_depthunit <- "m"
+  x_pos       <- x$pos[1:ncol(x$data)]
+  x_depth     <- x$depth[1:nrow(x$data)]
+  x_dx        <- 1 / x$hd$SPM
+  x_fid       <- rep("", ncol(x$data))
+  
+  if(!is.null(x$dzx)){
+    # spatial/horizontal units
+    # pos
+    if(!is.null(x$dzx$pos)){
+      x_pos <- x$dzx$pos
+      # x_dx <- mean(diff(x_pos))
+    }
+    # spatial sampling
+    if(!is.null(x$dzx$dx)){
+      x_dx <- x$dzx$dx
+    } 
+    # if(!is.null(x$dzx$unitsPerScan)){
+    #   x_dx <- x$dzx$unitsPerScan
+    # }
+    # fids/markers
+    if(!is.null(x$dzx$markers) && length(x$dzx$markers) == ncol(x$data)){
+      x_fid <- x$dzx$markers
+    }else if(!is.null(x$dzx$unitsPerMark)){
+      x_fid <- rep("", ncol(x$data))
+      x_fid_id <- which((x_pos %% x$dzx$unitsPerMark) == 0)
+      x_fid[x_fid_id] <- "FID"
+    }
+    if(!is.null(x$dzx$hUnit)){
+      x_posunit <-x$dzx$hUnit
+      if(grepl("in", x_posunit)){
+        x_pos <- x_pos * 0.0254
+        x_posunit <- "m"
+      }
+    }
+    # depth/vertical units
+    if(!is.null(x$dzx$vUnit)){
+      x_depthunit <- x$dzx$vUnit
+      if(grepl("in", x_depthunit)){
+        x_depth <- x_depth * 0.0254
+        x_depthunit <- "m"
+      }
+    }
   }
   new("GPR",   
       version      = "0.2",
@@ -753,7 +796,7 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
       fid         = x_fid,
       #coord = coord,
       coord       = matrix(nrow=0, ncol = 0),
-      pos         = x$pos[1:ncol(x$data)],
+      pos         = x_pos,
       depth       = x$depth[1:nrow(x$data)],
       rec         = matrix(nrow = 0, ncol = 0),
       trans       = matrix(nrow = 0, ncol = 0),
@@ -766,9 +809,9 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
       description = desc,
       filepath    = fPath,
       dz          =  x$hd$RANGE /  (x$hd$NSAMP - 1 ), 
-      dx          = 1 / x$hd$SPM,
-      depthunit   = "ns",
-      posunit     = "m",
+      dx          = x_dx,
+      depthunit   = x_depthunit,
+      posunit     = x_posunit,
       freq        = antfreq, 
       antsep      = antsep,     # check
       surveymode  = "reflection",

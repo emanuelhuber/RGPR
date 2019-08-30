@@ -5073,7 +5073,8 @@ readDZT <- function(fPath){
     # values from the .dzt file.
     y <- readDZX(fNameAux$dzx)
     if(!is.null(y)){
-      return(list(hd = hd, data = Adata, depth = tt, pos = yy, fid = y$markers))
+      # return(list(hd = hd, data = Adata, depth = tt, pos = yy, fid = y$markers))
+      return(list(hd = hd, data = Adata, depth = tt, pos = yy, dzx = y))
     }
   } 
   
@@ -5089,19 +5090,47 @@ readDZT <- function(fPath){
 #' @export
 readDZX <- function(fPath){
   doc <- verboseF(XML::xmlParse(fPath), verbose = FALSE)
+  
+  lst <- list()
+  
+  glbProp <- XML::xmlChildren(doc)$DZX[["GlobalProperties"]]
+  if(!is.null(glbProp)){
+    unitsPerMark <- XML::xmlElementsByTagName(glbProp, "unitsPerMark")
+    if(length(unitsPerMark) > 0){
+      unitsPerMark <- as.numeric(XML::xmlValue(unitsPerMark[[1]]))
+      if(unitsPerMark > 0){
+        lst$unitsPerMark <- unitsPerMark
+      }
+    }
+    unitsPerScan <- XML::xmlElementsByTagName(glbProp, "unitsPerScan")
+    if(length(unitsPerScan) > 0){
+      unitsPerScan <- as.numeric(XML::xmlValue(unitsPerScan[[1]]))
+      if(unitsPerScan > 0){
+        lst$unitsPerScan <- unitsPerScan
+      }
+    }
+    vUnit <- XML::xmlElementsByTagName(glbProp, "verticalUnit")
+    if(length(vUnit) > 0){
+      vUnit <- XML::xmlValue(vUnit[[1]])
+      lst$vUnit <- vUnit
+    }
+    hUnit <- XML::xmlElementsByTagName(glbProp, "horizontalUnit")
+    if(length(hUnit) > 0){
+      hUnit <- XML::xmlValue(hUnit[[1]])
+      lst$hUnit <- hUnit
+    }
+  }
+  
   # Scan range !!
-  if(!is.null(XML::xmlChildren(doc)$DZX[["File"]])){
-    s1 <- XML::xmlElementsByTagName(XML::xmlChildren(doc)$DZX[["File"]], 
-                                    "scanRange", 
-                                    recursive = TRUE)
+  # FIXME : multi channel files
+  fl <- XML::xmlChildren(doc)$DZX[["File"]]
+  if(!is.null(fl)){
+    s1 <- XML::xmlElementsByTagName(fl, "scanRange", recursive = TRUE)
     if(length(s1) > 0){
       s0 <- as.integer(strsplit(XML::xmlValue(s1[[1]]), split = ",")[[1]])
       nscans <- length(s0[1]:s0[2])
-      lst <- list()
       #--- distance
-      dst <- XML::xmlElementsByTagName(XML::xmlChildren(doc)$DZX[["File"]], 
-                                       "distance", 
-                                       recursive = TRUE)
+      dst <- XML::xmlElementsByTagName(fl, "distance", recursive = TRUE)
       if(length(dst) > 0){
         d0 <- as.numeric(sapply(dst, XML::xmlValue))
         lst$dx <- (d0[2] - d0[1])/(nscans- 1)
@@ -5109,23 +5138,21 @@ readDZX <- function(fPath){
       }
       
       #--- marks !!
-      tst <- XML::xmlElementsByTagName(XML::xmlChildren(doc)$DZX[["File"]], 
-                                       "mark", 
-                                       recursive = TRUE)
+      tst <- XML::xmlElementsByTagName(fl, "mark", recursive = TRUE)
       if(length(tst) > 0){
         markers_name <- as.character(sapply(tst, XML::xmlValue))
         markers_pos <- as.numeric(sapply(tst, .xmlValueSibling ))
         lst$markers <- character(length = nscans)
         lst$markers[markers_pos] <- markers_name
       }
-      if(length(lst) > 0){
-        return(lst)
-      }
     }
-    return(NULL)
     # return(list(markers = markers, pos = pos, dx = dx))
   }
-  return(NULL)
+  if(length(lst) > 0){
+    return(lst)
+  }else{
+    return(NULL)
+  }
 }
 
 .xmlValueSibling <- function(x, after = FALSE){

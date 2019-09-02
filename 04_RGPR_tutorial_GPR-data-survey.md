@@ -1,42 +1,13 @@
 ---
 layout: page
 title: Adding coordinates to GPR data
-date: 2019-08-29
+date: 2019-09-02
 ---
 
 <!--
 "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke")
 "G:/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
 -->
-Table of Contents
------------------
-
--   [Objectives of this tutorial](#objectives-of-this-tutorial)
--   [Preliminary](#preliminary)
-    -   [File organisation](#file-organisation)
-    -   [Install/load `RGPR` and set the working directory](#install/load-%60rgpr%60-and-set-the-working-directory)
-    -   [Getting help](#getting-help)
--   [Read GPR data](#read-gpr-data)
--   [Basic processing steps](#basic-processing-steps)
-    -   [First wave break and time zero estimation](#first-wave-break-and-time-zero-estimation)
-    -   [DC shift removal](#dc-shift-removal)
-    -   [Time zero correction](#time-zero-correction)
-    -   [Dewow](#dewow)
-    -   [Frequency filter](#frequency-filter)
-    -   [Amplitude gain](#amplitude-gain)
-        -   [Power gain](#power-gain)
-        -   [Exponential gain](#exponential-gain)
-    -   [inverse normal transformations](#inverse-normal-transformations)
-    -   [Median filter (spatial filter)](#median-filter-(spatial-filter))
-    -   [Frequency-wavenumber filter (f-k-filter)](#frequency-wavenumber-filter-(f-k-filter))
-    -   [Processing overview](#processing-overview)
-    -   [Other processing functions](#other-processing-functions)
-        -   [Trace average removal](#trace-average-removal)
-        -   [Eigen Image Filter](#eigen-image-filter)
-        -   [Background matrix substraction](#background-matrix-substraction)
-    -   [Save and export](#save-and-export)
-    -   [Read the saved GPR data](#read-the-saved-gpr-data)
--   [Some final thoughts](#some-final-thoughts)
 
 ------------------------------------------------------------------------
 
@@ -44,6 +15,30 @@ Table of Contents
 
 -   This R-package is still in development, and therefore some of the functions may change in a near future.
 -   If you have any questions, comments or suggestions, feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
+
+Table of Contents
+=================
+
+-   [Objectives of this tutorial](#objectives-of-this-tutorial)
+-   [Preliminary](#preliminary)
+    -   [File organisation](#file-organisation)
+    -   [Install/load the necessary packages](#install/load-the-necessary-packages)
+    -   [Set the working directory](#set-the-working-directory)
+-   [Read all the GPR data in a object of the class `GPRsurvey`](#read-all-the-gpr-data-in-a-object-of-the-class-%60gprsurvey%60)
+    -   [Set the filepaths](#set-the-filepaths)
+    -   [Create an object of the class `GPRsurvey`](#create-an-object-of-the-class-%60gprsurvey%60)
+-   [Add coordinates](#add-coordinates)
+    -   [Option 1: all the trace coordinates are already known](#option-1:-all-the-trace-coordinates-are-already-known)
+    -   [Option 2: some trace coordinates exist](#option-2:-some-trace-coordinates-exist)
+    -   [Setting the coordinate reference system](#setting-the-coordinate-reference-system)
+    -   [Export the coordinates](#export-the-coordinates)
+    -   [Remark](#remark)
+-   [Plot functions](#plot-functions)
+    -   [Plot the survey](#plot-the-survey)
+    -   [Plot the GPR data](#plot-the-gpr-data)
+    -   [Three-dimensional plot of the GPR data](#three-dimensional-plot-of-the-gpr-data)
+    -   [a name="pookie"&gt;</a>Processing, save and PDF export](#a-name=%22pookie%22%3E%3C/a%3Eprocessing,-save-and-pdf-export)
+    -   [Alternative: sequentially apply the processing steps on an object of the class GPRsurvey](#alternative:-sequentially-apply-the-processing-steps-on-an-object-of-the-class-gprsurvey)
 
 Objectives of this tutorial
 ===========================

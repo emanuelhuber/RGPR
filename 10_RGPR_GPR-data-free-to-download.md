@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Free GPR data
-date: 2019-08-29
+date: 2019-09-02
 ---
 
 <!--
@@ -11,12 +11,21 @@ date: 2019-08-29
 
 ------------------------------------------------------------------------
 
+Table of Contents
+=================
+
+-   [GPR data I collected](#gpr-data-i-collected)
+    -   [Single GPR data from\[Schmelzbach and Huber (2015)\](http://dx.doi.org/10.1109/TGRS.2015.2419235)](#single-gpr-data-from-%5Bschmelzbach-and-huber-(2015)%5D(http://dx.doi.org/10.1109/tgrs.2015.2419235))
+    -   [The Frenke GPR data set](#the-frenke-gpr-data-set)
+-   [Third party GPR data (not tested)](#third-party-gpr-data-(not-tested))
+
 GPR data I collected
---------------------
+====================
 
 I plan to make freely available the GPR data I collected during my PhD thesis (that was financed by public funding).
 
-### Single GPR data from [Schmelzbach and Huber (2015)](http://dx.doi.org/10.1109/TGRS.2015.2419235)
+Single GPR data from [Schmelzbach and Huber (2015)](http://dx.doi.org/10.1109/TGRS.2015.2419235)
+------------------------------------------------------------------------------------------------
 
 [GPR data recorded with Pulse Ekko Pro from Sensors & Software on the river bed of the Tagliamento River (NE Italy)](https://doi.org/10.5281/zenodo.2586189). Avalaible on Zenodo: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2586189.svg)](https://doi.org/10.5281/zenodo.2586189)
 
@@ -24,12 +33,15 @@ This data was used to test the *efficient deconvolution* scheme of Schmelzbar an
 
 > C. Schmelzbach, E. Huber (2015) Efficient Deconvolution of Ground-Penetrating Radar Data. IEEE Transactions on Geoscience and Remote Sensing, 53(9): 5209 - 5217. doi: [10.1109/TGRS.2015.2419235](http://dx.doi.org/10.1109/TGRS.2015.2419235). [PDF](public/schmelzbach-and-huber_2015_GPR-efficient-deconvolution.pdf)
 
-### the Frenke GPR data set
+The Frenke GPR data set
+-----------------------
 
 Five GPR lines plus a common mid-point (CMP) data: [2014\_04\_25\_frenke.zip](http://emanuelhuber.github.io/RGPR/2014_04_25_frenke.zip)
 
+------------------------------------------------------------------------
+
 Third party GPR data (not tested)
----------------------------------
+=================================
 
 -   Geophysics Forum: [GPR data with aircraft buried in the ice in Greenland](http://forum.detectation.com/viewtopic.php?f=2&t=4228); [direct link to google drive](https://drive.google.com/open?id=1PI660GXAGMtwoamq-lYB6ZX3hE2RXBeW)
 -   Geophysics Forum: [Fresh water bathymetry using GPR](http://forum.detectation.com/viewtopic.php?f=2&t=4244&p=12186&hilit=GPR+data&sid=4053b4fc4e1614f4debbe096d69669de#p12186); [direct link to google drive](https://drive.google.com/open?id=16lDd2j8RN4BWj3U-LqeLH3ghyMAVC7D8)

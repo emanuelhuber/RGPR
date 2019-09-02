@@ -1,7 +1,7 @@
 ---
 layout: page
 title: GPR data migration
-date: 2019-05-16
+date: 2019-09-02
 ---
 
 <!--
@@ -15,6 +15,29 @@ date: 2019-05-16
 
 -   This R-package is still in development, and therefore some of the functions may change in a near future.
 -   If you have any questions, comments or suggestions, feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
+
+Table of Contents
+=================
+
+-   [Objectives of this tutorial](#objectives-of-this-tutorial)
+-   [Preliminary](#preliminary)
+    -   [File organisation](#file-organisation)
+    -   [Install/load `RGPR` and set the working directory](#install/load-%60rgpr%60-and-set-the-working-directory)
+-   [Read GPR data](#read-gpr-data)
+-   [Pre-processing](#pre-processing)
+    -   [Add topographic data (coordinates)](#add-topographic-data-(coordinates))
+    -   [DC shift removal](#dc-shift-removal)
+    -   [First wave break estimation and set time-zero](#first-wave-break-estimation-and-set-time-zero)
+    -   [Dewow](#dewow)
+    -   [Frequency filter](#frequency-filter)
+    -   [Time gain](#time-gain)
+-   [Topographic Kirchhoff migration](#topographic-kirchhoff-migration)
+    -   [Pre-processing](#pre-processing)
+        -   [Constant offset correction](#constant-offset-correction)
+        -   [Time upsampling (sinc-interpolation) of the GPR data to reduce the aliasing risk.](#time-upsampling-(sinc-interpolation)-of-the-gpr-data-to-reduce-the-aliasing-risk.)
+    -   [Topographic Kirchhoff migration.](#topographic-kirchhoff-migration.)
+    -   [Post-processing](#post-processing)
+    -   [Comparison before/after migration](#comparison-before/after-migration)
 
 Objectives of this tutorial
 ===========================
@@ -88,6 +111,8 @@ TOPO <- file.path(getwd(), "coord/topo/LINE00.txt")
 ``` r
 TOPOList <- readTopo(TOPO, sep = "\t")
 ```
+
+    ## read /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE00.txt...
 
 1.  Set the list of coordinates as the new coordinates to the GPRsurvey object:
 

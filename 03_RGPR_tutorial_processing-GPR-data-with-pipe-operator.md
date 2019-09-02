@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Pipe processing
-date: 2019-05-16
+date: 2019-09-02
 ---
 
 <!--
@@ -15,6 +15,19 @@ date: 2019-05-16
 
 -   This R-package is still in development, and therefore some of the functions may change in a near future.
 -   If you have any questions, comments or suggestions, feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
+
+Table of Contents
+=================
+
+-   [Objectives of this tutorial](#objectives-of-this-tutorial)
+-   [Preliminary](#preliminary)
+    -   [Install/load `RGPR`](#install/load-%60rgpr%60)
+    -   [The GPR data](#the-gpr-data)
+    -   [Compute time zero](#compute-time-zero)
+-   [Using the pipe operators with RPGR](#using-the-pipe-operators-with-rpgr)
+    -   [Basic piping](#basic-piping)
+    -   [The `%>%` pipe operator](#the-%60%%3E%%60-pipe-operator)
+    -   [The `%T>%` tee operator](#the-%60%t%3E%%60-tee-operator)
 
 Objectives of this tutorial
 ===========================

@@ -1,15 +1,23 @@
 ---
 layout: page
 title: Basic GPR data processing
-date: 2019-07-27
+date: 2019-09-02
 ---
 
 <!--
 "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
 "G:/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
 -->
+
+------------------------------------------------------------------------
+
+**Note**:
+
+-   This R-package is still in development, and therefore some of the functions may change in a near future.
+-   If you have any questions, comments or suggestions, feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
+
 Table of Contents
------------------
+=================
 
 -   [Objectives of this tutorial](#objectives-of-this-tutorial)
 -   [Preliminary](#preliminary)
@@ -37,13 +45,6 @@ Table of Contents
     -   [Save and export](#save-and-export)
     -   [Read the saved GPR data](#read-the-saved-gpr-data)
 -   [Some final thoughts](#some-final-thoughts)
-
-------------------------------------------------------------------------
-
-**Note**:
-
--   This R-package is still in development, and therefore some of the functions may change in a near future.
--   If you have any questions, comments or suggestions, feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
 
 Objectives of this tutorial
 ===========================
@@ -230,7 +231,6 @@ x1
     ##  223 traces, 55.5 m
     ##  > PROCESSING
     ##    1. time0<-
-    ##    2. dcshift//u=1:110
     ##  ****************
 
 Compared with `x` or `print(x)`, three additional lines are displayed. The two last line show the applied processing step:
@@ -247,7 +247,6 @@ proc(x1)
 ```
 
     ## [1] "time0<-"
-    ## [2] "dcshift//u=1:110"
 
 Time zero correction
 --------------------
@@ -591,7 +590,7 @@ writeGPR(x9, fPath = file.path(getwd(), "processing", paste0(name(x9), ".rds")),
 
     ## *** Class GPR ***
     ##  name        = LINE00
-    ##  filepath    = /media/huber/Seagate1TB/UNIBAS/PROJECTS/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/processing/LINE00.dt1
+    ##  filepath    = /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/processing/LINE00.dt1
     ##  1 fiducial(s)
     ##  description =
     ##  survey date = 2014-04-25

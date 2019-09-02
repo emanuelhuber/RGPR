@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Import GPR data
-date: 2019-08-26
+date: 2019-09-02
 ---
 
 <!--
@@ -57,6 +57,13 @@ Read/import GPR data
 Use the function `readGPR()` to import GPR data into R. While the filepath (given to the argument `dsn`) is case sensitive, the extension is not. That means that you can write: `XLINE00.DT1` or `XLINE00.dt1`. Note that the filepath must correspond to the binary data (not to the ASCII header file data)
 
 Note that the coordinates collected with GPS in the same time as the GPR data and stored in a specific file are not directly imported by the function `readGPR()`. You must add the coordinates separatly following the explanations of the tutorial '[Adding coordinates to GPR data](http://emanuelhuber.github.io/RGPR/02_RGPR_tutorial_RGPR-survey/)'.
+
+To suppress any message or warning, set the argument `verbose = FALSE`, e.g.,
+
+``` r
+x <- readGPR(dsn = "myData.ext", verbose = FALSE)
+plot(x)
+```
 
 Sensors and software data (`.dt1`)
 ----------------------------------

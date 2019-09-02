@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Plot GPR data
-date: 2019-05-16
+date: 2019-09-02
 ---
 
 <!--
@@ -28,6 +28,39 @@ Install/load `RGPR`
 # install "devtools" if not already done
 if(!require("devtools")) install.packages("devtools")
 devtools::install_github("emanuelhuber/RGPR")
+```
+
+    ##
+    ##
+       checking for file ‘/tmp/RtmpLSrbAF/remotes21bd5d49ad10/emanuelhuber-RGPR-5f451a1/DESCRIPTION’...
+
+    ✔  checking for file ‘/tmp/RtmpLSrbAF/remotes21bd5d49ad10/emanuelhuber-RGPR-5f451a1/DESCRIPTION’
+    ##
+
+    ─  preparing ‘RGPR’:
+    ##
+
+       checking DESCRIPTION meta-information...
+
+    ✔  checking DESCRIPTION meta-information
+    ##
+
+    ─  checking for LF line-endings in source and make files and shell scripts
+    ##
+
+    ─  checking for empty or unneeded directories
+    ##
+
+    ─  looking to see if a ‘data/datalist’ file should be added
+    ##
+
+    ─  building ‘RGPR_0.0.5.tar.gz’
+    ##
+
+
+    ##
+
+``` r
 library(RGPR)       # load RGPR in the current R session
 ```
 
@@ -139,6 +172,22 @@ plot(x[100:300, 15:150])
 ```
 
 ![plot(A) subset](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_subset-1.png)
+
+To not display the markers, the annotation (e.g., markers for the intersection of the GPR line with other GPR lines), the time-zero line, the colorbar (barscale), set `addFid`, `addAnn`, `addTime0` and `barscale` equal to `FALSE`.
+
+``` r
+plot(x, addFid = FALSE, addAnn = FALSE, addTime0 = FALSE, barscale = FALSE)
+```
+
+![](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/withoutannotations-1.png)
+
+To not display the note below the x-label, the plot title (file name), the x and y lables, the colorbar label, set `note`, `main`, `ylab`, `xlab` and `clab` equal to `""`.
+
+``` r
+plot(x, note = "", main = "", ylab = "", xlab = "", clab = "")
+```
+
+![](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/withoutlabels-1.png)
 
 1D plot
 -------

@@ -225,15 +225,19 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
   antfreq <- .getHD(x$hd, "NOMINAL FREQUENCY", position=TRUE)
   if(!is.null(antfreq)){
     pos_used[antfreq[2]] <- 1L
-    freq <- freqFromString(antfreq[1])
+    antfreq <- freqFromString(antfreq[1])
   }else{
-    freq <- 100
+    antfreq <- 0
+    message("Antenna frequency set to 0 MHz. Set it with 'antfreq(x) <- ... '")
   }
   antsep <- .getHD(x$hd, "ANTENNA SEPARATION", position=TRUE)[1]
   if(!is.null(antsep)){
     pos_used[antsep[2]] <- 1L
   }else{
-    antsep <- antSepFromAntFreq(antfreq[1])
+    antsep <- 0
+    message("Antenna separation set to 0 ", posunit, 
+            ". Set it with 'antsep(x) <- ... '")
+    # antsep <- antSepFromAntFreq(antfreq[1])
   }
   surveymode = .getHD(x$hd, "SURVEY MODE",number=FALSE, position=TRUE)
   if(!is.null(surveymode)){
@@ -335,7 +339,7 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
       dx          = dx[1],                       # "STEP SIZE USED"
       depthunit   = "ns",
       posunit     = posunit[1],
-      freq        = freq[1], 
+      freq        = antfreq[1], 
       antsep      = antsep[1], 
       surveymode  = surveymode[1],
       date        = d,
@@ -389,13 +393,17 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
     antfreq <- freqFromString(afreq[1])
     pos_used[as.integer(afreq[2])] <- 1L
   }else{
-    antfreq <- 100
+    antfreq <- 0
+    message("Antenna frequency set to 0 MHz. Set it with 'antfreq(x) <- ... '")
   }
   antsep <- .getHD(x$hd, "ANTENNA SEPARATION", position = TRUE)
   if(!is.null(antsep)){
     pos_used[antsep[2]] <- 1L
   }else{
-    antsep[1] <- antSepFromAntFreq(antfreq)
+    # antsep[1] <- antSepFromAntFreq(antfreq)
+    antsep[1] <- 0
+    message("Antenna separation set to 0 ", "m", 
+            ". Set it with 'antsep(x) <- ... '")
   }
   surveyDate <- .getHD(x$hd, "DATE", position = TRUE, number = FALSE)
   if(!is.null(surveyDate)){
@@ -512,14 +520,18 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
   if(!is.null(antfreq) && !is.na(antfreq)){
     pos_used[X[2]] <- 1L
   }else{
-    antfreq <- 100
+    antfreq <- 0
+    message("Antenna frequency set to 0 MHz. Set it with 'antfreq(x) <- ... '")
   }
   # OK
   antsep <- .getHD(x$hd, "ANTENNA SEPARATION", position=TRUE)
   if(!is.null(antsep)){
     pos_used[antsep[2]] <- 1L
   }else{
-    antsep <- antSepFromAntFreq(antfreq)
+    # antsep <- antSepFromAntFreq(antfreq)
+    antsep <- 0
+    message("Antenna separation set to 0 ", "m", 
+            ". Set it with 'antsep(x) <- ... '")
   }
   x$hd2 <- x$hd[!pos_used,]
   if(nrow(x$hd2)>0){
@@ -599,13 +611,20 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
                    value = TRUE)
   antfreq <- as.numeric(gsub("[^0-9]", "", antfreq0))
   # antfreq <- freqFromString(x$hd$EBCDIC) FIXME.
-  if(length(antfreq) > 0){
-    antsep <- antSepFromAntFreq(antfreq)
-  }else{
-    antfreq <- numeric(0)
-    antsep <- numeric(0)
-    message("Please, add antenna frequency and antenna separation.")
+  if(length(antfreq) == 0){
+    antfreq <- 0
+    message("Antenna frequency set to 0 MHz. Set it with 'antfreq(x) <- ... '")
   }
+  antsep <- 0
+  message("Antenna separation set to 0 ", "m", 
+          ". Set it with 'antsep(x) <- ... '")
+  # if(length(antfreq) > 0){
+  #   antsep <- antSepFromAntFreq(antfreq)
+  # }else{
+  #   antfreq <- numeric(0)
+  #   antsep <- numeric(0)
+  #   message("Please, add antenna frequency and antenna separation.")
+  # }
   # Date
   dd <- format(Sys.time(), "%Y-%m-%d")
   traceTime <- as.double(as.POSIXct(x$hdt[1,] * 3600 + x$hdt[2,] * 60 + 
@@ -700,6 +719,67 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
   }else{
     x_name <- fName
   }
+  # defaults
+  x_posunit   <- "ns"
+  x_depthunit <- "m"
+  x_pos       <- x$pos[1:ncol(x$data)]
+  x_depth     <- x$depth[1:nrow(x$data)]
+  x_dx        <- 1 / x$hd$SPM
+
+  # Fiducial markers > each class has a different name (letter)
+  x_fid       <- rep("", ncol(x$data))
+  test <- which(x$hd$MRKS < 0)
+  fidval <- LETTERS[as.numeric(as.factor(x$hd$MRKS[test]))]
+  ufidval <- unique(fidval)
+  for( i in seq_along(ufidval)){
+    test2 <- which(fidval == ufidval[i])
+    fid_nb <- seq_along(test2)
+    x_fid[test][test2] <- paste0(ufidval[i], 
+                                 sprintf(paste0("%0", max(nchar(fid_nb)), "d"), 
+                                                     fid_nb))
+  }
+  
+  if(!is.null(x$dzx)){
+    # spatial/horizontal units
+    # pos
+    if(!is.null(x$dzx$pos)){
+      x_pos <- x$dzx$pos
+      # x_dx <- mean(diff(x_pos))
+    }
+    # spatial sampling
+    if(!is.null(x$dzx$dx)){
+      x_dx <- x$dzx$dx
+    } 
+    # if(!is.null(x$dzx$unitsPerScan)){
+    #   x_dx <- x$dzx$unitsPerScan
+    # }
+    # fids/markers
+    if(all(x_fid == "") &&
+       !is.null(x$dzx$markers) && 
+       length(x$dzx$markers) == ncol(x$data)){
+      x_fid <- x$dzx$markers
+    }
+    # else if(all(x_fid == "") && !is.null(x$dzx$unitsPerMark)){
+    #   x_fid <- rep("", ncol(x$data))
+    #   x_fid_id <- which((x_pos %% x$dzx$unitsPerMark) == 0)
+    #   x_fid[x_fid_id] <- "FID"
+    # }
+    if(!is.null(x$dzx$hUnit)){
+      x_posunit <-x$dzx$hUnit
+      if(grepl("in", x_posunit)){
+        x_pos <- x_pos * 0.0254
+        x_posunit <- "m"
+      }
+    }
+    # depth/vertical units
+    if(!is.null(x$dzx$vUnit)){
+      x_depthunit <- x$dzx$vUnit
+      if(grepl("in", x_depthunit)){
+        x_depth <- x_depth * 0.0254
+        x_depthunit <- "m"
+      }
+    }
+  }
   antfreq <- switch(antName,
                     '3200'   = numeric(0), # adjustable
                     '3200MLF' = numeric(0), # adjustable
@@ -729,73 +809,31 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
                     'D50800' = 800,
                     numeric(0))  # 800,300,
   if(length(antfreq) == 0){
+    # estimate anntenna frequency from the name (it it contains ### MHz)
     antfreq <- freqFromString(antName)
   }
   if(length(antfreq) == 0){
-    message("I could not identify the antenna frequency. Please set the ",
-            "correct antenna frequency value with 'antfreq(x) <- ...")
-    message("Please set also the correct antenna seaparation ",
-            "distance value with 'antsep(x) <- ...")
-    
-    antsep <- numeric(0)
-  }else{
-    antsep <- antSepFromAntFreq(antfreq)
+    antfreq <- 0
+    message("Antenna frequency set to 0 MHz. Set it with 'antfreq(x) <- ... '́")
+   # antsep <- numeric(0)
   }
+  #else{
+  #}
   v <- 2 * x$hd$DEPTH / x$hd$RANGE
   
-  # defaults
-  x_posunit   <- "ns"
-  x_depthunit <- "m"
-  x_pos       <- x$pos[1:ncol(x$data)]
-  x_depth     <- x$depth[1:nrow(x$data)]
-  x_dx        <- 1 / x$hd$SPM
-  x_fid       <- rep("", ncol(x$data))
+  # antenna sparation could be estimated from frequency...
+  # antsep <- antSepFromAntFreq(antfreq)
+  antsep <- 0
+  message("Antenna separation set to 0 ", x_posunit, 
+          ". Set it with 'antsep(x) <- ... '")
   
-  if(!is.null(x$dzx)){
-    # spatial/horizontal units
-    # pos
-    if(!is.null(x$dzx$pos)){
-      x_pos <- x$dzx$pos
-      # x_dx <- mean(diff(x_pos))
-    }
-    # spatial sampling
-    if(!is.null(x$dzx$dx)){
-      x_dx <- x$dzx$dx
-    } 
-    # if(!is.null(x$dzx$unitsPerScan)){
-    #   x_dx <- x$dzx$unitsPerScan
-    # }
-    # fids/markers
-    if(!is.null(x$dzx$markers) && length(x$dzx$markers) == ncol(x$data)){
-      x_fid <- x$dzx$markers
-    }else if(!is.null(x$dzx$unitsPerMark)){
-      x_fid <- rep("", ncol(x$data))
-      x_fid_id <- which((x_pos %% x$dzx$unitsPerMark) == 0)
-      x_fid[x_fid_id] <- "FID"
-    }
-    if(!is.null(x$dzx$hUnit)){
-      x_posunit <-x$dzx$hUnit
-      if(grepl("in", x_posunit)){
-        x_pos <- x_pos * 0.0254
-        x_posunit <- "m"
-      }
-    }
-    # depth/vertical units
-    if(!is.null(x$dzx$vUnit)){
-      x_depthunit <- x$dzx$vUnit
-      if(grepl("in", x_depthunit)){
-        x_depth <- x_depth * 0.0254
-        x_depthunit <- "m"
-      }
-    }
-  }
   new("GPR",   
       version      = "0.2",
       data        = byte2volt(Vmax = Vmax, nBytes = x$hd$BITS) * x$data,
       traces      = 1:ncol(x$data),
       fid         = x_fid,
       #coord = coord,
-      coord       = matrix(nrow=0, ncol = 0),
+      coord       = matrix(nro = 0, ncol = 0),
       pos         = x_pos,
       depth       = x$depth[1:nrow(x$data)],
       rec         = matrix(nrow = 0, ncol = 0),

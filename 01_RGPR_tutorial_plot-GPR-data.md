@@ -16,6 +16,36 @@ date: 2019-09-02
 -   This R-package is still in development, and therefore some of the functions may change in a near future.
 -   If you have any questions, comments or suggestions, feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
 
+Table of Contents
+=================
+
+-   [Objectives of this tutorial](#objectives-of-this-tutorial)
+-   [Preliminary](#preliminary)
+    -   [File organisation](#file-organisation)
+    -   [Install/load `RGPR` and set the working directory](#install/load-%60rgpr%60-and-set-the-working-directory)
+    -   [Getting help](#getting-help)
+-   [Read GPR data](#read-gpr-data)
+-   [Basic processing steps](#basic-processing-steps)
+    -   [First wave break and time zero estimation](#first-wave-break-and-time-zero-estimation)
+    -   [DC shift removal](#dc-shift-removal)
+    -   [Time zero correction](#time-zero-correction)
+    -   [Dewow](#dewow)
+    -   [Frequency filter](#frequency-filter)
+    -   [Amplitude gain](#amplitude-gain)
+        -   [Power gain](#power-gain)
+        -   [Exponential gain](#exponential-gain)
+    -   [inverse normal transformations](#inverse-normal-transformations)
+    -   [Median filter (spatial filter)](#median-filter-(spatial-filter))
+    -   [Frequency-wavenumber filter (f-k-filter)](#frequency-wavenumber-filter-(f-k-filter))
+    -   [Processing overview](#processing-overview)
+    -   [Other processing functions](#other-processing-functions)
+        -   [Trace average removal](#trace-average-removal)
+        -   [Eigen Image Filter](#eigen-image-filter)
+        -   [Background matrix substraction](#background-matrix-substraction)
+    -   [Save and export](#save-and-export)
+    -   [Read the saved GPR data](#read-the-saved-gpr-data)
+-   [Some final thoughts](#some-final-thoughts)
+
 Objectives of this tutorial
 ===========================
 
@@ -28,39 +58,6 @@ Install/load `RGPR`
 # install "devtools" if not already done
 if(!require("devtools")) install.packages("devtools")
 devtools::install_github("emanuelhuber/RGPR")
-```
-
-    ##
-    ##
-       checking for file ‘/tmp/RtmpLSrbAF/remotes21bd5d49ad10/emanuelhuber-RGPR-5f451a1/DESCRIPTION’...
-
-    ✔  checking for file ‘/tmp/RtmpLSrbAF/remotes21bd5d49ad10/emanuelhuber-RGPR-5f451a1/DESCRIPTION’
-    ##
-
-    ─  preparing ‘RGPR’:
-    ##
-
-       checking DESCRIPTION meta-information...
-
-    ✔  checking DESCRIPTION meta-information
-    ##
-
-    ─  checking for LF line-endings in source and make files and shell scripts
-    ##
-
-    ─  checking for empty or unneeded directories
-    ##
-
-    ─  looking to see if a ‘data/datalist’ file should be added
-    ##
-
-    ─  building ‘RGPR_0.0.5.tar.gz’
-    ##
-
-
-    ##
-
-``` r
 library(RGPR)       # load RGPR in the current R session
 ```
 

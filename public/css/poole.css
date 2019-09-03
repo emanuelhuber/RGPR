@@ -379,11 +379,12 @@ tbody tr:nth-child(odd) th {
 .page-title,
 .post-title,
 .post-title a {
-  color: #303030;
+  color: #000080;   # navy blue
 }
 .page-title,
 .post-title {
   margin-top: 0;
+  font-size: 2.5rem;
 }
 
 /* Meta data line below post title */

@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Import GPR data
-date: 2019-09-02
+date: 2019-09-03
 ---
 
 <!--
@@ -30,7 +30,7 @@ Table of content
     -   [ASCII data (`.txt`)](#ascii-data-txt)
     -   [ENVI band-sequential files (`.dat`, `.hdr`)](#envi-band-sequential-files-dat-hdr)
     -   [Pickle files (`.pkl`, serialized Python object)](#pickle-files-pkl-serialized-python-object)
--   [Convert a matrix object into a GPR data](#matrix2GPR)
+-   [Convert a matrix object into a GPR data](#convert-a-matrix-object-into-a-gpr-data)
 
 Objectives of this tutorial
 ===========================

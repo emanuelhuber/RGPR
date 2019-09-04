@@ -63,9 +63,10 @@ ISSN      = {2474-3844}}
     - or matrix-format (without header/rownames)
 - [X] R internal format (**\*.rds**).
 - [X] serialized Python object (**\*.pkl**).
-- [ ] [SEG-Y](https://en.wikipedia.org/wiki/SEG-Y) (filel format developed by the Society of Exploration Geophysicists (SEG) for storing geophysical data) -> **we are working on it**
-- [ ] [3dradar](http://3d-radar.com/) (**\*.3dra**) -> the manufacturer does not want to reveal the binary file format. Workaround: export the GPR data in binary VOL format (**\*.vol**)  with the examiner software -> **we are working on it**
+- [X] [SEG-Y](https://en.wikipedia.org/wiki/SEG-Y) (file format developed by the Society of Exploration Geophysicists (SEG) for storing geophysical data, also used by [Easy Radar USA](https://easyradusa.com)) -> **Still experimental**
+- [X] [3dradar](http://3d-radar.com/) (**\*.3dra**) -> the manufacturer does not want to reveal the binary file format. Workaround: export the GPR data in binary VOL format (**\*.vol**)  with the examiner software -> **Still experimental**
 - [ ] [Terra Zond](http://terrazond.ru/) binary file format (**\*.trz**) -> **we are working on it**
+- [ ] Utsi Electronics .hrd format (used by [Geomatrix Earth Science Ltd](https://www.geomatrix.co.uk/)) -> **I requested the binary file format description from  [Geomatrix Earth Science Ltd](https://www.geomatrix.co.uk/)**
     
 See tutorial [Import GPR data](http://emanuelhuber.github.io/RGPR/00_RGPR_import_data/).
 

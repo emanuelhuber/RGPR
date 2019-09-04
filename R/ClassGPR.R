@@ -900,6 +900,68 @@ readSGY <- function(dsn, fName = "", fPath = "", desc = "",
   
 }
 
+.gprVOL <- function(x, fName = "", fPath = "", desc = "", Vmax = 50){
+  if(is.null(x$hd$zmin) && !is.null(x$hd$dz)){
+    x_depth <- seq(x$hd$zmin, by = as.numeric(x$hd$dz), length.out = x$hd$z_dim)
+  }else{
+    x_depth <- seq_len(x$hd$z_dim)
+  }
+  if(x$hd$dim == "2D"){
+    y <- new("GPR",   
+        version      = "0.2",
+        data        = byte2volt(Vmax = Vmax, nBytes = x$hd$bits) * x$data,
+        traces      = 1:ncol(x$data),
+        fid         = rep("", ncol(x$data)),
+        #coord = coord,
+        coord       = matrix(nro = 0, ncol = 0),
+        pos         = 1:ncol(x$data),
+        depth       = 1:nrow(x$data),
+        rec         = matrix(nrow = 0, ncol = 0),
+        trans       = matrix(nrow = 0, ncol = 0),
+        time0       = rep(0, ncol(x$data)),
+        # time = x$hdt[1,] * 3600 + x$hdt[2,] * 60 + x$hdt[3,],
+        time        = rep(0, ncol(x$data)),
+        proc        = character(0),
+        vel         = list(),
+        name        = fName,
+        description = desc,
+        filepath    = fPath,
+        dz          =  1, 
+        dx          = 1,
+        depthunit   = "ns",
+        posunit     = "m",
+        freq        = 0, 
+        antsep      = 0,     # check
+        surveymode  = "reflection",
+        date        = format(Sys.time(), "%d/%m/%Y"),
+        crs         = character(0),
+        hd          = x$hd
+    )
+  }
+  if(x$hd$dim == "3D"){
+   y <- new("GPRcube",
+         version      = "0.2",
+         name         = fName,
+         date         = format(Sys.time(), "%d/%m/%Y"),  
+         freq         = 0,
+         filepaths    = fPath,
+         x            = seq_len(x$hd$x_dim),
+         y            = seq_len(x$hd$y_dim),
+         data         = x$data * byte2volt(Vmax = Vmax, nBytes = x$hd$bits),
+         coord        = numeric(),
+         posunit      = "m",
+         crs          = character(),
+         depth        = x_depth,
+         depthunit    = "ns",
+         vel          = list(),               
+         delineations = list(),
+         obs          = list(),
+         transf       = numeric()
+    )
+  }
+  return(y)
+}
+
 
 #' Read a GPR data file
 #' 
@@ -1072,6 +1134,20 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
     A <- verboseF( readDZT(dsn), verbose = verbose)
     x <- verboseF( .gprDZT(A, fName = fName, fPath = fPath, 
                  desc = desc, Vmax = Vmax, ch = ch), verbose = verbose)
+  }else if("VOL" == toupper(ext)){
+    A <- verboseF( readVOL(dsn), verbose = verbose)
+    x <- verboseF( .gprVOL(A, fName = fName, fPath = fPath, 
+                           desc = desc, Vmax = Vmax), verbose = verbose)
+    if(A$hd$dim == "3D"){
+      warning("return a 'GPRcube' object with complex numbers.",
+              " Current processing and plotting functions are likely to not ",
+              "work on the returned object. Please contact me:\n",
+              "emanuel.huber@alumni.ethz.ch")
+    }else{
+      warning("Still experimental. Don't hesitate to contact me:\n",
+              "emanuel.huber@alumni.ethz.ch")
+    }
+    return(x)
   }else if("TXT" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
     A <- verboseF( readTXT(dsn), verbose = verbose)
@@ -1080,7 +1156,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
   }else{
     stop(paste0("File extension not recognised!\n",
                 "Must be '.DT1', '.dzt', '.rd3', '.sgy', '.segy', '.rds'\n",
-                "'.iprb' or '.iprh"))
+                "'.iprb', '.iprh' or '.vol'."))
   }
   if(grepl("CMP", x@surveymode)){
     x@surveymode <- "CMP"

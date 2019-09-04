@@ -4927,6 +4927,117 @@ readTXT <- function(fPath){
   }
 }  
 
+readVOL <- function(fPath){
+  if( inherits(fPath, "connection") ){
+    x <- fPath
+  }else if(is.character(fPath)){
+    fName <- getFName(fPath, ext = c(".vol"))
+    x <- file(fName$vol , "rb")
+  }
+  hd <- c()
+  
+  #================================ HEADER ======================================#
+  # The header consists of at least 60 bytes of binary data. 
+  # Each field in the header is a 32 bit (4 byte) word in 
+  # network byte order (“big endian”), making a total of 
+  # at least 15 header words. This implies that the byte order has to be swapped 
+  # to read the values on an Intel-based PC.
+  
+  # 0 Magic token. This is always 192837465 (decimal)
+  hd$magic_token <- readBin(x, what = "integer", size = 4, endian = "big")
+  # 1 Header size in bytes, including the magic token and size fields
+  hd$header_size <- readBin(x, what = "integer", size = 4, endian = "big")
+  # 2 The size of the 3d matrix size in the z dimension
+  hd$z_dim <- readBin(x, what = "integer", size = 4, endian = "big")
+  # 3 The size of the 3d matrix size in the y dimension
+  hd$y_dim <- readBin(x, what = "integer", size = 4, endian = "big")
+  # 4 The size of the 3d matrix size in the x dimension
+  hd$x_dim <- readBin(x, what = "integer", size = 4, endian = "big")
+  # 5 Bits per sample. This should always be 64 for radar data
+  hd$bits <- readBin(x, what = "integer", size = 4, endian = "big")
+  # reserved bits
+  seek(x, where = 40, origin = "start")
+  # 10 Major file format version
+  hd$major_vers <- readBin(x, what = "integer", size = 4, endian = "big")
+  # 11 Minor file format version
+  hd$minor_vers <- readBin(x, what = "integer", size = 4, endian = "big")
+  # 12 File format revision number
+  hd$rev <- readBin(x, what = "integer", size = 4, endian = "big")
+  
+  
+  # These two words define the file offset and size of a block of XML data 
+  # in 8 bit ASCII that define further metadata for the volume file.
+  seek(x, where = 60, origin = "start")
+  if(hd$header_size >= 68){
+    # 15 XML data file offset
+    hd$xml_fo <- readBin(x, what = "integer", size = 4, endian = "big")
+    # 16 XML data size
+    hd$xml_size <- readBin(x, what = "integer", size = 4, endian = "big")
+    
+    seek(x, where = hd$xml_fo, origin = "start")
+    hd$XML <- readBin(x, what = "character", n = 1, size = 1, endian = "big")
+    
+    data <- XML::xmlParse(hd$XML)
+    
+    els <- XML::getNodeSet(data, "//MetadataDictionary/entry[@name]")
+    if(length(els) > 0){
+      metaD <- sapply(els, function(el) XML::xmlGetAttr(el, "value"))
+      names(metaD) <- sapply(els, function(el) XML::xmlGetAttr(el, "name"))
+      hd$meta_cst <- metaD
+    }
+    
+    els2 <- XML::getNodeSet(data, "//meta-data[@DataDomainType]")
+    if(length(els2) > 0){
+      metaD2 <- XML::xmlAttrs(els2[[1]])
+      if(length(metaD2) > 0 && !is.null(metaD2)){
+        if(!is.null(metaD2["DeltaValueZ"])){
+          hd$dz   <- as.numeric(metaD2["DeltaValueZ"])
+        }
+        if(!is.null(metaD2["MinValueZ"])){
+          hd$zmin <- as.numeric(metaD2["MinValueZ"])
+        }
+        if(!is.null(metaD2["MaxValueZ"])){
+          hd$zmax <- as.numeric(metaD2["MaxValueZ"])
+        }
+      }
+    }
+  }
+  
+  #================================ Binary Data =================================#
+  seek(x, where = hd$header_size , origin = "start")
+  XYZ_dim <- c(hd$x_dim, hd$y_dim, hd$z_dim)
+  test <- which(XYZ_dim == 1)
+  if(length(test) > 0){
+    hd$dim <- "2D"
+    XYZ_dim <- XYZ_dim[-test]
+    XYZ <- array(dim = XYZ_dim)
+    for(i in 1:XYZ_dim[1]){
+      for(j in 1:XYZ_dim[2]){
+        XYZ[i,j] <-  readBin(x, what = "numeric", size = 4, endian = "big")
+      }
+    }
+  }else{
+    hd$dim <- "3D"
+    XYZ <- array(dim = XYZ_dim)
+    for(k in seq_len(hd$z_dim)){
+      for(i in seq_len(hd$x_dim)){
+        for(j in seq_len(hd$y_dim)){
+          XYZ[i,j,k] <- readBin(x, what = "numeric", size = 8, endian = "big")
+          realPart <- readBin(x, what = "integer", size = hd$bits/8/2, endian = "big")
+          imagPart <- readBin(x, what = "integer", size = hd$bits/8/2, endian = "big")
+          XYZ[i,j,k] <- complex(real = realPart,
+                                imaginary = imagPart)
+        }
+      }
+    }
+  }
+  
+  if( !inherits(fPath, "connection") ){
+    close(DZT)
+  }
+  
+  return(list(hd = hd, data = XYZ))
+}
 
 readDZT <- function(fPath){
   if( inherits(fPath, "connection") ){

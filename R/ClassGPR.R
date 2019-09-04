@@ -859,6 +859,48 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
   )
 }
 
+readSGY <- function(dsn, fName = "", fPath = "", desc = "", 
+                    Vmax = 50, verbose = TRUE){
+  x <- suppressMessages( suppressWarnings(rgdal::readOGR(dsn = dsn)))
+  i <- grep("SAMPLE_ARRAY", names(x))
+  # xi <- x[i]
+  # 
+  # slotNames(xi)
+  # 
+  # dim(xi@data)
+  
+  x_data <- t(as.matrix(x[i]@data))
+  x_dz <- mean(x[["SAMPLE_INTERVAL"]]/1000)
+  
+  # plot3D::image2D(as.matrix(xi@data))
+  y <- list(version = "0.2",
+            data = x_data * byte2volt(Vmax = Vmax),
+            name = fName,
+            description = desc,
+            filepath = fPath,
+            surveymode = "reflection",
+            traces = seq_len(ncol(x_data)),
+            freq = 0,                      # FIXME
+            dx = 1,                        # FIXME
+            time0 = rep(0, ncol(x_data)),  # FIXME
+            # time = ,
+            fid = rep("", ncol(x_data)),   # FIXME
+            ann = rep("", ncol(x_data)),   # FIXME
+            dz = x_dz,
+            depth = seq(0, by = x_dz, length.out = nrow(x_data)),
+            pos = seq_len(ncol(x_data)),   # FIXME
+            antsep = 0,
+            posunit = "m",
+            depthunit = "ns"
+  )
+  message("Set trace position with either 'pos(x) < -...' or 'coord(x) < -...'")
+  message("Set antenna frequency with 'antfreq(x) < -...' ")
+  message("Set antenna separation distance with 'antsep(x) < -...' ")
+  as(y, "GPR")
+  
+}
+
+
 #' Read a GPR data file
 #' 
 #' Note: argument \code{fPath} is depreacted. Use \code{dsn} instead.
@@ -1010,9 +1052,16 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
                            nBytes = 32, Vmax = Vmax), verbose = verbose)
   }else if("SGY" == toupper(ext) || "SEGY" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
-    A <- verboseF( readSEGY(dsn), verbose = verbose)
-    x <- verboseF( .gprSEGY(A, fName = fName, fPath = fPath, 
-                            desc = desc, Vmax = Vmax), verbose = verbose)
+    # first try to read SEG-Y format
+    x <- tryCatch({verboseF( readSGY(dsn, fName = fName, fPath = fPath, 
+                           desc = desc, Vmax = Vmax), verbose = verbose)}, 
+                  error = function(e){return(NULL)})
+    if(is.null(x)){
+      # z <- readGPR(dsn)
+      A <- verboseF( readSEGY_RadSys_Zond_GPR(dsn), verbose = verbose)
+      x <- verboseF( .gprSEGY(A, fName = fName, fPath = fPath, 
+                              desc = desc, Vmax = Vmax), verbose = verbose)
+    }
   }else if("IPRB" == toupper(ext) || "IPRH" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
     A <- verboseF( readImpulseRadar(dsn, dsn2), verbose = verbose)
@@ -2129,7 +2178,12 @@ setReplaceMethod(
       if(length(value) != ncol(x)){
         stop("length(value) != ncol(x)")
       }else{
+        if(any(diff(value) < 0 )){
+          warning("The antenna separations do not increase!",
+                  " Increasing values are expected.")
+        }
         x@antsep <- value
+        x <- trRmDuplicates(x)
       }
     }else{
       # not CMP, not WARR => common-offset
@@ -2862,11 +2916,11 @@ setMethod("time0Cor", "GPR", function(x, t0 = NULL,
 # should use time0Cor() !!!!!
 setMethod("timeCorOffset", "GPR", function(x, t0 = NULL){
   if(length(x@antsep) == 0 || (!is.numeric(x@antsep))){
-    stop("You must first define the antenna separation",
+    stop("You must first define the antenna separation ",
          "with `antsep(x)<-...`!")
   }
   if(is.null(x@vel) || length(x@vel)==0){
-    stop("You must first define the antenna separation",
+    stop("You must first define the wave velocity ",
          "with `vel(x)<-...`!")
   }
   #----------------------------------------------------------------------------#
@@ -2881,6 +2935,7 @@ setMethod("timeCorOffset", "GPR", function(x, t0 = NULL){
   x <- x[test]
   x@depth <- sqrt(tcor2[test])
   # x@time0 is already = 0
+  x@antsep <- 0
   x@proc <- x@proc[-length(x@proc)] # remove proc from traceShift()
   x@proc <- c(x@proc, "timeCorOffset")
   return(x)

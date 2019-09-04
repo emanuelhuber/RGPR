@@ -4420,7 +4420,7 @@ readRD3 <- function(fPath, dsn2 = NULL){
 
 # Prism2 ” software
 #--------------- read RadSys Zond GPR device files -------------------#
-readSEGY <- function(fPath){
+readSEGY_RadSys_Zond_GPR <- function(fPath){
   #dirName     <- dirname(fPath)
   #baseName    <- .fNameWExt(fPath)
   #fName    <- file.path(dirName, paste0(baseName, ".sgy"))

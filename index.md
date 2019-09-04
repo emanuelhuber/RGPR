@@ -77,7 +77,7 @@ I am developing this package on my free time as a gift to the GPR community. Any
 
 - [x] [Sensors & Software](https://www.sensoft.ca) file format (**\*.dt1**, **\*.hd**).
 - [x] [MALA](https://www.malagpr.com.au) file format (**\*.rd3**, **\*.rd7**, **\*.rad**).
-- [x] [Radar Systems, Inc.](http://www.radsys.lv) Zond file format (**\*.sgy**). **WARNING: it is not a version of the SEG-Y file format**).
+- [x] [Radar Systems, Inc.](http://www.radsys.lv) Zond file format (**\*.sgy**). **WARNING: it is not a version of the SEG-Y file format**.
 - [x] [ImpulseRadar](https://www.impulseradar.se) file format (**\*.iprb**, **\*.iprh**).
 - [X] [GSSI](https://www.geophysical.com) file format (**\*.dzt**).
 - [X] [ENVI band sequential file format](https://www.harrisgeospatial.com/docs/ENVIImageFiles.html) (**\*.dat**, **\*.hdr**).
@@ -86,9 +86,10 @@ I am developing this package on my free time as a gift to the GPR community. Any
     - or matrix-format (without header/rownames)
 - [X] R internal format (**\*.rds**).
 - [X] serialized Python object (**\*.pkl**).
-- [ ] [SEG-Y](https://en.wikipedia.org/wiki/SEG-Y) (filel format developed by the Society of Exploration Geophysicists (SEG) for storing geophysical data) -> **we are working on it**
-- [ ] [3dradar](http://3d-radar.com/) (**\*.3dra**) -> the manufacturer does not want to reveal the binary file format. Workaround: export the GPR data in binary VOL format (**\*.vol**)  with the examiner software -> **we are working on it**
+- [X] [SEG-Y](https://en.wikipedia.org/wiki/SEG-Y) (file format developed by the Society of Exploration Geophysicists (SEG) for storing geophysical data, also used by [Easy Radar USA](https://easyradusa.com)) -> **Still experimental**
+- [X] [3dradar](http://3d-radar.com/) (**\*.3dra**) -> the manufacturer does not want to reveal the binary file format. Workaround: export the GPR data in binary VOL format (**\*.vol**)  with the examiner software -> **Still experimental**
 - [ ] [Terra Zond](http://terrazond.ru/) binary file format (**\*.trz**) -> **we are working on it**
+- [ ] Utsi Electronics .hrd format (used by [Geomatrix Earth Science Ltd](https://www.geomatrix.co.uk/)) -> **I requested the binary file format description from  [Geomatrix Earth Science Ltd](https://www.geomatrix.co.uk/)**
 
     
 <p>Do you miss your preferred file format? Send me the file format description with a test file and I will adapt the RGPR-package to support this file format:<br/><a href="mailto:emanuel.huber@alumni.ethz.ch">emanuel.huber@alumni.ethz.ch</a></p>

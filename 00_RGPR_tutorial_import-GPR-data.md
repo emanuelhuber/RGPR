@@ -27,7 +27,7 @@ Table of Contents
     -   [MALA data (`.rd3`, `.dr7`)](#mala-data-rd3-dr7)
     -   [ImpulseRadar data (`.iprb`)](#impulseradar-data-iprb)
     -   [SEG-Y data (`.sgy`)](#seg-y-data-sgy)
-    -   [RadSys Zond GPR data (`.segy`)](#radsys-zond-gpr-data-segy)
+    -   [RadSys Zond GPR data (`.sgy`)](#radsys-zond-gpr-data-sgy)
     -   [Geomatrix Earth Science data (`.dat`)](#geomatrix-earth-science-data-dat)
     -   [ASCII data (`.txt`)](#ascii-data-txt)
     -   [ENVI band-sequential files (`.dat`, `.hdr`)](#envi-band-sequential-files-dat-hdr)
@@ -52,7 +52,7 @@ Read/import GPR data
 
 Use the function `readGPR()` to import GPR data into R. While the filepath (given to the argument `dsn`) is case sensitive, the extension is not. That means that you can write: `XLINE00.DT1` or `XLINE00.dt1`. Note that the filepath must correspond to the binary data (not to the ASCII header file data)
 
-Note that the coordinates collected with GPS in the same time as the GPR data and stored in a specific file are not directly imported by the function `readGPR()`. You must add the coordinates separatly following the explanations of the tutorial '[Adding coordinates to GPR data](http://emanuelhuber.github.io/RGPR/02_RGPR_tutorial_RGPR-survey/)'.
+Currently the coordinates collected with GPS in the same time as the GPR data and stored in a specific file are not directly imported by the function `readGPR()`. You must add the coordinates separatly following the explanations of the tutorial '[Adding coordinates to GPR data](http://emanuelhuber.github.io/RGPR/02_RGPR_tutorial_RGPR-survey/)'. But I am working on that...
 
 To suppress any message or warning, set the argument `verbose = FALSE`, e.g.,
 
@@ -137,6 +137,8 @@ plot(x)
 SEG-Y data (`.sgy`)
 -------------------
 
+Binary data file with the SEG-Y Sounding Data Format (extension `.sgy` or `.segy`, 16-bit or 32-bit).
+
 **Still experimental!**
 
 To read the GPR data, enter
@@ -148,14 +150,10 @@ x <- readGPR(dsn = "XLINE00.segy")
 plot(x)
 ```
 
-RadSys Zond GPR data (`.segy`)
-------------------------------
+RadSys Zond GPR data (`.sgy`)
+-----------------------------
 
-Each GPR data consists of
-
--   a binary data file with the SEG-Y Sounding Data Format (extension `.sgy` or `.segy`, 16-bit or 32-bit).
-
-**NOTE THAT THIS DATA FORMAT IS NOT A VERSION OF THE SEG-Y file format.**
+Although the RadSys Zond GPR data files have the '.sgy' extension, they are **not a version of the SEG-Y file format**. RGPR will detect the file format and read correctly the data.
 
 To read the GPR data, enter
 
@@ -169,7 +167,7 @@ plot(x)
 Geomatrix Earth Science data (`.dat`)
 -------------------------------------
 
-Currently, on the file format for the GroundVue3/TriVue and GroundVue7 devices is supported.
+Currently, on the file formats for the GroundVue 3, GroundVue 7, and TriVue devices are supported. The file formats for the GroundVue 100, 250 and 400 will be soon supported.
 
 Each GPR data consists at least of
 

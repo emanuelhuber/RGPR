@@ -16,22 +16,23 @@ date: 2019-09-06
 -   This R-package is still in development, and therefore some of the functions may change in a near future.
 -   If you have any questions, comments or suggestions, feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
 
-Table of content
-================
+Table of Contents
+=================
 
 -   [Objectives of this tutorial](#objectives-of-this-tutorial)
--   [Install/load `RGPR`](#installload-rgpr)
--   [Read/import GPR data](#readimport-gpr-data)
-    -   [Sensors and software data (`.dt1`, `.hd`)](#sensors-and-software-data-dt1)
-    -   [GSSI data (`.dzt`, `.dzx`)](#gssi-data-dtz)
-    -   [MALA data (`.rd3`, `.rd7`, `.rad`)](#mala-data-rd3)
-    -   [ImpulseRadar data (`.iprb`, `.iprh`)](#impulseradar-data-iprb)
-    -   [SEG-Y data (`.sgy`)](#seg-y-data)
-    -   [RadSys Zond GPR data (`.segy`)](#radsys-zond-gpr-data-segy)
-    -   [Geomatrix Earth Science data (`.dat`, `.hdr`)](geomatrix-earth-science-data)
-    -   [ASCII data (`.txt`)](#ascii-data-txt)
-    -   [ENVI band-sequential files (`.dat`, `.hdr`)](#envi-band-sequential-files-dat-hdr)
-    -   [Pickle files (`.pkl`, serialized Python object)](#pickle-files-pkl-serialized-python-object)
+-   [Install/load `RGPR`](#install)
+-   [Read/import GPR data](#read)
+    -   [Sensors and software data (`.dt1`)](#read_dt)
+    -   [GSSI data (`.dtz`)](#read_dtz)
+        -   [Multi-channel data](#multi-channel-data)
+    -   [MALA data (`.rd3`, `.dr7`)](#read_rd)
+    -   [ImpulseRadar data (`.iprb`)](#read_iprb)
+    -   [SEG-Y data (`.sgy`)](#seg-y-data-(%60.sgy%60))
+    -   [RadSys Zond GPR data (`.segy`)](#read_segy)
+    -   [Geomatrix Earth Science data (`.dat`)](#geomatrix-earth-science-data-(%60.dat%60))
+    -   [ASCII data (`.txt`)](#read_txt)
+    -   [ENVI band-sequential files (`.dat`, `.hdr`)](#read_envi)
+    -   [Pickle files (`.pkl`, serialized Python object)](#read_pkl)
 -   [Convert a matrix object into a GPR data](#convert-a-matrix-object-into-a-gpr-data)
 
 Objectives of this tutorial

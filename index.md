@@ -79,7 +79,7 @@ I am developing this package on my free time as a gift to the GPR community. Any
 - [x] [MALA](https://www.malagpr.com.au) file format (**\*.rd3**, **\*.rd7**, **\*.rad**).
 - [x] [ImpulseRadar](https://www.impulseradar.se) file format (**\*.iprb**, **\*.iprh**).
 - [X] [GSSI](https://www.geophysical.com) file format (**\*.dzt**, **\*.dzx**).
-- [ ] [Geomatrix Earth Science Ltd](https://www.geomatrix.co.uk/) file format (Utsi Electronics format) for the GroundVue3/TriVue and GroundVue7 devices only (**\*.dat**, **\*.hdr**).
+- [ ] [Geomatrix Earth Science Ltd](https://www.geomatrix.co.uk/) file format (Utsi Electronics format) for the GroundVue3/TriVue and GroundVue7 devices only (**\*.dat**, **\*.hdr**). The file format for the GroundVue100, 250 and 400 is coming soon. 
 - [x] [Radar Systems, Inc.](http://www.radsys.lv) Zond file format (**\*.sgy**). **WARNING: it is not a version of the SEG-Y file format**.
 - [X] [SEG-Y](https://en.wikipedia.org/wiki/SEG-Y) file format developed by the Society of Exploration Geophysicists (SEG) for storing geophysical data (**\*.sgy**), also used by [Easy Radar USA](https://easyradusa.com) -> **still experimental**
 - [X] [3dradar](http://3d-radar.com/): the manufacturer does not want to reveal the binary file format **\*.3dra**. **Workaround**: export the GPR data in binary VOL format (**\*.vol**)  with the examiner software -> **still experimental**

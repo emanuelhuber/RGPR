@@ -4572,9 +4572,10 @@ plot.GPR <- function(x,
     
     if(barscale){
       # op2 <- par(no.readonly=TRUE)
-      plot3D::colkey (col = dots$col, clim = clim, clab = dots$clab, clog = FALSE, 
-                      add = TRUE, cex.clab = 0.75, dist = colkeyDist)
-      
+      # plot3D::colkey (col = dots$col, clim = clim, clab = dots$clab, clog = FALSE, 
+      #                 add = TRUE, cex.clab = 0.75, dist = colkeyDist)
+      fields::image.plot(zlim=range(x)*100,legend.only=TRUE, col=palGPR(), 
+                         legend.shrink = 1)
       # .barScale(clim = clim, y = yvalues, col = dots$col, 
       # clab = dots$clab, clabcex = 0.8)
       # par(op2)

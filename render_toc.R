@@ -20,6 +20,7 @@
 #'     ```{r echo=FALSE}
 #'     render_toc("/path/to/the/file.Rmd")
 #'     ```
+#' filename <- "00_RGPR_tutorial_import-GPR-data.Rmd"  
 #' 
 #' @param filename Name of RMarkdown or Markdown document
 #' @param toc_header_name The table of contents header name. If specified, any
@@ -29,12 +30,10 @@
 #'   prior to the first header at the base_level are dropped silently.
 #' @param toc_depth Maximum depth for TOC, relative to base_level. Default is
 #'   `toc_depth = 3`, which results in a TOC of at most 3 levels.
-render_toc <- function(
-  filename, 
-  toc_header_name = "Table of Contents",
-  base_level = NULL,
-  toc_depth = 3
-) {
+render_toc <- function(filename, 
+                       toc_header_name = "Table of Contents",
+                       base_level = NULL,
+                       toc_depth = 3){
   x <- readLines(filename, warn = FALSE)
   x <- paste(x, collapse = "\n")
   x <- paste0("\n", x, "\n")

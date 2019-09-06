@@ -963,6 +963,37 @@ readSGY <- function(dsn, fName = "", fPath = "", desc = "",
 }
 
 
+.gprUtsi <- function(x, fName = fName, fPath = fPath, 
+         desc = desc, Vmax = Vmax){
+  
+  y <- new("GPR", 
+           version     = "0.2",
+           data        = x[["data"]] * byte2volt(Vmax = Vmax, 
+                                                 nBytes = x$hd$bits),
+           traces      = 1:ncol(x[["data"]]),       # trace numbering
+           pos         = 1:ncol(x[["data"]]),                # trace position
+           depth       = 1:nrow(x[["data"]]),
+           time0       = rep(0, ncol(x[["data"]])),  
+           time        = rep(0, ncol(x[["data"]])), # time of trace records
+           proc        =  character(0),       
+           vel         = list(0.1),                 # m/ns
+           name        = fName,
+           description = desc,
+           filepath    = fPath,
+           fid         = trimStr(x[['fid']]),
+           dz          = 1, 
+           dx          = 1, 
+           depthunit   = "ns",
+           posunit     = "m",
+           freq        = 0,
+           antsep      = 0, 
+           surveymode  = "reflection",
+           date        = format(Sys.time(), "%Y-%m-%d"),
+           crs         = character(0),
+           hd          = list())
+  return(y)
+}
+
 #' Read a GPR data file
 #' 
 #' Note: argument \code{fPath} is depreacted. Use \code{dsn} instead.
@@ -1148,6 +1179,10 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
               "emanuel.huber@alumni.ethz.ch")
     }
     return(x)
+  }else if("DAT" == toupper(ext)){
+    A <- verboseF( readUtsi(dsn), verbose = verbose)
+    x <- verboseF( .gprUtsi(A, fName = fName, fPath = fPath, 
+                           desc = desc, Vmax = Vmax), verbose = verbose)
   }else if("TXT" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
     A <- verboseF( readTXT(dsn), verbose = verbose)
@@ -1156,7 +1191,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
   }else{
     stop(paste0("File extension not recognised!\n",
                 "Must be '.DT1', '.dzt', '.rd3', '.sgy', '.segy', '.rds'\n",
-                "'.iprb', '.iprh' or '.vol'."))
+                "'.iprb', '.iprh', '.dat', or '.vol'."))
   }
   if(grepl("CMP", x@surveymode)){
     x@surveymode <- "CMP"

@@ -5039,6 +5039,124 @@ readVOL <- function(fPath){
   return(list(hd = hd, data = XYZ))
 }
 
+# Data is stored in 16 bits as raw data. The only parameters that affect the 
+# recorded data directly are Tsweep and Read.  The other parameters affect the 
+# display and may be varied during or after completion of the survey 
+# (see sections 5.3 and 6.3).  
+# The data is stored under the run name as RUNNAME.dat. The run details are 
+# stored in the file RUNNAME.hdr.  The stored data format is 2 bytes per point 
+# with LSB byte followed by MSB byte. There are 256 points (512 bytes) 
+# followed by 1 byte of marker (ASCII).
+# In addition to the data and header files, GPS files (.gps) and gps number 
+# files (.gpt) are generated, irrespective of whether or not a GPS is used.  
+# If a GPS is not used, the .gps and .gpt files will be 0kB in size.
+# The HDR file is an ASCII file (can be read using notepad) that contains the 
+# radar parameters and notes about the run.
+
+readUtsi <- function(fPath, dsn2 = NULL){
+  
+  if( inherits(fPath, "connection") ){
+    if(!inherits(dsn2, "connection")){
+      stop("Please add an additional connection to 'readGPR()' for ",
+           "the header file '*.hdr'")
+    }
+    con <- fPath
+  }else if(is.character(fPath)){
+    fName <- getFName(fPath, ext = c(".hdr", ".dat"))
+    # open dt1 file
+    con  <- file(fName$dat , "rb")
+    con2 <- file(fName$hdr , "rb")
+  }else{
+    stop("check this error")
+  }
+  
+  hd <- readUtsiHDR(con2) 
+  z <- readUtsiDat(con, splPerScan = hd$splPerScan, bits = hd$bits)
+  z[["hd"]] <- hd
+  close(con)
+  close(con2)
+  return(z)
+  
+}
+
+readUtsiHDR <- function(con){
+  hd <- c()
+  
+  seek(con, where = 0, origin = "start")
+  #------------------ Utsi header *.hdr -----------------------------------------#
+  u <- readBin(con, what = "raw", n = 2, size = 1)
+  hd$magic_number <- sf::rawToHex(u)
+  if(hd$magic_number != "0f20"){
+    stop("Bad magic number in ", fPath)
+  }
+  u <- readLines(con, n = 1)
+  u <- strsplit(u, split = ", ")[[1]]
+  hd$software_version <- u[1]
+  hd$software_date <- u[2]
+  
+  # scan(con, what = "character", n = 1, skipNul = TRUE)
+  
+  # u <- readLines(con, n = 1, skipNul = TRUE, warn = FALSE)
+  u <- readBin(con, what = "character", n = 1)
+  hd$date <- as.Date(u[1], "%d\\%m\\%y")
+  
+  invisible(readBin(con, what = "character", n = 1))
+  u <- readBin(con, what = "character", n = 1)
+  u <- strsplit(gsub("\005", "", u), " ")[[1]]
+  hd$time <- u[1]
+  hd$site_text <- u[2]
+  
+  
+  invisible(readBin(con, what = "character", n = 5))
+  u <- readBin(con, what = "character", n = 1)
+  hd$time_sweep <- as.numeric(gsub("\002|\005|\n|\004", "", u))
+  
+  u <- readBin(con, what = "character", n = 1)
+  hd$depth_scaling <- as.numeric(gsub("\002|\005|\n|\004", "", u))
+  
+  u <- readBin(con, what = "character", n = 1)
+  hd$encoder_div_selection <- as.numeric(gsub("\004|\005|\n|\002", "", u))
+  
+  u <- readBin(con, what = "character", n = 1)
+  hd$antsep <- as.numeric(trimStr(gsub("\002|\005|\n|\004", "", u)))
+  
+  u <- readBin(con, what = "character", n = 1)
+  hd$unused_zero <- as.numeric(gsub("\002|\005|\n|\004", "", u))
+  
+  u <- readBin(con, what = "character", n = 1)
+  hd$splPerScan <- as.numeric(gsub("\002|\005|\n|\004", "", u))
+  
+  invisible(readBin(con, what = "character", n = 1))
+  
+  u <- readBin(con, what = "character", n = 1)
+  hd$bits <- as.numeric(gsub("\002|\005|\n|\004", "", u))
+  
+  return(hd)
+}
+
+
+
+readUtsiDat <- function(con, splPerScan = 512, bits = hd$bits){
+  con_len <- .flen(con)
+  # seek(con, where = 0, "start")
+  # xraw <- readBin(con, what = "integer", n = con_len, size = 2, endian = "little")
+  # close(con)
+  nr <- splPerScan
+  # nc <- length(xraw)/(nr+1+nr)
+  nc <- con_len/(nr*bits/8 + 1)
+  xdata <- matrix(nrow = nr, ncol = nc)
+  
+  mrkr <- character(nc)
+  
+  seek(con, where = 0, "start")
+  for(i in seq_len(nc)){
+    xdata[,i] <- readBin(con, what = "integer", n = nr, size = bits/8, endian = "little")
+    mrkr[i] <- readBin(con, what = "character", n = 1, size = 1)
+  }
+  return(list(data = xdata, fid = mrkr))
+}
+
+
 readDZT <- function(fPath){
   if( inherits(fPath, "connection") ){
     DZT <- fPath

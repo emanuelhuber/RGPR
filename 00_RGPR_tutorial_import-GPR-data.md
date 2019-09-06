@@ -19,7 +19,6 @@ date: 2019-09-06
 Table of Contents
 =================
 
--   [Objectives of this tutorial](#objectives-of-this-tutorial)
 -   [Install/load `RGPR`](#installload-rgpr)
 -   [Read/import GPR data](#readimport-gpr-data)
     -   [Sensors and software data (`.dt1`)](#sensors-and-software-data-dt1)
@@ -35,16 +34,10 @@ Table of Contents
     -   [Pickle files (`.pkl`, serialized Python object)](#pickle-files-pkl-serialized-python-object)
 -   [Convert a matrix object into a GPR data](#convert-a-matrix-object-into-a-gpr-data)
 
-Objectives of this tutorial
-===========================
-
--   Learn some basics of ground-penetrating radar data processing with `RGPR`.
--   Learn how to manipulate objects of the class `RGPR`.
-
-Note that his tutorial will not explain you the math/algorithms behind the different processing methods.
-
 Install/load `RGPR`
 ===================
+
+You need first to install R ([R Cran website](http://cran.r-project.org)). Then, RGPR can be installed within R with the following commands:
 
 ``` r
 # install "devtools" if not already done

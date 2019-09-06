@@ -67,9 +67,11 @@ render_toc <- function(filename,
       header_text <- gsub("^[^[:alpha:]]*\\s*", "", header_text) # remove up to first alpha char
       header_slug <- paste(strsplit(header_text, " ")[[1]], collapse="-")
       header_slug <- tolower(header_slug)
+      # added by manu: remove any punctuation except the '-'
+      header_slug <- gsub("([-])|[[:punct:]]", "\\1", header_slug)
     }
     paste0(strrep(" ", level * 4), "- [", header_text, "](#", header_slug, ")")
   })
   x <- x[x != ""]
   knitr::asis_output(paste(x, collapse = "\n"))
-}
+  }

@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Import GPR data
-date: 2019-09-03
+date: 2019-09-06
 ---
 
 <!--
@@ -22,11 +22,13 @@ Table of content
 -   [Objectives of this tutorial](#objectives-of-this-tutorial)
 -   [Install/load `RGPR`](#installload-rgpr)
 -   [Read/import GPR data](#readimport-gpr-data)
-    -   [Sensors and software data (`.dt1`)](#sensors-and-software-data-dt1)
-    -   [GSSI data (`.dtz`)](#gssi-data-dtz)
-    -   [MALA data (`.rd3`)](#mala-data-rd3)
-    -   [ImpulseRadar data (`.iprb`)](#impulseradar-data-iprb)
+    -   [Sensors and software data (`.dt1`, `.hd`)](#sensors-and-software-data-dt1)
+    -   [GSSI data (`.dzt`, `.dzx`)](#gssi-data-dtz)
+    -   [MALA data (`.rd3`, `.rd7`, `.rad`)](#mala-data-rd3)
+    -   [ImpulseRadar data (`.iprb`, `.iprh`)](#impulseradar-data-iprb)
+    -   [SEG-Y data (`.sgy`)](#seg-y-data)
     -   [RadSys Zond GPR data (`.segy`)](#radsys-zond-gpr-data-segy)
+    -   [Geomatrix Earth Science data (`.dat`, `.hdr`)](geomatrix-earth-science-data)
     -   [ASCII data (`.txt`)](#ascii-data-txt)
     -   [ENVI band-sequential files (`.dat`, `.hdr`)](#envi-band-sequential-files-dat-hdr)
     -   [Pickle files (`.pkl`, serialized Python object)](#pickle-files-pkl-serialized-python-object)
@@ -108,8 +110,8 @@ To read multi-channel data, simply specify the channel number you want to read b
     plot(x)
     ```
 
-MALA data (`.rd3`)
-------------------
+MALA data (`.rd3`, `.dr7`)
+--------------------------
 
 Each GPR data consists at least of
 
@@ -138,6 +140,20 @@ x <- readGPR(dsn = "XLINE00.iprb")
 plot(x)
 ```
 
+SEG-Y data (`.sgy`)
+-------------------
+
+**Still experimental!**
+
+To read the GPR data, enter
+
+``` r
+x <- readGPR(dsn = "XLINE00.sgy")
+# or
+x <- readGPR(dsn = "XLINE00.segy")
+plot(x)
+```
+
 RadSys Zond GPR data (`.segy`)
 ------------------------------
 
@@ -153,6 +169,25 @@ To read the GPR data, enter
 x <- readGPR(dsn = "XLINE00.sgy")
 # or
 x <- readGPR(dsn = "XLINE00.segy")
+plot(x)
+```
+
+Geomatrix Earth Science data (`.dat`)
+-------------------------------------
+
+Currently, on the file format for the GroundVue3/TriVue and GroundVue7 devices is supported.
+
+Each GPR data consists at least of
+
+-   a header file (extension `.hdr`) that can be opened with a normal text editor
+-   a 16-bit or 32-bit binary data file (extension `.data`).
+
+To read the GPR data, enter
+
+``` r
+x <- readGPR(dsn = "XLINE00.dat")
+# or
+x <- readGPR(dsn = "XLINE00.dat")
 plot(x)
 ```
 

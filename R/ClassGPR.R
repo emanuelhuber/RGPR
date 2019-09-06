@@ -720,8 +720,8 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
     x_name <- fName
   }
   # defaults
-  x_posunit   <- "ns"
-  x_depthunit <- "m"
+  x_posunit   <- "m"
+  x_depthunit <- "ns"
   x_pos       <- x$pos[1:ncol(x$data)]
   x_depth     <- x$depth[1:nrow(x$data)]
   x_dx        <- 1 / x$hd$SPM
@@ -771,14 +771,14 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
         x_posunit <- "m"
       }
     }
-    # depth/vertical units
-    if(!is.null(x$dzx$vUnit)){
-      x_depthunit <- x$dzx$vUnit
-      if(grepl("in", x_depthunit)){
-        x_depth <- x_depth * 0.0254
-        x_depthunit <- "m"
-      }
-    }
+    # # depth/vertical units
+    # if(!is.null(x$dzx$vUnit)){
+    #   x_depthunit <- x$dzx$vUnit
+    #   if(grepl("in", x_depthunit)){
+    #     x_depth <- x_depth * 0.0254
+    #     x_depthunit <- "m"
+    #   }
+    # }
   }
   antfreq <- switch(antName,
                     '3200'   = numeric(0), # adjustable
@@ -2365,11 +2365,11 @@ setMethod("isLengthUnit", "GPR", function(x){
 #' @rdname fid
 #' @export
 setReplaceMethod(
-  f="fid",
-  signature="GPR",
-  definition=function(x,value){
-    value <- as.character(value)
-    x@fid <- value
+  f = "fid",
+  signature = "GPR",
+  definition = function(x, value){
+    value  <- as.character(value)
+    x@fid  <- value
     x@proc <- c(x@proc, "fid<-")
     return(x)
   }
@@ -4185,28 +4185,34 @@ plot.GPR <- function(x,
       
       if(is.null(dots$ann) || dots$ann != FALSE){
         if(is.null(dotsxaxt) || dotsxaxt != "n"){
-          x_axis <- pretty(z,10)
+          x_axis <- pretty(z, 10)
           xat <- axis(side = 1,  tck = +0.02)
           if(grepl("[m]$", x@depthunit)){
             # axis(side = 3, at = x_axis, labels = x_axis, tck = +0.02)
             axis(side = 3, tck = +0.02)
             #FIXME: use fx .depthAxis()
           }else if(grepl("[s]$", x@depthunit)){
-            if(length(x@antsep) > 0 && x@antsep > 0){
-              depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
-              depth2  <- seq(0.1, by = 0.1, 0.9)
-              depthat0 <- depthToTime(0, 0, v, antsep = x@antsep)
-              if(max(z)*v/2 > 1.3){
-                # depth <- pretty(seq(1.1, by = 0.1, max(z)*v/2), 10)
+            if(length(x@antsep) > 0){
+              if( x@antsep > 0){
+                depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
+                depth2  <- seq(0.1, by = 0.1, 0.9)
+                depthat0 <- depthToTime(0, 0, v, antsep = x@antsep)
+                if(max(z)*v/2 > 1.3){
+                  # depth <- pretty(seq(1.1, by = 0.1, max(z)*v/2), 10)
+                  depth <- pretty(xat * v / 2, 10)
+                  depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
+                  axis(side = 3, at = t0 + depthat, labels = depth, tck = +0.02)
+                  #print(t0)
+                }
+                depthat2 <- depthToTime(depth2, 0, v, antsep = x@antsep)
+                axis(side =3, at = t0 + depthat2, labels = FALSE, tck =+0.01)
+                if(isTRUE(addDepth0)) abline(v = depth_0, col = "grey", lty = 3)
+                mtext(paste0("depth (m),   v=", v, "m/ns"), side = 3, line = 2)
+              }else{
                 depth <- pretty(xat * v / 2, 10)
                 depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
                 axis(side = 3, at = t0 + depthat, labels = depth, tck = +0.02)
-                #print(t0)
               }
-              depthat2 <- depthToTime(depth2, 0, v, antsep = x@antsep)
-              axis(side =3, at = t0 + depthat2, labels = FALSE, tck =+0.01)
-              if(isTRUE(addDepth0)) abline(v = depth_0, col = "grey", lty = 3)
-              mtext(paste0("depth (m),   v=", v, "m/ns"), side = 3, line = 2)
             }else{
               axis(side = 3, tck = +0.02)
             }
@@ -4312,8 +4318,8 @@ plot.GPR <- function(x,
       if(grepl("[s]$", x@depthunit) && !isCMP(x) && 
          toupper(x@surveymode) != "CMPANALYSIS"){
         if(length(x@antsep) > 0 && x@antsep > 0){
-          mai <- c(1.1, 1.02, 1.02, 1.8)
-          colkeyDist <- 0.09
+          mai <- c(1.1, 1.02, 1.02, 2)
+          colkeyDist <- 0.07  # 0.09
         }
       }
     }
@@ -4499,23 +4505,33 @@ plot.GPR <- function(x,
         axis(side = 4)
         #FIXME: use fx .depthAxis()
       }else if(grepl("[s]$", x@depthunit)){
-        if(length(x@antsep) > 0 && x@antsep > 0){
-          depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
-          depth2  <- seq(0.1, by = 0.1, 0.9)
-          depthat0 <- depthToTime(0, 0, v, antsep = x@antsep)
-          if(max(yvalues) * v / 2 > 1.3){
-            # depth <- pretty(seq(1.1, by = 0.1, max(z)*v/2), 10)
+        if(length(x@antsep) > 0){
+          if(x@antsep > 0){
+            depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
+            depth2  <- seq(0.1, by = 0.1, 0.9)
+            depthat0 <- depthToTime(0, 0, v, antsep = x@antsep)
+            if(max(yvalues) * v / 2 > 1.3){
+              # depth <- pretty(seq(1.1, by = 0.1, max(z)*v/2), 10)
+              depth <- pretty(yat * v / 2, 10)
+              depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
+              axis(side = 4, at = t0 + depthat, labels = depth, tck = -0.02)
+            }
+            depthat2 <- depthToTime(depth2, 0, v, antsep = x@antsep)
+            axis(side = 4, at = t0 + depthat2, labels = FALSE, tck = -0.01)
+            axis(side = 4, at = depth_0, labels = "0", tick = FALSE)
+            if(isTRUE(addDepth0)) abline(h = depth_0, col = "grey", lty = 3)
+            # mtext(paste0("depth (m),   v=", v, "m/ns"), side = 4, line = 2)
+            mtext(paste0("depth (", x@posunit, "),   v = ", round(v, 3), " ", x@posunit, 
+                         "/",  x@depthunit), side = 4, line = 2.5)
+          }else{
+            depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
             depth <- pretty(yat * v / 2, 10)
             depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
             axis(side = 4, at = t0 + depthat, labels = depth, tck = -0.02)
+            if(isTRUE(addDepth0)) abline(h = depth_0, col = "grey", lty = 3)
+            mtext(paste0("depth (", x@posunit, "),   v = ", round(v, 3), " ", x@posunit, 
+                         "/",  x@depthunit), side = 4, line = 2.5)
           }
-          depthat2 <- depthToTime(depth2, 0, v, antsep = x@antsep)
-          axis(side = 4, at = t0 + depthat2, labels = FALSE, tck = -0.01)
-          axis(side = 4, at = depth_0, labels = "0", tick = FALSE)
-          if(isTRUE(addDepth0)) abline(h = depth_0, col = "grey", lty = 3)
-          # mtext(paste0("depth (m),   v=", v, "m/ns"), side = 4, line = 2)
-          mtext(paste0("depth (", x@posunit, "),   v = ", round(v, 3), " ", x@posunit, 
-                       "/",  x@depthunit), side = 4, line = 2.5)
         }else{
           axis(side = 4)
         }

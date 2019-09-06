@@ -5033,7 +5033,7 @@ readVOL <- function(fPath){
   }
   
   if( !inherits(fPath, "connection") ){
-    close(DZT)
+    close(x)
   }
   
   return(list(hd = hd, data = XYZ))

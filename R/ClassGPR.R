@@ -4317,9 +4317,9 @@ plot.GPR <- function(x,
       mai <- c(1.1, 1.02, 1.02, 1.4)
       if(grepl("[s]$", x@depthunit) && !isCMP(x) && 
          toupper(x@surveymode) != "CMPANALYSIS"){
-        if(length(x@antsep) > 0 && x@antsep > 0){
+        if(length(x@antsep) > 0 ){
           mai <- c(1.1, 1.02, 1.02, 2)
-          colkeyDist <- 0.07  # 0.09
+          colkeyDist <- 0.05  # 0.09
         }
       }
     }

@@ -5200,7 +5200,7 @@ readUtsiHDR <- function(con){
   u <- readBin(con, what = "raw", n = 2, size = 1)
   hd$magic_number <- sf::rawToHex(u)
   if(hd$magic_number != "0f20"){
-    stop("Bad magic number in ", fPath)
+    message("Maybe bad magic number in ", fPath)
   }
   u <- readLines(con, n = 1)
   u <- strsplit(u, split = ", ")[[1]]

@@ -6,7 +6,7 @@
 \title{Trace scaling}
 \usage{
 \S4method{traceScaling}{GPR}(x, type = c("stat", "min-max", "95", "eq",
-  "sum", "rms", "mad", "invNormal"))
+  "sum", "rms", "mad", "invNormal"), track = TRUE)
 }
 \description{
 Trace scaling

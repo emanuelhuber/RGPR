@@ -5,7 +5,7 @@
 \alias{clip}
 \title{Clip the amplitude}
 \usage{
-\S4method{clip}{GPR}(x, Amax = NULL, Amin = NULL)
+\S4method{clip}{GPR}(x, Amax = NULL, Amin = NULL, track = TRUE)
 }
 \description{
 Clip the amplitude

@@ -48,7 +48,7 @@ Supported file format
   \item MALA file format (*.rd3, *.rad).
         \code{readGPR(dsn = 'xline.rd3')}
   \item RadSys Zond GPR device (*.sgy). 
-        \strong{Note: it is not the usual SEG-Y file format)}.
+        \strong{Note: it is not the SEG-Y file format)}.
         \code{readGPR(dsn = 'xline.sgy')}  
   \item GSSI file format (*.dzt).
         \code{readGPR(dsn = 'xline.dzt')}

@@ -6,13 +6,22 @@
 \title{Trace projection}
 \usage{
 \S4method{trProject}{GPR}(x, CRSobj)
+
+\S4method{trProject}{GPR}(x, CRSobj)
 }
 \arguments{
 \item{x}{Object of the class GPR}
 
 \item{CRSobj}{object of class \link{CRS}, or of class \code{character} in
 which case it is converted to \link{CRS}.}
+
+\item{x}{Object of the class GPR}
+
+\item{CRSobj}{object of class \link{CRS}, or of class \code{character} in
+which case it is converted to \link{CRS}.}
 }
 \description{
+Project the trace coordinates give a coordinate reference system.
+
 Project the trace coordinates give a coordinate reference system.
 }

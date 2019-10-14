@@ -2,8 +2,8 @@ Package: RGPR
 Type: Package
 Title: Ground-penetrating radar (GPR) data visualisation, processing and 
 	delineation
-Version: 0.0.5
-Date: 2019-04-26
+Version: 0.0.6
+Date: 2019-09-15
 Authors@R: c(
   person("Emanuel", "Huber", email = "emanuel.huber@alumni.ethz.ch",
   role = c("aut", "cre")),
@@ -52,5 +52,8 @@ Imports:
     MBA,
     geojsonsf,
     sf,
-    XML
+    XML,
+    checkmate
 RoxygenNote: 6.1.1
+Suggests: 
+    testthat

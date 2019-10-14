@@ -56,7 +56,7 @@ ISSN      = {2474-3844}}
 - [x] [MALA](https://www.malagpr.com.au) file format (**\*.rd3**, **\*.rd7**, **\*.rad**).
 - [x] [ImpulseRadar](https://www.impulseradar.se) file format (**\*.iprb**, **\*.iprh**).
 - [X] [GSSI](https://www.geophysical.com) file format (**\*.dzt**, **\*.dzx**).
-- [X] [Geomatrix Earth Science Ltd](https://www.geomatrix.co.uk/) file format (Utsi Electronics format) for the **GroundVue 3**, **TriVue** and **GroundVue 7** devices only (**\*.dat**, **\*.hdr**). The file formats for the GroundVue100, 250 and 400 will be soon supported.
+- [X] [Geomatrix Earth Science Ltd](https://www.geomatrix.co.uk/) file format (Utsi Electronics format) for the **GroundVue 3**, **GroundVue 7**, and **TriVue** devices only (**\*.dat**, **\*.hdr**). The file formats for the GroundVue 100, 250 and 400 will be soon supported.
 - [x] [Radar Systems, Inc.](http://www.radsys.lv) Zond file format (**\*.sgy**). **WARNING: it is not a version of the SEG-Y file format**.
 - [X] [SEG-Y](https://en.wikipedia.org/wiki/SEG-Y) file format developed by the Society of Exploration Geophysicists (SEG) for storing geophysical data (**\*.sgy**), also used by [Easy Radar USA](https://easyradusa.com) -> **still experimental**
 - [X] [3dradar](http://3d-radar.com/): the manufacturer does not want to reveal the binary file format **\*.3dra**. **Workaround**: export the GPR data in binary VOL format (**\*.vol**)  with the examiner software -> **still experimental**
@@ -123,11 +123,17 @@ The documentation is still incomplete (but check the tutorials, http://emanuelhu
 * `exportProc()`: ASCII-file
 
 ### Plot functions
-* `plot()`:
-   * `type = "raster"` 
-   * `type = "wiggles"`
-* `lines()`
-* `plot3D()`
+* 1D: 
+  * Plot a single trace: `plot()`
+  * Add a trace to a trace-plot: `lines()`
+  * Plot a superposition of traces: `trPlot()`
+  * Plot frequency spectrum: `spec()`
+* 2D:
+  * Plot a radargramm (raster or wiggles): `plot()` 
+  * Plot contour: `contour()`
+  * Frequency-wavenumber plot: `spec(x, type = "f-k")`
+* 3D:
+  * Plot in openGL: `plot3DRGL()`
 
 
 ### GPR data positioning and referencing

@@ -5,7 +5,7 @@
 \alias{traceStat}
 \title{Trace statistics}
 \usage{
-\S4method{traceStat}{GPR}(x, w = NULL, FUN = mean, ...)
+\S4method{traceStat}{GPR}(x, w = NULL, FUN = mean, ..., track = TRUE)
 }
 \arguments{
 \item{x}{An object of the class GPR}

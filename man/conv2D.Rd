@@ -5,7 +5,7 @@
 \alias{conv2D}
 \title{2D onvolution}
 \usage{
-\S4method{conv2D}{GPR}(x, w)
+\S4method{conv2D}{GPR}(x, w, track = TRUE)
 }
 \arguments{
 \item{x}{A GPR data}

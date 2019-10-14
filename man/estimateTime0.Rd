@@ -7,75 +7,88 @@
 \usage{
 \S4method{estimateTime0}{GPR}(x, method = c("coppens", "threshold",
   "MER"), thr = 0.12, w = 11, ns = NULL, bet = NULL, c0 = 0.299,
-  FUN = NULL, ...)
+  FUN = NULL, ..., track = TRUE)
 }
 \arguments{
-\item{x}{An object of the class \code{GPR}}
+\item{x}{[\code{GPR class}]\cr An object of the class \code{GPR}}
 
-\item{method}{A length-one character vector. \code{"coppens"} corresponds to
-the modified Coppens method, \code{"threshold"} to the 
-threshold method, and \code{"MER"} to the modified energy ratio
-method.}
+\item{method}{[\code{character(1)}]\cr Method to be applied (either
+\code{coppens}, \code{threshold} or \code{MER}). 
+\code{"coppens"} corresponds to the modified Coppens method, 
+\code{"threshold"} to the threshold method, 
+and \code{"MER"} to the modified energy ratio method.}
 
-\item{thr}{A length-one numeric vector defining the threshold  signal 
+\item{thr}{[\code{numeric(1)}]\cr Threshold for the signal 
 amplitude (in \%) at which time zero is picked (only for the
-threshold method).}
+threshold method). \code{thr} ranges between 0 and 1.}
 
-\item{w}{A length-one numeric vector defining the length of leading window 
+\item{w}{[\code{numeric(1)}]\cr Length of the leading window in unit of time
 (only for the modified Coppens and modified energy ratio 
 methods). Recommended value: about one period of the first-arrival 
-waveform. w is defined on a time basis.}
+waveform.}
 
-\item{ns}{A length-one numeric vector defining the length of the edge 
-preserving smoothing window (only for the modified Coppens 
+\item{ns}{[\code{numeric(1)}]\cr Length of the edge preserving smoothing 
+window in unit of time (only for the modified Coppens 
 method). Recommended value: between one and two signal periods.
 When \code{ns = NULL} the value of \code{ns} is set to 
 \code{1.5 * w}.}
 
-\item{bet}{A length-one numeric vector defining the stabilisation 
-constant (only for the modified Coppens method). Not critical. 
+\item{bet}{[\code{numeric(1)}]\cr Stabilisation constant (only for the 
+modified Coppens method). Not critical. 
 When \code{bet = NULL} the value of \code{bet} is set to 
 20\% of the maximal signal amplitude.}
 
-\item{c0}{Propagation speed of the GPR wave through air (used only when
-\code{keep = NULL}).}
+\item{c0}{[\code{numeric(1)}]\cr Propagation speed of the GPR wave 
+through air in unit of space per unit of time 
+(generally in m/ns).}
 
-\item{FUN}{Optional: function to apply to the estimated time-zero (e.g., 
-\code{mean} or \code{median} to get set a single time-zero 
-value to the data).}
+\item{FUN}{[\code{function}]\cr A function to apply on the 
+estimated time-zero of every traces (e.g., \code{mean} or 
+\code{median} to get set a single time-zero value to the data).}
 
-\item{...}{Arguments of \code{FUN}.}
+\item{...}{[\code{ANY}]\cr Further arguments to be passed to \code{FUN}.}
+}
+\value{
+[\code{GPR class}]\cr An object of the class \code{GPR}.
 }
 \description{
-Pick the time corresponding to the first break of each trace in the GPR profile.
-Return a vector containing the first break times.
+\code{estimateTime0} estimates for each trace individually the first wave 
+break, computes the corresponding time-zero knowing the propagation speed
+of the electromagnetic wave through air and returns an object of the class
+\code{GPR} with updated time-zero. It is possible to apply a function 
+provided by the user (e.g., \code{FUN}) on time-zero (e.g., to set time-zero
+equal to the average value of the time-zeros computed for every traces; in
+this case, all traces would have the same time-zero).
 }
 \details{
 This function is a wrapper for the following commands
 \itemize{
   \item \code{tfb <- firstBreak(x, ...)}
   \item \code{t0 <- firstBreakToTime0(tfb, x)}
-  \item \code{time0(x) <- t0}
+  \item \code{time0(x) <- t0} (if \code{FUN} is not \code{NULL}
+         \code{time0(x) <- FUN(t0, ...)})
+}
+
+Modified slots
+\itemize{
+  \item \code{time0}: new estimated time-zero.
+  \item \code{proc}: updated with function name and arguments.
 }
 }
-\references{
-\describe{
-  \item{Modified Coppens method}{Sabbione J.I. and Velis D. (2010) 
-       Automatic first-breaks picking: New strategies and algorithms. 
-       Geophysics, 75(4): 67-76.}
-  \item{Modified Energy Ratio (MER) method}{Han L., Wong J., and John C. 
-       (2010) Time picking on noisy microseismograms. In: Proceedings of the
-       GeoCanada 2010 Convention - Working with the Earth, Calgary, AB, 
-       Canada, p. 4}
-}
+\examples{
+data("frenkeLine00")
+x <- frenkeLine00
+x1 <- estimateTime0(x, w = 10)
+time0(x1)
+x2 <- estimateTime0(x, w = 10, FUN = mean)
+time0(x2)
+
 }
 \seealso{
-\code{\link{time0}} to set time zero and 
-         \code{\link{time0Cor}} to shift the traces such that they start
-         at time zero.
-
-\code{\link{time0}} and \code{\link{setTime0}} to set time zero,
-         \code{\link{firstBreak}} to estimate the first wave break, and
+\code{\link{firstBreak}} to estimate the first wave break;
          \code{\link{firstBreakToTime0}} to convert the first wave break
          into time zero.
+         \code{\link{time0}} and \code{\link{setTime0}} to set time-zero;
+         \code{\link{time0Cor}} to shift the traces such that they start
+         at time-zero.
 }

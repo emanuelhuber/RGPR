@@ -5,7 +5,8 @@
 \alias{fkFilter}
 \title{Frequency-wavenumber filter}
 \usage{
-\S4method{fkFilter}{GPR}(x, fk = NULL, L = c(5, 5), npad = 1)
+\S4method{fkFilter}{GPR}(x, fk = NULL, L = c(5, 5), npad = 1,
+  track = TRUE)
 }
 \description{
 Frequency-wavenumber filter

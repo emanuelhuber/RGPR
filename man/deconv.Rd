@@ -6,7 +6,7 @@
 \title{Deconvolution}
 \usage{
 \S4method{deconv}{GPR}(x, method = c("spiking", "wavelet", "min-phase",
-  "mixed-phase"), ...)
+  "mixed-phase"), ..., track = TRUE)
 }
 \arguments{
 \item{method}{Type of deconvolution method.}

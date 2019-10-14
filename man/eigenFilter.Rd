@@ -6,7 +6,7 @@
 \title{Eigenimage filter}
 \usage{
 \S4method{eigenFilter}{GPR}(x, eigenvalue = NA, center = TRUE,
-  scale = FALSE)
+  scale = FALSE, track = TRUE)
 }
 \arguments{
 \item{x}{An object of the class GPR}

@@ -5,7 +5,8 @@
 \alias{gain}
 \title{Gain compensation}
 \usage{
-\S4method{gain}{GPR}(x, type = c("power", "exp", "agc"), ...)
+\S4method{gain}{GPR}(x, type = c("power", "exp", "agc"), ...,
+  track = TRUE)
 }
 \description{
 Gain compensation

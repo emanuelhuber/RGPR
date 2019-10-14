@@ -5,7 +5,7 @@
 \alias{rotatePhase}
 \title{Phase rotation}
 \usage{
-\S4method{rotatePhase}{GPR}(x, phi)
+\S4method{rotatePhase}{GPR}(x, phi, track = TRUE)
 }
 \arguments{
 \item{x}{A GPR data}

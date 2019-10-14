@@ -2,7 +2,7 @@
 % Please edit documentation in R/global.R
 \name{wapplyMat2}
 \alias{wapplyMat2}
-\title{windowing with centered window}
+\title{windowing with not centered window}
 \usage{
 wapplyMat2(x = NULL, width = NULL, by = NULL, FUN = NULL,
   MARGIN = 1, ...)

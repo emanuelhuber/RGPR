@@ -5,8 +5,8 @@
 \alias{filter1D}
 \title{One dimensional filters}
 \usage{
-\S4method{filter1D}{GPR}(x, type = c("median", "hampel", "Gaussian"),
-  ...)
+\S4method{filter1D}{GPR}(x, type = c("runmed", "runmean", "mad",
+  "gaussian", "hampel"), w = NULL, track = TRUE)
 }
 \description{
 One dimensional filters

@@ -8,23 +8,25 @@
 \usage{
 firstBreakToTime0(fb, x, c0 = 0.299)
 
-\S4method{timeCorOffset}{GPR}(x, t0 = NULL)
+\S4method{timeCorOffset}{GPR}(x, t0 = NULL, track = TRUE)
 }
 \arguments{
-\item{x}{A object of the class GPR}
+\item{x}{[\code{GPR class}]\cr An object of the class \code{GPR}}
 
-\item{c0}{Propagation speed of the GPR wave through air (used only when
-\code{keep = NULL}).}
-
-\item{t0}{A numeric vector with length equal either to \code{NULL}, or one 
-or to the number traces.
-If \code{t0 = NULL} `time0(x)` will be used.}
+\item{t0}{[\code{DEPRECATED}]\cr DEPRECATED - NO MORE USED.
+Instead, set time-zero with either 
+\code{time0(x) <- ...} or 
+\code{x <- setTime0(x, ...)}.}
+}
+\value{
+[\code{GPR class}]\cr An object of the class \code{GPR}
 }
 \description{
 Account for the delay time between time of wave emission and time of first
 wave break recording due to the antenna separation (offset).
 
-Time correction for each trace to compensate the offset between transmitter 
+\code{timeCorOffset} applies a time correction to every traces 
+to compensate the offset between transmitter 
 and receiver antennae (it converts the trace time of the data acquired with
 a bistatic antenna system into trace time data virtually acquiered with 
 a monostatic system under the assumption of horizontally layered structure).
@@ -32,6 +34,18 @@ If all the traces have the same time-zero, this function does not change the
 trace but only the time (time scale). If the traces have different
 time-zero, the traces are first aligned to have the same time-zero 
 (spline interpolation)
+}
+\details{
+Modified slots
+\itemize{
+  \item \code{data}: trace shifted to time-zeor. The number of rows of data 
+        may be smaller.
+  \item \code{time0}: set to 0.
+  \item \code{depth}: adapted to a virtual monostatic system. 
+        FIXME: not regularly spaced!
+  \item \code{antsep}: set to 0.
+  \item \code{proc}: updated with function name and arguments.
+}
 }
 \seealso{
 \code{\link{time0}} to set time zero and 

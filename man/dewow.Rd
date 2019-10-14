@@ -5,25 +5,49 @@
 \alias{dewow}
 \title{Trace dewowing}
 \usage{
-\S4method{dewow}{GPR}(x, type = c("MAD", "Gaussian"), w)
+\S4method{dewow}{GPR}(x, type = c("runmed", "runmean", "mad",
+  "gaussian"), w = NULL, track = TRUE)
 }
 \arguments{
-\item{x}{An object of the class GPR.}
+\item{x}{[\code{GPR class}]\cr An object of the class GPR.}
 
-\item{type}{A length-one character vector, either \code{MAD} (Median
-Absolute Deviation filter) or \code{Gaussian} (Gaussian
-filter)}
+\item{type}{[\code{character(1)}]\cr Dewow method,
+one of \code{runmed} (running median),
+\code{runmean} (running mean), 
+\code{MAD} (DEPRECATED Median Absolute Deviation), 
+\code{Gaussian} (Gaussian smoothing).}
 
-\item{w}{A length-one numeric vector equal to the window length 
-of the filter. Per default, the filter length is five times
-the GPR pulse width. w is defined on a time basis.}
+\item{w}{[\code{numeric(1)}]\cr If \code{type} = \code{runmed}, 
+\code{MAD} or \code{runmean}, window length of the filter in
+trace unit;
+If \code{type} = \code{Gaussian}, standard deviation in trace
+unit.
+If \code{w = NULL}, \code{w} is estimated as five times the 
+wavelength corresponding to the maximum frequency of x 
+(estimated with \code{\link{spec}})}
 }
 \value{
-An object of the class GPR whose traces are dewowed.
+[\code{GPR class}]\cr An object of the class GPR whose traces are dewowed.
 }
 \description{
 \code{dewow} remove the low-frequency component (the so-called 'wow') of 
-every trace..
+every traces.
+}
+\details{
+The low-frequency component is computed by different methods:
+\itemize{
+  \item \code{runmed} running median based on \code{\link[stats]{runmed}}
+  \item \code{runmean} running mean based on \code{\link[stats]{filter}}
+  \item \code{MAD} DEPRECATED - Median Absolute Deviation filter
+  \item \code{Gaussian} Gaussian smoothing applied to the trace samples
+        after time-zero based on \code{\link[mmand]{gaussianSmooth}}
+}
+
+Modified slots
+\itemize{
+  \item \code{data}: trace dewowed.
+  \item \code{proc}: updated with function name and arguments.
+}
 }
 \examples{
 data(frenkeLine00)

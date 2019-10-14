@@ -11,7 +11,7 @@ doi: 10.1016/j.jappgeo.2014.04.022
 Takes time to compute!!}
 \usage{
 \S4method{backgroundSub}{GPR}(x, width = 21, trim = 0.2, s = 1,
-  eps = 1, itmax = 5)
+  eps = 1, itmax = 5, track = TRUE)
 }
 \arguments{
 \item{x}{An object of the class GPR}

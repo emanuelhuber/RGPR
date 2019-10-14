@@ -211,7 +211,7 @@ setGenericVerif("setTime0", function(x, t0) standardGeneric("setTime0"))
 setGenericVerif("estimateTime0",
                 function(x, method = c("coppens", "threshold", "MER"), 
                          thr = 0.12, w = 11, ns = NULL, bet = NULL, c0 = 0.299, 
-                         FUN = NULL, ...)
+                         FUN = NULL, ..., track = TRUE)
                   standardGeneric("estimateTime0"))
 
 #' Time of data collection for each trace
@@ -460,31 +460,62 @@ setGenericVerif("migration", function(x, type = c("static", "kirchhoff"), ...)
 
 setGenericVerif("upsample", function(x,n) standardGeneric("upsample"))
 
-setGenericVerif("timeCorOffset", function(x, t0 = NULL, c0 = 0.299) 
+setGenericVerif("timeCorOffset", function(x, t0 = NULL, track = TRUE) 
   standardGeneric("timeCorOffset"))
 
 #' @name filter1D
 #' @rdname filter1D
-setGenericVerif("filter1D", function(x, type = c("median", "hampel", 
-                                                 "Gaussian"), ...) standardGeneric("filter1D"))
+setGenericVerif("filter1D", 
+                function(x, 
+                         type = c("runmed", "runmean", "MAD", "Gaussian"), 
+                         w = NULL,
+                         track = TRUE) 
+                  standardGeneric("filter1D"))
 
 #' @name filter2D
 #' @rdname filter2D
 #' @export
-setGenericVerif("filter2D", function(x, type=c("median3x3", "adimpro"), ...) 
+setGenericVerif("filter2D", function(x, type=c("median3x3", "adimpro"), 
+                                     ..., track = TRUE) 
   standardGeneric("filter2D"))
 
-setGenericVerif("dewow", function(x, type=c("MAD", "Gaussian"), w ) 
+setGenericVerif("dewow", 
+                function(x,
+                         type = c("runmed", "runmean", "MAD", "Gaussian"), 
+                         w = NULL, 
+                         track = TRUE ) 
   standardGeneric("dewow"))
 
-setGenericVerif("gain", function(x, type=c("power", "exp", "agc"), ...) 
-  standardGeneric("gain")) 
+setGenericVerif("gain", function(x, 
+                                 type=c("power", "exp", "agc"), 
+                                 ..., 
+                                 track = TRUE) 
+  standardGeneric("gain"))
+
+setGenericVerif("gainSEC", function(x, a = 0.01, b = 1, 
+                                    t0   = NULL, 
+                                    tend = NULL, 
+                                    tcst = NULL,
+                                    track = TRUE) 
+  standardGeneric("gainSEC")) 
+
+setGenericVerif("getGainSEC", function(x, a = 0.01, b = 1, 
+                                    t0   = NULL, 
+                                    tend = NULL, 
+                                    tcst = NULL,
+                                    track = TRUE) 
+  standardGeneric("getGainSEC"))
+
+setGenericVerif("gainAGC", function(x, w = 10, p = 2, r = 0.5, track = TRUE) 
+  standardGeneric("gainAGC")) 
+
+
 
 setGenericVerif("trAmplCor", 
                 function(x, type=c("power", "exp", "agc"),  ...) 
                   standardGeneric("trAmplCor"))
 
-setGenericVerif("dcshift", function(x, u = NULL, FUN = mean) 
+setGenericVerif("dcshift", function(x, u = NULL, FUN = mean, ..., track = TRUE) 
   standardGeneric("dcshift"))
 
 setGenericVerif("firstBreak", function(x, method = c("coppens",
@@ -492,15 +523,17 @@ setGenericVerif("firstBreak", function(x, method = c("coppens",
                                        bet = NULL)
   standardGeneric("firstBreak"))
 
-setGenericVerif("clip", function(x, Amax=NULL,Amin=NULL) 
+setGenericVerif("clip", function(x, Amax = NULL, Amin = NULL, track = TRUE) 
   standardGeneric("clip"))
 
-setGenericVerif("gammaCorrection", function(x, a = 1, b = 1) 
+setGenericVerif("gammaCorrection", function(x, a = 1, b = 1, track = TRUE) 
   standardGeneric("gammaCorrection"))
 
-setGenericVerif("traceScaling", function(x, 
-                                         type = c("stat", "min-max", "95", "eq", "sum", "rms", 
-                                                  "mad", "invNormal")) 
+setGenericVerif("traceScaling", 
+                function(x, 
+                         type = c("stat", "min-max", "95", "eq", "sum", "rms", 
+                                  "mad", "invNormal"), 
+                         track = TRUE) 
   standardGeneric("traceScaling"))
 
 setGenericVerif("spec", function(x, type = c("f-x", "f-k"), plotSpec = TRUE, 
@@ -508,39 +541,58 @@ setGenericVerif("spec", function(x, type = c("f-x", "f-k"), plotSpec = TRUE,
 
 setGenericVerif("fFilter", function(x, f = 100, 
                                     type = c('low', 'high', 'bandpass'),
-                                    L = 257, plotSpec = FALSE) standardGeneric("fFilter"))
+                                    L = 257, plotSpec = FALSE, track = TRUE) 
+  standardGeneric("fFilter"))
 
-setGenericVerif("fkFilter", function(x, fk = NULL, L = c(5, 5), npad = 1) 
+setGenericVerif("fkFilter", function(x, fk = NULL, L = c(5, 5), npad = 1, 
+                                     track = TRUE) 
   standardGeneric("fkFilter"))
 
 setGenericVerif("eigenFilter", function(x, eigenvalue = NA, center = TRUE, 
-                                        scale = FALSE) 
+                                        scale = FALSE, track = TRUE) 
   standardGeneric("eigenFilter"))
 
-setGenericVerif("traceShift", function(x,  ts, method = c("spline", "linear", 
-                                                          "nearest", "pchip", "cubic", "none"), crop = TRUE) 
-  standardGeneric("traceShift"))
+setGenericVerif("traceShift", 
+                function(x,  ts, 
+                         method = c("pchip", "linear", "nearest", 
+                                    "spline", "cubic", "none"), 
+                         crop = TRUE, track = TRUE)
+                  standardGeneric("traceShift"))
 
-setGenericVerif("traceAverage", function(x, w = NULL, FUN = mean, ...) 
+setGenericVerif("interpTrace", 
+                function(x,  z, method = c("pchip", "linear", 
+                                           "nearest", "spline", "cubic"), 
+                         crop = TRUE, track = TRUE) 
+  standardGeneric("interpTrace"))
+
+
+
+
+setGenericVerif("traceAverage", function(x, w = NULL, FUN = mean, ..., 
+                                         track = TRUE) 
   standardGeneric("traceAverage"))
 
-setGenericVerif("traceStat", function(x, w = NULL, FUN = mean, ...) 
+setGenericVerif("traceStat", function(x, w = NULL, FUN = mean, ..., 
+                                      track = TRUE) 
   standardGeneric("traceStat"))
 
 setGenericVerif("backgroundSub", function(x, width = 21, trim = 0.2,
-                                          s = 1, eps = 1, itmax = 5)
+                                          s = 1, eps = 1, itmax = 5,
+                                          track = TRUE)
   standardGeneric("backgroundSub"))
 
 setGenericVerif("time0Cor",  function(x, t0 = NULL, 
                                       method = c("spline", "linear", "nearest", "pchip", "cubic", 
-                                                 "none"), crop = TRUE, keep = 0) 
+                                                 "none"), crop = TRUE, keep = 0, track = TRUE) 
   standardGeneric("time0Cor"))
 
 setGenericVerif("deconv", function(x, method=c("spiking", "wavelet",
-                                               "min-phase", "mixed-phase"), ...) standardGeneric("deconv"))
-setGenericVerif("conv1D", function(x, w) standardGeneric("conv1D"))
-setGenericVerif("conv2D", function(x, w) standardGeneric("conv2D"))
-setGenericVerif("rotatePhase", function(x, phi) standardGeneric("rotatePhase"))
+                                               "min-phase", "mixed-phase"), 
+                                   ...,
+                                   track = TRUE) standardGeneric("deconv"))
+setGenericVerif("conv1D", function(x, w, track = TRUE) standardGeneric("conv1D"))
+setGenericVerif("conv2D", function(x, w, track = TRUE) standardGeneric("conv2D"))
+setGenericVerif("rotatePhase", function(x, phi, track = TRUE) standardGeneric("rotatePhase"))
 
 
 #------------------------------GRPsurvey
@@ -1548,7 +1600,7 @@ wapplyMat <- function(x = NULL, width = NULL, by = NULL, FUN = NULL,
   }
 }
 
-#' windowing with centered window
+#' windowing with not centered window
 #'
 #' based on wapply and modified by Manu.
 #' not centered moving window! start first row/column and 
@@ -1789,7 +1841,8 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
 # }
 
 
-.traceShift <- function(A, ts = 0, tt = NULL, dz = 0.4, method = "linear"){
+# FIXME > vectorise that!
+.traceShiftMat <- function(A, ts = 0, tt = NULL, dz = 0.4, method = "linear"){
   ps <- ts/dz
   Anew <- matrix(NA, nrow = nrow(A), ncol = ncol(A))
   v0 <- 1:nrow(A)
@@ -2483,6 +2536,45 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
   return(b)
 }
 
+# run med mean mad
+.runmmmMat <- function(x, w, type = c("runmed", "runmean", "runmad", "hampel")){
+  type <- match.arg(type, c("runmed", "runmean", "runmad", "hampel"))
+  if( (w %% 2) == 0 )  w <- w + 1 
+  xdata <- matrix(0, nrow = nrow(x) + 2*w , ncol = ncol(x) )
+  xdata[1:nrow(x) + w, ] <- x
+  if(type == "runmed"){
+    xdata <- apply(xdata, 2, stats::runmed, k = w)
+  }else if(type == "runmean"){
+    runmean <- function(x, k = 5){stats::filter(x, rep(1 / k, k), sides = 2)}
+    xdata <- apply(xdata, 2, runmean, k = w)
+  }
+  else if(type == "hampel"){
+    xdata <- apply(xdata, 2, rollapplyHampel, w ,  .fHampel)
+  }
+  # x <- x - xdata[1:nrow(x) + w, ]
+  return(xdata[1:nrow(x) + w, ])
+}
+
+
+rollapplyHampel <- function(x, w, FUN){
+  k <- trunc((w - 1)/ 2)
+  locs <- (k + 1):(length(x) - k)
+  num <- vapply(
+    locs, 
+    function(i) FUN(x[(i - k):(i + k)], x[i]),
+    numeric(1)
+  )
+  x[locs] <- num
+  return(x)
+}
+.fHampel <- function(x, y){
+  x0 <- median(x)
+  S0 <- 1.4826 * median(abs(x - x0))
+  if(abs(y - x0) > 3 * S0) return(x0)
+  # y[test] <- x0[test]
+  return(y)
+}
+
 #==============================#
 #======= GAIN FUNCTIONS ========#
 # dts = sampling time (e.g., 0.8 ns)
@@ -2552,19 +2644,10 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
 .gainAgc0 <- function(d, w = 10, p = 2 , r = 0.5){
   # convert NA into 0
   d[is.na(d)] <- 0
-  # Get local mean by smoothing the image with a Gaussian filter
-  dAmp   <- mmand::gaussianSmooth(d, w)
-  # Subtract image from local mean, raise to power 'p' then apply Gaussian
-  # smoothing filter to obtain a local weighted sum. 
-  # Finally raise the result
-  # to power 'r' to obtain the 'gain'.  Typically p = 2 and r = 0.5 which will
-  # make gain equal to the local RMS.  The abs() function is used to allow
-  # for arbitrary 'p' and 'r'.
-  dGain <- (mmand::gaussianSmooth(abs(d - dAmp)^p, w))^r
-  # Apply inverse gain to the difference between the image and the local
-  # mean to obtain the final AGC image.
-  sel <- dGain > 0
-  d[sel ] <- d[sel ]/dGain[sel ]
+  dAmp   <- d - mmand::gaussianSmooth(d, w)
+  dGain <- (mmand::gaussianSmooth(abs(dAmp)^p, w))^r
+  test <- dGain > 0
+  d[test ] <- dAmp[test]/dGain[test ]
   return(d)
 }
 
@@ -3146,6 +3229,36 @@ byte2volt <- function( Vmax = 50, Vmin = 50, nBytes = 16) {
   }
   return(Re(A_int))
 }
+
+
+
+# Hilbert transform
+# https://github.com/cran/spectral/blob/master/R/hilbert.R
+HilbertTransf <- function(x, npad = 10){
+  x <- as.numeric(x)
+  n <- length(x)
+  # x <- c(x, rep(0, npad))   # add MANU
+  x <- c(rev(head(x, npad)), x, rev(tail(x, npad)))   # add MANU
+  # first calculate the normalized FFT
+  X <- fft(x) / length(x)
+  
+  # then we need a virtual spatial vector which is symmetric with respect to
+  # f = 0. The signum function will do that. The advantage is, that we need not
+  # take care of the odd-/evenness of the length of our dataset
+  xf <- 0:(length(X) - 1)
+  xf <- xf - mean(xf)
+  
+  # because the negative Frequencies are located in the upper half of the
+  # FFT-data vector it is nesccesary to use "-sign". This will mirror the relation
+  # The "-0.5" effect is that the Nyquist frequency, in case of odd data set lenghts,
+  # is not rejected.
+  Xh <- -1i * X * -sign(xf - 0.5)
+  xh <- fft(Xh, inverse = TRUE)
+  # return(xh[1:n])   # add MANU
+  return(xh[npad + 1:n])   # add MANU
+}
+
+
 
 #========================================================#
 #================= LOCAL ORIENTATION ====================#
@@ -5457,6 +5570,24 @@ readDZX <- function(fPath){
 #   if(n > 0) invisible(readBin(con, "integer", n = n, size = size))
 # }
 
+
+
+# https://stackoverflow.com/questions/50561768/r-get-argument-names-from-function-call
+# Using the same formalArgs suggested by @Akrun 
+# (and also in the almost duplicate Get the argument names of an R function):
+#   
+#   getArgNames <- function(value) formalArgs(deparse(substitute(value)[[1]]))
+# 
+# substitute(value) quotes the input, to prevent immediate evaluation, [[1]] 
+# retrieves the function from the parsed input, deparse turns it into character 
+# (since formalArgs can take the function name as character).
+# 
+# getArgNames(testFun())
+# 
+# #[1] "x" "z"
+
+
+
 #--------------------------------------
 # http://stackoverflow.com/questions/17256834/getting-the-arguments-of-a-parent-
 # function-in-r-with-names
@@ -5465,20 +5596,28 @@ readDZX <- function(fPath){
 # location   Galway, Ireland
 #' @export
 getArgs <- function (returnCharacter = TRUE, addArgs = NULL) {
-  if(sys.nframe() == 3){
+  print(sys.nframe())
+  # 50 -> 1 error with devtools::test() and opencpu
+  # 100 -> works with devtools::test() and does not work with opencpu
+  if(sys.nframe() <=  75){
     arg <- as.list(match.call(definition = sys.function( -1 ),
                               call = sys.call(-1),
                               expand.dots = TRUE )
     )
     narg <- length(arg)
     if(returnCharacter){
-      if(narg >=3){
-        eval_arg <- sapply(arg[3:narg], eval, simplify = FALSE)
-        argChar <- paste0(arg[[1]],"//", 
-                          paste(names(arg[3:narg]), 
-                                mapply(pasteArgs, eval_arg, arg[3:narg]), 
-                                #sapply(eval_arg, pasteArgs, arg[3:narg]), 
-                                sep = "=", collapse = "+"))
+      if(narg  >= 3){
+        eval_arg <- tryCatch(sapply(arg[3:narg], eval, simplify = FALSE),
+                             error = function(cond){return(NULL)})
+        if(!is.null(eval_arg)){                     
+          argChar <- paste0(arg[[1]],"//", 
+                            paste(names(arg[3:narg]), 
+                                  mapply(pasteArgs, eval_arg, arg[3:narg]), 
+                                  #sapply(eval_arg, pasteArgs, arg[3:narg]), 
+                                  sep = "=", collapse = "+"))
+        }else{
+          return(c())
+        }  
       }else{
         argChar <- paste0(arg[[1]],"//")
       }
@@ -5535,6 +5674,219 @@ getFunName <- function(FUN){
   }
   return(funName)
 }
+
+#' @export
+checkArgInit <- function(){
+  return( "Check arg\n" )
+}
+
+#' @export
+checkArgStop <- function(x){
+  if(length(x) > 1) stop(x)
+}
+
+#' @export
+checkArg <- function(x, u, type, y, ...){
+  arg <- sapply(match.call(expand.dots=TRUE)[-1], deparse)
+  msg <- NULL
+  switch(type,
+         "COUNT" = {
+           if(!testCount(x)){
+             msg <- "must be a positiv integer"
+           }
+         },
+         "STRING" = {
+           if(!checkmate::testString(x)){
+             msg <- "must be a string"
+           }           
+         },
+         "STRING_CHOICE" = {
+           if(!(checkmate::testString(x) && x %in% y)){
+             msg <- paste0("string must be one of '", 
+                           paste0(y, collapse = "', '"), "'")
+           }
+         },
+         "INDEX_VECTOR_NULL_UPPER" = {
+           if(!checkmate::testInteger(x, lower = 1, min.len = 1, 
+                                      upper = y, null.ok = TRUE,
+                                      any.missing = FALSE, 
+                                      all.missing = FALSE  )){
+             msg <- paste0("must be a vector of strictly positiv integer",
+                           " with max value <= ", y)
+           } 
+         },
+         "FUNCTION_NULL" = {
+           if(!(checkmate::testFunction(x, null.ok = TRUE))){
+             msg <- "must be a function"
+           }
+         },
+         "FUNCTION" = {
+           if(!(checkmate::testFunction(x))){
+             msg <- "must be a function"
+           }
+         },
+         "INTEGER" = {
+           
+         },
+         "PERCENT1" = {
+           if(!checkmate::testNumeric(x, lower = 0, upper = 1, finite = TRUE,
+                                      any.missing = FALSE, 
+                                      all.missing = FALSE,
+                                      len = 1)){
+             msg <- "must be a numeric value between 0 and 1"
+           } 
+         },
+         "NUMERIC" = {
+            if(!checkmate::testNumeric(x,
+                                       finite = TRUE,
+                                       any.missing = FALSE, 
+                                       all.missing = FALSE)){
+              msg <- paste0("must be a numeric value/vector")
+            }
+         },
+         "NUMERIC_LEN" = {
+           if(! (checkmate::testNumeric(x,
+                                        finite = TRUE,
+                                        any.missing = FALSE, 
+                                        all.missing = FALSE) &&
+                 length(x) %in% y ) ){
+             if(length(y) < 2){
+               msg <- paste0("must be a numeric value")
+             }else{
+               msg <- paste0("must be a numeric vector of length ",
+                             paste0(y[-length(y)], collapse = ", "),
+                             " or ", y[length(y)])
+             }
+           }
+         },
+         # length = 1,  POSitive
+         "NUMERIC1_POS" = {
+           if(!checkmate::testNumeric(x, lower = -sqrt(.Machine$double.eps),
+                                      finite = TRUE,
+                                      any.missing = FALSE, 
+                                      all.missing = FALSE,
+                                      len = 1,
+                                      upper = y)){
+             msg <- "must be a numeric value >= 0" 
+             if(is.finite(y)) msg <- paste0(msg, " and < ", y)
+           }
+         },
+         "NUMERIC1_SPOS" = {
+           if(!checkmate::testNumeric(x, lower = sqrt(.Machine$double.eps),
+                                      finite = TRUE,
+                                      any.missing = FALSE, 
+                                      all.missing = FALSE,
+                                      len = 1,
+                                      upper = y)){
+             msg <- "must be a numeric value > 0"
+             if(is.finite(y)) msg <- paste0(msg, " and < ", y)
+           }
+         },
+         # length = 1, Strictly POSitive
+         "NUMERIC1_NULL" = {
+           if(!checkmate::testNumeric(x, 
+                                      finite = TRUE,
+                                      any.missing = FALSE, 
+                                      all.missing = FALSE,
+                                      len = 1,
+                                      upper = y,
+                                      null.ok = TRUE)){
+             msg <- "must be a numeric value"
+             if(is.finite(y)) msg <- paste0(msg, " < ", y)
+             msg <- past0(msg, " or a 'NULL'")
+           }
+         },
+         # length = 1, Strictly POSitive
+         "NUMERIC1_SPOS_NULL" = {
+           if(!checkmate::testNumeric(x, lower = sqrt(.Machine$double.eps),
+                                      finite = TRUE,
+                                      any.missing = FALSE, 
+                                      all.missing = FALSE,
+                                      len = 1,
+                                      null.ok = TRUE,
+                                      upper = y)){
+             msg <- "must be a numeric value > 0"
+             if(is.finite(y)) msg <- paste0(msg, " and < ", y)
+           }
+         },
+         "LOGICAL_LEN" = {
+           if(!(checkmate::testLogical(x,
+                                      any.missing = FALSE, 
+                                      all.missing = FALSE,
+                                      null.ok = FALSE) &&
+              length(x) %in% y ) ){
+             if(length(y) < 2){
+               msg <- paste0("must be a logical value (TRUE/FALSE)")
+             }else{
+               msg <- paste0("must be a logical vector (TRUE/FALSE)  of length ",
+                             paste0(y[-length(y)], collapse = ", "),
+                             " or ", y[length(y)])
+             }
+           }
+         },
+         warning("Arg not checked. ",
+                 "Please contact me with a copy of this message: \n",
+                 "emanuel.huber@alumni.ethz.ch")
+         # return(u)
+  )
+  if(is.null(msg)){
+    return(u)
+  }else{
+    u1 <- paste0("arg '", arg[1], "': ", msg, "\n")
+    return(c(u, u1))
+  }
+}
+
+
+#' @export
+checkSlotInit <- function(){
+  return( "Check slots\n" )
+}
+
+#' @export
+checkSlotStop <- function(x){
+  if(length(x) > 1) stop(x)
+}
+
+#' @export
+checkSlotEmpty <- function(x, name, u){
+  slt_x <- slot(x, name)
+  test1 <- length(slt_x) == 0
+  msg <- NULL
+  switch(name,
+        "antsep" = {
+          if(test1 || is.na(slt_x)){
+            msg <- paste0("Antenna separation must be ",
+                          "first set with `antsep(x) < -... `!")
+          }
+        },
+        "vel" = {
+          if(test1  || length(slt_x[[1]]) == 0){
+            msg <- paste0("GPR wave velocity must be ",
+                          "first set with `vel(x) < -... `!")
+          }
+        },
+        "fid" = {all(slt_x == "")},
+        "ann" = {all(slt_x == "")},
+        "version" = {slt_x == ""},
+        "name"= {slt_x == ""},
+        "description"= {slt_x == ""},
+        "filepath"= {slt_x == ""},
+        "depthunit"= {slt_x == ""},
+        "posunit"= {slt_x == ""},
+        "surveymode"= {slt_x == ""},
+        "date"= {slt_x == ""},
+        "crs"= {slt_x == ""},
+        "proc"= {slt_x == ""},
+        stop("Unknown input"))
+  if(is.null(msg)){
+    return(u)
+  }else{
+    u1 <- paste0("slot '", name, "': ", msg, "\n")
+    return(c(u, u1))
+  }
+}
+
 
 
 #' Suppressing output from cat(), warnings & messages

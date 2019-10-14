@@ -6,7 +6,7 @@
 \title{Frequency filter}
 \usage{
 \S4method{fFilter}{GPR}(x, f = 100, type = c("low", "high",
-  "bandpass"), L = 257, plotSpec = FALSE)
+  "bandpass"), L = 257, plotSpec = FALSE, track = TRUE)
 }
 \arguments{
 \item{x}{An object of the class GPR}

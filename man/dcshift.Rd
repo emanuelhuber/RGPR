@@ -5,20 +5,51 @@
 \alias{dcshift}
 \title{Direct-Current shift removal}
 \usage{
-\S4method{dcshift}{GPR}(x, u = NULL, FUN = mean)
+\S4method{dcshift}{GPR}(x, u = NULL, FUN = mean, ..., track = TRUE)
 }
 \arguments{
-\item{x}{An object of the class `GPR`.}
+\item{x}{[\code{GPR class}]\cr An object of the class \code{GPR}.}
 
-\item{u}{Number of time samples used to evaluate the DC-shift. If 
-\code{u = NULL}, the function take the first 90\% of the 
-samples before time-zero.}
+\item{u}{[\code{integer}]\cr Index of the trace samples used to evaluate for
+every trace the DC-shift. If \code{u = NULL}, the function takes
+for each trace 90\% of the samples before time-zero (the number
+of samples can vary from trace to trace).}
 
-\item{FUN}{A function to apply on the first `u` time samples (default is 
-`mean`; alternatively `median` could be used or any user defined function).}
+\item{FUN}{[\code{function}]\cr A function to apply on the \code{u} trace 
+samples (default is \code{mean}; alternatively, \code{median} 
+could be of interest because it is more robust but slower to 
+compute).}
+
+\item{...}{[\code{ANY}]\cr Further arguments to be passed to \code{FUN}.}
+}
+\value{
+[\code{GPR class}]\cr An object of the class \code{GPR}.
 }
 \description{
-The direct-current shift is estimated for each traces based on a specified 
-number of time samples (normally the samples before time-zero). Then, the
-direct-current shift of every trace is substracted from every trace.
+The direct-current offset (DC-shift) is estimated and removed from every 
+trace individually. 
+For a given trace, the DC-shift is estimated by a user supplied function 
+applied on few trace samples, normally the samples before time-zero
+(e.g., the average of the samples before time-zero).  Then, the
+DC-shift is substracted from the trace.
+}
+\details{
+The direct-current offset (or DC-shift) is a constant bias over time
+that slightly shifts the signal amplitude. The DC-shift is best 
+observed on the trace samples recorded before the signal was emitted.
+
+Modified slots
+\itemize{
+  \item \code{data}: DC-shift removed (data dimensions unchanged).
+  \item \code{proc}: updated with function name and arguments.
+}
+}
+\examples{
+data("frenkeLine00")
+x <- frenkeLine00
+x1 <- dcshift(x, u = 1:100, FUN = median)
+plot(x - x1)
+x2 <- dcshift(x)
+plot(x - x2)
+
 }

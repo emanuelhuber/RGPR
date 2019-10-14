@@ -121,8 +121,7 @@ setClass(
 
 
 
-#------------------------------------------#
-#-------------- CONSTRUCTOR ---------------#
+#============================== READ GPR DATA =================================#
 
 #' Extract frequency from string
 #' 
@@ -1005,7 +1004,7 @@ readSGY <- function(dsn, fName = "", fPath = "", desc = "",
 #'   \item MALA file format (*.rd3, *.rad).
 #'         \code{readGPR(dsn = 'xline.rd3')}
 #'   \item RadSys Zond GPR device (*.sgy). 
-#'         \strong{Note: it is not the usual SEG-Y file format)}.
+#'         \strong{Note: it is not the SEG-Y file format)}.
 #'         \code{readGPR(dsn = 'xline.sgy')}  
 #'   \item GSSI file format (*.dzt).
 #'         \code{readGPR(dsn = 'xline.dzt')}
@@ -1146,8 +1145,12 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
   }else if("SGY" == toupper(ext) || "SEGY" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
     # first try to read SEG-Y format
-    x <- tryCatch({verboseF( readSGY(dsn, fName = fName, fPath = fPath, 
-                           desc = desc, Vmax = Vmax), verbose = verbose)}, 
+    x <- tryCatch({verboseF(readSGY(dsn, 
+                                    fName = fName, 
+                                    fPath = fPath, 
+                                    desc = desc, 
+                                    Vmax = Vmax), 
+                            verbose = verbose)},
                   error = function(e){return(NULL)})
     if(is.null(x)){
       # z <- readGPR(dsn)
@@ -1204,8 +1207,10 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
   return(x)
 }
 
-#------------------------------------------#
-#---------------- COERCION ----------------#
+
+
+#================================= COERCION ===================================#
+
 ###--- Coercion from GPR to ...
 setAs(from = "GPR", to = "matrix", def = function(from){ from@data } )
 
@@ -1399,14 +1404,16 @@ as.GPR.list <- function (x, ...){
 }    
 
 
+#======================== MANIPULATING GPR OBJECTS ============================#
+
 #' @export
 setMethod("length", "GPR", function(x) ncol(x@data))
 
 #' @export
 setMethod("summary", "GPR", function(object, ...) 
   
-  #' @export
-  summary(as.vector(object@data)))
+#' @export
+summary(as.vector(object@data)))
 
 #' @export
 setMethod("mean", "GPR", function(x, ...) mean(as.vector(x@data)))
@@ -1419,9 +1426,9 @@ setMethod("median", "GPR", function(x, na.rm = FALSE)
 
 #' @export
 setMethod(
-  f="apply", 
-  signature="GPR", 
-  definition=function(X, MARGIN, FUN, ...){
+  f = "apply", 
+  signature = "GPR", 
+  definition = function(X, MARGIN, FUN, ...){
     x_apply <- apply(X@data, MARGIN, FUN,...)
     if(MARGIN == 1 && is.null(dim(x_apply)) && length(x_apply) == nrow(X)){
       X[, 1:ncol(x_apply)] <- x_apply
@@ -1479,6 +1486,7 @@ setMethod(
     range(x@data,na.rm=na.rm)
   }
 )
+
 #' @export
 setMethod(   
   # can make the sum of a list of object of class GPR
@@ -1541,7 +1549,7 @@ setMethod(
                      # "digamma" "trigamma"
                      stop(paste(.Generic, "not allowed on GPR objects"))
     )
-    proc(x) <- getArgs()
+    # proc(x) <- getArgs()
     return(x)
   }
 )
@@ -1668,8 +1676,8 @@ setMethod(
 
 
 
+#=========================== GETTER / SETTER ==================================#
 
-#------------------------------
 # ###' @rdname GPR-extract-methods
 #' extract parts of GPR
 #'
@@ -1733,7 +1741,7 @@ setMethod(
   }
 )
 
-#-------------------------------
+
 #' @name [<-
 #' @rdname GPR-subset
 setReplaceMethod(
@@ -2126,85 +2134,7 @@ setMethod("setTime0", "GPR", function(x, t0){
 })
 
 
-time0Estimation <- function(...){
-  stop("DEPRECATED!\n",
-       "Use 'estimateTime0()' instead.")
-}
 
-#' Estimate and set time-zero
-#' 
-#' Pick the time corresponding to the first break of each trace in the GPR profile.
-#' Return a vector containing the first break times.
-#' 
-#' This function is a wrapper for the following commands
-#' \itemize{
-#'   \item \code{tfb <- firstBreak(x, ...)}
-#'   \item \code{t0 <- firstBreakToTime0(tfb, x)}
-#'   \item \code{time0(x) <- t0}
-#' }
-#'
-#' @param x An object of the class \code{GPR}
-#' @param method A length-one character vector. \code{"coppens"} corresponds to
-#'              the modified Coppens method, \code{"threshold"} to the 
-#'              threshold method, and \code{"MER"} to the modified energy ratio
-#'              method.
-#' @param thr A length-one numeric vector defining the threshold  signal 
-#'              amplitude (in \%) at which time zero is picked (only for the
-#'              threshold method).
-#' @param w A length-one numeric vector defining the length of leading window 
-#'          (only for the modified Coppens and modified energy ratio 
-#'          methods). Recommended value: about one period of the first-arrival 
-#'          waveform. w is defined on a time basis.
-#' @param ns A length-one numeric vector defining the length of the edge 
-#'           preserving smoothing window (only for the modified Coppens 
-#'           method). Recommended value: between one and two signal periods.
-#'           When \code{ns = NULL} the value of \code{ns} is set to 
-#'           \code{1.5 * w}.
-#' @param bet A length-one numeric vector defining the stabilisation 
-#'            constant (only for the modified Coppens method). Not critical. 
-#'            When \code{bet = NULL} the value of \code{bet} is set to 
-#'            20\% of the maximal signal amplitude. 
-#' @param c0 Propagation speed of the GPR wave through air (used only when
-#'           \code{keep = NULL}).
-#' @param FUN Optional: function to apply to the estimated time-zero (e.g., 
-#'            \code{mean} or \code{median} to get set a single time-zero 
-#'            value to the data).
-#' @param ... Arguments of \code{FUN}.
-#' @seealso \code{\link{time0}} to set time zero and 
-#'          \code{\link{time0Cor}} to shift the traces such that they start
-#'          at time zero.
-#' @references
-#' \describe{
-#'   \item{Modified Coppens method}{Sabbione J.I. and Velis D. (2010) 
-#'        Automatic first-breaks picking: New strategies and algorithms. 
-#'        Geophysics, 75(4): 67-76.}
-#'   \item{Modified Energy Ratio (MER) method}{Han L., Wong J., and John C. 
-#'        (2010) Time picking on noisy microseismograms. In: Proceedings of the
-#'        GeoCanada 2010 Convention - Working with the Earth, Calgary, AB, 
-#'        Canada, p. 4}
-#' }
-#' @seealso \code{\link{time0}} and \code{\link{setTime0}} to set time zero,
-#'          \code{\link{firstBreak}} to estimate the first wave break, and
-#'          \code{\link{firstBreakToTime0}} to convert the first wave break
-#'          into time zero.
-#' @name estimateTime0
-#' @rdname estimateTime0
-#' @export
-setMethod("estimateTime0", "GPR", 
-          function(x, method = c("coppens", "threshold", "MER"), 
-                   thr = 0.12, w = 11, ns = NULL, bet = NULL, c0 = 0.299, 
-                   FUN = NULL, ...){
-            tfb <- firstBreak(x, method = method, thr = thr, w = w, 
-                              ns = ns, bet = bet)
-            t0 <- firstBreakToTime0(tfb, x, c0 = c0)
-            if(is.null(FUN)){
-              time0(x) <- t0
-            }else{
-              FUN <- match.fun(FUN)
-              time0(x) <- FUN(t0, ...)
-            }
-            return(x)
-          })
 
   
 #' Depth/time of the GPR data
@@ -2362,38 +2292,6 @@ setReplaceMethod(
 })
 
 
-#' Return TRUE if surveymode is CMP
-#' 
-#' Return TRUE if surveymode is CMP
-#' @name isCMP
-#' @rdname isCMP
-#' @export
-setMethod("isCMP", "GPR", function(x){
-  (grepl("CMP", toupper(x@surveymode)) || 
-     grepl("WARR", toupper(x@surveymode))) && 
-    !grepl("CMPANALYSIS", toupper(x@surveymode))
-})
-
-
-#' Return TRUE if the data are a function of time
-#' 
-#' @name isTimeUnit
-#' @rdname isTimeUnit
-#' @export
-setMethod("isTimeUnit", "GPR", function(x){
-  grepl("[s]$", x@depthunit)
-})
-
-#' Return TRUE if the data are a function of length
-#' 
-#' @name isLengthUnit
-#' @rdname isLengthUnit
-#' @export
-setMethod("isLengthUnit", "GPR", function(x){
-  !isTimeUnit(x)
-} 
-)
-
 #' Fiducial markers of the GPR data
 #' 
 #' @name fid<-
@@ -2447,6 +2345,99 @@ setReplaceMethod(
   } 
 )
 
+
+#' Processing steps applied to the data
+#' 
+#' \code{processing} returns all the processing steps applied to the data.
+#' 
+#' @param x An object of the class GPR.
+#' @return A character vector whose elements contain the name of the 
+#' processing functions with their arguments applied previously on the
+#' GPR data.
+#' @examples
+#' data(frenkeLine00)
+#' A <- dewow(frenkeLine00, type = "Gaussian")
+#' proc(A)
+#' @name proc
+#' @rdname proc
+#' @export
+setMethod("proc", "GPR", function(x){
+  return(x@proc)
+} 
+)
+
+#' Add a processing step
+#' 
+#' @name proc
+#' @rdname proc
+#' @export
+setReplaceMethod(
+  f = "proc",
+  signature = "GPR",
+  definition = function(x,value){
+    value <- as.character(value)
+    x@proc <- c(x@proc, value)
+    return(x)
+  }
+)
+
+#=============================== TEST FUNCTION: isXXX() =======================#
+
+
+#' Return TRUE if surveymode is CMP
+#' 
+#' Return TRUE if surveymode is CMP
+#' @name isCMP
+#' @rdname isCMP
+#' @export
+setMethod("isCMP", "GPR", function(x){
+  (grepl("CMP", toupper(x@surveymode)) || 
+     grepl("WARR", toupper(x@surveymode))) && 
+    !grepl("CMPANALYSIS", toupper(x@surveymode))
+})
+
+
+#' Return TRUE if the data are a function of time
+#' 
+#' @name isTimeUnit
+#' @rdname isTimeUnit
+#' @export
+setMethod("isTimeUnit", "GPR", function(x){
+  grepl("[s]$", x@depthunit)
+})
+
+#' Return TRUE if the data are a function of length
+#' 
+#' @name isLengthUnit
+#' @rdname isLengthUnit
+#' @export
+setMethod("isLengthUnit", "GPR", function(x){
+  !isTimeUnit(x)
+} 
+)
+
+
+
+
+#============================= PROCESSING FUNCTIONS ===========================#
+
+
+#' Trace projection
+#'
+#' Project the trace coordinates give a coordinate reference system.
+#' @param x Object of the class GPR
+#' @param CRSobj object of class \link{CRS}, or of class \code{character} in
+#'               which case it is converted to \link{CRS}.
+#' @name trProject
+#' @rdname trProject
+#' @export
+setMethod("trProject", "GPR", function(x, CRSobj){
+  xsp <- as(x, "SpatialLines")
+  xsptrsf <- sp::spTransform(xsp, CRSobj)
+  x@coord[, 1:2] <- sp::coordinates(xsptrsf)[[1]][[1]]
+  return(x)
+})
+
 #' Amplitude envelope
 #' 
 #' Estimate for each trace the amplitude envelope with the Hilbert 
@@ -2459,20 +2450,15 @@ setReplaceMethod(
 #' @name envelope
 #' @rdname envelope
 #' @export
-setMethod("envelope", "GPR", function(x, npad = 100){# }, FUN = NULL, ...){
- #if(is.null(FUN)){
-    xmax <- max(abs(x), na.rm = TRUE)
-    xH <- apply(x, 2, HilbertTransf, npad = npad)
-    x <- sqrt(x^2 + base::Re(xH)^2)
-    x@data[abs(x@data) > xmax] <- xmax
-  # }else{
-  #   funName <- getFunName(FUN)
-  #   x@data[] <- apply(x, 1, FUN, ...)
-  # }
-  # 
-  # proc(x) <- getArgs( addArgs = c('FUN' = funName))
-  proc(x) <- getArgs()
-  return(x)
+setMethod("envelope", "GPR", function(x, npad = 100){
+  #if(is.null(FUN)){
+  xmax <- max(abs(x), na.rm = TRUE)
+  xH <- apply(x, 2, HilbertTransf, npad = npad)
+  x2 <- sqrt(x^2 + base::Re(xH)^2)
+  test <- abs(x2@data) > xmax
+  x2@data[test] <- abs(x@data[test])
+  proc(x2) <- getArgs()
+  return(x2)
 } 
 )
 
@@ -2492,7 +2478,6 @@ setMethod("ampl", "GPR", function(x, npad = 100, FUN = NULL, ...){
     #funName <- getFunName(FUN)
     x@data[] <- apply(x, 1, FUN, ...)
   }
-  # 
   # proc(x) <- getArgs( addArgs = c('FUN' = funName))
   proc(x) <- getArgs()
   return(x)
@@ -2500,31 +2485,6 @@ setMethod("ampl", "GPR", function(x, npad = 100, FUN = NULL, ...){
 )
 
 
-# Hilbert transform
-# https://github.com/cran/spectral/blob/master/R/hilbert.R
-HilbertTransf <- function(x, npad = 10){
-  x <- as.numeric(x)
-  n <- length(x)
-  # x <- c(x, rep(0, npad))   # add MANU
-  x <- c(rev(head(x, npad)), x, rev(tail(x, npad)))   # add MANU
-  # first calculate the normalized FFT
-  X <- fft(x) / length(x)
-  
-  # then we need a virtual spatial vector which is symmetric with respect to
-  # f = 0. The signum function will do that. The advantage is, that we need not
-  # take care of the odd-/evenness of the length of our dataset
-  xf <- 0:(length(X) - 1)
-  xf <- xf - mean(xf)
-  
-  # because the negative Frequencies are located in the upper half of the
-  # FFT-data vector it is nesccesary to use "-sign". This will mirror the relation
-  # The "-0.5" effect is that the Nyquist frequency, in case of odd data set lenghts,
-  # is not rejected.
-  Xh <- -1i * X * -sign(xf - 0.5)
-  xh <- fft(Xh, inverse = TRUE)
-  # return(xh[1:n])   # add MANU
-  return(xh[npad + 1:n])   # add MANU
-}
 
 
 #' DEPRECATED - Plot the trace plotEnvelope
@@ -2550,45 +2510,10 @@ HilbertTransf <- function(x, npad = 10){
 #' @rdname envelope
 #' @export
 setMethod("plotEnvelope", "GPR", function(x, npad = 100, FUN = mean, add = FALSE, 
-                                      all = FALSE, plotLog = TRUE, ...){
+                                          all = FALSE, plotLog = TRUE, ...){
   #   op <- par(no.readonly=TRUE)
   stop("Deprecated!\nUse 'trPlot(envelope(x))' or ",
        "'trPlot(traceStat(envelope(x)))' instead.")
-  # AMP <- envelope(x, npad = npad, FUN = FUN, ...)
-  # # AMP <- xAMP@data
-  # ylab <- "mV"
-  # if(plotLog == TRUE){
-  #   AMP <- log(AMP)
-  #   ylab <- "log(mV)"
-  # }
-  # z <- depth(x)
-  # if(!add){
-  #   trPlot(AMP, xlab = x@depthunit, ylab = ylab)
-  #   par(mar=c(5, 4, 4, 2)+0.1)
-  #   plot(z, AMP, type = "l", xlab = x@depthunit, ylab = ylab, ...)
-  #   if(all == TRUE){
-  #     if(plotLog == TRUE){
-  #       invisible(apply(log(abs(x@data)), 2, lines, x = z, 
-  #                       col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
-  #     }else{
-  #       invisible(apply((abs(x@data)), 2, lines, x = z, 
-  #                       col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
-  #     }
-  #   }
-  #   title(x@name)
-  # }else{
-  #   if(all == TRUE){
-  #     if(plotLog == TRUE){
-  #       invisible(apply(log(abs(x@data)), 2, lines, x = z, 
-  #                       col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
-  #     }else{
-  #       invisible(apply((abs(x@data)), 2, lines, x = z, 
-  #                       col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
-  #     }
-  #   }
-  #   lines(z, AMP, ...)
-  # }
-  #   par(op)
 } 
 )
 
@@ -2620,40 +2545,6 @@ setMethod("plotAmpl", "GPR", function(x, npad = 100, FUN = mean, add = FALSE,
           "'trPlot(traceStat(envelope(x)))' instead.")
   FUN <- match.fun(FUN)
   trPlot(traceStat(envelope(x), FUN = FUN), ...)
-  # xAMP <- suppressWarnings( ampl(x, npad = npad, FUN = FUN, ...) )
-  # AMP <- xAMP@data
-  # ylab <- "mV"
-  # if(plotLog == TRUE){
-  #   AMP <- log(AMP)
-  #   ylab <- "log(mV)"
-  # }
-  # z <- depth(x)
-  # if(!add){
-  #   par(mar=c(5, 4, 4, 2)+0.1)
-  #   plot(z, AMP, type = "l", xlab = x@depthunit, ylab = ylab, ...)
-  #   if(all == TRUE){
-  #     if(plotLog == TRUE){
-  #       invisible(apply(log(abs(x@data)), 2, lines, x = z, 
-  #                       col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
-  #     }else{
-  #       invisible(apply((abs(x@data)), 2, lines, x = z, 
-  #                       col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
-  #     }
-  #   }
-  #   title(x@name)
-  # }else{
-  #   if(all == TRUE){
-  #     if(plotLog == TRUE){
-  #       invisible(apply(log(abs(x@data)), 2, lines, x = z, 
-  #                       col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
-  #     }else{
-  #       invisible(apply((abs(x@data)), 2, lines, x = z, 
-  #                       col=rgb(0.2,0.2,0.2,7/max(ncol(x),7))))
-  #     }
-  #   }
-  #   lines(z, AMP, ...)
-  # }
-  #   par(op)
 } 
 )
 
@@ -2680,108 +2571,132 @@ setMethod("processing", "GPR", function(x){
 )
 
 
-#' Processing steps applied to the data
-#' 
-#' \code{processing} returns all the processing steps applied to the data.
-#' 
-#' @param x An object of the class GPR.
-#' @return A character vector whose elements contain the name of the 
-#' processing functions with their arguments applied previously on the
-#' GPR data.
-#' @examples
-#' data(frenkeLine00)
-#' A <- dewow(frenkeLine00, type = "Gaussian")
-#' proc(A)
-#' @name proc
-#' @rdname proc
-#' @export
-setMethod("proc", "GPR", function(x){
-  return(x@proc)
-} 
-)
 
-#' Add a processing step
+#' Direct-Current shift removal 
 #' 
-#' @name proc
-#' @rdname proc
-#' @export
-setReplaceMethod(
-  f="proc",
-  signature="GPR",
-  definition=function(x,value){
-    value <- as.character(value)
-    x@proc <- c(x@proc, value)
-    return(x)
-  }
-)
-
-#================= PROCESSING ===============#
-#----------------- DC-SHIFT
-#' Direct-Current shift removal
+#' The direct-current offset (DC-shift) is estimated and removed from every 
+#' trace individually. 
+#' For a given trace, the DC-shift is estimated by a user supplied function 
+#' applied on few trace samples, normally the samples before time-zero
+#' (e.g., the average of the samples before time-zero).  Then, the
+#' DC-shift is substracted from the trace.
 #' 
-#' The direct-current shift is estimated for each traces based on a specified 
-#' number of time samples (normally the samples before time-zero). Then, the
-#' direct-current shift of every trace is substracted from every trace.
-#' @param x An object of the class `GPR`.
-#' @param u Number of time samples used to evaluate the DC-shift. If 
-#'          \code{u = NULL}, the function take the first 90\% of the 
-#'          samples before time-zero.  
-#' @param FUN A function to apply on the first `u` time samples (default is 
-#' `mean`; alternatively `median` could be used or any user defined function).
+#' The direct-current offset (or DC-shift) is a constant bias over time
+#' that slightly shifts the signal amplitude. The DC-shift is best 
+#' observed on the trace samples recorded before the signal was emitted. 
+#' 
+#' Modified slots
+#' \itemize{
+#'   \item \code{data}: DC-shift removed (data dimensions unchanged).
+#'   \item \code{proc}: updated with function name and arguments.
+#' }
+#' 
+#' @param x [\code{GPR class}]\cr An object of the class \code{GPR}.
+#' @param u [\code{integer}]\cr Index of the trace samples used to evaluate for
+#'          every trace the DC-shift. If \code{u = NULL}, the function takes
+#'          for each trace 90\% of the samples before time-zero (the number
+#'          of samples can vary from trace to trace).  
+#' @param FUN [\code{function}]\cr A function to apply on the \code{u} trace 
+#'            samples (default is \code{mean}; alternatively, \code{median} 
+#'            could be of interest because it is more robust but slower to 
+#'            compute).
+#' @param ... [\code{ANY}]\cr Further arguments to be passed to \code{FUN}. 
+#'          
+#' @return [\code{GPR class}]\cr An object of the class \code{GPR}.
+#' 
+#' @examples 
+#' data("frenkeLine00")
+#' x <- frenkeLine00
+#' x1 <- dcshift(x, u = 1:100, FUN = median)
+#' plot(x - x1)
+#' x2 <- dcshift(x)
+#' plot(x - x2)
+#' 
 #' @name dcshift
 #' @rdname dcshift
 #' @export
-setMethod("dcshift", "GPR", function(x, u = NULL, FUN = mean){
+setMethod("dcshift", "GPR", function(x, u = NULL, FUN = mean, ...,
+                                     track = TRUE){
+  
+  if(!is.null(u)) u <- as.integer(u)
+  #------------------- check arguments
+  msg <- checkArgInit()
+  msg <- checkArg(u,   msg, "INDEX_VECTOR_NULL_UPPER", nrow(x))
+  msg <- checkArg(FUN, msg, "FUNCTION")
+  checkArgStop(msg)
+  #    - ----------------------------------
+  
   if(is.null(u)){
     if(all(time0(x) > x@depth[1])){
-      Dt <- min(time0(x)) - x@depth[1]  # time before time-zero
-      u <- x@depth[1] + 0:round((Dt*0.9)/x@dz)
+      # Dt <- min(time0(x)) - x@depth[1]  # time before time-zero
+      # u <- x@depth[1] + 0:round((Dt*0.9)/x@dz)
+      
+      # 90% samples before time0 (computed individually for each trace)
+      # computation independent of the time axis
+      spls <- sapply(time0(x), function(y, d, a= 0.9){floor(a * sum(d <= y))}, 
+                      x@depth)
+      xDepth <- matrix(seq_along(x@depth), byrow = TRUE, 
+                       nrow = ncol(x), ncol = nrow(x))
+      # test which samples can be used for the computation
+      test <- t(xDepth <= spls)
+      f <- function(i, x, y, FUN, ...){
+        FUN(x[,i][y[,i]], ...)
+      }
+      OUT <- sapply(1:ncol(x), f, x@data, test, FUN, ...)
     }else{
-      warning("You must define 'u', not enough samples before time-zero...")
+      warning("You must define 'u' or reset time-zero.\n",
+              "not enough samples before time-zero...")
       return(x)
     }
+  }else{
+    OUT <- apply(x[u, ], 2, FUN, ...)
   }
-  shift <- matrix(apply(x[u, ], 2, FUN), nrow = nrow(x), 
-                  ncol=ncol(x), byrow = TRUE)
-  x <-  x - shift
-  # funName <- getFunName(FUN)
-  # proc(x) <- getArgs(addArgs = c('FUN' = getFunName(FUN)))
-  proc(x) <- getArgs()
-  # proc(x) <- paste0("dcshift>u=", head(u,1),":",tail(u,1), "+", 
-  # "FUN=",funName)
+  x_shift <- matrix(OUT, nrow = nrow(x), ncol = ncol(x), byrow = TRUE)
+  x <-  x - x_shift
+  if(isTRUE(track)) proc(x) <- getArgs()
   return(x)
 })
 
 #----------------- FIRST-BREAK
-#' First wave break
+#' Time of first wave break
 #'
 #' Pick the time corresponding to the first break of each trace in the GPR profile.
 #' Return a vector containing the first break times.
-#'
-#' @param x An object of the class \code{GPR}
-#' @param method A length-one character vector. \code{"coppens"} corresponds to
-#'              the modified Coppens method, \code{"threshold"} to the 
-#'              threshold method, and \code{"MER"} to the modified energy ratio
-#'              method.
-#' @param thr A length-one numeric vector defining the threshold  signal 
+#' 
+#' @param x [\code{GPR class}]\cr An object of the class \code{GPR}
+#' @param method [\code{character(1)}]\cr Method to be applied (either
+#'              \code{coppens}, \code{threshold} or \code{MER}). 
+#'              \code{"coppens"} corresponds to the modified Coppens method, 
+#'              \code{"threshold"} to the threshold method, 
+#'              and \code{"MER"} to the modified energy ratio method.
+#' @param thr [\code{numeric(1)}]\cr Threshold for the signal 
 #'              amplitude (in \%) at which time zero is picked (only for the
-#'              threshold method).
-#' @param w A length-one numeric vector defining the length of leading window 
+#'              threshold method). \code{thr} ranges between 0 and 1.
+#' @param w [\code{numeric(1)}]\cr Length of the leading window in unit of time
 #'          (only for the modified Coppens and modified energy ratio 
 #'          methods). Recommended value: about one period of the first-arrival 
-#'          waveform. w is defined on a time basis.
-#' @param ns A length-one numeric vector defining the length of the edge 
-#'           preserving smoothing window (only for the modified Coppens 
+#'          waveform.
+#' @param ns [\code{numeric(1)}]\cr Length of the edge preserving smoothing 
+#'           window in unit of time (only for the modified Coppens 
 #'           method). Recommended value: between one and two signal periods.
 #'           When \code{ns = NULL} the value of \code{ns} is set to 
 #'           \code{1.5 * w}.
-#' @param bet A length-one numeric vector defining the stabilisation 
-#'            constant (only for the modified Coppens method). Not critical. 
+#' @param bet [\code{numeric(1)}]\cr Stabilisation constant (only for the 
+#'            modified Coppens method). Not critical. 
 #'            When \code{bet = NULL} the value of \code{bet} is set to 
-#'            20\% of the maximal signal amplitude. 
-#' @seealso \code{\link{time0}} to set time zero and 
+#'            20\% of the maximal signal amplitude.
+#'            
+#' @return [\code{numeric(n)}]\cr The time of the first wave break for every
+#'         traces in unit of time (\code{n = ncol(x) =} number of traces).
+#'         
+#' @seealso \code{\link{firstBreakToTime0}} to convert time of first wave break
+#'          into time-zero; 
+#'          \code{\link{time0}} and \code{\link{setTime0}} to set time-zero;
+#'          \code{\link{estimateTime0}} to estimate first wave break, convert
+#'          it to time-zero and set time zero (all in one step);
 #'          \code{\link{time0Cor}} to shift the traces such that they start
-#'          at time zero.
+#'          at time-zero.
+#'          
 #' @references
 #' \describe{
 #'   \item{Modified Coppens method}{Sabbione J.I. and Velis D. (2010) 
@@ -2792,69 +2707,70 @@ setMethod("dcshift", "GPR", function(x, u = NULL, FUN = mean){
 #'        GeoCanada 2010 Convention - Working with the Earth, Calgary, AB, 
 #'        Canada, p. 4}
 #' }
+#'
+#' #' @examples 
+#' data("frenkeLine00")
+#' fb <- firstbreak(frenkeLine00, w = 10)
+#' plot(seq_along(frenkeLine00), fb)
+#' 
 #' @name firstBreak
 #' @rdname firstBreak
 #' @export
-setMethod("firstBreak", "GPR", function(x, method = c("coppens",
-                                                      "threshold",  "MER"), 
-                                        thr = 0.12, w = 11, ns = NULL, 
-                                        bet = NULL){
-  method <- match.arg(method, c("coppens", "threshold", "MER"))
+setMethod("firstBreak", 
+          "GPR",
+          function(x, method = c("coppens","threshold",  "MER"), 
+                   thr = 0.12, w = 11, ns = NULL, bet = NULL){
+  #method <- match.arg(method, c("coppens", "threshold", "MER"))
+  method <- method[1]
   
   # shorten the file -> computation only up to the max value
+  nmax <- nrow(x)
   tst <- which(as.matrix(x) == max(x), arr.ind = TRUE)
   if(length(tst) > 0 ){
-    xrowmax <- max(tst[,"row"]) + w
-    if(xrowmax < nrow(x)){
-      x <- x[1:xrowmax,]
-    }
+    nmax <- max(tst[,"row"])
   }
+  
+  #------------------- check arguments
+  msg <- checkArgInit()
+  msg <- checkArg(method, msg, "STRING_CHOICE", 
+                  c("coppens", "threshold",  "MER"))
+  msg <- checkArg(thr   , msg, "PERCENT1")
+  msg <- checkArg(w     , msg, "NUMERIC1_SPOS", round((nmax - 1) * x@dz/1.5))
+  msg <- checkArg(ns    , msg, "NUMERIC1_SPOS_NULL", round((nmax - 1) * x@dz))
+  msg <- checkArg(bet   , msg, "NUMERIC1_SPOS_NULL", Inf)
+  checkArgStop(msg)
+  #-----------------------------------
+  
+  if( (nmax + w) < nrow(x) )  nmax <- max(tst[,"row"]) + w
+  
   if(method == "coppens"){
+    xs <- x@data[1:nmax, ]^2
+    
+    ns <- if(is.null(ns)) round(1.5 * w) else ns
     w <- round(w / x@dz)
-    if( (w %% 2) == 0){
-      w <- w + 1
-    }
-    if(is.null(ns)){
-      ns <- round(1.5 * w)
-    }
-    if( ns %% 2 == 0){
-      ns <- ns + 1
-    }
-    xs <- x@data^2
-    if(is.null(bet)){
-      bet <- 0.2 * max(xs)
-    }
+    if( (w %% 2) == 0 ) w <- w + 1
+    
+    ns <- round(ns / x@dz)
+    if(ns > nmax) ns <- nmax - 1
+    if( (ns %% 2) == 0 )  ns <- ns + 1 
+    if(is.null(bet))      bet <- 0.2 * max(xs)
+    
+    # the vectorized version of "coppens" (though not really faster)
+    #  fb <- .firstBreakModCoppens2(xs, w = w, ns = ns, bet = bet)
+    # below: the not vectorised version of Coppens...
     fb <- apply(xs, 2, .firstBreakModCoppens, w = w, ns = ns, bet = bet)
-    fb <- x@depth[fb] # fb * x@dz
-  # the vectorized version of "coppens" (though not really faster)
-  }else if(method == "coppens2"){
-    w <- round(w / x@dz)
-    if( (w %% 2) == 0){
-      w <- w + 1
-    }
-    if(is.null(ns)){
-      ns <- round(1.5 * w)
-    }
-    if( ns %% 2 == 0){
-      ns <- ns + 1
-    }
-    xs <- x@data^2
-    if(is.null(bet)){
-      bet <- 0.2 * max(xs)
-    }
-    fb <- .firstBreakModCoppens2(xs, w = w, ns = ns, bet = bet)
     fb <- x@depth[fb] # fb * x@dz
   }else if(method == "threshold"){
     thres <- thr * max(x)
     fb <- apply(abs(x@data), 2, .firstBreakThres, thr = thres, x@depth)
   }else if(method == "MER"){
     w <- round(w / x@dz)
-    fb <- .firstBreakMER(x@data, w)
+    fb <- .firstBreakMER(x@data[1:nmax, ], w)
     fb <- x@depth[fb]
   }
   if(any(is.na(fb))){
     warning("First break could not be picked for some traces. \n",
-            "That's no luck, but good news is you can try with another ",
+            "That's no luck, but good news is that you can try with another ",
             "method.\n", "This is probably because your traces have a ",
             "too low S/N ratio." )
   }
@@ -2862,69 +2778,296 @@ setMethod("firstBreak", "GPR", function(x, method = c("coppens",
 } 
 )
 
+time0Estimation <- function(...){
+  stop("DEPRECATED!\n",
+       "Use 'estimateTime0()' instead.")
+}
+
+#' Estimate and set time-zero
+#' 
+#' \code{estimateTime0} estimates for each trace individually the first wave 
+#' break, computes the corresponding time-zero knowing the propagation speed
+#' of the electromagnetic wave through air and returns an object of the class
+#' \code{GPR} with updated time-zero. It is possible to apply a function 
+#' provided by the user (e.g., \code{FUN}) on time-zero (e.g., to set time-zero
+#' equal to the average value of the time-zeros computed for every traces; in
+#' this case, all traces would have the same time-zero).
+#' 
+#' This function is a wrapper for the following commands
+#' \itemize{
+#'   \item \code{tfb <- firstBreak(x, ...)}
+#'   \item \code{t0 <- firstBreakToTime0(tfb, x)}
+#'   \item \code{time0(x) <- t0} (if \code{FUN} is not \code{NULL}
+#'          \code{time0(x) <- FUN(t0, ...)})
+#' }
+#' 
+#' Modified slots
+#' \itemize{
+#'   \item \code{time0}: new estimated time-zero.
+#'   \item \code{proc}: updated with function name and arguments.
+#' }
+#'
+#' @param x [\code{GPR class}]\cr An object of the class \code{GPR}
+#' @param method [\code{character(1)}]\cr Method to be applied (either
+#'              \code{coppens}, \code{threshold} or \code{MER}). 
+#'              \code{"coppens"} corresponds to the modified Coppens method, 
+#'              \code{"threshold"} to the threshold method, 
+#'              and \code{"MER"} to the modified energy ratio method.
+#' @param thr [\code{numeric(1)}]\cr Threshold for the signal 
+#'              amplitude (in \%) at which time zero is picked (only for the
+#'              threshold method). \code{thr} ranges between 0 and 1.
+#' @param w [\code{numeric(1)}]\cr Length of the leading window in unit of time
+#'          (only for the modified Coppens and modified energy ratio 
+#'          methods). Recommended value: about one period of the first-arrival 
+#'          waveform.
+#' @param ns [\code{numeric(1)}]\cr Length of the edge preserving smoothing 
+#'           window in unit of time (only for the modified Coppens 
+#'           method). Recommended value: between one and two signal periods.
+#'           When \code{ns = NULL} the value of \code{ns} is set to 
+#'           \code{1.5 * w}.
+#' @param bet [\code{numeric(1)}]\cr Stabilisation constant (only for the 
+#'            modified Coppens method). Not critical. 
+#'            When \code{bet = NULL} the value of \code{bet} is set to 
+#'            20\% of the maximal signal amplitude. 
+#' @param c0     [\code{numeric(1)}]\cr Propagation speed of the GPR wave 
+#'               through air in unit of space per unit of time 
+#'               (generally in m/ns).
+#' @param FUN [\code{function}]\cr A function to apply on the 
+#'            estimated time-zero of every traces (e.g., \code{mean} or 
+#'            \code{median} to get set a single time-zero value to the data).
+#' @param ... [\code{ANY}]\cr Further arguments to be passed to \code{FUN}.
+#'  
+#' @return [\code{GPR class}]\cr An object of the class \code{GPR}.
+#'          
+#' @seealso \code{\link{firstBreak}} to estimate the first wave break;
+#'          \code{\link{firstBreakToTime0}} to convert the first wave break
+#'          into time zero.
+#'          \code{\link{time0}} and \code{\link{setTime0}} to set time-zero;
+#'          \code{\link{time0Cor}} to shift the traces such that they start
+#'          at time-zero.
+#'          
+#' @examples 
+#' data("frenkeLine00")
+#' x <- frenkeLine00
+#' x1 <- estimateTime0(x, w = 10)
+#' time0(x1)
+#' x2 <- estimateTime0(x, w = 10, FUN = mean)
+#' time0(x2)
+#' 
+#' @name estimateTime0
+#' @rdname estimateTime0
+#' @export
+setMethod("estimateTime0", "GPR", 
+          function(x, method = c("coppens", "threshold", "MER"), 
+                   thr = 0.12, w = 11, ns = NULL, bet = NULL, c0 = 0.299, 
+                   FUN = NULL, ..., track = TRUE){
+  
+  method <- method[1]
+  
+  # shorten the file -> computed only for argument checking
+  nmax <- nrow(x)
+  tst <- which(as.matrix(x) == max(x), arr.ind = TRUE)
+  if(length(tst) > 0 ){
+    nmax <- max(tst[,"row"])
+  }
+  
+  #------------------- check arguments
+  msg <- checkArgInit()
+  msg <- checkArg(method, msg, "STRING_CHOICE", 
+                  c("coppens", "threshold",  "MER"))
+  msg <- checkArg(thr   , msg, "PERCENT1")
+  msg <- checkArg(w     , msg, "NUMERIC1_SPOS", round((nmax - 1) * x@dz/1.5))
+  msg <- checkArg(ns    , msg, "NUMERIC1_SPOS_NULL", round((nmax - 1) * x@dz))
+  msg <- checkArg(bet   , msg, "NUMERIC1_SPOS_NULL", Inf)
+  msg <- checkArg(c0    , msg, "NUMERIC1_SPOS", Inf)
+  msg <- checkArg(FUN   , msg, "FUNCTION_NULL")
+  checkArgStop(msg)
+  #-----------------------------------
+  
+  tfb <- firstBreak(x, method = method, thr = thr, w = w, 
+                    ns = ns, bet = bet)
+  t0 <- firstBreakToTime0(tfb, x, c0 = c0)
+  if(is.null(FUN)){
+    x@time0 <- t0
+  }else{
+    FUN <- match.fun(FUN)
+    x@time0 <- FUN(t0, ...)
+  }
+  # x@proc <- x@proc[-length(x@proc)] # remove proc "time0()<-"
+  if(isTRUE(track)) proc(x) <- getArgs()
+  return(x)
+})
+
 #--------------- DATA EDITING FUNCTIONS
+#' Shift trace vertically
+#'
 #' Shift traces vertically by an amount of depth (time) units. New traces 
 #' are interpolated.
+#' 
+#' Modified slots
+#' \itemize{
+#'   \item \code{data}: trace shifted. The number of rows of data may 
+#'         be smaller if \code{crop = TRUE}.
+#'   \item \code{proc}: updated with function name and arguments.
+#' }
 #'
-#' @param x A object of the class GPR
-#' @param ts A numeric vector defining the amount of depth the traces have to
-#'              be shifted
-#' @param method A length-one character vector indicating the interpolation
-#'               method. \code{"none"} means that the trace is shifted by the
-#'               amount of points that is the closest to amount of depth 
-#'               \code{ts}.
-#' @param crop If TRUE (defaults), remove the rows containing only zero's 
-#'              (no data).,
-#' @return An object of the class GPR.
+#' @param x      [\code{GPR class}]\cr An object of the class \code{GPR}
+#' @param ts     [\code{numeric}]\cr Amount of time (or depth, depending on the
+#'               trace unit) to shift the traces. 
+#'               \code{ts} is eiter a single value (all the traces are shifted by 
+#'               the same amount \code{ts}) or a vector with \eqn{m} elements 
+#'               (\eqn{m} is equal to the number of traces).
+#' @param method [\code{character(1)}]\cr Interpolation method to be applied
+#'               (one of \code{pchip} \code{linear}, \code{nearest}, 
+#'               \code{spline}, \code{cubic}, \code{none}, 
+#'               see also \code{\link[signal]{interp1}}). 
+#'                \code{"none"} means that the trace is shifted by the
+#'               amount of trace samples the closest to \code{ts} without
+#'               interpolation.
+#' @param crop   [\code{logical(1)}]\cr 
+#'               If \code{TRUE} (default), remove the rows containing only 
+#'               zero's (no data).
+#'              
+#' @return [\code{GPR class}]\cr An object of the class GPR.
+#' 
 #' @seealso \code{\link{time0Cor}} to shift the traces such that they start
-#'          at time zero.
+#'          at time-zero.
 #' @name traceShift
 #' @rdname traceShift
 #' @export
-setMethod("traceShift", "GPR", function(x,  ts, method = c("spline", 
-                                                           "linear", "nearest", "pchip", "cubic", "none"), crop = TRUE){
-  method <- match.arg(method, c("spline", "linear", "nearest", "pchip", 
-                                "cubic", "none"))
+setMethod("traceShift", 
+          "GPR", 
+          function(x, ts, method = c("pchip", "linear", "nearest", "spline", 
+                                      "cubic", "none"), crop = TRUE, 
+                   track = TRUE){
+            
+  # method <- match.arg(method, c("spline", "linear", "nearest", "pchip", 
+                                # "cubic", "none"))
+  method <- method[1]
   if(length(ts) == 1){
     ts <- rep(ts, ncol(x))
   }
+  
+  #------------------- check arguments
+  msg <- checkArgInit()
+  msg <- checkArg(ts,     msg, "NUMERIC_LEN", c(1, ncol(x)))
+  msg <- checkArg(method, msg, "STRING_CHOICE", 
+                 c("pchip", "linear", "nearest", "spline", "cubic", "none"))
+  msg <- checkArg(crop,   msg, "LOGICAL_LEN", 1)
+  checkArgStop(msg)
+  #-----------------------------------
+  
   if(any(ts != 0)){
-    #x <- upsample(x, n = c(2,1))
-    x@data <- .traceShift(x@data, ts = ts, tt = x@depth, 
-                          dz = x@dz, method = method)
-    #x@data <- xshift@data[seq(1, length.out = nrow(x), by = 2), ]
+    x <- .traceShift(x, ts = ts, method = method, crop = crop)
+    if(isTRUE(track)) proc(x) <- getArgs()
   }else{
     warning("Nothing shifted because all 'ts' values are equal to zero!")
   }
+
+  return(x)
+})
+
+# private function
+.traceShift <- function(x, ts, method = c("pchip", "linear", "nearest", "spline", 
+                                          "cubic", "none"), crop = TRUE){
+  x@data <- .traceShiftMat(x@data, ts = ts, tt = x@depth, 
+                           dz = x@dz, method = method)
   if(crop == TRUE){
-    testCrop <- apply(abs(x@data),1,sum)
+    testCrop <- apply(abs(x@data), 1, sum)
     x <- x[!is.na(testCrop), ]
   }
-  # x <- .shiftThisTrace( x,  ts, method, crop = TRUE)
-  proc(x) <- getArgs()
-  # x@proc <- c(x@proc, proc)
   return(x)
 }
-)
 
-# .shiftThisTrace <- function(x,  ts, method = c("spline", "linear", "nearest", 
-#                                                "pchip", "cubic", "none"), 
-#                             crop = TRUE){
-#   method <- match.arg(method, c("spline", "linear", "nearest", "pchip", 
-#                                 "cubic", "none"))
-#   if(length(ts) == 1){
-#     ts <- rep(ts, ncol(x))
-#   }
-#   xshift <- upsample(x, n = c(2,1))
-#   xshift@data <- .traceShift(xshift@data, ts = ts, tt = xshift@depth, 
-#                              dz = xshift@dz, method = method)
-#   x@data <- xshift@data[seq(1, length.out = nrow(x), by = 2), ]
-#   if(crop == TRUE){
-#     testCrop <- apply(abs(x@data),1,sum)
-#     x <- x[!is.na(testCrop),]
-#   }
-#   return(x)
-# }
+#' Interpolate (vertically) trace at regular interval or given position
+#' 
+#' Interpolate every trace at regular interval or at given positions
+#' 
+#' Modified slots
+#' \itemize{
+#'   \item \code{data}: trace interpolated The number of rows of data may 
+#'         be smaller if \code{crop = TRUE}.
+#'   \item \code{dz}: new value depending on argument \code{z}.
+#'   \item \code{depth}: adapted to code{z}.
+#'   \item \code{proc}: updated with function name and arguments.
+#' }
+#'
+#' @param x      [\code{GPR class}]\cr An object of the class \code{GPR}
+#' @param z      [\code{numeric}]\cr Either an interval (e.g., time interval)
+#'               to interpolate the traces at regular interval or a vector
+#'               of \eqn{m} elements (\eqn{m} is equal to the number of traces)
+#'               Amount of time (or depth, depending on the
+#'               trace unit) to shift the traces. 
+#'               \code{ts} is eiter a single value (all the traces are shifted by 
+#'               the same amount \code{ts}) or a vector with \eqn{m} elements 
+#'               (\eqn{m} is equal to the number of traces).
+#' @param method [\code{character(1)}]\cr Interpolation method to be applied
+#'               (one of \code{pchip} \code{linear}, \code{nearest}, 
+#'               \code{spline}, \code{cubic}, \code{none}, 
+#'               see also \code{\link[signal]{interp1}}). 
+#'                \code{"none"} means that the trace is shifted by the
+#'               amount of trace samples the closest to \code{ts} without
+#'               interpolation.
+#' @param crop   [\code{logical(1)}]\cr 
+#'               If \code{TRUE} (default), remove the rows containing only 
+#'               zero's (no data).
+#'              
+#' @return [\code{GPR class}]\cr An object of the class GPR.
+#' 
+#' @name interpTrace
+#' @rdname interpTrace
+#' @export
+setMethod("interpTrace", 
+          "GPR", 
+          function(x, z, method = c("pchip", "linear", "nearest", "spline", 
+                                     "cubic"), crop = TRUE, track = TRUE){
+            
+  method <- method[1]
+  #------------------- check arguments
+  msg <- checkArgInit()
+  msg <- checkArg(z,     msg, "NUMERIC")
+  if(length(z) == 1) msg <- checkArg(z,     msg, "NUMERIC1_SPOS", Inf)
+  msg <- checkArg(method, msg, "STRING_CHOICE", 
+                  c("pchip", "linear", "nearest", "spline", "cubic"))
+  msg <- checkArg(crop,   msg, "LOGICAL_LEN", 1)
+  checkArgStop(msg)
+  #-----------------------------------  
+  extrap <- TRUE
+  if(crop) extrap = FALSE
+  
+  x <- .traceInterpReg(x = x, z = z, method = method, extrap = extrap)
+  
+  if(crop == TRUE){
+    testCrop <- apply(abs(x@data), 1, sum)
+    x <- x[!is.na(testCrop), ]
+  }
+  
+  if(isTRUE(track)) proc(x) <- getArgs()
+  return(x)
+})
+
+
+# interpolation at regular interval if x@dz is not unique!!
+.traceInterpReg <- function(x, z, method = c("pchip", "linear", "nearest", 
+                                             "spline", "cubic"), extrap = TRUE){
+  method <- method[1]
+  if(length(z) == 1){
+    x@dz <- z
+    zreg <- seq(from = min(x@depth), to = tail(x@depth, 1), by = x@dz)
+  }else if(length(z) > 1){
+    zreg <- z
+    x@dz <- mean(diff(z))
+  }
+  funInterp <- function(x, z, zreg){
+    signal::interp1(x = z, y = x, xi = zreg, 
+                    method = method, extrap = extrap)
+  }
+  x@data <- apply(x@data, 2, funInterp, 
+                  z = x@depth, zreg = zreg)
+  x@depth <- zreg
+  return(x)
+}
+
 
 #' Time zero correction
 #'
@@ -2932,79 +3075,132 @@ setMethod("traceShift", "GPR", function(x,  ts, method = c("spline",
 #' time zero (time zero of the data can be modified with the function).
 #' New traces are interpolated.
 #'
-#' When \code{keep = NULL} the amount of time kept is equal to
-#' time taken by the air wave to travel from the transmitter to the
-#' receiver.
-#' @param x A object of the class GPR
-#' @param t0 A numeric vector with length equal either to \code{NULL}, or one 
-#'           or to the number traces.
-#'           The traces will be shifted to \code{t0}. 
-#'           If \code{t0 = NULL} `time0(x)` will be used instead. 
-#'           If \code{t0} is the time-zero, set \code{keep = 0}.
-#' @param method A length-one character vector defining the interpolation 
-#'               method that are from the function 'interp1' 
-#'               from the 'signal' package.
-#' @param keep A length-one numeric vector indicating in time units how much of
-#'             the trace has to be kept before time zero.
-#' @param crop If TRUE (defaults), remove the rows containing only zero's 
-#'              (no data).
-#' @param c0 Propagation speed of the GPR wave through air (used only when
-#'           \code{keep = NULL}).
-#' @return An object of the class GPR.
+#' This function is a wrapper for the following commands
+#' \itemize{
+#'   \item \code{ts <- -t0 + keep} (or if \code{t0} is \code{NULL}, 
+#'         \code{ts <- -time0(x) + keep})
+#'   \item \code{x <- traceShift( x,  ts, method = method, crop = crop)}
+#'   \item \code{time0(x) <- time0(x) + ts}
+#' }
+#' 
+#' Modified slots
+#' \itemize{
+#'   \item \code{data}: trace shifted. The number of rows of data may 
+#'         be smaller if \code{crop = TRUE}.
+#'   \item \code{time0}: set to 0.
+#'   \item \code{proc}: updated with function name and arguments.
+#' }
+#'  
+#' @param x      [\code{GPR class}]\cr An object of the class \code{GPR}
+#' @param t0     [\code{DEPRECATED}]\cr DEPRECATED - NO MORE USED.
+#'               Instead, set time-zero with either 
+#'               \code{time0(x) <- ...} or 
+#'               \code{x <- setTime0(x, ...)}.
+#' @param method [\code{character(1)}]\cr Interpolation method to be applied
+#'               (one of \code{pchip} \code{linear}, \code{nearest}, 
+#'               \code{spline}, \code{cubic}, \code{none}, 
+#'               see also \code{\link[signal]{interp1}}). 
+#'                \code{"none"} means that the trace is shifted by the
+#'               amount of trace samples the closest to \code{ts} without
+#'               interpolation.
+#' @param keep   [\code{DEPRECATED}]\cr DEPRECATED - NO MORE USED.
+#' @param crop   [\code{logical(1)}]\cr 
+#'               If \code{TRUE} (default), remove the rows containing only 
+#'               zero's (no data).
+#'               
+#' @return [\code{GPR class}]\cr An object of the class \code{GPR}
+#' 
 #' @examples
 #' data(frenkeLine00)
 #' tfb <- firstBreak(frenkeLine00)
 #' t0 <- firstBreakToTime0(tfb, frenkeLine00, c0 = 0.299)
 #' time0(frenkeLine00) <- t0
 #' frenkeLine00_2 <- time0Cor(frenkeLine00, method = "pchip")
-#' @seealso \code{\link{time0}} to set time zero and \code{\link{firstBreak}} 
-#'          to estimate the first wave break.
+#' 
+#' @seealso \code{\link{firstBreak}} to estimate the first wave break;
 #'          \code{\link{firstBreakToTime0}} to convert the first wave break
 #'          into time zero.
+#'          \code{\link{time0}} and \code{\link{setTime0}} to set time-zero;
+#'          \code{\link{traceShift}} to shift the traces
+
 #' @name time0Cor
 #' @rdname time0Cor
 #' @export
 setMethod("time0Cor", "GPR", function(x, t0 = NULL, 
-                                      method = c("spline", "linear", "nearest", 
-                                                 "pchip", "cubic", "none"), 
-                                      crop = TRUE, keep = 0){
-  method <- match.arg(method, c("spline", "linear", "nearest", "pchip", 
-                                "cubic", "none"))
-  if(is.null(t0)){
-    ts <- -x@time0 + keep
-  }else{
-    if(any(is.na(t0))){
-      stop("Woops, time zero selected have NA values. \n",
-           "This is not acceptable, time zero must have a numeric value in ",
-           "order to be corrected. \n",
-           "If this is because first break could not be picked, \n",
-           "you might want to consider removing these traces from your ",
-           "radargram.")
-    }else{
-      if(length(t0) == 1){
-        t0 <- rep(t0, length(x@time0))
-      }
-      ts <- -t0 + keep
-    }
+                                      method = c("pchip", "linear", "nearest", 
+                                                 "spline", "cubic", "none"), 
+                                      crop = TRUE, keep = 0, track = TRUE){
+  method <- method[1]
+  if(!is.null(t0)){
+    warning("'t0' is no more used. Set first time-zero with\n",
+            "'time0(x) <- t0' or",
+            "'x <- setTime0(x, t0)'.")
   }
-  if( any(ts != 0) ){
-    x <- traceShift( x,  ts, method, crop = TRUE)
+  if(keep != 0){
+    warning("'keep' is no more used.")
+  }
+  
+  #------------------- check arguments
+  msg <- checkArgInit()
+  #msg <- checkArg(t0,     msg, "NUMERIC_LEN", c(1, ncol(x)))
+  msg <- checkArg(method, msg, "STRING_CHOICE", 
+                 c("pchip", "linear", "nearest", "spline", "cubic", "none"))
+  msg <- checkArg(crop,   msg, "LOGICAL_LEN", 1)
+  checkArgStop(msg)
+  #-----------------------------------
+  
+  # ts <- -x@time0 + keep
+  
+  # if(is.null(t0)){
+  #   ts <- -x@time0 + keep
+  # }else{
+  #   if(any(is.na(t0))){
+  #     stop("Woops, time zero selected have NA values. \n",
+  #          "This is not acceptable, time zero must have a numeric value in ",
+  #          "order to be corrected. \n",
+  #          "If this is because first break could not be picked, \n",
+  #          "you might want to consider removing these traces from your ",
+  #          "radargram.")
+  #   }else{
+  #     if(length(t0) == 1){
+  #       t0 <- rep(t0, length(x@time0))
+  #     }
+  #     ts <- -t0 + keep
+  #   }
+  # }
+  ts <- -x@time0 
+  if(any(ts != 0)){
+    x <- .traceShift(x, ts = ts, method = method, crop = crop)
     x@time0 <- x@time0 + ts
-    proc(x) <- getArgs()
+    if(isTRUE(track)) proc(x) <- getArgs()
+    return(x)
   }else{
-    warning("Nothing shifted because all 't0' or 'time0(x)' values ",
-            "as well as all 'keep' values are ",
-            "equal to zero!")
+    warning("Nothing shifted because all 'ts' values are equal to zero!")
+    return(x)
   }
-  return(x)
-}
-)
+  # if(crop == TRUE){
+  #   testCrop <- apply(abs(x@data), 1, sum)
+  #   x <- x[!is.na(testCrop), ]
+  # }
+  # if( any(ts != 0) ){
+  #   x <- traceShift( x,  ts, method = method, crop = TRUE)
+  #   x@time0 <- x@time0 + ts
+  #   proc(x) <- getArgs()
+  # }else{
+  #   warning("Nothing shifted because all 't0' or 'time0(x)' values ",
+  #           "as well as all 'keep' values are ",
+  #           "equal to zero!")
+  # }
+  # proc(x) <- getArgs()
+  # return(x)
+})
 
 
 
 #' Constant-offset correction (time) of the GPR data
 #'
-#' Time correction for each trace to compensate the offset between transmitter 
+#' \code{timeCorOffset} applies a time correction to every traces 
+#' to compensate the offset between transmitter 
 #' and receiver antennae (it converts the trace time of the data acquired with
 #' a bistatic antenna system into trace time data virtually acquiered with 
 #' a monostatic system under the assumption of horizontally layered structure).
@@ -3012,34 +3208,69 @@ setMethod("time0Cor", "GPR", function(x, t0 = NULL,
 #' trace but only the time (time scale). If the traces have different
 #' time-zero, the traces are first aligned to have the same time-zero 
 #' (spline interpolation)
-#' @param x A object of the class GPR
-#' @param t0 A numeric vector with length equal either to \code{NULL}, or one 
-#'           or to the number traces.
-#'           If \code{t0 = NULL} `time0(x)` will be used.
-#' @param c0 Propagation speed of the GPR wave through air (used only when
-#'           \code{keep = NULL}).
+#' 
+#' Modified slots
+#' \itemize{
+#'   \item \code{data}: trace shifted to time-zeor. The number of rows of data 
+#'         may be smaller.
+#'   \item \code{time0}: set to 0.
+#'   \item \code{depth}: adapted to a virtual monostatic system. 
+#'         FIXME: not regularly spaced!
+#'   \item \code{antsep}: set to 0.
+#'   \item \code{proc}: updated with function name and arguments.
+#' }
+#' 
+#' @param x  [\code{GPR class}]\cr An object of the class \code{GPR}
+#' @param t0 [\code{DEPRECATED}]\cr DEPRECATED - NO MORE USED.
+#'           Instead, set time-zero with either 
+#'           \code{time0(x) <- ...} or 
+#'           \code{x <- setTime0(x, ...)}.
+#'               
+#' @return [\code{GPR class}]\cr An object of the class \code{GPR}
+#'              
 #' @seealso \code{\link{time0}} to set time zero and 
 #'          \code{\link{firstBreakToTime0}} to convert the first wave break
 #'          into time zero.
 #' @name timeCorOffset
 #' @rdname timeCorOffset
 #' @export
-# should use time0Cor() !!!!!
-setMethod("timeCorOffset", "GPR", function(x, t0 = NULL){
-  if(length(x@antsep) == 0 || (!is.numeric(x@antsep))){
-    stop("You must first define the antenna separation ",
-         "with `antsep(x)<-...`!")
-  }
-  if(is.null(x@vel) || length(x@vel)==0){
-    stop("You must first define the wave velocity ",
-         "with `vel(x)<-...`!")
-  }
-  #----------------------------------------------------------------------------#
-  #FIXME > use here
+setMethod("timeCorOffset", "GPR", function(x, t0 = NULL, track = TRUE){
+  
   if(!is.null(t0)){
-    time0(x) <- t0
+    warning("'t0' is no more used. Set first time-zero with\n",
+            "'time0(x) <- t0' or",
+            "'x <- setTime0(x, t0)'.")
   }
-  time0Cor(x, method = "spline")
+  
+  #------------------- check if slots are empty
+  msg <- checkSlotInit()
+  msg <- checkSlotEmpty(x, "antsep", msg)
+  msg <- checkSlotEmpty(x, "vel", msg)
+  checkSlotStop(msg)
+  #--------------------------------------------
+  
+  # if( isSlotEmpty(x, "antsep") ){
+  #   msg <- c(msg, "@antsep: Antenna separation must be first defined ",
+  #          "with `antsep(x)<-...`!")
+  # }
+  # if( isSlotEmpty(x, "vel") ){
+  #   msg <- c(msg, "@vel: wave velocity must be first defined ",
+  #        "with `vel(x)<-...`!")
+  # }
+  # if(length(msg) > 0 )
+
+  # if(!is.null(t0)){
+  #   time0(x) <- t0
+  # }
+  
+  # x <- time0Cor(x, method = "spline")
+  ts <- -x@time0 
+  if(any(ts != 0)){
+    x <- .traceShift(x, ts = ts, method = "spline", crop = TRUE)
+    x@time0 <- x@time0 + ts
+  }
+  
+  dz <- mean(diff(x@depth))
   # !!! pb if negative values in sqrt()!!!!
   tcor2 <- x@depth^2 - (x@antsep/x@vel[[1]])^2
   test <- tcor2 >= 0
@@ -3047,8 +3278,11 @@ setMethod("timeCorOffset", "GPR", function(x, t0 = NULL){
   x@depth <- sqrt(tcor2[test])
   # x@time0 is already = 0
   x@antsep <- 0
-  x@proc <- x@proc[-length(x@proc)] # remove proc from traceShift()
-  x@proc <- c(x@proc, "timeCorOffset")
+  
+  x <- .traceInterpReg(x, z = dz)
+  # x@proc <- x@proc[-length(x@proc)] # remove proc from traceShift()
+  # x@proc <- c(x@proc, "timeCorOffset")
+  if(isTRUE(track)) proc(x) <- getArgs()
   return(x)
   #----------------------------------------------------------------------------#
   # if(is.null(t0)){
@@ -3082,16 +3316,39 @@ setMethod("timeCorOffset", "GPR", function(x, t0 = NULL){
 #' Trace dewowing
 #' 
 #' \code{dewow} remove the low-frequency component (the so-called 'wow') of 
-#' every trace..
+#' every traces.
 #' 
-#' @param x An object of the class GPR.
-#' @param type A length-one character vector, either \code{MAD} (Median
-#'              Absolute Deviation filter) or \code{Gaussian} (Gaussian
-#'              filter)
-#' @param w A length-one numeric vector equal to the window length 
-#'            of the filter. Per default, the filter length is five times
-#'            the GPR pulse width. w is defined on a time basis.
-#' @return An object of the class GPR whose traces are dewowed.
+#' The low-frequency component is computed by different methods:
+#' \itemize{
+#'   \item \code{runmed} running median based on \code{\link[stats]{runmed}}
+#'   \item \code{runmean} running mean based on \code{\link[stats]{filter}}
+#'   \item \code{MAD} DEPRECATED - Median Absolute Deviation filter
+#'   \item \code{Gaussian} Gaussian smoothing applied to the trace samples
+#'         after time-zero based on \code{\link[mmand]{gaussianSmooth}}
+#' }
+#' 
+#' Modified slots
+#' \itemize{
+#'   \item \code{data}: trace dewowed.
+#'   \item \code{proc}: updated with function name and arguments.
+#' }
+#' 
+#' @param x    [\code{GPR class}]\cr An object of the class GPR.
+#' @param type [\code{character(1)}]\cr Dewow method,
+#'             one of \code{runmed} (running median),
+#'             \code{runmean} (running mean), 
+#'             \code{MAD} (DEPRECATED Median Absolute Deviation), 
+#'             \code{Gaussian} (Gaussian smoothing).
+#' @param w    [\code{numeric(1)}]\cr If \code{type} = \code{runmed}, 
+#'             \code{MAD} or \code{runmean}, window length of the filter in
+#'             trace unit;
+#'             If \code{type} = \code{Gaussian}, standard deviation in trace
+#'             unit.
+#'             If \code{w = NULL}, \code{w} is estimated as five times the 
+#'             wavelength corresponding to the maximum frequency of x 
+#'             (estimated with \code{\link{spec}})
+#'             
+#' @return [\code{GPR class}]\cr An object of the class GPR whose traces are dewowed.
 #' @examples
 #' data(frenkeLine00)
 #' A <- dewow(frenkeLine00, type = "Gaussian")
@@ -3099,46 +3356,49 @@ setMethod("timeCorOffset", "GPR", function(x, t0 = NULL){
 #' @name dewow
 #' @rdname dewow
 #' @export
-setMethod("dewow", "GPR", function(x, type = c("MAD", "Gaussian"), w){
-  type <- match.arg(type, c("MAD", "Gaussian"))
-  if(missing(w)){
+setMethod("dewow", "GPR", function(x, type = c("runmed", "runmean", 
+                                               "mad", "gaussian"), 
+                                   w = NULL, track = TRUE){
+  # type <- match.arg(type, c("MAD", "Gaussian"))
+  type <- tolower(type[1])
+  
+  #------------------- check arguments
+  msg <- checkArgInit()
+  msg <- checkArg(type, msg, "STRING_CHOICE", c("runmed", "runmean",
+                                                "mad", "gaussian"))
+  msg <- checkArg(w,    msg, "NUMERIC1_SPOS_NULL", Inf)
+  checkArgStop(msg)
+  #-----------------------------------
+  
+  if(is.null(w)){
     # argument initialization
     # pulse width in ns, (x@freq is in MHz)
-    pw <- 1/(x@freq * 10^6)/10^-9
+    a <- RGPR::spec(x, plotSpec = FALSE, unwrapPhase = FALSE)
+    freq <- a$freq[which.max(rowMeans(a$pow))]
+    # pw <- 1/(x@freq * 10^6)/10^-9
+    pw <- 1/(freq * 10^6)/10^-9
     w <- (5 * pw)/x@dz
   }else{
     w <- round(w / x@dz)
   }
-  if(type=="MAD"){  
-    A <- x@data
-    if(length(dim(A))<2){
-      A <- matrix(A,ncol=1,nrow=length(A))
-    }
-    X <- rbind(matrix(0,ncol=ncol(A),nrow=w), A, matrix(0,ncol=ncol(A),nrow=w))
-    n <- nrow(X)
-    Y <- X
-    for (i in (w + 1):(n - w)) {
-      Y[i,] <-  apply( X[(i - w):(i + w),,drop=FALSE],2, median)
-      # x0 = 0.1  # argument initialization
-      # S0 <- 1.4826 * apply( abs(X[(i - w):(i + w),,drop=FALSE] - Xmed),
-      #  2, median)
-      # test <- abs(X[i,] - Xmed) > x0 * S0
-      # Y[i,test] <- Xmed[test]      
-    }
-    x@data <- A - Y[(w+1):(n-w),]
-  }else if(type == "Gaussian"){
-    t0 <- round(mean(x@time0)/x@dz)
-    A <- x@data
-    before_t0 <- x@depth <= mean(x@time0)
-    A[before_t0,] <- 0
-    if(length(dim(A))<2){
-      A <- matrix(A,ncol=1,nrow=length(A))
-    }
-    x@data[!before_t0,] <- A[!before_t0,] - 
-      mmand::gaussianSmooth(A,w)[!before_t0,]
+  if(type == "mad"){  
+    warning("Soon deprecated. Use instead:\n",
+            "dewow(x, type = 'runmed', w = 2*w)")
+    x@data <- x@data - .runmmmMat(x@data, 2*w, type = "runmed")
+  }else if(type == "runmed"){
+    x@data <- x@data - .runmmmMat(x@data, w, type = "runmed")
+  }else if(type == "runmean"){
+    x@data <- x@data - .runmmmMat(x@data, w, type = "runmean")
+  }else if(type == "gaussian"){
+    xdata <- x@data
+    xDepth <- matrix(x@depth, byrow = FALSE, nrow = nrow(x), ncol = ncol(x))
+    xTime0 <- matrix(x@time0, byrow = TRUE, nrow = nrow(x), ncol = ncol(x))
+    test <- xDepth <= xTime0
+    # before_t0 <- x@depth <= mean(x@time0)
+    xdata[test] <- 0
+    x@data[!test] <- x@data[!test] - mmand::gaussianSmooth(xdata, w)[!test]
   }
-  proc(x) <- getArgs()
-  #   x@proc <- c(x@proc, proc)
+  if(isTRUE(track)) proc(x) <- getArgs()
   return(x) 
 })
 
@@ -3149,7 +3409,9 @@ setMethod("dewow", "GPR", function(x, type = c("MAD", "Gaussian"), w){
 #' @rdname gain
 #' @export
 setMethod("gain", "GPR", function(x, 
-                                  type = c("power", "exp", "agc"), ...){
+                                  type = c("power", "exp", "agc"), 
+                                  ..., 
+                                  track = TRUE){
   type <- match.arg(type, c("power", "exp", "agc"))
   x@data[is.na(x@data)] <-0
   if(type == "power"){
@@ -3161,10 +3423,192 @@ setMethod("gain", "GPR", function(x,
   }else if(type == "agc"){
     x@data <- .gainAgc(x@data, dts = x@dz, ...)
   }
-  proc(x) <- getArgs()
+  if(isTRUE(track)) proc(x) <- getArgs()
   return(x)
 } 
 )
+
+#' Spreading and Exponential Compensation (SEC) gain
+#' 
+#' \code{gainSEC} Applies a combination of a power and exponential time gain to compensate for 
+#' the signal attenuation through spherical spreading losses and  
+#' exponential ohmic dissipation of energy with depth. Usually, the power in
+#' the power gain is set to zero.
+#' 
+#' Spreading and Exponential Compensation (SEC) gain can be written as 
+#' \eqn{\exp(a \cdot t) \cdot t^b}, where \eqn{t^b} is the power gain
+#' (set \eqn{b = 1} to get a linear gain) and \eqn{\exp(a \cdot t)} is the
+#' exponential gain.
+#' 
+#' Modified slots
+#' \itemize{
+#'   \item \code{data}: trace gained.
+#'   \item \code{proc}: updated with function name and arguments.
+#' }
+#' 
+#' @param x    [\code{GPR class}]\cr An object of the class GPR.
+#' @param a    [\code{numeric(1)}]\cr Parameter of the exponential filter
+#'             (\code{a} \eqn{\geq} 0).
+#' @param b    [\code{numeric(1)}]\cr Parameter of the power filter
+#'             (\code{b} \eqn{\geq} 0). Usually, \code{b = 1}.
+#' @param t0   [\code{numeric}]\cr Start time of the gain filter
+#'             (if \code{t0 = NULL}, \code{t0} is set equal to \code{time0(x)}).
+#' @param tend [\code{numeric(1)}]\cr End time of the gain filter (optional)
+#' @param tcst [\code{numeric(1)}]\cr Constant time: the gain before 
+#'             \code{tcst} is set equal to the gain value at \code{tcst}.
+#'             
+#' @return [\code{GPR class}]\cr An object of the class GPR.
+#' 
+#' @seealso \code{\link{gainAGC}}
+#'                            
+#' @name gainSEC
+#' @rdname gainSEC
+#' @export
+setMethod("gainSEC", "GPR", function(x, a = 0.01, b = 1, 
+                    t0   = NULL, 
+                    tend = NULL, 
+                    tcst = NULL,
+                    track = TRUE){
+  
+  if(is.null(t0)) t0 <- x@time0
+  if(length(t0) == 1) t0 <- rep(t0, ncol(x))
+  
+  #------------------- check arguments
+  msg <- checkArgInit()
+  msg <- checkArg(a,    msg, "NUMERIC1_POS", Inf)
+  msg <- checkArg(b,    msg, "NUMERIC1_POS", Inf)
+  msg <- checkArg(t0,   msg, "NUMERIC_LEN", c(1, ncol(x)))
+  msg <- checkArg(tend, msg, "NUMERIC1_NULL", Inf)
+  msg <- checkArg(tcst, msg, "NUMERIC1_NULL", Inf)
+
+  checkArgStop(msg)
+  #-----------------------------------
+  
+  G <- getGainSEC(x, 
+                  a  = a, 
+                  b  = b,
+                  t0 = t0,
+                  tend = tend,
+                  tcst = tcst)
+  x <- x*G
+  if(isTRUE(track)) proc(x) <- getArgs()
+  return(x)
+})
+
+#' Spreading and Exponential Compensation (SEC) gain
+#' 
+#' \code{getGainSEC} returns the SEC gain as an object of the class \code{GPR}.
+#'                   
+#' @name getGainSEC
+#' @rdname gainSEC
+#' @export
+setMethod("getGainSEC", "GPR", function(x, a = 0.01, b = 1, 
+                                        t0   = NULL, 
+                                        tend = NULL, 
+                                        tcst = NULL,
+                                        track = TRUE){
+  
+  if(is.null(t0)) t0 <- x@time0
+  if(length(t0) == 1) t0 <- rep(t0, ncol(x))
+  
+  #------------------- check arguments
+  msg <- checkArgInit()
+  msg <- checkArg(a,    msg, "NUMERIC1_POS", Inf)
+  msg <- checkArg(b,    msg, "NUMERIC1_POS", Inf)
+  msg <- checkArg(t0,   msg, "NUMERIC_LEN", c(1, ncol(x)))
+  msg <- checkArg(tend, msg, "NUMERIC1_NULL", Inf)
+  msg <- checkArg(tcst, msg, "NUMERIC1_NULL", Inf)
+  checkArgStop(msg)
+  #-----------------------------------
+  
+  spls <- sapply(t0, function(y, d){floor(sum(d < y))}, 
+                 x@depth)
+  n <- nrow(x)
+  g <- (0 + x@depth^b) * exp(a * x@depth)
+  G <- sapply(spls, function(x, g, n){c(rep(1, x), g[1:(n-x)])}, g, n )
+  
+  if(!is.null(tend)){
+    test_tend <- x@depth >= tend
+    if(any(test_tend)) G[test_tend, ] <- G[which(test_tend)[1],]
+  }
+  if(!is.null(tcst)){
+    test_tcst <- x@depth <= tcst
+    if(any(test_tcst)) G[test_tcst, ] <- G[tail(which(test_tcst),1),]
+  }
+  # xG <- x*G
+  # scaling
+  h1 <- quantile(as.vector(abs(x*G)), 0.99, na.rm = TRUE)
+  h2 <- quantile(as.vector(abs(x)), 0.99, na.rm = TRUE)
+  x@data <- G / h1 * h2
+  # xG <- xG / h1 * h2
+  if(isTRUE(track)) proc(x) <- getArgs()
+  return(x)
+})
+
+
+#' Automatic Gain Control (AGC) gain
+#' 
+#' \code{gainAGC} applies an AGC (Automatic Gain Control) gain.
+#' The trace signal is smoothed with a Gaussian filter. The smoothed trace
+#' is substracted from the original trace, raised to power \code{p}, smoothed
+#' by a Gaussian filter and raised to power \code{r} to obtain the gain.
+# Subtract image from local mean, raise to power 'p' then apply Gaussian
+# smoothing filter to obtain a local weighted sum. 
+# Finally raise the result
+# to power 'r' to obtain the 'gain'.  Typically p = 2 and r = 0.5 which will
+# make gain equal to the local RMS.  The abs() function is used to allow
+# for arbitrary 'p' and 'r'.
+# Apply inverse gain to the difference between the image and the local
+# mean to obtain the final AGC image.
+#' 
+#' Spreading and Exponential Compensation (SEC) gain can be written as 
+#' \eqn{\exp(a \cdot t) \cdot t^b}, where \eqn{t^b} is the power gain
+#' (set \eqn{b = 1} to get a linear gain) and \eqn{\exp(a \cdot t)} is the
+#' exponential gain.
+#' 
+#' Modified slots
+#' \itemize{
+#'   \item \code{data}: trace gained.
+#'   \item \code{proc}: updated with function name and arguments.
+#' }
+#' 
+#' @param x    [\code{GPR class}]\cr An object of the class GPR.
+#' @param w    [\code{numeric(1)}]\cr Standard deviation of the 
+#'             Gaussian smoother (in trace unit).
+#' @param p    [\code{numeric(1)}]\cr Parameter of the power filter
+#'             (\code{b} \eqn{\geq} 0). Usually, \code{b = 1}.
+#' @param r   [\code{numeric}]\cr Start time of the gain filter
+#'             (if \code{t0 = NULL}, \code{t0} is set equal to \code{time0(x)}).
+#'             
+#' @return [\code{GPR class}]\cr An object of the class GPR.
+#' 
+#' @seealso \code{\link{gainSEC}}
+#' 
+#' @name gainAGC
+#' @rdname gainAGC
+#' @export
+setMethod("gainAGC", "GPR", function(x, w = 10, p = 2, r = 0.5, track = TRUE){
+  
+  #------------------- check arguments
+  msg <- checkArgInit()
+  msg <- checkArg(w,    msg, "NUMERIC1_SPOS", Inf)
+  msg <- checkArg(p,    msg, "NUMERIC1_POS", Inf)
+  msg <- checkArg(r,    msg, "NUMERIC1_POS", Inf)
+  checkArgStop(msg)
+  #-----------------------------------
+  
+  xG <- .gainAgc(x@data, x@dz, w = w, p = p, r = r)
+  
+  h1 <- quantile(as.vector(abs(xG)), 0.99, na.rm = TRUE)
+  h2 <- quantile(as.vector(abs(x)), 0.99, na.rm = TRUE)
+  x@data <- xG / h1 * h2
+  
+  if(isTRUE(track)) proc(x) <- getArgs()
+  return(x)
+})
+
+
+
 
 #----------------- 1D-FILTER
 #' One dimensional filters
@@ -3172,68 +3616,73 @@ setMethod("gain", "GPR", function(x,
 #' @name filter1D
 #' @rdname filter1D
 #' @export
-setMethod("filter1D", "GPR", function(x, type = c("median", "hampel", 
-                                                  "Gaussian"), ...){
-  type <- match.arg(type, c("median", "hampel", "Gaussian"))
-  w <- 50 * x@dz   # argument initialization
-  if( length(dots <- list(...)) ){
-    #         dots <- list(...)
-    if( !is.null(dots$w)){
-      w <- dots$w
-    }
-  }
-  w <- w / x@dz
-  if(type == "median"){
-    # if( length(dots <- list(...)) ){
-    #   #         dots <- list(...)
-    #   if( !is.null(dots$w)){
-    #     w <- dots$w
-    #   }
-    #   w <- round(w / x@dz)
-    # }  
-    w <- round(w)
-    if(w %% 2 == 1){
-      w <- w + 1  # uneven window
-    }
-    w <- (w-1)/2
-    x@data <-  apply(x@data, 2, .medianFilter1D, w)
+setMethod("filter1D", 
+          "GPR", 
+          function(x, 
+                   type = c("runmed", "runmean", "mad", "gaussian", "hampel"), 
+                   w = NULL, track = TRUE){
+  # type <- match.arg(type, c("MAD", "Gaussian"))
+  type <- tolower(type[1])
+  
+  #------------------- check arguments
+  msg <- checkArgInit()
+  msg <- checkArg(type, msg, "STRING_CHOICE", c("runmed", "runmean",
+                                                "mad", "gaussian", "hampel"))
+  msg <- checkArg(w,    msg, "NUMERIC1_SPOS_NULL", Inf)
+  checkArgStop(msg)
+  #-----------------------------------
+  
+  if(is.null(w)) w <- 10 * x@dz
+  w <- round(w / x@dz)
+  
+  if(type == "mad"){  
+    warning("Soon deprecated. Use instead:\n",
+            "filter1D(x, type = 'Hampel', w = ...)")
+    # A <- x@data
+    # if(length(dim(A)) < 2){
+    #   A <- matrix(A,ncol=1,nrow=length(A))
+    # }
+    # X <- rbind(matrix(0,ncol=ncol(A),nrow=w), A, matrix(0,ncol=ncol(A),nrow=w))
+    # n <- nrow(X)
+    # Y <- X
+    # for (i in (w + 1):(n - w)) {
+    #   Y[i,] <-  apply( X[(i - w):(i + w),, drop=FALSE], 2, median)
+    #   # x0 = 0.1  # argument initialization
+    #   # S0 <- 1.4826 * apply( abs(X[(i - w):(i + w),,drop=FALSE] - Xmed),
+    #   #  2, median)
+    #   # test <- abs(X[i,] - Xmed) > x0 * S0
+    #   # Y[i,test] <- Xmed[test]      
+    # }
+    # x@data <- A - Y[(w+1):(n-w),]
+    x@data <- .runmmmMat(x@data, 2*w, type = "runmed")
+  }else if(type == "runmed"){
+    x@data <- .runmmmMat(x@data, w, type = "runmed")
+  }else if(type == "runmean"){
+    x@data <- .runmmmMat(x@data, w, type = "runmean")
+  }else if(type == "gaussian"){
+    # t0 <- round(mean(x@time0)/x@dz)
+    # xdata <- x@data
+    # xDepth <- matrix(x@depth, byrow = FALSE, nrow = nrow(x), ncol = ncol(x))
+    # xTime0 <- matrix(x@time0, byrow = TRUE, nrow = nrow(x), ncol = ncol(x))
+    # test <- xDepth <= xTime0
+    # before_t0 <- x@depth <= mean(x@time0)
+    # xdata[before_t0,] <- 0
+    # # if(length(dim(A))<2){
+    # #   A <- matrix(A, ncol = 1, nrow = length(A))
+    # # }
+    # x@data[!before_t0,] <- xdata[!before_t0,] - 
+    #   mmand::gaussianSmooth(xdata, w)[!before_t0,]
+    xdata <- x@data
+    xDepth <- matrix(x@depth, byrow = FALSE, nrow = nrow(x), ncol = ncol(x))
+    xTime0 <- matrix(x@time0, byrow = TRUE, nrow = nrow(x), ncol = ncol(x))
+    test <- xDepth <= xTime0
+    # before_t0 <- x@depth <= mean(x@time0)
+    xdata[test] <- 0
+    x@data[!test] <- x@data[!test] - mmand::gaussianSmooth(xdata, w)[!test]
   }else if(type == "hampel"){
-    # if( length(dots <-  list(...)) ){
-    #   #         dots <- list(...)
-    #   if( !is.null(dots$w)){
-    #     w <- dots$w
-    #   }
-    #   w <- round(w / x@dz)
-    # }
-    w <- round(w)
-    A <- x@data
-    if(length(dim(A))<2){
-      A <- matrix(A, ncol = 1, nrow = length(A))
-    }
-    X <- rbind(matrix(0, ncol = ncol(A), nrow = w), A, 
-               matrix(0, ncol = ncol(A), nrow = w))
-    n <- nrow(X)
-    Y <- X
-    for (i in (w + 1):(n - w)) {
-      Xmed <- apply( X[(i - w):(i + w),,drop=FALSE],2, median)
-      # S0 <- 1.4826 * apply( abs(X[(i - w):(i + w),,drop=FALSE] - Xmed),
-      # 2, median)
-      # test <- abs(X[i,] - Xmed) > x0 * S0
-      # Y[i,test] <- Xmed[test]
-      Y[i,] <- Xmed
-    }
-    x@data <- Y[(w+1):(n-w),]
-  }else if(type == "Gaussian"){
-    # if( length(dots <-  list(...)) ){
-    #   #         dots <- list(...)
-    #   if( !is.null(dots$w)){
-    #     w <- dots$w
-    #   }
-    # }
-    x@data <- mmand::gaussianSmooth(x@data, sigma = w)
+    x@data <- .runmmmMat(x@data, w, type = "hampel")
   }
-  proc(x) <- getArgs()
-  #     x@proc <- c(x@proc, proc)
+  if(isTRUE(track)) proc(x) <- getArgs()
   return(x)
 } 
 )
@@ -3261,8 +3710,10 @@ setMethod("filter1D", "GPR", function(x, type = c("median", "hampel",
 #' @name filter2D
 #' @rdname filter2D
 #' @export
-setMethod("filter2D", "GPR", function(x, type = c("median3x3", "adimpro"), 
-                                      ...){
+setMethod("filter2D", "GPR", function(x, 
+                                      type = c("median3x3", "adimpro"), 
+                                      ...,
+                                      track = TRUE){
   type <- match.arg(type, c("median3x3", "adimpro"))
   if(type == "median3x3"){
     x@data <-  .medianFilter3x3(x@data)
@@ -3278,7 +3729,7 @@ setMethod("filter2D", "GPR", function(x, type = c("median3x3", "adimpro"),
     AAA <- ( (AA - mean(AA))/sd(AA) ) * sd(x@data)
     x@data <- AAA
   }
-  proc(x) <- getArgs()
+  if(isTRUE(track)) proc(x) <- getArgs()
   #     x@proc <- c(x@proc, proc)
   return(x)
 } 
@@ -3290,9 +3741,10 @@ setMethod("filter2D", "GPR", function(x, type = c("median3x3", "adimpro"),
 #' @name clip
 #' @rdname clip
 #' @export
-setMethod("clip", "GPR", function(x,Amax=NULL,Amin=NULL){
+setMethod("clip", "GPR", function(x, Amax = NULL, Amin = NULL,
+                                  track = TRUE){
   x@data <- .clip(x@data,Amax,Amin)
-  proc(x) <- getArgs()
+  if(isTRUE(track)) proc(x) <- getArgs()
   #   x@proc <- c(x@proc, proc)
   return(x)
 } 
@@ -3302,9 +3754,10 @@ setMethod("clip", "GPR", function(x,Amax=NULL,Amin=NULL){
 #' @name gammaCorrection
 #' @rdname gammaCorrection
 #' @export
-setMethod("gammaCorrection", "GPR", function(x,a=1,b=1){
+setMethod("gammaCorrection", "GPR", function(x, a = 1, b = 1,
+                                             track = TRUE){
   x@data <- .gammaCorrection(x@data,a,b)
-  proc(x) <- getArgs()
+  if(isTRUE(track)) proc(x) <- getArgs()
   #   x@proc <- c(x@proc, proc)
   return(x)
 } 
@@ -3315,11 +3768,13 @@ setMethod("gammaCorrection", "GPR", function(x,a=1,b=1){
 #' @name traceScaling
 #' @rdname traceScaling
 #' @export
-setMethod("traceScaling", "GPR", function(x, 
-                                          type = c("stat","min-max","95","eq","sum", "rms", 
-                                                   "mad", "invNormal")){
+setMethod("traceScaling", 
+          "GPR", 
+          function(x,type = c("stat", "min-max", "95", "eq", 
+                              "sum", "rms", "mad", "invNormal"),
+                   track = TRUE){
   x@data <- scaleCol(x@data, type = type)
-  proc(x) <- getArgs()
+  if(isTRUE(track)) proc(x) <- getArgs()
   #   x@proc <- c(x@proc, proc)
   return(x)
 }
@@ -3365,7 +3820,8 @@ setMethod("traceScaling", "GPR", function(x,
 #' @name traceStat
 #' @rdname traceStat
 #' @export
-setMethod("traceStat", "GPR", function(x, w = NULL, FUN = mean, ...){
+setMethod("traceStat", "GPR", function(x, w = NULL, FUN = mean, ...,
+                                       track = TRUE){
   FUN <- match.fun(FUN)
   if(is.null(w)){
     xdata <- x@data
@@ -3379,7 +3835,7 @@ setMethod("traceStat", "GPR", function(x, w = NULL, FUN = mean, ...){
   }else{
     x@data <- wapplyMat(x@data, width = w, by = 1, FUN = FUN, MARGIN = 1, ...)
   }
-  proc(x) <- getArgs()
+  if(isTRUE(track)) proc(x) <- getArgs()
   return(x)
 }
 )
@@ -3422,7 +3878,8 @@ setMethod("traceStat", "GPR", function(x, w = NULL, FUN = mean, ...){
 #' @name traceAverage
 #' @rdname traceAverage
 #' @export
-setMethod("traceAverage", "GPR", function(x, w = NULL, FUN = mean, ...){
+setMethod("traceAverage", "GPR", function(x, w = NULL, FUN = mean, ...,
+                                          track = TRUE){
   warning("Deprecated!\n Use 'traceStat()' instead. Check the help.")
   FUN <- match.fun(FUN)
   if(is.null(w)){
@@ -3439,7 +3896,7 @@ setMethod("traceAverage", "GPR", function(x, w = NULL, FUN = mean, ...){
   }
   # funName <- getFunName(FUN)
   # proc(x) <- getArgs( addArgs = c('FUN' = funName))
-  proc(x) <- getArgs()
+  if(isTRUE(track)) proc(x) <- getArgs()
   #   x@proc <- c(x@proc, proc)
   return(x)
 }
@@ -3472,7 +3929,8 @@ setMethod("traceAverage", "GPR", function(x, w = NULL, FUN = mean, ...){
 #' @rdname backgroundSub
 #' @export
 setMethod("backgroundSub", "GPR", function(x, width = 21, trim = 0.2,
-                                           s = 1, eps = 1, itmax = 5){
+                                           s = 1, eps = 1, itmax = 5,
+                                           track = TRUE){
   if(is.null(width)){
     stop("Set a value to 'width'")
   }
@@ -3505,8 +3963,10 @@ setMethod("backgroundSub", "GPR", function(x, width = 21, trim = 0.2,
     y0 <- y
   }
   message("Residuals: ", paste(round(test, 3), collapse = " "))
-  return(x - y0[, - c(1:((width-1)/2), 
-                      (width-1)/2  + ncol(x1) + 1:((width-1)/2))])
+  x <- x - y0[, - c(1:((width-1)/2), 
+                    (width-1)/2  + ncol(x1) + 1:((width-1)/2))]
+  if(isTRUE(track)) proc(x) <- getArgs()
+  return(x)
 }
 ) 
 
@@ -3562,10 +4022,11 @@ setMethod("backgroundSub", "GPR", function(x, width = 21, trim = 0.2,
 setMethod("fFilter", "GPR", function(x, f = 100, type = 
                                      c('low','high','bandpass'),
                                      L = 257, 
-                                     plotSpec = FALSE){
+                                     plotSpec = FALSE,
+                                     track = TRUE){
   x@data <- .fFilter1D(x@data, f = f,  type = type, L = L, dT = x@dz, 
                        plotSpec = plotSpec)
-  proc(x) <- getArgs()
+  if(isTRUE(track)) proc(x) <- getArgs()
   #   x@proc <- c(x@proc, proc)
   return(x)
 } 
@@ -3576,7 +4037,8 @@ setMethod("fFilter", "GPR", function(x, f = 100, type =
 #' @name fkFilter
 #' @rdname fkFilter
 #' @export
-setMethod("fkFilter", "GPR", function(x, fk = NULL, L = c(5 , 5), npad = 1){
+setMethod("fkFilter", "GPR", function(x, fk = NULL, L = c(5 , 5), npad = 1,
+                                      track = TRUE){
   if(is.null(fk)) stop("fk argument has to be specified")
   # if polygon
   if(is.list(fk) && length(fk) == 2){
@@ -3601,7 +4063,7 @@ setMethod("fkFilter", "GPR", function(x, fk = NULL, L = c(5 , 5), npad = 1){
     cat("# FIXME! function to transform matrix into polygon\n")
   }
   x@data <- .FKFilter(x@data, fk = fk, L = L, npad = npad)
-  proc(x) <- getArgs()
+  if(isTRUE(track)) proc(x) <- getArgs()
   #   x@proc <- c(x@proc, proc)
   return(x)
   
@@ -3663,7 +4125,7 @@ setMethod("fkFilter", "GPR", function(x, fk = NULL, L = c(5 , 5), npad = 1){
 #' @rdname eigenFilter
 #' @export
 setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA, center = TRUE, 
-                                         scale = FALSE){
+                                         scale = FALSE, track = TRUE){
   
   ev <- unique(eigenvalue)
   X <- scale(x@data, center = center, scale = scale)
@@ -3737,7 +4199,7 @@ setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA, center = TRUE,
   #                                     'center' = as.character(center), 
   #                                     'scale' = as.character(scale)))
   # }
-  proc(x) <- getArgs()
+  if(isTRUE(track)) proc(x) <- getArgs()
   
   return(x)
 } 
@@ -3758,9 +4220,9 @@ setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA, center = TRUE,
 #' @name rotatePhase
 #' @rdname rotatePhase
 #' @export
-setMethod("rotatePhase", "GPR", function(x, phi){
+setMethod("rotatePhase", "GPR", function(x, phi, track = TRUE){
   x@data <- apply(x@data, 2, phaseRotation, phi)
-  proc(x) <- getArgs()
+  if(isTRUE(track)) proc(x) <- getArgs()
   return(x)
 }
 )
@@ -3775,11 +4237,11 @@ setMethod("rotatePhase", "GPR", function(x, phi){
 #' @name conv1D
 #' @rdname conv1D
 #' @export
-setMethod("conv1D", "GPR", function(x, w){
+setMethod("conv1D", "GPR", function(x, w, track = TRUE){
   # rotatePhase <- function(x,phi){
   x@data <- convolution(x@data, w)
   #     x@proc <- c(x@proc,"conv1D")
-  proc(x) <- "conv1D"
+  if(isTRUE(track)) proc(x) <- getArgs()  #proc(x) <- "conv1D"
   return(x)
 }
 )
@@ -3792,10 +4254,11 @@ setMethod("conv1D", "GPR", function(x, w){
 #' @name conv2D
 #' @rdname conv2D
 #' @export
-setMethod("conv2D", "GPR", function(x, w){
+setMethod("conv2D", "GPR", function(x, w, track = TRUE){
   # rotatePhase <- function(x,phi){
   x@data <- convolution2D(x@data, w)
-  x@proc <- c(x@proc, "conv2D")
+  # x@proc <- c(x@proc, "conv2D")
+  if(isTRUE(track)) proc(x) <- getArgs()
   return(x)
 }
 )
@@ -3832,7 +4295,10 @@ setMethod("conv2D", "GPR", function(x, w){
 #' @rdname deconv
 #' @export
 setMethod("deconv", "GPR", function(x, 
-                                    method=c("spiking", "wavelet", "min-phase", "mixed-phase"),...){
+                                    method=c("spiking", "wavelet", 
+                                             "min-phase", "mixed-phase"),
+                                    ...,
+                                    track = TRUE){
   method <- match.arg(method, c("spiking", "wavelet", "min-phase",
                                 "mixed-phase"))
   toReturn <- list()
@@ -3913,9 +4379,7 @@ setMethod("deconv", "GPR", function(x,
     toReturn[["optRot"]] <- phi
     toReturn[["wmix"]] <- w_mix
   }
-  # gprdec <- gpr
-  #     x@data <- Xdec
-  proc(x) <- getArgs()
+  if(isTRUE(track)) proc(x) <- getArgs()
   #     x@proc <- c(x@proc, proc)
   toReturn[["x"]] <- x
   return(toReturn)
@@ -3980,7 +4444,9 @@ print.GPR <- function(x, ...){
 #' Identical to print().
 #' @name show
 #' @aliases show-method
-setMethod("show", "GPR", function(object){print.GPR(object)})   
+setMethod("show", "GPR", function(object){
+  print.GPR(object)
+})   
 
 #' Add a GPR trace on a plot
 #'
@@ -4076,7 +4542,7 @@ setMethod(
       dotsLine[["pch"]] <- dots[["pch"]]
       
       if(is.null(dots[["ylim"]])){
-        dots[["ylim"]] <- range(depth(x), na.rm = TRUE)
+        dots[["ylim"]] <- range(x, na.rm = TRUE)
         if(dots[["ylim"]][1] > 0){
           dots[["ylim"]][1] <- 0
         }else{
@@ -4467,9 +4933,7 @@ plot.GPR <- function(x,
         dots$type <- NULL
         do.call(plot3D::image2D, c(list(x = xvalues, y = yvalues, z = z), dots))
       }
-      
-      
-      #------------------------------ WIGGLES -----------------------------------#
+    #------------------------------ WIGGLES -----------------------------------#
     }else if(dots$type == "wiggles"){
       dots$type <- NULL
       barscale <- FALSE
@@ -4609,7 +5073,9 @@ plot.GPR <- function(x,
       # op2 <- par(no.readonly=TRUE)
       # plot3D::colkey (col = dots$col, clim = clim, clab = dots$clab, clog = FALSE, 
       #                 add = TRUE, cex.clab = 0.75, dist = colkeyDist)
-      fields::image.plot(zlim=range(x)*100,legend.only=TRUE, col=palGPR(), 
+      fields::image.plot(zlim = clim, 
+                         legend.only = TRUE, 
+                         col = dots$col, 
                          legend.shrink = 1)
       # .barScale(clim = clim, y = yvalues, col = dots$col, 
       # clab = dots$clab, clabcex = 0.8)

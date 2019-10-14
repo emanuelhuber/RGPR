@@ -5,7 +5,7 @@
 \alias{conv1D}
 \title{Trace convolution (1D)}
 \usage{
-\S4method{conv1D}{GPR}(x, w)
+\S4method{conv1D}{GPR}(x, w, track = TRUE)
 }
 \arguments{
 \item{x}{A GPR data}

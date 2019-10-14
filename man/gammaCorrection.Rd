@@ -5,7 +5,7 @@
 \alias{gammaCorrection}
 \title{Gamma correction of the amplitude}
 \usage{
-\S4method{gammaCorrection}{GPR}(x, a = 1, b = 1)
+\S4method{gammaCorrection}{GPR}(x, a = 1, b = 1, track = TRUE)
 }
 \description{
 Gamma correction of the amplitude

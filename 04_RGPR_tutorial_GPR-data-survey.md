@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Adding coordinates to GPR data
-date: 2019-09-02
+date: 2019-10-14
 ---
 
 <!--
@@ -22,14 +22,14 @@ Table of Contents
 -   [Objectives of this tutorial](#objectives-of-this-tutorial)
 -   [Preliminary](#preliminary)
     -   [File organisation](#file-organisation)
-    -   [Install/load the necessary packages](#install/load-the-necessary-packages)
+    -   [Install/load the necessary packages](#installload-the-necessary-packages)
     -   [Set the working directory](#set-the-working-directory)
--   [Read all the GPR data in a object of the class `GPRsurvey`](#read-all-the-gpr-data-in-a-object-of-the-class-%60gprsurvey%60)
+-   [Read all the GPR data in a object of the class `GPRsurvey`](#read-all-the-gpr-data-in-a-object-of-the-class-gprsurvey)
     -   [Set the filepaths](#set-the-filepaths)
-    -   [Create an object of the class `GPRsurvey`](#create-an-object-of-the-class-%60gprsurvey%60)
+    -   [Create an object of the class `GPRsurvey`](#create-an-object-of-the-class-gprsurvey)
 -   [Add coordinates](#add-coordinates)
-    -   [Option 1: all the trace coordinates are already known](#option-1:-all-the-trace-coordinates-are-already-known)
-    -   [Option 2: some trace coordinates exist](#option-2:-some-trace-coordinates-exist)
+    -   [Option 1: all the trace coordinates are already known](#option-1-all-the-trace-coordinates-are-already-known)
+    -   [Option 2: some trace coordinates exist](#option-2-some-trace-coordinates-exist)
     -   [Setting the coordinate reference system](#setting-the-coordinate-reference-system)
     -   [Export the coordinates](#export-the-coordinates)
     -   [Remark](#remark)
@@ -37,8 +37,8 @@ Table of Contents
     -   [Plot the survey](#plot-the-survey)
     -   [Plot the GPR data](#plot-the-gpr-data)
     -   [Three-dimensional plot of the GPR data](#three-dimensional-plot-of-the-gpr-data)
-    -   [a name="pookie"&gt;</a>Processing, save and PDF export](#a-name=%22pookie%22%3E%3C/a%3Eprocessing,-save-and-pdf-export)
-    -   [Alternative: sequentially apply the processing steps on an object of the class GPRsurvey](#alternative:-sequentially-apply-the-processing-steps-on-an-object-of-the-class-gprsurvey)
+    -   [a name="pookie"&gt;</a>Processing, save and PDF export](#a-namepookieaprocessing-save-and-pdf-export)
+    -   [Alternative: sequentially apply the processing steps on an object of the class GPRsurvey](#alternative-sequentially-apply-the-processing-steps-on-an-object-of-the-class-gprsurvey)
 
 Objectives of this tutorial
 ===========================
@@ -439,7 +439,12 @@ To plot the first GPR record, enter:
 plot(mySurvey[[1]], addTopo=TRUE)
 ```
 
+    ## [1] 25
+
     ## time to depth conversion with constant velocity (0.1 m/ns)
+
+    ## [1] 25
+    ## [1] 23
 
 ![plot GPR data](04_RGPR_tutorial_GPR-data-survey_tp_files/figure-markdown_github/unnamed-chunk-27-1.png)
 
@@ -476,7 +481,7 @@ for(i in seq_along(mySurvey)){
   A <- gain(A, type = "power", alpha = 1, te = 200, tcst = 100)
   A <- fFilter(A, f= c(150, 200), type = "low", plotSpec = FALSE)
   A <- gain(A, type = "exp", alpha = 0.1, t0 = 50, te = 180)
-  A <- dewow(A, type = "MAD", w = 50)              # dewow
+  A <- dewow(A, type = "runmed", w = 50)              # dewow
   A <- filter2D(A, type = "median3x3")
   # export PDF
  exportPDF(A, clip = 30, fPath = file.path(procDir, name(A)), addTopo = TRUE,

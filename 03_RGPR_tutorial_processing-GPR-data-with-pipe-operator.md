@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Pipe processing
-date: 2019-09-02
+date: 2019-10-14
 ---
 
 <!--
@@ -21,13 +21,13 @@ Table of Contents
 
 -   [Objectives of this tutorial](#objectives-of-this-tutorial)
 -   [Preliminary](#preliminary)
-    -   [Install/load `RGPR`](#install/load-%60rgpr%60)
+    -   [Install/load `RGPR`](#installload-rgpr)
     -   [The GPR data](#the-gpr-data)
     -   [Compute time zero](#compute-time-zero)
 -   [Using the pipe operators with RPGR](#using-the-pipe-operators-with-rpgr)
     -   [Basic piping](#basic-piping)
-    -   [The `%>%` pipe operator](#the-%60%%3E%%60-pipe-operator)
-    -   [The `%T>%` tee operator](#the-%60%t%3E%%60-tee-operator)
+    -   [The `%>%` pipe operator](#the--pipe-operator)
+    -   [The `%T>%` tee operator](#the-t-tee-operator)
 
 Objectives of this tutorial
 ===========================
@@ -99,11 +99,33 @@ Without pipe operator, we would code something like that:
 ``` r
 time0(x) <- t0
 x1 <- dcshift(x)
-x2 <- dewow(x1, type = "MAD", w = 50)
+```
+
+    ## [1] 21
+
+``` r
+x2 <- dewow(x1, type = "runmed", w = 50)
+```
+
+    ## [1] 21
+
+``` r
 x3 <- time0Cor(x2)
+```
+
+    ## [1] 21
+
+``` r
 x4 <- fFilter(x3, f = c(100, 280), type = "low", plotSpec = FALSE)
+```
+
+    ## [1] 21
+
+``` r
 x5 <- gain(x4, type = "agc", w =  5)
 ```
+
+    ## [1] 21
 
 The same code with the `%>%` pipe operator.
 
@@ -111,11 +133,17 @@ The same code with the `%>%` pipe operator.
 xnew <- x %>%
   setTime0(t0) %>%
   dcshift() %>%
-  dewow(type = "MAD", w = 50) %>%
+  dewow(type = "runmed", w = 50) %>%
   time0Cor() %>%
   fFilter(f = c(100, 280), type = "low", plotSpec = FALSE)  %>%
   gain(type = "agc", w =  5)
 ```
+
+    ## [1] 28
+    ## [1] 28
+    ## [1] 28
+    ## [1] 28
+    ## [1] 29
 
 Note that we here the `setTime0()` instead of `time0()<-`. `setTime0()` is nothing else than a wrapper for `time0()<-`:
 
@@ -140,13 +168,20 @@ Here the example:
 xnew <- x %>%
   setTime0(t0) %>%
   dcshift() %>%
-  dewow(type = "MAD", w = 50) %T>%
+  dewow(type = "runmed", w = 50) %T>%
   plot() %>%
   time0Cor() %>%
   fFilter(f = c(100, 280), type = "low", plotSpec = FALSE)  %>%
   gain(type = "agc", w =  5)
 ```
 
+    ## [1] 28
+    ## [1] 28
+
 ![plot(dewow(x))](03_RGPR_tutorial_processing-GPR-data-with-pipe-operator_tp_files/figure-markdown_github/w_tee_pipe-1.png)
 
-In this example `dewow(type = "MAD", w = 50) %T>%  plot()` returns the output of the `dewow()` function.
+    ## [1] 28
+    ## [1] 28
+    ## [1] 29
+
+In this example `dewow(type = "runmed", w = 50) %T>%  plot()` returns the output of the `dewow()` function.

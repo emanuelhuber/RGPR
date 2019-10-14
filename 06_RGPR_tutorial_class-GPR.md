@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Class GPR
-date: 2019-05-16
+date: 2019-10-14
 ---
 
 <!--
@@ -15,6 +15,13 @@ date: 2019-05-16
 
 -   This R-package is still in development, and therefore some of the functions may change in a near future.
 -   If you have any questions, comments or suggestions, feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
+
+Table of Contents
+=================
+
+-   [Objectives of this tutorial](#objectives-of-this-tutorial)
+-   [Preliminary](#preliminary)
+-   [An object of the class `RGPR`](#an-object-of-the-class-rgpr)
 
 Objectives of this tutorial
 ===========================

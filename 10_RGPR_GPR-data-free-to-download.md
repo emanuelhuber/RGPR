@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Free GPR data
-date: 2019-09-02
+date: 2019-10-14
 ---
 
 <!--
@@ -15,9 +15,9 @@ Table of Contents
 =================
 
 -   [GPR data I collected](#gpr-data-i-collected)
-    -   [Single GPR data from\[Schmelzbach and Huber (2015)\](http://dx.doi.org/10.1109/TGRS.2015.2419235)](#single-gpr-data-from-%5Bschmelzbach-and-huber-(2015)%5D(http://dx.doi.org/10.1109/tgrs.2015.2419235))
+    -   [Single GPR data from\[Schmelzbach and Huber (2015)\](http://dx.doi.org/10.1109/TGRS.2015.2419235)](#single-gpr-data-from-schmelzbach-and-huber-2015httpdxdoiorg101109tgrs20152419235)
     -   [The Frenke GPR data set](#the-frenke-gpr-data-set)
--   [Third party GPR data (not tested)](#third-party-gpr-data-(not-tested))
+-   [Third party GPR data (not tested)](#third-party-gpr-data-not-tested)
 
 GPR data I collected
 ====================
@@ -59,3 +59,4 @@ Third party GPR data (not tested)
 -   Dataset of the analysis described in the article: EM signal penetration in a planetary soil simulant: Estimated attenuation rates using GPR and TDR in volcanic deposits on Mount Etna: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.573306.svg)](https://doi.org/10.5281/zenodo.573306)
 -   Physical controls on the spatial and temporal biogenic gas dynamics in two subtropical wetland ecosystems in Florida: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1469818.svg)](https://doi.org/10.5281/zenodo.1469818)
 -   MARSIS surface clutter simulations over Lucus Planun, Mars: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.582651.svg)](https://doi.org/10.5281/zenodo.582651)
+-   Data from the tutorials for the GPR software application **GPRslice** <https://www.gpr-survey.com/tutorials.html>

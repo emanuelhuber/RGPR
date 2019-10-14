@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Basic GPR data processing
-date: 2019-09-02
+date: 2019-10-14
 ---
 
 <!--
@@ -22,7 +22,7 @@ Table of Contents
 -   [Objectives of this tutorial](#objectives-of-this-tutorial)
 -   [Preliminary](#preliminary)
     -   [File organisation](#file-organisation)
-    -   [Install/load `RGPR` and set the working directory](#install/load-%60rgpr%60-and-set-the-working-directory)
+    -   [Install/load `RGPR` and set the working directory](#installload-rgpr-and-set-the-working-directory)
     -   [Getting help](#getting-help)
 -   [Read GPR data](#read-gpr-data)
 -   [Basic processing steps](#basic-processing-steps)
@@ -35,8 +35,8 @@ Table of Contents
         -   [Power gain](#power-gain)
         -   [Exponential gain](#exponential-gain)
     -   [inverse normal transformations](#inverse-normal-transformations)
-    -   [Median filter (spatial filter)](#median-filter-(spatial-filter))
-    -   [Frequency-wavenumber filter (f-k-filter)](#frequency-wavenumber-filter-(f-k-filter))
+    -   [Median filter (spatial filter)](#median-filter-spatial-filter)
+    -   [Frequency-wavenumber filter (f-k-filter)](#frequency-wavenumber-filter-f-k-filter)
     -   [Processing overview](#processing-overview)
     -   [Other processing functions](#other-processing-functions)
         -   [Trace average removal](#trace-average-removal)
@@ -215,6 +215,8 @@ You can visualise the DC-offset on the trace plot by adding an horizontal lines 
     x1 <- dcshift(x, u = 1:110)   # new object x1
     ```
 
+        ## [1] 21
+
 Have a look at x1:
 
 ``` r
@@ -231,6 +233,7 @@ x1
     ##  223 traces, 55.5 m
     ##  > PROCESSING
     ##    1. time0<-
+    ##    2. dcshift//u=1:110
     ##  ****************
 
 Compared with `x` or `print(x)`, three additional lines are displayed. The two last line show the applied processing step:
@@ -246,7 +249,7 @@ The processing steps can be extracted with the function `processing()`:
 proc(x1)
 ```
 
-    ## [1] "time0<-"
+    ## [1] "time0<-"          "dcshift//u=1:110"
 
 Time zero correction
 --------------------
@@ -256,6 +259,8 @@ To shift the traces to time-zero, use the function `time0Cor` (the `method` argu
 ``` r
 x2 <- time0Cor(x1, method = "pchip")
 ```
+
+    ## [1] 21
 
 ``` r
 plot(x2)
@@ -268,14 +273,20 @@ Dewow
 
 Remove the low-frequency components (the so-called "wow") of the GPR record using:
 
-1.  either a median absolute deviation (MAD) filter (`type = "MAD"`).
-2.  or a Gaussian filter (`type = "Gaussian"`). The Gaussian filter is faster than the MAD filter.
+1.  a running median filter (`type = "runnmed"`)
+2.  a running mean filter (`type = "runmean"`)
+3.  a Gaussian filter (`type = "Gaussian"`)
 
-In both cases, the argument `w` is the length of the filter in time units.
+For the two first cases, the argument `w` is the length of the filter in time units. For the Gaussian filter, `w` is the standard deviation.
 
 ``` r
-x3 <- dewow(x2, type = "MAD", w = 50)     # dewowing: take some time
-plot(x3)                                  # plot the result
+x3 <- dewow(x2, type = "runmed", w = 50)     # dewowing:
+```
+
+    ## [1] 21
+
+``` r
+plot(x3)                                     # plot the result
 ```
 
 ![plot after dewow](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/dewow-1.png)
@@ -324,6 +335,8 @@ x4 <- fFilter(x3, f = c(150, 260), type = "low", plotSpec = TRUE)
 
 ![plot frequency filter](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/fFilter_fFilter-1.png)
 
+    ## [1] 21
+
 ``` r
 plot(x4)
 ```
@@ -366,6 +379,11 @@ We will first apply a power gain and then an exponential gain. To visualise the 
 ``` r
 # compute the trace amplitude envelopes (with Hilbert transform)
 x4_env <- envelope(x4)
+```
+
+    ## [1] 21
+
+``` r
 # plot all the trace amplitude envelopes as a function of time
 trPlot(x4_env, log = "y", col = rgb(0.2,0.2,0.2,7/100))
 # plot the log average amplitude envelope
@@ -373,6 +391,8 @@ lines(traceStat(x4_env), log = "y", col = "red", lwd = 2)
 ```
 
 ![plot amplitude](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/plotAmpl-1.png)
+
+    ## [1] 22
 
 On the plot above, there is a sharp increase of the amplitude envelope at the begining of the signal. This sharp increase corresponds to the first wave arrival. Then the amplitude decreases until about $220\,\mathit{ns}$.
 
@@ -384,14 +404,24 @@ From $0\,\mathit{ns}$ to $20\,\mathit{ns}$ the power gain is set equal to the ga
 x5 <- gain(x4, type = "power", alpha = 1, te = 220, tcst = 20)
 ```
 
+    ## [1] 21
+
 Compare the amplitude before (red) and after (green) the power gain:
 
 ``` r
 plot(traceStat(x4_env), log = "y", col = "red", lwd = 2)
+```
+
+    ## [1] 22
+
+``` r
 lines(traceStat(envelope(x5)), log = "y", col = "green", lwd = 2)
 ```
 
 ![plot amplitude after power gain](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/ampl_check-1.png)
+
+    ## [1] 23
+    ## [1] 22
 
 ``` r
 plot(x5)      # how does it look after the gain?
@@ -405,8 +435,16 @@ Ideally, the parameter $\alpha$ in the exponential gain should be close to the s
 
 ``` r
 x6 <- gain(x5, type ="exp",  alpha = 0.2, t0 = 0, te = 125)
+```
+
+    ## [1] 21
+
+``` r
 plot(traceStat(envelope(x6)), log = "y", col = "blue", lwd = 2)
 ```
+
+    ## [1] 23
+    ## [1] 22
 
 ![plot ampliude exponential gain](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/gain_exp-1.png)
 
@@ -414,12 +452,31 @@ Oops! Set `alpha` to a smaller value!
 
 ``` r
 x6 <- gain(x5, type = "exp", alpha = 0.11, t0 = 0, te = 125)
+```
+
+    ## [1] 21
+
+``` r
 plot(traceStat(x4_env), log = "y", col = "red", lwd = 2)
+```
+
+    ## [1] 22
+
+``` r
 lines(traceStat(envelope(x5)), log = "y", col = "green", lwd = 2)
+```
+
+    ## [1] 23
+    ## [1] 22
+
+``` r
 lines(traceStat(envelope(x6)), log = "y", col = "blue", lwd = 2)
 ```
 
 ![plot amplitude after exponential gain](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/gain_check2-1.png)
+
+    ## [1] 23
+    ## [1] 22
 
 ``` r
 plot(x6)    # how does it look after the gain?
@@ -444,6 +501,8 @@ This histogram is very narrow, meaning that a lot of values are very close to ze
 x7 <- traceScaling(x6, type = "invNormal")
 ```
 
+    ## [1] 21
+
 Histograms before and after
 
 ``` r
@@ -467,6 +526,11 @@ A non-linear filter to remove noise:
 
 ``` r
 x8 <- filter2D(x7, type = "median3x3")
+```
+
+    ## [1] 21
+
+``` r
 plot(x8)
 ```
 
@@ -497,6 +561,8 @@ lines(area, type="o")
 ``` r
 x9 <- fkFilter(x8, fk = area)
 ```
+
+    ## [1] 21
 
 With the f-k-filter you can successfully remove the artifacts but still the information gained is very small in this case (the quality of the raw GPR data is already bad):
 
@@ -594,10 +660,19 @@ writeGPR(x9, fPath = file.path(getwd(), "processing", paste0(name(x9), ".rds")),
     ##  1 fiducial(s)
     ##  description =
     ##  survey date = 2014-04-25
-    ##  Reflection, 100 MHz, Window length = 352.4 ns, dz = 0.4 ns
+    ##  Reflection, 100 MHz, Window length = 351.6 ns, dz = 0.4 ns
     ##  223 traces, 55.5 m
     ##  > PROCESSING
     ##    1. time0<-
+    ##    2. dcshift//u=1:110
+    ##    3. time0Cor//method=pchip
+    ##    4. dewow//type=runmed+w=50
+    ##    5. fFilter//f=150,260+type=low+plotSpec=TRUE
+    ##    6. gain//type=power+alpha=1+te=220+tcst=20
+    ##    7. gain//type=exp+alpha=0.11+t0=0+te=125
+    ##    8. traceScaling//type=invNormal
+    ##    9. filter2D//type=median3x3
+    ##    10. fkFilter//fk=x<-c(0, -2, -2, 2, 2, 0),y<-c(1250, 800, 0, 0, 800, 1250)
     ##  ****************
 
 Export a high quality PDF:

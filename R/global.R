@@ -5200,11 +5200,11 @@ readUtsiHDR <- function(con){
   u <- readBin(con, what = "raw", n = 2, size = 1)
   hd$magic_number <- sf::rawToHex(u)
   if(hd$magic_number != "0f20"){
-    message("Magic number in ", 
+    message("Magic number in '", 
             summary.connection(con)$description, 
-            " is ",
+            "' is '",
             hd$magic_number,
-            " instead of '0f20'")
+            "' instead of '0f20'")
   }
   u <- readLines(con, n = 1)
   u <- strsplit(u, split = ", ")[[1]]
@@ -5229,7 +5229,7 @@ readUtsiHDR <- function(con){
   hd$time_sweep <- as.numeric(gsub("\002|\005|\n|\004", "", u))
   
   u <- readBin(con, what = "character", n = 1)
-  hd$depth_scaling <- as.numeric(gsub("\002|\005|\n|\004", "", u))
+  hd$depth_scaling <- as.numeric(gsub("\0016|\002|\005|\n|\004", "", u))
   
   u <- readBin(con, what = "character", n = 1)
   hd$encoder_div_selection <- as.numeric(gsub("\004|\005|\n|\002", "", u))

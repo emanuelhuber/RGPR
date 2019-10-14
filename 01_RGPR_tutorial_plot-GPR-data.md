@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Plot GPR data
-date: 2019-09-02
+date: 2019-10-14
 ---
 
 <!--
@@ -20,16 +20,16 @@ Table of Contents
 =================
 
 -   [Objectives of this tutorial](#objectives-of-this-tutorial)
-    -   [Install/load `RGPR`](#install/load-%60rgpr%60)
+    -   [Install/load `RGPR`](#installload-rgpr)
     -   [The GPR data](#the-gpr-data)
 -   [Plot the GPR data](#plot-the-gpr-data)
-    -   [D plot: radargramm](#d-plot:-radargramm)
-    -   [D plot](#d-plot)
+    -   [Two-dimensional plot: radargramm](#two-dimensional-plot-radargramm)
+    -   [One-dimensional plot](#one-dimensional-plot)
         -   [Single trace plot](#single-trace-plot)
         -   [Multiple trace plot](#multiple-trace-plot)
     -   [Frequency plots](#frequency-plots)
-        -   [Frequency/Phase-Amplitude (1D)](#frequency/phase-amplitude-(1d))
-    -   [Frequency-wavenumber filter (f-k-filter)](#frequency-wavenumber-filter-(f-k-filter))
+        -   [Frequency/Phase-Amplitude (1D)](#frequencyphase-amplitude-1d)
+    -   [Frequency-wavenumber filter (f-k-filter)](#frequency-wavenumber-filter-f-k-filter)
     -   [More infos](#more-infos)
 
 Objectives of this tutorial
@@ -44,6 +44,59 @@ Install/load `RGPR`
 # install "devtools" if not already done
 if(!require("devtools")) install.packages("devtools")
 devtools::install_github("emanuelhuber/RGPR")
+```
+
+    ## backports   (1.1.4   -> 1.1.5) [CRAN]
+    ## callr       (3.3.1   -> 3.3.2) [CRAN]
+    ## curl        (4.0     -> 4.2) [CRAN]
+    ## digest      (0.6.20  -> 0.6.21) [CRAN]
+    ## ellipsis    (0.2.0.1 -> 0.3.0) [CRAN]
+    ## fields      (9.8-6   -> 9.9) [CRAN]
+    ## htmltools   (0.3.6   -> 0.4.0) [CRAN]
+    ## htmlwidgets (1.3     -> 1.5.1) [CRAN]
+    ## httpuv      (1.5.1   -> 1.5.2) [CRAN]
+    ## knitr       (1.24    -> 1.25) [CRAN]
+    ## later       (0.8.0   -> 1.0.0) [CRAN]
+    ## pkgconfig   (2.0.2   -> 2.0.3) [CRAN]
+    ## promises    (1.0.1   -> 1.1.0) [CRAN]
+    ## raster      (3.0-2   -> 3.0-7) [CRAN]
+    ## rgdal       (1.4-4   -> 1.4-6) [CRAN]
+    ## rgeos       (0.5-1   -> 0.5-2) [CRAN]
+    ## sf          (0.7-7   -> 0.8-0) [CRAN]
+    ## shiny       (1.3.2   -> 1.4.0) [CRAN]
+    ## spam        (2.2-2   -> 2.3-0) [CRAN]
+    ## units       (0.6-4   -> 0.6-5) [CRAN]
+    ## xfun        (0.9     -> 0.10) [CRAN]
+    ##
+       checking for file ‘/tmp/RtmpsEzAgK/remotes43cd336a7bc9/emanuelhuber-RGPR-d06e059/DESCRIPTION’...
+
+    ✔  checking for file ‘/tmp/RtmpsEzAgK/remotes43cd336a7bc9/emanuelhuber-RGPR-d06e059/DESCRIPTION’
+    ##
+
+    ─  preparing ‘RGPR’:
+    ##
+
+       checking DESCRIPTION meta-information...
+
+    ✔  checking DESCRIPTION meta-information
+    ##
+
+    ─  checking for LF line-endings in source and make files and shell scripts
+    ##
+
+    ─  checking for empty or unneeded directories
+    ##
+
+    ─  looking to see if a ‘data/datalist’ file should be added
+    ##
+
+    ─  building ‘RGPR_0.0.6.tar.gz’
+    ##
+
+
+    ##
+
+``` r
 library(RGPR)       # load RGPR in the current R session
 ```
 
@@ -70,8 +123,8 @@ x
 Plot the GPR data
 =================
 
-2D plot: radargramm
--------------------
+Two-dimensional plot: radargramm
+--------------------------------
 
 To plot the GPR record as a raster image (default mode), enter
 
@@ -172,8 +225,8 @@ plot(x, note = "", main = "", ylab = "", xlab = "", clab = "")
 
 ![](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/withoutlabels-1.png)
 
-1D plot
--------
+One-dimensional plot
+--------------------
 
 ### Single trace plot
 
@@ -223,6 +276,8 @@ lines(traceStat(x), lwd = "2", col = "red")
 ```
 
 ![plot multiple traces with average trace](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_multi_1D_average-1.png)
+
+    ## [1] 22
 
 Frequency plots
 ---------------

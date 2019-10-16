@@ -5600,10 +5600,10 @@ readDZX <- function(fPath){
 # location   Galway, Ireland
 #' @export
 getArgs <- function (returnCharacter = TRUE, addArgs = NULL) {
-  print(sys.nframe())
+  # print(sys.nframe())
   # 50 -> 1 error with devtools::test() and opencpu
   # 100 -> works with devtools::test() and does not work with opencpu
-  if(sys.nframe() <=  75){
+  if(sys.nframe() <=  2){
     arg <- as.list(match.call(definition = sys.function( -1 ),
                               call = sys.call(-1),
                               expand.dots = TRUE )

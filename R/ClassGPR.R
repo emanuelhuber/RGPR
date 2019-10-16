@@ -2112,11 +2112,18 @@ setReplaceMethod(
   f="time0",
   signature="GPR",
   definition=function(x, value){
-    if(length(value) == ncol(x)){
-      x@time0 <- as.numeric(value)
-    }else{
-      x@time0 <- rep(as.numeric(value[1]), length(x@time0))
-    }
+    
+    value <- as.numeric(value)
+    
+    #------------------- check arguments
+    msg <- checkArgInit()
+    msg <- checkArg(value,     msg, "NUMERIC_LEN", c(1, ncol(x)))
+    checkArgStop(msg)
+    #-----------------------------------
+    
+    if(length(value) == 1) value <- rep(value, ncol(x))
+    x@time0 <- value
+    
     x@proc <- c(x@proc, "time0<-")
     return(x)
   }
@@ -2138,8 +2145,8 @@ setMethod("setTime0", "GPR", function(x, t0, track = TRUE){
   checkArgStop(msg)
   #-----------------------------------
   
-  time0(x) <- t0
-  x@proc <- x@proc[-length(x@proc)]
+  if(length(t0) == 1) t0 <- rep(t0, ncol(x))
+  x@time0 <- t0
   
   if(isTRUE(track)) proc(x) <- getArgs()
   return(x)
@@ -2900,12 +2907,11 @@ setMethod("estimateTime0", "GPR",
   tfb <- firstBreak(x, method = method, thr = thr, w = w, 
                     ns = ns, bet = bet)
   t0 <- firstBreakToTime0(tfb, x, c0 = c0)
-  if(is.null(FUN)){
-    x@time0 <- t0
-  }else{
-    FUN <- match.fun(FUN)
-    x@time0 <- FUN(t0, ...)
-  }
+  
+  if(!is.null(FUN)) t0 <- FUN(t0, ...)
+  
+  x <- setTime0(x, t0, track = FALSE)
+
   # x@proc <- x@proc[-length(x@proc)] # remove proc "time0()<-"
   if(isTRUE(track)) proc(x) <- getArgs()
   return(x)

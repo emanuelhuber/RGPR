@@ -2112,7 +2112,7 @@ setReplaceMethod(
   f="time0",
   signature="GPR",
   definition=function(x, value){
-    if(length(value) == length(x@time0)){
+    if(length(value) == ncol(x)){
       x@time0 <- as.numeric(value)
     }else{
       x@time0 <- rep(as.numeric(value[1]), length(x@time0))
@@ -2127,9 +2127,21 @@ setReplaceMethod(
 #' @name setTime0
 #' @rdname time0
 #' @export
-setMethod("setTime0", "GPR", function(x, t0){
+setMethod("setTime0", "GPR", function(x, t0, track = TRUE){
+  
   t0 <- as.numeric(t0)
+
+  #------------------- check arguments
+  msg <- checkArgInit()
+  msg <- checkArg(t0,     msg, "NUMERIC_LEN", c(1, ncol(x)))
+  msg <- checkArg(track,   msg, "LOGICAL_LEN", 1)
+  checkArgStop(msg)
+  #-----------------------------------
+  
   time0(x) <- t0
+  x@proc <- x@proc[-length(x@proc)]
+  
+  if(isTRUE(track)) proc(x) <- getArgs()
   return(x)
 })
 
@@ -2653,6 +2665,7 @@ setMethod("dcshift", "GPR", function(x, u = NULL, FUN = mean, ...,
   }
   x_shift <- matrix(OUT, nrow = nrow(x), ncol = ncol(x), byrow = TRUE)
   x <-  x - x_shift
+  
   if(isTRUE(track)) proc(x) <- getArgs()
   return(x)
 })

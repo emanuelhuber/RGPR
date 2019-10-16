@@ -195,7 +195,7 @@ setGenericVerif("time0<-",function(x, value){standardGeneric("time0<-")})
 #' @name setTime0
 #' @rdname time0
 #' @export
-setGenericVerif("setTime0", function(x, t0) standardGeneric("setTime0"))
+setGenericVerif("setTime0", function(x, t0, track = TRUE) standardGeneric("setTime0"))
 
 # #' @name time0Estimation
 # #' @rdname time0Estimation
@@ -5603,7 +5603,7 @@ getArgs <- function (returnCharacter = TRUE, addArgs = NULL) {
   # print(sys.nframe())
   # 50 -> 1 error with devtools::test() and opencpu
   # 100 -> works with devtools::test() and does not work with opencpu
-  if(sys.nframe() <=  2){
+  if(sys.nframe() >= 2){
     arg <- as.list(match.call(definition = sys.function( -1 ),
                               call = sys.call(-1),
                               expand.dots = TRUE )
@@ -5632,6 +5632,8 @@ getArgs <- function (returnCharacter = TRUE, addArgs = NULL) {
     }else{
       return(arg)
     }
+  }else{
+    message("getargs rerror, frame = ", sys.nframe())
   }
 }
 

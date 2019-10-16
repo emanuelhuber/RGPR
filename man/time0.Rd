@@ -11,7 +11,7 @@
 
 \S4method{time0}{GPR}(x) <- value
 
-\S4method{setTime0}{GPR}(x, t0)
+\S4method{setTime0}{GPR}(x, t0, track = TRUE)
 }
 \arguments{
 \item{x}{An object of the class GPR.}

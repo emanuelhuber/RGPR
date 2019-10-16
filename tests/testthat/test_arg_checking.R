@@ -217,3 +217,23 @@ test_that("@proc > OK", {
   expect_length((time0Cor(estimateTime0(dcshift(x))))@proc, 3)
   expect_length((time0Cor(estimateTime0(dcshift(x, track = FALSE), track = FALSE), track = FALSE))@proc, 0)
 })
+
+
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+#------------------------------------------------------------------------------#
+
+test_that("setTime0 > OK", {
+  expect_true(class(setTime0(x, 0)) == "GPR")
+  expect_true(class(setTime0(x, t0 = 10)) == "GPR")
+  expect_length(setTime0(x, t0 = 10)@time0, ncol(x))
+  expect_length(setTime0(x, t0 = rep(10, ncol(x)))@time0, ncol(x))
+  expect_length(setTime0(x, t0 = 10)@proc, 1)
+  expect_length(setTime0(x, t0 = 10, track = FALSE)@proc, 0)
+})
+
+test_that("setTime0 > uncorrect arguments", {
+  expect_error(setTime0(x, t0 = 2, track = "lkj"))
+  expect_error(setTime0(x, t0 = NULL))
+  expect_error(setTime0(x, t0 = NA))
+})

@@ -45,39 +45,6 @@ Install/load `RGPR`
 # install "devtools" if not already done
 if(!require("devtools")) install.packages("devtools")
 devtools::install_github("emanuelhuber/RGPR")
-```
-
-    ##
-    ##
-       checking for file ‘/tmp/Rtmp8JTyfh/remotes2856766962e7/emanuelhuber-RGPR-189073f/DESCRIPTION’...
-
-    ✔  checking for file ‘/tmp/Rtmp8JTyfh/remotes2856766962e7/emanuelhuber-RGPR-189073f/DESCRIPTION’
-    ##
-
-    ─  preparing ‘RGPR’:
-    ##
-
-       checking DESCRIPTION meta-information...
-
-    ✔  checking DESCRIPTION meta-information
-    ##
-
-    ─  checking for LF line-endings in source and make files and shell scripts
-    ##
-
-    ─  checking for empty or unneeded directories
-    ##
-
-    ─  looking to see if a ‘data/datalist’ file should be added
-    ##
-
-    ─  building ‘RGPR_0.0.6.tar.gz’
-    ##
-
-
-    ##
-
-``` r
 library(RGPR)       # load RGPR in the current R session
 ```
 

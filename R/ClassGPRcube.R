@@ -539,7 +539,11 @@ trInterp <- function(x, z, zi){
 #' @name interpSlices 
 #' @rdname interpSlices
 #' @export
-setMethod("interpSlices", "GPRsurvey", function(x, dx = NULL, dy = NULL, dz = NULL, h = 6){
+setMethod("interpSlices", "GPRsurvey", function(x, 
+                                                dx = NULL, 
+                                                dy = NULL, 
+                                                dz = NULL, 
+                                                h = 6){
   
   if(is.null(dx) || is.null(dy) || is.null(dz)){
     stop("'dx', 'dy' and 'dz' must all be defined!")

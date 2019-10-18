@@ -9,8 +9,8 @@
 }
 \description{
 Fresnel zone defined according to 
-Pérez-Gracia et al. (2008) Horizontal resolution in a non-destructive
+Perez-Gracia et al. (2008) Horizontal resolution in a non-destructive
 shallow GPR survey: An experimental evaluation. NDT & E International,
-41(8): 611–620.
+41(8): 611-620.
 doi:10.1016/j.ndteint.2008.06.002
 }

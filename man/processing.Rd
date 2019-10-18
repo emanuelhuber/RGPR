@@ -22,5 +22,5 @@ DEPRECATED - use \code{proc} instead!
 \examples{
 data(frenkeLine00)
 A <- dewow(frenkeLine00, type = "Gaussian")
-processing(A)
+proc(A)
 }

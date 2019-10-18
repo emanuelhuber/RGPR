@@ -24,8 +24,8 @@ same orientation (up to a tolerance value \code{tol}).}
 if the data have the same orientation. The first data of the 
 cluster is set as reference angle \eqn{\alpha_0}, then for data 
 \eqn{i} in the same cluster, if \eqn{\alpha_i} is not between
-\eqn{\alpha_0 - \frac{\text{tol}{2}}} and 
-\eqn{\alpha_0 + \frac{\text{tol}{2}}}, then the data is reversed.}
+\eqn{\alpha_0 - \frac{tol}{2}} and 
+\eqn{\alpha_0 + \frac{tol}{2}}, then the data is reversed.}
 }
 \description{
 Reverse the trace position.

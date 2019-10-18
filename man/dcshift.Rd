@@ -8,22 +8,22 @@
 \S4method{dcshift}{GPR}(x, u = NULL, FUN = mean, ..., track = TRUE)
 }
 \arguments{
-\item{x}{[\code{GPR class}]\cr An object of the class \code{GPR}.}
+\item{x}{[\code{GPR class}] An object of the class \code{GPR}.}
 
-\item{u}{[\code{integer}]\cr Index of the trace samples used to evaluate for
+\item{u}{[\code{integer}] Index of the trace samples used to evaluate for
 every trace the DC-shift. If \code{u = NULL}, the function takes
 for each trace 90\% of the samples before time-zero (the number
 of samples can vary from trace to trace).}
 
-\item{FUN}{[\code{function}]\cr A function to apply on the \code{u} trace 
+\item{FUN}{[\code{function}] A function to apply on the \code{u} trace 
 samples (default is \code{mean}; alternatively, \code{median} 
 could be of interest because it is more robust but slower to 
 compute).}
 
-\item{...}{[\code{ANY}]\cr Further arguments to be passed to \code{FUN}.}
+\item{...}{[\code{ANY}] Further arguments to be passed to \code{FUN}.}
 }
 \value{
-[\code{GPR class}]\cr An object of the class \code{GPR}.
+[\code{GPR class}] An object of the class \code{GPR}.
 }
 \description{
 The direct-current offset (DC-shift) is estimated and removed from every 

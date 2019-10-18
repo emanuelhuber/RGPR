@@ -101,9 +101,9 @@ GPRsurvey <- function(LINES, verbose = TRUE){
       # }else{
       #   xyzCoords[[line_names[i] ]] <- gpr@coord
       # }
-      xyzCoords[[line_names[i]]] <- as.matrix(value[[i]])
+      # xyzCoords[[line_names[i]]] <- as.matrix(value[[i]])
+      xyzCoords[[line_names[i]]] <- gpr@coord
       colnames(xyzCoords[[line_names[i]]]) <- c("x", "y", "z")
-      
       line_lengths[i] <- posLine(gpr@coord[, 1:2], last = TRUE)
     }else{
       line_lengths[i] <- gpr@dx * ncol(gpr@data)

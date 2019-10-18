@@ -13,24 +13,24 @@
   tend = NULL, tcst = NULL, track = TRUE)
 }
 \arguments{
-\item{x}{[\code{GPR class}]\cr An object of the class GPR.}
+\item{x}{[\code{GPR class}] An object of the class GPR.}
 
-\item{a}{[\code{numeric(1)}]\cr Parameter of the exponential filter
+\item{a}{[\code{numeric(1)}] Parameter of the exponential filter
 (\code{a} \eqn{\geq} 0).}
 
-\item{b}{[\code{numeric(1)}]\cr Parameter of the power filter
+\item{b}{[\code{numeric(1)}] Parameter of the power filter
 (\code{b} \eqn{\geq} 0). Usually, \code{b = 1}.}
 
-\item{t0}{[\code{numeric}]\cr Start time of the gain filter
+\item{t0}{[\code{numeric}] Start time of the gain filter
 (if \code{t0 = NULL}, \code{t0} is set equal to \code{time0(x)}).}
 
-\item{tend}{[\code{numeric(1)}]\cr End time of the gain filter (optional)}
+\item{tend}{[\code{numeric(1)}] End time of the gain filter (optional)}
 
-\item{tcst}{[\code{numeric(1)}]\cr Constant time: the gain before 
+\item{tcst}{[\code{numeric(1)}] Constant time: the gain before 
 \code{tcst} is set equal to the gain value at \code{tcst}.}
 }
 \value{
-[\code{GPR class}]\cr An object of the class GPR.
+[\code{GPR class}] An object of the class GPR.
 }
 \description{
 \code{gainSEC} Applies a combination of a power and exponential time gain to compensate for 

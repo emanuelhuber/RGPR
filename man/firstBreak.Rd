@@ -9,36 +9,36 @@
   thr = 0.12, w = 11, ns = NULL, bet = NULL)
 }
 \arguments{
-\item{x}{[\code{GPR class}]\cr An object of the class \code{GPR}}
+\item{x}{[\code{GPR class}] An object of the class \code{GPR}}
 
-\item{method}{[\code{character(1)}]\cr Method to be applied (either
+\item{method}{[\code{character(1)}] Method to be applied (either
 \code{coppens}, \code{threshold} or \code{MER}). 
 \code{"coppens"} corresponds to the modified Coppens method, 
 \code{"threshold"} to the threshold method, 
 and \code{"MER"} to the modified energy ratio method.}
 
-\item{thr}{[\code{numeric(1)}]\cr Threshold for the signal 
+\item{thr}{[\code{numeric(1)}] Threshold for the signal 
 amplitude (in \%) at which time zero is picked (only for the
 threshold method). \code{thr} ranges between 0 and 1.}
 
-\item{w}{[\code{numeric(1)}]\cr Length of the leading window in unit of time
+\item{w}{[\code{numeric(1)}] Length of the leading window in unit of time
 (only for the modified Coppens and modified energy ratio 
 methods). Recommended value: about one period of the first-arrival 
 waveform.}
 
-\item{ns}{[\code{numeric(1)}]\cr Length of the edge preserving smoothing 
+\item{ns}{[\code{numeric(1)}] Length of the edge preserving smoothing 
 window in unit of time (only for the modified Coppens 
 method). Recommended value: between one and two signal periods.
 When \code{ns = NULL} the value of \code{ns} is set to 
 \code{1.5 * w}.}
 
-\item{bet}{[\code{numeric(1)}]\cr Stabilisation constant (only for the 
+\item{bet}{[\code{numeric(1)}] Stabilisation constant (only for the 
 modified Coppens method). Not critical. 
 When \code{bet = NULL} the value of \code{bet} is set to 
 20\% of the maximal signal amplitude.}
 }
 \value{
-[\code{numeric(n)}]\cr The time of the first wave break for every
+[\code{numeric(n)}] The time of the first wave break for every
         traces in unit of time (\code{n = ncol(x) =} number of traces).
 }
 \description{

@@ -51,6 +51,8 @@ the Karhunen-Loeve (KL) transformation or the eigenimage decomposition.
 }
 \examples{
  
+data(frenkeLine00)
+x <- frenkeLine00
 x1 <- eigenFilter(x, eigenvalue = c(1,3))
 plot(x)
 plot(x1)

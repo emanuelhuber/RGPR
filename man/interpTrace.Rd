@@ -9,9 +9,9 @@
   "nearest", "spline", "cubic"), crop = TRUE, track = TRUE)
 }
 \arguments{
-\item{x}{[\code{GPR class}]\cr An object of the class \code{GPR}}
+\item{x}{[\code{GPR class}] An object of the class \code{GPR}}
 
-\item{z}{[\code{numeric}]\cr Either an interval (e.g., time interval)
+\item{z}{[\code{numeric}] Either an interval (e.g., time interval)
 to interpolate the traces at regular interval or a vector
 of \eqn{m} elements (\eqn{m} is equal to the number of traces)
 Amount of time (or depth, depending on the
@@ -20,7 +20,7 @@ trace unit) to shift the traces.
 the same amount \code{ts}) or a vector with \eqn{m} elements 
 (\eqn{m} is equal to the number of traces).}
 
-\item{method}{[\code{character(1)}]\cr Interpolation method to be applied
+\item{method}{[\code{character(1)}] Interpolation method to be applied
 (one of \code{pchip} \code{linear}, \code{nearest}, 
 \code{spline}, \code{cubic}, \code{none}, 
 see also \code{\link[signal]{interp1}}). 
@@ -28,12 +28,12 @@ see also \code{\link[signal]{interp1}}).
 amount of trace samples the closest to \code{ts} without
 interpolation.}
 
-\item{crop}{[\code{logical(1)}]\cr 
+\item{crop}{[\code{logical(1)}] 
 If \code{TRUE} (default), remove the rows containing only 
 zero's (no data).}
 }
 \value{
-[\code{GPR class}]\cr An object of the class GPR.
+[\code{GPR class}] An object of the class GPR.
 }
 \description{
 Interpolate every trace at regular interval or at given positions

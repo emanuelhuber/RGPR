@@ -10,14 +10,14 @@
   track = TRUE)
 }
 \arguments{
-\item{x}{[\code{GPR class}]\cr An object of the class \code{GPR}}
+\item{x}{[\code{GPR class}] An object of the class \code{GPR}}
 
-\item{t0}{[\code{DEPRECATED}]\cr DEPRECATED - NO MORE USED.
+\item{t0}{[\code{DEPRECATED}] DEPRECATED - NO MORE USED.
 Instead, set time-zero with either 
 \code{time0(x) <- ...} or 
 \code{x <- setTime0(x, ...)}.}
 
-\item{method}{[\code{character(1)}]\cr Interpolation method to be applied
+\item{method}{[\code{character(1)}] Interpolation method to be applied
 (one of \code{pchip} \code{linear}, \code{nearest}, 
 \code{spline}, \code{cubic}, \code{none}, 
 see also \code{\link[signal]{interp1}}). 
@@ -25,14 +25,14 @@ see also \code{\link[signal]{interp1}}).
 amount of trace samples the closest to \code{ts} without
 interpolation.}
 
-\item{crop}{[\code{logical(1)}]\cr 
+\item{crop}{[\code{logical(1)}] 
 If \code{TRUE} (default), remove the rows containing only 
 zero's (no data).}
 
-\item{keep}{[\code{DEPRECATED}]\cr DEPRECATED - NO MORE USED.}
+\item{keep}{[\code{DEPRECATED}] DEPRECATED - NO MORE USED.}
 }
 \value{
-[\code{GPR class}]\cr An object of the class \code{GPR}
+[\code{GPR class}] An object of the class \code{GPR}
 }
 \description{
 \code{time0Cor} shift the traces vertically such that they start at

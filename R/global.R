@@ -7,6 +7,8 @@
 
 # check lockBinding  (bibliotheque/documents/R/manuel-S4)
 
+
+
 #--------------------------------------------#
 #---------------- SETGENERIC ----------------#
 # setGenericVerif <- function(x,y){
@@ -617,7 +619,7 @@ setGenericVerif("writeSurvey", function(x, fPath, overwrite=FALSE){
 #' @name interpSlices
 #' @rdname interpSlices
 #' @export
-setGenericVerif("interpSlices", function(x, dx = NULL, dy = NULL, dz = NULLL, 
+setGenericVerif("interpSlices", function(x, dx = NULL, dy = NULL, dz = NULL, 
                                          h = 6){ 
   standardGeneric("interpSlices")})
 
@@ -1723,11 +1725,11 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
       rgl::rgl.surface(Y, X, Z, color = colA, back = back, 
                        smooth = smooth, lit = lit, lwd = lwd, ...) 
     }
-    lines3d(y, z0, x, col = "black", alpha = 1, lwd = lwd)   
-    lines3d(y, (z0 - z[length(z)]), x, col = "black", alpha = 1, lwd = lwd)   
-    lines3d(rep(y[1], 2), (z0[1] - z), rep(x[1], 2), col = "black", 
+    rgl::lines3d(y, z0, x, col = "black", alpha = 1, lwd = lwd)   
+    rgl::lines3d(y, (z0 - z[length(z)]), x, col = "black", alpha = 1, lwd = lwd)   
+    rgl::lines3d(rep(y[1], 2), (z0[1] - z), rep(x[1], 2), col = "black", 
             alpha = 1, lwd = lwd)
-    lines3d(rep(y[length(y)], 2), (z0[length(z0)] - z), rep(x[length(x)], 2),
+    rgl::lines3d(rep(y[length(y)], 2), (z0[length(z0)] - z), rep(x[length(x)], 2),
             col = "black", alpha = 1, lwd = lwd)   
     
   }else{
@@ -4028,7 +4030,7 @@ repmat <- function(A,n,m) {
 #' match the dimension of the other matrix.
 #' match the dimension of the other matrix.
 #' @param A A numeric vector or matrix.
-#' @param A B numeric vector or matrix.
+#' @param k B numeric vector or matrix.
 #' @name convolution
 #' @rdname convolution
 #' @export
@@ -5253,7 +5255,7 @@ readUtsiHDR <- function(con){
 
 
 
-readUtsiDat <- function(con, splPerScan = 512, bits = hd$bits){
+readUtsiDat <- function(con, splPerScan = 512, bits = 16){
   con_len <- .flen(con)
   # seek(con, where = 0, "start")
   # xraw <- readBin(con, what = "integer", n = con_len, size = 2, endian = "little")
@@ -5697,7 +5699,7 @@ checkArg <- function(x, u, type, y, ...){
   msg <- NULL
   switch(type,
          "COUNT" = {
-           if(!testCount(x)){
+           if(!checkmate::testCount(x)){
              msg <- "must be a positiv integer"
            }
          },
@@ -5799,7 +5801,7 @@ checkArg <- function(x, u, type, y, ...){
                                       null.ok = TRUE)){
              msg <- "must be a numeric value"
              if(is.finite(y)) msg <- paste0(msg, " < ", y)
-             msg <- past0(msg, " or a 'NULL'")
+             msg <- paste0(msg, " or a 'NULL'")
            }
          },
          # length = 1, Strictly POSitive

@@ -9,15 +9,15 @@
   "gaussian"), w = NULL, track = TRUE)
 }
 \arguments{
-\item{x}{[\code{GPR class}]\cr An object of the class GPR.}
+\item{x}{[\code{GPR class}] An object of the class GPR.}
 
-\item{type}{[\code{character(1)}]\cr Dewow method,
+\item{type}{[\code{character(1)}] Dewow method,
 one of \code{runmed} (running median),
 \code{runmean} (running mean), 
 \code{MAD} (DEPRECATED Median Absolute Deviation), 
 \code{Gaussian} (Gaussian smoothing).}
 
-\item{w}{[\code{numeric(1)}]\cr If \code{type} = \code{runmed}, 
+\item{w}{[\code{numeric(1)}] If \code{type} = \code{runmed}, 
 \code{MAD} or \code{runmean}, window length of the filter in
 trace unit;
 If \code{type} = \code{Gaussian}, standard deviation in trace
@@ -27,7 +27,7 @@ wavelength corresponding to the maximum frequency of x
 (estimated with \code{\link{spec}})}
 }
 \value{
-[\code{GPR class}]\cr An object of the class GPR whose traces are dewowed.
+[\code{GPR class}] An object of the class GPR whose traces are dewowed.
 }
 \description{
 \code{dewow} remove the low-frequency component (the so-called 'wow') of 

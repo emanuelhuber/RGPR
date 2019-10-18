@@ -813,7 +813,7 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
   }
   if(length(antfreq) == 0){
     antfreq <- 0
-    message("Antenna frequency set to 0 MHz. Set it with 'antfreq(x) <- ... '́")
+    message("Antenna frequency set to 0 MHz. Set it with 'antfreq(x) <- ... '")
    # antsep <- numeric(0)
   }
   #else{
@@ -832,7 +832,7 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
       traces      = 1:ncol(x$data),
       fid         = x_fid,
       #coord = coord,
-      coord       = matrix(nro = 0, ncol = 0),
+      coord       = matrix(nrow = 0, ncol = 0),
       pos         = x_pos,
       depth       = x$depth[1:nrow(x$data)],
       rec         = matrix(nrow = 0, ncol = 0),
@@ -912,7 +912,7 @@ readSGY <- function(dsn, fName = "", fPath = "", desc = "",
         traces      = 1:ncol(x$data),
         fid         = rep("", ncol(x$data)),
         #coord = coord,
-        coord       = matrix(nro = 0, ncol = 0),
+        coord       = matrix(nrow = 0, ncol = 0),
         pos         = 1:ncol(x$data),
         depth       = 1:nrow(x$data),
         rec         = matrix(nrow = 0, ncol = 0),
@@ -2579,7 +2579,7 @@ setMethod("plotAmpl", "GPR", function(x, npad = 100, FUN = mean, add = FALSE,
 #' @examples
 #' data(frenkeLine00)
 #' A <- dewow(frenkeLine00, type = "Gaussian")
-#' processing(A)
+#' proc(A)
 #' @name processing
 #' @rdname processing
 #' @export
@@ -2610,18 +2610,18 @@ setMethod("processing", "GPR", function(x){
 #'   \item \code{proc}: updated with function name and arguments.
 #' }
 #' 
-#' @param x [\code{GPR class}]\cr An object of the class \code{GPR}.
-#' @param u [\code{integer}]\cr Index of the trace samples used to evaluate for
+#' @param x [\code{GPR class}] An object of the class \code{GPR}.
+#' @param u [\code{integer}] Index of the trace samples used to evaluate for
 #'          every trace the DC-shift. If \code{u = NULL}, the function takes
 #'          for each trace 90\% of the samples before time-zero (the number
 #'          of samples can vary from trace to trace).  
-#' @param FUN [\code{function}]\cr A function to apply on the \code{u} trace 
+#' @param FUN [\code{function}] A function to apply on the \code{u} trace 
 #'            samples (default is \code{mean}; alternatively, \code{median} 
 #'            could be of interest because it is more robust but slower to 
 #'            compute).
-#' @param ... [\code{ANY}]\cr Further arguments to be passed to \code{FUN}. 
+#' @param ... [\code{ANY}] Further arguments to be passed to \code{FUN}. 
 #'          
-#' @return [\code{GPR class}]\cr An object of the class \code{GPR}.
+#' @return [\code{GPR class}] An object of the class \code{GPR}.
 #' 
 #' @examples 
 #' data("frenkeLine00")
@@ -2683,30 +2683,30 @@ setMethod("dcshift", "GPR", function(x, u = NULL, FUN = mean, ...,
 #' Pick the time corresponding to the first break of each trace in the GPR profile.
 #' Return a vector containing the first break times.
 #' 
-#' @param x [\code{GPR class}]\cr An object of the class \code{GPR}
-#' @param method [\code{character(1)}]\cr Method to be applied (either
+#' @param x [\code{GPR class}] An object of the class \code{GPR}
+#' @param method [\code{character(1)}] Method to be applied (either
 #'              \code{coppens}, \code{threshold} or \code{MER}). 
 #'              \code{"coppens"} corresponds to the modified Coppens method, 
 #'              \code{"threshold"} to the threshold method, 
 #'              and \code{"MER"} to the modified energy ratio method.
-#' @param thr [\code{numeric(1)}]\cr Threshold for the signal 
+#' @param thr [\code{numeric(1)}] Threshold for the signal 
 #'              amplitude (in \%) at which time zero is picked (only for the
 #'              threshold method). \code{thr} ranges between 0 and 1.
-#' @param w [\code{numeric(1)}]\cr Length of the leading window in unit of time
+#' @param w [\code{numeric(1)}] Length of the leading window in unit of time
 #'          (only for the modified Coppens and modified energy ratio 
 #'          methods). Recommended value: about one period of the first-arrival 
 #'          waveform.
-#' @param ns [\code{numeric(1)}]\cr Length of the edge preserving smoothing 
+#' @param ns [\code{numeric(1)}] Length of the edge preserving smoothing 
 #'           window in unit of time (only for the modified Coppens 
 #'           method). Recommended value: between one and two signal periods.
 #'           When \code{ns = NULL} the value of \code{ns} is set to 
 #'           \code{1.5 * w}.
-#' @param bet [\code{numeric(1)}]\cr Stabilisation constant (only for the 
+#' @param bet [\code{numeric(1)}] Stabilisation constant (only for the 
 #'            modified Coppens method). Not critical. 
 #'            When \code{bet = NULL} the value of \code{bet} is set to 
 #'            20\% of the maximal signal amplitude.
 #'            
-#' @return [\code{numeric(n)}]\cr The time of the first wave break for every
+#' @return [\code{numeric(n)}] The time of the first wave break for every
 #'         traces in unit of time (\code{n = ncol(x) =} number of traces).
 #'         
 #' @seealso \code{\link{firstBreakToTime0}} to convert time of first wave break
@@ -2827,37 +2827,37 @@ time0Estimation <- function(...){
 #'   \item \code{proc}: updated with function name and arguments.
 #' }
 #'
-#' @param x [\code{GPR class}]\cr An object of the class \code{GPR}
-#' @param method [\code{character(1)}]\cr Method to be applied (either
+#' @param x [\code{GPR class}] An object of the class \code{GPR}
+#' @param method [\code{character(1)}] Method to be applied (either
 #'              \code{coppens}, \code{threshold} or \code{MER}). 
 #'              \code{"coppens"} corresponds to the modified Coppens method, 
 #'              \code{"threshold"} to the threshold method, 
 #'              and \code{"MER"} to the modified energy ratio method.
-#' @param thr [\code{numeric(1)}]\cr Threshold for the signal 
+#' @param thr [\code{numeric(1)}] Threshold for the signal 
 #'              amplitude (in \%) at which time zero is picked (only for the
 #'              threshold method). \code{thr} ranges between 0 and 1.
-#' @param w [\code{numeric(1)}]\cr Length of the leading window in unit of time
+#' @param w [\code{numeric(1)}] Length of the leading window in unit of time
 #'          (only for the modified Coppens and modified energy ratio 
 #'          methods). Recommended value: about one period of the first-arrival 
 #'          waveform.
-#' @param ns [\code{numeric(1)}]\cr Length of the edge preserving smoothing 
+#' @param ns [\code{numeric(1)}] Length of the edge preserving smoothing 
 #'           window in unit of time (only for the modified Coppens 
 #'           method). Recommended value: between one and two signal periods.
 #'           When \code{ns = NULL} the value of \code{ns} is set to 
 #'           \code{1.5 * w}.
-#' @param bet [\code{numeric(1)}]\cr Stabilisation constant (only for the 
+#' @param bet [\code{numeric(1)}] Stabilisation constant (only for the 
 #'            modified Coppens method). Not critical. 
 #'            When \code{bet = NULL} the value of \code{bet} is set to 
 #'            20\% of the maximal signal amplitude. 
-#' @param c0     [\code{numeric(1)}]\cr Propagation speed of the GPR wave 
+#' @param c0     [\code{numeric(1)}] Propagation speed of the GPR wave 
 #'               through air in unit of space per unit of time 
 #'               (generally in m/ns).
-#' @param FUN [\code{function}]\cr A function to apply on the 
+#' @param FUN [\code{function}] A function to apply on the 
 #'            estimated time-zero of every traces (e.g., \code{mean} or 
 #'            \code{median} to get set a single time-zero value to the data).
-#' @param ... [\code{ANY}]\cr Further arguments to be passed to \code{FUN}.
+#' @param ... [\code{ANY}] Further arguments to be passed to \code{FUN}.
 #'  
-#' @return [\code{GPR class}]\cr An object of the class \code{GPR}.
+#' @return [\code{GPR class}] An object of the class \code{GPR}.
 #'          
 #' @seealso \code{\link{firstBreak}} to estimate the first wave break;
 #'          \code{\link{firstBreakToTime0}} to convert the first wave break
@@ -2930,24 +2930,24 @@ setMethod("estimateTime0", "GPR",
 #'   \item \code{proc}: updated with function name and arguments.
 #' }
 #'
-#' @param x      [\code{GPR class}]\cr An object of the class \code{GPR}
-#' @param ts     [\code{numeric}]\cr Amount of time (or depth, depending on the
+#' @param x      [\code{GPR class}] An object of the class \code{GPR}
+#' @param ts     [\code{numeric}] Amount of time (or depth, depending on the
 #'               trace unit) to shift the traces. 
 #'               \code{ts} is eiter a single value (all the traces are shifted by 
 #'               the same amount \code{ts}) or a vector with \eqn{m} elements 
 #'               (\eqn{m} is equal to the number of traces).
-#' @param method [\code{character(1)}]\cr Interpolation method to be applied
+#' @param method [\code{character(1)}] Interpolation method to be applied
 #'               (one of \code{pchip} \code{linear}, \code{nearest}, 
 #'               \code{spline}, \code{cubic}, \code{none}, 
 #'               see also \code{\link[signal]{interp1}}). 
 #'                \code{"none"} means that the trace is shifted by the
 #'               amount of trace samples the closest to \code{ts} without
 #'               interpolation.
-#' @param crop   [\code{logical(1)}]\cr 
+#' @param crop   [\code{logical(1)}] 
 #'               If \code{TRUE} (default), remove the rows containing only 
 #'               zero's (no data).
 #'              
-#' @return [\code{GPR class}]\cr An object of the class GPR.
+#' @return [\code{GPR class}] An object of the class GPR.
 #' 
 #' @seealso \code{\link{time0Cor}} to shift the traces such that they start
 #'          at time-zero.
@@ -3011,8 +3011,8 @@ setMethod("traceShift",
 #'   \item \code{proc}: updated with function name and arguments.
 #' }
 #'
-#' @param x      [\code{GPR class}]\cr An object of the class \code{GPR}
-#' @param z      [\code{numeric}]\cr Either an interval (e.g., time interval)
+#' @param x      [\code{GPR class}] An object of the class \code{GPR}
+#' @param z      [\code{numeric}] Either an interval (e.g., time interval)
 #'               to interpolate the traces at regular interval or a vector
 #'               of \eqn{m} elements (\eqn{m} is equal to the number of traces)
 #'               Amount of time (or depth, depending on the
@@ -3020,18 +3020,18 @@ setMethod("traceShift",
 #'               \code{ts} is eiter a single value (all the traces are shifted by 
 #'               the same amount \code{ts}) or a vector with \eqn{m} elements 
 #'               (\eqn{m} is equal to the number of traces).
-#' @param method [\code{character(1)}]\cr Interpolation method to be applied
+#' @param method [\code{character(1)}] Interpolation method to be applied
 #'               (one of \code{pchip} \code{linear}, \code{nearest}, 
 #'               \code{spline}, \code{cubic}, \code{none}, 
 #'               see also \code{\link[signal]{interp1}}). 
 #'                \code{"none"} means that the trace is shifted by the
 #'               amount of trace samples the closest to \code{ts} without
 #'               interpolation.
-#' @param crop   [\code{logical(1)}]\cr 
+#' @param crop   [\code{logical(1)}] 
 #'               If \code{TRUE} (default), remove the rows containing only 
 #'               zero's (no data).
 #'              
-#' @return [\code{GPR class}]\cr An object of the class GPR.
+#' @return [\code{GPR class}] An object of the class GPR.
 #' 
 #' @name interpTrace
 #' @rdname interpTrace
@@ -3110,24 +3110,24 @@ setMethod("interpTrace",
 #'   \item \code{proc}: updated with function name and arguments.
 #' }
 #'  
-#' @param x      [\code{GPR class}]\cr An object of the class \code{GPR}
-#' @param t0     [\code{DEPRECATED}]\cr DEPRECATED - NO MORE USED.
+#' @param x      [\code{GPR class}] An object of the class \code{GPR}
+#' @param t0     [\code{DEPRECATED}] DEPRECATED - NO MORE USED.
 #'               Instead, set time-zero with either 
 #'               \code{time0(x) <- ...} or 
 #'               \code{x <- setTime0(x, ...)}.
-#' @param method [\code{character(1)}]\cr Interpolation method to be applied
+#' @param method [\code{character(1)}] Interpolation method to be applied
 #'               (one of \code{pchip} \code{linear}, \code{nearest}, 
 #'               \code{spline}, \code{cubic}, \code{none}, 
 #'               see also \code{\link[signal]{interp1}}). 
 #'                \code{"none"} means that the trace is shifted by the
 #'               amount of trace samples the closest to \code{ts} without
 #'               interpolation.
-#' @param keep   [\code{DEPRECATED}]\cr DEPRECATED - NO MORE USED.
-#' @param crop   [\code{logical(1)}]\cr 
+#' @param keep   [\code{DEPRECATED}] DEPRECATED - NO MORE USED.
+#' @param crop   [\code{logical(1)}] 
 #'               If \code{TRUE} (default), remove the rows containing only 
 #'               zero's (no data).
 #'               
-#' @return [\code{GPR class}]\cr An object of the class \code{GPR}
+#' @return [\code{GPR class}] An object of the class \code{GPR}
 #' 
 #' @examples
 #' data(frenkeLine00)
@@ -3239,13 +3239,13 @@ setMethod("time0Cor", "GPR", function(x, t0 = NULL,
 #'   \item \code{proc}: updated with function name and arguments.
 #' }
 #' 
-#' @param x  [\code{GPR class}]\cr An object of the class \code{GPR}
-#' @param t0 [\code{DEPRECATED}]\cr DEPRECATED - NO MORE USED.
+#' @param x  [\code{GPR class}] An object of the class \code{GPR}
+#' @param t0 [\code{DEPRECATED}] DEPRECATED - NO MORE USED.
 #'           Instead, set time-zero with either 
 #'           \code{time0(x) <- ...} or 
 #'           \code{x <- setTime0(x, ...)}.
 #'               
-#' @return [\code{GPR class}]\cr An object of the class \code{GPR}
+#' @return [\code{GPR class}] An object of the class \code{GPR}
 #'              
 #' @seealso \code{\link{time0}} to set time zero and 
 #'          \code{\link{firstBreakToTime0}} to convert the first wave break
@@ -3352,13 +3352,13 @@ setMethod("timeCorOffset", "GPR", function(x, t0 = NULL, track = TRUE){
 #'   \item \code{proc}: updated with function name and arguments.
 #' }
 #' 
-#' @param x    [\code{GPR class}]\cr An object of the class GPR.
-#' @param type [\code{character(1)}]\cr Dewow method,
+#' @param x    [\code{GPR class}] An object of the class GPR.
+#' @param type [\code{character(1)}] Dewow method,
 #'             one of \code{runmed} (running median),
 #'             \code{runmean} (running mean), 
 #'             \code{MAD} (DEPRECATED Median Absolute Deviation), 
 #'             \code{Gaussian} (Gaussian smoothing).
-#' @param w    [\code{numeric(1)}]\cr If \code{type} = \code{runmed}, 
+#' @param w    [\code{numeric(1)}] If \code{type} = \code{runmed}, 
 #'             \code{MAD} or \code{runmean}, window length of the filter in
 #'             trace unit;
 #'             If \code{type} = \code{Gaussian}, standard deviation in trace
@@ -3367,7 +3367,7 @@ setMethod("timeCorOffset", "GPR", function(x, t0 = NULL, track = TRUE){
 #'             wavelength corresponding to the maximum frequency of x 
 #'             (estimated with \code{\link{spec}})
 #'             
-#' @return [\code{GPR class}]\cr An object of the class GPR whose traces are dewowed.
+#' @return [\code{GPR class}] An object of the class GPR whose traces are dewowed.
 #' @examples
 #' data(frenkeLine00)
 #' A <- dewow(frenkeLine00, type = "Gaussian")
@@ -3465,18 +3465,18 @@ setMethod("gain", "GPR", function(x,
 #'   \item \code{proc}: updated with function name and arguments.
 #' }
 #' 
-#' @param x    [\code{GPR class}]\cr An object of the class GPR.
-#' @param a    [\code{numeric(1)}]\cr Parameter of the exponential filter
+#' @param x    [\code{GPR class}] An object of the class GPR.
+#' @param a    [\code{numeric(1)}] Parameter of the exponential filter
 #'             (\code{a} \eqn{\geq} 0).
-#' @param b    [\code{numeric(1)}]\cr Parameter of the power filter
+#' @param b    [\code{numeric(1)}] Parameter of the power filter
 #'             (\code{b} \eqn{\geq} 0). Usually, \code{b = 1}.
-#' @param t0   [\code{numeric}]\cr Start time of the gain filter
+#' @param t0   [\code{numeric}] Start time of the gain filter
 #'             (if \code{t0 = NULL}, \code{t0} is set equal to \code{time0(x)}).
-#' @param tend [\code{numeric(1)}]\cr End time of the gain filter (optional)
-#' @param tcst [\code{numeric(1)}]\cr Constant time: the gain before 
+#' @param tend [\code{numeric(1)}] End time of the gain filter (optional)
+#' @param tcst [\code{numeric(1)}] Constant time: the gain before 
 #'             \code{tcst} is set equal to the gain value at \code{tcst}.
 #'             
-#' @return [\code{GPR class}]\cr An object of the class GPR.
+#' @return [\code{GPR class}] An object of the class GPR.
 #' 
 #' @seealso \code{\link{gainAGC}}
 #'                            
@@ -3591,15 +3591,15 @@ setMethod("getGainSEC", "GPR", function(x, a = 0.01, b = 1,
 #'   \item \code{proc}: updated with function name and arguments.
 #' }
 #' 
-#' @param x    [\code{GPR class}]\cr An object of the class GPR.
-#' @param w    [\code{numeric(1)}]\cr Standard deviation of the 
+#' @param x    [\code{GPR class}] An object of the class GPR.
+#' @param w    [\code{numeric(1)}] Standard deviation of the 
 #'             Gaussian smoother (in trace unit).
-#' @param p    [\code{numeric(1)}]\cr Parameter of the power filter
+#' @param p    [\code{numeric(1)}] Parameter of the power filter
 #'             (\code{b} \eqn{\geq} 0). Usually, \code{b = 1}.
-#' @param r   [\code{numeric}]\cr Start time of the gain filter
+#' @param r   [\code{numeric}] Start time of the gain filter
 #'             (if \code{t0 = NULL}, \code{t0} is set equal to \code{time0(x)}).
 #'             
-#' @return [\code{GPR class}]\cr An object of the class GPR.
+#' @return [\code{GPR class}] An object of the class GPR.
 #' 
 #' @seealso \code{\link{gainSEC}}
 #' 
@@ -3966,8 +3966,8 @@ setMethod("backgroundSub", "GPR", function(x, width = 21, trim = 0.2,
     width <- width + 1
   }
   y0 <- as.matrix(x[, c(((width - 1)/2 + 1):2, 
-                        seq_along(x1), 
-                        ncol(x1) - 1:((width - 1)/2))])
+                        seq_along(x), 
+                        ncol(x) - 1:((width - 1)/2))])
   test <- c()
   i <- 0
   
@@ -3983,7 +3983,7 @@ setMethod("backgroundSub", "GPR", function(x, width = 21, trim = 0.2,
   }
   message("Residuals: ", paste(round(test, 3), collapse = " "))
   x <- x - y0[, - c(1:((width-1)/2), 
-                    (width-1)/2  + ncol(x1) + 1:((width-1)/2))]
+                    (width-1)/2  + ncol(x) + 1:((width-1)/2))]
   if(isTRUE(track)) proc(x) <- getArgs()
   return(x)
 }
@@ -4136,6 +4136,8 @@ setMethod("fkFilter", "GPR", function(x, fk = NULL, L = c(5 , 5), npad = 1,
 #'         }
 #'         
 #' @examples  
+#' data(frenkeLine00)
+#' x <- frenkeLine00
 #' x1 <- eigenFilter(x, eigenvalue = c(1,3))
 #' plot(x)
 #' plot(x1)
@@ -5639,8 +5641,8 @@ relPos <- function(x){
 #'           if the data have the same orientation. The first data of the 
 #'           cluster is set as reference angle \eqn{\alpha_0}, then for data 
 #'           \eqn{i} in the same cluster, if \eqn{\alpha_i} is not between
-#'           \eqn{\alpha_0 - \frac{\text{tol}{2}}} and 
-#'           \eqn{\alpha_0 + \frac{\text{tol}{2}}}, then the data is reversed.
+#'           \eqn{\alpha_0 - \frac{tol}{2}} and 
+#'           \eqn{\alpha_0 + \frac{tol}{2}}, then the data is reversed.
 #' @name reverse
 #' @rdname reverse
 #' @examples 
@@ -6381,9 +6383,9 @@ setMethod("CMPAnalysis", "GPR", function(x, method = c("semblance",
 #' Migration of the GPR data
 #' 
 #' Fresnel zone defined according to 
-#' Pérez-Gracia et al. (2008) Horizontal resolution in a non-destructive
+#' Perez-Gracia et al. (2008) Horizontal resolution in a non-destructive
 #' shallow GPR survey: An experimental evaluation. NDT & E International,
-#' 41(8): 611–620.
+#' 41(8): 611-620.
 #' doi:10.1016/j.ndteint.2008.06.002
 #'
 #' @name migration

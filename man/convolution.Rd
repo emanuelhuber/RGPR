@@ -9,7 +9,7 @@ convolution(A, k)
 \arguments{
 \item{A}{A numeric vector or matrix.}
 
-\item{A}{B numeric vector or matrix.}
+\item{k}{B numeric vector or matrix.}
 }
 \description{
 If A (or B) is a numeric vector, it is converted into a one-column 

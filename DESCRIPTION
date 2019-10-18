@@ -14,7 +14,8 @@ Maintainer: Emanuel Huber <emanuel.huber@alumni.ethz.ch>
 Description: S4 classes and R functions to read, write, analyse and visualise
     ground-penetrating radar (GPR) data.
 Depends:
-	base
+	base,
+	R (>= 2.10)
 License: GPL (>= 2)
 URL: https://github.com/emanuelhuber/RGPR
 BugReports: https://github.com/emanuelhuber/RGPR/issues
@@ -27,6 +28,7 @@ Collate:
   'ClassGPRsurvey.R'
   'ClassGPRcube.R'
   'ClassMisc.R'
+  'hyperbola.R'
   'data.R'
 Imports:
     methods,
@@ -53,7 +55,8 @@ Imports:
     geojsonsf,
     sf,
     XML,
-    checkmate
+    checkmate,
+    RConics
 RoxygenNote: 6.1.1
 Suggests: 
     testthat

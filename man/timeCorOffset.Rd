@@ -11,15 +11,15 @@ firstBreakToTime0(fb, x, c0 = 0.299)
 \S4method{timeCorOffset}{GPR}(x, t0 = NULL, track = TRUE)
 }
 \arguments{
-\item{x}{[\code{GPR class}]\cr An object of the class \code{GPR}}
+\item{x}{[\code{GPR class}] An object of the class \code{GPR}}
 
-\item{t0}{[\code{DEPRECATED}]\cr DEPRECATED - NO MORE USED.
+\item{t0}{[\code{DEPRECATED}] DEPRECATED - NO MORE USED.
 Instead, set time-zero with either 
 \code{time0(x) <- ...} or 
 \code{x <- setTime0(x, ...)}.}
 }
 \value{
-[\code{GPR class}]\cr An object of the class \code{GPR}
+[\code{GPR class}] An object of the class \code{GPR}
 }
 \description{
 Account for the delay time between time of wave emission and time of first

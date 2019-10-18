@@ -8,19 +8,19 @@
 \S4method{gainAGC}{GPR}(x, w = 10, p = 2, r = 0.5, track = TRUE)
 }
 \arguments{
-\item{x}{[\code{GPR class}]\cr An object of the class GPR.}
+\item{x}{[\code{GPR class}] An object of the class GPR.}
 
-\item{w}{[\code{numeric(1)}]\cr Standard deviation of the 
+\item{w}{[\code{numeric(1)}] Standard deviation of the 
 Gaussian smoother (in trace unit).}
 
-\item{p}{[\code{numeric(1)}]\cr Parameter of the power filter
+\item{p}{[\code{numeric(1)}] Parameter of the power filter
 (\code{b} \eqn{\geq} 0). Usually, \code{b = 1}.}
 
-\item{r}{[\code{numeric}]\cr Start time of the gain filter
+\item{r}{[\code{numeric}] Start time of the gain filter
 (if \code{t0 = NULL}, \code{t0} is set equal to \code{time0(x)}).}
 }
 \value{
-[\code{GPR class}]\cr An object of the class GPR.
+[\code{GPR class}] An object of the class GPR.
 }
 \description{
 \code{gainAGC} applies an AGC (Automatic Gain Control) gain.

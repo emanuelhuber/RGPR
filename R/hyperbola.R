@@ -226,9 +226,9 @@ hyperbolaPlot <- function(hyp,
                           n = 100, ...){
   
   if(is.null(x)){
-    lst <- list(...)
     xlim <- par()$usr[1:2] 
-    if( length(lst) > 0 && !is.null(xlim) ){
+    lst <- list(...)
+    if( length(lst) > 0 && !is.null(lst[["xlim"]]) ){
       xlim <- lst[["xlim"]]
     }
     x <- seq(xlim[1], to = xlim[2], length.out = n)

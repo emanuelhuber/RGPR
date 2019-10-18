@@ -1,6 +1,7 @@
 ---
 layout: page
-title: Hyperbola fitting date: 2019-10-18
+title: Hyperbola fitting
+date: 2019-10-18
 ---
 
 <!--

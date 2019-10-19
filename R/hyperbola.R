@@ -75,8 +75,7 @@ hyperbolaFit <- function(x, y = NULL){
   return(hyp)
 }
 
-# An object of the class \code{hyperbola} 
-#          or a list with 3 elements named \code{x_0}, \code{t_0}, \code{vrms}.
+
 #' Simulate hyperbola
 #' 
 #' Return the time values of the hyperbola as a function of the position
@@ -125,8 +124,8 @@ hyperbolaSim <- function(x, hyp){
     if( !(all(names(hyp) %in% c("x0", "t0", "vrms"))) ){
       stop("the names of 'hyp' must be 'x0', 't0' and 'vrms'")
     }
-    hyp$z0 <- hyp$vrms * hyp$t0/2   # we need z0 later!
-    y <- 2/hyp$vrms * sqrt( (x - hyp$x0)^2 + hyp$z0^2 )
+    # hyp$z0 <- hyp$vrms * hyp$t0/2   # we need z0 later!
+    y <- 2/hyp$vrms * sqrt( (x - hyp$x0)^2 + (hyp$vrms * hyp$t0/2)^2 )
   }
   return(y)
 }

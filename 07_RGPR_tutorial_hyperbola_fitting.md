@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Hyperbola fitting
-date: 2019-10-18
+date: 2019-10-19
 ---
 
 <!--
@@ -26,6 +26,9 @@ Table of Contents
     -   [Basic processing](#basic-processing)
 -   [Hyperbola fitting](#hyperbola-fitting)
     -   [Interactive point selection and hyperbola fitting](#interactive-point-selection-and-hyperbola-fitting)
+    -   [Plot the fitted hyperbola](#plot-the-fitted-hyperbola)
+    -   [Plot an hyperbola defined by its vertex position and the root-mean-square velocity](#plot-an-hyperbola-defined-by-its-vertex-position-and-the-root-mean-square-velocity)
+    -   [Simulate an hyperbola](#simulate-an-hyperbola)
 
 Objectives of this tutorial
 ===========================
@@ -90,32 +93,92 @@ Select points interactively on the plot with
 xy <- locator(type = "l")
 ```
 
-Fit the corresponding hyperbola:
+    ## $x
+    ## [1] 11.8 15.0 17.7 20.3 24.4 27.4 30.9 35.2
+    ##
+    ## $y
+    ## [1] 142.2 119.8 107.7  99.5  97.5 105.6 120.9 138.1
+
+Fit the corresponding hyperbola with the function `hyperbolaFit()`:
 
 ``` r
 hyp <- hyperbolaFit(xy)
 ```
 
-``` r
-plot(x)
-points(xy, pch = 20, col = "blue")
-hyperbolaPlot(hyp, x = seq(5, 50, by = 0.01), col = "red", lwd = 2)
-```
+Plot the fitted hyperbola
+-------------------------
+
+-   Plot the hyperbola for x-position ranging from 5 to 50:
+
+    ``` r
+    plot(x)
+    points(xy, pch = 20, col = "blue")
+    hyperbolaPlot(hyp, x = seq(5, 50, by = 0.01), col = "red", lwd = 2)
+    ```
 
 ![plot1a](07_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/plot1a-1.png)
 
-``` r
-plot(x)
-points(xy, pch = 20, col = "blue")
-hyperbolaPlot(hyp, col = "red", lwd = 2)
-```
+-   Plot the hyperbola without defining its x-position (in this case the hyperbola is displayed over the entire plot)
+
+    ``` r
+    plot(x)
+    points(xy, pch = 20, col = "blue")
+    hyperbolaPlot(hyp, col = "red", lwd = 2)
+    ```
 
 ![plot1b](07_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/plot1b-1.png)
 
-``` r
-plot(x)
-points(xy, pch = 20, col = "blue")
-hyperbolaPlot(hyp, col = "red", lwd = 2, ann = TRUE)
-```
+-   Define the hyperbola range with `xlim` and add some annotations:
+
+    ``` r
+    plot(x)
+    points(xy, pch = 20, col = "blue")
+    hyperbolaPlot(hyp, col = "red", lwd = 2, xlim = c(10, 40), ann = TRUE)
+    ```
 
 ![plot1c](07_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/plot1c-1.png)
+
+Plot an hyperbola defined by its vertex position and the root-mean-square velocity
+----------------------------------------------------------------------------------
+
+Define the hyperbola parameters
+
+``` r
+hyp2 <- list(x0 = hyp$x0, t0 = hyp$t0, vrms = hyp$vrms)
+```
+
+Plot the hyperbola
+
+``` r
+plot(x)
+points(hyp$x0, hyp$t0, pch = 20, col = "red", cex = 1.3)
+hyperbolaPlot(hyp2, col = "blue", lwd = 2, ann = TRUE)
+```
+
+![hyp\_parameters\_plot](07_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/hyp2_plot-1.png)
+
+Simulate an hyperbola
+---------------------
+
+-   Using the output of `hyperbolaFit()`:
+
+    ``` r
+    x <- seq(5, 45, by = 0.1)
+    y <- hyperbolaSim(x, hyp)
+    plot(x)
+    lines(x, y)
+    ```
+
+![sim1](07_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/sim1-1.png)
+
+-   Defining its vertex position and the root-mean-square velocity:
+
+    ``` r
+    hyp2 <- list(x0 = hyp$x0, t0 = hyp$t0, vrms = hyp$vrms)
+    x <- seq(5, 45, by = 0.1)
+    y <- hyperbolaSim(x, hyp2)
+    plot(x)
+    lines(x, y)
+    ```
+
+![sim2](07_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/sim2-1.png)

@@ -258,7 +258,7 @@ hyperbolaPlot <- function(hyp,
   }
   if(isTRUE(ann)){
     tvrms <- paste0("Vrms = ", as.character(round(hyp$vrms, 4 )), 
-                    " cm/ns", "  ", "z = ", 
+                    " m/ns", "  ", "z = ", 
                     as.character(round(hyp$z0, 1)), " m")
     text(hyp$x0, hyp$t0, pos = ann.pos, offset = ann.offset, 
          col = ann.col, font = ann.font, tvrms)

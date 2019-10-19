@@ -163,10 +163,11 @@ Simulate an hyperbola
 -   Using the output of `hyperbolaFit()`:
 
     ``` r
-    x <- seq(5, 45, by = 0.1)
-    y <- hyperbolaSim(x, hyp)
+    xv <- seq(5, 45, by = 0.1)
+    y <- hyperbolaSim(xv, hyp)
     plot(x)
-    lines(x, y)
+    points(hyp$x0, hyp$t0, pch = 20, col = "blue")
+    lines(xv, y)
     ```
 
 ![sim1](07_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/sim1-1.png)
@@ -175,10 +176,11 @@ Simulate an hyperbola
 
     ``` r
     hyp2 <- list(x0 = hyp$x0, t0 = hyp$t0, vrms = hyp$vrms)
-    x <- seq(5, 45, by = 0.1)
-    y <- hyperbolaSim(x, hyp2)
+    xv <- seq(5, 45, by = 0.1)
+    y <- hyperbolaSim(xv, hyp2)
     plot(x)
-    lines(x, y)
+    lines(xv, y)
+    points(hyp$x0, hyp$t0, pch = 20, col = "blue")
     ```
 
 ![sim2](07_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/sim2-1.png)

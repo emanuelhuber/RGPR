@@ -1490,7 +1490,7 @@ UTMToll <- function(xy, xy_crs = NULL){
   sp::coordinates(ll) <- c("X", "Y")
   sp::proj4string(ll) <- sp::CRS(xy_crs)
   xy <- sp::spTransform(ll, sp::CRS("+init=epsg:4326"))
-  as.matrix(as.data.frame(xy)[,2:3])
+  as.matrix(as.data.frame(xy)[,3:2])
 }
 
 # conversion latitude longitude (hh:mm:ss into decimal

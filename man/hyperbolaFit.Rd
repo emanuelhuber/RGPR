@@ -39,6 +39,7 @@ The position of the vertex is given by:
 and
 \deqn{t_0 = 2 \sqrt{c - (\frac{x_0}{v_{RMS}})^2}}
 where \eqn{v_{RMS} = \sqrt{\frac{1}{a}}}
+Note that the antenna separation distance is not accounted for.
 }
 \examples{
 data("frenkeLine00")

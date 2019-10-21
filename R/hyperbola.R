@@ -14,6 +14,7 @@
 #' and
 #' \deqn{t_0 = 2 \sqrt{c - (\frac{x_0}{v_{RMS}})^2}}
 #' where \eqn{v_{RMS} = \sqrt{\frac{1}{a}}}
+#' Note that the antenna separation distance is not accounted for.
 #' 
 #' @param x [\code{numeric}|\code{list}] Either the x-values of the data
 #'          points or a list with elements x and t (in this case, leave 

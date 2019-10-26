@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Hyperbola fitting
-date: 2019-10-19
+date: 2019-10-26
 ---
 
 <!--
@@ -49,6 +49,37 @@ Install/load `RGPR`
 # install "devtools" if not already done
 if(!require("devtools")) install.packages("devtools")
 devtools::install_github("emanuelhuber/RGPR")
+```
+
+    ##
+    ##
+       checking for file ‘/tmp/RtmpX8Xjmp/remotes1db62ad0ee84/emanuelhuber-RGPR-dea7f39/DESCRIPTION’...
+
+    ✔  checking for file ‘/tmp/RtmpX8Xjmp/remotes1db62ad0ee84/emanuelhuber-RGPR-dea7f39/DESCRIPTION’
+    ##
+
+    ─  preparing ‘RGPR’:
+    ##
+
+       checking DESCRIPTION meta-information...
+
+    ✔  checking DESCRIPTION meta-information
+    ##
+
+    ─  checking for LF line-endings in source and make files and shell scripts
+    ##
+
+    ─  checking for empty or unneeded directories
+    ## ─  looking to see if a ‘data/datalist’ file should be added
+    ##
+
+    ─  building ‘RGPR_0.0.6.tar.gz’
+    ##
+
+
+    ##
+
+``` r
 library(RGPR)       # load RGPR in the current R session
 ```
 
@@ -104,6 +135,14 @@ Fit the corresponding hyperbola with the function `hyperbolaFit()`:
 ``` r
 hyp <- hyperbolaFit(xy)
 ```
+
+`hyperbolaFit()` returns:
+
+-   the hyperbola vertex: `c(hyp$x0, hyp$t0)`
+-   the estimated root-mean-square velocity: `hyp$vrms`
+-   the estimated depth of the hyperbola vertex (computed using the root-mean-square velocity): `hyp$z0`
+-   the input points for the fitting: `hyp$x`and `hyp$y`
+-   the output of the regression fit (see R function `lm()`): `hyp$reg`
 
 Plot the fitted hyperbola
 -------------------------

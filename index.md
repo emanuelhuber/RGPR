@@ -73,7 +73,7 @@ I am developing this package on my free time as a gift to the GPR community. Any
 
 ## Notes
 
-### Supported file formats:
+### Supported file formats (read only):
 
 - [x] [Sensors & Software](https://www.sensoft.ca) file format (**\*.dt1**, **\*.hd**).
 - [x] [MALA](https://www.malagpr.com.au) file format (**\*.rd3**, **\*.rd7**, **\*.rad**).
@@ -81,7 +81,7 @@ I am developing this package on my free time as a gift to the GPR community. Any
 - [X] [GSSI](https://www.geophysical.com) file format (**\*.dzt**, **\*.dzx**).
 - [X] [Geomatrix Earth Science Ltd](https://www.geomatrix.co.uk/) file format (Utsi Electronics format) for the **GroundVue 3**, **7**, **100**, **250** and **400** as well as for the **TriVue** devices (**\*.dat**, **\*.hdr**).
 - [x] [Radar Systems, Inc.](http://www.radsys.lv) Zond file format (**\*.sgy**). **WARNING: it is not a version of the SEG-Y file format**.
-- [X] [SEG-Y](https://en.wikipedia.org/wiki/SEG-Y) file format developed by the Society of Exploration Geophysicists (SEG) for storing geophysical data (**\*.sgy**), also used by [Easy Radar USA](https://easyradusa.com) -> **still experimental**
+- [X] [SEG-Y](https://en.wikipedia.org/wiki/SEG-Y) file format developed by the Society of Exploration Geophysicists (SEG) for storing geophysical data (**\*.sgy**), also used by [Easy Radar USA](https://easyradusa.com)
 - [X] [3dradar](http://3d-radar.com/): the manufacturer does not want to reveal the binary file format **\*.3dra**. **Workaround**: export the GPR data in binary VOL format (**\*.vol**)  with the examiner software -> **still experimental**
 - [X] R internal format (**\*.rds**).
 - [X] serialized Python object (**\*.pkl**).
@@ -90,8 +90,18 @@ I am developing this package on my free time as a gift to the GPR community. Any
   	- either 3-column format (x, t, amplitude) 
     - or matrix-format (without header/rownames)
 - [ ] [Terra Zond](http://terrazond.ru/) binary file format (**\*.trz**) -> **we are working on it**
+    
+See tutorial [Import GPR data](http://emanuelhuber.github.io/RGPR/00_RGPR_import_data/).
 
 <p>Do you miss your preferred file format? Send me the file format description with a test file and I will adapt the RGPR-package to support this file format:<br/><a href="mailto:emanuel.huber@alumni.ethz.ch">emanuel.huber@alumni.ethz.ch</a></p>
+
+### Supported export file formats
+
+- [X] [Sensors & Software](https://www.sensoft.ca) file format (**\*.dt1**, **\*.hd**).
+- [X] R internal format (**\*.rds**).
+- [X] ASCII (**\*.txt**): 
+- [ ] [SEG-Y](https://en.wikipedia.org/wiki/SEG-Y) file format (**\*.sgy**) -> **we are working on it**
+
 
 ### Current limitations
 

@@ -1248,7 +1248,8 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
     ENDIAN <- "big"
     THD <- readSGY_textual_file_header(dsn, ENDIAN = "big")
     # read RadSys Zond System
-    if( grepl("Prism", THD) && grepl("Radar Systems, Inc.", THD)){
+    if( verboseF( grepl("Prism", THD), verbose = FALSE) && 
+        verboseF( grepl("Radar Systems, Inc.", THD), verbose = FALSE) ){
       A <- verboseF( readSEGY_RadSys_Zond_GPR(dsn), verbose = verbose)
       x <- verboseF( .gprSEGY(A, fName = fName, fPath = fPath, 
                               desc = desc, Vmax = Vmax), verbose = verbose)

@@ -4578,14 +4578,21 @@ readSGY_textual_file_header <- function(con, ENDIAN){
   # readChar(con, nchars = 3200, useBytes = TRUE)
   # readBin(con, what = "raw", n = 3200, size = 1, endian = ENDIAN)
   uu <- readBin(con, what = character(), n = 1, size = 1, endian = ENDIAN)
-  uu <- verboseF(strsplit(uu, "(C\\s*[0-9]+)")[[1]], verbose = FALSE)
-  if(length(uu) > 0 && !is.na(uu)){
-    uu <- sapply(uu, trimStr, USE.NAMES = FALSE)
-    uu <- uu[uu!=""]
+  uu <- trimStr(uu)
+  uu1 <- verboseF(strsplit(uu, "(C\\s*[0-9]+)")[[1]], verbose = FALSE)
+  if(length(uu1) > 1 && !is.na(uu1)){
+    uu1 <- sapply(uu1, trimStr, USE.NAMES = FALSE)
+    uu1 <- uu1[uu1!=""]
   }else{
-    uu <- ""
+    uu1 <- verboseF(strsplit(uu, "\r\n")[[1]], verbose = FALSE)
+    if(length(uu1) > 0 && !is.na(uu1)){
+      uu1 <- sapply(uu1, trimStr, USE.NAMES = FALSE)
+      uu1 <- uu1[uu1!=""]
+    }else{
+      uu1 <- uu
+    }
   }
-  return(uu)
+  return(uu1)
 }
 
 
@@ -4929,12 +4936,17 @@ readSEGY_RadSys_Zond_GPR <- function(dsn){
   # 2 = 32-bit fixed-point (integer);
   # 3 = 16-bit fixed-point (integer);
   # 4 = 16-bit fixed-point with gain code 
-  dsfc <- readBin(dsn, what = integer(), n = 1, size = 2)
-  hd$DATA_FORMAT <- switch(dsfc,
+  hd$DATA_FORMAT_CODE <- readBin(dsn, what = integer(), n = 1, size = 2)
+  hd$DATA_FORMAT <- switch(hd$DATA_FORMAT_CODE,
                            "1" = "32-bit IBM floating point",
                            "2" = "32-bit fixed-point",
                            "3" = "16-bit fixed-point",
                            "4" = "16-bit fixed-point with gain code")
+  hd$DATA_BYTES <- switch(hd$DATA_FORMAT_CODE,
+                          "1"  = 4,
+                          "2"  = 4,
+                          "3"  = 2,
+                          "4"  = 2)
   #number of traces per ensemble
   invisible(readBin(dsn, what = integer(), n = 1, size = 2))
   # not used
@@ -4948,8 +4960,9 @@ readSEGY_RadSys_Zond_GPR <- function(dsn){
                         "2" = "feet")
   # not used
   invisible(readBin(dsn, what = integer(), n = 172, size = 2))
+  
   # 240-byte binary tracer header + trace data
-  hd$NB_TRACES <- (.flen(dsn) - seek(dsn))/(240 + hd$NB_SAMPLES*2)
+  hd$NB_TRACES <- (.flen(dsn) - seek(dsn))/(240 + hd$NB_SAMPLES * hd$DATA_BYTES)
   dataSGY <- matrix(nrow = hd$NB_SAMPLES, ncol = hd$NB_TRACES)
   hdt <- matrix(nrow = 7, ncol = hd$NB_TRACES)
   xyfac <- numeric(hd$NB_TRACES)
@@ -5100,13 +5113,13 @@ readSEGY_RadSys_Zond_GPR <- function(dsn){
     hdt[7,i] <- readBin(dsn, what = integer(), n = 1L, size = 2, 
                         endian = "little") 
     #---------- trace ---------------#
-    if( dsfc == 1){
+    if(hd$DATA_FORMAT_CODE == 1){
       # "32-bit IBM floating point"
       dataSGY[,i] <- readBin(dsn, what = numeric(), n = hd$NB_SAMPLES, 
-                             size = 2, endian = "little")
+                             size = hd$DATA_BYTES, endian = "little")
     }else{
-      dataSGY[,i] <- readBin(dsn, what = integer(), n = hd$NB_SAMPLES, 
-                             size = 2, endian = "little")
+      dataSGY[,i] <- readBin(dsn, what = integer(), n = hd$NB_SAMPLES,
+                             size = hd$DATA_BYTES, endian = "little")
     }
   }
   hdt[4,] <- hdt[4,] * abs(xyfac)^sign(xyfac)

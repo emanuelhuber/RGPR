@@ -576,6 +576,105 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
 }
 
 
+.gprSGY <- function(x, fName = character(0), desc = character(0),
+                    fPath = character(0), Vmax = 50){
+  n <- ncol( x$DTR$data)
+  data_xyz <- matrix( c(x$DTR$trHD[16,], x$DTR$trHD[17,], x$DTR$trHD[12,]),
+                      nrow = n, ncol = 3, byrow = FALSE)
+  data_pos <- posLine(data_xyz)
+  
+  if(!all(diff(data_pos) > 0)){
+    data_pos <- seq_len(n)
+    x$BHD$xyz <- data_xyz
+    data_xyz <- matrix(nrow = 0, ncol = 0)
+    message("No increasing inter-trace distances, ",
+            "I ignore the trace coordinates. ",
+            "Check the coordinates in 'gethd(x)$xyz'")
+  }
+  
+  # check date
+  # 22 = year, 23 = day of the year
+  if(all(c(x$DTR$trHD[22, 1], x$DTR$trHD[23, 1]) == 0)){
+    data_date <- format(Sys.time(), "%Y-%m-%d")
+  }else{
+    data_date <- as.character(format(as.Date(x$DTR$trHD[23, 1] - 1, 
+                                             origin = paste0(x$DTR$trHD[22, 1], "-01-01")),
+                                     "%Y-%m-%d"))
+  }
+  
+  # check time
+  data_time <- seq_len(n)
+  
+  data_dt <- x$DTR$trHD[21,1]*10^3
+  
+  antfreq <- 0
+  message("Antenna frequency set to 0 MHz. Set it with 'antfreq(x) <- ... '")
+  antsep <- 0
+  message("Antenna separation set to 0 ", "m", 
+          ". Set it with 'antsep(x) <- ... '")
+  
+  
+  k <- grepl("epsg:", x$THD, ignore.case = TRUE)
+  epsg_code <- regmatches(x$THD[k], regexpr("epsg:[0-9]+" , x$THD[k], ignore.case = TRUE))
+  if(length(epsg_code ) >= 1){
+    epsg_code <- gsub("[^0-9.]", "", epsg_code[1], ignore.case = TRUE)
+    data_crs <- paste0("+init=epsg:", epsg_code)
+  }else{
+    data_crs <- character(0)
+  }
+  
+  y <- new("GPR",   
+           version      = "0.2",
+           data        = byte2volt(Vmax = Vmax, nBytes = x$BHD$DATA_BYTES) * x$DTR$data,
+           traces      = x$DTR$trHD[1,],
+           fid         = rep("", n),
+           coord       = data_xyz,
+           pos         = data_pos,
+           depth       = seq(0, by = data_dt, length.out = nrow(x$DTR$data)),
+           rec         = matrix(nrow = 0, ncol = 0),
+           trans       = matrix(nrow = 0, ncol = 0),
+           time0       = rep(0, n),
+           time        = data_time,
+           proc        = character(0),
+           vel         = list(0.1),
+           name        = fName,
+           description = desc,
+           filepath    = fPath,
+           dz          = data_dt, 
+           dx          = mean(diff(data_pos)),
+           depthunit   = "ns",
+           posunit     = "m",
+           freq        = antfreq, 
+           antsep      = antsep,     # check
+           surveymode  = "reflection",
+           date        = data_date,
+           crs         = data_crs,
+           hd          = c(x$THD, x$BHD)
+  )
+  
+  if( identical(x$DTR$trHD[1, ], x$DTR$trHD[2, ])){
+    # plot(y)
+    return(y)
+  }else{
+    trc_seq <- x$DTR$trHD[2, ]
+    trc_seq_unique <- unique(trc_seq)
+    if(length(trc_seq_unique) > 1){
+      # Y <- list()
+      Ys <- GPRsurveyEmpty(length(trc_seq_unique))
+      for(i in seq_along(trc_seq_unique)){
+        # Y[[i]] <- y[, trc_seq %in% trc_seq_unique[i]]
+        Ys[[i]] <- y[, trc_seq %in% trc_seq_unique[i]]
+      }
+      message("I return an object of the class 'GPRsurvey' (contains many ",
+              "GPR lines. "
+              "'plot(x)' will display the position of the traces. ",
+              "To plot a single line, use 'plot(x[[1]])'")
+      return(Ys)
+    }else{
+      return(y)
+    }
+  }
+}
 
 .gprSEGY <- function(x, fName = character(0), desc = character(0),
                      fPath = character(0), Vmax = 50){  
@@ -858,46 +957,46 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
   )
 }
 
-readSGY <- function(dsn, fName = "", fPath = "", desc = "", 
-                    Vmax = 50, verbose = TRUE){
-  x <- suppressMessages( suppressWarnings(rgdal::readOGR(dsn = dsn)))
-  i <- grep("SAMPLE_ARRAY", names(x))
-  # xi <- x[i]
-  # 
-  # slotNames(xi)
-  # 
-  # dim(xi@data)
-  
-  x_data <- t(as.matrix(x[i]@data))
-  x_dz <- mean(x[["SAMPLE_INTERVAL"]]/1000)
-  
-  # plot3D::image2D(as.matrix(xi@data))
-  y <- list(version = "0.2",
-            data = x_data * byte2volt(Vmax = Vmax),
-            name = fName,
-            description = desc,
-            filepath = fPath,
-            surveymode = "reflection",
-            traces = seq_len(ncol(x_data)),
-            freq = 0,                      # FIXME
-            dx = 1,                        # FIXME
-            time0 = rep(0, ncol(x_data)),  # FIXME
-            # time = ,
-            fid = rep("", ncol(x_data)),   # FIXME
-            ann = rep("", ncol(x_data)),   # FIXME
-            dz = x_dz,
-            depth = seq(0, by = x_dz, length.out = nrow(x_data)),
-            pos = seq_len(ncol(x_data)),   # FIXME
-            antsep = 0,
-            posunit = "m",
-            depthunit = "ns"
-  )
-  message("Set trace position with either 'pos(x) < -...' or 'coord(x) < -...'")
-  message("Set antenna frequency with 'antfreq(x) < -...' ")
-  message("Set antenna separation distance with 'antsep(x) < -...' ")
-  as(y, "GPR")
-  
-}
+# readSGY <- function(dsn, fName = "", fPath = "", desc = "", 
+#                     Vmax = 50, verbose = TRUE){
+#   x <- suppressMessages( suppressWarnings(rgdal::readOGR(dsn = dsn)))
+#   i <- grep("SAMPLE_ARRAY", names(x))
+#   # xi <- x[i]
+#   # 
+#   # slotNames(xi)
+#   # 
+#   # dim(xi@data)
+#   
+#   x_data <- t(as.matrix(x[i]@data))
+#   x_dz <- mean(x[["SAMPLE_INTERVAL"]]/1000)
+#   
+#   # plot3D::image2D(as.matrix(xi@data))
+#   y <- list(version = "0.2",
+#             data = x_data * byte2volt(Vmax = Vmax),
+#             name = fName,
+#             description = desc,
+#             filepath = fPath,
+#             surveymode = "reflection",
+#             traces = seq_len(ncol(x_data)),
+#             freq = 0,                      # FIXME
+#             dx = 1,                        # FIXME
+#             time0 = rep(0, ncol(x_data)),  # FIXME
+#             # time = ,
+#             fid = rep("", ncol(x_data)),   # FIXME
+#             ann = rep("", ncol(x_data)),   # FIXME
+#             dz = x_dz,
+#             depth = seq(0, by = x_dz, length.out = nrow(x_data)),
+#             pos = seq_len(ncol(x_data)),   # FIXME
+#             antsep = 0,
+#             posunit = "m",
+#             depthunit = "ns"
+#   )
+#   message("Set trace position with either 'pos(x) < -...' or 'coord(x) < -...'")
+#   message("Set antenna frequency with 'antfreq(x) < -...' ")
+#   message("Set antenna separation distance with 'antsep(x) < -...' ")
+#   as(y, "GPR")
+#   
+# }
 
 .gprVOL <- function(x, fName = "", fPath = "", desc = "", Vmax = 50){
   if(is.null(x$hd$zmin) && !is.null(x$hd$dz)){
@@ -947,9 +1046,9 @@ readSGY <- function(dsn, fName = "", fPath = "", desc = "",
          x            = seq_len(x$hd$x_dim),
          y            = seq_len(x$hd$y_dim),
          data         = x$data * byte2volt(Vmax = Vmax, nBytes = x$hd$bits),
-         coord        = numeric(),
+         coord        = numeric(0),
          posunit      = "m",
-         crs          = character(),
+         crs          = character(0),
          depth        = x_depth,
          depthunit    = "ns",
          vel          = list(),               
@@ -1082,7 +1181,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
     fName <- .fNameWExt(fPath)
   }
   # DT1
-  if("DT1" == toupper(ext)){
+  if("DT1" == toupper(ext) || "HD" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
     A <- verboseF( readDT1(dsn, dsn2), verbose = verbose)
     x <- verboseF( .gpr(A, fName = fName, fPath = fPath, 
@@ -1132,12 +1231,12 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
       y@filepath <- fPath
       x <- y
     }
-  }else if("RD3" == toupper(ext)){
+  }else if("RD3" == toupper(ext) || "RAD" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
     A <- verboseF( readRD3(dsn, dsn2), verbose = verbose)
     x <- verboseF( .gprRD3(A, fName = fName, fPath = fPath, 
                            desc = desc, Vmax = Vmax), verbose = verbose)
-  }else if("RD7" == toupper(ext)){
+  }else if("RD7" == toupper(ext) || "RAD" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
     A <- verboseF( readRD7(dsn, dsn2), verbose = verbose)
     x <- verboseF( .gprRD3(A, fName = fName, fPath = fPath, desc = desc, 
@@ -1145,18 +1244,25 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
   }else if("SGY" == toupper(ext) || "SEGY" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
     # first try to read SEG-Y format
-    x <- tryCatch({verboseF(readSGY(dsn, 
-                                    fName = fName, 
-                                    fPath = fPath, 
-                                    desc = desc, 
-                                    Vmax = Vmax), 
+    A <- tryCatch({verboseF(readSGY(dsn), 
                             verbose = verbose)},
                   error = function(e){return(NULL)})
-    if(is.null(x)){
+    # x <- tryCatch({verboseF(readSGY(dsn, 
+    #                                 fName = fName, 
+    #                                 fPath = fPath, 
+    #                                 desc = desc, 
+    #                                 Vmax = Vmax), 
+    #                         verbose = verbose)},
+    #               error = function(e){return(NULL)})
+    if(is.null(A)){
       # z <- readGPR(dsn)
       A <- verboseF( readSEGY_RadSys_Zond_GPR(dsn), verbose = verbose)
       x <- verboseF( .gprSEGY(A, fName = fName, fPath = fPath, 
                               desc = desc, Vmax = Vmax), verbose = verbose)
+    }else{
+      x <- verboseF( .gprSGY(A, fName = fName, fPath = fPath, 
+                             desc = desc, Vmax = Vmax), verbose = verbose)
+      return(x)
     }
   }else if("IPRB" == toupper(ext) || "IPRH" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
@@ -1182,7 +1288,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
               "emanuel.huber@alumni.ethz.ch")
     }
     return(x)
-  }else if("DAT" == toupper(ext)){
+  }else if("DAT" == toupper(ext) || "HDR" == toupper(ext)){
     A <- verboseF( readUtsi(dsn), verbose = verbose)
     x <- verboseF( .gprUtsi(A, fName = fName, fPath = fPath, 
                            desc = desc, Vmax = Vmax), verbose = verbose)
@@ -6758,27 +6864,28 @@ setMethod("writeGPR", "GPR", function(x, fPath = NULL,
   switch(type,
          "dt1" = {.writeDT1(x, fPath)},
          "rds" = {namesSlot <- slotNames(x)
-         xList <- list()
-         # xList[["version"]] <- "0.1"
-         for(i in seq_along(namesSlot)){
-           xList[[namesSlot[i]]] <- slot(x, namesSlot[i])
-         }
-         saveRDS(xList, fPath)},
+                   xList <- list()
+                   # xList[["version"]] <- "0.1"
+                   for(i in seq_along(namesSlot)){
+                     xList[[namesSlot[i]]] <- slot(x, namesSlot[i])
+                   }
+                   saveRDS(xList, fPath)},
          # idea: add header data
          "ascii" = {write.table(as.matrix(x), file = fPath, 
-                                quote = FALSE, col.names = x@pos, row.names = x@depth,
+                                quote = FALSE, col.names = x@pos, 
+                                row.names = x@depth,
                                 ...)},
          "xyza" = {if(length(x@coord) == 0){
-           stop("This data has no coordinates!")
-         }
-           xyzv <- matrix(nrow=prod(dim(x)), ncol = 4)
-           colnames(xyzv) <- c("x", "y", "z", "a")
-           xyzv[, 4]  <- as.vector(as.matrix(x))
-           xyzv[,1:3] <-  kronecker(x@coord, matrix(1,nrow(x),1))
-           xyzv[,3]   <- rep(max(xyzv[,3]), ncol(x)) - 
-             rep(x@depth, times = ncol(x))
-           write.table(xyzv, file = fPath, quote = FALSE, 
-                       col.names = TRUE, row.names = FALSE, ...)}
+                     stop("This data has no coordinates!")
+                   }
+                   xyzv <- matrix(nrow=prod(dim(x)), ncol = 4)
+                   colnames(xyzv) <- c("x", "y", "z", "a")
+                   xyzv[, 4]  <- as.vector(as.matrix(x))
+                   xyzv[,1:3] <-  kronecker(x@coord, matrix(1,nrow(x),1))
+                   xyzv[,3]   <- rep(max(xyzv[,3]), ncol(x)) - 
+                     rep(x@depth, times = ncol(x))
+                   write.table(xyzv, file = fPath, quote = FALSE, 
+                               col.names = TRUE, row.names = FALSE, ...)}
   )
   invisible(return(x))
 } 

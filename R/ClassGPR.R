@@ -1242,28 +1242,37 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
     x <- verboseF( .gprRD3(A, fName = fName, fPath = fPath, desc = desc, 
                            nBytes = 32, Vmax = Vmax), verbose = verbose)
   }else if("SGY" == toupper(ext) || "SEGY" == toupper(ext)){
-    # fName <- .fNameWExt(fPath)
-    # first try to read SEG-Y format
-    A <- tryCatch({verboseF(readSGY(dsn), 
-                            verbose = verbose)},
-                  error = function(e){return(NULL)})
-    # x <- tryCatch({verboseF(readSGY(dsn, 
-    #                                 fName = fName, 
-    #                                 fPath = fPath, 
-    #                                 desc = desc, 
-    #                                 Vmax = Vmax), 
-    #                         verbose = verbose)},
-    #               error = function(e){return(NULL)})
-    if(is.null(A)){
-      # z <- readGPR(dsn)
+    if( !inherits(dsn, "connection") ){
+      dsn <- file(dsn, "rb")
+    }
+    ENDIAN <- "big"
+    THD <- readSGY_textual_file_header(dsn, ENDIAN = "big")
+    # read RadSys Zond System
+    if( grepl("Prism", THD) && grepl("Radar Systems, Inc.", THD)){
       A <- verboseF( readSEGY_RadSys_Zond_GPR(dsn), verbose = verbose)
       x <- verboseF( .gprSEGY(A, fName = fName, fPath = fPath, 
                               desc = desc, Vmax = Vmax), verbose = verbose)
+    # read classical SEG-Y file
     }else{
+      A <- verboseF(readSGY(dsn), verbose = verbose)
       x <- verboseF( .gprSGY(A, fName = fName, fPath = fPath, 
                              desc = desc, Vmax = Vmax), verbose = verbose)
       return(x)
     }
+    # A <- tryCatch({verboseF(readSGY(dsn), 
+    #                         verbose = verbose)},
+    #               error = function(e){return(NULL)})
+    # if(is.null(A)){
+    #   # z <- readGPR(dsn)
+    #   if(in)
+    #   A <- verboseF( readSEGY_RadSys_Zond_GPR(dsn), verbose = verbose)
+    #   x <- verboseF( .gprSEGY(A, fName = fName, fPath = fPath, 
+    #                           desc = desc, Vmax = Vmax), verbose = verbose)
+    # }else{
+    #   x <- verboseF( .gprSGY(A, fName = fName, fPath = fPath, 
+    #                          desc = desc, Vmax = Vmax), verbose = verbose)
+    #   return(x)
+    # }
   }else if("IPRB" == toupper(ext) || "IPRH" == toupper(ext)){
     # fName <- .fNameWExt(fPath)
     A <- verboseF( readImpulseRadar(dsn, dsn2), verbose = verbose)

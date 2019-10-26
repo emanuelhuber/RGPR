@@ -666,7 +666,7 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
         Ys[[i]] <- y[, trc_seq %in% trc_seq_unique[i]]
       }
       message("I return an object of the class 'GPRsurvey' (contains many ",
-              "GPR lines. ",
+              "GPR lines). ",
               "'plot(x)' will display the position of the traces. ",
               "To plot a single line, use 'plot(x[[1]])'")
       return(Ys)

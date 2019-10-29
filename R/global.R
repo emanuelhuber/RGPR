@@ -4323,15 +4323,21 @@ inPoly <- function(x, y, vertx, verty){
   return(A_back/(max(A_back)-min(A_back))*(max(A)-min(A)))
 }
 
+#------------------------------------------------------------------------------#
+
 #' @export
 readGPGGA <- function(x, sep = ","){
   a <- read.table(x, header = FALSE, colClasses = "character",
                   sep = ",", stringsAsFactors = FALSE)
-  return(getLonLatFromGPGGA(a))
+  llz <- getLonLatFromGPGGA(a)
+  sp::coordinates(llz) <- cbind(x = lon, y = lat)
+  sp::proj4string(llz) <- sp::CRS("+proj=longlat +datum=WGS84")
+  return(llz)
 }
 
 #' @export
 getLonLatFromGPGGA <- function(a){  
+  a <- as.data.frame(a, stringsAsFactors = FALSE)
   a <- a[a[,1]=="$GPGGA",]
   names(a) <- c("ID","UTC","lat","NS","lon","EW","fix","NbSat","HDOP","H","mf","HGeoid","TDGPS","DGPSID","Checks")
   
@@ -4342,7 +4348,7 @@ getLonLatFromGPGGA <- function(a){
   
   # 2 - UTC (time)
   options(digits.secs = 3)
-  strptime(paste(Sys.Date(), a$UTC), '%Y-%m-%d %H%M%OS', tz='UTC')
+  trctime <- strptime(paste(Sys.Date(), a$UTC), '%Y-%m-%d %H%M%OS', tz='UTC')
   
   # 3 latitude 
   #  The format for NMEA coordinates is (d)ddmm.mmmm
@@ -4355,12 +4361,11 @@ getLonLatFromGPGGA <- function(a){
   # 10 elevation
   z <- as.numeric(a$H)
   
-  llz <- data.frame(lon = lon, lat = lat, z = z)
-  colnames(llz) <- c("lon", "lat", "z")
-  sp::coordinates(llz) <- cbind(x = lon, y = lat)
-  sp::proj4string(llz) <- sp::CRS("+proj=longlat +datum=WGS84")
+  llz <- data.frame(lon = lon, lat = lat, z = z, time = trctime)
+  colnames(llz) <- c("lon", "lat", "z", "time")
   return(llz)
 }
+
 
 stringToLat <- function(x, NW = "N"){
   ddmm_mmmm <- strsplit(x, "\\.")[[1]]

@@ -4323,13 +4323,14 @@ inPoly <- function(x, y, vertx, verty){
   return(A_back/(max(A_back)-min(A_back))*(max(A)-min(A)))
 }
 
-
+#' @export
 readGPGGA <- function(x, sep = ","){
   a <- read.table(x, header = FALSE, colClasses = "character",
                   sep = ",", stringsAsFactors = FALSE)
   return(getLonLatFromGPGGA(a))
 }
 
+#' @export
 getLonLatFromGPGGA <- function(a){  
   a <- a[a[,1]=="$GPGGA",]
   names(a) <- c("ID","UTC","lat","NS","lon","EW","fix","NbSat","HDOP","H","mf","HGeoid","TDGPS","DGPSID","Checks")

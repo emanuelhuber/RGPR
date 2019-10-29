@@ -2171,6 +2171,7 @@ setMethod("trProject", "GPR", function(x, CRSobj){
   xsp <- as(x, "SpatialLines")
   xsptrsf <- sp::spTransform(xsp, CRSobj)
   x@coord[, 1:2] <- sp::coordinates(xsptrsf)[[1]][[1]]
+  x@crs <- as.character(CRSobj)
   return(x)
 })
 

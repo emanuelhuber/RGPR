@@ -282,7 +282,7 @@ setMethod("crs", "GPRsurvey", function(x){
 )
 
 
-#' @name crs
+#' @name crs<-
 #' @rdname crs
 #' @export
 setReplaceMethod(
@@ -290,6 +290,8 @@ setReplaceMethod(
   signature="GPRsurvey",
   definition=function(x,value){
     value <- as.character(value)
+    # return a warning if number of items to replace is not a multiple of 
+    # replacement length
     x@crs[] <- value
     return(x)
   }
@@ -1097,6 +1099,7 @@ setMethod("trProject", "GPRsurvey", function(x, CRSobj){
     return(x)
   }
   coords(x) <- mapply(FUN, coords(x), xshpc_coords, USE.NAMES = FALSE)
+  crs(x) <- as.character(CRSobj)
   return(x)
 })
 

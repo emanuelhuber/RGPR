@@ -613,22 +613,33 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
   message("Antenna separation set to 0 ", "m", 
           ". Set it with 'antsep(x) <- ... '")
   
-  
-  k <- grepl("epsg:", x$THD, ignore.case = TRUE)
-  epsg_code <- regmatches(x$THD[k], regexpr("epsg:[0-9]+" , x$THD[k], ignore.case = TRUE))
-  if(length(epsg_code ) >= 1){
-    epsg_code <- gsub("[^0-9.]", "", epsg_code[1], ignore.case = TRUE)
-    data_crs <- paste0("+init=epsg:", epsg_code)
-  }else{
-    data_crs <- character(0)
-  }
+  # extract information from textual header data (only if valid encoding)
+  scl <- 1
+  data_crs <- character(0)
+  # if(all(validEnc(x$THD))){
+    k <- verboseF(grepl("epsg:", x$THD, ignore.case = TRUE), verbose = FALSE)
+    epsg_code <- regmatches(x$THD[k], regexpr("epsg:[0-9]+" , x$THD[k], ignore.case = TRUE))
+    if(length(epsg_code) >= 1){
+      epsg_code <- gsub("[^0-9.]", "", epsg_code[1], ignore.case = TRUE)
+      data_crs <- paste0("+init=epsg:", epsg_code)
+    }
+    
+    k <- verboseF(grepl("scale factor ", x$THD, ignore.case = TRUE), verbose = FALSE)
+    scale_fact <- regexpr("scale factor (?<scale>[0-9.]+)", x$THD[k], 
+                         perl = TRUE, ignore.case = TRUE)
+    if(length(k) > 1 && scale_fact[1] != -1){
+      i1 <- attr(scale_fact, "capture.start")
+      i2 <- i1 + attr(scale_fact, "capture.length") -1
+      scl <- as.numeric(substr(x$THD[k], i1, i2))
+    }
+  # }
   
   y <- new("GPR",   
            version      = "0.2",
            data        = byte2volt(Vmax = Vmax, nBytes = x$BHD$DATA_BYTES) * x$DTR$data,
            traces      = x$DTR$trHD[1,],
            fid         = rep("", n),
-           coord       = data_xyz,
+           coord       = data_xyz * scl,
            pos         = data_pos,
            depth       = seq(0, by = data_dt, length.out = nrow(x$DTR$data)),
            rec         = matrix(nrow = 0, ncol = 0),
@@ -1247,8 +1258,12 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
     }
     ENDIAN <- "big"
     THD <- readSGY_textual_file_header(dsn, ENDIAN = "big")
-    test <- verboseF( any(grepl("Prism", THD), verbose = FALSE)) & 
-            verboseF( any(grepl("Radar Systems, Inc.", THD)), verbose = FALSE)
+    test <- FALSE
+    # if(all(validEnc(THD))){
+      test <- any(verboseF(grepl("Prism", THD), verbose = FALSE)) & 
+              any(verboseF(grepl("Radar Systems, Inc.", THD), 
+                        verbose = FALSE))
+    # }
     # read RadSys Zond System
     if( test ){
       A <- verboseF( readSEGY_RadSys_Zond_GPR(dsn), verbose = verbose)

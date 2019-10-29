@@ -1086,6 +1086,22 @@ setMethod("georef", "GPRsurvey",
   return(colMeans(pos))
 }
 
+
+#' @export
+setMethod("trProject", "GPRsurvey", function(x, CRSobj){
+  xshp <- as(x, "SpatialLines")
+  xshpc <- sp::spTransform(xshp, CRSobj)
+  xshpc_coords <- sp::coordinates(xshpc)
+  FUN <- function(x, y){
+    x[, 1:2] <- y[[1]]
+    return(x)
+  }
+  coords(x) <- mapply(FUN, coords(x), xshpc_coords, USE.NAMES = FALSE)
+  return(x)
+})
+
+
+
 #' @export
 setMethod("shiftEst", "GPRsurvey", function(x, y = NULL, 
           method=c("phase", "WSSD"), dxy = NULL, ...){

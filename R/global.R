@@ -4324,6 +4324,58 @@ inPoly <- function(x, y, vertx, verty){
 }
 
 
+readGPGGA <- function(x, sep = ","){
+  a <- read.table(x, header = FALSE, colClasses = "character",
+                  sep = ",", stringsAsFactors = FALSE)
+  return(getLonLatFromGPGGA(a))
+}
+
+getLonLatFromGPGGA <- function(a){  
+  a <- a[a[,1]=="$GPGGA",]
+  names(a) <- c("ID","UTC","lat","NS","lon","EW","fix","NbSat","HDOP","H","mf","HGeoid","TDGPS","DGPSID","Checks")
+  
+  # string = sentence identifier
+  # UTC = time (170834 = 17:08:34 Z)
+  # Lat = latitude (4124.8963 = 41°24'...)
+  # a$ID
+  
+  # 2 - UTC (time)
+  options(digits.secs = 3)
+  strptime(paste(Sys.Date(), a$UTC), '%Y-%m-%d %H%M%OS', tz='UTC')
+  
+  # 3 latitude 
+  #  The format for NMEA coordinates is (d)ddmm.mmmm
+  lat <- sapply(a$lat, stringToLat, NW = a$NS, USE.NAMES = FALSE)
+  
+  # 5 longitude
+  #  The format for NMEA coordinates is (d)ddmm.mmmm
+  lon <- sapply(a$lon, stringToLat, NW = a$EW,USE.NAMES = FALSE)
+  
+  # 10 elevation
+  z <- as.numeric(a$H)
+  
+  llz <- data.frame(lon = lon, lat = lat, z = z)
+  colnames(llz) <- c("lon", "lat", "z")
+  sp::coordinates(llz) <- cbind(x = lon, y = lat)
+  sp::proj4string(llz) <- sp::CRS("+proj=longlat +datum=WGS84")
+  return(llz)
+}
+
+stringToLat <- function(x, NW = "N"){
+  ddmm_mmmm <- strsplit(x, "\\.")[[1]]
+  n <- nchar(ddmm_mmmm[1])
+  if(n > 2){
+    dd <- as.numeric(substring(ddmm_mmmm[1],1, n-2))
+  }else{
+    dd <- 0
+  }
+  mm_mmmm <- paste0(substring(ddmm_mmmm[1],n-1, n), ".", ddmm_mmmm[2])
+  lat <- dd + as.numeric(mm_mmmm) / 60
+  if(any(c("S", "W") %in% NW)) lat <- -lat
+  return(lat)
+}
+
+
 # -------------------------------------------
 # ------------readDT1--------------------------
 # -------------------------------------------

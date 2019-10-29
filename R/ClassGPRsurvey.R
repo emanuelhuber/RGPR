@@ -209,10 +209,12 @@ setAs(from = "GPRsurvey", to = "SpatialPoints",
 #' @export
 setMethod("as.SpatialLines", signature(x = "GPRsurvey"), function(x){
   # remove NULL from list
+  # FIXME
+  # Filter(Negate(is.null), x) = alternative
   isNotNull <- !sapply(x@coords, is.null)
   if(any(isNotNull)){
     xyz <- x@coords[isNotNull]
-    lineList <- lapply(xyz, xyToLine)
+    lineList <- lapply(unname(xyz), xyToLine)
     linesList <- lapply(seq_along(lineList), LineToLines, lineList, 
                         names(xyz))
     mySpatLines <- sp::SpatialLines(linesList)
@@ -1099,7 +1101,7 @@ setMethod("trProject", "GPRsurvey", function(x, CRSobj){
     return(x)
   }
   coords(x) <- mapply(FUN, coords(x), xshpc_coords, USE.NAMES = FALSE)
-  crs(x) <- as.character(CRSobj)
+  x@c <- as.character(CRSobj)
   return(x)
 })
 

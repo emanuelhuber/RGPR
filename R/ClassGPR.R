@@ -1375,7 +1375,7 @@ setAs(from = "GPR", to = "SpatialLines",
 # as.SpatialLines <- function (x, ...){
 setMethod("as.SpatialLines", signature(x = "GPR"), function(x){
   myLine <- sp::Line(x@coord[,1:2])
-  myLines <- sp::Lines(list(myLine), ID=x@name)
+  myLines <- sp::Lines(list(myLine), ID = x@name)
   mySpatLines <- sp::SpatialLines(list(myLines))
   if(length(crs(x)) == 0){
     warning("no CRS defined!\n")
@@ -2587,6 +2587,7 @@ setMethod("trProject", "GPR", function(x, CRSobj){
   xsp <- as(x, "SpatialLines")
   xsptrsf <- sp::spTransform(xsp, CRSobj)
   x@coord[, 1:2] <- sp::coordinates(xsptrsf)[[1]][[1]]
+  x@crs <- as.character(CRSobj)
   return(x)
 })
 

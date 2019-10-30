@@ -522,12 +522,14 @@ trInterp <- function(x, z, zi){
   nx <- abs(diff(range(xpos))) / dx
   ny  <- abs(diff(range(ypos))) / dy
   SL <- array(dim = c(nx, ny, length(vj)))
+  obb <- tpOBB2D(x)
+  bbox <- c(min(obb[,1]), max(obb[,1]), min(obb[,2]), max(obb[,2]))
   for(u in  seq_along(vj)){
     j <- vj[u]
     #z <- rep(sapply(Z, function(x, i = j) x[i]), sapply(V, ncol))
     val[[u]] <- unlist(lapply(V, function(u, k = j) u[k,]))
     S <- MBA::mba.surf(cbind(xpos, ypos, val[[u]]), nx, ny, n = 1, m = 1, 
-                       extend = TRUE, h = h)$xyz.est
+                       extend = TRUE, h = h, b.box = )$xyz.est
     SL[,,u] <- S$z
   }
   return(list(x = S$x, y = S$y, z = SL, vz = vz, x0 = xpos, y0 = ypos, z0 = val))

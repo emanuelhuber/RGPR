@@ -1101,7 +1101,7 @@ setMethod("trProject", "GPRsurvey", function(x, CRSobj){
     return(x)
   }
   coords(x) <- mapply(FUN, coords(x), xshpc_coords, USE.NAMES = FALSE)
-  x@c <- as.character(CRSobj)
+  x@crs <- as.character(CRSobj)
   return(x)
 })
 

@@ -357,7 +357,7 @@ plot.GPRslice <- function(x,
     clim <- range(x@data, na.rm = TRUE)
   }
   
-  plot3D::image2D(x = x@coord + x@x, y = x@coord + x@y, z = x@data,
+  plot3D::image2D(x = x@coord[1] + x@x, y = x@coord[2] + x@y, z = x@data,
                 main = main, xlab, ylab, clim = clim, col = col, ...)
 }
 

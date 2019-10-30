@@ -1143,7 +1143,7 @@ setMethod("tpOBB2D", "GPRsurvey", function(x){
 #' @name svAngle
 #' @rdname svAngle
 #' @export
-setMethod("svAngle", "GPR", function(x){
+setMethod("svAngle", "GPRsurvey", function(x){
   if(length(x@coords) > 0){
     orb <- trOBB2D(x)
     dEN <- orb[1,] - orb[2,]

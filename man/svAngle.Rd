@@ -7,7 +7,7 @@
 \usage{
 \S4method{svAngle}{GPR}(x)
 
-\S4method{svAngle}{GPR}(x)
+\S4method{svAngle}{GPRsurvey}(x)
 }
 \description{
 Angle of the GPR survey

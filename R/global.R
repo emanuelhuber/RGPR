@@ -4362,7 +4362,7 @@ readGPGGA <- function(x, sep = ","){
   a <- read.table(x, header = FALSE, colClasses = "character",
                   sep = ",", stringsAsFactors = FALSE)
   llz <- getLonLatFromGPGGA(a)
-  sp::coordinates(llz) <- cbind(x = lon, y = lat)
+  sp::coordinates(llz) <- cbind(x = llz$lon, y = llz$lat)
   sp::proj4string(llz) <- sp::CRS("+proj=longlat +datum=WGS84")
   return(llz)
 }

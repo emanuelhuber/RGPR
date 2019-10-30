@@ -463,23 +463,43 @@ trInterp <- function(x, z, zi){
   # vj <- seq(dz, by = dz, to = length(x_zi))
   
   val <- list()
-  # vz <- x_zi[vj]
+  # positions obervations
   xpos <- unlist(lapply(X@coords, function(x) x[,1]))
   ypos <- unlist(lapply(X@coords, function(x) x[,2]))
-  nx <- abs(diff(range(xpos))) / dx
-  ny  <- abs(diff(range(ypos))) / dy
-  SL <- array(dim = c(nx, ny, length(x_zi)))
+  
+  # define bounding box + number of points for interpolation
   obb <- tpOBB2D(x)
   bbox <- c(min(obb[,1]), max(obb[,1]), min(obb[,2]), max(obb[,2]))
+  bbox_dx <- bbox[2] - bbox[1]
+  bbox_dy <- bbox[4] - bbox[3]
+  nx <- ceiling(bbox_dx / dx )
+  ny <- ceiling(bbox_dy / dy )
+  
+  # correct bbox (such that dx, dy are correct)
+  Dx <- (nx * dx - bbox_dx)/2
+  Dy <- (ny * dy - bbox_dy)/2
+  bbox[1:2] <- bbox[1:2] + c(-1, 1) * Dx
+  bbox[3:4] <- bbox[3:4] + c(-1, 1) * Dy 
+  bbox_dx <- bbox[2] - bbox[1]
+  bbox_dy <- bbox[4] - bbox[3]
+  SL <- array(dim = c(nx, ny, length(x_zi)))
+  m <- round(bbox_dy / bbox_dx)
   for(j in  seq_along(x_zi)){
     # j <- vj[u]
     #z <- rep(sapply(Z, function(x, i = j) x[i]), sapply(V, ncol))
     val[[j]] <- unlist(lapply(V, function(v, k = j) v[k,]))
-    S <- MBA::mba.surf(cbind(xpos, ypos, val[[j]]), nx, ny, n = 1, m = 1, 
+    S <- MBA::mba.surf(cbind(xpos, ypos, val[[j]]), nx, ny, n = 1, m = m, 
                        extend = extend, h = h, b.box = bbox)$xyz.est
     SL[,,j] <- S$z
+    # note: MBA::mba.surf return unprecise S$x and S$y values,
+    # even if the bounding box extent and the nx, ny are set
+    # correctly. That is why I take here the expected 
+    # x and y positions instead of the x and y values returned
+    # ba MBA::mba.surf()!!
   }
-  return(list(x = S$x, y = S$y, z = SL, vz = x_zi, x0 = xpos, y0 = ypos, z0 = val))
+  return(list(x = seq(from = bbox[1], by = dx, length.out = nx), 
+              y = seq(from = bbox[3], by = dy, length.out = ny), 
+              z = SL, vz = x_zi, x0 = xpos, y0 = ypos, z0 = val))
 }
 
 #' Interpolate horizontal slices

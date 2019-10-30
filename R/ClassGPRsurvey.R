@@ -1108,16 +1108,59 @@ setMethod("trProject", "GPRsurvey", function(x, CRSobj){
 #' Oriented bounding box (2D)
 #' 
 #' Returns the oriented bounding box of the trace position of the survey.
-#' @name trOBB2D
-#' @rdname trOBB2D
+#' 
+#' The algorithm you are looking for is known in polygon generalisation as 
+#' "smallest surrounding rectangle".
+#' Compute the convex hull of the cloud.
+#' For each edge of the convex hull:
+#' compute the edge orientation (with arctan),
+#' rotate the convex hull using this orientation in order to compute easily 
+#' the bounding rectangle area with min/max of x/y of the rotated convex hull,
+#' Store the orientation corresponding to the minimum area found,
+#' Return the rectangle corresponding to the minimum area found.
+#' In 3D, the same applies, except:
+#'   The convex hull will be a volume,
+#'   The orientations tested will be the orientations (in 3D) of the convex hull faces.
+#' @source  source "whuber" from stackexchange.com, 
+#' https://gis.stackexchange.com/questions/22895/finding-minimum-area-rectangle-for-given-points/181883#181883
+#' @name tpOBB2D
+#' @rdname tpOBB2D
 #' @export
-setMethod("trOBB2D", "GPRsurvey", function(x){
-  xyz <- coords(x)
-  xyz <- Filter(Negate(is.null), xyz)
-  p <- do.call(rbind, xyz)
-  return(OBB(p[,1:2]))
+setMethod("tpOBB2D", "GPRsurvey", function(x){
+  if(length(x@coords) > 0){
+    xyz <- coords(x)
+    xyz <- Filter(Negate(is.null), xyz)
+    p <- do.call(rbind, xyz)
+    return(OBB(p[,1:2]))
+  }else{
+    stop("x has no coordinates.")
+  }
 })
 
+
+#' Angle of the GPR survey 
+#' 
+#' @name svAngle
+#' @rdname svAngle
+#' @export
+setMethod("svAngle", "GPR", function(x){
+  if(length(x@coords) > 0){
+    orb <- trOBB2D(x)
+    dEN <- orb[1,] - orb[2,]
+    i <- which.max(diff(posLine(orb)))[1]
+    dOBB <- orb[i + 1,] - orb[i,]
+    angl_OBB <- atan2(dOBB[2], dOBB[1])
+    # # angl_OBB/pi * 180
+    # # abs(angl_EN - angl_OBB) / pi * 180
+    # if(pi * 6/5 > abs(angl_EN - angl_OBB) && abs(angl_EN - angl_OBB)  > pi* 4 /5){
+    #   angl_OBB <- angl_OBB + pi
+    #   if(angl_OBB > pi) angl_OBB <- angl_OBB - 2*pi
+    # }
+    return(angl_OBB)
+  }else{
+    stop("x has no coordinates.")
+  }
+})
 
 
 #' @export

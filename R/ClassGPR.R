@@ -5808,6 +5808,42 @@ setMethod("reverse", "GPR", function(x, id = NULL,  tol = 0.3){
 }
 )
 
+#' @name tpOBB2D
+#' @rdname tpOBB2D
+#' @export
+setMethod("tpOBB2D", "GPR", function(x){
+  if(length(x@coord) > 0){
+    return(OBB(x@coord[,1:2]))
+  }else{
+    stop("x has no coordinates.")
+  }
+})
+
+#' @name svAngle
+#' @rdname svAngle
+#' @export
+setMethod("svAngle", "GPR", function(x){
+  if(length(x@coord) > 0){
+    dEN <- x@coord[1,1:2] - tail(x@coord[,1:2],1)
+    angl_EN <- atan2(dEN[2], dEN[1])
+    # angl_EN/pi * 180
+    orb <- trOBB2D(x)
+    dEN <- orb[1,] - orb[2,]
+    i <- which.max(diff(posLine(orb)))[1]
+    dOBB <- orb[i + 1,] - orb[i,]
+    angl_OBB <- atan2(dOBB[2], dOBB[1])
+    # angl_OBB/pi * 180
+    # abs(angl_EN - angl_OBB) / pi * 180
+    if(pi * 6/5 > abs(angl_EN - angl_OBB) && abs(angl_EN - angl_OBB)  > pi* 4 /5){
+      angl_OBB <- angl_OBB + pi
+      if(angl_OBB > pi) angl_OBB <- angl_OBB - 2*pi
+    }
+    return(angl_OBB)
+  }else{
+    stop("x has no coordinates.")
+  }
+})
+
 #' Shift estimation between two GPR profiles.
 #'
 #' @name shiftEst

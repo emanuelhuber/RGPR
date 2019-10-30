@@ -331,10 +331,15 @@ setGenericVerif("papply", function(x, prc = NULL) standardGeneric("papply"))
 #' @export
 setGenericVerif("trProject", function(x, CRSobj) standardGeneric("trProject"))
 
-#' @name trOBB2D
-#' @rdname trOBB2D
+#' @name tpOBB2D
+#' @rdname tpOBB2D
 #' @export
-setGenericVerif("trOBB2D", function(x) standardGeneric("trOBB2D"))
+setGenericVerif("tpOBB2D", function(x) standardGeneric("tpOBB2D"))
+
+#' @name svAngle
+#' @rdname svAngle
+#' @export
+setGenericVerif("svAngle", function(x) standardGeneric("svAngle"))
 
 
 #------------------------------GPR

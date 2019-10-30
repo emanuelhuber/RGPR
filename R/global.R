@@ -629,7 +629,7 @@ setGenericVerif("writeSurvey", function(x, fPath, overwrite=FALSE){
 #' @rdname interpSlices
 #' @export
 setGenericVerif("interpSlices", function(x, dx = NULL, dy = NULL, dz = NULL, 
-                                         h = 6){ 
+                                         h = 6, extend = TRUE){ 
   standardGeneric("interpSlices")})
 
 #' @name tpShift

@@ -28,7 +28,7 @@
   colkey = NULL, add = FALSE, col = NULL, inttype = 2, ...)
 
 \method{plot}{GPRslice}(x, main = NULL, xlab = NULL, ylab = NULL,
-  col = NULL, clim = NULL, ...)
+  col = NULL, clim = NULL, rel = FALSE, ...)
 }
 \arguments{
 \item{x}{Object of class \code{GPR}}

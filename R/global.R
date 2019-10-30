@@ -331,6 +331,10 @@ setGenericVerif("papply", function(x, prc = NULL) standardGeneric("papply"))
 #' @export
 setGenericVerif("trProject", function(x, CRSobj) standardGeneric("trProject"))
 
+#' @name trOBB2D
+#' @rdname trOBB2D
+#' @export
+setGenericVerif("trOBB2D", function(x) standardGeneric("trOBB2D"))
 
 
 #------------------------------GPR
@@ -1302,6 +1306,29 @@ selectBBox <- function(border="red",lwd=2,...){
   LIM <- sapply(bbox, range)
   rect(LIM[1,"x"], LIM[1,"y"], LIM[2,"x"], LIM[2,"y"], border=border)
   return(list("xlim"=LIM[,"x"], "ylim" =LIM[,"y"]))
+}
+
+# source "whuber" from stackexchange.com
+# https://gis.stackexchange.com/questions/22895/finding-minimum-area-rectangle-for-given-points/181883#181883
+# Oriented Bounding Box
+OBB <- function(p) {
+  # Analyze the convex hull edges     
+  a <- chull(p)                                   # Indexes of extremal points
+  a <- c(a, a[1])                                 # Close the loop
+  e <- p[a[-1],] - p[a[-length(a)], ]             # Edge directions
+  norms <- sqrt(rowSums(e^2))                     # Edge lengths
+  v <- e / norms                                  # Unit edge directions
+  w <- cbind(-v[,2], v[,1])                       # Normal directions to the edges
+  
+  # Find the MBR
+  vertices <- p[a, ]                              # Convex hull vertices
+  x <- apply(vertices %*% t(v), 2, range)         # Extremes along edges
+  y <- apply(vertices %*% t(w), 2, range)         # Extremes normal to edges
+  areas <- (y[1,]-y[2,])*(x[1,]-x[2,])            # Areas
+  k <- which.min(areas)                           # Index of the best edge (smallest area)
+  
+  # Form a rectangle from the extremes of the best edge
+  cbind(x[c(1,2,2,1,1),k], y[c(1,1,2,2,1),k]) %*% rbind(v[k,], w[k,])
 }
 
 # NOT USED!

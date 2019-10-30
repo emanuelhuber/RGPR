@@ -1105,6 +1105,19 @@ setMethod("trProject", "GPRsurvey", function(x, CRSobj){
   return(x)
 })
 
+#' Oriented bounding box (2D)
+#' 
+#' Returns the oriented bounding box of the trace position of the survey.
+#' @name trOBB2D
+#' @rdname trOBB2D
+#' @export
+setMethod("trOBB2D", "GPRsurvey", function(x){
+  xyz <- coords(x)
+  xyz <- Filter(Negate(is.null), xyz)
+  p <- do.call(rbind, xyz)
+  return(OBB(p[,1:2]))
+})
+
 
 
 #' @export

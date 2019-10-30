@@ -5827,7 +5827,7 @@ setMethod("svAngle", "GPR", function(x){
     dEN <- x@coord[1,1:2] - tail(x@coord[,1:2],1)
     angl_EN <- atan2(dEN[2], dEN[1])
     # angl_EN/pi * 180
-    orb <- trOBB2D(x)
+    orb <- tpOBB2D(x)
     dEN <- orb[1,] - orb[2,]
     i <- which.max(diff(posLine(orb)))[1]
     dOBB <- orb[i + 1,] - orb[i,]

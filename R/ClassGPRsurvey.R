@@ -1145,7 +1145,7 @@ setMethod("tpOBB2D", "GPRsurvey", function(x){
 #' @export
 setMethod("svAngle", "GPRsurvey", function(x){
   if(length(x@coords) > 0){
-    orb <- trOBB2D(x)
+    orb <- tpOBB2D(x)
     dEN <- orb[1,] - orb[2,]
     i <- which.max(diff(posLine(orb)))[1]
     dOBB <- orb[i + 1,] - orb[i,]

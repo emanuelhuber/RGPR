@@ -1345,32 +1345,32 @@ OBB <- function(p) {
 #' @return a list with elements x and y of dimension (n, m).
 #' @export
 perpPoints <- function(xy, d){
-  xy <- xy0[c(1,1:nrow(xy0), nrow(xy0)),]
-  xlat <- matrix(nrow = nrow(xy0), ncol = length(d))
-  ylat <- matrix(nrow = nrow(xy0), ncol = length(d))
-  for(i in 2:(nrow(xy) - 1)){
-    if( xy[i - 1, 2] == xy[i + 1, 2]){
-      xlat[i-1, ] <- xy[i, 1]
-      ylat[i-1, ] <- xy[i, 2] + d
-    }else if(xy[i - 1, 1] == xy[i + 1, 1] ){
-      xlat[i-1, ] = xy[i, 1] + d
-      ylat[i-1, ] = xy[i, 2]
+  xy <- ab[c(1,1:nrow(ab), nrow(ab)),]
+  xlat <- matrix(nrow = nrow(ab), ncol = length(d))
+  ylat <- matrix(nrow = nrow(ab), ncol = length(d))
+  for(i in 2:(nrow(xy2) - 1)){
+    if( xy2[i - 1, 2] == xy2[i + 1, 2]){
+      xlat[i-1, ] <- xy2[i, 1]
+      ylat[i-1, ] <- xy2[i, 2] + d
+    }else if(xy2[i - 1, 1] == xy2[i + 1, 1] ){
+      xlat[i-1, ] = xy2[i, 1] + d
+      ylat[i-1, ] = xy2[i, 2]
     }else{
       #get the slope of the line
-      m <- ((xy[i - 1, 2] - xy[i + 1, 2])/(xy[i - 1, 1] - xy[i + 1, 1]))
+      m <- ((xy2[i - 1, 2] - xy2[i + 1, 2])/(xy2[i - 1, 1] - xy2[i + 1, 1]))
       #get the negative reciprocal, 
       n_m <- -1/m
-      sng <- sign(xy[i + 1, 1] - xy[i - 1, 1])
+      sng <- sign(xy2[i + 1, 1] - xy2[i - 1, 1])
       DD <- d / sqrt( n_m^2 + 1)
       if( m < 0){
         DD <- -DD
       }
       if(sng > 0){
-        xlat[i-1, ] = xy[i, 1] +  DD
-        ylat[i-1, ] = xy[i, 2] + n_m * DD
+        xlat[i-1, ] = xy2[i, 1] +  DD
+        ylat[i-1, ] = xy2[i, 2] + n_m * DD
       }else{
-        xlat[i-1, ] = xy[i, 1] - DD
-        ylat[i-1, ] = xy[i, 2] - n_m * DD
+        xlat[i-1, ] = xy2[i, 1] - DD
+        ylat[i-1, ] = xy2[i, 2] - n_m * DD
       }
     }  
   }

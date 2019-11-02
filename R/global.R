@@ -1359,8 +1359,6 @@ perpPoints <- function(xy, d){
       m <- ((xy[i - 1, 2] - xy[i + 1, 2])/(xy[i - 1, 1] - xy[i + 1, 1]))
       #get the negative reciprocal, 
       n_m <- -1/m
-      # d <- d * sqrt(m^2 /(m^2 + 1))
-      k <- 1
       sng <- sign(xy[i + 1, 1] - xy[i - 1, 1])
       DD <- d / sqrt( n_m^2 + 1)
       if( m < 0){

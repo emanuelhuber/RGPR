@@ -1345,9 +1345,9 @@ OBB <- function(p) {
 #' @return a list with elements x and y of dimension (n, m).
 #' @export
 perpPoints <- function(xy, d){
-  xy <- ab[c(1,1:nrow(ab), nrow(ab)),]
-  xlat <- matrix(nrow = nrow(ab), ncol = length(d))
-  ylat <- matrix(nrow = nrow(ab), ncol = length(d))
+  xy2 <- xy[c(1,1:nrow(xy), nrow(xy)),]
+  xlat <- matrix(nrow = nrow(xy), ncol = length(d))
+  ylat <- matrix(nrow = nrow(xy), ncol = length(d))
   for(i in 2:(nrow(xy2) - 1)){
     if( xy2[i - 1, 2] == xy2[i + 1, 2]){
       xlat[i-1, ] <- xy2[i, 1]

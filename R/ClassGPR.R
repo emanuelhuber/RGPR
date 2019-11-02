@@ -2889,8 +2889,10 @@ setMethod("firstBreak",
   msg <- checkArg(method, msg, "STRING_CHOICE", 
                   c("coppens", "threshold",  "MER"))
   msg <- checkArg(thr   , msg, "PERCENT1")
-  msg <- checkArg(w     , msg, "NUMERIC1_SPOS", round((nmax - 1) * x@dz/1.5))
-  msg <- checkArg(ns    , msg, "NUMERIC1_SPOS_NULL", round((nmax - 1) * x@dz))
+  # msg <- checkArg(w     , msg, "NUMERIC1_SPOS", round((nmax - 1) * x@dz/1.5))
+  msg <- checkArg(w     , msg, "NUMERIC1_SPOS", max(x@depth))
+  # msg <- checkArg(ns    , msg, "NUMERIC1_SPOS_NULL", round((nmax - 1) * x@dz))
+  msg <- checkArg(ns    , msg, "NUMERIC1_SPOS_NULL", max(x@depth))
   msg <- checkArg(bet   , msg, "NUMERIC1_SPOS_NULL", Inf)
   checkArgStop(msg)
   #-----------------------------------
@@ -5458,7 +5460,7 @@ setMethod("trRmDuplicates", "GPR", function(x, tol = NULL, verbose = TRUE){
 #'
 #' @param x      An object of the class GPR.
 #' @param topo   A \eqn{m \times 4} numeric matrix, with \code{m} the number of 
-#'               traces in 'x'.
+#'               recorded trace positions.
 #'               The first 3 columns are the 
 #'               coordinates (x, y, z) and the last column the trace number 
 #'               (the column names can now be freely chosen).

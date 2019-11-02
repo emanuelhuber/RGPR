@@ -1336,6 +1336,49 @@ OBB <- function(p) {
   cbind(x[c(1,2,2,1,1),k], y[c(1,1,2,2,1),k]) %*% rbind(v[k,], w[k,])
 }
 
+#' Points perdicular to a polyline
+#'
+#' Compute oriented transects along a polyline (one transect per points)
+#' @param xy matrix n row, 2 column (x and y positions)
+#' @param d numeric vector of length m defining the distance of the transect from the
+#'          polyline points. If length m > 1 several transects are returned.
+#' @return a list with elements x and y of dimension (n, m).
+perpPoints <- function(xy, d){
+  xy <- xy0[c(1,1:nrow(xy0), nrow(xy0)),]
+  xlat <- matrix(nrow = nrow(xy0), ncol = length(d))
+  ylat <- matrix(nrow = nrow(xy0), ncol = length(d))
+  for(i in 2:(nrow(xy) - 1)){
+    if( xy[i - 1, 2] == xy[i + 1, 2]){
+      xlat[i-1, ] <- xy[i, 1]
+      ylat[i-1, ] <- xy[i, 2] + d
+    }else if(xy[i - 1, 1] == xy[i + 1, 1] ){
+      xlat[i-1, ] = xy[i, 1] + d
+      ylat[i-1, ] = xy[i, 2]
+    }else{
+      #get the slope of the line
+      m <- ((xy[i - 1, 2] - xy[i + 1, 2])/(xy[i - 1, 1] - xy[i + 1, 1]))
+      #get the negative reciprocal, 
+      n_m <- -1/m
+      # d <- d * sqrt(m^2 /(m^2 + 1))
+      k <- 1
+      sng <- sign(xy[i + 1, 1] - xy[i - 1, 1])
+      DD <- d / sqrt( n_m^2 + 1)
+      if( m < 0){
+        DD <- -DD
+      }
+      if(sng > 0){
+        xlat[i-1, ] = xy[i, 1] +  DD
+        ylat[i-1, ] = xy[i, 2] + n_m * DD
+      }else{
+        xlat[i-1, ] = xy[i, 1] - DD
+        ylat[i-1, ] = xy[i, 2] - n_m * DD
+      }
+    }  
+  }
+  return(list(x = xlat, y = ylat))
+}
+
+
 # NOT USED!
 # .fidpos <- function(xyz,fid){
 #   return(xyz[trimStr(fid)!="",,drop=FALSE])

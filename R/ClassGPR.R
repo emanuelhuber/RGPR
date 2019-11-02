@@ -2896,6 +2896,7 @@ setMethod("firstBreak",
   msg <- checkArg(bet   , msg, "NUMERIC1_SPOS_NULL", Inf)
   checkArgStop(msg)
   #-----------------------------------
+
   
   if( (nmax + w) < nrow(x) )  nmax <- max(tst[,"row"]) + w
   

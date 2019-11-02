@@ -1343,6 +1343,7 @@ OBB <- function(p) {
 #' @param d numeric vector of length m defining the distance of the transect from the
 #'          polyline points. If length m > 1 several transects are returned.
 #' @return a list with elements x and y of dimension (n, m).
+#' @export
 perpPoints <- function(xy, d){
   xy <- xy0[c(1,1:nrow(xy0), nrow(xy0)),]
   xlat <- matrix(nrow = nrow(xy0), ncol = length(d))

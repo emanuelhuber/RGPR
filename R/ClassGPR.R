@@ -5677,7 +5677,7 @@ interp3DPath <- function(x, pos, posi, r = NULL,
 #' @export
 interpPosFromGPGGA <- function(ntr, GPGGA, tol = NULL, backproject = TRUE){
   
-  mrk0 <- gpgga
+  mrk0 <- GPGGA
   
   #--- Convert to UTM
   tr_crs <-  llToUTM(lat = median(sp::coordinates(mrk0)[,2]), 
@@ -5728,7 +5728,7 @@ interpPosFromGPGGA <- function(ntr, GPGGA, tol = NULL, backproject = TRUE){
   
 
   if(backproject == TRUE){
-    tr_xyz[,1:2] <- UTMToll(xy = tr_xyz[,1:2], xy_crs = mrk_crs)
+    tr_xyz[,1:2] <- UTMToll(xy = tr_xyz[,1:2], xy_crs = tr_crs)
     tr_crs <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
   }
   

@@ -5675,16 +5675,15 @@ interp3DPath <- function(x, pos, posi, r = NULL,
 #' @name interpPosFromGPGGA 
 #' @rdname interpPosFromGPGGA
 #' @export
-setMethod("interpPosFromGPGGA", "GPR", 
-          function(x, gpgga, tol = NULL, backproject = TRUE){
+interpPosFromGPGGA <- function(ntr, GPGGA, tol = NULL, backproject = TRUE){
   
   mrk0 <- gpgga
   
   #--- Convert to UTM
-  mrk_crs <-  llToUTM(lat = median(sp::coordinates(mrk0)[,2]), 
+  tr_crs <-  llToUTM(lat = median(sp::coordinates(mrk0)[,2]), 
                       lon = median(sp::coordinates(mrk0)[,1]), 
                       zone = NULL, south = NULL)$crs
-  mrk <- as.data.frame(sp::spTransform(mrk0, mrk_crs))
+  mrk <- as.data.frame(sp::spTransform(mrk0, tr_crs))
   
   
   #---- 4. remove duplicates
@@ -5702,7 +5701,7 @@ setMethod("interpPosFromGPGGA", "GPR",
   mrk_time <- as.numeric(as.POSIXct(mrk$time))
   mrk_pos <- posLine(mrk[,c("x", "y")])
   tr_time <- seq(from = mrk_time[1], to = tail(mrk_time, 1), 
-                 length.out = length(x))
+                 length.out = ntr)
   tr_pos <- signal::interp1(x = mrk_time, y = mrk_pos, xi = tr_time, 
                             method = "spline", extrap = NA)
   
@@ -5713,7 +5712,7 @@ setMethod("interpPosFromGPGGA", "GPR",
   # plot(tr_pos, posLine(coord(x[[1]])[,1:2]))
   
   #--- Interpolate trace coordinates
-  tr_xyz <- matrix(0, nrow = ncol(x), ncol = 3)
+  tr_xyz <- matrix(0, nrow = ntr, ncol = 3)
   tr_xyz[, 1] <- signal::interp1(x = mrk_pos, y = mrk$x, xi = tr_pos, 
                           method = "spline", extrap = NA)
   tr_xyz[, 2] <- signal::interp1(x = mrk_pos, y = mrk$y, xi = tr_pos, 
@@ -5726,8 +5725,11 @@ setMethod("interpPosFromGPGGA", "GPR",
   # 
   # plot(tr_pos, tr_z)
   # points(mrk_pos, mrk$z, pch = 20, col = "red")
+  
+
   if(backproject == TRUE){
     tr_xyz[,1:2] <- UTMToll(xy = tr_xyz[,1:2], xy_crs = mrk_crs)
+    tr_crs <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
   }
   
   # utr <- sf::st_as_sf(as.data.frame(uu), coords = c(1,2))
@@ -5735,12 +5737,12 @@ setMethod("interpPosFromGPGGA", "GPR",
   # points(sf::st_coordinates(utr), pch = 20)
   # plot(utr, add = TRUE, pch = 20)
 
-  coord(x) <- tr_xyz
-  crs(x) <- mrk_crs
-  x@proc <- c(x@proc, "interpPosFromGPGGA")
-  return(x)
+  # coord(x) <- tr_xyz
+  # crs(x) <- mrk_crs
+  # x@proc <- c(x@proc, "interpPosFromGPGGA")
+  return(list(x = tr_xyz, crs = tr_crs))
 }
-)
+
 
 #' Interpolate GPR coordinates from geoJSON data
 #'

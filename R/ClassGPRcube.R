@@ -406,13 +406,108 @@ trInterp <- function(x, z, zi){
   return(xi)
 }
 
+
+.sliceInterpOLD <- function(x, dx = NULL, dy = NULL, dz = NULL, h = 6){
+  if(!all(sapply(x@coords, length) > 0) ){
+    stop("Some of the data have no coordinates. Please set first coordinates to all data.")
+  }
+  X <- x
+  # default z-values (get elevation range)
+  x_zi0 <- defVz(X)
+  x_zi <- seq(min(x_zi0), by = dz, to = max(x_zi0))
+  if(all(isLengthUnit(X)) ){
+    x_zi <- sort(x_zi, decreasing = TRUE)
+  }
+  
+  if(is.null(dx)){
+    dx <- mean(sapply(x@coords, function(x) mean(diff(posLine(x)))))
+    # nx <- (max(sapply(x@coords, function(x) max(x[,1]))) -
+    #          min(sapply(x@coords, function(x) min(x[,1])) )) / dxy
+    # nx <- round(nx)
+  }
+  if(is.null(dy)){
+    dy <- dx
+  }
+  if(is.null(dz)){
+    dz <- abs(diff(x_zi))
+  }
+  #Z <- list()
+  V <- list()
+  for(i in seq_along(X)){
+    if(isLengthUnit(X[[i]])){
+      if(length(unique(X[[i]]@coord[,3])) > 1){
+        stop("The traces have different elevation!")
+      } 
+      x_z   <- X[[i]]@coord[1,3] - X[[i]]@depth
+    }else{
+      x_z   <- X[[i]]@depth
+    }
+    x_data <- X[[i]]@data
+    x_data[is.na(x_data)] <- 0
+    # interpolation
+    V[[i]] <- apply(x_data, 2, trInterp, z = x_z, zi = x_zi )
+    # Z[[i]] <- x_zi   # X[[i]]@depth
+  }
+  
+  # vj <- seq(dz, by = dz, to = length(x_zi))
+  
+  val <- list()
+  # positions obervations
+  xpos <- unlist(lapply(X@coords, function(x) x[,1]))
+  ypos <- unlist(lapply(X@coords, function(x) x[,2]))
+  
+  # define bounding box + number of points for interpolation
+  obb <- tpOBB2D(x)
+  bbox <- c(min(obb[,1]), max(obb[,1]), min(obb[,2]), max(obb[,2]))
+  
+  
+  bbox_dx <- bbox[2] - bbox[1]
+  bbox_dy <- bbox[4] - bbox[3]
+  nx <- ceiling(bbox_dx / dx )
+  ny <- ceiling(bbox_dy / dy )
+  
+  # correct bbox (such that dx, dy are correct)
+  Dx <- (nx * dx - bbox_dx)/2
+  Dy <- (ny * dy - bbox_dy)/2
+  bbox[1:2] <- bbox[1:2] + c(-1, 1) * Dx
+  bbox[3:4] <- bbox[3:4] + c(-1, 1) * Dy 
+  bbox_dx <- bbox[2] - bbox[1]
+  bbox_dy <- bbox[4] - bbox[3]
+  SL <- array(dim = c(nx, ny, length(x_zi)))
+  
+  
+  bbox[1] < min(xpos)
+  
+  j <- 1
+  h = 6
+  
+  n <- 1
+  m <- 1
+  ratio_x_y <- bbox_dy / bbox_dx
+  if(ratio_x_y < 1){
+    m <- round(1/ratio_x_y)
+  }else{
+    n <- round(ratio_x_y)
+  }
+  for(j in  seq_along(x_zi)){
+    # j <- vj[u]
+    #z <- rep(sapply(Z, function(x, i = j) x[i]), sapply(V, ncol))
+    val[[j]] <- unlist(lapply(V, function(v, k = j) v[k,]))
+    S <- MBA::mba.surf(cbind(xpos, ypos, val[[j]]), nx, ny, n = 1L, m = 1L, 
+                       extend = TRUE, h = h)$xyz.est
+    SL[,,j] <- S$z
+  }
+  return(list(x = S$x, y = S$y, z = SL, vz = x_zi, x0 = xpos, y0 = ypos, z0 = val))
+  
+}  
+
 # x = GPRsurvey object
 # dx = resolution along x-axis (e.g., 0.5 [m])
 # dy = resolution along y-axis (e.g., 0.5 [m])
 # dz = resolution along z-axis (e.g., 2 [ns])
 # h = Number of levels in the hierarchical construction 
 #     See the function 'mba.surf' of the MBA package
-.sliceInterp <- function(x, dx = NULL, dy = NULL, dz = NULL, h = 6){
+.sliceInterpOLD <- function(x, dx = NULL, dy = NULL, dz = NULL, h = 6){
   if(!all(sapply(x@coords, length) > 0) ){
     stop("Some of the data have no coordinates. Please set first coordinates to all data.")
   }
@@ -463,6 +558,7 @@ trInterp <- function(x, z, zi){
   nx <- abs(diff(range(xpos))) / dx
   ny  <- abs(diff(range(ypos))) / dy
   SL <- array(dim = c(nx, ny, length(x_zi)))
+  
   for(j in  seq_along(x_zi)){
     # j <- vj[u]
     #z <- rep(sapply(Z, function(x, i = j) x[i]), sapply(V, ncol))

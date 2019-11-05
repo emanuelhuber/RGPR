@@ -377,6 +377,13 @@ setGenericVerif("interpPos", function(x, topo, plot = FALSE, r = NULL, tol = NUL
                                       method = c("linear", "linear", "linear"), crs = NULL, ...) 
   standardGeneric("interpPos"))
 
+#' @name interpPosFromGPGGA
+#' @rdname interpPosFromGPGGA
+#' @export
+setGenericVerif("interpPosFromGPGGA", 
+          function(x, gpgga, tol = NULL, backproject = TRUE)
+            standardGeneric("interpPosFromGPGGA"))
+
 #' @name regInterpPos
 #' @rdname regInterpPos
 #' @export

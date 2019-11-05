@@ -5504,14 +5504,12 @@ setMethod("interpPos", "GPR",
             # if we have measured some points before the line start or 
             # after the end of the GPR Line, we delete them
             test <- which(!is.na(topo[, 4]))
-            #trueEnd <- max(which(test))
-            #trueBeg <- min(which(test))
             topo <- topo[min(test):max(test), ]
             #--- 3D topo Distance ---#
             if(!is.null(r)){
               topo[,3] <- raster::extract(r, topo[, 1:2], method = "bilinear")
               if(sum(is.na(topo[, 3])) > 0){
-                stop("\n'extract(r, topo[, c(\"E\",\"N\")], method = \"bilinear\")' ",
+                stop("'extract(r, topo[, c(\"E\",\"N\")], method = \"bilinear\")' ",
                      "returns 'NA' values!\n", 
                      "Not all GPR positions fall within raster extent or\n",
                      "there are 'NA' values in raster 'r'!")
@@ -5670,6 +5668,80 @@ interp3DPath <- function(x, pos, posi, r = NULL,
   return(ENZ)
 }
 
+#' Interpolate GPR coordinates from GPS data (GPGGA string) data
+#'
+#' @param x Object of the class GPR
+#' @param gpgga output of the function "readGPGGA()"
+#' @name interpPosFromGPGGA 
+#' @rdname interpPosFromGPGGA
+#' @export
+setMethod("interpPosFromGPGGA", "GPR", 
+          function(x, gpgga, tol = NULL, backproject = TRUE){
+  
+  mrk0 <- gpgga
+  
+  #--- Convert to UTM
+  mrk_crs <-  llToUTM(lat = median(sp::coordinates(mrk0)[,2]), 
+                      lon = median(sp::coordinates(mrk0)[,1]), 
+                      zone = NULL, south = NULL)$crs
+  mrk <- as.data.frame(sp::spTransform(mrk0, mrk_crs))
+  
+  
+  #---- 4. remove duplicates
+  dist2D <- posLine(mrk[, c("x", "y")], last = FALSE)
+  # in 'x' and 'mrk'
+  if(is.null(tol))  tol <- sqrt(.Machine$double.eps)
+  tdbl <- which(abs(diff(dist2D)) < tol)
+  while(length(tdbl) > 0){
+    mrk <- mrk[ -(tdbl + 1), ]
+    dist2D <- posLine(mrk[, c("x", "y", "z")], last = FALSE) # mod
+    tdbl <- which(abs(diff(dist2D)) < tol)
+  }
+  
+  #--- Interpolate trace position
+  mrk_time <- as.numeric(as.POSIXct(mrk$time))
+  mrk_pos <- posLine(mrk[,c("x", "y")])
+  tr_time <- seq(from = mrk_time[1], to = tail(mrk_time, 1), 
+                 length.out = length(x))
+  tr_pos <- signal::interp1(x = mrk_time, y = mrk_pos, xi = tr_time, 
+                            method = "spline", extrap = NA)
+  
+  
+  # plot(mrk_pos, mrk_time)
+  # points(tr_pos, tr_time, pch = 20)
+  # check: compare with GPR data -> OK
+  # plot(tr_pos, posLine(coord(x[[1]])[,1:2]))
+  
+  #--- Interpolate trace coordinates
+  tr_xyz <- matrix(0, nrow = ncol(x), ncol = 3)
+  tr_xyz[, 1] <- signal::interp1(x = mrk_pos, y = mrk$x, xi = tr_pos, 
+                          method = "spline", extrap = NA)
+  tr_xyz[, 2] <- signal::interp1(x = mrk_pos, y = mrk$y, xi = tr_pos, 
+                          method = "spline", extrap = NA)
+  tr_xyz[, 3] <- signal::interp1(x = mrk_pos, y = mrk$z, xi = tr_pos, 
+                          method = "spline", extrap = NA)
+  
+  # plot(tr_x, tr_y, pch = 20)
+  # 
+  # 
+  # plot(tr_pos, tr_z)
+  # points(mrk_pos, mrk$z, pch = 20, col = "red")
+  if(backproject == TRUE){
+    tr_xyz[,1:2] <- UTMToll(xy = tr_xyz[,1:2], xy_crs = mrk_crs)
+  }
+  
+  # utr <- sf::st_as_sf(as.data.frame(uu), coords = c(1,2))
+  # plot(sf::st_coordinates(xyz), asp = 1, type = "l")
+  # points(sf::st_coordinates(utr), pch = 20)
+  # plot(utr, add = TRUE, pch = 20)
+
+  coord(x) <- tr_xyz
+  crs(x) <- mrk_crs
+  x@proc <- c(x@proc, "interpPosFromGPGGA")
+  return(x)
+}
+)
+
 #' Interpolate GPR coordinates from geoJSON data
 #'
 #' @param x Object of the class GPR
@@ -5688,17 +5760,17 @@ interpPosFromGeoJSON <- function(x, geojson, tol = NULL, backproject = TRUE){
   #plot(u$xy, type = "l", asp = 1)
   
   #---- 3. create "topo" file
-  topo <- cbind(u$xy, 0, NA)
-  colnames(topo) <- c("x", "y", "z", "tn")
+  mrk <- cbind(u$xy, 0, NA)
+  colnames(mrk) <- c("x", "y", "z", "tn")
   
   #---- 4. remove duplicates
-  dist2D <- posLine(topo[, c("x", "y")], last = FALSE)
-  # in 'x' and 'topo'
+  dist2D <- posLine(mrk[, c("x", "y")], last = FALSE)
+  # in 'x' and 'mrk'
   if(is.null(tol))  tol <- sqrt(.Machine$double.eps)
   tdbl <- which(abs(diff(dist2D)) < tol)
   while(length(tdbl) > 0){
-    topo <- topo[ -(tdbl + 1), ]
-    dist2D <- posLine(topo[, c("x", "y", "z")], last = FALSE) # mod
+    mrk <- mrk[ -(tdbl + 1), ]
+    dist2D <- posLine(mrk[, c("x", "y", "z")], last = FALSE) # mod
     tdbl <- which(abs(diff(dist2D)) < tol)
   }
   
@@ -5711,13 +5783,13 @@ interpPosFromGeoJSON <- function(x, geojson, tol = NULL, backproject = TRUE){
   # b) interpolate coordinates
   tr_xyz <- matrix(0, nrow = ncol(x), ncol = 3)
   tx_x <- approx(x = trFIDPos$y,
-                 y = topo[,"x"],
+                 y = mrk[,"x"],
                  xout = seq_along(x))
   tx_y <- approx(x = trFIDPos$y,
-                 y = topo[,"y"],
+                 y = mrk[,"y"],
                  xout = seq_along(x))
   tx_z <- approx(x = trFIDPos$y,
-                 y = topo[,"z"],
+                 y = mrk[,"z"],
                  xout = seq_along(x))
   tr_xyz[,1] <- tx_x$y
   tr_xyz[,2] <- tx_y$y

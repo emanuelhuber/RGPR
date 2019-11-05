@@ -1,6 +1,7 @@
 
 
 # Georeferencing
+#' @export
 setMethod("georef", "matrix", 
           function(x, alpha = NULL, cloc = c(0,0), creg = NULL,
                    ploc = NULL, preg = NULL, FUN = mean){
@@ -10,7 +11,7 @@ setMethod("georef", "matrix",
 })
 
 
-                        
+#' @export                      
 setMethod("strTensor", "matrix", 
           function(x, dxy = c(1, 1), mask = c(2, 2),
                         kBlur   = list(n = 3, m =  3, sd = 1), 

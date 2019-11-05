@@ -1069,6 +1069,10 @@ setReplaceMethod(
     
 # Rotate coordinates of the GPR traces
 #
+
+#' @export
+#' @name georef
+#' @rdname georef
 setMethod("georef", "GPRsurvey", 
           function(x, alpha = NULL, cloc = c(0,0), creg = NULL,
                    ploc = NULL, preg = NULL, FUN = mean){

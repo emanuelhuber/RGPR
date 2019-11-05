@@ -1440,7 +1440,7 @@ perpPoints <- function(xy, d){
 #            \code{ploc}-\code{preg}.
 .georef <- function(x, alpha = NULL, cloc = c(0,0), creg = NULL,
                     ploc = NULL, preg = NULL, FUN = mean){
-  x0 <- as.matrix(unname(x[,1:2, drop = FALSE]))
+  x0 <- as.matrix(unname(x[, 1:2, drop = FALSE]))
   if(is.null(alpha)){
     cloc <- as.double(cloc)
     creg <- as.double(creg)
@@ -6177,7 +6177,7 @@ pasteArgs <- function(eval_arg, arg){
     # if eval_arg == "1:10", returns "1:10" instead of "1,2,3,4,5,6,7,8,9,10"
   }else if(is.null(eval_arg)){
     return("NULL")
-  }else if(grepl(pattern = '^([[:digit:]]+):([[:digit:]]+)$', arg)){
+  }else if(all(grepl(pattern = '^([[:digit:]]+):([[:digit:]]+)$', arg))){
     return(paste0(arg))
   }else{
     return( paste0(eval_arg, collapse = ",") )

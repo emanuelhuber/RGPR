@@ -13,7 +13,7 @@
 \item{x}{An object of the class GPR.}
 
 \item{topo}{A \eqn{m \times 4} numeric matrix, with \code{m} the number of 
-traces in 'x'.
+recorded trace positions.
 The first 3 columns are the 
 coordinates (x, y, z) and the last column the trace number 
 (the column names can now be freely chosen).}

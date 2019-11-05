@@ -407,7 +407,7 @@ trInterp <- function(x, z, zi){
 }
 
 
-.sliceInterpOLD <- function(x, dx = NULL, dy = NULL, dz = NULL, h = 6){
+.sliceInterp <- function(x, dx = NULL, dy = NULL, dz = NULL, h = 6){
   if(!all(sapply(x@coords, length) > 0) ){
     stop("Some of the data have no coordinates. Please set first coordinates to all data.")
   }

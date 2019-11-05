@@ -6,7 +6,7 @@
 \title{Interpolate horizontal slices}
 \usage{
 \S4method{interpSlices}{GPRsurvey}(x, dx = NULL, dy = NULL,
-  dz = NULL, h = 6, extend = TRUE)
+  dz = NULL, h = 6)
 }
 \description{
 Interpolate horizontal slices

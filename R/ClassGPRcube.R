@@ -489,11 +489,15 @@ trInterp <- function(x, z, zi){
   }else{
     n <- round(ratio_x_y)
   }
+  if(m < 1) m <- 1L
+  if(n < 1) n <- 1L
+  print(m)
+  print(n)
   for(j in  seq_along(x_zi)){
     # j <- vj[u]
     #z <- rep(sapply(Z, function(x, i = j) x[i]), sapply(V, ncol))
     val[[j]] <- unlist(lapply(V, function(v, k = j) v[k,]))
-    S <- MBA::mba.surf(cbind(xpos, ypos, val[[j]]), nx, ny, n = 1L, m = 1L, 
+    S <- MBA::mba.surf(cbind(xpos, ypos, val[[j]]), nx, ny, n = n, m = m, 
                        extend = TRUE, h = h)$xyz.est
     SL[,,j] <- S$z
   }

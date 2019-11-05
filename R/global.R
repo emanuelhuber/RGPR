@@ -4900,7 +4900,7 @@ readSGY_data_trace <- function(con, ENDIAN, nbytes, NB_3200_BYTES = 0, NB_DATA_T
   trdt <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)  / (1000 * 1000)
   
   trclen = 240 + nspls * nbytes
-  ntrc = (.flen(con) - start_data_trace - start_data_trace) / trclen
+  ntrc = (.flen(con) - start_data_trace) / trclen
   
   dataSGY <- matrix(nrow = nspls, ncol = ntrc)
   trhd <- matrix(0L, nrow = 27, ncol = ntrc)

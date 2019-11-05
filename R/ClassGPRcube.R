@@ -407,7 +407,8 @@ trInterp <- function(x, z, zi){
 }
 
 
-.sliceInterp <- function(x, dx = NULL, dy = NULL, dz = NULL, h = 6){
+.sliceInterp <- function(x, dx = NULL, dy = NULL, dz = NULL, h = 6,
+                         extend = extend){
   if(!all(sapply(x@coords, length) > 0) ){
     stop("Some of the data have no coordinates. Please set first coordinates to all data.")
   }
@@ -491,14 +492,12 @@ trInterp <- function(x, z, zi){
   }
   if(m < 1) m <- 1L
   if(n < 1) n <- 1L
-  print(m)
-  print(n)
   for(j in  seq_along(x_zi)){
     # j <- vj[u]
     #z <- rep(sapply(Z, function(x, i = j) x[i]), sapply(V, ncol))
     val[[j]] <- unlist(lapply(V, function(v, k = j) v[k,]))
     S <- MBA::mba.surf(cbind(xpos, ypos, val[[j]]), nx, ny, n = n, m = m, 
-                       extend = TRUE, h = h)$xyz.est
+                       extend = extend, h = h)$xyz.est
     SL[,,j] <- S$z
   }
   return(list(x = S$x, y = S$y, z = SL, vz = x_zi, x0 = xpos, y0 = ypos, z0 = val))
@@ -643,7 +642,8 @@ setMethod("interpSlices", "GPRsurvey", function(x,
                                                 dx = NULL, 
                                                 dy = NULL, 
                                                 dz = NULL, 
-                                                h = 6){
+                                                h = 6,
+                                                extend = TRUE){
   
   if(is.null(dx) || is.null(dy) || is.null(dz)){
     stop("'dx', 'dy' and 'dz' must all be defined!")
@@ -652,7 +652,8 @@ setMethod("interpSlices", "GPRsurvey", function(x,
     stop("'dx', 'dy' and 'dz' must all be strickly positive!")
   }
   
-  SXY <- .sliceInterp(x = x, dx = dx, dy = dy, dz = dz, h = h)
+  SXY <- .sliceInterp(x = x, dx = dx, dy = dy, dz = dz, h = h,
+                      extend = extend)
   
   xyref <- c(min(SXY$x), min(SXY$y))
   xpos <- SXY$x - min(SXY$x)

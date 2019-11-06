@@ -1088,25 +1088,27 @@ setReplaceMethod(
     
 # Rotate coordinates of the GPR traces
 #
-
 #' @export
 #' @name georef
 #' @rdname georef
 setMethod("georef", "GPRsurvey", 
-          function(x, alpha = NULL, cloc = c(0,0), creg = NULL,
+          function(x, alpha = NULL, cloc = NULL, creg = NULL,
                    ploc = NULL, preg = NULL, FUN = mean){
-  if(is.null(center)){
-    center <- .centroid(x)
-  }
-  xyz  <- lapply(x@coords, georef, alpha = NULL, cloc = c(0,0), 
-                 creg = NULL, ploc = NULL, preg = NULL, FUN = mean)
-  #xyz2 <- lapply(x@intersections$coord, georef, alpha = NULL, cloc = c(0,0), 
-  #               creg = NULL, ploc = NULL, preg = NULL, FUN = mean)
-  x@coords <- xyz
-  x@intersections <- list()
-  x <- coordref(x)
-  return(x)
-})
+            if(is.null(cloc)){
+              cloc <- .centroid(x)[1:2]
+            }
+            if(is.null(alpha) && is.null(ploc) && is.null(preg)){
+              alpha <- svAngle(x)
+            }
+            # here I cannot write FUN = FUN because FUN is an argument of
+            # lapply...
+            xyz  <- lapply(x@coords, georef, alpha = alpha, cloc = cloc,
+                           creg = creg, ploc = ploc, preg = preg, FUN)
+            x@coords <- xyz
+            x@intersections <- list()
+            x <- coordref(x)
+            return(x)
+          })
 
 .centroid <- function(x){
   pos <- do.call(rbind, x@coords)

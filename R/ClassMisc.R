@@ -3,13 +3,12 @@
 # Georeferencing
 #' @export
 setMethod("georef", "matrix", 
-          function(x, alpha = NULL, cloc = c(0,0), creg = NULL,
+          function(x, alpha = NULL, cloc = NULL, creg = NULL,
                    ploc = NULL, preg = NULL, FUN = mean){
   x <- .georef (x, alpha = alpha, cloc = cloc, creg = creg,
                    ploc = ploc, preg = preg, FUN = FUN)
   return(x)
 })
-
 
 #' @export                      
 setMethod("strTensor", "matrix", 

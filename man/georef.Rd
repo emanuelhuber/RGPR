@@ -5,7 +5,10 @@
 \alias{georef}
 \title{Georeferencing}
 \usage{
-\S4method{georef}{GPRsurvey}(x, alpha = NULL, cloc = c(0, 0),
+georef(x, alpha = NULL, cloc = NULL, creg = NULL, ploc = NULL,
+  preg = NULL, FUN = mean)
+
+\S4method{georef}{GPRsurvey}(x, alpha = NULL, cloc = NULL,
   creg = NULL, ploc = NULL, preg = NULL, FUN = mean)
 }
 \arguments{

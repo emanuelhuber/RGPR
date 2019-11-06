@@ -681,8 +681,8 @@ setGenericVerif("tpShift", function(x, i, dx = 0, dy = 0){
 #' @export
 #' @name georef
 #' @rdname georef
-setGenericVerif("georef", function(x, alpha = NULL, cloc = c(0,0), creg = NULL,
-                                   ploc = NULL, preg = NULL, FUN = mean){ 
+setGeneric("georef", function(x, alpha = NULL, cloc = NULL, creg = NULL,
+                               ploc = NULL, preg = NULL, FUN = mean){ 
   standardGeneric("georef")})
 
 #------------------------------BOTH

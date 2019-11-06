@@ -3351,7 +3351,19 @@ setMethod("time0Cor", "GPR", function(x, t0 = NULL,
   # return(x)
 })
 
-
+#' Correct for the elevation of antenna above the ground
+#' 
+#' For air-lauched GPR or airborn GPR
+#' @name corAntElev
+#' @rdname corAntElev
+#' @export
+setMethod("corAntElev", "GPR", function(x, c0 = 0.3){
+  ant_z <- max(x@coord[,3]) - x@coord[,3]
+  ts <- ant_z * 2 / c0
+  x <- traceShift(x, ts, crop = FALSE)
+  proc(x) <- getArgs()
+  return(x)
+})
 
 #' Constant-offset correction (time) of the GPR data
 #'

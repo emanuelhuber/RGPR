@@ -485,6 +485,10 @@ setGenericVerif("upsample", function(x,n) standardGeneric("upsample"))
 setGenericVerif("timeCorOffset", function(x, t0 = NULL, track = TRUE) 
   standardGeneric("timeCorOffset"))
 
+
+setGenericVerif("corAntElev", function(x, c0 = 0.3)
+  standardGeneric("corAntElev"))
+
 #' @name filter1D
 #' @rdname filter1D
 setGenericVerif("filter1D", 

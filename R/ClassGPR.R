@@ -2901,7 +2901,7 @@ setMethod("firstBreak",
   if( (nmax + w) < nrow(x) )  nmax <- max(tst[,"row"]) + w
   
   if(method == "coppens"){
-    xs <- x@data[1:nmax, ]^2
+    xs <- x@data[1:nmax, , drop = FALSE]^2
     
     ns <- if(is.null(ns)) round(1.5 * w) else ns
     w <- round(w / x@dz)
@@ -2922,7 +2922,7 @@ setMethod("firstBreak",
     fb <- apply(abs(x@data), 2, .firstBreakThres, thr = thres, x@depth)
   }else if(method == "MER"){
     w <- round(w / x@dz)
-    fb <- .firstBreakMER(x@data[1:nmax, ], w)
+    fb <- .firstBreakMER(x@data[1:nmax, , drop = FALSE], w)
     fb <- x@depth[fb]
   }
   if(any(is.na(fb))){

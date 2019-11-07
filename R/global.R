@@ -4428,15 +4428,38 @@ readGPGGA <- function(x, sep = ","){
 getLonLatFromGPGGA <- function(a){  
   a <- as.data.frame(a, stringsAsFactors = FALSE)
   a <- a[a[,1]=="$GPGGA",]
-  names(a) <- c("ID","UTC","lat","NS","lon","EW","fix","NbSat","HDOP","H","mf","HGeoid","TDGPS","DGPSID","Checks")
+
+  names(a) <- c("ID", "UTC", "lat", "NS", "lon", "EW", "fix", 
+                "NbSat", "HDOP", "H", "mf", "HGeoid", "mf2", 
+                "TDGPS", "DGPSID", "Checks")[1:ncol(a)]
   
-  # string = sentence identifier
-  # UTC = time (170834 = 17:08:34 Z)
-  # Lat = latitude (4124.8963 = 41°24'...)
-  # a$ID
-  
-  # 2 - UTC (time)
-  options(digits.secs = 3)
+  # # string = sentence identifier
+  # # UTC = time (170834 = 17:08:34 Z)
+  # # Lat = latitude (4124.8963 = 41°24'...)
+  # # a$ID
+  # 
+  # # 2 - UTC (time)
+  # # options(digits.secs = 3)
+  # trctime <- strptime(paste(Sys.Date(), a$UTC), '%Y-%m-%d %H%M%OS', tz='UTC')
+  # 
+  # # 3 latitude 
+  # #  The format for NMEA coordinates is (d)ddmm.mmmm
+  # lat <- sapply(a$lat, stringToLat, NW = a$NS, USE.NAMES = FALSE)
+  # 
+  # # 5 longitude
+  # #  The format for NMEA coordinates is (d)ddmm.mmmm
+  # lon <- sapply(a$lon, stringToLat, NW = a$EW,USE.NAMES = FALSE)
+  # 
+  # # 10 elevation
+  # z <- as.numeric(a$H)
+  # 
+  # llz <- data.frame(lon = lon, lat = lat, z = z, time = trctime)
+  # colnames(llz) <- c("lon", "lat", "z", "time")
+  return(.getLonLatFromGPGGA(a))
+}
+
+
+.getLonLatFromGPGGA <- function(a){
   trctime <- strptime(paste(Sys.Date(), a$UTC), '%Y-%m-%d %H%M%OS', tz='UTC')
   
   # 3 latitude 

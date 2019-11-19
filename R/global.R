@@ -4696,7 +4696,7 @@ readDT1 <- function(dsn, dsn2 = NULL){
 #' @param dsn [\code{character(1)|connection object}]data source name: 
 #'            either the filepath to the GPR data (character),
 #'            or an open file connection.
-#'
+#' 
 #' @export
 readGPS <- function(dsn){
   X <- .readGPS(dsn)

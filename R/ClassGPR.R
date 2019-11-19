@@ -5545,7 +5545,6 @@ setMethod("interpPos", "GPR",
                 dtr <- topo[tdbl[i] + 1 , 4] - topo[tdbl[i], 4]
                 # traces to remove (ID)
                 w <- topo[tdbl[i], 4] + seq_len(dtr)
-                print(dtr)
                 # remove trace in x
                 x <- x[, -w]  
                 # remove traces in topo 

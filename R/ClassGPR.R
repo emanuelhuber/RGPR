@@ -5517,6 +5517,9 @@ setMethod("interpPos", "GPR",
             # after the end of the GPR Line, we delete them
             test <- which(!is.na(topo[, 4]))
             topo <- topo[min(test):max(test), ]
+            topo[, 4] <- as.integer(topo[,4])
+            # keep only the markers corresponding to existing traces
+            topo <- topo[topo[, 4] > 0 & topo[, 4] <= ncol(x), ]
             #--- 3D topo Distance ---#
             if(!is.null(r)){
               topo[,3] <- raster::extract(r, topo[, 1:2], method = "bilinear")
@@ -5611,7 +5614,7 @@ setMethod("interpPos", "GPR",
             }else{
               #--- INTERPOLATION ---#
               A <- interp3DPath(x = topo[, 1:3], pos = topo[, 4], 
-                                posi = seq_along(x@pos), r =r,
+                                posi = seq_along(x@pos), r = r,
                                 method = method)
               colnames(A) <- c("x", "y", "z")
             }

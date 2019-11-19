@@ -5532,30 +5532,60 @@ setMethod("interpPos", "GPR",
             # order topo by increasing traceNb
             topo <- topo[order(topo[, 4]), ]
             #--- REMOVE DUPLICATED TRACES (TRACES WITH (ALMOST) SAME POSITIONS) ---#
+            if(is.null(tol))  tol <- (.Machine$double.eps)
+            # topo <- mrk
             dist2D <- posLine(topo[, 1:2], last = FALSE)
-            # in 'x' and 'topo'
-            if(is.null(tol))  tol <- sqrt(.Machine$double.eps)
             tdbl <- which(abs(diff(dist2D)) < tol)
             #if(length(tdbl) > 0){
+            check <- 0
             while(length(tdbl) > 0){    # add
-              check <- 0
               for(i in seq_along(tdbl)){
-                dtr <- topo[tdbl[i] + 1, 4] - topo[tdbl[i], 4]
-                # traces to remove
+                # i <- 1
+                # number of trace to remove
+                dtr <- topo[tdbl[i] + 1 , 4] - topo[tdbl[i], 4]
+                # traces to remove (ID)
                 w <- topo[tdbl[i], 4] + seq_len(dtr)
-                x <- x[, -w]  # remove trace in x
-                # remove traces in topo and actualise the trace numbers
+                print(dtr)
+                # remove trace in x
+                x <- x[, -w]  
+                # remove traces in topo 
                 topo <- topo[-(tdbl[i] + 1), ] 
+                # and actualise the trace numbers
                 v <- (tdbl[i] + 1):nrow(topo)
                 topo[v, 4] <- topo[v, 4] -  dtr
-                #dist3D <- dist3D[-tdbl[i]]
                 tdbl <- tdbl - 1
                 check <- check + dtr
               }
-              message(length(tdbl), " duplicate trace position(s) removed from 'topo'!")
-              message("Accordingly, ", check, " trace(s) removed from 'x'!")
+              dist2D <- posLine(topo[, 1:2], last = FALSE)
               tdbl <- which(abs(diff(dist2D)) < tol)
             }
+            message(check, " duplicate trace position(s) removed from 'topo'!")
+            message("Accordingly, ", check, " trace(s) removed from 'x'!")
+            
+            # # in 'x' and 'topo'
+            # dist2D <- posLine(topo[, 1:2], last = FALSE)
+            # if(is.null(tol))  tol <- sqrt(.Machine$double.eps)
+            # tdbl <- which(abs(diff(dist2D)) < tol)
+            # #if(length(tdbl) > 0){
+            # while(length(tdbl) > 0){    # add
+            #   check <- 0
+            #   for(i in seq_along(tdbl)){
+            #     dtr <- topo[tdbl[i] + 1, 4] - topo[tdbl[i], 4]
+            #     # traces to remove
+            #     w <- topo[tdbl[i], 4] + seq_len(dtr)
+            #     x <- x[, -w]  # remove trace in x
+            #     # remove traces in topo and actualise the trace numbers
+            #     topo <- topo[-(tdbl[i] + 1), ] 
+            #     v <- (tdbl[i] + 1):nrow(topo)
+            #     topo[v, 4] <- topo[v, 4] -  dtr
+            #     #dist3D <- dist3D[-tdbl[i]]
+            #     tdbl <- tdbl - 1
+            #     check <- check + dtr
+            #   }
+            #   message(length(tdbl), " duplicate trace position(s) removed from 'topo'!")
+            #   message("Accordingly, ", check, " trace(s) removed from 'x'!")
+            #   tdbl <- which(abs(diff(dist2D)) < tol)
+            # }
             dist3D <- posLine(topo[, 1:3], last = FALSE)
             # if there are points measured with the total station
             # that do not have an fiducial (FID) > interpolate them!
@@ -6982,7 +7012,7 @@ setMethod("strTensor", "GPR", function(x,  blksze = c(2, 4),
 #' Write the GPR object in a file.
 #'
 #' @param x Object of the class \code{GPR} or \code{GPRsurvey}
-#' @param fPaht Filepath (Length-one character vector). If \code{fPath = NULL},
+#' @param fPath Filepath (Length-one character vector). If \code{fPath = NULL},
 #'              the file will be save in the current working directory with
 #'              the name of x (\code{name(x)}) with the extension depending 
 #'              of \code{type}.

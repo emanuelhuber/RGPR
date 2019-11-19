@@ -4414,6 +4414,15 @@ inPoly <- function(x, y, vertx, verty){
 
 #------------------------------------------------------------------------------#
 
+# used in function readGPS()
+extractPattern <- function(x, pat, shift1 = 0, shift2 = 0){
+  # pat_tr <- "(\\#[0-9]+)"
+  matches <- regexpr(pat, x, perl=TRUE)
+  first <- attr(matches, "capture.start") + shift1
+  last <- first + attr(matches, "capture.length") + shift2
+  return(mapply(substring, x, first, last, USE.NAMES = FALSE))
+}
+
 #' @export
 readGPGGA <- function(x, sep = ","){
   a <- read.table(x, header = FALSE, colClasses = "character",
@@ -4600,6 +4609,103 @@ readDT1 <- function(dsn, dsn2 = NULL){
   }
 }
 
+.readGPS <- function(dsn){
+  
+  x <- scan(dsn, what = character(), sep = "\n")
+  
+  xtr <- which(grepl("Trace \\#[0-9]+", x, 
+                     ignore.case = TRUE, useBytes = TRUE ))
+  #if(length(xtr) != length(xgpgga)){}
+  xgpgga <- integer(length(xtr) - 1)
+  xtr <- c(xtr, nrow(x))
+  todelete <- c()
+  for(i in seq_along(xtr[-1])){
+    for(j in (xtr[i] + 1):(xtr[i+1] - 1)){
+      test <- grepl("(\\$GPGGA)", x[j], ignore.case = TRUE, useBytes = TRUE )
+      if(isTRUE(test)){
+        xgpgga[i] <- j
+        # message(xtr[i], " - ", j)
+        break
+      }
+    }
+    if(!isTRUE(test)){
+      todelete <- c(todelete, i)
+    }
+  }
+  
+  xtr <- xtr[-todelete]
+  xgpgga <- xgpgga[-todelete]
+  
+  
+  # trace number
+  # pat_tr <- "(\\#[0-9]+)"
+  # matches <- regexpr(pat_tr, x[xtr], perl=TRUE)
+  # first <- attr(matches, "capture.start") + 1
+  # last <- first + attr(matches, "capture.length") - 1
+  # tr_id <- as.integer(mapply(substring, x[xtr], first, last, 
+  #                            USE.NAMES = FALSE))
+  tr_id <- as.integer(extractPattern(x[xtr], pat = "(\\#[0-9]+)", 
+                                     shift1 = 1, shift2 = -1))
+  
+  # trace position
+  # pat_tr <- "(position [0-9]*\\.?[0-9]*)"
+  # matches <- regexpr(pat_tr, x[xtr], perl=TRUE)
+  # first <- attr(matches, "capture.start") + 9
+  # last <- first + attr(matches, "capture.length")
+  # tr_pos <- as.numeric(mapply(substring, x[xtr], first, last, 
+  #                             USE.NAMES = FALSE))
+  tr_pos <- as.numeric(extractPattern(x[xtr], 
+                                      pat = "(position [0-9]*\\.?[0-9]*)", 
+                                      shift1 = 9, shift2 = 0))
+  
+  pat_gpgga <- paste0("\\$(?<ID>GPGGA),(?<UTC>[0-9.]+),(?<lat>[0-9.]+),",
+                      "(?<NS>[NS]),(?<lon>[0-9.]+),(?<EW>[EW]),(?<fix>[0-9]),",
+                      "(?<NbSat>[0-9.]+),(?<HDOP>[0-9.]+),(?<H>[0-9.]+),",
+                      "(?<mf>[MmFf]+)") 
+  #,(?<HGeoid>[0-9.]+),(?<mf2>[mMfF+),",
+  # "(?<TDGPS>[0-9.]+),(?<DGPSID> [A-z0-9.]+)"
+  # )
+  
+  # matches <- regexpr(pat_gpgga, x[xgpgga], perl=TRUE)
+  # first <- attr(matches, "capture.start")
+  # last <- first + attr(matches, "capture.length") -1
+  # gpgga <- mapply(substring, x[xgpgga], first, last, USE.NAMES = FALSE)
+  gpgga <- extractPattern(x[xgpgga], pat = pat_gpgga, 
+                          shift1 = 0, shift2 = -1)
+  
+  dim(gpgga) <- c(length(xgpgga), 11)
+  gpgga <- as.data.frame(gpgga, stringsAsFactors = FALSE)
+  colnames(gpgga) <- c("ID", "UTC", "lat", "NS", "lon", "EW", 
+                       "fix", "NbSat", "HDOP", "H", "mf")
+  
+  sel <- which(gpgga[,1] != "")
+  
+  tr_id <- tr_id[sel]
+  tr_pos <- tr_pos[sel]
+  gpgga <- gpgga[sel,]
+  
+  if(any(c(nrow(gpgga), length(tr_id)) != length(tr_pos))){
+    stop("Problem - code 'qoiwelk'. Please contact me\n",
+         "emanuel.huber@alumni.ethz.ch")
+  }
+  return(list(tr_id = tr_id, tr_pos = tr_pos, gpgga = gpgga))
+}
+
+#' Read .GPS files (Sensors and Software)
+#' 
+#' @param dsn [\code{character(1)|connection object}]data source name: 
+#'            either the filepath to the GPR data (character),
+#'            or an open file connection.
+#'
+#' @export
+readGPS <- function(dsn){
+  X <- .readGPS(dsn)
+  xyzt <- .getLonLatFromGPGGA(X$gpgga)
+  mrk <- cbind(xyzt[ ,1:3], X$tr_id, X$tr_pos, xyzt[ ,4])
+  # mrk <- as.matrix(mrk)
+  # colnames(mrk) <- c("x", "y", "z", "id", "pos", "time")
+  return(mrk)
+}
 
 #--------------- read MALA files -------------------#
 readRD7 <- function(dsn, dsn2 = NULL){

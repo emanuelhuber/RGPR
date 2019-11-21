@@ -842,7 +842,7 @@ setMethod("trRmDuplicates", "GPRsurvey", function(x, tol = NULL){
 #' @export
 setMethod("interpPos", "GPRsurvey",
           function(x, topo, plot = FALSE, r = NULL, tol = NULL, 
-                   method = c("linear", "spline", "pchip"), crs = NULL,
+                   method = c("linear", "linear", "linear"), crs = NULL,
                    ...){
     for(i in seq_along(x)){
       gpr <- readGPR(x@filepaths[[i]])

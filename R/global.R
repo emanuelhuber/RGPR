@@ -4632,10 +4632,11 @@ readDT1 <- function(dsn, dsn2 = NULL){
       todelete <- c(todelete, i)
     }
   }
-  
-  xtr <- xtr[-todelete]
-  xgpgga <- xgpgga[-todelete]
-  
+
+  if(length(todelete) > 0){
+    xtr <- xtr[-todelete]
+    xgpgga <- xgpgga[-todelete]
+  }
   
   # trace number
   # pat_tr <- "(\\#[0-9]+)"

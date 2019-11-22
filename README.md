@@ -3,10 +3,11 @@
 **If you have any questions, comments or suggestions, feel free to contact me (in english, french or german):**
 **emanuel.huber@alumni.ethz.ch**
 
-> I am developing this package on my free time as a gift to the GPR community. Any support will be appreciated! 
+<!-- > I am developing this package on my free time as a gift to the GPR community. Any support will be appreciated! 
 
 
 [![](https://bmc-cdn.nyc3.digitaloceanspaces.com/BMC-button-images/custom_images/orange_img.png)](https://www.buymeacoffee.com/EmanuelHuber)
+-->
 
 [RGPR](http://emanuelhuber.github.io/RGPR) is a free and open-source software package to read, export, analyse, process and visualise *ground-penetrating radar* (GPR) data. [RGPR](http://emanuelhuber.github.io/RGPR) is written in [R](https://cran.r-project.org/), a high-level  programming language for statistical computing and graphics that is freely available under the GNU General Public License and runs on Linux, Windows and MacOS. [R](https://cran.r-project.org/) is a interpreted scripting language (not compiled) in the same veine as python or matlab.
 

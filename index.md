@@ -10,6 +10,7 @@ date: 2018-02-12
 
 # RGPR: a free and open-source software package for ground-penetrating radar (<acronym title="Ground Penetrating Radar">GPR</acronym>) data processing
 
+<!--
 <p class="message"> 
 I am developing this package on my free time as a gift to the GPR community. Any support will be appreciated!
 </p>
@@ -17,7 +18,7 @@ I am developing this package on my free time as a gift to the GPR community. Any
 
 [![](https://bmc-cdn.nyc3.digitaloceanspaces.com/BMC-button-images/custom_images/orange_img.png)](https://www.buymeacoffee.com/EmanuelHuber)
 
-
+-->
 
 ## About
 

@@ -8,7 +8,7 @@ permalink:        pretty
 # Setup
 title:            RGPR
 tagline:          "free and open-source software package for ground-penetrating radar (GPR) data processing"
-description:      'RGPR: a free and open-source software package for ground-penetrating radar (GPR) data processing, analysis, visualisation, import and export .'
+description:      'RGPR: free and open-source'
 url:              https://emanuelhuber.github.io/RGPR/
 baseurl:          /RGPR
 logo:             http://emanuelhuber.github.io/RGPR/img/RGPR_logo.png

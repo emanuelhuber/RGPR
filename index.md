@@ -76,11 +76,11 @@ I am developing this package on my free time as a gift to the GPR community. Any
 
 ### Supported file formats (read only):
 
-- [x] [Sensors & Software](https://www.sensoft.ca) file format (**\*.dt1**, **\*.hd**).
-- [x] [MALA](https://www.malagpr.com.au) file format (**\*.rd3**, **\*.rd7**, **\*.rad**).
-- [x] [ImpulseRadar](https://www.impulseradar.se) file format (**\*.iprb**, **\*.iprh**).
+- [x] [Sensors & Software](https://www.sensoft.ca) file format (**\*.dt1**, **\*.hd**, **\*.gps**).
+- [x] [MALA](https://www.malagpr.com.au) file format (**\*.rd3**, **\*.rd7**, **\*.rad**, **\*.cor**).
+- [x] [ImpulseRadar](https://www.impulseradar.se) file format (**\*.iprb**, **\*.iprh**, **\*.cor**, **\*.time**, **\*.mrk**).
 - [X] [GSSI](https://www.geophysical.com) file format (**\*.dzt**, **\*.dzx**).
-- [X] [Geomatrix Earth Science Ltd](https://www.geomatrix.co.uk/) file format (Utsi Electronics format) for the **GroundVue 3**, **7**, **100**, **250** and **400** as well as for the **TriVue** devices (**\*.dat**, **\*.hdr**).
+- [X] [Geomatrix Earth Science Ltd](https://www.geomatrix.co.uk/) file format (Utsi Electronics format) for the **GroundVue 3**, **7**, **100**, **250** and **400** as well as for the **TriVue** devices (**\*.dat**, **\*.hdr**, **\*.gpt**, **\*.gps**).
 - [x] [Radar Systems, Inc.](http://www.radsys.lv) Zond file format (**\*.sgy**). **WARNING: it is not a version of the SEG-Y file format**.
 - [X] [SEG-Y](https://en.wikipedia.org/wiki/SEG-Y) file format developed by the Society of Exploration Geophysicists (SEG) for storing geophysical data (**\*.sgy**), also used by [Easy Radar USA](https://easyradusa.com)
 - [X] [3dradar](http://3d-radar.com/): the manufacturer does not want to reveal the binary file format **\*.3dra**. **Workaround**: export the GPR data in binary VOL format (**\*.vol**)  with the examiner software -> **still experimental**

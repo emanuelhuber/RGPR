@@ -1514,83 +1514,6 @@ closestTr <- function(x, y){
 
 
 
-#' latitude-longitude to UTM
-#' 
-#' see https://stackoverflow.com/a/30225804
-#' https://stackoverflow.com/questions/18639967/converting-latitude-and-longitude-points-to-utm
-#' @export
-llToUTM <- function(lat, lon, zone = NULL, south = NULL){
-  # todo: check if lat/long in hh:mm:ss and convert them into
-  #       decimal with the function 'll2dc()' (see below)
-  lat_mean <- median(lat)
-  lon_mean <- median(lon)
-  if(is.null(zone)){
-    zone <- getUTMzone(lat = lat_mean, lon = lon_mean)
-  }
-  if(is.null(south)){
-    south <- ifelse(lat_mean > 0, "", "+south")
-  }else if(isTRUE(south)){
-    south <- "+south "
-  }else{
-    south <- ""
-  }
-  ll <- data.frame(ID = 1:length(lat), X = lon, Y = lat)
-  sp::coordinates(ll) <- c("X", "Y")
-  sp::proj4string(ll) <- sp::CRS("+proj=longlat +datum=WGS84")
-  xy_crs <- paste0("+proj=utm ", south, "+zone=", zone, " +datum=WGS84",
-                   " +units=m +no_defs", " +ellps=WGS84 +towgs84=0,0,0")
-  xy <- sp::spTransform(ll, sp::CRS(xy_crs))
-  return(list(xy = as.matrix(as.data.frame(xy)[,2:3]), crs = xy_crs))
-}
-
-#' Get UTM zone from lattidue and longitude
-#'
-#' @export
-getUTMzone <- function(lat, lon){
-  # see https://stackoverflow.com/a/9188972
-  # The formula is to simple: it does not work for the both 
-  # UTM Zone Exceptions in Norway and Svalbard
-  # Special zones for Svalbard and Norway
-  lat <- median(lat)
-  lon <- median(lon)
-  if (lat >= 72.0 && lat < 84.0 ) 
-    if (lon >= 0.0  && lon <  9.0) 
-      return(31)
-  if (lon >= 9.0  && lon < 21.0)
-    return(33)
-  if (lon >= 21.0 && lon < 33.0)
-    return(35)
-  if (lon >= 33.0 && lon < 42.0) 
-    return(37)
-  zone <- (floor((lon + 180)/6) %% 60) + 1
-  return(unique(zone)[1])
-}
-
-#' UTM to latitude-longitude
-#' 
-#' @export
-UTMToll <- function(xy, xy_crs = NULL){
-  if(max(xy[,1]) > 834000) stop("y-values (northing) are larger than 834000")
-  if(min(xy[,1]) < 166000) stop("x-values (easting) are smaller than 166000")
-  if(is.null(xy_crs)){
-    xy_crs <- "+proj=utm +zone=32 +ellps=WGS84"
-  } 
-  ll <- data.frame(ID = 1:nrow(xy), X = xy[,1], Y = xy[,2])
-  sp::coordinates(ll) <- c("X", "Y")
-  sp::proj4string(ll) <- sp::CRS(xy_crs)
-  xy <- sp::spTransform(ll, sp::CRS("+init=epsg:4326"))
-  as.matrix(as.data.frame(xy)[,3:2])
-}
-
-# conversion latitude longitude (hh:mm:ss into decimal
-ll2dc <- function(x){
-  NS <- gsub('[^[:alpha:]]', "", x)
-  w <- gsub('[^0-9:.]', "", x)
-  V <- matrix(as.numeric(do.call(rbind, strsplit(w, ":"))), ncol = 3)
-  pm <- 2* (grepl("N", NS) | grepl("E", NS)) - 1
-  dec <- (V[,1] + V[,2] / 60 + V[,3]/3600) * pm
-  return(dec)
-}  
 
 .doubleVector <- function(v,n=2L){
   if(n > 1){
@@ -1604,6 +1527,7 @@ ll2dc <- function(x){
     return(v)
   }
 }
+
 
 #--------------------------------
 #' wapply: A faster (but less functional) "rollapply" for vector setups
@@ -3235,6 +3159,7 @@ phaseRotation <- function(x,phi){
 #' @param nBytes Length-one numeric vector: number of bytes
 #' @export
 byte2volt <- function( Vmax = 50, Vmin = 50, nBytes = 16) {
+  warnings("deprecated")
   if(is.null(Vmax)){
     return(1L)
   }else{
@@ -3242,6 +3167,27 @@ byte2volt <- function( Vmax = 50, Vmin = 50, nBytes = 16) {
       Vmin <- -Vmax
     }
     return( abs(Vmax - Vmin) / ( 2^nBytes ) )
+  }
+}
+
+#' Bytes to volt conversion
+#'       
+#' Convert bytes to volt values
+#' @param Vmax length-one numeric vector: maximal nominal analog input voltage. 
+#'             If \code{Vmax = NULL} it returns \code{1} (no bytes to volt 
+#'             transformation)
+#' @param Vmin length-one numeric vector: minimal nominal analog input voltage. 
+#'             If missing, then \code{Vmin = -Vmax}.
+#' @param nbits Length-one numeric vector: number of bits
+#' @export
+bits2volt <- function( Vmax = 50, Vmin = 50, nbits = 16) {
+  if(is.null(Vmax)){
+    return(1L)
+  }else{
+    if( missing(Vmin) ){
+      Vmin <- -Vmax
+    }
+    return( abs(Vmax - Vmin) / ( 2^nbits ) )
   }
 }
 
@@ -4423,1170 +4369,13 @@ extractPattern <- function(x, pat, shift1 = 0, shift2 = 0){
   return(mapply(substring, x, first, last, USE.NAMES = FALSE))
 }
 
-#' @export
-readGPGGA <- function(x, sep = ","){
-  a <- read.table(x, header = FALSE, colClasses = "character",
-                  sep = ",", stringsAsFactors = FALSE)
-  llz <- getLonLatFromGPGGA(a)
-  sp::coordinates(llz) <- cbind(x = llz$lon, y = llz$lat)
-  sp::proj4string(llz) <- sp::CRS("+proj=longlat +datum=WGS84")
-  return(llz)
-}
-
-#' @export
-getLonLatFromGPGGA <- function(a){  
-  a <- as.data.frame(a, stringsAsFactors = FALSE)
-  a <- a[a[,1]=="$GPGGA",]
-
-  names(a) <- c("ID", "UTC", "lat", "NS", "lon", "EW", "fix", 
-                "NbSat", "HDOP", "H", "mf", "HGeoid", "mf2", 
-                "TDGPS", "DGPSID", "Checks")[1:ncol(a)]
-  
-  # # string = sentence identifier
-  # # UTC = time (170834 = 17:08:34 Z)
-  # # Lat = latitude (4124.8963 = 41°24'...)
-  # # a$ID
-  # 
-  # # 2 - UTC (time)
-  # # options(digits.secs = 3)
-  # trctime <- strptime(paste(Sys.Date(), a$UTC), '%Y-%m-%d %H%M%OS', tz='UTC')
-  # 
-  # # 3 latitude 
-  # #  The format for NMEA coordinates is (d)ddmm.mmmm
-  # lat <- sapply(a$lat, stringToLat, NW = a$NS, USE.NAMES = FALSE)
-  # 
-  # # 5 longitude
-  # #  The format for NMEA coordinates is (d)ddmm.mmmm
-  # lon <- sapply(a$lon, stringToLat, NW = a$EW,USE.NAMES = FALSE)
-  # 
-  # # 10 elevation
-  # z <- as.numeric(a$H)
-  # 
-  # llz <- data.frame(lon = lon, lat = lat, z = z, time = trctime)
-  # colnames(llz) <- c("lon", "lat", "z", "time")
-  return(.getLonLatFromGPGGA(a))
-}
-
-
-.getLonLatFromGPGGA <- function(a){
-  trctime <- strptime(paste(Sys.Date(), a$UTC), '%Y-%m-%d %H%M%OS', tz='UTC')
-  
-  # 3 latitude 
-  #  The format for NMEA coordinates is (d)ddmm.mmmm
-  lat <- sapply(a$lat, stringToLat, NW = a$NS, USE.NAMES = FALSE)
-  
-  # 5 longitude
-  #  The format for NMEA coordinates is (d)ddmm.mmmm
-  lon <- sapply(a$lon, stringToLat, NW = a$EW,USE.NAMES = FALSE)
-  
-  # 10 elevation
-  z <- as.numeric(a$H)
-  
-  llz <- data.frame(lon = lon, lat = lat, z = z, time = trctime)
-  colnames(llz) <- c("lon", "lat", "z", "time")
-  return(llz)
-}
-
-
-stringToLat <- function(x, NW = "N"){
-  ddmm_mmmm <- strsplit(x, "\\.")[[1]]
-  n <- nchar(ddmm_mmmm[1])
-  if(n > 2){
-    dd <- as.numeric(substring(ddmm_mmmm[1],1, n-2))
-  }else{
-    dd <- 0
-  }
-  mm_mmmm <- paste0(substring(ddmm_mmmm[1],n-1, n), ".", ddmm_mmmm[2])
-  lat <- dd + as.numeric(mm_mmmm) / 60
-  if(any(c("S", "W") %in% NW)) lat <- -lat
-  return(lat)
-}
-
-
-# -------------------------------------------
-# ------------readDT1--------------------------
-# -------------------------------------------
-# @name  readDT1 (plot Ground Penetrating Radar image)
-# @description This function read *.HD and associated *.DT1
-# files from Sensors & Software.
-
-# @date 30.04.2014 08:33
-# @auteur Emanuel Huber
-# @param [text]    fPath       (file path of *.hd or *.dt1 file)
-# @require source("trimStr.R")
-# source('trimStr.R')
-# cat('> Function(s) loaded: "trimStr.R" \n')
-# @return list((hd = headerHD, dt1hd = headerDT1, data=myData))
-# -------------------------------------------
-
-readDT1 <- function(dsn, dsn2 = NULL){
-  
-  if( inherits(dsn, "connection") ){
-    if(!inherits(dsn2, "connection")){
-      stop("Please add an additional connection to 'readGPR()' for ",
-           "the header file '*.hd'")
-    }
-  }else if(is.character(dsn) && is.null(dsn2)){
-    fName <- getFName(dsn, ext = c(".HD", ".DT1"))
-    # open dt1 file
-    dsn <- file(fName$dt1 , "rb")
-    dsn2 <- fName$hd
-  }else{
-    if(!file.exists(dsn)){
-      stop("File ", dsn, " does not exist!")
-    }
-    if(!file.exists(dsn2)){
-      stop("File ", dsn2, " does not exist!")
-    }
-    dsn_save <- c(dsn, dsn2)
-    dsn  <- file(dsn_save[grepl("(\\.rd7)$", dsn_save)], "rb")
-    dsn2 <- dsn_save[grepl("(\\.rad)$", dsn_save)]
-  }
-  
-  # scan header file
-  headHD <- scan(dsn2, what = character(), strip.white = TRUE,
-                 quiet = TRUE, fill = TRUE, blank.lines.skip = TRUE, 
-                 flush = TRUE, sep = "\n")
-  nHD <- length(headHD)
-  hHD <- data.frame( tag = character(), val = character(), 
-                     stringsAsFactors = FALSE)
-  for(i in seq_along(headHD)){
-    hdline <- strsplit(headHD[i], "=")[[1]]
-    if(length(hdline) < 2){
-      hHD[i,1] <- ""
-      hHD[i,2] <- trimStr(hdline[1])
-    }else{
-      hHD[i,1:2] <-  as.character(sapply(hdline[1:2],trimStr))
-    }
-  }
-  nTr <- .getHD(hHD, "NUMBER OF TRACES")
-  nPt <- .getHD(hHD, "NUMBER OF PTS/TRC")
-  
-  #--- READ DT1
-  tags <- c("traces", "position", "samples","topo", "NA1", "bytes",
-            "tracenb", "stack","window","NA2", "NA3", "NA4",
-            "NA5", "NA6", "recx","recy","recz","transx","transy",
-            "transz","time0","zeroflag", "NA7", "time","x8","com")  
-  hDT1 <- list()
-  dataDT1 <- matrix(NA, nrow = nPt, ncol = nTr)
-  
-  for(i in 1:nTr){
-    for(j in 1:25){
-      hDT1[[tags[j]]][i] <- readBin(dsn, what = numeric(), n = 1L, size = 4)
-    }
-    # read the 28 characters long comment
-    hDT1[[tags[26]]][i] <- readChar(dsn, 28)
-    # read the nPt * 2 bytes trace data
-    dataDT1[,i] <- readBin(dsn, what = integer(), n = nPt, size = 2)
-  }
-  
-  close(dsn)
-  if(inherits(dsn2, "connection") ) close(dsn2)
-  
-  return( list(hd = hHD, dt1hd = hDT1, data = dataDT1) )
-}
-#-----------------
-#-----------------
-
-# A = GPR$hd
-# if position = TRUE, return in addition the row number
-# if number = TRUE, try to convert the value into a number
-.getHD <- function(A, string, number = TRUE, position = FALSE){
-  if(number){
-    value <- as.numeric(A[trimStr(A[,1]) == string, 2])
-  }else{
-    value <- A[trimStr(A[,1]) == string,2]
-  }
-  if(length(value)>0){
-    if(position){
-      pos <- which((trimStr(A[,1]) == string ) == TRUE)[1]
-      return(c(value, pos))
-    }else{
-      return(value)
-    }
-  }else{
-    return(NULL)
-  }
-}
-
-.readGPS <- function(dsn){
-  
-  x <- scan(dsn, what = character(), sep = "\n")
-  
-  xtr <- which(grepl("Trace \\#[0-9]+", x, 
-                     ignore.case = TRUE, useBytes = TRUE ))
-  #if(length(xtr) != length(xgpgga)){}
-  xgpgga <- integer(length(xtr) - 1)
-  xtr <- c(xtr, nrow(x))
-  todelete <- c()
-  for(i in seq_along(xtr[-1])){
-    for(j in (xtr[i] + 1):(xtr[i+1] - 1)){
-      test <- grepl("(\\$GPGGA)", x[j], ignore.case = TRUE, useBytes = TRUE )
-      if(isTRUE(test)){
-        xgpgga[i] <- j
-        # message(xtr[i], " - ", j)
-        break
-      }
-    }
-    if(!isTRUE(test)){
-      todelete <- c(todelete, i)
-    }
-  }
-
-  if(length(todelete) > 0){
-    xtr <- xtr[-todelete]
-    xgpgga <- xgpgga[-todelete]
-  }
-  
-  # trace number
-  # pat_tr <- "(\\#[0-9]+)"
-  # matches <- regexpr(pat_tr, x[xtr], perl=TRUE)
-  # first <- attr(matches, "capture.start") + 1
-  # last <- first + attr(matches, "capture.length") - 1
-  # tr_id <- as.integer(mapply(substring, x[xtr], first, last, 
-  #                            USE.NAMES = FALSE))
-  tr_id <- as.integer(extractPattern(x[xtr], pat = "(\\#[0-9]+)", 
-                                     shift1 = 1, shift2 = -1))
-  
-  # trace position
-  # pat_tr <- "(position [0-9]*\\.?[0-9]*)"
-  # matches <- regexpr(pat_tr, x[xtr], perl=TRUE)
-  # first <- attr(matches, "capture.start") + 9
-  # last <- first + attr(matches, "capture.length")
-  # tr_pos <- as.numeric(mapply(substring, x[xtr], first, last, 
-  #                             USE.NAMES = FALSE))
-  tr_pos <- as.numeric(extractPattern(x[xtr], 
-                                      pat = "(position [0-9]*\\.?[0-9]*)", 
-                                      shift1 = 9, shift2 = 0))
-  
-  pat_gpgga <- paste0("\\$(?<ID>GPGGA),(?<UTC>[0-9.]+),(?<lat>[0-9.]+),",
-                      "(?<NS>[NS]),(?<lon>[0-9.]+),(?<EW>[EW]),(?<fix>[0-9]),",
-                      "(?<NbSat>[0-9.]+),(?<HDOP>[0-9.]+),(?<H>[0-9.]+),",
-                      "(?<mf>[MmFf]+)") 
-  #,(?<HGeoid>[0-9.]+),(?<mf2>[mMfF+),",
-  # "(?<TDGPS>[0-9.]+),(?<DGPSID> [A-z0-9.]+)"
-  # )
-  
-  # matches <- regexpr(pat_gpgga, x[xgpgga], perl=TRUE)
-  # first <- attr(matches, "capture.start")
-  # last <- first + attr(matches, "capture.length") -1
-  # gpgga <- mapply(substring, x[xgpgga], first, last, USE.NAMES = FALSE)
-  gpgga <- extractPattern(x[xgpgga], pat = pat_gpgga, 
-                          shift1 = 0, shift2 = -1)
-  
-  dim(gpgga) <- c(length(xgpgga), 11)
-  gpgga <- as.data.frame(gpgga, stringsAsFactors = FALSE)
-  colnames(gpgga) <- c("ID", "UTC", "lat", "NS", "lon", "EW", 
-                       "fix", "NbSat", "HDOP", "H", "mf")
-  
-  sel <- which(gpgga[,1] != "")
-  
-  tr_id <- tr_id[sel]
-  tr_pos <- tr_pos[sel]
-  gpgga <- gpgga[sel,]
-  
-  if(any(c(nrow(gpgga), length(tr_id)) != length(tr_pos))){
-    stop("Problem - code 'qoiwelk'. Please contact me\n",
-         "emanuel.huber@alumni.ethz.ch")
-  }
-  return(list(tr_id = tr_id, tr_pos = tr_pos, gpgga = gpgga))
-}
-
-#' Read .GPS files (Sensors and Software)
-#' 
-#' @param dsn [\code{character(1)|connection object}]data source name: 
-#'            either the filepath to the GPR data (character),
-#'            or an open file connection.
-#' 
-#' @export
-readGPS <- function(dsn){
-  X <- .readGPS(dsn)
-  xyzt <- .getLonLatFromGPGGA(X$gpgga)
-  mrk <- cbind(xyzt[ ,1:3], X$tr_id, X$tr_pos, xyzt[ ,4])
-  # mrk <- as.matrix(mrk)
-  # colnames(mrk) <- c("x", "y", "z", "id", "pos", "time")
-  return(mrk)
-}
-
-#--------------- read MALA files -------------------#
-readRD7 <- function(dsn, dsn2 = NULL){
-  if( inherits(dsn, "connection") ){
-    if(!inherits(dsn2, "connection")){
-      stop("Please add an additional connection to 'readGPR()' for ",
-           "the header file '*.hd'")
-    }
-  }else if(is.character(dsn) && is.null(dsn2)){
-    fName <- getFName(dsn, ext = c(".rad", ".rd7"))
-    # open dt1 file
-    dsn <- file(fName$rd7 , "rb")
-    dsn2 <- fName$rad
-  }else{
-    if(!file.exists(dsn)){
-      stop("File ", dsn, " does not exist!")
-    }
-    if(!file.exists(dsn2)){
-      stop("File ", dsn2, " does not exist!")
-    }
-    dsn_save <- c(dsn, dsn2)
-    dsn  <- file(dsn_save[grepl("(\\.rd7)$", dsn_save)], "rb")
-    dsn2 <- dsn_save[grepl("(\\.rad)$", dsn_save)]
-  }
-  
-  ##---- RAD file
-  headRAD <- scan(dsn2, what = character(), strip.white = TRUE,
-                  quiet = TRUE, fill = TRUE, blank.lines.skip = TRUE, 
-                  flush = TRUE, sep = "\n")
-  
-  nRAD <- length(headRAD)
-  hRAD <- data.frame( tag = character(), val = character(), 
-                      stringsAsFactors = FALSE)
-  for(i in seq_along(headRAD)){
-    hdline <- strsplit(headRAD[i], ":")[[1]]
-    hRAD[i,1:2] <-  as.character(sapply(hdline[1:2],trimStr))
-  }
-  nTr <- .getHD(hRAD, "LAST TRACE")
-  nPt <- .getHD(hRAD, "SAMPLES")
-  ##---- RD7 file
-  dataRD7 <- matrix(NA, nrow = nPt, ncol = nTr)
-  for(i in seq_len(nTr)){
-    dataRD7[, i] <- readBin(dsn, what = integer(), n = nPt, size = 4)
-  }
-  
-  close(dsn)
-  if(inherits(dsn2, "connection") ) close(dsn2)
-  
-  return(list(hd = hRAD, data = dataRD7))
-}
-
-
-readRD3 <- function(dsn, dsn2 = NULL){
-  if( inherits(dsn, "connection") ){
-    if(!inherits(dsn2, "connection")){
-      stop("Please add an additional connection to 'readGPR()' for ",
-           "the header file '*.hd'")
-    }
-  }else if(is.character(dsn) && is.null(dsn2)){
-    fName <- getFName(dsn, ext = c(".rad", ".rd3"))
-    # open dt1 file
-    dsn <- file(fName$rd3 , "rb")
-    dsn2 <- fName$rad
-  }else{
-    if(!file.exists(dsn)){
-      stop("File ", dsn, " does not exist!")
-    }
-    if(!file.exists(dsn2)){
-      stop("File ", dsn2, " does not exist!")
-    }
-    dsn_save <- c(dsn, dsn2)
-    dsn  <- file(dsn_save[grepl("(\\.rd3)$", dsn_save)], "rb")
-    dsn2 <- dsn_save[grepl("(\\.rad)$", dsn_save)]
-  }
-  
-  #dirName     <- dirname(dsn)
-  #baseName    <- .fNameWExt(dsn)
-  #fNameRAD    <- file.path(dirName, paste0(baseName, ".rad"))
-  #fNameRD3    <- file.path(dirName, paste0(baseName, ".rd3"))
-  #fNameCOR    <- file.path(dirName, paste0(baseName, ".cor"))
-  
-  ##---- RAD file
-  headRAD <- scan(dsn2, what = character(), strip.white = TRUE,
-                  quiet = TRUE, fill = TRUE, blank.lines.skip = TRUE, 
-                  flush = TRUE, sep = "\n")
-  
-  nRAD <- length(headRAD)
-  hRAD <- data.frame( tag = character(), val = character(), 
-                      stringsAsFactors = FALSE)
-  for(i in seq_along(headRAD)){
-    hdline <- strsplit(headRAD[i], ":")[[1]]
-    hRAD[i,1:2] <-  as.character(sapply(hdline[1:2],trimStr))
-  }
-  nTr <- .getHD(hRAD, "LAST TRACE")
-  nPt <- .getHD(hRAD, "SAMPLES")
-  
-  ##---- RD3 file
-  dataRD3 <- matrix(NA, nrow = nPt, ncol = nTr)
-  for(i in seq_len(nTr)){
-    dataRD3[, i] <- readBin(dsn, what = integer(), n = nPt, size = 2)
-  }
-  
-  close(dsn)
-  if(inherits(dsn2, "connection") ) close(dsn2)
-
-  
-  ##---- COR file
-  #if(file.exists(fNameCOR)){
-  #hCOR <- read.table(fNameCOR, sep = "\t", dec = ".", header = FALSE,
-  #                   stringsAsFactors = FALSE)
-  #colnames(hCOR) <- c("traces", "date", "time", "latitude", "longitude",
-  #                "height", "accuracy")
-  #hCOR <- read.table(textConnection(gsub(",", "\t", readLines(fNameCOR))), 
-  #                   dec = ".", header = FALSE, stringsAsFactors = FALSE)
-  
-  # colnames(hCOR) <- c("traces", "date", "time", "latitude", 
-  #                     "lat", "longitude",
-  #                "long", "height", "unit", "accuracy")
-  # return(list(hd = hRAD, data = dataRD3, coords = hCOR))
-  #}else{
-  return(list(hd = hRAD, data = dataRD3))
-}
-
-#' Read SEG-Y file
-#' 
-#' @param dsn data source name: either the filepath to the GPR data (character),
-#'            or an open file connection.
-#' @param ENDIAN The endian-ness ("big" or "little") of the target system for 
-#'               the file. Using "swap" will force swapping endian-ness.
-#' 
-#' @export
-readSGY <- function(dsn, ENDIAN = "big"){
-  if( !inherits(dsn, "connection") ){
-    dsn <- file(dsn, "rb")
-  }
-  THD <- readSGY_textual_file_header(dsn, ENDIAN)
-  BHD <- readSGY_binary_file_header(dsn, ENDIAN)
-  DTR <- readSGY_data_trace(dsn, ENDIAN, 
-                            nbytes = BHD$DATA_BYTES, 
-                            NB_3200_BYTES = BHD$NB_3200_BYTES, 
-                            NB_DATA_TRAILER = BHD$NB_DATA_TRAILER)
-  close(dsn)
-  return(list(THD = THD, BHD = BHD, DTR = DTR))
-}
-
-#------------------------------ SEG-Y FORMAT ----------------------------------#
-#---------------------------- TEXTUAL FILE HEADER -----------------------------#
-# A reel identification header consisting of 3600 bytes in 2 parts:
-# 1. - 3200 (0xC80) bytes of EBCDIC characters representing 40 80-byte
-# "card images"
-readSGY_textual_file_header <- function(con, ENDIAN){
-  invisible(seek(con, where = 0, origin = "start"))
-  # readChar(con, nchars = 3200, useBytes = TRUE)
-  # readBin(con, what = "raw", n = 3200, size = 1, endian = ENDIAN)
-  uu <- readBin(con, what = character(), n = 1, size = 1, endian = ENDIAN)
-  uu <- trimStr(uu)
-  uu1 <- verboseF(strsplit(uu, "(C\\s*[0-9]+)")[[1]], verbose = FALSE)
-  if(length(uu1) > 1 && !is.na(uu1)){
-    uu1 <- sapply(uu1, trimStr, USE.NAMES = FALSE)
-    uu1 <- uu1[uu1!=""]
-  }else{
-    uu1 <- verboseF(strsplit(uu, "\r\n")[[1]], verbose = FALSE)
-    if(length(uu1) > 0 && !is.na(uu1)){
-      uu1 <- sapply(uu1, trimStr, USE.NAMES = FALSE)
-      uu1 <- uu1[uu1!=""]
-    }else{
-      uu1 <- uu
-    }
-  }
-  return(uu1)
-}
-
-
-#------------------------------ BINARY FILE HEADER ----------------------------#
-# 400 (0x190) bytes of binary fixed-point integers, the first 60 bytes
-# are assigned, the remaining 340 bytes are unassigned for optional use;
-readSGY_binary_file_header <- function(con, ENDIAN){
-  hd <- c()
-  invisible(seek(con, where = 3200, origin = "start"))
-  # 3201-3204 - Job identification number
-  hd$JOB_ID <- readBin(con, what = integer(), n = 1, size = 4, endian = ENDIAN)
-  # 3205-3208 - Line number
-  hd$LINE_NUMBER <-  readBin(con, what = integer(), n = 1, size = 4, endian = ENDIAN)
-  # 3209-3212 - Reel number
-  hd$REEL_NUMBER <-  readBin(con, what = integer(), n = 1, size = 4, endian = ENDIAN)
-  # 3213-3214 - Number of data traces per ensemble
-  hd$NB_DATA_TRACES <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-  # 3215-3216 - Number of auxiliary traces per ensemble
-  hd$NB_AUX_TRACES <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-  # 3217-3218 - Sample interval. Microseconds (μs) for time data, Hertz (Hz) 
-  # for frequency data, meters (m) or feet (ft) for depth data.
-  hd$TIME_SAMPLING <-  readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-  # 3219-3220 Sample interval of original field recording. Microseconds (μs) for 
-  # time data, Hertz (Hz) for frequency data, meters (m) or 
-  #  feet (ft) for depth data.
-  hd$TIME_SAMPLING_FIELD <-  readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-  # 3221-3222 - Number of samples per data trace
-  hd$NB_SAMPLES <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-  # 3223-3224 - Number of samples per data trace for original field recording.
-  hd$NB_SAMPLES_FIELD <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-  
-  # 3225-3226 - data sample format code
-  # 1 = 4-byte IBM floating-point
-  # 2 = 4-byte, two's complement integer
-  # 3 = 2-byte, two's complement integer
-  # 4 = 4-byte fixed-point with gain (obsolete)
-  # 5 = 4-byte IEEE floating-point
-  # 6 = 8-byte IEEE floating-point
-  # 7 = 3-byte two’s complement integer
-  # 8 = 1-byte, two's complement integer
-  # 9 = 8-byte, two's complement integer
-  # 10 = 4-byte, unsigned integer
-  # 11 = 2-byte, unsigned integer
-  # 12 = 8-byte, unsigned integer
-  # 15 = 3-byte, unsigned integer
-  # 16 = 1-byte, unsigned integer
-  invisible(seek(con, where = 3224, origin = "start"))
-  hd$DATA_FORMAT_CODE <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-  hd$DATA_FORMAT <- switch(hd$DATA_FORMAT_CODE,
-                           "1" = "32-bit IBM floating point",
-                           "2" = "32-bit fixed-point",
-                           "3" = "16-bit fixed-point",
-                           "4" = "16-bit fixed-point with gain code",
-                           "5" = "4-byte IEEE floating-point",
-                           "6" = "8-byte IEEE floating-point",
-                           "7" = "3-byte two’s complement integer",
-                           "8" = "1-byte, two's complement integer",
-                           "9" = "8-byte, two's complement integer",
-                           "10" = "4-byte, unsigned integer",
-                           "11" = "2-byte, unsigned integer",
-                           "12" = "8-byte, unsigned integer",
-                           "15" = "3-byte, unsigned integer")
-  hd$DATA_BYTES <- switch(hd$DATA_FORMAT_CODE,
-                          "1"  = 4,
-                          "2"  = 4,
-                          "3"  = 2,
-                          "4"  = 2,
-                          "5"  = 4,
-                          "6"  = 8,
-                          "7"  = 3,
-                          "8"  = 1,
-                          "9"  = 8,
-                          "10" = 4,
-                          "11" = 2,
-                          "12" = 8,
-                          "15" = 3,
-                          "16" = 1)
-  
-  # 3227-3228 - CDP fold expected per CDP ensemble
-  hd$ENSEMBLE_FOLD <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-  # 3229-3230 - Trace sorting code (i.e. type of ensemble) :
-  # -1 = Other (should be explained in a user Extended Textual File Header
-  #               stanza)
-  # 0 = Unknown
-  # 1 = As recorded (no sorting)
-  # 2 = CDP ensemble
-  # 3 = Single fold continuous profile
-  # 4 = Horizontally stacked
-  # 5 = Common source point
-  # 6 = Common receiver point
-  # 7 = Common offset point
-  # 8 = Common mid-point
-  # 9 = Common conversion point
-  hd$TRACE_SORTING_CODE <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-  # 3231-3232 - Vertical sum code:
-  # 1 = no sum,
-  # 2 = two sum,
-  # ...,
-  # N = M-1 sum (M = 2 to 32,767)
-  hd$VERTICAL_SUM_CODE <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-  hd$VERTICAL_SUM <- switch(hd$VERTICAL_SUM_CODE ,
-                            "1" = "meter",
-                            "2" = "feet")
-  # 3233-3234 - Sweep frequency at start (Hz).
-  hd$SWEEP_FREQ_START <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-  # 3235-3236 - Sweep frequency at end (Hz).
-  hd$SWEEP_FREQ_END <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-  # 3237-3238 Sweep length (ms).
-  hd$SWEEP_LENGTH <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-  
-  
-  seek(con, where = 3500, origin = "start")
-  # 3501 Major SEG-Y Format Revision Number. This is an 8-bit unsigned value. Thus
-  # for SEG-Y Revision 2.0, as defined in this document, this will be recorded as
-  # 02 16 . This field is mandatory for all versions of SEG-Y, although a value of
-  # zero indicates "traditional" SEG-Y conforming to the 1975 standard.
-  hd$FORMAT_REV_NB <- readBin(con, what = integer(), n = 1, size = 1, endian = ENDIAN, signed = FALSE)
-  # 3502 Minor SEG-Y Format Revision Number. This is an 8-bit unsigned value with a
-  # radix point between the first and second bytes. Thus for SEG-Y Revision 2.0,
-  # as defined in this document, this will be recorded as 00 16 . This field is
-  # mandatory for all versions of SEG-Y.
-  hd$FORMAT_REV_NB_MINOR <- readBin(con, what = integer(), n = 1, size = 1, endian = ENDIAN)
-  # 3503-3504 - Fixed length trace flag. A value of one indicates that all traces in this SEG-Y
-  # file are guaranteed to have the same sample interval, number of trace header
-  # blocks and trace samples, as specified in Binary File Header bytes 3217-3218
-  # or 3281-3288, 3517-3518, and 3221-3222 or 3289-3292. A value of zero
-  # indicates that the length of the traces in the file may vary and the number of
-  # samples in bytes 115-116 of the Standard SEG-Y Trace Header and, if
-  # present, bytes 137-140 of SEG-Y Trace Header Extension 1 must be
-  # examined to determine the actual length of each trace. This field is mandatory
-  # for all versions of SEG-Y, although a value of zero indicates "traditional" SEGY
-  # conforming to the 1975 standard. Irrespective of this flag, it is strongly
-  # recommended that corect values for the number of samples per trace and
-  # sample interval appear in the appropriate trace Trace Header locations.
-  hd$FIXED_LENGTH_FLAG <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-  # 3505-3506 - Number of 3200-byte, Extended Textual File Header 
-  # records following the Binary Header.
-  hd$NB_3200_BYTES <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-  # 3507-3510 - Maximum number of additional 240 byte trace headers.
-  hd$MAX_NB_240_HEADER <- readBin(con, what = integer(), n = 1, size = 4, endian = ENDIAN)
-  # 3511-3512 - Time basis code:
-  # 1 = Local
-  # 2 = GMT (Greenwich Mean Time)
-  # 3 = Other, should be explained in a user defined stanza in the 
-  # Extended Textual File Header
-  # 4 = UTC (Coordinated Universal Time)
-  # 5 = GPS (Global Positioning System Time)
-  hd$TIME_BASIS_CODE <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-  # 3513–3520Number of traces in this file or stream
-  # If zero, all bytes in the file or stream are part of this SEG-Y dataset.
-  hd$TRACE_NUMBER <- readBin(con, what = integer(), n = 1, size = 8, endian = ENDIAN)
-  # Byte offset of first trace relative to start of file or stream if known
-  hd$BYTE_OFFSET <- readBin(con, what = integer(), n = 1, size = 8, endian = ENDIAN)
-  # Number of 3200-byte data trailer stanza records
-  hd$NB_DATA_TRAILER <- readBin(con, what = integer(), n = 1, size = 4, endian = ENDIAN)
-  return(hd)
-}
-
-readSGY_data_trace <- function(con, ENDIAN, nbytes, NB_3200_BYTES = 0, NB_DATA_TRAILER = 0){
-  start_data_trace <- 3600 + NB_3200_BYTES * 3200
-  length_data_trailer <- NB_DATA_TRAILER * 3200
-  seek(con, where = start_data_trace + 114, origin = "start")
-  # number of samples 
-  nspls <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-  # sample interval
-  trdt <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)  / (1000 * 1000)
-  
-  trclen = 240 + nspls * nbytes
-  ntrc = (.flen(con) - start_data_trace) / trclen
-  
-  dataSGY <- matrix(nrow = nspls, ncol = ntrc)
-  trhd <- matrix(0L, nrow = 27, ncol = ntrc)
-  seek(con, where = start_data_trace, origin = "start")
-  for(i in seq_len(ntrc)){
-    # trace sequence number within line
-    trhd[1, i] <- readBin(con, what = integer(), n = 1, size = 4, endian = ENDIAN)
-    # trace sequence number within SEG-Y file 
-    trhd[2, i] <- readBin(con, what = integer(), n = 1, size = 4, endian = ENDIAN)
-    # Original field record number
-    trhd[3, i] <- readBin(con, what = integer(), n = 1, size = 4, endian = ENDIAN)
-    # Trace number within original field record
-    trhd[4, i] <- readBin(con, what = integer(), n = 1, size = 4,
-                          endian = ENDIAN)
-    # Energy source point number
-    trhd[5, i] <- readBin(con, what = integer(), n = 1, size = 4,
-                          endian = ENDIAN)
-    # CDP ensemble number || CDP = CMP
-    trhd[6, i] <- readBin(con, what = integer(), n = 1, size = 4,
-                          endian = ENDIAN)
-    # Trace  number within the ensemble
-    trhd[7, i] <- readBin(con, what = integer(), n = 1, size = 4,
-                          endian = ENDIAN)
-    # Trace identification code:
-    # 1 = seismic data;
-    # 2 = dead;
-    # 3 = dummy;
-    # 4 = time break;
-    # 5 = uphole;
-    # 6 = sweep;
-    # 7 = timing;
-    # 8 = water break;
-    # 9 = optional use
-    trhd[8, i] <- readBin(con, what = integer(), n = 1, size = 2,
-                          endian = ENDIAN)
-    # Stacking: Number of vertically summed traces yielding this trace
-    trhd[9, i] <- readBin(con, what = integer(), n = 1, size = 2,
-                          endian = ENDIAN)
-    # Number of horizontally summed traces yielding this trace
-    invisible(readBin(con, what = integer(), n = 1, size = 2,
-                      endian = ENDIAN))
-    # data use:
-    # 1 = production;
-    # 2 = test.
-    invisible(readBin(con, what = integer(), n = 1L, size = 2,
-                      endian = ENDIAN))
-    # Distance from center of the source point to the center of the receiver group
-    # (negative if opposite to direction in which line is shot).
-    trhd[10, i] <-  readBin(con, what = integer(), n = 1L, size = 4,
-                            endian = ENDIAN)
-    # Elevation of receiver group
-    trhd[11, i] <- readBin(con, what = integer(), n = 1L, size = 4,
-                           endian = ENDIAN)
-    # Surface elevation at source location.
-    trhd[12, i] <- readBin(con, what = integer(), n = 1L, size = 4,
-                           endian = ENDIAN)
-    # Source depth below surface
-    trhd[13, i] <- readBin(con, what = integer(), n = 1L, size = 4,
-                           endian = ENDIAN)
-    # Seismic Datum elevation at receiver group
-    trhd[14, i] <- readBin(con, what = integer(), n = 1L, size = 4,
-                           endian = ENDIAN)
-    # Seismic Datum elevation at source.
-    trhd[15, i] <- readBin(con, what = integer(), n = 1L, size = 4,
-                           endian = ENDIAN)
-    # Water column height at source location
-    invisible(readBin(con, what = integer(), n = 1L, size = 4,
-                      endian = ENDIAN))
-    # Water column height at receiver group location
-    invisible(readBin(con, what = integer(), n = 1L, size = 4,
-                      endian = ENDIAN))
-    # Scalar to be applied to all elevations and depths
-    invisible(readBin(con, what = integer(), n = 1L, size = 2,
-                      endian = ENDIAN))
-    # Scalar to be applied to all coordinates
-    invisible(readBin(con, what = integer(), n = 1L, size = 2,
-                      endian = ENDIAN))
-    # Source coordinate – X.
-    trhd[16, i] <- readBin(con, what = integer(), n = 1L, size = 4,
-                           endian = ENDIAN)
-    # Source coordinate – Y.
-    trhd[17, i] <- readBin(con, what = integer(), n = 1L, size = 4,
-                           endian = ENDIAN)
-    # Group coordinate – X.
-    trhd[18, i] <- readBin(con, what = integer(), n = 1L, size = 4,
-                           endian = ENDIAN)
-    # Group coordinate – Y.
-    trhd[19, i] <- readBin(con, what = integer(), n = 1L, size = 4,
-                           endian = ENDIAN)
-    invisible(seek(con, where = 114 - 88, origin = "current"))
-    
-    # Number of samples in this trace.
-    trhd[20, i] <-readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-    # Sample interval for this trace.
-    trhd[21, i] <-readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)  / (1000 * 1000)
-    
-    invisible(seek(con, where = 156 - 118, origin = "current"))
-    
-    # Year data recorded
-    trhd[22, i] <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-    # Day of year
-    trhd[23, i] <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-    # Hour of day
-    trhd[24, i] <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-    # Minute of hour.
-    trhd[25, i] <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-    # Second of minute.
-    trhd[26, i] <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-    
-    # Time basis code. If nonzero, overrides Binary File Header bytes 3511–3512.
-    # 1 = Local
-    # 2 = GMT (Greenwich Mean Time)
-    # 3 = Other, should be explained in a user defined stanza in the Extended
-    # Textual File Header
-    # 4 = UTC (Coordinated Universal Time)
-    # 5 = GPS (Global Positioning System Time)
-    trhd[27, i] <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-    
-    invisible(seek(con, where = 3600 + 240 * i + nspls * nbytes * (i-1), origin = "start"))
-    
-    dataSGY[,i] <- readBin(con, what = integer(), n = nspls, 
-                           size = nbytes, endian = ENDIAN)
-  }
-  return(list(data = dataSGY, trHD = trhd))
-}
 
 
 
-# Prism2 ” software
-#--------------- read RadSys Zond GPR device files -------------------#
-readSEGY_RadSys_Zond_GPR <- function(dsn){
-  #dirName     <- dirname(fPath)
-  #baseName    <- .fNameWExt(fPath)
-  #fName    <- file.path(dirName, paste0(baseName, ".sgy"))
-  # fName <- getFName(fPath, ext = c(".sgy"))
-  hd <- c()
-  # con <- file(fName$sgy , "rb")
-  
-  if(is.character(dsn)){
-    fName <- getFName(dsn, ext = c(".sgy"))
-    # open dt1 file
-    dsn <- file(fName$sgy , "rb")
-  }
-  
-  ##---- SEGY file
-  uu <- readBin(dsn, what = character(), n = 1, size = 1)
-  vv <- strsplit(uu, split ="\r\n", perl = TRUE)
-  hd$EBCDIC <- sub("\\s+$", "", vv[[1]])
-  invisible(seek(dsn, where = 3200, origin = "start"))
-  # Job identification number
-  hd$JOB_ID <- readBin(dsn, what = integer(), n = 1, size = 4)
-  # Line number
-  hd$LINE_NUMBER <-  readBin(dsn, what = integer(), n = 1, size = 4)
-  # Reel number
-  hd$REEL_NUMBER <- readBin(dsn, what = integer(), n = 1, size = 4)
-  # Number of data traces per record
-  hd$NB_DATA_TRACES <- readBin(dsn, what = integer(), n = 1, size = 2)
-  # Number of auxiliary traces per record
-  hd$NB_AUX_TRACES <- readBin(dsn, what = integer(), n = 1, size = 2)
-  # tspl > Sample interval of this reel's data in PICOseconds
-  # hd$TIME_SAMPLING in nanoseconds
-  hd$TIME_SAMPLING <-  readBin(dsn, what = integer(), n = 1, size = 2) * 1e-3
-  # Number of samples per trace for this reel's data
-  invisible(readBin(dsn, what = integer(), n = 1, size = 2))
-  # samples per trace for this reel's data
-  # Nspl
-  hd$NB_SAMPLES <- readBin(dsn, what = integer(), n = 1, size = 2)
-  #unused
-  invisible(readBin(dsn, what = integer(), n = 1, size = 2))
-  # data sample format code
-  # 1 = 32-bit IBM floating point;
-  # 2 = 32-bit fixed-point (integer);
-  # 3 = 16-bit fixed-point (integer);
-  # 4 = 16-bit fixed-point with gain code 
-  hd$DATA_FORMAT_CODE <- readBin(dsn, what = integer(), n = 1, size = 2)
-  hd$DATA_FORMAT <- switch(hd$DATA_FORMAT_CODE,
-                           "1" = "32-bit IBM floating point",
-                           "2" = "32-bit fixed-point",
-                           "3" = "16-bit fixed-point",
-                           "4" = "16-bit fixed-point with gain code")
-  hd$DATA_BYTES <- switch(hd$DATA_FORMAT_CODE,
-                          "1"  = 4,
-                          "2"  = 4,
-                          "3"  = 2,
-                          "4"  = 2)
-  #number of traces per ensemble
-  invisible(readBin(dsn, what = integer(), n = 1, size = 2))
-  # not used
-  invisible(readBin(dsn, what = integer(), n = 13, size = 2))
-  # mesuring system
-  # 1 = meters
-  # 2 = feet
-  pos_unit <- readBin(dsn, what = integer(), n = 1, size = 2)
-  hd$POS_UNIT <- switch(pos_unit,
-                        "1" = "meter",
-                        "2" = "feet")
-  # not used
-  invisible(readBin(dsn, what = integer(), n = 172, size = 2))
-  
-  # 240-byte binary tracer header + trace data
-  hd$NB_TRACES <- (.flen(dsn) - seek(dsn))/(240 + hd$NB_SAMPLES * hd$DATA_BYTES)
-  dataSGY <- matrix(nrow = hd$NB_SAMPLES, ncol = hd$NB_TRACES)
-  hdt <- matrix(nrow = 7, ncol = hd$NB_TRACES)
-  xyfac <- numeric(hd$NB_TRACES)
-  for(i in 1:hd$NB_TRACES){
-    #--------------------------#
-    #--------- header ---------#
-    # trace sequence number within line
-    invisible(readBin(dsn, what = integer(), n = 1, size = 4, 
-                      endian = "little"))
-    # not used
-    invisible(readBin(dsn, what = integer(), n = 1, size = 4, 
-                      endian = "little"))
-    # Original field record number
-    invisible(readBin(dsn, what = integer(), n = 1, size = 4, 
-                      endian = "little"))
-    # Trace sequence number within original field record
-    invisible(readBin(dsn, what = integer(), n = 1, size = 4, 
-                      endian = "little"))
-    # not used
-    invisible(readBin(dsn, what = integer(), n = 1, size = 4, 
-                      endian = "little"))
-    # CDP ensemble number || CDP = CMP
-    invisible(readBin(dsn, what = integer(), n = 1, size = 4, 
-                      endian = "little"))
-    # Trace sequence number within CDP ensemble
-    invisible(readBin(dsn, what = integer(), n = 1, size = 4, 
-                      endian = "little"))
-    # Trace identification code:
-    # 1 = seismic data;
-    # 2 = dead;
-    # 3 = dummy;
-    # 4 = time break;
-    # 5 = uphole;
-    # 6 = sweep;
-    # 7 = timing;
-    # 8 = water break;
-    # 9 = optional use
-    invisible(readBin(dsn, what = integer(), n = 1, size = 2, 
-                      endian = "little"))
-    # Number of vertically summed traces yielding this trace
-    invisible(readBin(dsn, what = integer(), n = 1, size = 2, 
-                      endian = "little"))
-    # Number of horizontally summed traces yielding this trace
-    invisible(readBin(dsn, what = integer(), n = 1, size = 2, 
-                      endian = "little"))
-    # data use:
-    # 1 = production;
-    # 2 = test.
-    invisible(readBin(dsn, what = integer(), n = 1L, size = 2, 
-                      endian = "little"))
-    # not used
-    invisible(readBin(dsn, what = integer(), n = 1L, size = 4, 
-                      endian = "little"))
-    # Altitude (mean-sea-level)
-    invisible(readBin(dsn, what = numeric(), n = 1L, size = 4, 
-                      endian = "little"))
-    # Height of geoid above WGS84 ellipsoid
-    invisible(readBin(dsn, what = numeric(), n = 1L, size = 4, 
-                      endian = "little"))
-    # Backward/toward direction (if negative -backward)
-    invisible(readBin(dsn, what = integer(), n = 1, size = 4, 
-                      endian = "little"))
-    # Datum elevation at source in m (topography offset)
-    invisible(readBin(dsn, what = numeric(), n = 1L, size = 4, 
-                      endian = "little"))
-    # not used
-    invisible(readBin(dsn, what = integer(), n = 7L, size = 2, 
-                      endian = "little"))
-    # Scalar for coordinates:
-    # + = multiplier; 
-    # –= divisor.
-    xyfac[i] <- readBin(dsn, what = integer(), n = 1L, size = 2, 
-                        endian = "little")
-    # X source coordinate (Longitude in 32-bit float accuracy for arc seconds)
-    invisible(readBin(dsn, what = integer(), n = 1L, size = 4, 
-                      endian = "little"))
-    # Y source coordinate (Longitude in 32-bit float accuracy for arc seconds)
-    invisible(readBin(dsn, what = integer(), n = 1L, size = 4, 
-                      endian = "little"))
-    # X receiver group coordinate
-    hdt[4,i] <- readBin(dsn, what = integer(), n = 1L, size = 4, 
-                        endian = "little")
-    # Y receiver group coordinate
-    hdt[5,i] <- readBin(dsn, what = integer(), n = 1L, size = 4, 
-                        endian = "little")
-    # Coordinate units:
-    # 1 = length in meters or feets; 
-    # 2 = arc seconds (DDMM.SSSS).
-    invisible(readBin(dsn, what = integer(), n = 1L, size = 2, 
-                      endian = "little"))
-    # GPS signal quality
-    invisible(readBin(dsn, what = numeric(), n = 1L, size = 4, 
-                      endian = "little"))
-    # not used
-    invisible(readBin(dsn, what = integer(), n = 7L, size = 2, 
-                      endian = "little"))
-    # Lag time between shot and recording start in PICOseconds
-    invisible(readBin(dsn, what = integer(), n = 1L, size = 2, 
-                      endian = "little"))
-    # not used
-    invisible(readBin(dsn, what = numeric(), n = 1L, size = 4, 
-                      endian = "little"))
-    # Number of samples in this trace = hd$NB_SAMPLES
-    invisible(readBin(dsn, what = integer(), n = 1L, size = 2, 
-                      endian = "little"))
-    # Sample interval of this reel's data in PICOseconds 
-    # = hd$TIME_SAMPLING *1e3
-    invisible(readBin(dsn, what = integer(), n = 1L, size = 2, 
-                      endian = "little"))
-    # not used
-    invisible(readBin(dsn, what = integer(), n = 21L, size = 2, 
-                      endian = "little"))
-    # Hour of day (24 hour clock)
-    hdt[1,i] <- readBin(dsn, what = integer(), n = 1L, size = 2, 
-                        endian = "little")
-    # Minute of hour
-    hdt[2,i] <- readBin(dsn, what = integer(), n = 1L, size = 2, 
-                        endian = "little")
-    # Second of minute
-    hdt[3,i] <- readBin(dsn, what = integer(), n = 1L, size = 2, 
-                        endian = "little")
-    # Time basis code (1 –Local, 2 -GMT)
-    invisible(readBin(dsn, what = integer(), n = 1L, size = 2, 
-                      endian = "little"))
-    # not used
-    invisible(readBin(dsn, what = integer(), n = 7L, size = 2, 
-                      endian = "little"))
-    # Longitude in 64-bit double accuracy
-    invisible(readBin(dsn, what = numeric(), n = 1L, size = 8, 
-                      endian = "little"))
-    # Latitude in 64-bit double accuracy
-    invisible(readBin(dsn, what = numeric(), n = 1L, size = 8, 
-                      endian = "little"))
-    # not used
-    invisible(readBin(dsn, what = integer(), n = 8L, size = 2, 
-                      endian = "little"))
-    # Time scalar. If positive, scalar is used as a 
-    # multiplier. If negative –divisor.
-    invisible(readBin(dsn, what = integer(), n = 1L, size = 2, 
-                      endian = "little"))
-    # not used
-    invisible(readBin(dsn, what = integer(), n = 10L, size = 2, 
-                      endian = "little"))
-    # Marks indicator. If equal to 0x5555, trace is marked.
-    hdt[6,i] <- readBin(dsn, what = integer(), n = 1L, size = 2, 
-                        endian = "little")
-    # Mark number.
-    hdt[7,i] <- readBin(dsn, what = integer(), n = 1L, size = 2, 
-                        endian = "little") 
-    #---------- trace ---------------#
-    if(hd$DATA_FORMAT_CODE == 1){
-      # "32-bit IBM floating point"
-      dataSGY[,i] <- readBin(dsn, what = numeric(), n = hd$NB_SAMPLES, 
-                             size = hd$DATA_BYTES, endian = "little")
-    }else{
-      dataSGY[,i] <- readBin(dsn, what = integer(), n = hd$NB_SAMPLES,
-                             size = hd$DATA_BYTES, endian = "little")
-    }
-  }
-  hdt[4,] <- hdt[4,] * abs(xyfac)^sign(xyfac)
-  
-  
-  close(dsn)
-  
-  # byte to volt conversion assuming
-  # recording range: [-50mV, 50mV]
-  # 16 bytes
-  #V <- c(-50,50)
-  #nBytes <- 16
-  #A2 <- A*abs(diff(V))/(2^nBytes)
-  
-  # time sample in nanosecond
-  #tt <- seq(0, by = hd$TIME_SAMPLING, length.out = hd$NB_SAMPLES)
-  
-  # hdt matrix
-  # row 1 = hour
-  # row 2 = minute
-  # row 3 = seconde
-  # row 4 = x-pos
-  # row 5 = y-pos
-  # row 6 = mark indicator
-  # row 7 = mark number
-  return(list(hd = hd, data = dataSGY, hdt = hdt))
-}
 
 
 
-readImpulseRadar <- function( dsn, dsn2 = NULL){
-  
-  fNameOpt <- NULL
-  hTime <- NULL
-  hCor <- NULL
-  hMrk <- NULL
-  
-  if( inherits(dsn, "connection") ){
-    if(!inherits(dsn2, "connection")){
-      stop("Please add an additional connection to 'readGPR()' for ",
-           "the header file '*.hd'")
-    }
-  }else if(is.character(dsn) && is.null(dsn2)){
-    fName <- getFName(dsn, ext = c(".iprh", ".iprb"))
-    #--- READ OPTIONAL FILES
-    fNameOpt <- getFName(dsn, ext = c(".cor", ".time", ".mrk"), 
-                      throwError = FALSE)
-    dsn <- file(fName$iprb , "rb")
-    dsn2 <- fName$iprh
-  }else{
-    if(!file.exists(dsn)){
-      stop("File ", dsn, " does not exist!")
-    }
-    if(!file.exists(dsn2)){
-      stop("File ", dsn2, " does not exist!")
-    }
-    dsn_save <- c(dsn, dsn2)
-    dsn  <- file(dsn_save[grepl("(\\.iprb)$", dsn_save)], "rb")
-    dsn2 <- dsn_save[grepl("(\\.iprh)$", dsn_save)]
-  }
 
-  
-  #--- read header file
-  headHD <- scan( dsn2, what = character(), strip.white = TRUE,
-                  quiet = TRUE, fill = TRUE, blank.lines.skip = TRUE, 
-                  flush = TRUE, sep = "\n")
-  nHD <- length(headHD)
-  hHD <- data.frame( tag = character(), val = character(), 
-                     stringsAsFactors = FALSE)
-  for(i in seq_along(headHD)){
-    hdline <- strsplit(headHD[i], ":")[[1]]
-    if(length(hdline) < 2){
-      hHD[i,1] <- ""
-      hHD[i,2] <- trimStr(hdline[1])
-    }else{
-      hHD[i,1:2] <-  as.character(sapply(hdline[1:2],trimStr))
-    }
-  }
-  nTr    <- .getHD(hHD, "LAST TRACE")
-  nPt    <- .getHD(hHD, "SAMPLES")
-  nBits <- .getHD(hHD, "DATA VERSION")
-  if(nBits == 16){
-    nBytes <- 2
-  }else if(nBits == 32){
-    nBytes <- 4
-  }
-  
-  #--- READ .IPRB
-  bind <- matrix(NA, nrow = nPt, ncol = nTr)
-  for(i in 1:nTr){
-    bind[,i] <- readBin(dsn, what=integer(), n = nPt, size = nBytes)
-  }
-  
-  # TIME: trace_numer date(yyyy-mm-dd) time(hh:mm:sss)
-  if(!is.null(fNameOpt$time))  hTime <- read.table(fNameOpt$time, 
-                                                   stringsAsFactors = FALSE)
-  # GPS POSITION: trace date time north N East E Elevation M Quality
-  if(!is.null(fNameOpt$cor)) hCor <- read.table(fNameOpt$cor,
-                                                stringsAsFactors = FALSE)
-  # marker
-  if(!is.null(fNameOpt$mrk)) hMrk <- read.table(fNameOpt$mrk, 
-                                                stringsAsFactors = FALSE)
-  
-  close(dsn)
-  if(inherits(dsn2, "connection")){  close(dsn2)}
-  
-  return( list(hd = hHD, data = bind, time = hTime, cor = hCor, mkr = hMrk) )
-}
-
-#' Get properties of ASCII file to read it with \code{read.table}
-#' 
-#' To get header, separator, column with na values, etc.
-#' 
-#' don't forget to skip blank line when reading fPath
-#' @param fPath   (character) File path
-#' @param lns     (numeric) Number of lines to read to get the properties of the ASCII file
-#' @param verbose (boolean) If \code{TRUE} print messages allowed.
-#' @return 1) header, 2) skip, 3) 
-#' @export
-detectASCIIProp <- function(fPath, lns = 20, verbose = TRUE){
-  
-  #---------------------- read first 'lns' lines ------------------------------#
-  con <- file(fPath , "rt")
-  x <- readLines(con, n = lns, skipNul = TRUE)
-  close(con)
-  x <- x[ x!= ""]
-  
-  #------------------------------ detect header -------------------------------#
-  # y <- strsplit(x, split = "[^[:alnum:]]+")
-  # split at all punctuations signs except '-' and '-'
-  y <- strsplit(x, split = "[^[:alnum:]\\.\\-]+") 
-  test0 <- suppressWarnings(lapply(y, as.numeric))
-  test <- sapply(test0, function(x) sum(is.na(x)))
-  if( all(test[-1] > 0) ){
-    if(length(unique(test)) == 1){
-      nHeader <- 0
-    }else{
-      nHeader <- 1
-      if(verbose){
-        warning("Cannot detect header with certitude. ",
-                "I assume that the first non-empty line it the header.")
-      }
-    }
-  }else{
-    nHeader <- which(test > 0)
-    #message("there is ", length(nHeader), " header lines!")
-  }
-  
-  if(length(nHeader) > 0){
-    x0 <- x[-nHeader]
-    header <- TRUE
-    skip <- max(nHeader) - 1
-  }else{
-    x0 <- x
-    header <- FALSE
-    skip <- 0
-  }
-  
-  #--------------------------- detect column separator ------------------------#
-  sep <- unique(unlist(lapply(x0, detectSep)))
-  sepName <- sep
-  if(sep == "\t"){
-    sepName <- "\\t"
-  }
-  if(length(sep) > 1){
-    stop("seems that you have different column delimiters: ", sepName, "\n")
-  }else{
-    #message("Column delimiter is '", sepName, "'")
-  }
-  
-  #--------------------------- number of columns ------------------------------#
-  # z <- strsplit(x0, split = "[^[:alnum:]\\.\\-]+")
-  z <- strsplit(x0, split = sep)
-  nCols <- unique(sapply(z, length))
-  
-  return(list(header = header, skip = skip, sep = sep, nCols = nCols))
-}
-
-detectSep <- function(x){ 
-  # i <- gregexpr("[^[:alnum:]]+", x, perl = TRUE)
-  i <- gregexpr("[^[:alnum:]\\.\\-]+", x, perl = TRUE)
-  sep <- unique(substring(x, i[[1]], i[[1]]))
-}
 
 rmNaCol <- function(x){
   # remove NA columns
@@ -5595,658 +4384,249 @@ rmNaCol <- function(x){
   return(x)
 }
 
-readTXT <- function(fPath){
-  fName <- getFName(fPath, ext = c(".txt"))
-  
-  # detect header, column separator, skip lines, number of columns.
-  pp <- detectASCIIProp(fName$txt)
-  
-  #------------------------------ Matrix file ----------------------------------#  
-  if(length(pp$nCols) > 1){
-    # only first row has one element less -> first row = trace position
-    #                                     -> first col = trace depth
-    if( length(unique(pp$nCols[-1])) == 1 && pp$nCols[1] == (pp$nCols[2] - 1) ){
-      A <- read.table(file   = fPath, 
-                      header = pp$header, 
-                      skip   = pp$skip + 1, 
-                      sep    = pp$sep)
-      if(pp$header == TRUE){
-        pp$skip <- pp$skip + 1
-      }
-      Apos <- scan(file   = fPath, 
-                   sep    = pp$sep, 
-                   skip   = pp$skip, 
-                   nlines = 1,
-                   quiet = TRUE)
-      
-      return(list(data  = as.matrix(A[,-1]), 
-                  pos   = Apos, 
-                  depth = A[,1]))
-    }else{
-      stop("Error, not same number of elements per line.")
-    }
-  }else{
-    #message(nCols, " columns")
-  }
-  
-  #---------------------------- 3 (or 4) column file --------------------------#
-  X <- read.table(file   = fPath, 
-                  header = pp$header,
-                  skip   = pp$skip, 
-                  sep    = pp$sep)
-  
-  # remove NA columns
-  X <- rmNaCol(X)
-  
-  if(ncol(X) < 3){
-    stop("The data are not correctly formated.")
-  }else if(ncol(X) == 3){
-    Xn <- list()
-    Xn[[1]] <- unique(rle(X[,1])$lengths)
-    Xn[[2]] <- unique(rle(X[,2])$lengths)
-    Xn[[3]] <- unique(rle(X[,3])$lengths)
-    pos <- 1:3
-    
-    Xamp <- which(lapply(Xn, length) > 2)
-    if(length(Xamp) > 1){
-      cat("Error")
-    }
-    
-    XnTemp <- Xn
-    XnTemp[[Xamp]] <- NULL
-    pos <- pos[-Xamp]
-    Xpos <- pos[which.max((XnTemp))]
-    Xt <- pos[-Xpos]
-    
-    nr <- Xn[[Xpos]]
-    nc <- length(unique(X[, Xpos]))
-    if( nc != nrow(X)/nr){
-      cat("Error")
-    }
-    
-    A <- matrix(data  = X[, Xamp][seq_len(nc * nr)], 
-                nrow  = nr, 
-                ncol  = nc, 
-                byrow = FALSE)
-    
-    return(list(data  = A, 
-                pos   = unique(X[, Xpos]), 
-                depth = unique(X[, Xt])))
-    
-    # }else if(ncol(X) == 4){
-    #   # case xyza!!!
-    #   Xn <- list()
-    #   Xn[[1]] <- unique(rle(X[,1])$lengths)
-    #   Xn[[2]] <- unique(rle(X[,2])$lengths)
-    #   Xn[[3]] <- unique(rle(X[,3])$lengths)
-    #   Xn[[4]] <- unique(rle(X[,4])$lengths)
-    #   pos <- 1:x <- list(data = A$data)
-    #   
-    #   Xamp <- which(lapply(Xn, length) > 2)
-    #   if(length(XampPos) > 1){
-    #     cat("Error")
-    #   }
-    #   XnTemp <- Xn
-    #   XnTemp[[Xamp]] <- NULL
-    #   pos <- pos[-Xamp]
-    #   Xpos <- pos[which.max((XnTemp))]
-    #   Xt <- pos[-Xpos]
-    #   
-    #   nr <- Xn[[Xpos]]
-    #   nc <- length(unique(X[, Xpos]))
-    #   if( nc != nrow(X)/nr){
-    #     cat("Error")
-    #   }
-    #   
-    #   A <- matrix(X[, Xamp][seq_len(nc * nr)], nrow = nr, ncol = nc, byrow = FALSE)
-    #   return(list(data = A, pos = unique(X[, Xpos]), depth = unique(X[, Xt])))
-  }else{
-    return(list(data = X))
-  }
-}  
 
-readVOL <- function(fPath){
-  if( inherits(fPath, "connection") ){
-    x <- fPath
-  }else if(is.character(fPath)){
-    fName <- getFName(fPath, ext = c(".vol"))
-    x <- file(fName$vol , "rb")
-  }
-  hd <- c()
-  
-  #================================ HEADER ======================================#
-  # The header consists of at least 60 bytes of binary data. 
-  # Each field in the header is a 32 bit (4 byte) word in 
-  # network byte order (“big endian”), making a total of 
-  # at least 15 header words. This implies that the byte order has to be swapped 
-  # to read the values on an Intel-based PC.
-  
-  # 0 Magic token. This is always 192837465 (decimal)
-  hd$magic_token <- readBin(x, what = "integer", size = 4, endian = "big")
-  # 1 Header size in bytes, including the magic token and size fields
-  hd$header_size <- readBin(x, what = "integer", size = 4, endian = "big")
-  # 2 The size of the 3d matrix size in the z dimension
-  hd$z_dim <- readBin(x, what = "integer", size = 4, endian = "big")
-  # 3 The size of the 3d matrix size in the y dimension
-  hd$y_dim <- readBin(x, what = "integer", size = 4, endian = "big")
-  # 4 The size of the 3d matrix size in the x dimension
-  hd$x_dim <- readBin(x, what = "integer", size = 4, endian = "big")
-  # 5 Bits per sample. This should always be 64 for radar data
-  hd$bits <- readBin(x, what = "integer", size = 4, endian = "big")
-  # reserved bits
-  seek(x, where = 40, origin = "start")
-  # 10 Major file format version
-  hd$major_vers <- readBin(x, what = "integer", size = 4, endian = "big")
-  # 11 Minor file format version
-  hd$minor_vers <- readBin(x, what = "integer", size = 4, endian = "big")
-  # 12 File format revision number
-  hd$rev <- readBin(x, what = "integer", size = 4, endian = "big")
-  
-  
-  # These two words define the file offset and size of a block of XML data 
-  # in 8 bit ASCII that define further metadata for the volume file.
-  seek(x, where = 60, origin = "start")
-  if(hd$header_size >= 68){
-    # 15 XML data file offset
-    hd$xml_fo <- readBin(x, what = "integer", size = 4, endian = "big")
-    # 16 XML data size
-    hd$xml_size <- readBin(x, what = "integer", size = 4, endian = "big")
-    
-    seek(x, where = hd$xml_fo, origin = "start")
-    hd$XML <- readBin(x, what = "character", n = 1, size = 1, endian = "big")
-    
-    data <- XML::xmlParse(hd$XML)
-    
-    els <- XML::getNodeSet(data, "//MetadataDictionary/entry[@name]")
-    if(length(els) > 0){
-      metaD <- sapply(els, function(el) XML::xmlGetAttr(el, "value"))
-      names(metaD) <- sapply(els, function(el) XML::xmlGetAttr(el, "name"))
-      hd$meta_cst <- metaD
-    }
-    
-    els2 <- XML::getNodeSet(data, "//meta-data[@DataDomainType]")
-    if(length(els2) > 0){
-      metaD2 <- XML::xmlAttrs(els2[[1]])
-      if(length(metaD2) > 0 && !is.null(metaD2)){
-        if(!is.null(metaD2["DeltaValueZ"])){
-          hd$dz   <- as.numeric(metaD2["DeltaValueZ"])
-        }
-        if(!is.null(metaD2["MinValueZ"])){
-          hd$zmin <- as.numeric(metaD2["MinValueZ"])
-        }
-        if(!is.null(metaD2["MaxValueZ"])){
-          hd$zmax <- as.numeric(metaD2["MaxValueZ"])
-        }
-      }
-    }
-  }
-  
-  #================================ Binary Data =================================#
-  seek(x, where = hd$header_size , origin = "start")
-  XYZ_dim <- c(hd$x_dim, hd$y_dim, hd$z_dim)
-  test <- which(XYZ_dim == 1)
-  if(length(test) > 0){
-    hd$dim <- "2D"
-    XYZ_dim <- XYZ_dim[-test]
-    XYZ <- array(dim = XYZ_dim)
-    for(i in 1:XYZ_dim[1]){
-      for(j in 1:XYZ_dim[2]){
-        XYZ[i,j] <-  readBin(x, what = "numeric", size = 4, endian = "big")
-      }
-    }
-  }else{
-    hd$dim <- "3D"
-    XYZ <- array(dim = XYZ_dim)
-    for(k in seq_len(hd$z_dim)){
-      for(i in seq_len(hd$x_dim)){
-        for(j in seq_len(hd$y_dim)){
-          XYZ[i,j,k] <- readBin(x, what = "numeric", size = 8, endian = "big")
-          realPart <- readBin(x, what = "integer", size = hd$bits/8/2, endian = "big")
-          imagPart <- readBin(x, what = "integer", size = hd$bits/8/2, endian = "big")
-          XYZ[i,j,k] <- complex(real = realPart,
-                                imaginary = imagPart)
-        }
-      }
-    }
-  }
-  
-  if( !inherits(fPath, "connection") ){
-    close(x)
-  }
-  
-  return(list(hd = hd, data = XYZ))
-}
+# readVOL <- function(fPath){
+#   if( inherits(fPath, "connection") ){
+#     x <- fPath
+#   }else if(is.character(fPath)){
+#     fName <- getFName(fPath, ext = c(".vol"))
+#     x <- file(fName$vol , "rb")
+#   }
+#   hd <- c()
+#   
+#   #================================ HEADER ======================================#
+#   # The header consists of at least 60 bytes of binary data. 
+#   # Each field in the header is a 32 bit (4 byte) word in 
+#   # network byte order (“big endian”), making a total of 
+#   # at least 15 header words. This implies that the byte order has to be swapped 
+#   # to read the values on an Intel-based PC.
+#   
+#   # 0 Magic token. This is always 192837465 (decimal)
+#   hd$magic_token <- readBin(x, what = "integer", size = 4, endian = "big")
+#   # 1 Header size in bytes, including the magic token and size fields
+#   hd$header_size <- readBin(x, what = "integer", size = 4, endian = "big")
+#   # 2 The size of the 3d matrix size in the z dimension
+#   hd$z_dim <- readBin(x, what = "integer", size = 4, endian = "big")
+#   # 3 The size of the 3d matrix size in the y dimension
+#   hd$y_dim <- readBin(x, what = "integer", size = 4, endian = "big")
+#   # 4 The size of the 3d matrix size in the x dimension
+#   hd$x_dim <- readBin(x, what = "integer", size = 4, endian = "big")
+#   # 5 Bits per sample. This should always be 64 for radar data
+#   hd$bits <- readBin(x, what = "integer", size = 4, endian = "big")
+#   # reserved bits
+#   seek(x, where = 40, origin = "start")
+#   # 10 Major file format version
+#   hd$major_vers <- readBin(x, what = "integer", size = 4, endian = "big")
+#   # 11 Minor file format version
+#   hd$minor_vers <- readBin(x, what = "integer", size = 4, endian = "big")
+#   # 12 File format revision number
+#   hd$rev <- readBin(x, what = "integer", size = 4, endian = "big")
+#   
+#   
+#   # These two words define the file offset and size of a block of XML data 
+#   # in 8 bit ASCII that define further metadata for the volume file.
+#   seek(x, where = 60, origin = "start")
+#   if(hd$header_size >= 68){
+#     # 15 XML data file offset
+#     hd$xml_fo <- readBin(x, what = "integer", size = 4, endian = "big")
+#     # 16 XML data size
+#     hd$xml_size <- readBin(x, what = "integer", size = 4, endian = "big")
+#     
+#     seek(x, where = hd$xml_fo, origin = "start")
+#     hd$XML <- readBin(x, what = "character", n = 1, size = 1, endian = "big")
+#     
+#     data <- XML::xmlParse(hd$XML)
+#     
+#     els <- XML::getNodeSet(data, "//MetadataDictionary/entry[@name]")
+#     if(length(els) > 0){
+#       metaD <- sapply(els, function(el) XML::xmlGetAttr(el, "value"))
+#       names(metaD) <- sapply(els, function(el) XML::xmlGetAttr(el, "name"))
+#       hd$meta_cst <- metaD
+#     }
+#     
+#     els2 <- XML::getNodeSet(data, "//meta-data[@DataDomainType]")
+#     if(length(els2) > 0){
+#       metaD2 <- XML::xmlAttrs(els2[[1]])
+#       if(length(metaD2) > 0 && !is.null(metaD2)){
+#         if(!is.null(metaD2["DeltaValueZ"])){
+#           hd$dz   <- as.numeric(metaD2["DeltaValueZ"])
+#         }
+#         if(!is.null(metaD2["MinValueZ"])){
+#           hd$zmin <- as.numeric(metaD2["MinValueZ"])
+#         }
+#         if(!is.null(metaD2["MaxValueZ"])){
+#           hd$zmax <- as.numeric(metaD2["MaxValueZ"])
+#         }
+#       }
+#     }
+#   }
+#   
+#   #================================ Binary Data =================================#
+#   seek(x, where = hd$header_size , origin = "start")
+#   XYZ_dim <- c(hd$x_dim, hd$y_dim, hd$z_dim)
+#   test <- which(XYZ_dim == 1)
+#   if(length(test) > 0){
+#     hd$dim <- "2D"
+#     XYZ_dim <- XYZ_dim[-test]
+#     XYZ <- array(dim = XYZ_dim)
+#     for(i in 1:XYZ_dim[1]){
+#       for(j in 1:XYZ_dim[2]){
+#         XYZ[i,j] <-  readBin(x, what = "numeric", size = 4, endian = "big")
+#       }
+#     }
+#   }else{
+#     hd$dim <- "3D"
+#     XYZ <- array(dim = XYZ_dim)
+#     for(k in seq_len(hd$z_dim)){
+#       for(i in seq_len(hd$x_dim)){
+#         for(j in seq_len(hd$y_dim)){
+#           XYZ[i,j,k] <- readBin(x, what = "numeric", size = 8, endian = "big")
+#           realPart <- readBin(x, what = "integer", size = hd$bits/8/2, endian = "big")
+#           imagPart <- readBin(x, what = "integer", size = hd$bits/8/2, endian = "big")
+#           XYZ[i,j,k] <- complex(real = realPart,
+#                                 imaginary = imagPart)
+#         }
+#       }
+#     }
+#   }
+#   
+#   if( !inherits(fPath, "connection") ){
+#     close(x)
+#   }
+#   
+#   return(list(hd = hd, data = XYZ))
+# }
 
-# Data is stored in 16 bits as raw data. The only parameters that affect the 
-# recorded data directly are Tsweep and Read.  The other parameters affect the 
-# display and may be varied during or after completion of the survey 
-# (see sections 5.3 and 6.3).  
-# The data is stored under the run name as RUNNAME.dat. The run details are 
-# stored in the file RUNNAME.hdr.  The stored data format is 2 bytes per point 
-# with LSB byte followed by MSB byte. There are 256 points (512 bytes) 
-# followed by 1 byte of marker (ASCII).
-# In addition to the data and header files, GPS files (.gps) and gps number 
-# files (.gpt) are generated, irrespective of whether or not a GPS is used.  
-# If a GPS is not used, the .gps and .gpt files will be 0kB in size.
-# The HDR file is an ASCII file (can be read using notepad) that contains the 
-# radar parameters and notes about the run.
-
-readUtsi <- function(dsn, dsn2 = NULL){
-  
-  if( inherits(dsn, "connection") ){
-    if(!inherits(dsn2, "connection")){
-      stop("Please add an additional connection to 'readGPR()' for ",
-           "the header file '*.hdr'")
-    }
-  }else if(is.character(dsn) && is.null(dsn2)){
-    fName <- getFName(dsn, ext = c(".hdr", ".dat"))
-    # open dt1 file
-    dsn  <- file(fName$dat , "rb")
-    dsn2 <- file(fName$hdr , "rb")
-  }else{
-    if(!file.exists(dsn)){
-      stop("File ", dsn, " does not exist!")
-    }
-    if(!file.exists(dsn2)){
-      stop("File ", dsn2, " does not exist!")
-    }
-    dsn_save <- c(dsn, dsn2)
-    dsn  <- file(dsn_save[grepl("(\\.dat)$", dsn_save)], "rb")
-    dsn2 <- dsn_save[grepl("(\\.hdr)$", dsn_save)]
-  }
-  
-  hd <- readUtsiHDR(dsn2) 
-  z <- readUtsiDat(dsn, splPerScan = hd$splPerScan, bits = hd$bits)
-  z[["hd"]] <- hd
-  close(dsn)
-  close(dsn2)
-  return(z)
-  
-}
-
-readUtsiHDR <- function(con){
-  hd <- c()
-  
-  seek(con, where = 0, origin = "start")
-  #------------------ Utsi header *.hdr -----------------------------------------#
-  u <- readBin(con, what = "raw", n = 2, size = 1)
-  hd$magic_number <- sf::rawToHex(u)
-  if(hd$magic_number != "0f20"){
-    message("Magic number in '", 
-            summary.connection(con)$description, 
-            "' is '",
-            hd$magic_number,
-            "' instead of '0f20'")
-  }
-  u <- readLines(con, n = 1)
-  u <- strsplit(u, split = ", ")[[1]]
-  hd$software_version <- u[1]
-  hd$software_date <- u[2]
-  
-  # scan(con, what = "character", n = 1, skipNul = TRUE)
-  
-  # u <- readLines(con, n = 1, skipNul = TRUE, warn = FALSE)
-  u <- readBin(con, what = "character", n = 1)
-  hd$date <- as.Date(u[1], "%d\\%m\\%y")
-  
-  invisible(readBin(con, what = "character", n = 1))
-  u <- readBin(con, what = "character", n = 1)
-  u <- strsplit(gsub("\005", "", u), " ")[[1]]
-  hd$time <- u[1]
-  hd$site_text <- u[2]
-  
-  
-  invisible(readBin(con, what = "character", n = 5))
-  u <- readBin(con, what = "character", n = 1)
-  hd$time_sweep <- as.numeric(gsub("\002|\005|\n|\004", "", u))
-  
-  u <- readBin(con, what = "character", n = 1)
-  hd$depth_scaling <- as.numeric(gsub("\0016|\002|\005|\n|\004", "", u))
-  
-  u <- readBin(con, what = "character", n = 1)
-  hd$encoder_div_selection <- as.numeric(gsub("\004|\005|\n|\002", "", u))
-  
-  u <- readBin(con, what = "character", n = 1)
-  hd$antsep <- as.numeric(trimStr(gsub("\002|\005|\n|\004", "", u)))
-  
-  u <- readBin(con, what = "character", n = 1)
-  hd$unused_zero <- as.numeric(gsub("\002|\005|\n|\004", "", u))
-  
-  u <- readBin(con, what = "character", n = 1)
-  hd$splPerScan <- as.numeric(gsub("\002|\005|\n|\004", "", u))
-  
-  invisible(readBin(con, what = "character", n = 1))
-  
-  u <- readBin(con, what = "character", n = 1)
-  hd$bits <- as.numeric(gsub("\002|\005|\n|\004", "", u))
-  
-  return(hd)
-}
-
-
-
-readUtsiDat <- function(con, splPerScan = 512, bits = 16){
-  con_len <- .flen(con)
-  # seek(con, where = 0, "start")
-  # xraw <- readBin(con, what = "integer", n = con_len, size = 2, endian = "little")
-  # close(con)
-  nr <- splPerScan
-  # nc <- length(xraw)/(nr+1+nr)
-  nc <- con_len/(nr*bits/8 + 1)
-  xdata <- matrix(nrow = nr, ncol = nc)
-  
-  mrkr <- character(nc)
-  
-  seek(con, where = 0, "start")
-  for(i in seq_len(nc)){
-    xdata[,i] <- readBin(con, what = "integer", n = nr, size = bits/8, endian = "little")
-    mrkr[i] <- readBin(con, what = "character", n = 1, size = 1)
-  }
-  return(list(data = xdata, fid = mrkr))
-}
-
-
-readDZT <- function(fPath){
-  if( inherits(fPath, "connection") ){
-    DZT <- fPath
-  }else if(is.character(fPath)){
-    fName <- getFName(fPath, ext = c(".dzt"))
-    DZT <- file(fName$dzt , "rb")
-  }
-  hd <- c()
-  MINHEADSIZE <- 1024  # absolute minimum total header size
-  nScans <- 0
-  #--------------------------------- READ HEADER ------------------------------#  
-  # 0x00ff ('\xff\a') if header, 0xfnff for old file
-  #rh_tag <- readChar(DZT, nchars = 1, useBytes = TRUE)
-  hd$TAG <- .readBin_ushort(DZT)
-  # Offset to Data from beginning of file
-  #   if rh_data < MINHEADSIZE then offset is MINHEADSIZE * rh_data
-  #   else offset is MINHEADSIZE *rh_nchan
-  hd$OFFSETDATA <- .readBin_ushort(DZT)   # rh_offsetdata
-  # samples per scan
-  hd$NSAMP <- .readBin_ushort(DZT)        # rh_nsamp
-  # bits per data word (8,16, 32) *
-  hd$BITS <- .readBin_ushort(DZT)         # rh_bits
-  # Binary_offset
-  # if rh_system is SIR 30, then equals repeats/sample
-  #     otherwise is 0x80 for 8 bit data and 0x8000 for 16 bit data
-  hd$ZERO <-.readBin_short(DZT)           # rh_zero
-  # scans per second
-  hd$SPS <- .readBin_float(DZT)           # rh_sps
-  # scans per meter
-  hd$SPM <- .readBin_float(DZT)           # rh_spm
-  # meters per mark
-  hd$MPM <- .readBin_float(DZT)           # rh_mpm
-  # position (ns)
-  hd$POSITION <- .readBin_float(DZT)      # rh_position
-  # range (ns)
-  hd$RANGE <- .readBin_float(DZT)         # rh_range
-  # number of passes for 2-D files
-  hd$NPASS <- .readBin_ushort(DZT)        # rh_npass
-  # creation date
-  creaDT <- .readRFDate(DZT, where = 31)
-  # modification date
-  modDT  <- .readRFDate(DZT, where = 35)
-  hd$DATE <- creaDT$date
-  hd$TIME <- creaDT$time
-  # skip across some proprietary stuff
-  seek(DZT, where = 44, origin = "start")
-  # offset to text
-  hd$OFFSETTEXT <- .readBin_ushort(DZT)   # rh_text
-  # size of text
-  hd$NTEXT <- .readBin_ushort(DZT)        # rh_ntext
-  # offset to processing history
-  hd$PROC <- .readBin_ushort(DZT)         # rh_proc
-  # size of processing history
-  hd$NPROC <- .readBin_ushort(DZT)        # rh_nproc
-  # number of channels
-  hd$NCHAN <- .readBin_ushort(DZT)        # rh_nchan
-  # average dilectric
-  hd$EPSR <- .readBin_float(DZT)          # rhf_epsr
-  # position in meters (useless?)
-  hd$TOP <- .readBin_float(DZT)           # rhf_top
-  # range in meters
-  hd$DEPTH <- .readBin_float(DZT)        # rhf_depth
-  seek(DZT, where = 98, origin = "start")
-  # antenna name
-  ant_name <- character(hd$NCHAN)
-  for(i in seq_len(hd$NCHAN)){
-    seek(DZT, where = 98 + MINHEADSIZE * (i - 1), origin = "start")
-    ant_name[i] <- readChar(DZT, nchars = 14, useBytes = FALSE)
-  }
-  # hd$ANT <- readChar(DZT, nchars = 14, useBytes = TRUE)
-  hd$ANT <- ant_name
-  # byte containing versioning bits
-  hd$VSBYTE <- .readBin_ushort(DZT) 
-  
-  #--------------------------------- READ DATA --------------------------------#
-  # number of bytes in file
-  nB <- .flen(DZT)
-  
-  # whether or not the header is normal or big-->determines offset to data array
-  if( hd$OFFSETDATA < MINHEADSIZE){
-    hd$OFFSETDATA <- MINHEADSIZE * hd$OFFSETDATA
-  }else{
-    hd$OFFSETDATA <- MINHEADSIZE * hd$NCHAN
-  }
-  
-  if(nScans == 0){ # read all the scans
-    nNumScans <- (nB - hd$OFFSETDATA)/(hd$NCHAN * hd$NSAMP * hd$BITS/8);
-  }
-  
-  seek(DZT, where = hd$OFFSETDATA, origin = "start")
-  
-  nNumSkipScans <- 0
-  
-  if(hd$BITS == 8){
-    invisible(readBin(DZT, "integer", n = hd$NSAMP * nNumSkipScans * hd$NCHAN,
-                      size = 2L))
-    A <- matrix(nrow = hd$NSAMP, ncol = nNumScans * hd$NCHAN)
-    A[] <- readBin(DZT, what = "int", n = prod(dim(A)),  size = 1)
-    test <- A > 0
-    A[ test] <- A[ test] - 129
-    A[!test] <- A[!test] + 127
-  }else if(hd$BITS == 16){
-    #.skipBin(DZT, hd$NSAMP * nNumSkipScans * hd$NCHAN, size = 2)
-    invisible(readBin(DZT, "integer", n = hd$NSAMP * nNumSkipScans * hd$NCHAN, 
-                      size = 2L))
-    A <- matrix(nrow = hd$NSAMP, ncol = nNumScans * hd$NCHAN)
-    A[] <- readBin(DZT, what = "int", n = prod(dim(A)),  size = 2)
-    test <- A > 0
-    A[ test] <- A[ test] - 32769
-    A[!test] <- A[!test] + 32767
-  }else if(hd$BITS == 32){
-    # invisible(readBin(DZT, "integer", n = hd$NSAMP * nNumSkipScans * hd$NCHAN, 
-    #                   size = 2L))
-    A <- matrix(nrow = hd$NSAMP, ncol = nNumScans * hd$NCHAN)
-    A[] <- readBin(DZT, what = "int", n = prod(dim(A)),  size = 4) 
-  }
-  
-  tt <- (seq_len(hd$NSAMP) - 1) * hd$RANGE /  (hd$NSAMP - 1 )
-  # yy <- 1/hd$SPM * (seq_len(ncol(A) ) - 1)
-  # plot3D::image2D(x = tt, y = yy, z = A)
-  
-  yy <- 1/hd$SPM * (seq_len(ncol(A) / hd$NCHAN) - 1)
-  Adata <- vector(mode = "list", length = hd$NCHAN)
-  for(i in seq_len(hd$NCHAN)){
-    Adata[[i]] <- A[, seq(i, by = hd$NCHAN, to = ncol(A))]
-    if(i == 1){
-      hd$MRKS <- Adata[[i]][2,]
-      Adata[[i]] <- Adata[[i]][-c(1, 2), ]   
-    }
-    # plot3D::image2D(y = tt[1:nrow(Adata[[i]])], x = yy, 
-    # z = t(Adata[[i]][nrow(Adata[[i]]):1,]))
-  }
-  
-  if( !inherits(fPath, "connection") ){
-    close(DZT)
-  }
-  
-  
-  # auxiliary file > DZX
-  fNameAux <- getFName(fPath, ext = c(".dzx"), throwError = FALSE)
-  if(!is.null(fNameAux$dzx)){
-    # return fid, pos and dx. The two last should be equal to the
-    # values from the .dzt file.
-    y <- readDZX(fNameAux$dzx)
-    if(!is.null(y)){
-      # return(list(hd = hd, data = Adata, depth = tt, pos = yy, fid = y$markers))
-      return(list(hd = hd, data = Adata, depth = tt, pos = yy, dzx = y))
-    }
-  } 
-  
-  return(list(hd = hd, data = Adata, depth = tt, pos = yy))
-}
-
-#' Read GSSI's .dzx file
-#' 
-#' .dzx files are xml files
-#' @param fPath the filepath
-#' @return a list containing the markers, the trace position and the spatial
-#'         sampling.
-#' @export
-readDZX <- function(fPath){
-  doc <- verboseF(XML::xmlParse(fPath), verbose = FALSE)
-  
-  lst <- list()
-  
-  glbProp <- XML::xmlChildren(doc)$DZX[["GlobalProperties"]]
-  if(!is.null(glbProp)){
-    unitsPerMark <- XML::xmlElementsByTagName(glbProp, "unitsPerMark")
-    if(length(unitsPerMark) > 0){
-      unitsPerMark <- as.numeric(XML::xmlValue(unitsPerMark[[1]]))
-      if(unitsPerMark > 0){
-        lst$unitsPerMark <- unitsPerMark
-      }
-    }
-    unitsPerScan <- XML::xmlElementsByTagName(glbProp, "unitsPerScan")
-    if(length(unitsPerScan) > 0){
-      unitsPerScan <- as.numeric(XML::xmlValue(unitsPerScan[[1]]))
-      if(unitsPerScan > 0){
-        lst$unitsPerScan <- unitsPerScan
-      }
-    }
-    vUnit <- XML::xmlElementsByTagName(glbProp, "verticalUnit")
-    if(length(vUnit) > 0){
-      vUnit <- XML::xmlValue(vUnit[[1]])
-      lst$vUnit <- vUnit
-    }
-    hUnit <- XML::xmlElementsByTagName(glbProp, "horizontalUnit")
-    if(length(hUnit) > 0){
-      hUnit <- XML::xmlValue(hUnit[[1]])
-      lst$hUnit <- hUnit
-    }
-  }
-  
-  # Scan range !!
-  # FIXME : multi channel files
-  fl <- XML::xmlChildren(doc)$DZX[["File"]]
-  if(!is.null(fl)){
-    s1 <- XML::xmlElementsByTagName(fl, "scanRange", recursive = TRUE)
-    if(length(s1) > 0){
-      s0 <- as.integer(strsplit(XML::xmlValue(s1[[1]]), split = ",")[[1]])
-      nscans <- length(s0[1]:s0[2])
-      #--- distance
-      dst <- XML::xmlElementsByTagName(fl, "distance", recursive = TRUE)
-      if(length(dst) > 0){
-        d0 <- as.numeric(sapply(dst, XML::xmlValue))
-        lst$dx <- (d0[2] - d0[1])/(nscans- 1)
-        lst$pos <- seq(from = d0[1], by = lst$dx, length.out = nscans)
-      }
-      
-      #--- marks !!
-      tst <- XML::xmlElementsByTagName(fl, "mark", recursive = TRUE)
-      if(length(tst) > 0){
-        markers_name <- as.character(sapply(tst, XML::xmlValue))
-        markers_pos <- as.numeric(sapply(tst, .xmlValueSibling ))
-        lst$markers <- character(length = nscans)
-        lst$markers[markers_pos] <- markers_name
-      }
-    }
-    # return(list(markers = markers, pos = pos, dx = dx))
-  }
-  if(length(lst) > 0){
-    return(lst)
-  }else{
-    return(NULL)
-  }
-}
-
-.xmlValueSibling <- function(x, after = FALSE){
-  XML::xmlValue(XML::getSibling(x, after = after))
-}
-
-.readRFDate <- function(con, where = 31){
-  seek(con, where = where, origin = "start")
-  rhb_cdt0 <- readBin(con, what = "raw", n = 4L, size = 1L, endian = "little")
-  
-  aa <- rawToBits(rhb_cdt0)
-  xdate <- paste(.bit2int(aa[25 + (1:7)]) + 1980, 
-                 sprintf("%02d", .bit2int(aa[21 + (1:4)])),  # sprintf()
-                 sprintf("%02d", .bit2int(aa[16 + (1:5)])), sep = "-")
-  xtime <- paste(sprintf("%02d", .bit2int(aa[11 + (1:5)])),
-                 sprintf("%02d", .bit2int(aa[5 + (1:6)])),
-                 sprintf("%02d", .bit2int(aa[1:5])* 2), sep = ":" )
-  return(list(date = xdate, time = xtime))
-}
-
-#-----------------------------------------
-# bit to integer conversion
-.bit2int <- function(x){
-  sum(as.integer(x) * 2^( rev(seq_along(x)) - 1))
-}
-
-# number of bytes in connection
-# file.info(filename)$size
-.flen <- function(con){
-  pos0 <- seek(con)
-  seek(con,0,"end")
-  pos <- seek(con)
-  seek(con,where=pos0,"start")
-  return(pos)
-}
-
-# unsigned integer, 2 bytes
-.readBin_int1 <- function(x, n = 1){
-  readBin(x, what = "int", n = n, size = 1, signed = FALSE, endian = "little")
-}
-
-# unsigned integer, 2 bytes
-.readBin_ushort <- function(x, n = 1){
-  readBin(x, what = "int", n = n, size = 2, signed = FALSE, endian = "little")
-}
-
-# signed integer, 2 bytes
-.readBin_short <- function(x){
-  readBin(x, what = "int", size = 2, signed = TRUE, endian = "little")
-}
-
-# float, 4 bytes
-.readBin_float <- function(x){
-  readBin(x, what = "numeric", size = 4, endian = "little")
-}
-
-# float, 8 bytes
-.readBin_float8 <- function(x){
-  readBin(x, what = "numeric", size = 8, endian = "little")
-}
-
-# char, 4 bytes
-.readBin_char <- function(x, n = 1){
-  readBin(x, what = "character", n = n, size = 1, endian = "little")
-}
-
-#  returns the current position in the specified file/connection con
-.ftell <- function(con){
-  return(seek(con))
-}
-
-# .skipBin <- function(con, n, size = 1L){
-#   if(n > 0) invisible(readBin(con, "integer", n = n, size = size))
+# # Data is stored in 16 bits as raw data. The only parameters that affect the 
+# # recorded data directly are Tsweep and Read.  The other parameters affect the 
+# # display and may be varied during or after completion of the survey 
+# # (see sections 5.3 and 6.3).  
+# # The data is stored under the run name as RUNNAME.dat. The run details are 
+# # stored in the file RUNNAME.hdr.  The stored data format is 2 bytes per point 
+# # with LSB byte followed by MSB byte. There are 256 points (512 bytes) 
+# # followed by 1 byte of marker (ASCII).
+# # In addition to the data and header files, GPS files (.gps) and gps number 
+# # files (.gpt) are generated, irrespective of whether or not a GPS is used.  
+# # If a GPS is not used, the .gps and .gpt files will be 0kB in size.
+# # The HDR file is an ASCII file (can be read using notepad) that contains the 
+# # radar parameters and notes about the run.
+# 
+# readUtsi <- function(dsn, dsn2 = NULL){
+#   
+#   if( inherits(dsn, "connection") ){
+#     if(!inherits(dsn2, "connection")){
+#       stop("Please add an additional connection to 'readGPR()' for ",
+#            "the header file '*.hdr'")
+#     }
+#   }else if(is.character(dsn) && is.null(dsn2)){
+#     fName <- getFName(dsn, ext = c(".hdr", ".dat"))
+#     # open dt1 file
+#     dsn  <- file(fName$dat , "rb")
+#     dsn2 <- file(fName$hdr , "rb")
+#   }else{
+#     if(!file.exists(dsn)){
+#       stop("File ", dsn, " does not exist!")
+#     }
+#     if(!file.exists(dsn2)){
+#       stop("File ", dsn2, " does not exist!")
+#     }
+#     dsn_save <- c(dsn, dsn2)
+#     dsn  <- file(dsn_save[grepl("(\\.dat)$", dsn_save)], "rb")
+#     dsn2 <- dsn_save[grepl("(\\.hdr)$", dsn_save)]
+#   }
+#   
+#   hd <- readUtsiHDR(dsn2) 
+#   z <- readUtsiDat(dsn, splPerScan = hd$splPerScan, bits = hd$bits)
+#   z[["hd"]] <- hd
+#   close(dsn)
+#   close(dsn2)
+#   return(z)
+#   
+# }
+# 
+# readUtsiHDR <- function(con){
+#   hd <- c()
+#   
+#   seek(con, where = 0, origin = "start")
+#   #------------------ Utsi header *.hdr -----------------------------------------#
+#   u <- readBin(con, what = "raw", n = 2, size = 1)
+#   hd$magic_number <- sf::rawToHex(u)
+#   if(hd$magic_number != "0f20"){
+#     message("Magic number in '", 
+#             summary.connection(con)$description, 
+#             "' is '",
+#             hd$magic_number,
+#             "' instead of '0f20'")
+#   }
+#   u <- readLines(con, n = 1)
+#   u <- strsplit(u, split = ", ")[[1]]
+#   hd$software_version <- u[1]
+#   hd$software_date <- u[2]
+#   
+#   # scan(con, what = "character", n = 1, skipNul = TRUE)
+#   
+#   # u <- readLines(con, n = 1, skipNul = TRUE, warn = FALSE)
+#   u <- readBin(con, what = "character", n = 1)
+#   hd$date <- as.Date(u[1], "%d\\%m\\%y")
+#   
+#   invisible(readBin(con, what = "character", n = 1))
+#   u <- readBin(con, what = "character", n = 1)
+#   u <- strsplit(gsub("\005", "", u), " ")[[1]]
+#   hd$time <- u[1]
+#   hd$site_text <- u[2]
+#   
+#   
+#   invisible(readBin(con, what = "character", n = 5))
+#   u <- readBin(con, what = "character", n = 1)
+#   hd$time_sweep <- as.numeric(gsub("\002|\005|\n|\004", "", u))
+#   
+#   u <- readBin(con, what = "character", n = 1)
+#   hd$depth_scaling <- as.numeric(gsub("\0016|\002|\005|\n|\004", "", u))
+#   
+#   u <- readBin(con, what = "character", n = 1)
+#   hd$encoder_div_selection <- as.numeric(gsub("\004|\005|\n|\002", "", u))
+#   
+#   u <- readBin(con, what = "character", n = 1)
+#   hd$antsep <- as.numeric(trimStr(gsub("\002|\005|\n|\004", "", u)))
+#   
+#   u <- readBin(con, what = "character", n = 1)
+#   hd$unused_zero <- as.numeric(gsub("\002|\005|\n|\004", "", u))
+#   
+#   u <- readBin(con, what = "character", n = 1)
+#   hd$splPerScan <- as.numeric(gsub("\002|\005|\n|\004", "", u))
+#   
+#   invisible(readBin(con, what = "character", n = 1))
+#   
+#   u <- readBin(con, what = "character", n = 1)
+#   hd$bits <- as.numeric(gsub("\002|\005|\n|\004", "", u))
+#   
+#   return(hd)
+# }
+# 
+# 
+# 
+# readUtsiDat <- function(con, splPerScan = 512, bits = 16){
+#   con_len <- .flen(con)
+#   # seek(con, where = 0, "start")
+#   # xraw <- readBin(con, what = "integer", n = con_len, size = 2, endian = "little")
+#   # close(con)
+#   nr <- splPerScan
+#   # nc <- length(xraw)/(nr+1+nr)
+#   nc <- con_len/(nr*bits/8 + 1)
+#   xdata <- matrix(nrow = nr, ncol = nc)
+#   
+#   mrkr <- character(nc)
+#   
+#   seek(con, where = 0, "start")
+#   for(i in seq_len(nc)){
+#     xdata[,i] <- readBin(con, what = "integer", n = nr, size = bits/8, endian = "little")
+#     mrkr[i] <- readBin(con, what = "character", n = 1, size = 1)
+#   }
+#   return(list(data = xdata, fid = mrkr))
 # }
 
 
+#--------------------------------------
 
 # https://stackoverflow.com/questions/50561768/r-get-argument-names-from-function-call
 # Using the same formalArgs suggested by @Akrun 
@@ -6264,7 +4644,6 @@ readDZX <- function(fPath){
 
 
 
-#--------------------------------------
 # http://stackoverflow.com/questions/17256834/getting-the-arguments-of-a-parent-
 # function-in-r-with-names
 # Ryan Grannell

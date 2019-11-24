@@ -29,6 +29,17 @@ Collate:
   'ClassGPRcube.R'
   'ClassMisc.R'
   'hyperbola.R'
+  'GPS.R'
+  'readFiles.R'
+  'readDT1.R'
+  'readMala.R'
+  'readIPRB.R'
+  'readSGY.R'
+  'readZondGPR.R'
+  'readDZT.R'
+  'readVOL.R'
+  'readUTSI.R'
+  'readTXT.R'
   'data.R'
 Imports:
     methods,

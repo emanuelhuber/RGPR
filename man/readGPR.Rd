@@ -33,6 +33,17 @@ no bits to Volt transformation is applied.}
 
 \item{verbose}{(boolean). If \code{FALSE}, all messages and warnings are
 suppressed (use with care).}
+
+\item{interp_pos}{logical: should the trace position be interpolated if possible? TRUE or FALSE}
+
+\item{method}{A length-three character vector defining the interpolation
+methods (same methods as in \code{signal::interp1}:
+"linear", "nearest", "pchip", "cubic", and "spline"). 
+First element for the interpolation of the 
+inter-trace distances, 
+second element for the interpolation of the horizontal 
+trace positions, and third element for the interpolation
+of the vertical trace positions.}
 }
 \value{
 The GPR data as object of the class RGPR.

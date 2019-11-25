@@ -860,24 +860,6 @@ setMethod("interpPos", "GPRsurvey",
 )
 
 
-#' @export
-setMethod("interpPosArray" , "GPRsurvey",
-          function(x, d, GPGGA = NULL, geojson = NULL, 
-                           tol = NULL, backproject = FALSE){
-  if(length(unique(x@ntraces)) > 1){
-    stop("All GPR data must have exactly the same number of traces!")
-  }
-  if(!is.null(GPGGA)){
-    posInt <- interpPosFromGPGGA(ncol(x[[1]]), GPGGA = GPGGA, tol = tol,
-                                 backproject = backproject)
-  }
-  xyp <- perpPoints(posInt$x, d = d)
-  for(i in seq_along(x)){
-    x@coords[[i]] <-  cbind(xyp$x[, i], xyp$y[, i], posInt$x[,3])
-  }
-  return(x)
-})
-
 #' Reverse the trace position.
 #'
 #' @name reverse

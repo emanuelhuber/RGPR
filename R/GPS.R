@@ -20,9 +20,12 @@ readGPGGA <- function(dsn, sep = ","){
     .closeFileIfNot(dsn)
     return(NULL)
   }
-  a <- read.table(textConnection(gsub(sep, "\t", content)), 
+  a <- read.table(textConnection(content), 
                   header = FALSE, colClasses = "character",
-                 stringsAsFactors = FALSE)
+                  stringsAsFactors = FALSE, sep = ",")
+  # a <- read.table(textConnection(gsub(sep, ";", content)), 
+  #                 header = FALSE, colClasses = "character",
+  #                 stringsAsFactors = FALSE, sep = ";")
   # a <- read.table(x, header = FALSE, colClasses = "character",
                   # sep = ",", stringsAsFactors = FALSE)
   llz <- getLonLatFromGPGGA(a)

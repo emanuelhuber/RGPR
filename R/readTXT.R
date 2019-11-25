@@ -40,10 +40,15 @@ readTXT <- function(dsn){
         return(NULL)
       }
       # A <- read.table(file   = dsn, 
-      A <- read.table(textConnection(gsub(pp$sep, "\t", content)), 
+      # A <- read.table(textConnection(gsub(pp$sep, ";", content)), 
+      #                 header = pp$header, 
+      #                 skip   = pp$skip + 1,
+      #                 sep = ";") #, 
+      #                 # sep    = pp$sep)
+      A <- read.table(textConnection(content),
                       header = pp$header, 
-                      skip   = pp$skip + 1) #, 
-                      # sep    = pp$sep)
+                      skip   = pp$skip + 1, 
+                      sep    = pp$sep)
 
       if(pp$header == TRUE){
         pp$skip <- pp$skip + 1
@@ -73,9 +78,10 @@ readTXT <- function(dsn){
     return(NULL)
   }
   # A <- read.table(file   = dsn, 
-  X <- read.table(textConnection(gsub(pp$sep, "\t", content)), 
+  X <- read.table(textConnection(content), 
                   header = pp$header, 
-                  skip   = pp$skip) #, 
+                  skip   = pp$skip,
+                  sep    = pp$sep) #, 
   # sep    = pp$sep)
   # X <- read.table(file   = dsn, 
   #                 header = pp$header,

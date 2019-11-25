@@ -169,8 +169,13 @@ readTIME <- function(dsn){
     .closeFileIfNot(dsn)
     return(NULL)
   }
-  hTIME <- read.table(textConnection(gsub(",", "\t", content)), 
-                     dec = ".", header = FALSE, stringsAsFactors = FALSE)
+  # hTIME <- read.table(textConnection(gsub(",", ";", content)), 
+  #                    dec = ".", header = FALSE, stringsAsFactors = FALSE,
+  #                    sep = ";")
+  hTIME <- read.table(textConnection(content),
+                      colClasses = "character",
+                      stringsAsFactors = FALSE, 
+                      sep = "")
   .closeFileIfNot(dsn)
   return(hTIME)
 }
@@ -185,8 +190,13 @@ readMRK <- function(dsn){
     .closeFileIfNot(dsn)
     return(NULL)
   }
-  hMRK <- read.table(textConnection(gsub(",", "\t", content)), 
-                     dec = ".", header = FALSE, stringsAsFactors = FALSE)
+  # hMRK <- read.table(textConnection(gsub(",", ";", content)), 
+  #                    dec = ".", header = FALSE, stringsAsFactors = FALSE,
+  #                    sep = ";")
+  hMRK <- read.table(textConnection(content),
+                      colClasses = "character",
+                      stringsAsFactors = FALSE, 
+                      sep = "")
   .closeFileIfNot(dsn)
   return(hMRK)
 }
@@ -202,8 +212,12 @@ readIPRCOR <- function(dsn){
     .closeFileIfNot(dsn)
     return(NULL)
   }
-  hCOR <- read.table(textConnection(gsub(",", "\t", content)), 
-                     dec = ".", header = FALSE, stringsAsFactors = FALSE)
+  # hCOR <- read.table(textConnection(gsub(",", ";", content)), 
+  #                    dec = ".", header = FALSE, stringsAsFactors = FALSE,
+  #                    sep = ";")
+  hCOR <- read.table(textConnection(content),
+                     stringsAsFactors = FALSE, 
+                     sep = "")
   # hCOR <- read.table(textConnection(gsub(",", "\t", readLines(dsn))), 
   #                    dec = ".", header = FALSE, stringsAsFactors = FALSE)
   colnames(hCOR) <- c("id", "date", "time", "y", 

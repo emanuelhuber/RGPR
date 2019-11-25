@@ -164,8 +164,13 @@ readCOR <- function(dsn){
     .closeFileIfNot(dsn)
     return(NULL)
   }
-  hCOR <- read.table(textConnection(gsub(",", "\t", content)), 
-                     dec = ".", header = FALSE, stringsAsFactors = FALSE)
+  # hCOR <- read.table(textConnection(gsub(",", ";", content)), 
+  #                    dec = ".", header = FALSE, stringsAsFactors = FALSE,
+  #                    sep = ";")
+  hCOR <- read.table(textConnection(gsub(",", "\t", content)),
+                     #colClasses = "character",
+                     stringsAsFactors = FALSE, 
+                     sep = "")
   if(ncol(hCOR) == 9){
     unts <- gsub("[0-9.]", "", hCOR[,8])[1]
     hCOR[,8] <- as.numeric(gsub(unts, "", hCOR[,8]))

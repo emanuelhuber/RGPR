@@ -196,12 +196,13 @@ readUtsiGPS <- function(dsn, gpt){
     .closeFileIfNot(dsn)
     return(NULL)
   }
-  hCOR <- read.table(textConnection(gsub(",", "\t", content)), 
-                     dec = ".", header = FALSE, stringsAsFactors = FALSE,
-                     colClasses = "character")
   # hCOR <- read.table(textConnection(gsub(",", "\t", readLines(dsn))), 
   #                    dec = ".", header = FALSE, colClasses = "character",
   #                    stringsAsFactors = FALSE)
+  hCOR <- read.table(textConnection(content),
+                      colClasses = "character",
+                      stringsAsFactors = FALSE, 
+                      sep = ",")
   a <- getLonLatFromGPGGA(hCOR)
   
   .closeFileIfNot(dsn)

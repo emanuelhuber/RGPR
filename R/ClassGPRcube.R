@@ -166,7 +166,7 @@ setMethod(
             crs         = character(0)
             #hd          = sup_hd                      # header
         )
-    # extract sub-cuve
+    # extract sub-cube
     }else{
       y <- new("GPRcube",
                version      = x@version,

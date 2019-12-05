@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Free GPR data
-date: 2019-10-19
+date: 2019-12-05
 ---
 
 <!--
@@ -15,7 +15,7 @@ Table of Contents
 =================
 
 -   [GPR data I collected](#gpr-data-i-collected)
-    -   [Single GPR data from\[Schmelzbach and Huber (2015)\](http://dx.doi.org/10.1109/TGRS.2015.2419235)](#single-gpr-data-from-schmelzbach-and-huber-2015httpdxdoiorg101109tgrs20152419235)
+    -   [GPR data from Schmelzbach and Huber (2015)](#gpr-data-from-schmelzbach-and-huber-2015)
     -   [The Frenke GPR data set](#the-frenke-gpr-data-set)
 -   [Third party GPR data (not tested)](#third-party-gpr-data-not-tested)
 
@@ -24,8 +24,8 @@ GPR data I collected
 
 I plan to make freely available the GPR data I collected during my PhD thesis (that was financed by public funding).
 
-Single GPR data from [Schmelzbach and Huber (2015)](http://dx.doi.org/10.1109/TGRS.2015.2419235)
-------------------------------------------------------------------------------------------------
+GPR data from Schmelzbach and Huber (2015)
+------------------------------------------
 
 [GPR data recorded with Pulse Ekko Pro from Sensors & Software on the river bed of the Tagliamento River (NE Italy)](https://doi.org/10.5281/zenodo.2586189). Avalaible on Zenodo: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2586189.svg)](https://doi.org/10.5281/zenodo.2586189)
 

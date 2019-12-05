@@ -1,6 +1,7 @@
 ---
 layout: page
-title: GPR data deconvolution date: 2019-12-05
+title: GPR data deconvolution
+date: 2019-12-05
 ---
 
 <!--

@@ -1,7 +1,7 @@
 ---
 layout: page
 title: GPR data deconvolution
-date: 2019-12-05
+date: 2019-12-06
 ---
 
 <!--
@@ -199,13 +199,15 @@ x_dec <- deconv(x6, method="mixed-phase", W = tWin, wtr = 5, nf = 35,
 
 Estimated phase rotation: 114.59°.
 
-The function `deconv()` returns a list of following elements:
+The function `deconv()` (when `method = "mixed-phase"`) returns a list of following elements:
 
 -   `fmin`: estimated inverse minimum-phase wavelet
 -   `wmin`: estimated minimum-phase wavelet
 -   `optRot`: rotation of the minimum-phase wavelet that maximise the kurtosis
 -   `wmix`: estimated mixed-phase wavelet (the rotated minimum-phase wavelet)
 -   `x`: the deconvolued data
+
+You can compare the results with the "minimum-phase deconvolution" also called "spiking deconvolution" by setting in `deconv()` `method = "spiking"` (in this case, `deconv()` returns only `fmin`, `wmin` and `x`).
 
 ### Minimum-phase and mixed-phase wavelet
 

@@ -4361,6 +4361,7 @@ inPoly <- function(x, y, vertx, verty){
 #------------------------------------------------------------------------------#
 
 # used in function readGPS()
+#' @export
 extractPattern <- function(x, pat, shift1 = 0, shift2 = 0){
   # pat_tr <- "(\\#[0-9]+)"
   matches <- regexpr(pat, x, perl=TRUE)

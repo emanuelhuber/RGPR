@@ -82,12 +82,12 @@ stringToLat <- function(x, NW = "N"){
   return(lat)
 }
 
-#' latitude-longitude to UTM
+#' longitude, latitude to UTM
 #' 
 #' see https://stackoverflow.com/a/30225804
 #' https://stackoverflow.com/questions/18639967/converting-latitude-and-longitude-points-to-utm
 #' @export
-llToUTM <- function(lat, lon, zone = NULL, south = NULL){
+llToUTM <- function(lon, lat, zone = NULL, south = NULL){
   # todo: check if lat/long in hh:mm:ss and convert them into
   #       decimal with the function 'll2dc()' (see below)
   lat_mean <- median(lat)
@@ -135,11 +135,12 @@ getUTMzone <- function(lat, lon){
 }
 
 #' UTM to latitude-longitude
+#' @return a 2-column-matrix (longitude (N), latitude (E))
 #' 
 #' @export
 UTMToll <- function(xy, xy_crs = NULL){
-  if(max(xy[,1]) > 834000) stop("y-values (northing) are larger than 834000")
-  if(min(xy[,1]) < 166000) stop("x-values (easting) are smaller than 166000")
+  #if(max(xy[,1]) > 834000) stop("y-values (northing) are larger than 834000")
+  #if(min(xy[,1]) < 166000) stop("x-values (easting) are smaller than 166000")
   if(is.null(xy_crs)){
     xy_crs <- "+proj=utm +zone=32 +ellps=WGS84"
   } 
@@ -147,7 +148,7 @@ UTMToll <- function(xy, xy_crs = NULL){
   sp::coordinates(ll) <- c("X", "Y")
   sp::proj4string(ll) <- sp::CRS(xy_crs)
   xy <- sp::spTransform(ll, sp::CRS("+init=epsg:4326"))
-  as.matrix(as.data.frame(xy)[,3:2])
+  as.matrix(as.data.frame(xy)[,2:3])
 }
 
 # conversion latitude longitude (hh:mm:ss into decimal

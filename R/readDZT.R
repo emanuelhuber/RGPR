@@ -303,6 +303,59 @@ readDZT <- function(dsn){
   return(list(hd = hd, data = Adata, depth = tt, pos = yy))
 }
 
+# setwd("/media/huber/Seagate1TB/UNIBAS/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT")
+# dsn <- "dzt/jarvis/PROJECT001__014.DZG"
+# dsn <- "dzt/jarvis/PROJECT001__014.DZT"
+# mrk <- readDZG(dsn)
+
+
+readDZG <- function(dsn){
+  x <- scan(dsn, what = character(), sep = "\n")
+  
+  test_gssis <- grepl("(\\$GSSIS)", x, ignore.case = TRUE, useBytes = TRUE )
+  test_gpgga <- grepl("(\\$GPGGA)", x, ignore.case = TRUE, useBytes = TRUE )
+  
+  if(sum(test_gssis) != sum(test_gpgga)){
+    stop("File '.dzg' is corrupted! I cannot read it... sorry.")
+  }
+  
+  pat_gssis <- paste0("\\$(?<ID>GSSIS),(?<tr>[0-9]+),(?<time>[-]?[0-9.]+)") 
+  pat_gpgga <- paste0("\\$(?<ID>GPGGA),(?<UTC>[0-9.]+),(?<lat>[0-9.]+),",
+                      "(?<NS>[NS]),(?<lon>[0-9.]+),(?<EW>[EW]),(?<fix>[0-9]),",
+                      "(?<NbSat>[0-9.]+),(?<HDOP>[0-9.]+),(?<H>[0-9.]+),",
+                      "(?<mf>[MmFf]+)") 
+  #,(?<HGeoid>[0-9.]+),(?<mf2>[mMfF+),",
+  # "(?<TDGPS>[0-9.]+),(?<DGPSID> [A-z0-9.]+)"
+  # )
+  
+  # matches <- regexpr(pat_gpgga, x[xgpgga], perl=TRUE)
+  # first <- attr(matches, "capture.start")
+  # last <- first + attr(matches, "capture.length") -1
+  # gpgga <- mapply(substring, x[xgpgga], first, last, USE.NAMES = FALSE)
+  gpgga <- extractPattern(x[test_gpgga], pat = pat_gpgga, 
+                          shift1 = 0, shift2 = -1)  
+  gssis <- extractPattern(x[test_gssis], pat = pat_gssis, 
+                          shift1 = 0, shift2 = -1)
+  
+  dim(gpgga) <- c(sum(test_gpgga), 11)
+  gpgga <- as.data.frame(gpgga, stringsAsFactors = FALSE)
+  colnames(gpgga) <- c("ID", "UTC", "lat", "NS", "lon", "EW", 
+                       "fix", "NbSat", "HDOP", "H", "mf")
+  dim(gssis) <- c(sum(test_gssis), 3)
+  gssis <- as.data.frame(gssis, stringsAsFactors = FALSE)
+  colnames(gssis) <- c("ID", "trace", "time")
+  
+  xyzt <- .getLonLatFromGPGGA(gpgga)
+  
+  # trace number start at 0!!
+  mrk <- cbind(xyzt[ ,1:3], as.integer(gssis$trace) + 1,  xyzt[ ,4])
+  # mrk <- as.matrix(mrk)
+  names(mrk) <- c("x", "y", "z", "id", "time")
+  
+  .closeFileIfNot(dsn)
+  return(mrk)
+}
+
 #' Read GSSI's .dzx file
 #' 
 #' .dzx files are xml files

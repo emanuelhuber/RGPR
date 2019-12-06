@@ -150,21 +150,20 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
     }else if( !("RAD" %in% toupper(ext))){
       stop("Missing connection or filepath to '*.rad' file.") 
     }else if( !("COR" %in% toupper(ext)) ){
-      i <- which("RD7" == toupper(ext) )
-      if(length(i) == 0) i <- which("RD3" == toupper(ext) )
-      dsn <- list(RD37 = dsn[[i]], # FIXME: 
-                  # assume that the ext is correct 
-                  # (upper/lower case)
-                  RAD = dsn[["RAD"]],
-                  COR = getFName(fPath[1], ext = ".COR", throwError = FALSE)$cor)
+      dsn[["COR"]] <- getFName(fPath[1], ext = ".COR", throwError = FALSE)$cor
     }
-    nbytes <- 2
-    if("RD7" %in% toupper(ext)) nbytes <- 4
+    nbytes <- 4
+    i <- which("RD7" == toupper(ext) )
+    if(length(i) == 0){
+      i <- which("RD3" == toupper(ext) )
+      nbytes <- 2
+    } 
+    dsn[["RD37"]] <- dsn[[i]] # FIXME: 
+    # assume that the ext is correct 
+    # (upper/lower case)
     rad  <- verboseF( readRAD(dsn[["RAD"]]), verbose = verbose)
     rd37 <-  verboseF( readRD37(dsn[["RD37"]], ntr = rad$ntr, npt = rad$npt, 
                                 nbytes = nbytes), verbose = verbose)
-    i <- which("RD7" == toupper(ext) )
-    if(length(i) == 0) i <- which("RD3" == toupper(ext) )
     
     x <- verboseF( .gprRD3(list(hd = rad$HD, data = rd37), 
                                     fName = fName[[i]], fPath = fPath[[i]],  
@@ -275,13 +274,26 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
       crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
     }
   #--------------------------------- GSSI -------------------------------------#
-  #------------------------------ DZT (+ DZX) ---------------------------------#
+  #------------------------------ DZT (+ DZX, DZG) ----------------------------#
   }else if("DZT" %in% toupper(ext)){
-    dzt <- verboseF( readDZT(dsn[["DZT"]]), verbose = verbose)
-    if( !("DZX" %in% toupper(ext)) ){
+    if(length(dsn) == 1){
+      if(inherits(dsn, "connection")){
+        stop("Please add an additional connection to 'dsn' in 'readGPR()' for ",
+             "the header file '*.iprh'")
+      }
       dsn <- list(DZT = dsn[["DZT"]], 
-               DZX = getFName(fPath[1], ext = ".DZX", throwError = FALSE)$dzx)
+                  DZX = getFName(fPath[1], ext = ".DZX", throwError = FALSE)$dzx,
+                  DZG = getFName(fPath[1], ext = ".DZG", throwError = FALSE)$dzg)
+    }else{
+      if( !("DZX" %in% toupper(ext)) ){
+        dsn <- c(dsn, list(DZX = getFName(fPath[1], ext = ".DZX", throwError = FALSE)$dzx))
+      }
+      if( !("DZG" %in% toupper(ext)) ){
+        dsn <- c(dsn, list( DZG = getFName(fPath[1], ext = ".DZG", throwError = FALSE)$dzg))
+      }
+      
     }
+    dzt <- verboseF( readDZT(dsn[["DZT"]]), verbose = verbose)
     if(!is.null(dsn[["DZX"]])){
       dzx <- verboseF( readDZX(dsn[["DZX"]]), verbose = verbose)
       dzt <- c(dzt, list(dzx = dzx))
@@ -289,6 +301,13 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
     x <- verboseF( .gprDZT(dzt, 
                            fName = fName[["DZT"]], fPath = fPath[["DZT"]], 
                            desc = desc, Vmax = Vmax, ch = ch), verbose = verbose)
+    if( !is.null(dsn[["DZG"]]) && isTRUE(interp_pos)){
+      x_mrk <-  verboseF(readDZG(dsn[["DZG"]]), verbose = verbose)
+      x <- interpPos(x, x_mrk, tol = sqrt(.Machine$double.eps), method = method)
+      crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+    }
+  #------------------------------- 3d RADAR -----------------------------------#
+  #------------------------------------ VOL -----------------------------------#
   }else if("VOL" %in% toupper(ext)){
     A <- verboseF( readVOL(dsn), verbose = verbose)
     x <- verboseF( .gprVOL(A, fName = fName, fPath = fPath, 

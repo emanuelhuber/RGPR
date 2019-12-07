@@ -2,9 +2,9 @@
 % Please edit documentation in R/GPS.R
 \name{llToUTM}
 \alias{llToUTM}
-\title{latitude-longitude to UTM}
+\title{longitude, latitude to UTM}
 \usage{
-llToUTM(lat, lon, zone = NULL, south = NULL)
+llToUTM(lon, lat, zone = NULL, south = NULL)
 }
 \description{
 see https://stackoverflow.com/a/30225804

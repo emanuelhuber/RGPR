@@ -41,6 +41,7 @@ Collate:
   'readUTSI.R'
   'readTXT.R'
   'data.R'
+  'color.R'
 Imports:
     methods,
     graphics,

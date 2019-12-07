@@ -6,6 +6,9 @@
 \usage{
 UTMToll(xy, xy_crs = NULL)
 }
+\value{
+a 2-column-matrix (longitude (N), latitude (E))
+}
 \description{
 UTM to latitude-longitude
 }

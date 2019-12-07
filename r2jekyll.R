@@ -12,6 +12,7 @@
 # Rscript --vanilla r2jekyll.R 04_RGPR_tutorial_GPR-data-survey.Rmd
 # Rscript --vanilla r2jekyll.R 05_RGPR_tutorial_GPR-data-migration.Rmd
 # Rscript --vanilla r2jekyll.R 07_RGPR_tutorial_hyperbola_fitting.Rmd
+# Rscript --vanilla r2jekyll.R 08_RGPR_mixed-phase-wavelet-deconvolution.Rmd
 # Rscript --vanilla r2jekyll.R 70_RGPR_tutorial_class-GPR.Rmd
 # Rscript --vanilla r2jekyll.R 80_RGPR_GPR-data-free-to-download.Rmd
 

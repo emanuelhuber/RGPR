@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Plot GPR data
-date: 2019-10-14
+date: 2019-12-07
 ---
 
 <!--
@@ -24,6 +24,8 @@ Table of Contents
     -   [The GPR data](#the-gpr-data)
 -   [Plot the GPR data](#plot-the-gpr-data)
     -   [Two-dimensional plot: radargramm](#two-dimensional-plot-radargramm)
+        -   [Raster plot](#raster-plot)
+        -   [Wiggle plot](#wiggle-plot)
     -   [One-dimensional plot](#one-dimensional-plot)
         -   [Single trace plot](#single-trace-plot)
         -   [Multiple trace plot](#multiple-trace-plot)
@@ -46,31 +48,11 @@ if(!require("devtools")) install.packages("devtools")
 devtools::install_github("emanuelhuber/RGPR")
 ```
 
-    ## backports   (1.1.4   -> 1.1.5) [CRAN]
-    ## callr       (3.3.1   -> 3.3.2) [CRAN]
-    ## curl        (4.0     -> 4.2) [CRAN]
-    ## digest      (0.6.20  -> 0.6.21) [CRAN]
-    ## ellipsis    (0.2.0.1 -> 0.3.0) [CRAN]
-    ## fields      (9.8-6   -> 9.9) [CRAN]
-    ## htmltools   (0.3.6   -> 0.4.0) [CRAN]
-    ## htmlwidgets (1.3     -> 1.5.1) [CRAN]
-    ## httpuv      (1.5.1   -> 1.5.2) [CRAN]
-    ## knitr       (1.24    -> 1.25) [CRAN]
-    ## later       (0.8.0   -> 1.0.0) [CRAN]
-    ## pkgconfig   (2.0.2   -> 2.0.3) [CRAN]
-    ## promises    (1.0.1   -> 1.1.0) [CRAN]
-    ## raster      (3.0-2   -> 3.0-7) [CRAN]
-    ## rgdal       (1.4-4   -> 1.4-6) [CRAN]
-    ## rgeos       (0.5-1   -> 0.5-2) [CRAN]
-    ## sf          (0.7-7   -> 0.8-0) [CRAN]
-    ## shiny       (1.3.2   -> 1.4.0) [CRAN]
-    ## spam        (2.2-2   -> 2.3-0) [CRAN]
-    ## units       (0.6-4   -> 0.6-5) [CRAN]
-    ## xfun        (0.9     -> 0.10) [CRAN]
     ##
-       checking for file ‘/tmp/RtmpsEzAgK/remotes43cd336a7bc9/emanuelhuber-RGPR-d06e059/DESCRIPTION’...
+    ##
+       checking for file ‘/tmp/RtmpSLpAEU/remotes22e350fe5bc9/emanuelhuber-RGPR-b188384/DESCRIPTION’...
 
-    ✔  checking for file ‘/tmp/RtmpsEzAgK/remotes43cd336a7bc9/emanuelhuber-RGPR-d06e059/DESCRIPTION’
+    ✔  checking for file ‘/tmp/RtmpSLpAEU/remotes22e350fe5bc9/emanuelhuber-RGPR-b188384/DESCRIPTION’
     ##
 
     ─  preparing ‘RGPR’:
@@ -126,6 +108,8 @@ Plot the GPR data
 Two-dimensional plot: radargramm
 --------------------------------
 
+### Raster plot
+
 To plot the GPR record as a raster image (default mode), enter
 
 ``` r
@@ -135,6 +119,40 @@ plot(x)
 ![plot(A)](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot-1.png)
 
 The green line indicates the position of time-zero. The yellow triangle indicates the position of a fiducial marker that was set during the survey to mark something (such as a specific object close to the GPR line, a change in morphology/topography/sedimentology or an intersection with another GPR line). These markers are very useful to add topographic data to the GPR profile, particularly when the fiducial markers correspond to the locations where the (x,y,z) coordinates were measured.
+
+Do you want another color palette? RGPR comes with predefined color palettes. Check them with:
+
+``` r
+displayPalGPR()
+```
+
+![displayPalGPR()](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/displayPalGPR-1.png)
+
+Plot a single palette:
+
+``` r
+plotPal(palGPR("nice"))
+```
+
+![plot color palette nice](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_single_color_palette-1.png)
+
+Choose the color palette you want and plot the GPR data with it:
+
+``` r
+plot(x, col = palGPR("nice"))
+```
+
+![plot GPR data with color palette nice](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_GPR_with_color_palette-1.png)
+
+You can reduce the number of colors with:
+
+``` r
+plot(x, col = palGPR("nice", n = 5))
+```
+
+![displayPalGPR()](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_GPR_with_color_palette_n-1.png)
+
+### Wiggle plot
 
 Plot wiggles
 
@@ -276,8 +294,6 @@ lines(traceStat(x), lwd = "2", col = "red")
 ```
 
 ![plot multiple traces with average trace](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_multi_1D_average-1.png)
-
-    ## [1] 22
 
 Frequency plots
 ---------------

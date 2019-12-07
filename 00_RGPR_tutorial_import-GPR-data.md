@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Import GPR data
-date: 2019-10-14
+date: 2019-12-08
 ---
 
 <!--
@@ -21,6 +21,7 @@ Table of Contents
 
 -   [Install/load `RGPR`](#installload-rgpr)
 -   [Read/import GPR data](#readimport-gpr-data)
+    -   [Overview](#overview)
     -   [Sensors and software data (`.dt1`)](#sensors-and-software-data-dt1)
     -   [GSSI data (`.dtz`)](#gssi-data-dtz)
         -   [Multi-channel data](#multi-channel-data)
@@ -60,6 +61,28 @@ To suppress any message or warning, set the argument `verbose = FALSE`, e.g.,
 x <- readGPR(dsn = "myData.ext", verbose = FALSE)
 plot(x)
 ```
+
+Overview
+--------
+
+| Manufacturer                | Mandatory    | optional: GPS          | optional: others                         |
+|-----------------------------|--------------|------------------------|------------------------------------------|
+| Sensors & software          |.DT1,.HD    |.GPS                   |                                          |
+| MALA 16 bits                |.rd3,.rad   |.cor                   |                                          |
+| MALA 32 bits                |.rd7,.rad   |.cor                   |                                          |
+| ImpulseRadar                |.iprb,.iprh |.cor                   |.time<sup>1</sup> (,.mrk<sup>2</sup>\*) |
+| GSSI                        |.dzt         |.dzg                   |                                          |
+| Geomatrix Earth Science Ltd |.dat,.hdr   |.gps,.gpt<sup>3</sup> |                                          |
+| Radar Systems, Inc.         |.sgy/.segy   |                        |                                          |
+| SEG-Y                       |.sgy/.segy   |                        |                                          |
+| R internal file format      |.rds         |                        |                                          |
+
+\* not yet implemented
+<sup>1</sup> date and time recording for each traces
+<sup>2</sup> markers
+<sup>3</sup> markers associated to the GPS data (.gps)
+
+Indirectly supported file format - ENVI band-sequential files (.dat,.hdr) - Pickle files (.pkl)
 
 Sensors and software data (`.dt1`)
 ----------------------------------

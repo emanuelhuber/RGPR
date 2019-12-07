@@ -1,7 +1,7 @@
 ---
 layout: page
 title: GPR data migration
-date: 2019-10-14
+date: 2019-12-08
 ---
 
 <!--
@@ -89,8 +89,8 @@ Read GPR data
 A <- readGPR(fPath = "rawGPR/LINE00.DT1")   # the filepath is case sensitive!
 ```
 
-    ## Warning in readGPR(fPath = "rawGPR/LINE00.DT1"): Use argument 'dsn' instead
-    ## of 'fPath' because argument 'fPath' is deprecated.
+    ## Warning in readGPR(fPath = "rawGPR/LINE00.DT1"): Use argument 'dsn' instead of
+    ## 'fPath' because argument 'fPath' is deprecated.
 
 Pre-processing
 ==============
@@ -112,15 +112,13 @@ TOPO <- file.path(getwd(), "coord/topo/LINE00.txt")
 TOPOList <- readTopo(TOPO, sep = "\t")
 ```
 
-    ## read /mnt/data/huber/Documents/WORKNEW/GPR_Project/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE00.txt...
+    ## read /media/huber/Seagate1TB/UNIBAS/PROJECTS/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE00.txt...
 
 1.  Set the list of coordinates as the new coordinates to the GPRsurvey object:
 
 ``` r
 coord(A) <- TOPOList[[1]]
 ```
-
-    ## [1] 23
 
 DC shift removal
 ----------------
@@ -130,8 +128,6 @@ Remove the DC-offset estimated on the first n samples usind the function `dcshif
 ``` r
 A1 <- dcshift(A, 1:110)   # new object A1
 ```
-
-    ## [1] 21
 
 First wave break estimation and set time-zero
 ---------------------------------------------
@@ -157,8 +153,6 @@ To shift the traces to time-zero, use the function `time0Cor`.
 A2 <- time0Cor(A1, method = "spline")
 ```
 
-    ## [1] 21
-
 Dewow
 -----
 
@@ -167,8 +161,6 @@ Remove the low-frequency components (the so-called "wow") of the GPR record with
 ``` r
 A3 <- dewow(A2, type = "runmed", w = 50)
 ```
-
-    ## [1] 21
 
 Frequency filter
 ----------------
@@ -181,8 +173,6 @@ A4 <- fFilter(A3, f = c(150, 260), type = "low", plotSpec = TRUE)
 
 ![frequency filter](05_RGPR_tutorial_GPR-data-migration_tp_files/figure-markdown_github/unnamed-chunk-10-1.png)
 
-    ## [1] 21
-
 Time gain
 ---------
 
@@ -190,15 +180,8 @@ Apply a power gain and a spherical gain to compensate for geometric wave spreadi
 
 ``` r
 A5 <- gain(A4, type = "power", alpha = 1, te = 150, tcst = 20)
-```
-
-    ## [1] 21
-
-``` r
 A6 <- gain(A5, type = "exp", alpha = 0.11, t0 = 0, te = 125)
 ```
-
-    ## [1] 21
 
 Topographic Kirchhoff migration
 ===============================
@@ -214,11 +197,6 @@ Time correction for each trace to compensate the offset between transmitter and 
 
 ``` r
 A7 <- timeCorOffset(A6)
-```
-
-    ## [1] 21
-
-``` r
 plot(A7)
 ```
 
@@ -229,8 +207,6 @@ plot(A7)
 ``` r
 A8 <- upsample(A7, n = c(3,1))
 ```
-
-    ## [1] 21
 
 Topographic Kirchhoff migration.
 --------------------------------
@@ -262,11 +238,6 @@ vel(A8)  <- 0.09        # velocity in ns
 ``` r
 A9 <- migration(A8, type="kirchhoff", max_depth = 20,
                  dz = 0.01, fdo = 80)
-```
-
-    ## [1] 21
-
-``` r
 plot(A9)
 ```
 
@@ -283,23 +254,17 @@ Trace smoothing with a Gaussian filter
 A10 <- filter1D(A9, type = "Gaussian", w = 2.5)
 ```
 
-    ## [1] 21
-
 Automatic gain control
 
 ``` r
 A11 <- gain(A10, type = "agc", w = 0.55)
 ```
 
-    ## [1] 21
-
 inverse normal transformations
 
 ``` r
 A12 <- traceScaling(A11, type = "invNormal")
 ```
-
-    ## [1] 21
 
 Comparison before/after migration
 ---------------------------------
@@ -309,8 +274,6 @@ Before migration
 ``` r
 plot(traceScaling(A8, type = "invNormal"))
 ```
-
-    ## [1] 22
 
 ![before migration](05_RGPR_tutorial_GPR-data-migration_tp_files/figure-markdown_github/unnamed-chunk-20-1.png)
 

@@ -2917,18 +2917,51 @@ nextpower2 <- function(x){
 #'       
 #' shift the phase of signal by phi (in radian)
 #' @export
-phaseRotation <- function(x,phi){
-  nf <- length(x)
-  X <- stats::fft(x)
-  phi2 <- numeric(nf)
-  phi2[2:(nf/2)] <- phi
-  phi2[(nf/2+1):(nf)] <- -phi
-  Phase <- exp(-complex(imaginary=-1)*phi2)
-  xcor <- stats::fft(X*Phase, inverse=TRUE)/nf
-  return(Re(xcor))
+phaseRotation <- function(x, phi){
+  # # x <- as.numeric(x)
+  # n <- length(x)
+  # x <- c(rev(head(x, npad)), x, rev(tail(x, npad)))   # add MANU
+  # nf <- length(x)
+  # X <- stats::fft(x)
+  # # phi2 <- numeric(nf)
+  # # phi2[2:(nf/2)] <- phi
+  # phi2 <- rep(phi, nf)
+  # phi2[(nf/2+1):(nf)] <- -phi
+  # Phase <- exp( complex(imaginary = 1) * phi2)
+  # xcor <- stats::fft(X * Phase, inverse = TRUE)/nf
+  # return(Re(xcor[npad + 1:n]))
+  xH <- base::Re(HilbertTransf(x, npad = 20))
+  return(x * cos(phi) - xH * sin(phi))
+  # return(Re(xcor))
 }
 
 
+# Hilbert transform
+# https://github.com/cran/spectral/blob/master/R/hilbert.R
+#' @export
+HilbertTransf <- function(x, npad = 10){
+  x <- as.numeric(x)
+  n <- length(x)
+  # x <- c(x, rep(0, npad))   # add MANU
+  x <- c(rev(head(x, npad)), x, rev(tail(x, npad)))   # add MANU
+  # first calculate the normalized FFT
+  X <- fft(x) / length(x)
+  
+  # then we need a virtual spatial vector which is symmetric with respect to
+  # f = 0. The signum function will do that. The advantage is, that we need not
+  # take care of the odd-/evenness of the length of our dataset
+  xf <- 0:(length(X) - 1)
+  xf <- xf - mean(xf)
+  
+  # because the negative Frequencies are located in the upper half of the
+  # FFT-data vector it is nesccesary to use "-sign". This will mirror the relation
+  # The "-0.5" effect is that the Nyquist frequency, in case of odd data set lenghts,
+  # is not rejected.
+  Xh <- -1i * X * -sign(xf - 0.5)
+  xh <- fft(Xh, inverse = TRUE)
+  # return(xh[1:n])   # add MANU
+  return(xh[npad + 1:n])   # add MANU
+}
 
 # -------------------------------------------
 # ------------addProfile3D--------------------------
@@ -3146,31 +3179,7 @@ bits2volt <- function( Vmax = 50, Vmin = 50, nbits = 16) {
 
 
 
-# Hilbert transform
-# https://github.com/cran/spectral/blob/master/R/hilbert.R
-HilbertTransf <- function(x, npad = 10){
-  x <- as.numeric(x)
-  n <- length(x)
-  # x <- c(x, rep(0, npad))   # add MANU
-  x <- c(rev(head(x, npad)), x, rev(tail(x, npad)))   # add MANU
-  # first calculate the normalized FFT
-  X <- fft(x) / length(x)
-  
-  # then we need a virtual spatial vector which is symmetric with respect to
-  # f = 0. The signum function will do that. The advantage is, that we need not
-  # take care of the odd-/evenness of the length of our dataset
-  xf <- 0:(length(X) - 1)
-  xf <- xf - mean(xf)
-  
-  # because the negative Frequencies are located in the upper half of the
-  # FFT-data vector it is nesccesary to use "-sign". This will mirror the relation
-  # The "-0.5" effect is that the Nyquist frequency, in case of odd data set lenghts,
-  # is not rejected.
-  Xh <- -1i * X * -sign(xf - 0.5)
-  xh <- fft(Xh, inverse = TRUE)
-  # return(xh[1:n])   # add MANU
-  return(xh[npad + 1:n])   # add MANU
-}
+
 
 
 
@@ -4039,10 +4048,10 @@ deconvolutionMtx <- function(y, h, nf, mu = 0.0001){
 #' @name optPhaseRotation
 #' @rdname optPhaseRotation
 #' @export
-optPhaseRotation <- function(x,rot=0.01,plot=TRUE){
+optPhaseRotation <- function(x, rot = 0.01, plot = TRUE){
   # x_dec <- as.vector(gpr/apply(as.matrix(gpr),2,RMS))
   x_dec <- as.vector(x)
-  pi_seq <- seq(0,pi,by=rot)
+  pi_seq <- seq(0, pi, by = rot)
   kurt <- numeric(length(pi_seq))
   nx <- length(x_dec)
   for(i in seq_along(pi_seq)){

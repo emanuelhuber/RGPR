@@ -3875,12 +3875,12 @@ setMethod("deconv", "GPR", function(x,
       shft <- dots$shft
     }
     
-    W <- seq(W[1],W[2])
-    X <- traceScaling(x, type="rms")@data
+    W <- seq(W[1], W[2])
+    X <- traceScaling(x, type = "rms")@data
     # X <- X / apply(as.matrix(X),2,RMS)
-    Xdec <- matrix(nrow=nrow(X),ncol=ncol(X))
-    Fmin <- matrix(nrow=nf,ncol=ncol(X))
-    Wmin <- matrix(nrow=nf,ncol=ncol(X))
+    Xdec <- matrix(nrow = nrow(X), ncol = ncol(X))
+    Fmin <- matrix(nrow = nf, ncol = ncol(X))
+    Wmin <- matrix(nrow = nf, ncol = ncol(X))
     for(i in 1:ncol(X)){
       ww <- (i-wtr):(i+wtr)
       ww <- ww[ww <= ncol(X) & ww >= 1]

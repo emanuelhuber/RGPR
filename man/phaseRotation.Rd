@@ -6,7 +6,7 @@
       
 shift the phase of signal by phi (in radian)}
 \usage{
-phaseRotation(x, phi)
+phaseRotation(x, phi, npad = 10)
 }
 \description{
 Phase rotation

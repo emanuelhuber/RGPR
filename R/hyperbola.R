@@ -52,26 +52,30 @@
 #' @rdname hyperbolaFit
 #' @export
 hyperbolaFit <- function(x, y = NULL){
-  if(is.null(y)){
-    if(length(x) != 2) stop("x must a list of length = 2")
-    y <- x[[2]]
-    x <- x[[1]]
-  }
-  y2 <- y^2/4
-  x2 <- x^2
-  fit1 <- lm(y2 ~ x2 + x)
+  # if(is.null(y)){
+  #   if(length(x) != 2) stop("x must a list of length = 2")
+  #   y <- x[[2]]
+  #   x <- x[[1]]
+  # }
+  # y2 <- y^2/4
+  # x2 <- x^2
+  # fit1 <- lm(y2 ~ x2 + x)
+  xy <- grDevices::xy.coords(x, y)
+  y2 <- xy[["y"]]^2/4
+  x2 <- xy[["x"]]^2
+  fit1 <- lm(y2 ~ x2 + xy[["x"]])
   coef1 <- unname(fit1$coefficient)
   vrms <- sqrt(1 / coef1[2])
   x0 <- -coef1[3] * vrms^2 / 2
   t0 <- 2 * sqrt( coef1[1] - x0^2 / vrms^2 )
   z0 <- vrms * t0 / 2
-  hyp <- list(reg = fit1, 
+  hyp <- list(reg  = fit1, 
               vrms = vrms,
-              x0 = x0,
-              t0 = t0,
-              z0 = z0,
-              x = x,
-              y = y)
+              x0   = x0,
+              t0   = t0,
+              z0   = z0,
+              x    = xy[["x"]],
+              y    = xy[["y"]])
   class(hyp) <- "hyperbola"
   return(hyp)
 }

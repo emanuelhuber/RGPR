@@ -175,7 +175,7 @@ readUtsiGPT <- function(dsn){
   if(!inherits(dsn, "connection")){
     dsn <- file(dsn, 'rb')
   }
-  gpt <- scan(dsn)
+  gpt <- scan(dsn, quiet = TRUE)
   .closeFileIfNot(dsn)
   return(gpt)
 }

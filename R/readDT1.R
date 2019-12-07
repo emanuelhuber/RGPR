@@ -265,7 +265,7 @@ readGPS <- function(dsn){
 
 .readGPS <- function(dsn){
   
-  x <- scan(dsn, what = character(), sep = "\n")
+  x <- scan(dsn, what = character(), sep = "\n", quiet = TRUE)
   
   xtr <- which(grepl("Trace \\#[0-9]+", x, 
                      ignore.case = TRUE, useBytes = TRUE ))

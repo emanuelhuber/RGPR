@@ -310,7 +310,7 @@ readDZT <- function(dsn){
 
 
 readDZG <- function(dsn){
-  x <- scan(dsn, what = character(), sep = "\n")
+  x <- scan(dsn, what = character(), sep = "\n", quiet = TRUE)
   
   test_gssis <- grepl("(\\$GSSIS)", x, ignore.case = TRUE, useBytes = TRUE )
   test_gpgga <- grepl("(\\$GPGGA)", x, ignore.case = TRUE, useBytes = TRUE )

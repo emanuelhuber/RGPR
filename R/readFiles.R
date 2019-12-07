@@ -117,9 +117,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
     }else if( !("HD" %in% toupper(ext))){
       stop("Missing connection or filepath to '*.hd' file.") 
     }else if( !("GPS" %in% toupper(ext)) ){
-      dsn <- list(DT1 = dsn[["DT1"]], # FIXME: 
-                  # assume that the ext is correct 
-                  # (upper/lower case)
+      dsn <- list(DT1 = dsn[["DT1"]], 
                   HD = dsn[["HD"]],
                   GPS = getFName(fPath[1], ext = ".GPS", throwError = FALSE)$gps)
     }
@@ -130,8 +128,41 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
                           fName = fName[["DT1"]], fPath = fPath[["DT1"]], 
                           desc = desc, Vmax = Vmax),  verbose = verbose)
     if( !is.null(dsn[["GPS"]]) && isTRUE(interp_pos)){
-      gps <-  verboseF(readGPS(dsn[["GPS"]]), verbose = verbose)
-      x <- interpPos(x, gps, tol = sqrt(.Machine$double.eps), method = method)
+      x <- tryCatch({
+              gps <-  verboseF(readGPS(dsn[["GPS"]]), verbose = verbose)
+              if(!is.null(gps)){
+                x <- interpPos(x, gps, tol = sqrt(.Machine$double.eps), 
+                               method = method)
+                crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+                x
+              }else{
+                x
+              }
+            },
+            error = function(cond) {
+              message("I could not either read your GPS data ",
+                      "or interpolate the trace position.")
+              # Choose a return value in case of error
+              return(x)
+            }#,
+            # warning = function(cond) {
+            #   message(paste("URL caused a warning:", url))
+            #   message("Here's the original warning message:")
+            #   message(cond)
+            #   # Choose a return value in case of warning
+            #   return(NULL)
+            # },
+            # finally={
+            #   # NOTE:
+            #   # Here goes everything that should be executed at the end,
+            #   # regardless of success or error.
+            #   # If you want more than one expression to be executed, then you 
+            #   # need to wrap them in curly brackets ({...}); otherwise you could
+            #   # just have written 'finally=<expression>' 
+            #   message(paste("Processed URL:", url))
+            #   message("Some other message at the end")
+            # }
+            )    
     }
     # plot(x)
     
@@ -170,11 +201,23 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
                                     desc = desc, nbits = 8*nbytes, Vmax = Vmax), 
                    verbose = verbose)
     if( !is.null(dsn[["COR"]]) ){
-      x_cor <-  verboseF(readCOR(dsn[["COR"]]), verbose = verbose)
-      if(!is.null(x_cor) && isTRUE(interp_pos)){
-        x <- interpPos(x, x_cor, tol = sqrt(.Machine$double.eps), method = method)
-        crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
-      }
+      x <- tryCatch({
+              x_cor <-  verboseF(readCOR(dsn[["COR"]]), verbose = verbose)
+              if(!is.null(x_cor) && isTRUE(interp_pos)){
+                x <- interpPos(x, x_cor, tol = sqrt(.Machine$double.eps), 
+                               method = method)
+                crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+                x
+              }else{
+                x
+              }
+            },
+            error = function(cond) {
+              message("I could not either read your GPS data ",
+                      "or interpolate the trace position.")
+              # Choose a return value in case of error
+              return(x)
+            })
     }
   #---------------------------SEG-Y +  EASY RADAR -----------------------------#
   #------------------------------- SEG/SEG-Y ----------------------------------#
@@ -269,9 +312,18 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
                           fName = fName[["IPRB"]], fPath = fPath[["IPRB"]], 
                           desc = desc, Vmax = Vmax),  verbose = verbose)
     if( !is.null(dsn[["COR"]]) && isTRUE(interp_pos)){
-      x_cor <-  verboseF(readIPRCOR(dsn[["COR"]]), verbose = verbose)
-      x <- interpPos(x, x_cor, tol = sqrt(.Machine$double.eps), method = method)
-      crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+      x <- tryCatch({
+              x_cor <-  verboseF(readIPRCOR(dsn[["COR"]]), verbose = verbose)
+              x <- interpPos(x, x_cor, tol = sqrt(.Machine$double.eps), method = method)
+              crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+              x
+            },
+            error = function(cond) {
+              message("I could not either read your GPS data ",
+                      "or interpolate the trace position.")
+              # Choose a return value in case of error
+              return(x)
+            })
     }
   #--------------------------------- GSSI -------------------------------------#
   #------------------------------ DZT (+ DZX, DZG) ----------------------------#
@@ -302,9 +354,19 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
                            fName = fName[["DZT"]], fPath = fPath[["DZT"]], 
                            desc = desc, Vmax = Vmax, ch = ch), verbose = verbose)
     if( !is.null(dsn[["DZG"]]) && isTRUE(interp_pos)){
-      x_mrk <-  verboseF(readDZG(dsn[["DZG"]]), verbose = verbose)
-      x <- interpPos(x, x_mrk, tol = sqrt(.Machine$double.eps), method = method)
-      crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+      x <- tryCatch({
+              x_mrk <-  verboseF(readDZG(dsn[["DZG"]]), verbose = verbose)
+              x <- interpPos(x, x_mrk, tol = sqrt(.Machine$double.eps), 
+                             method = method)
+              crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+              x
+            },
+            error = function(cond) {
+              message("I could not either read your GPS data ",
+                      "or interpolate the trace position.")
+              # Choose a return value in case of error
+              return(x)
+            })
     }
   #------------------------------- 3d RADAR -----------------------------------#
   #------------------------------------ VOL -----------------------------------#
@@ -357,12 +419,25 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
                             fName = fName[["DAT"]], fPath = fPath[["DAT"]], 
                            desc = desc, Vmax = Vmax), verbose = verbose)
     if( !is.null(dsn[["GPS"]]) && !is.null(dsn[["GPT"]])  && isTRUE(interp_pos)){
-      gpt <- verboseF(readUtsiGPT(dsn[["GPT"]]), verbose = verbose)
-      if(length(gpt) > 0 ){
-        x_cor <-  verboseF(readUtsiGPS(dsn[["GPS"]], gpt), verbose = verbose)
-        x <- interpPos(x, x_cor, tol = sqrt(.Machine$double.eps), method = method)
-        crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
-      }
+      x <- tryCatch({
+              gpt <- verboseF(readUtsiGPT(dsn[["GPT"]]), verbose = verbose)
+              if(length(gpt) > 0 ){
+                x_cor <-  verboseF(readUtsiGPS(dsn[["GPS"]], gpt), 
+                                   verbose = verbose)
+                x <- interpPos(x, x_cor, tol = sqrt(.Machine$double.eps), 
+                               method = method)
+                crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+                x
+              }else{
+                x
+              }
+            },
+            error = function(cond) {
+              message("I could not either read your GPS data ",
+                      "or interpolate the trace position.")
+              # Choose a return value in case of error
+              return(x)
+            })
     }
   }else if("TXT" %in% toupper(ext)){
     # fName <- .fNameWExt(fPath)

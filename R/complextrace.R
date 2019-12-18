@@ -1,14 +1,47 @@
 
-#' @name envelope
-#' @rdname envelope
+#' Complex trace
+#'
+#' @name trComplex
+#' @rdname trComplex
 #' @export
 setMethod("trComplex", "GPR", function(x, npad = 100){
 # trComplex <- function(x, npad = 100){
-  xH <- HilbertTransfMV(x, npad = npad)
-  x@data <- x@data + 1i*base::Re(xH)
+  xH <- HilbertTransfMV(x@data, npad = npad)
+  x <- x + 1i*base::Re(xH)
   proc(x) <- getArgs()
   return(x)
 })
+
+#' Instantaneous phase
+#' 
+#' @name instPhase
+#' @rdname instPhase
+#' @export
+setMethod("instPhase", "GPR", function(x, npad = 100, unwrapPhase = TRUE){
+  xH <- HilbertTransfMV(x@data, npad = npad)
+  xphase <- atan2(base::Re(xH), as.matrix(x))
+  if(isTRUE(unwrapPhase)){
+    xphase <- apply(xphase, 2, signal::unwrap)
+  }
+  x[] <- xphase
+  proc(x) <- getArgs()
+  return(x)
+}
+)
+
+#' Instantaneous amplitude
+#' 
+#' @name instAmpl
+#' @rdname instAmpl
+#' @export
+setMethod("instAmpl", "GPR", function(x, npad = 100){
+  xH <- HilbertTransfMV(x@data, npad = npad)
+  x <- sqrt(x^2 + base::Re(xH)^2)
+  proc(x) <- getArgs()
+  return(x)
+}
+)
+
 
 #' Phase rotation
 #'       

@@ -35,11 +35,21 @@ setMethod("envelope", "GPR", function(x, method = c("hilbert", "peak"),
   #if(is.null(FUN)){
   method <- match.arg(method, c("hilbert", "peak"))
   if(method == "hilbert"){
-    xmax <- max(abs(x), na.rm = TRUE)
+    # xmax <- max(abs(x), na.rm = TRUE)
+    # # xH <- apply(x, 2, HilbertTransf, npad = npad)
+    # # xH <- HilbertTransfMV(x@data, npad = npad)
+    # # x2 <- sqrt(x^2 + base::Re(xH)^2)
+    # x2 <- instAmpl(x, npad = npad)
+    # test <- abs(x2@data) > xmax
+    # x2@data[test] <- abs(x@data[test])
+    xmax <- apply(abs(x), 2, max, na.rm = TRUE)
     # xH <- apply(x, 2, HilbertTransf, npad = npad)
-    xH <- HilbertTransfMV(x@data, npad = npad)
-    x2 <- sqrt(x^2 + base::Re(xH)^2)
-    test <- abs(x2@data) > xmax
+    # xH <- HilbertTransfMV(x@data, npad = npad)
+    # x2 <- sqrt(x^2 + base::Re(xH)^2)
+    x2 <- instAmpl(x, npad = npad)
+    test <- abs(x2@data) > matrix(xmax, nrow = nrow(x), 
+                                  ncol = ncol(x), 
+                                  byrow = TRUE)
     x2@data[test] <- abs(x@data[test])
   }else if( method == "peak"){
     x2 <- getAmplLocalMax(x, threshold = threshold)
@@ -48,6 +58,8 @@ setMethod("envelope", "GPR", function(x, method = c("hilbert", "peak"),
   return(x2)
 }
 )
+
+
 
 #' Amplitude (deprecated)
 #'

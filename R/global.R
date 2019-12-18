@@ -367,6 +367,12 @@ setGeneric("envelope", function(x, method = c("hilbert", "peak"),
 setGeneric("trComplex", function(x, npad = 100) 
   standardGeneric("trComplex"))
 
+setGeneric("instPhase", function(x, npad = 100, unwrapPhase = TRUE) 
+  standardGeneric("instPhase"))
+
+setGeneric("instAmpl", function(x, npad = 100) 
+  standardGeneric("instAmpl"))
+
 #' @name trRmDuplicates
 #' @rdname trRmDuplicates
 #' @export

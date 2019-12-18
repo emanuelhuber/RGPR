@@ -28,6 +28,7 @@ Collate:
   'ClassGPRsurvey.R'
   'ClassGPRcube.R'
   'ClassMisc.R'
+  'complextrace.R'
   'hyperbola.R'
   'GPS.R'
   'readFiles.R'
@@ -42,6 +43,7 @@ Collate:
   'readTXT.R'
   'data.R'
   'color.R'
+  'ampl.R'
 Imports:
     methods,
     graphics,

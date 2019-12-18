@@ -1961,51 +1961,6 @@ setMethod("trProject", "GPR", function(x, CRSobj){
   return(x)
 })
 
-#' Amplitude envelope
-#' 
-#' Estimate for each trace the amplitude envelope with the Hilbert 
-#' transform (instataneous amplitude).
-#' @param x An object of the class GPR.
-#' @param npad Integer. Padding to avoid Gibbs effect at the begining and
-#'             end of the data because of the Hilbert transform.
-#' @param FUN DEPRECATED. A function to be applied on each row of the GPR data 
-#'            to estimate the wave amplitude as a function of time/depth.
-#' @name envelope
-#' @rdname envelope
-#' @export
-setMethod("envelope", "GPR", function(x, npad = 100){
-  #if(is.null(FUN)){
-  xmax <- max(abs(x), na.rm = TRUE)
-  xH <- apply(x, 2, HilbertTransf, npad = npad)
-  x2 <- sqrt(x^2 + base::Re(xH)^2)
-  test <- abs(x2@data) > xmax
-  x2@data[test] <- abs(x@data[test])
-  proc(x2) <- getArgs()
-  return(x2)
-} 
-)
-
-#' Amplitude (deprecated)
-#' 
-#' @name ampl
-#' @rdname ampl
-#' @export
-setMethod("ampl", "GPR", function(x, npad = 100, FUN = NULL, ...){
-  warning("Deprecated! Use 'envelope()' instead.")
-  if(is.null(FUN)){
-    xmax <- max(abs(x), na.rm = TRUE)
-    xH <- apply(x, 2, HilbertTransf, npad = npad)
-    x <- sqrt(x^2 + base::Re(xH)^2)
-    x@data[abs(x@data) > xmax] <- xmax
-  }else{
-    #funName <- getFunName(FUN)
-    x@data[] <- apply(x, 1, FUN, ...)
-  }
-  # proc(x) <- getArgs( addArgs = c('FUN' = funName))
-  proc(x) <- getArgs()
-  return(x)
-} 
-)
 
 
 

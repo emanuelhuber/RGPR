@@ -360,9 +360,12 @@ setGenericVerif("ampl", function(x, npad = 100, FUN = mean, ...)
 setGenericVerif("plotEnvelope", function(x, npad = 100, FUN = mean, add = FALSE, 
                                          all = FALSE,...) standardGeneric("plotEnvelope"))
 
-setGenericVerif("envelope", function(x, npad = 100) 
+setGeneric("envelope", function(x, method = c("hilbert", "peak"),
+                                     npad = 100, threshold = 2) 
   standardGeneric("envelope"))
 
+setGeneric("trComplex", function(x, npad = 100) 
+  standardGeneric("trComplex"))
 
 #' @name trRmDuplicates
 #' @rdname trRmDuplicates
@@ -2719,6 +2722,9 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
   
   # frequenceS
   fre = Fs*seq(0, N/2)/N/fac
+  # fre <- seq(from = Fs/2,
+  #            to = nf*Fs,
+  #            by = Fs)
   
   # plot the power spectrum
   if(plotSpec){
@@ -2913,55 +2919,7 @@ nextpower2 <- function(x){
   return(2^(ceiling(log2(x))))
 }
 
-#' Phase rotation
-#'       
-#' shift the phase of signal by phi (in radian)
-#' @export
-phaseRotation <- function(x, phi){
-  # # x <- as.numeric(x)
-  # n <- length(x)
-  # x <- c(rev(head(x, npad)), x, rev(tail(x, npad)))   # add MANU
-  # nf <- length(x)
-  # X <- stats::fft(x)
-  # # phi2 <- numeric(nf)
-  # # phi2[2:(nf/2)] <- phi
-  # phi2 <- rep(phi, nf)
-  # phi2[(nf/2+1):(nf)] <- -phi
-  # Phase <- exp( complex(imaginary = 1) * phi2)
-  # xcor <- stats::fft(X * Phase, inverse = TRUE)/nf
-  # return(Re(xcor[npad + 1:n]))
-  xH <- base::Re(HilbertTransf(x, npad = 20))
-  return(x * cos(phi) - xH * sin(phi))
-  # return(Re(xcor))
-}
 
-
-# Hilbert transform
-# https://github.com/cran/spectral/blob/master/R/hilbert.R
-#' @export
-HilbertTransf <- function(x, npad = 10){
-  x <- as.numeric(x)
-  n <- length(x)
-  # x <- c(x, rep(0, npad))   # add MANU
-  x <- c(rev(head(x, npad)), x, rev(tail(x, npad)))   # add MANU
-  # first calculate the normalized FFT
-  X <- fft(x) / length(x)
-  
-  # then we need a virtual spatial vector which is symmetric with respect to
-  # f = 0. The signum function will do that. The advantage is, that we need not
-  # take care of the odd-/evenness of the length of our dataset
-  xf <- 0:(length(X) - 1)
-  xf <- xf - mean(xf)
-  
-  # because the negative Frequencies are located in the upper half of the
-  # FFT-data vector it is nesccesary to use "-sign". This will mirror the relation
-  # The "-0.5" effect is that the Nyquist frequency, in case of odd data set lenghts,
-  # is not rejected.
-  Xh <- -1i * X * -sign(xf - 0.5)
-  xh <- fft(Xh, inverse = TRUE)
-  # return(xh[1:n])   # add MANU
-  return(xh[npad + 1:n])   # add MANU
-}
 
 # -------------------------------------------
 # ------------addProfile3D--------------------------

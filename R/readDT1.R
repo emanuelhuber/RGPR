@@ -164,25 +164,26 @@
     dorigin <- "1970-01-01"
   }
   traceTime <- as.double(as.POSIXct(x$dt1$time, origin = as.Date(dorigin)))
+  sup_hd[["clip"]] <- getClippedBits(x$data, nbits = 16)
   new("GPR",   
       version     = "0.2",
       data        = bits2volt(Vmax = Vmax)*x$data,
-      traces      = x$dt1$traces,            # x$dt1$traces
-      fid         = trimStr(x$dt1$com),         # x$dt1$fid    <-> x$dt1$x8
-      coord       = coord,                    # x$dt1$topo  of the traces
-      pos         = x$dt1$pos,                  # x$dt1$position  of the traces
+      traces      = x$dt1$traces,
+      fid         = trimStr(x$dt1$com),
+      coord       = coord,
+      pos         = x$dt1$pos,
       depth       = seq(0, by = dz, length.out = nrow(x$data)),
-      rec         = rec_coord,      # x$dt1$recx,x$dt1$recy,x$dt1$recz
+      rec         = rec_coord,
       trans       = trans_coord,
-      time0       = time_0,                   # x$dt1$time0
-      time        = traceTime,                       # x$dt1$time
-      proc        = character(0),              # processing steps
+      time0       = time_0,
+      time        = traceTime,
+      proc        = character(0),
       vel         = list(0.1),                  # m/ns
       name        = fName,
       description = desc,
       filepath    = fPath,
       dz          = dz,  
-      dx          = dx[1],                       # "STEP SIZE USED"
+      dx          = dx[1],
       depthunit   = "ns",
       posunit     = posunit[1],
       freq        = antfreq[1], 

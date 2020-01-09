@@ -25,6 +25,7 @@ Collate:
 	'RGPR.R'
 	'global.R'    
 	'ClassGPR.R'
+	'ClassGPRstack.R'
   'ClassGPRsurvey.R'
   'ClassGPRcube.R'
   'ClassMisc.R'
@@ -44,6 +45,9 @@ Collate:
   'data.R'
   'color.R'
   'ampl.R'
+  'trDeclip.R'
+  'trClippedValues.R'
+  'plot.R'
 Imports:
     methods,
     graphics,

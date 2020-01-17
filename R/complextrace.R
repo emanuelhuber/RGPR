@@ -1,16 +1,25 @@
 
-#' Complex trace
+
+
+setGeneric("analyticSignal", function(x, npad = 100) 
+  standardGeneric("analyticSignal"))
+
+#' Analytic signal (complex trace)
 #'
-#' @name trComplex
-#' @rdname trComplex
+#' @name analyticSignal
+#' @rdname analyticSignal
 #' @export
-setMethod("trComplex", "GPR", function(x, npad = 100){
+setMethod("analyticSignal", "GPR", function(x, npad = 100){
 # trComplex <- function(x, npad = 100){
   xH <- HilbertTransfMV(x@data, npad = npad)
   x <- x + 1i*base::Re(xH)
   proc(x) <- getArgs()
   return(x)
 })
+
+
+setGeneric("instPhase", function(x, npad = 100, unwrapPhase = TRUE) 
+  standardGeneric("instPhase"))
 
 #' Instantaneous phase
 #' 
@@ -26,8 +35,11 @@ setMethod("instPhase", "GPR", function(x, npad = 100, unwrapPhase = TRUE){
   x[] <- xphase
   proc(x) <- getArgs()
   return(x)
-}
-)
+})
+
+
+setGeneric("instAmpl", function(x, npad = 100) 
+  standardGeneric("instAmpl"))
 
 #' Instantaneous amplitude
 #' 
@@ -39,8 +51,7 @@ setMethod("instAmpl", "GPR", function(x, npad = 100){
   x <- sqrt(x^2 + base::Re(xH)^2)
   proc(x) <- getArgs()
   return(x)
-}
-)
+})
 
 
 #' Phase rotation

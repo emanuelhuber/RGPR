@@ -199,22 +199,7 @@ setGenericVerif("time0<-",function(x, value){standardGeneric("time0<-")})
 #' @export
 setGenericVerif("setTime0", function(x, t0, track = TRUE) standardGeneric("setTime0"))
 
-# #' @name time0Estimation
-# #' @rdname time0Estimation
-# #' @export
-# setGenericVerif("time0Estimation",
-#           function(x, method = c("coppens", "coppens2", "threshold", "MER"), 
-#                    thr = 0.12, w = 11, ns = NULL, bet = NULL, c0 = 0.299, FUN)
-#             standardGeneric("time0Estimation"))
 
-#' @name estimateTime0
-#' @rdname estimateTime0
-#' @export
-setGenericVerif("estimateTime0",
-                function(x, method = c("coppens", "threshold", "MER"), 
-                         thr = 0.12, w = 11, ns = NULL, bet = NULL, c0 = 0.299, 
-                         FUN = NULL, ..., track = TRUE)
-                  standardGeneric("estimateTime0"))
 
 #' Time of data collection for each trace
 #'
@@ -353,25 +338,14 @@ setGenericVerif("plotAmpl", function(x, npad = 100, FUN = mean, add = FALSE,
                                      all = FALSE,...) standardGeneric("plotAmpl"))
 
 
-setGenericVerif("ampl", function(x, npad = 100, FUN = mean, ...) 
-  standardGeneric("ampl"))
+
 
 
 setGenericVerif("plotEnvelope", function(x, npad = 100, FUN = mean, add = FALSE, 
                                          all = FALSE,...) standardGeneric("plotEnvelope"))
 
-setGeneric("envelope", function(x, method = c("hilbert", "peak"),
-                                     npad = 100, threshold = 2) 
-  standardGeneric("envelope"))
 
-setGeneric("trComplex", function(x, npad = 100) 
-  standardGeneric("trComplex"))
 
-setGeneric("instPhase", function(x, npad = 100, unwrapPhase = TRUE) 
-  standardGeneric("instPhase"))
-
-setGeneric("instAmpl", function(x, npad = 100) 
-  standardGeneric("instAmpl"))
 
 #' @name trRmDuplicates
 #' @rdname trRmDuplicates
@@ -424,30 +398,7 @@ setGenericVerif("relTrPos3D", function(x, last = FALSE)
 #   standardGeneric("readGPR")
 # )
 
-#' @name writeGPR
-#' @rdname writeGPR
-#' @export
-setGeneric("writeGPR", function(x, fPath = NULL, 
-                                type = c("DT1", "rds", "ASCII", "xta", "xyza"),
-                                overwrite = FALSE, ...){ standardGeneric("writeGPR")})
 
-#' @name exportCoord
-#' @rdname exportCoord
-#' @export
-setGenericVerif("exportCoord",  
-                function(x, type = c("SpatialPoints", "SpatialLines", "ASCII"),
-                         fPath = NULL, driver = "ESRI Shapefile", ...) standardGeneric("exportCoord"))
-#' @name exportFid
-#' @rdname exportFid
-#' @export
-setGenericVerif("exportFid", function(x, fPath = NULL, sep = " ") 
-  standardGeneric("exportFid"))
-
-#' @name exportProc
-#' @rdname exportProc
-#' @export
-setGenericVerif("exportProc",  function(x,fPath=NULL,sep="\t", row.names=FALSE,
-                                        col.names=FALSE, ...) standardGeneric("exportProc"))
 
 #' @name reverse
 #' @rdname reverse
@@ -469,27 +420,12 @@ setGenericVerif("shiftEst", function(x, y = NULL,
                                      method=c("phase", "WSSD"), dxy = NULL, ...) 
   standardGeneric("shiftEst"))
 
-#' @name NMOCor
-#' @rdname NMOCor-methods
-#' @exportMethod NMOCor
-setGenericVerif("NMOCor", function(x, v = NULL) 
-  standardGeneric("NMOCor"))
 
 
-#' @name CMPAnalysis
-#' @rdname CMPAnalysis-methods
-#' @exportMethod CMPAnalysis
-setGenericVerif("CMPAnalysis", function(x, method = c("semblance", 
-                                                      "winsemblance", "wincoherence", "wincoherence2"), v = NULL, 
-                                        w = NULL) standardGeneric("CMPAnalysis"))
 
-#' @name migration
-#' @rdname migration
-#' @export
-setGenericVerif("migration", function(x, type = c("static", "kirchhoff"), ...) 
-  standardGeneric("migration"))
 
-setGenericVerif("upsample", function(x,n) standardGeneric("upsample"))
+
+
 
 setGenericVerif("timeCorOffset", function(x, t0 = NULL, track = TRUE) 
   standardGeneric("timeCorOffset"))
@@ -507,12 +443,6 @@ setGenericVerif("filter1D",
                          track = TRUE) 
                   standardGeneric("filter1D"))
 
-#' @name filter2D
-#' @rdname filter2D
-#' @export
-setGenericVerif("filter2D", function(x, type=c("median3x3", "adimpro"), 
-                                     ..., track = TRUE) 
-  standardGeneric("filter2D"))
 
 setGenericVerif("dewow", 
                 function(x,
@@ -521,28 +451,7 @@ setGenericVerif("dewow",
                          track = TRUE ) 
   standardGeneric("dewow"))
 
-setGenericVerif("gain", function(x, 
-                                 type=c("power", "exp", "agc"), 
-                                 ..., 
-                                 track = TRUE) 
-  standardGeneric("gain"))
 
-setGenericVerif("gainSEC", function(x, a = 0.01, b = 1, 
-                                    t0   = NULL, 
-                                    tend = NULL, 
-                                    tcst = NULL,
-                                    track = TRUE) 
-  standardGeneric("gainSEC")) 
-
-setGenericVerif("getGainSEC", function(x, a = 0.01, b = 1, 
-                                    t0   = NULL, 
-                                    tend = NULL, 
-                                    tcst = NULL,
-                                    track = TRUE) 
-  standardGeneric("getGainSEC"))
-
-setGenericVerif("gainAGC", function(x, w = 10, p = 2, r = 0.5, track = TRUE) 
-  standardGeneric("gainAGC")) 
 
 
 
@@ -558,11 +467,9 @@ setGenericVerif("firstBreak", function(x, method = c("coppens",
                                        bet = NULL)
   standardGeneric("firstBreak"))
 
-setGenericVerif("clip", function(x, Amax = NULL, Amin = NULL, track = TRUE) 
-  standardGeneric("clip"))
 
-setGenericVerif("gammaCorrection", function(x, a = 1, b = 1, track = TRUE) 
-  standardGeneric("gammaCorrection"))
+
+
 
 setGenericVerif("traceScaling", 
                 function(x, 
@@ -571,8 +478,6 @@ setGenericVerif("traceScaling",
                          track = TRUE) 
   standardGeneric("traceScaling"))
 
-setGenericVerif("spec", function(x, type = c("f-x", "f-k"), plotSpec = TRUE, 
-                                 unwrapPhase = TRUE, ...) standardGeneric("spec"))
 
 setGenericVerif("fFilter", function(x, f = 100, 
                                     type = c('low', 'high', 'bandpass'),
@@ -621,12 +526,7 @@ setGenericVerif("time0Cor",  function(x, t0 = NULL,
                                                  "none"), crop = TRUE, keep = 0, track = TRUE) 
   standardGeneric("time0Cor"))
 
-setGenericVerif("deconv", function(x, method=c("spiking", "wavelet",
-                                               "min-phase", "mixed-phase"), 
-                                   ...,
-                                   track = TRUE) standardGeneric("deconv"))
-setGenericVerif("conv1D", function(x, w, track = TRUE) standardGeneric("conv1D"))
-setGenericVerif("conv2D", function(x, w, track = TRUE) standardGeneric("conv2D"))
+
 setGenericVerif("rotatePhase", function(x, phi, track = TRUE) standardGeneric("rotatePhase"))
 
 
@@ -699,65 +599,14 @@ setGeneric("georef", function(x, alpha = NULL, cloc = NULL, creg = NULL,
   standardGeneric("georef")})
 
 #------------------------------BOTH
-setGenericVerif("plot3DRGL", 
-                function(x, addTopo = FALSE, clip = NULL, normalize = NULL, 
-                         nupspl = NULL, add = TRUE, xlim = NULL, ylim = NULL, 
-                         zlim = NULL,...) 
-                  standardGeneric("plot3DRGL"))
 
-setGenericVerif("exportPDF", function(x, fPath = NULL, addTopo = FALSE, 
-                                      clip = NULL, normalize = NULL, nupspl = NULL, ...) 
-  standardGeneric("exportPDF"))
+
+
 
 #setGenericVerif("adimproSmooth", function(x,hmax=2,...) standardGeneric("
 # adimproSmooth"))
 
-#---------------------- DELINEATIONS ---------------------#
-#' @name delineate
-#' @rdname delineation
-#' @export
-setGenericVerif("delineate", function(x, name = NULL,
-                                      type = c("raster", "wiggles"),
-                                      addTopo = FALSE, nupspl = NULL, n = 10000, ...) 
-  standardGeneric("delineate"))
-#' @name rmDelineations<-
-#' @rdname delineation
-#' @export
-setGenericVerif("rmDelineations<-", function(x,value=NULL) 
-  standardGeneric("rmDelineations<-"))
-#' @name delineations
-#' @rdname delineation
-#' @export
-setGenericVerif("delineations", function(x,sel=NULL,...) 
-  standardGeneric("delineations"))
-#' @name addDelineation
-#' @rdname delineation
-#' @export
-setGenericVerif("addDelineation", function(x,...) 
-  standardGeneric("addDelineation"))
-setGenericVerif("showDelineations", function(x,sel=NULL,...) 
-  standardGeneric("showDelineations"))
-#' @name exportDelineations
-#' @rdname delineation
-#' @export
-setGenericVerif("exportDelineations", function(x, dirpath="") 
-  standardGeneric("exportDelineations"))
-#' @name plotDelineations3D
-#' @rdname delineation
-#' @export
-setGenericVerif("plotDelineations3D", 
-                function(x,sel=NULL,col=NULL,add=TRUE,...)
-                  standardGeneric("plotDelineations3D"))
-#' @name plotDelineations
-#' @rdname delineation
-#' @export
-setGenericVerif("plotDelineations", function(x,sel=NULL,col=NULL,...) 
-  standardGeneric("plotDelineations"))
-#' @name identifyDelineation
-#' @rdname delineation
-#' @export
-setGenericVerif("identifyDelineation", function(x,sel=NULL,...) 
-  standardGeneric("identifyDelineation"))
+
 
 #' Structure tensor field of GPR data 
 #'
@@ -1489,9 +1338,9 @@ wapplyMat <- function(x = NULL, width = NULL, by = NULL, FUN = NULL,
   xnew <- xnew[xnew > 0]
   xnew <- xnew[xnew <= lenX]})
   if(MARGIN == 1){
-    OUT <- lapply(SEQ2, function(a) apply(x[, a, drop = FALSE], MARGIN, FUN))
+    OUT <- lapply(SEQ2, function(a) apply(x[, a, drop = FALSE], MARGIN, FUN, ...))
   }else if( MARGIN == 2) {
-    OUT <- lapply(SEQ2, function(a) apply(x[a,, drop = FALSE], MARGIN, FUN))
+    OUT <- lapply(SEQ2, function(a) apply(x[a,, drop = FALSE], MARGIN, FUN, ...))
   }
   OUT <- base::simplify2array(OUT, higher = TRUE)
   if(MARGIN == 2){
@@ -1763,670 +1612,13 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
   return(Anew)
 }
 
-# x = data matrix (col = traces)
-# topoGPR = z-coordinate of each trace
-# dx = spatial sampling (trace spacing)
-# dts = temporal sampling
-# v = GPR wave velocity (ns)
-# max_depth = to which depth should the migration be performed
-# dz = vertical resolution of the migrated data
-# fdo = dominant frequency of the GPR signal
-.kirMig <- function(x, topoGPR, xpos, dts, v, max_depth = 8, 
-                    dz = 0.025, fdo = 80, FUN = sum){
-  n <- nrow(x)
-  m <- ncol(x)
-  z <- max(topoGPR) - topoGPR
-  fdo <- fdo * 10^6   # from MHz to Hz
-  lambda <- fdo / v * 10^-9
-  v2 <- v^2
-  kirTopoGPR <- matrix(0, nrow = max_depth/dz + 1, ncol = m)
-  dx <- mean(diff(xpos))
-  for( i in seq_len(m)){
-    # x_d <- (i - 1)*dx   # diffraction
-    x_d <- xpos[i]   # diffraction
-    z_d <- seq(z[i], max_depth, by = dz)
-    #     mt <- (i - migTpl):(i + migTpl) # migration template
-    #     mt <- mt[mt > 0 & mt <= m]
-    #     l_migtpl <- length(mt)
-    # if(i == 1){
-    #   dx <- xpos[2] - xpos[1]
-    # }else if (i == m){
-    #   dx <- xpos[m] - xpos[m-1]
-    # }else{
-    #   dx <- sum((diff(xpos[(i-1):(i+1)]))/2)
-    # }
-    
-    for(k in seq_along(z_d)){
-      t_0 <- 2*(z_d[k] - z[i])/v    # = k * dts in reality
-      z_idx <- round(z_d[k] /dz + 1)
-      # Fresnel zone
-      # Pérez-Gracia et al. (2008) Horizontal resolution in a non-destructive
-      # shallow GPR survey: An experimental evaluation. NDT & E International,
-      # 41(8): 611–620. doi:10.1016/j.ndteint.2008.06.002
-      rf <- 0.5 * sqrt(lambda * 2 * (z_d[k] - z[i]))
-      rf_tr <- round(rf/dx)
-      mt <- (i - rf_tr):(i + rf_tr)
-      mt <- mt[mt > 0 & mt <= m]
-      
-      lmt <- length(mt)
-      Ampl <- numeric(lmt)
-      for(j in mt){
-        # x_a <- (j-1)*dx
-        x_a <- xpos[j]
-        t_top <-  t_0 - 2*(z[j] - z[i])/v
-        t_x <- sqrt( t_top^2 +   4*(x_a - x_d)^2 /v2)
-        t1 <- floor(t_x/dts) + 1 # the largest integers not greater
-        t2 <- ceiling(t_x/dts) + 1 # smallest integers not less
-        if(t2 <= n && t1 > 0 && t_x != 0){
-          w <- ifelse(t1 != t2, abs((t1 - t_x)/(t1 - t2)), 0)
-          # Dujardin & Bano amplitude factor weight: cos(alpha) = t_top/t_x
-          # Ampl[j- mt[1] + 1] <- (t_top/t_x) * 
-          # ((1-w)*A[t1,j] + w*A[t2,j])
-          # http://sepwww.stanford.edu/public/docs/sep87/SEP087.Bevc.pdf
-          Ampl[j- mt[1] + 1] <- (dx/sqrt(2*pi*t_x*v))*
-            (t_top/t_x) * 
-            ((1-w)*x[t1,j] + w*x[t2,j])
-        }
-      }
-      kirTopoGPR[z_idx,i] <- FUN(Ampl)
-    }
-  }
-  kirTopoGPR <- kirTopoGPR/max(kirTopoGPR, na.rm=TRUE) * 50
-  #   kirTopoGPR2 <- kirTopoGPR
-  
-  return(kirTopoGPR)
-}
-# x = data matrix (col = traces)
-# topoGPR = z-coordinate of each trace
-# dx = spatial sampling (trace spacing)
-# dts = temporal sampling
-# v = GPR wave velocity (ns)
-# max_depth = to which depth should the migration be performed
-# dz = vertical resolution of the migrated data
-# fdo = dominant frequency of the GPR signal
-.kirMigold <- function(x, topoGPR, dx, dts, v, max_depth = 8, 
-                       dz = 0.025, fdo = 80, FUN = sum){
-  n <- nrow(x)
-  m <- ncol(x)
-  z <- max(topoGPR) - topoGPR
-  fdo <- fdo * 10^6   # from MHz to Hz
-  lambda <- fdo / v * 10^-9
-  v2 <- v^2
-  kirTopoGPR <- matrix(0, nrow = max_depth/dz + 1, ncol = m)
-  for( i in seq_len(m)){
-    x_d <- (i - 1)*dx   # diffraction
-    z_d <- seq(z[i], max_depth, by = dz)
-    #     mt <- (i - migTpl):(i + migTpl) # migration template
-    #     mt <- mt[mt > 0 & mt <= m]
-    #     l_migtpl <- length(mt)
-    
-    for(k in seq_along(z_d)){
-      t_0 <- 2*(z_d[k] - z[i])/v    # = k * dts in reality
-      z_idx <- round(z_d[k] /dz + 1)
-      # Fresnel zone
-      # Pérez-Gracia et al. (2008) Horizontal resolution in a non-destructive
-      # shallow GPR survey: An experimental evaluation. NDT & E International,
-      # 41(8): 611–620. doi:10.1016/j.ndteint.2008.06.002
-      rf <- 0.5 * sqrt(lambda * 2 * (z_d[k] - z[i]))
-      rf_tr <- round(rf/dx)
-      mt <- (i - rf_tr):(i + rf_tr)
-      mt <- mt[mt > 0 & mt <= m]
-      
-      lmt <- length(mt)
-      Ampl <- numeric(lmt)
-      for(j in mt){
-        x_a <- (j-1)*dx
-        t_top <-  t_0 - 2*(z[j] - z[i])/v
-        t_x <- sqrt( t_top^2 +   4*(x_a - x_d)^2 /v2)
-        t1 <- floor(t_x/dts) + 1 # the largest integers not greater
-        t2 <- ceiling(t_x/dts) + 1 # smallest integers not less
-        if(t2 <= n && t1 > 0 && t_x != 0){
-          w <- ifelse(t1 != t2, abs((t1 - t_x)/(t1 - t2)), 0)
-          # Dujardin & Bano amplitude factor weight: cos(alpha) = t_top/t_x
-          # Ampl[j- mt[1] + 1] <- (t_top/t_x) * 
-          # ((1-w)*A[t1,j] + w*A[t2,j])
-          # http://sepwww.stanford.edu/public/docs/sep87/SEP087.Bevc.pdf
-          Ampl[j- mt[1] + 1] <- (dx/sqrt(2*pi*t_x*v))*
-            (t_top/t_x) * 
-            ((1-w)*x[t1,j] + w*x[t2,j])
-        }
-      }
-      kirTopoGPR[z_idx,i] <- FUN(Ampl)
-    }
-  }
-  kirTopoGPR <- kirTopoGPR/max(kirTopoGPR, na.rm=TRUE) * 50
-  #   kirTopoGPR2 <- kirTopoGPR
-  
-  return(kirTopoGPR)
-}
-
-# plotWig <- function(z, x = NULL, y = NULL, main ="", note=NULL,
-#           time_0 = 0, antsep = 1, v = 0.1, surveymode = NULL,
-#           addFid = TRUE, fid = NULL,
-#           addAnn = TRUE, annotations = NULL, 
-#           depthunit="ns", posunit="m",
-#           topo=NULL,
-#           pdfName=NULL, 
-#           yaxt = "s", bty = "o",
-#           col = "black", lwd = 0.5, ws = 1, side = 1, ratio = 1, 
-#           dx = 0.25, dz = 0.4, xlim = NULL, ylim = NULL, relTime0 = FALSE, ...){
-#   
-#   op <- par(no.readonly = TRUE) 
-#   dx <- mean(diff(x)) # estimated x-step
-#   z[is.na(z)] = 0
-#   z <- z/max(abs(z)) * dx
-#   # A =  as.matrix(A)/max(abs(A))
-#   # v <- ifelse(is.null(v),1,v/2)
-#   nr <- nrow(z)
-#   nc <- ncol(z)
-#   z <- z[nr:1,]
-#   time_0 <- mean(time_0)
-#   if(is.null(y)){
-#     y <- -(ncol(GPR):1)
-#   }
-#   y0 <- 0
-#   if(is.null(topo)){
-#     topo <- rep(0L,nc)
-#   }else{
-#     # conversion ns to m!
-#     if(grepl("[s]$", depthunit)){
-#       # timeToDepth <- function(tt, time0, v=0.1, antsep=1){
-#         # t0 <- time0 - antsep/0.299
-#         # sqrt(v^2*(tt-t0)- antsep^2)/2
-#       # }
-#       y <-  y * v/ 2
-#       depthunit <- "m"
-#     }
-#     topo <- topo - max(topo)
-#   }
-#   if(grepl("[s]$", depthunit) && relTime0){
-#     y <- y + time_0
-#     if(ylim[2] > -time_0){
-#       ylim[1] <- max(c(min(y), ylim[1]))
-#       ylim[2] <- 0
-#     }
-#   }else if(grepl("[m]$", depthunit)){
-#     depth_0 <- depthToTime(z=0, time_0 , v=v, antsep=antsep) * v/ 2
-#     y <- y + depth_0
-#   }
-#   if(is.null(xlim) ){
-#        # xlim <- range(x) 
-#        xlim <- range(x)  + c(-1,1)*dx
-#      test <- rep(TRUE,length(x))
-#   }else{
-#     test <- ( x >= xlim[1] & x <= xlim[2] )
-#     xlim <- xlim + c(-1,1)*dx
-#   }
-# 
-#   
-#   omi=c(0,0,0.6,0)
-#   mgp=c(2.5, 0.75, 0)
-#   fac <- 0.2
-#   # if the depthunit are "meters"
-#   if(grepl("[m]$",depthunit)){
-#     mai=c(1,0.8,0.6,0.8)+0.02
-#     heightPDF <- fac*diff(ylim) + sum(omi[c(1,3)] + mai[c(1,3)])
-#     widthPDF <- fac*diff(xlim)*ratio +  sum(omi[c(2,4)]+ mai[c(2,4)])
-#   }else{
-#     mai=c(1,0.8,0.6,1.0)+0.02 
-#     heightPDF <- fac*(ylim[2] - ylim[1])*v/ 2 + sum(omi[c(1,3)] + mai[c(1,3)])
-#     widthPDF <- fac*(xlim[2] - xlim[1])*ratio + sum(omi[c(2,4)] + mai[c(2,4)])
-#   }
-#   if(!is.null(pdfName)){
-#     Cairo::CairoPDF(file = paste0(pdfName, ".pdf"),
-#         # pointsize=10,
-#         width = widthPDF, 
-#         height = heightPDF,
-#         # dpi=75,  # 75
-#         bg = "white",
-#         pointsize=10,
-#         # units = "in",
-#         title = pdfName)  
-#   }
-#   
-#   par(mai=mai,omi=omi,mgp=mgp)
-#       
-#   plot(0,0, type="n", xaxs="i", yaxs="i", yaxt="n",
-#       xlim=xlim, ylim=ylim, bty = "n", ...)
-#   usr <- par("usr")
-#   if(side==1){
-#     for(i in rev(seq_along(x))){
-#       y2 <- y + topo[i]
-#       wig = cbind(ws*z[,i]+x[i],y2)
-#       wig1 = rbind(c(x[i],y2[1]),wig,c(x[i],y2[nr]))
-#       polygon(wig1, col = col, border=NA)
-#       rect(min(wig1[,1]), ylim[1], x[i], ylim[2],col="white",border=NA)
-#       # lines(x[i]+ws*z[,i],y2,lwd=lwd)
-#     }
-#   }else{
-#     for(i in (seq_along(x))){
-#       y2 <- y + topo[i]
-#       wig = cbind(ws*z[,i]+x[i],y2)
-#       wig1 = rbind(c(x[i],y2[1]),wig,c(x[i],y2[nr]))
-#       polygon(wig1, col = col, border=NA)
-#       rect(max(wig1[,1]), ylim[1], x[i], ylim[2],col="white",border=NA)
-#     }
-#   }
-#   for(i in (seq_along(x))){
-#     y2 <- y + topo[i]
-#     lines(x[i]+ws*z[,i],y2,lwd=lwd)  
-#   }
-# 
-#   # plot fiducial markers
-#   if(!is.null(fid) && length(fid) > 0){
-#     .plotFid(fid[test], x[test])
-#   }
-#   
-#   # plot annotations
-#   testAnn <- FALSE
-#   if(addAnn && !is.null(annotations) && length(annotations) > 0){
-#     testAnn <- .plotAnn(annotations[test],x[test])
-#   }
-#   
-#   # plot title
-#   if(addAnn && testAnn){
-#     title(main,outer=TRUE,line=1)
-#   }else{
-#     title(main)  
-#   }
-#   
-#   # plot axis
-# #   axis(side=2, at=pretty_y + dusr/2, labels= -pretty_y)
-# #   dusr <- dylim/length(y)
-#   if( yaxt != "n"){
-#     pretty_y <- pretty(y ,10)
-#     axis(side=2, at=pretty_y, labels= -pretty_y)
-#     if( grepl("CMP", toupper(surveymode))){
-#       axis(side = 4, at = pretty_y, labels = -pretty_y)
-#     }else{
-#       #.depthAxis(ylim, pretty_y, time_0, v, antsep, depthunit, posunit )
-#       .depthAxis(y, pretty_y, time_0, v, antsep, depthunit, posunit )
-#     }
-#   }
-#   
-#   if( bty != "n"){
-#     box(bty = bty)
-#   }
-#   if(!is.null(note) && length(note) > 0){
-#      mtext(note, side = 1, line = 4, cex=0.6)
-#   }
-#   
-#   if(!is.null(pdfName)){
-#     dev.off()
-#   }else{
-#     par(op)
-#     par("usr" = usr)
-#   }
-# }
 
 
-# # @relTime0 > boolean, y scale relative to time0? 0 <-> time0
-# # col, main, xlab, ylab, mar, barscale
-# #' Plot GPR as image (raster)
-# #' 
-# #' Plot GPR as image (raster)
-# #' @export
-# plotRaster <- function(z, x = NULL, y = NULL, main = "", 
-#                        xlim = NULL,
-#                       note = NULL, ratio = 1,
-#              time_0 = 0, antsep = 1, v = 0.1,surveymode = NULL,
-#              addFid = TRUE, fid=NULL, ylim = NULL,
-#              addAnn = TRUE, annotations = NULL, 
-#              depthunit = "ns", posunit = "m",
-#              rasterImage = FALSE, resfac = 1, clab = "mV",
-#              add = FALSE, barscale = TRUE, addGrid = FALSE, 
-#              col = palGPR(n = 101), yaxt = "s", bty = "o",
-#              relTime0 = FALSE, clim = NULL, pdfName = NULL,...){
-#   op <- par(no.readonly=TRUE)
-#   time_0 <- median(time_0)
-#   mai <- op$mai
-#   if(barscale == FALSE){
-#     mai <- c(1.2, 1.2, 1.2, 1.2)
-#   }else{
-#     mai <- c(1.2, 1.2, 1.2, 1.8)
-#   }
-#   z <-  as.matrix(z)
-#   z <- t(z)
-#   if(is.null(x)){
-#     x <- (1:nrow(z))
-#   }  
-#   if(is.null(y)){
-#     y <- -(ncol(z):1)
-#   }
-#   if(is.null(clim)){
-#     clim <- range(z[is.finite(z)], na.rm = TRUE)
-#     if( min(z) > 0 ){
-#       # to plot amplitudes for example...
-#       clim <- c(0, max(z, na.rm = TRUE))
-#       # clim <- range(z, na.rm = TRUE)
-#     } else if(!is.null(surveymode) && 
-#                 tolower(surveymode) %in% c("cmp", "reflection")){
-#       clim <- c(-1, 1) * max(abs(z), na.rm = TRUE)
-#     }
-#   }
-#   # Note that y and ylim are negative and time_0 is positive...
-#   # if(relTime0 && ylim[2] > -time_0){
-#   #   # truncate the data -> start at time-zero!!
-#   #   y <- y + time_0
-#   #   ylim[1] <- max(c(min(y), ylim[1]))
-#   #   ylim[2] <- 0
-#   #   time_0 <- 0
-#   # }
-#   if(isTRUE(relTime0)){
-#     y <- y - time_0
-#     time_0 <- 0
-#   }
-#  
-#   if( length(unique(diff(x))) > 1){
-#     rasterImage <- FALSE
-#   }
-#   omi <- c(0,0,0.6,0)
-#   mgp <- c(2.5, 0.75, 0)
-#   fac <- 0.2
-#   if(!is.null(pdfName)){
-#     # if the depthunit are "meters"
-#     if(grepl("[m]$",depthunit)){
-#       heightPDF <- fac*diff(ylim) + sum(omi[c(1,3)] + mai[c(1,3)])
-#       widthPDF <- fac*diff(xlim)*ratio +  sum(omi[c(2,4)]+ mai[c(2,4)])
-#     }else{
-#       heightPDF <- fac*(ylim[2] - ylim[1])*v/ 2 + sum(omi[c(1,3)] + mai[c(1,3)])
-#       widthPDF <- fac*(xlim[2] - xlim[1])*ratio + sum(omi[c(2,4)] + mai[c(2,4)])
-#     }
-#     Cairo::CairoPDF(file = paste0(pdfName, ".pdf"),
-#         # pointsize=10,
-#         width = widthPDF, 
-#         height = heightPDF,
-#         # dpi=75,  # 75
-#         bg = "white",
-#         pointsize=10,
-#         # units = "in",
-#         title = pdfName)  
-#   }
-#   if(add == TRUE){ 
-#     par(new = TRUE)
-#   }else{
-#     par( mai = mai,omi=omi,mgp=mgp)
-#   }
-#   if(isTRUE(rasterImage)){
-#     dy <- diff(y)
-#     tol <- sqrt(.Machine$double.eps)
-#     # all not equal
-#     if(abs(max(dy) - min(dy)) > tol){
-#       rasterImage <- FALSE
-#     }
-#   }
-#   #image(x,y,z,col=col,zlim=clim,xaxs="i", yaxs="i", yaxt="n",...)
-#   plot3D::image2D(x = x, y = y, z = z, col = col, 
-#         #xlim = xlim, ylim = ylim, zlim = clim,
-#         ylim = rev(range(y)),
-#         xaxs = "i", yaxs = "i", yaxt = "n", rasterImage = rasterImage, 
-#         resfac = resfac, main = "", bty = "n", colkey = FALSE, ...)
-#   usr <- par("usr")
-#   if(is.null(xlim) ){
-#      test <- rep(TRUE, length(x))
-#   }else{
-#     test <- ( x >= xlim[1] & x <= xlim[2] )
-#   }
-#   # plot fiducial markers
-#   if(!is.null(fid) && length(fid) > 0){
-#     .plotFid(fid[test], x[test])
-#   }
-#   # plot annotations
-#   testAnn <- FALSE
-#   if(addAnn && !is.null(annotations) && length(annotations) > 0){
-#     testAnn <- .plotAnn(annotations[test], x[test])
-#   }
-#   # plot title
-#   if(addAnn && testAnn){
-#     title(main, outer = TRUE, line = 1)
-#   }else{
-#     title(main)  
-#   }
-#   # plot axis
-#   # pretty_y <- pretty(ylim, 10)
-#   yat <- axis(side = 2)
-#   if( grepl("CMP", toupper(surveymode))){
-#     axis(side = 4)
-#   }else{
-#     .depthAxis(range(yat), pretty(yat), time_0, v, antsep, depthunit, posunit )
-#   }
-#   # plot time0
-#   if(abs(time_0) > 0)  abline(h = -time_0, col = "chartreuse", lwd = 2)
-#   # plot note
-#   if(!is.null(note) && length(note) > 0){
-#     mtext(note, side = 1, line = 4, cex=0.6)
-#   }
-#   # add grid
-#   if(addGrid){
-#     grid()
-#   }
-#   if( bty != "n"){
-#     box(bty = bty)
-#   }
-#   if(barscale){
-#     op2 <- par(no.readonly=TRUE)
-#     .barScale(clim = clim, y = y, col = col, clab = clab, 
-#               clabcex = 0.8)
-#     par(op2)
-#   }
-#   if(!is.null(pdfName)){
-#     dev.off()
-#   }
-# }
-# #---
 
-.plotAnn <- function(ann, x, line=1.7){
-  if(length(ann)>0){
-    testann <- (ann != "")
-    if(sum(testann)>0){
-      posann <- x
-      ann <- gsub("#","\n",ann)
-      abline(v=posann[testann],col="red",lwd=1)
-      mtext(ann[testann], side = 3, line = line, at=posann[testann],
-            col="red", cex=0.9)
-    }
-    return(TRUE)
-  }else{
-    return(FALSE)
-  }
-}
-
-.plotFid <- function(fid, x){
-  usr <- par()$usr
-  pin <- par()$pin  # inch
-  if(!is.null(fid) && length(fid)>0 && any(fid!="")){
-    cin <- par()$cin[2]
-    posfid <- x
-    testfid <- (fid != "")
-    yr <- diff(usr[3:4])/(pin[2])
-    if(sum(testfid)>0){  
-      par(xpd=TRUE)
-      cst <- yr*cin
-      points(posfid[testfid],cst/2*0.75+rep(usr[4],sum(testfid)),pch=25,
-             col="red",bg="yellow",cex=1)
-      text(posfid[testfid],cst+rep(usr[4],sum(testfid)),fid[testfid],cex=0.6)
-      #,pos=3,offset =0)
-      par(xpd=FALSE)
-    }
-  }
-}
-
-
-.barScale <- function(clim, y, col, clab = "mV", clabcex = 0.8){
-  # clim <- sort(clim)
-  usr <- par()$usr
-  pin <- par()$pin  # inch
-  mai <- par()$mai
-  dxin <- diff(usr[1:2])/(pin[1])
-  dylim <- diff(usr[3:4])
-  fin <- par()$fin
-  mai2 <- c(par("mai")[1], par("mai")[1] + pin[1] + 1, par("mai")[3], 0.6)
-  par(mai=mai2)
-  fin2 <- par()$fin
-  wstrip <- dxin*(fin2[1] - mai2[2] - mai2[4])/2
-  xpos <- usr[1] + dxin*(mai2[2] - mai[2])
-  xstrip <- c( xpos - 20*wstrip,  xpos + 20*wstrip)#*c(0.9, 1.1)
-  # ystrip <- seq(min(y), max(y), length.out = length(col))
-  ystrip <- rev(seq(usr[3], usr[4], length.out = length(col)))
-  ystrip <- sort(ystrip)
-  dclim <- clim[2] - clim[1] 
-  if(dclim == 0){
-    axis(side = 4, las = 2, at = (usr[3] - usr[4])/2, labels = clim[1])
-    image(x = xstrip, y = c(usr[4], usr[3]), 
-          z = matrix(rep(clim[1], 2), nrow = 1),
-          add = TRUE, col = col,
-          axes = FALSE, xlab = "", ylab = "", xaxs = "i", yaxs = "i")
-  }else{
-    zstrip <- matrix(seq(clim[1], clim[2], length.out = length(col)), nrow = 1)
-    pretty_z <- pretty(as.vector(zstrip))
-    pretty_at <- usr[3] - dylim * (clim[1] - pretty_z)/dclim
-    axis(side = 4, las = 2, at = pretty_at, labels = pretty_z)
-    image(x = xstrip, y = ystrip, z = zstrip,
-          add = TRUE, col = rev(col),
-          axes = FALSE, xlab = "", ylab = "", xaxs = "i", yaxs = "i")
-  }
-  #  print(par("usr"))
-  # axis(side=4, las=2)
-  title(main=clab, line =1, cex.main = clabcex)
-  box()
-}
-
-# we use the Sensors & Software method to plot the depth axis
-# when the data are in time domain: because of the offset between
-# transmitter and receiver, there is an offset between time zero and depth,
-# the depth axes is squished.
-.depthAxis <- function(y, pretty_y, time_0, v, antsep, depthunit, posunit ){
-  if(grepl("[s]$",depthunit)){
-    maxDepth <- v * max( abs(y - time_0) ) / 2
-    #print(maxDepth)
-    depthAll <- pretty(c(0, maxDepth), 10)
-    depthAllPos <- depthToTime(depthAll, 0, v, antsep)
-    axis(side = 4, at = -depthAllPos - time_0, labels = depthAll, tck = -0.02)
-    depth2  <- seq(0.1, by = 0.1, 0.9)
-    depthat2 <- depthToTime(depth2, 0, v, antsep = antsep)
-    axis(side = 4, at = - depthat2 - time_0, labels = FALSE, tck = -0.01)
-    mtext(paste0("depth (", posunit, "),   v = ",v, " ", posunit, "/", 
-                 depthunit), side = 4, line = 2.5)
-  }else{
-    axis(side = 4, at = pretty_y, labels = -pretty_y)
-    mtext(paste0("depth (", depthunit, ")") ,side = 4, line = 3)
-  }
-}
-
-
-#----------------------- FIRST WAVE BREAK -------------------------------------#
-
-# Modified Energy ratio method
-.firstBreakMER <- function(x, w){
-  E <- wapplyMat2(x, width = w, by = 1, FUN = function(x) sum(x^2), 
-                  MARGIN = 2)
-  v1 <- 1:(nrow(x) - 2*(w-1))
-  v2 <- v1 + (w-1)
-  E1 <- E[v1,]
-  E2 <- E[v2,]
-  ER <- E2/E1
-  MER <- (ER * abs( x[v1 + w-1,]) )^3
-  fb <- apply(MER, 2, function(x) which.max(x)) + (w-1)
-  return(fb)
-}
-
-# Threshold method for first breack picking
-.firstBreakThres <- function(x, thr = 0.12, tt){
-  #   first_breacks <- rep(NA, ncol(x))
-  #   thres <- thr * max(x)
-  #   for(j in seq_len(ncol(x))){
-  if( max(x) > thr){
-    fb <- which(x > thr)
-    if(length(fb) > 0){
-      i <- fb[1]
-      if(i > 1){
-        w <- (x[i] - thr) / (x[i] - x[i-1])
-        return( w * tt[i-1] + (1- w) * tt[i] )
-      }else{
-        return(tt[i])
-      }
-    } else{
-      return(NA)
-    }
-  } else{
-    return(NA)
-  }
-  #   }
-  
-  #   return(first_breacks)
-}
-
-# Jaun I. Sabbione and Danilo Velis (2010). Automatic first-breaks picking: 
-# New strategies and algorithms. Geophysics, 75 (4): v67-v76
-# -> modified Coppens's Method
-# w = length leading window: about one period of the first-arrival waveform
-# ns = length eps (edge preserving smoothing) window: good results with ns 
-# between one and two signal periods
-#        -> default values ns= 1.5*w
-# bet = stabilisation constant, not critical, set to 0.2*max(amplitude) 
-.firstBreakModCoppens2 <- function(x, w = 11, ns = NULL, bet = 0.2){
-  if(is.null(ns)){
-    ns <- 1.5 * w
-  }
-  
-  E1all <- matrix(0, nrow=nrow(x), ncol= ncol(x))
-  E1all[1:(nrow(E1all) - w +1),] <- wapplyMat2(x, width = w, by = 1, 
-                                               FUN = sum, MARGIN=2)
-  E2all <- apply(x, 2, cumsum)
-  Erall <- E1all/(E2all + bet)
-  
-  xmeanall <- wapplyMat(Erall, width = ns, by = 1, FUN = mean, MARGIN=2)
-  xsdall <- wapplyMat(Erall, width = ns, by = 1, FUN = sd, MARGIN=2)
-  xtestall <- wapplyMat2(xsdall, width = ns, by = 1, FUN = which.min, MARGIN=2)
-  xtestall <- xtestall + seq_len(nrow(xtestall))
-  meantstall <- matrix(xmeanall[xtestall],nrow=nrow(xtestall), 
-                       ncol=ncol(xmeanall), byrow=FALSE)
-  meantstall2 <- matrix(0, nrow=nrow(x), ncol= ncol(x))
-  meantstall2[seq_len(nrow(meantstall)) + (ns-1)/2,] <- meantstall
-  fb <- apply(meantstall2, 2, function(x) which.max(abs(diff(x))))
-  return(fb)
-}
-
-.firstBreakModCoppens <- function(x, w = 11, ns = NULL, bet = 0.2){
-  if(is.null(ns)){
-    ns <- 1.5 * w
-  }
-  
-  E1 <- c(wapply(x, width = w, by = 1, FUN = sum), rep(0, 2*floor(w/2)))
-  E2 <- cumsum(x)
-  Er <- E1/(E2 + bet)
-  Er_fil <- .eps(Er, ns = ns)
-  fb <- which.max(abs(diff(Er_fil)))
-  return(fb)
-}
-
-# edge preserving smoothing
-# luo et al. (2002): Edge preserving smoothing and applications: 
-# The Leading edge, 21: 136-158
-.eps <- function(x, ns){
-  xmean <-  c(rep(0, floor(ns/2)), 
-              wapply(x, width = ns, by = 1, FUN = mean),
-              rep(0, floor(ns/2)))
-  xsd <- c(rep(0, floor(ns/2)), 
-           wapply(x, width = ns, by = 1, FUN = sd),
-           rep(0, floor(ns/2)))
-  xtest <- wapply(xsd, width = ns, by = 1, FUN = which.min) + 
-    (0):(length(xmean)- 2*floor(ns/2)-1)
-  return(c(rep(0, floor(ns/2)), xmean[xtest], rep(0, floor(ns/2))))
-}
 
 #==============================#
 #========== SPATIAL FILTER =========#
-.medianFilter3x3 <- function(A){
-  B <- A  # <- matrix(0, 364,364)
-  for(i in 1:(nrow(A)-2)) {
-    for(j in 1:(ncol(A)-2) ) {
-      xm <- A[i+0:2, j+0:2]
-      B[i+1, j+1] <- xm[order(xm)[5]]
-    }
-  }  
-  return(B)
-}
+
 
 .medianFilter1D <- function(a,w){
   b <- a  # <- matrix(0, 364,364)
@@ -2476,81 +1668,8 @@ rollapplyHampel <- function(x, w, FUN){
   return(y)
 }
 
-#==============================#
-#======= GAIN FUNCTIONS ========#
-# dts = sampling time (e.g., 0.8 ns)
-# t0 = starting time to apply the gain scaling
-# te = ending time to apply the gain scaling
-# tcst
-# CF Yilmaz, p85
-.gainPower <- function(A, alpha, dts, t0 = NULL, te = NULL,
-                       tcst = NULL){
-  g <- .gainPower0(A[,1], alpha, dts, t0, te, tcst)
-  Anew <- A * g
-  #s1 = ((max(A))-(min(A)));  # scale factor
-  #s2 = ((max(Anew))-(min(Anew)));  # scale factor
-  #return(Anew/s2*s1 )
-  return( Anew / sd(Anew) * sd(A))
-}
-
-.gainPower0 <- function(d, alpha, dts, t0 = NULL, te = NULL, tcst = NULL){
-  if(is.null(t0)) t0 <- 0
-  if(is.null(te)) te <- (length(d) - 1) * dts
-  if(!is.null(tcst) && !(tcst > t0 && tcst < te)){
-    stop("you need tcst > t0 && tcst < te\n")
-  }
-  ## FIX ME > instead of "(seq_along(d) - 1) *dts" use directly
-  ## x <- gpr@depth !!!  
-  x <- (seq_along(d) - 1) *dts
-  test <- x >= t0 & x <= te
-  g <- rep(1, length(d))
-  g[test] <- 1 + (seq_along(d[test])*dts )^alpha
-  g[x > te] <- max(g)
-  if(!is.null(tcst) && any(x < tcst)){
-    g[x < tcst] <- g[1 + floor(tcst/dts)]
-  }
-  return( g)
-}
-
-.gainExp <- function(A, alpha, dts, t0 = NULL, te = NULL){
-  g <- .gainExp0(A[,1], alpha, dts, t0, te)
-  Anew <- A * g
-  return( Anew / sd(Anew) * sd(A))
-}
-
-.gainExp0 <- function(d, alpha, dts, t0 = NULL, te = NULL){
-  if(is.null(t0) || t0==0) t0 <-0
-  if(is.null(te)) te <-(length(d)-1)*dts
-  ## FIX ME > instead of "(seq_along(d) - 1) *dts" use directly
-  ## x <- gpr@depth !!! 
-  x <- (seq_along(d) - 1) * dts
-  test <- (x >= t0 & x <= te)
-  test_max <- x > te
-  g <- rep(1L,length(d))
-  g[test] <-  exp((x[test] - t0) * dts * alpha)
-  g[test_max] <-  exp(max(x[test] - t0)*dts*alpha)
-  return( g)
-}
 
 
-.gainAgc <- function(A, dts, w = 10, p = 2, r = 0.5){
-  w <- w/dts
-  Anew <- apply(A, 2, .gainAgc0, w, p, r)
-  #s1 = ((max(A))-(min(A)));  # scale factor
-  #s2 = ((max(Anew))-(min(Anew)));  # scale factor
-  #return(Anew * s1/s2)
-  return(Anew)
-}
-
-.gainAgc0 <- function(d, w = 10, p = 2 , r = 0.5){
-  # convert NA into 0
-  d[is.na(d)] <- 0
-  dAmp   <- d - mmand::gaussianSmooth(d, w)
-  dGain <- (mmand::gaussianSmooth(abs(dAmp)^p, w))^r
-  test <- dGain > 0
-  d[test ] <- dAmp[test]/dGain[test ]
-  return(d)
-}
 
 
 # histogram transformation to normal distributed data with same mean and sd
@@ -2615,22 +1734,9 @@ unscale <- function(x, y){
 #======== CLIP/GAMMA/NORMALIZE ================#
 
 
-.gammaCorrection <- function(A,a,b){
-  return(a*sign(A)*abs(A)^b)
-}
 
-.clip <- function(A, Amax = NULL, Amin = NULL){
-  if(!is.null(Amin)){
-    A[(A)< Amin] <- Amin
-  }
-  if(!is.null(Amax)){
-    A[(A) > Amax] <- Amax
-  }
-  if(!is.null(Amax) && is.null(Amin)){
-    A[(A)< -Amax] <- -Amax
-  }
-  return(A)
-}
+
+
 
 #.rms <- function(num) sqrt(sum(num^2)/length(num))
 
@@ -2687,87 +1793,6 @@ rmsScaling <- function(...){
 #=============================================#
 #======== SPECTRAL FUNCTIONS ================#
 
-
-# @param [matrix]/[vector]   A     (each column represent a trace / a trace)
-# @param [double]       dT     (sampling time in nanoseconde)  
-# @param [double]      fac    (result multiplied by a factor, e.g. to get MHz 
-# instead of Hz)
-
-# @return power spectrum (frequency, power, phase)
-# -------------------------------------------
-powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE, 
-                    titleSpec = NULL, unwrapPhase = TRUE){
-  A   <- as.matrix(A)
-  nr  <- nrow(A)
-  nc  <- ncol(A)
-  N   <- 2^(ceiling(log2(nr)))
-  A   <- rbind(A,matrix(0,nrow=N-nr,ncol=nc))
-  
-  # samping interval GPR = 0.8 ns
-  Ts    <- dT*(10^(-9))     # [s] Sample time
-  Fs    <- 1/Ts             # [Hz] Sampling frequency
-  Fc    <- 1/(2*Ts)         # Nyquist frequency
-  nfreq <- N/2 + 1
-  
-  # if y <- fft(z), then z is 
-  # fft(y, inverse = TRUE) / length(y).
-  # each column = discrete Fourier transform. 
-  fft_A <- stats::mvfft(A)
-  # extract the power spectrum (sometimes referred to as "magnitude")
-  pow <- as.matrix(Mod(fft_A))
-  pow <- pow[1:nfreq,,drop=FALSE]   # select only first half
-  # extract the phase which is atan(Im(fourier)/Re(fourier))
-  pha <- as.matrix(Arg(fft_A))
-  pha <- pha[1:nfreq,,drop=FALSE]    # # select only first half
-  
-  pow_mean <- apply(pow, 1, mean, na.rm = TRUE)
-  if(unwrapPhase){
-    pha <- apply(pha, 2, signal::unwrap)
-  }
-  pha_mean <- apply(pha, 1, mean, na.rm = TRUE)
-  
-  # frequenceS
-  fre = Fs*seq(0, N/2)/N/fac
-  # fre <- seq(from = Fs/2,
-  #            to = nf*Fs,
-  #            by = Fs)
-  
-  # plot the power spectrum
-  if(plotSpec){
-    op <- par(no.readonly=TRUE)
-    m = seq(0, 10000, by = 50)
-    par(mfrow=c(2,1))
-    par(mar=c(0, 4, 4, 2) + 0.1, oma=c(1,1,1,1) )
-    plot(fre,pow_mean, type="n",
-         xaxt = "n",
-         ylim=c(0,max(pow)),
-         ylab="amplitude",xlab="")
-    if(!is.null(dim(A))){
-      invisible( apply(pow, 2, lines, x = fre, 
-                       col=rgb(0.2,0.2,0.2,7/max(ncol(A),7))) )
-    }
-    lines(fre,pow_mean,col="red")
-    axis(side = 1, tcl = +0.3,  labels = FALSE)
-    if(!is.null(titleSpec)){
-      title(titleSpec)
-    }
-    grid()
-    par(mar=c(4, 4, 0.3, 2))
-    plot(fre,pha_mean, type="n", 
-         xaxt = "n",
-         ylim=range(pha), 
-         xlab = "frequency MHz", ylab="phase") 
-    if(!is.null(dim(A))){
-      invisible(  apply(pha, 2, lines, x = fre, 
-                        col = rgb(0.2,0.2,0.2,7/max(ncol(A), 7))) )
-    }
-    lines(fre,pha_mean,col="red")
-    axis(side = 1, tcl = +0.3,  labels = TRUE)
-    grid()
-    par(op)
-  }
-  return(list(freq = fre, pow = pow, pha = pha))
-}
 
 # @param [matrix]/[vector]   A     (each column represent a trace / a trace)
 # @param [double]       dT     (sampling time in nanoseconde)  
@@ -3083,63 +2108,6 @@ bits2volt <- function( Vmax = 50, Vmin = 50, nbits = 16) {
   }
 }
 
-
-
-
-.upsample <- function(A, n=c(2,1), type=c("DFT","bicubic")){
-  # bi cubic---
-  # library(fields)
-  # interp2d <- function(old, newx, newy) {
-  # interp.surface.grid(list(x=seq(nrow(old)),y=seq(ncol(old)),z=old),
-  # list(x=seq(1,nrow(old),length=newx),
-  # y=seq(1,ncol(old),length=newy)))$z
-  # }
-  # A_bi <- interp2d(A,nrow(A)*2,ncol(A)*2)
-  # or akima::bicubic.grid(x,y,z,xlim,ylim,dx,dy)
-  if(is.matrix(A)){
-    nr <- nrow(A)  # time  
-    nc <- ncol(A)  # x  
-    
-    nk <- (nextpower2(nc))
-    nf <- (nextpower2(nr))
-    A1 <- matrix(0,nrow=nf,ncol=nk)
-    A1[1:nr,1:nc] <- A
-    A1_fft <- stats::fft(A1)
-    
-    A_fftint <- matrix(0,nrow=n[1]*nf,ncol=n[2]*nk)
-    A_fftint[1:(nf/2),1:(nk/2)] <- A1_fft[1:(nf/2),1:(nk/2)]
-    A_fftint[((n[1]-1)*nf + nf/2+1):(n[1]*nf),
-             ((n[2]-1)*nk + nk/2 + 1):(n[2]*nk)] <- 
-      A1_fft[(nf/2+1):(nf),(nk/2 + 1):nk]
-    A_fftint[1:(nf/2),
-             ((n[2]-1)*nk + nk/2 + 1):(n[2]*nk)] <- 
-      A1_fft[1:(nf/2),(nk/2 + 1):nk]
-    A_fftint[((n[1]-1)*nf + nf/2+1):(n[1]*nf),
-             1:(nk/2)] <- 
-      A1_fft[(nf/2+1):(nf),1:(nk/2)]
-    
-    A_int <- stats::fft(A_fftint, inverse = TRUE)
-    A_int <- A_int[1:(n[1]*nr),1:(n[2]*nc)]/(nk*nf)
-  }else if(is.vector(A)){
-    # FTA = fft(A);
-    n_A = length(A)
-    # Choose the next power of 2 greater than L+M-1 
-    Nfft = 2^(ceiling(log2(n_A)))    # 
-    # Zero pad the signal and impulse response:
-    A0 = c( A, rep(0,Nfft-n_A) )
-    n_A0 <- length(A0)
-    
-    FTA <- stats::fft(A0)
-    
-    # % now insert enough zeros into the dft to match the desired density 'n'
-    FTA = c(FTA[1:(n_A0/2)], rep.int(0,floor((n[1]-1)*n_A0)), 
-            FTA[(n_A0/2+1):n_A0])
-    
-    A_int = stats::fft(FTA, inverse = TRUE)
-    A_int <- A_int[1:(n_A * (n[1]))]/n_A0
-  }
-  return(Re(A_int))
-}
 
 
 
@@ -3729,32 +2697,7 @@ dy_gkernel <- function(n, m, sd=1){
   return(g)
 }
 
-#' Two-dimensional convolution
-#' 
-#' The convolution is performed with 2D FFT
-#' @name convolution2D
-#' @rdname convolution2D
-#' @export
-convolution2D <- function(A,k){
-  nA = nrow(A)
-  mA = ncol(A)
-  nk = nrow(k)
-  mk = ncol(k)
-  if(nk > nA || mk > mA){
-    stop("Kernel 'k' should be smaller than the matrix 'A'\n")
-  }
-  A0 <- paddMatrix(A, nk, mk)
-  nL <- nrow(A0)
-  mL <- ncol(A0)
-  k0 <- matrix(0, nrow=nL, ncol=mL)
-  # h0[(nk-1) + 1:nh, (mk-1) + 1:mh] <- A
-  #   A0[1:nA,  1:mA] <- A
-  k0[1:nk, 1:mk] <- k
-  g <- Re(stats::fft(stats::fft(k0)*stats::fft(A0),inverse=TRUE))/(nL * mL)
-  g2 <- g[nk + nk/2  + (1:nA), mk +mk/2 + (1:mA)]
-  # g2 <- g[nk + 1:nh, mk + 1:mh]
-  return(g2)
-}
+
 
 #' Displacement to align two matrix
 #'
@@ -3966,114 +2909,6 @@ convmtx <- function(y, nf){
 
 
 
-#---------------- DECONVOLUTION --------------------#
-# spectral deconvolution with known wavelet
-# convolution model: y = h*x 
-# h and y are known, x is unknown
-# x ~ H^h * Y / (H^h * H + mu)
-deconvolve <- function(y,h,mu=0.0001){
-  ny <- length(y)
-  nh <- length(h)
-  L  <- ny + ny - 1
-  H  <- stats::fft(c(h,rep(0,ny-1)))
-  Y  <- stats::fft(c(y, rep(0,nh-1)))
-  Re(stats::fft( t(Conj(H))*Y/(t(Conj(H))*H + mu) ,inverse=TRUE))[1:ny]/L
-  # Re(fft( Y/(H + mu) ,inverse=TRUE))[1:ny]/L
-}
-
-
-# TO CHECK!!!!
-# deconvolution with known wavelet
-# convolution model: y = h*x 
-# h and y are known, x is unknown
-# x ~ H^h * Y / (H^h * H + mu)
-deconvolutionMtx <- function(y, h, nf, mu = 0.0001){
-  # ny <- length(y)
-  # nh <- length(h)
-  # L  <- ny + ny - 1
-  H  <- convmtx(h,nf)
-  y_acf <- as.numeric(acf(y, lag.max = nf - 1, plot = FALSE)[[1]])
-  y_acf[1] <- y_acf[1] + mu
-  HtH <- toeplitz(y_acf)
-  x <-  solve(HtH) %*% (t(H[1:nf,1:nf]) %*% y)
-  return(x)
-}
-
-
-
-# setGenericVerif("rmsScaling", function(x) standardGeneric("rmsScaling"))
-#' Optimum Phase Rotation
-#'
-#' @param x any data that can be converted into a numeric vector with 
-#'          as.vector.
-#' @param rot The phase rotation increment.
-#' @param plot A lenth-one boolean vector. If TRUE, the kurtosis as a function
-#'             of phase angle is plotet.
-#' @name optPhaseRotation
-#' @rdname optPhaseRotation
-#' @export
-optPhaseRotation <- function(x, rot = 0.01, plot = TRUE){
-  # x_dec <- as.vector(gpr/apply(as.matrix(gpr),2,RMS))
-  x_dec <- as.vector(x)
-  pi_seq <- seq(0, pi, by = rot)
-  kurt <- numeric(length(pi_seq))
-  nx <- length(x_dec)
-  for(i in seq_along(pi_seq)){
-    xrot <- phaseRotation(x_dec, pi_seq[i])
-    # xrot_scaled2 <- (xrot -   mean(xrot))^2
-    # kurt[i] <- ((1/nx) * sum( xrot_scaled2^2)) / 
-    # ( (1/nx) *sum( xrot_scaled2))^2 
-    kurt[i] <- e1071::kurtosis( xrot)
-  }
-  phi_max <- pi_seq[which.max(kurt)]
-  message("rotation angle = ", phi_max/pi*180, " degree")
-  # dev.off(); windows()
-  if(plot==TRUE){
-    plot(pi_seq/pi*180,kurt,type="l")
-    abline(v=phi_max/pi*180,col="red")
-  }
-  return(phi_max)
-  # x_dec <- phaseRotation(x_dec, phi_max)
-}
-
-# y is the wavelet and we want 
-# a filter f s.t. f*y = d 
-# with d = [0 ... 0 1 0 ...0]
-# 1 at the postion i = shft
-# if shft = NULL, the shift is chosen by the
-#     algorithm and also returned
-# if shift is not NULL, case of wavelet estimation
-#     from the trace via the autocorrelation matrix.
-# mu = percent of pre-whitening
-.spikingFilter <- function(y, nf = 32, mu = 0.1, shft = 1){
-  # R = t(Y)%*%Y = Toepliz matrix of ACF
-  y_acf <- as.numeric(acf(y, lag.max = nf - 1, plot= FALSE)[[1]])
-  taper <- hammingWindow(2*nf)
-  y_acf <- y_acf*taper[(nf+1):(2*nf)] 
-  y_acf[1] <- y_acf[1] + mu
-  YtY <- toeplitz(y_acf)
-  # all the spiking filters
-  if(is.null(shft)){
-    ny <- length(y)
-    L <- nf + ny -1
-    # convolution matrix Y
-    Y <- convmtx(y,nf)
-    H <- solve(YtY) %*% t(Y) 
-    v <- numeric(L)
-    # performance matrix: all spiking filter outputs
-    P <- Y %*% H
-    # optimal delay (smallest error)
-    i <- which.max(diag(P))
-    v[i] <- 1
-    h <- H%*%v
-    return(list("h"=h,"delay"=i))
-  }else{
-    v <- numeric(nf)
-    v[shft] <- 1
-    h <- solve(YtY) %*% v 
-    return(h)
-  }
-}
 
 
 
@@ -4099,58 +2934,7 @@ inPoly <- function(x, y, vertx, verty){
   return(inPo)
 }
 
-.FKSpectrum <- function(A, dx = 0.25, dz = 0.8, npad = 1, 
-                        p = 0.01, plotSpec = TRUE){
-  # A <- GPR$data    #[90:1000,]
-  nr <- nrow(A)  # time  
-  nc <- ncol(A)  # x  
-  
-  #============== PLOT F-K SPECTRUM ===============#
-  # padding (try also 2*(2^nextpow2(nc))
-  nk <- npad*(nextpower2(nc))
-  nf <- npad*(nextpower2(nr))
-  A1 <- matrix(0,nrow=nf,ncol=nk)
-  A1[1:nr,1:nc] <- A
-  
-  # function to center the spectrum!! (no need of fttshift!)
-  #centres spectrum: Gonzalez & Wintz (1977) Digital Image Processing p.53
-  A1  <- A1 * (-1)^(row(A1) + col(A1))
-  A1_fft <- stats::fft(A1)
-  A1_fft_pow <- Mod(A1_fft)
-  A1_fft_phase <- Arg(A1_fft)
-  # plotGPR((A1_fft_phase[1:(nf/2),])^0.05)
-  
-  # Sampling frequency [Hz] = 1 / Sample time [s]
-  Fs = 1/(dz*10^(-9))
-  fac = 1000000
-  fre = Fs*seq(0,nf/2)/nf/fac
-  
-  # wavenumber
-  Ks <- 1/dx      # [1/m] Sampling frequency
-  knu <- 1:(nk/2)/(2*(nk/2)) * Ks  #[1/m]
-  knutot <- c(-rev(knu),knu)
-  
-  # labels: find a function between "xat" and "xLabels" and use "pretty()"
-  xat   <- c(0,nk/2,nk)/nk
-  xLabels <- c(min(knutot), 0, max(knutot))
-  yat    <- c(0,nf/2,nf)/nf
-  yLabels  <- c(0, max(fre)/2, max(fre))
-  
-  # Note: when plotting spectra (S)  use log(S) or S.^alpha (alpha=0.1-0.3) to
-  #       increase the visibility of small events 
-  # p = 0.05
-  if(plotSpec){
-    plot3D::image2D(x = knutot, y = fre, z = (t(A1_fft_pow[1:(nf/2),])^p), 
-                    xlab="wavenumber (1/m)",
-                    ylab="frequency MHz")
-    #      axis(side=4, labels=TRUE)
-    
-  }
-  return(list(pow=A1_fft_pow[1:(nf/2),], 
-              pha=A1_fft_phase[1:(nf/2),],
-              fre = fre,
-              wnb = knutot))
-}
+
 
 
 

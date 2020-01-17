@@ -10,13 +10,13 @@ setClass(
   Class="GPRcube",  
   slots=c(
     version = "character",      # version of the class
-    
-    name = "character",         # name of the cube
-    
     date = "character",          # date of creation, format %Y-%m-%d
-    freq = "numeric",            # antenna frequency (if unique)
-
+    
     filepaths = "character",     # filepath of the profile
+    
+    freq = "numeric",            # antenna frequency (if unique)
+    name = "character",         # name of the cube
+
     
     x = "numeric",      # trace position along x-axes (local crs)
     y = "numeric",      # trace position along y-axes (local crs)

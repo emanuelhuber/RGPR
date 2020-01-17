@@ -3,10 +3,10 @@
 #' Max and min values
 #' 
 #' @export
-setGeneric("trClippedValues", function(x, nbits = NULL, xlim = NULL) 
-  standardGeneric("trClippedValues"))
+setGeneric("clippedValues", function(x, nbits = NULL, xlim = NULL) 
+  standardGeneric("clippedValues"))
 
-setMethod("trClippedValues", "GPR", function(x, nbits = NULL, xlim = NULL){
+setMethod("clippedValues", "GPR", function(x, nbits = NULL, xlim = NULL){
   if(is.null(nbits) && !is.null(xlim)){
     # print("1")
     xclip <- list(clipmin = apply(x, 2, .getClipped, xclip = min(xlim)),

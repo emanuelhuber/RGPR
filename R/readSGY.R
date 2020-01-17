@@ -178,10 +178,10 @@ readSGY_binary_file_header <- function(con, ENDIAN){
   hd$NB_DATA_TRACES <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
   # 3215-3216 - Number of auxiliary traces per ensemble
   hd$NB_AUX_TRACES <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-  # 3217-3218 - Sample interval. Microseconds (μs) for time data, Hertz (Hz) 
+  # 3217-3218 - Sample interval. Microseconds (micro-s) for time data, Hertz (Hz) 
   # for frequency data, meters (m) or feet (ft) for depth data.
   hd$TIME_SAMPLING <-  readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-  # 3219-3220 Sample interval of original field recording. Microseconds (μs) for 
+  # 3219-3220 Sample interval of original field recording. Microseconds (micro-s) for 
   # time data, Hertz (Hz) for frequency data, meters (m) or 
   #  feet (ft) for depth data.
   hd$TIME_SAMPLING_FIELD <-  readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
@@ -197,7 +197,7 @@ readSGY_binary_file_header <- function(con, ENDIAN){
   # 4 = 4-byte fixed-point with gain (obsolete)
   # 5 = 4-byte IEEE floating-point
   # 6 = 8-byte IEEE floating-point
-  # 7 = 3-byte two’s complement integer
+  # 7 = 3-byte two's complement integer
   # 8 = 1-byte, two's complement integer
   # 9 = 8-byte, two's complement integer
   # 10 = 4-byte, unsigned integer
@@ -214,7 +214,7 @@ readSGY_binary_file_header <- function(con, ENDIAN){
                            "4" = "16-bit fixed-point with gain code",
                            "5" = "4-byte IEEE floating-point",
                            "6" = "8-byte IEEE floating-point",
-                           "7" = "3-byte two’s complement integer",
+                           "7" = "3-byte two's complement integer",
                            "8" = "1-byte, two's complement integer",
                            "9" = "8-byte, two's complement integer",
                            "10" = "4-byte, unsigned integer",
@@ -307,7 +307,7 @@ readSGY_binary_file_header <- function(con, ENDIAN){
   # 4 = UTC (Coordinated Universal Time)
   # 5 = GPS (Global Positioning System Time)
   hd$TIME_BASIS_CODE <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-  # 3513–3520Number of traces in this file or stream
+  # 3513-3520Number of traces in this file or stream
   # If zero, all bytes in the file or stream are part of this SEG-Y dataset.
   hd$TRACE_NUMBER <- readBin(con, what = integer(), n = 1, size = 8, endian = ENDIAN)
   # Byte offset of first trace relative to start of file or stream if known
@@ -405,16 +405,16 @@ readSGY_data_trace <- function(con, ENDIAN, nbytes, NB_3200_BYTES = 0, NB_DATA_T
     # Scalar to be applied to all coordinates
     invisible(readBin(con, what = integer(), n = 1L, size = 2,
                       endian = ENDIAN))
-    # Source coordinate – X.
+    # Source coordinate - X.
     trhd[16, i] <- readBin(con, what = integer(), n = 1L, size = 4,
                            endian = ENDIAN)
-    # Source coordinate – Y.
+    # Source coordinate - Y.
     trhd[17, i] <- readBin(con, what = integer(), n = 1L, size = 4,
                            endian = ENDIAN)
-    # Group coordinate – X.
+    # Group coordinate - X.
     trhd[18, i] <- readBin(con, what = integer(), n = 1L, size = 4,
                            endian = ENDIAN)
-    # Group coordinate – Y.
+    # Group coordinate - Y.
     trhd[19, i] <- readBin(con, what = integer(), n = 1L, size = 4,
                            endian = ENDIAN)
     invisible(seek(con, where = 114 - 88, origin = "current"))
@@ -437,7 +437,7 @@ readSGY_data_trace <- function(con, ENDIAN, nbytes, NB_3200_BYTES = 0, NB_DATA_T
     # Second of minute.
     trhd[26, i] <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
     
-    # Time basis code. If nonzero, overrides Binary File Header bytes 3511–3512.
+    # Time basis code. If nonzero, overrides Binary File Header bytes 3511-3512.
     # 1 = Local
     # 2 = GMT (Greenwich Mean Time)
     # 3 = Other, should be explained in a user defined stanza in the Extended

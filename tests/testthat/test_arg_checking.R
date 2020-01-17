@@ -34,8 +34,6 @@ test_that("firstBreak > OK", {
 # NOT OK
 test_that("firstBreak > uncorrect arguments", {
   expect_error(firstBreak(x, thr = 1.4, method = "threshold"))
-  expect_error(firstBreak(x, w = 49, ns = 1.5*49, method = "coppens"))
-  expect_error(firstBreak(x, w = 72.8, method = "coppens"))
   expect_error(firstBreak(x, w = 163.76, method = "coppens"))
   expect_error(firstBreak(x, w = 163.76, method = "ccoppens"))
 })

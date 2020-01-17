@@ -1,4 +1,9 @@
 
+setGeneric("declip", function(x, 
+                                xclip = NULL, 
+                                xrange = NULL, 
+                                lambda = 1) 
+  standardGeneric("declip"))
 
 #' Declip the GPR signal
 #' 
@@ -10,20 +15,15 @@
 #' + constraint (i.e., constrained least squares) like in
 #' http://www.cs.cmu.edu/~robust/Papers/HarvillaStern15a.pdf
 #' 
-#' @export
-setGeneric("trDeclip", function(x, 
-                                xclip = NULL, 
-                                xrange = NULL, 
-                                lambda = 1) 
-  standardGeneric("trDeclip"))
 
-setMethod("trDeclip", "GPR", function(x, 
+#' @export
+setMethod("declip", "GPR", function(x, 
                                       xclip = NULL, 
                                       xrange = NULL, 
                                       lambda = 1){
   if(is.null(xclip)){
     #try to estimate it
-    xclip <- trClippedValues(x)
+    xclip <- clippedValues(x)
     xclip <- xclip@data
   }
   xclipmax <- xclip == 1

@@ -68,6 +68,7 @@ plot.GPR <- function(x,
                      wsize = 1,   # wiggles
                      wside = 1,   # wiggles
                      pdfName = NULL,
+                     NAcol = "white",
                      ...){
   # print(list(...))
   if(length(x@vel)>0){  
@@ -93,6 +94,8 @@ plot.GPR <- function(x,
           dots$xlab <- paste0("depth (",x@depthunit,")")
         }else if(grepl("[s]$", x@depthunit)){
           dots$xlab <- paste0("two-way travel time (",x@depthunit,")")
+        }else{
+          dots$xlab <- x@depthunit
         }
       }
       if(is.null(dots$type)) dots$type <- "l"
@@ -159,6 +162,7 @@ plot.GPR <- function(x,
     }
     #------------------------ radargram plot (2D) -------------------------------#
   }else{
+    dots$NAcol <- NAcol
     if(grepl("[s]$", x@depthunit) && addTopo){
       x <- migration(x)
     }
@@ -185,6 +189,7 @@ plot.GPR <- function(x,
     xvalues <- x@pos
     yvalues <- x@depth
     myxlab <- paste0("length (", x@posunit, ")")
+    if(grepl("[m]$", x@depthunit)) myxlab <- x@posunit
     myclab <- "mV"
     mymain <- x@name
     if(isCMP(x)){
@@ -202,10 +207,12 @@ plot.GPR <- function(x,
       # xvalues <- posLine(x@coord)
       xvalues <- relTrPos(x)
     }
-    if(grepl("[m]$",x@depthunit)){
+    if(grepl("[m]$", x@depthunit)){
       myylab <- paste0("depth (", x@depthunit, ")")
     }else if( grepl("[s]$", x@depthunit) ){
       myylab <- paste0("two-way travel time (", x@depthunit, ")")
+    }else{
+      myylab <- x@depthunit
     }
     if(is.null(dots$xlab)) dots$xlab <- myxlab
     if(is.null(dots$ylab)) dots$ylab <- myylab
@@ -297,12 +304,12 @@ plot.GPR <- function(x,
         }
       }
       
-      if(is.null(dots$zlim)){
+      if(!all(is.na(z)) && is.null(dots$zlim)){
         if( min(z, na.rm = TRUE) >= 0 ){
           # to plot amplitudes for example...
           dots$zlim <- c(0, max(z, na.rm = TRUE))
           # if I use 'dots$col', R returns 'dots$colkey'!!!!
-          if(is.null(dots[["col"]]) && diff(range(z)) != 0){
+          if(is.null(dots[["col"]]) && diff(range(z, na.rm = TRUE)) != 0){
             dots[["col"]] <- palGPR("slice", n = 101)
           } 
         }else if(!is.null(x@surveymode) && 
@@ -317,7 +324,7 @@ plot.GPR <- function(x,
       if(is.null(dots[["col"]])) dots[["col"]] <- palGPR(n = 101)
       
       
-      if(diff(range(z, na.rm = TRUE)) == 0){
+      if(!all(is.na(z)) && diff(range(z, na.rm = TRUE)) == 0){
         dots$zlim <- rep(0, 2)
         clim <- rep(z[1], 2)
         z[!is.na(z)] <- 0
@@ -506,7 +513,11 @@ plot.GPR <- function(x,
       # op2 <- par(no.readonly=TRUE)
       # plot3D::colkey (col = dots$col, clim = clim, clab = dots$clab, clog = FALSE, 
       #                 add = TRUE, cex.clab = 0.75, dist = colkeyDist)
-      if(clim[1] == clim[2]) clim <- clim + c(-0.1, 0.1)
+      if(is.null(clim)){
+        clim <- c(-0.1, 0.1)
+      }else if(clim[1] == clim[2]){
+        clim <- clim + c(-0.1, 0.1)
+      } 
       fields::image.plot(zlim = clim, 
                          legend.only = TRUE, 
                          col = dots$col, 
@@ -745,3 +756,104 @@ lines.GPRsurvey <- function(x, ...){
     do.call(lines, dots)
   }
 }
+
+
+
+.plotAnn <- function(ann, x, line=1.7){
+  if(length(ann)>0){
+    testann <- (ann != "")
+    if(sum(testann)>0){
+      posann <- x
+      ann <- gsub("#","\n",ann)
+      abline(v=posann[testann],col="red",lwd=1)
+      mtext(ann[testann], side = 3, line = line, at=posann[testann],
+            col="red", cex=0.9)
+    }
+    return(TRUE)
+  }else{
+    return(FALSE)
+  }
+}
+
+.plotFid <- function(fid, x){
+  usr <- par()$usr
+  pin <- par()$pin  # inch
+  if(!is.null(fid) && length(fid)>0 && any(fid!="")){
+    cin <- par()$cin[2]
+    posfid <- x
+    testfid <- (fid != "")
+    yr <- diff(usr[3:4])/(pin[2])
+    if(sum(testfid)>0){  
+      par(xpd=TRUE)
+      cst <- yr*cin
+      points(posfid[testfid],cst/2*0.75+rep(usr[4],sum(testfid)),pch=25,
+             col="red",bg="yellow",cex=1)
+      text(posfid[testfid],cst+rep(usr[4],sum(testfid)),fid[testfid],cex=0.6)
+      #,pos=3,offset =0)
+      par(xpd=FALSE)
+    }
+  }
+}
+
+
+.barScale <- function(clim, y, col, clab = "mV", clabcex = 0.8){
+  # clim <- sort(clim)
+  usr <- par()$usr
+  pin <- par()$pin  # inch
+  mai <- par()$mai
+  dxin <- diff(usr[1:2])/(pin[1])
+  dylim <- diff(usr[3:4])
+  fin <- par()$fin
+  mai2 <- c(par("mai")[1], par("mai")[1] + pin[1] + 1, par("mai")[3], 0.6)
+  par(mai=mai2)
+  fin2 <- par()$fin
+  wstrip <- dxin*(fin2[1] - mai2[2] - mai2[4])/2
+  xpos <- usr[1] + dxin*(mai2[2] - mai[2])
+  xstrip <- c( xpos - 20*wstrip,  xpos + 20*wstrip)#*c(0.9, 1.1)
+  # ystrip <- seq(min(y), max(y), length.out = length(col))
+  ystrip <- rev(seq(usr[3], usr[4], length.out = length(col)))
+  ystrip <- sort(ystrip)
+  dclim <- clim[2] - clim[1] 
+  if(dclim == 0){
+    axis(side = 4, las = 2, at = (usr[3] - usr[4])/2, labels = clim[1])
+    image(x = xstrip, y = c(usr[4], usr[3]), 
+          z = matrix(rep(clim[1], 2), nrow = 1),
+          add = TRUE, col = col,
+          axes = FALSE, xlab = "", ylab = "", xaxs = "i", yaxs = "i")
+  }else{
+    zstrip <- matrix(seq(clim[1], clim[2], length.out = length(col)), nrow = 1)
+    pretty_z <- pretty(as.vector(zstrip))
+    pretty_at <- usr[3] - dylim * (clim[1] - pretty_z)/dclim
+    axis(side = 4, las = 2, at = pretty_at, labels = pretty_z)
+    image(x = xstrip, y = ystrip, z = zstrip,
+          add = TRUE, col = rev(col),
+          axes = FALSE, xlab = "", ylab = "", xaxs = "i", yaxs = "i")
+  }
+  #  print(par("usr"))
+  # axis(side=4, las=2)
+  title(main=clab, line =1, cex.main = clabcex)
+  box()
+}
+
+# we use the Sensors & Software method to plot the depth axis
+# when the data are in time domain: because of the offset between
+# transmitter and receiver, there is an offset between time zero and depth,
+# the depth axes is squished.
+.depthAxis <- function(y, pretty_y, time_0, v, antsep, depthunit, posunit ){
+  if(grepl("[s]$",depthunit)){
+    maxDepth <- v * max( abs(y - time_0) ) / 2
+    #print(maxDepth)
+    depthAll <- pretty(c(0, maxDepth), 10)
+    depthAllPos <- depthToTime(depthAll, 0, v, antsep)
+    axis(side = 4, at = -depthAllPos - time_0, labels = depthAll, tck = -0.02)
+    depth2  <- seq(0.1, by = 0.1, 0.9)
+    depthat2 <- depthToTime(depth2, 0, v, antsep = antsep)
+    axis(side = 4, at = - depthat2 - time_0, labels = FALSE, tck = -0.01)
+    mtext(paste0("depth (", posunit, "),   v = ",v, " ", posunit, "/", 
+                 depthunit), side = 4, line = 2.5)
+  }else{
+    axis(side = 4, at = pretty_y, labels = -pretty_y)
+    mtext(paste0("depth (", depthunit, ")") ,side = 4, line = 3)
+  }
+}
+

@@ -1053,59 +1053,9 @@ setMethod("tpShift", "GPRsurvey", function(x, i, dx = 0, dy = 0){
   return(x)
 })
                                             
-    
-#' @export
-setMethod("plot3DRGL", "GPRsurvey", 
-        function(x, addTopo = FALSE, clip = NULL, normalize = NULL, 
-                 nupspl=NULL, add = TRUE, xlim = NULL, ylim= NULL, 
-                 zlim = NULL, ...){
-    add <- add
-    for(i in seq_along(x)){
-      cat("***", i , "***\n")
-      gpr <- readGPR(x@filepaths[[i]])
-      if(length(x@coords[[gpr@name]])>0){
-        gpr@coord <- x@coords[[gpr@name]]
-        # cat(x@coordref,"\n")
-        gpr@coordref <- x@coordref
-      }
-      if(length(coord(gpr))==0){
-        message(gpr@name, ": no coordinates, I cannot plot",
-                  " this line!!")
-      }else{
-        plot3DRGL(gpr, addTopo = addTopo, clip = clip, normalize = normalize, 
-                  nupspl = nupspl, add = add, xlim = xlim, ylim = ylim, 
-                  zlim = zlim, ...)
-      }
-      add <- TRUE
-    }  
-  }
-)
+   
 
 
-
-#' @export
-setMethod("plotDelineations3D", "GPRsurvey", 
-          function(x,sel=NULL,col=NULL,add=TRUE,...){
-    add<-add
-    for(i in seq_along(x)){
-      gpr <- readGPR(x@filepaths[[i]])
-      if(length(x@coords[[gpr@name]])>0){
-        gpr@coord <- x@coords[[gpr@name]]
-        # cat(x@coordref,"\n")
-        gpr@coordref <- x@coordref
-      }
-      if(length(coord(gpr))==0){
-        message(gpr@name, ": no coordinates, I cannot plot",
-                  " this line!!")
-      }else if(length(gpr@delineations) == 0){
-        message(gpr@name, ": no delineations for this line!!")
-      }else{
-        plotDelineations3D(gpr,sel=sel,col=col,add=add,...)
-      }
-      add <- TRUE
-    }  
-  }
-)
 
 
 #----------------------- EXPORT/SAVE -----------------#
@@ -1133,102 +1083,9 @@ setMethod("writeSurvey", "GPRsurvey", function(x, fPath, overwrite=FALSE){
 })
 
 
-#' @export
-setMethod("writeGPR", "GPRsurvey", 
-        function(x, fPath = NULL, 
-                 type = c("DT1", "rds", "ASCII", "xta", "xyzv"),
-                 overwrite = FALSE, ...){
-    #setMethod("writeGPR", "GPRsurvey", 
-    #    function(x,fPath, format=c("DT1","rds"), overwrite=FALSE){
-    type <- match.arg(tolower(type), c("dt1", "rds", "ascii", "xta", "xyza"))
-    mainDir <- dirname(fPath)
-    if(mainDir =="." || mainDir =="/" ){
-      mainDir <- ""
-    }
-    subDir <- basename(fPath)
-    if ( !dir.exists( file.path(mainDir, subDir) )) {
-      warning("Create new director ", subDir, " in ", mainDir, "\n")
-      dir.create(file.path(mainDir, subDir))
-    }
-    for(i in seq_along(x)){
-      gpr <- verboseF( x[[i]] , verbose = FALSE)
-      if(length(x@coords[[gpr@name]])>0){
-        gpr@coord <- x@coords[[gpr@name]]
-      }
-      if(length(x@intersections[[gpr@name]])>0){
-        #ann(gpr) <- x@intersections[[gpr@name]][,3:4]
-        ann(gpr) <- cbind(x@intersections[[gpr@name]]$trace,
-                          x@intersections[[gpr@name]]$name)
-      }
-      fPath <- file.path(mainDir, subDir, gpr@name)
-      x@filepaths[[i]] <- paste0(fPath, ".", tolower(type))
-      writeGPR(gpr, fPath = fPath, type = type , overwrite = overwrite, ...)
-      message("Saved: ", fPath )
-    } 
-    invisible(return(x))
-  }
-)
-#' @export
-setMethod("exportFid", "GPRsurvey", function(x, fPath = NULL, sep = " "){
-    for(i in seq_along(x)){
-      gpr <- readGPR(x@filepaths[[i]])
-      file_name <- file.path(fPath, paste0(gpr@name, ".txt"))
-      exportFid(x = gpr, fPath = file_name, sep = sep)
-      message('File "', file_name, '" created!')
-      # x@coords[[gpr@name]] <- gpr@coord
-    }
-  }
-)
 
-#' @export
-setMethod("exportCoord", "GPRsurvey",
-  function(x, type = c("SpatialPoints", "SpatialLines", "ASCII"),
-  fPath = NULL, driver = "ESRI Shapefile", ...){
-  type <- match.arg(type, c("SpatialPoints", "SpatialLines", "ASCII"))
-  if(type == "SpatialLines"){
-    fPath <- ifelse(is.null(fPath), x@names[1], 
-                    file.path(dirname(fPath), .fNameWExt(fPath))) 
-    mySpatLines <- verboseF(as.SpatialLines(x), verbose = FALSE)
-    dfl <- data.frame(z=seq_along(mySpatLines), 
-                      row.names = sapply(slot(mySpatLines, "lines"), 
-                      function(x) slot(x, "ID")))
-    spldf <- sp::SpatialLinesDataFrame(mySpatLines, dfl , 
-                            match.ID = TRUE)
-    rgdal::writeOGR(obj = spldf, dsn = dirname(fPath), layer = basename(fPath), 
-                    driver = driver, check_exists = TRUE, 
-                    overwrite_layer = TRUE, delete_dsn = TRUE)
-  }else if(type == "SpatialPoints"){
-    fPath <- ifelse(is.null(fPath), x@names[1], 
-                    file.path(dirname(fPath), .fNameWExt(fPath))) 
-    spp <- as.SpatialPoints(x)
-    rgdal::writeOGR(spp, dsn = dirname(fPath), layer = basename(fPath),
-                    driver = driver, check_exists = TRUE,
-                    overwrite_layer = TRUE, delete_dsn = TRUE)
-  }else if(type == "ASCII"){
-    mainDir <- dirname(fPath)
-    if(mainDir =="." || mainDir =="/" ){
-      mainDir <- ""
-    }
-    subDir <- basename(fPath)
-    if ( !dir.exists( file.path(mainDir, subDir) )) {
-      warning("Create new director ", subDir, " in ", mainDir, "\n")
-      dir.create(file.path(mainDir, subDir))
-    }
-    for( i in seq_along(x)){
-      gpr <- verboseF( x[[i]] , verbose = FALSE)
-      fPath <- file.path(mainDir, subDir, gpr@name)
-      exportCoord(gpr, fPath = fPath, type = "ASCII", ...)
-    }
-  }
-})
 
-#' @export
-setMethod("exportDelineations", "GPRsurvey", function(x, dirpath=""){
-  for(i in seq_along(x)){
-    exportDelineations(verboseF(getGPR(x, id = i), verbose = FALSE),  
-                       dirpath = dirpath) 
-  }
-})
+
 
 
 

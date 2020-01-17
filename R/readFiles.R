@@ -140,8 +140,8 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
               }
             },
             error = function(cond) {
-              message("I could not either read your GPS data ",
-                      "or interpolate the trace position.")
+              message("I could neither read your GPS data ",
+                      "nor interpolate the trace position.")
               # Choose a return value in case of error
               return(x)
             }#,
@@ -213,8 +213,8 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
               }
             },
             error = function(cond) {
-              message("I could not either read your GPS data ",
-                      "or interpolate the trace position.")
+              message("I could neither read your GPS data ",
+                      "nor interpolate the trace position.")
               # Choose a return value in case of error
               return(x)
             })
@@ -319,8 +319,8 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
               x
             },
             error = function(cond) {
-              message("I could not either read your GPS data ",
-                      "or interpolate the trace position.")
+              message("I could neither read your GPS data ",
+                      "nor interpolate the trace position.")
               # Choose a return value in case of error
               return(x)
             })
@@ -362,8 +362,8 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
               x
             },
             error = function(cond) {
-              message("I could not either read your GPS data ",
-                      "or interpolate the trace position.")
+              message("I could neither read your GPS data ",
+                      "nor interpolate the trace position.")
               # Choose a return value in case of error
               return(x)
             })
@@ -433,8 +433,8 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
               }
             },
             error = function(cond) {
-              message("I could not either read your GPS data ",
-                      "or interpolate the trace position.")
+              message("I could neither read your GPS data ",
+                      "nor interpolate the trace position.")
               # Choose a return value in case of error
               return(x)
             })

@@ -162,7 +162,6 @@ plot.GPR <- function(x,
     }
     #------------------------ radargram plot (2D) -------------------------------#
   }else{
-    dots$NAcol <- NAcol
     if(grepl("[s]$", x@depthunit) && addTopo){
       x <- migration(x)
     }
@@ -292,6 +291,7 @@ plot.GPR <- function(x,
     }
     #------------------------------ RASTER ------------------------------------#
     if(dots$type %in% c("raster", "contour")){
+      dots$NAcol <- NAcol
       if(is.null(dots$clab)) dots$clab <- myclab
       if(!is.null(dots$rasterImage) && isTRUE(rasterImage)){
         dy <- diff(yvalues)

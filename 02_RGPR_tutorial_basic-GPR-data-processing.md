@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Basic GPR data processing
-date: 2019-12-08
+date: 2020-01-17
 ---
 
 <!--
@@ -111,11 +111,6 @@ To read the GPR data, enter
 
 ``` r
 x <- readGPR(dsn = "rawGPR/LINE00.DT1")   # the filepath is case sensitive!
-```
-
-    ## I could not either read your GPS data or interpolate the trace position.
-
-``` r
 class(x)
 ```
 
@@ -313,6 +308,8 @@ Let's have a look at the amplitude-frequency and phase-frequency plot (the spect
 spec(x3)
 ```
 
+    ## Soon deprecated. Use 'spec1D()' or 'spec2D()' instead
+
 ![plot spectrum](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/fFilter_spectrum-1.png)
 
 The curve in red is the averaged amplitude/phase over all the trace amplitudes/phases.
@@ -494,6 +491,11 @@ The function `spec()` with the argument `type = "f-k` returns a list containing 
 
 ``` r
 FKSpec <- spec(x8, type = "f-k")
+```
+
+    ## Soon deprecated. Use 'spec1D()' or 'spec2D()' instead
+
+``` r
 area <- list(x = c(0, min(FKSpec$wnb), min(FKSpec$wnb), max(FKSpec$wnb), max(FKSpec$wnb), 0),
              y = c(max(FKSpec$fre), 800, 0, 0, 800, max(FKSpec$fre)))
 lines(area, type="o")
@@ -516,6 +518,8 @@ plot(x9, clip = 50)
 ``` r
 spec(x9, type = "f-k")
 ```
+
+    ## Soon deprecated. Use 'spec1D()' or 'spec2D()' instead
 
 ![plot fk-spectrum](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/fk_plot-2.png)
 
@@ -597,7 +601,7 @@ writeGPR(x9, fPath = file.path(getwd(), "processing", paste0(name(x9), ".rds")),
 
     ## *** Class GPR ***
     ##  name        = LINE00
-    ##  filepath    = /media/huber/Seagate1TB/UNIBAS/PROJECTS/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/processing/LINE00.dt1
+    ##  filepath    = /mnt/data/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/processing/LINE00.dt1
     ##  1 fiducial(s)
     ##  description =
     ##  survey date = 2014-04-25

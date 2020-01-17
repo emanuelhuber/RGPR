@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Adding coordinates to GPR data
-date: 2019-12-08
+date: 2020-01-17
 ---
 
 <!--
@@ -178,7 +178,7 @@ mySurvey
 ```
 
     ## *** Class GPRsurvey ***
-    ## Unique directory: /media/huber/Seagate1TB/UNIBAS/PROJECTS/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/rawGPR
+    ## Unique directory: /mnt/data/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/rawGPR
     ## - - - - - - - - - - - - - - -
     ##     name length units       date freq coord int   filename
     ## 1 LINE00  55.75     m 2014-04-25  100    NO  NO LINE00.DT1
@@ -205,7 +205,7 @@ Note that the object `mySurvey` only contains the meta-data and a link to the GP
 
         ## *** Class GPR ***
         ##  name        = LINE02
-        ##  filepath    = /media/huber/Seagate1TB/UNIBAS/PROJECTS/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
+        ##  filepath    = /mnt/data/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
         ##  description =
         ##  survey date = 2014-04-25
         ##  Reflection, 100 MHz, Window length = 399.6 ns, dz = 0.4 ns
@@ -221,7 +221,7 @@ Note that the object `mySurvey` only contains the meta-data and a link to the GP
 
         ## *** Class GPR ***
         ##  name        = LINE02
-        ##  filepath    = /media/huber/Seagate1TB/UNIBAS/PROJECTS/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
+        ##  filepath    = /mnt/data/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/rawGPR/LINE02.DT1
         ##  description =
         ##  survey date = 2014-04-25
         ##  Reflection, 100 MHz, Window length = 399.6 ns, dz = 0.4 ns
@@ -261,15 +261,15 @@ We assume that for each GPR record there is a file containing the (x, y, z) coor
     TOPOList <- readTopo(TOPO)
     ```
 
-        ## read /media/huber/Seagate1TB/UNIBAS/PROJECTS/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE00.txt...
+        ## read /mnt/data/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE00.txt...
 
-        ## read /media/huber/Seagate1TB/UNIBAS/PROJECTS/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE01.txt...
+        ## read /mnt/data/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE01.txt...
 
-        ## read /media/huber/Seagate1TB/UNIBAS/PROJECTS/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE02.txt...
+        ## read /mnt/data/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE02.txt...
 
-        ## read /media/huber/Seagate1TB/UNIBAS/PROJECTS/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE03.txt...
+        ## read /mnt/data/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE03.txt...
 
-        ## read /media/huber/Seagate1TB/UNIBAS/PROJECTS/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE04.txt...
+        ## read /mnt/data/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE04.txt...
 
 3.  Set the list of coordinates as the new coordinates to the GPRsurvey object:
 

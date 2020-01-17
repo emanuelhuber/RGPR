@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Class GPR
-date: 2019-10-19
+date: 2020-01-17
 ---
 
 <!--
@@ -125,14 +125,12 @@ The strings after the `@` are the names of the elements that form `A`. These ele
 slotNames(A)      # return the slot names
 ```
 
-    ##  [1] "version"      "data"         "traces"       "depth"
-    ##  [5] "pos"          "time0"        "time"         "fid"
-    ##  [9] "ann"          "coord"        "rec"          "trans"
-    ## [13] "coordref"     "freq"         "dz"           "dx"
-    ## [17] "antsep"       "name"         "description"  "filepath"
-    ## [21] "depthunit"    "posunit"      "surveymode"   "date"
-    ## [25] "crs"          "proc"         "vel"          "delineations"
-    ## [29] "hd"
+    ##  [1] "version"      "data"         "traces"       "depth"        "pos"
+    ##  [6] "time0"        "time"         "fid"          "ann"          "coord"
+    ## [11] "rec"          "trans"        "coordref"     "freq"         "dz"
+    ## [16] "dx"           "antsep"       "name"         "description"  "filepath"
+    ## [21] "depthunit"    "posunit"      "surveymode"   "date"         "crs"
+    ## [26] "proc"         "vel"          "delineations" "hd"
 
 A `RGPR` object consist of: 1. the GPR data (i.e. the measured amplitudes as a function of time for each GPR traces). The data are stored in the slot `data`. 2. meta-data (e.g. position of the traces on the survey line, time of the trace recording, time/depth of each trace sample, time step, etc.)
 

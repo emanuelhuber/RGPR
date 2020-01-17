@@ -1,7 +1,7 @@
 ---
 layout: page
 title: GPR data migration
-date: 2019-12-08
+date: 2020-01-17
 ---
 
 <!--
@@ -112,7 +112,7 @@ TOPO <- file.path(getwd(), "coord/topo/LINE00.txt")
 TOPOList <- readTopo(TOPO, sep = "\t")
 ```
 
-    ## read /media/huber/Seagate1TB/UNIBAS/PROJECTS/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE00.txt...
+    ## read /mnt/data/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/coord/topo/LINE00.txt...
 
 1.  Set the list of coordinates as the new coordinates to the GPRsurvey object:
 

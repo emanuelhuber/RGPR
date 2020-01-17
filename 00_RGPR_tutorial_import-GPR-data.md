@@ -77,12 +77,12 @@ Overview
 | SEG-Y                       |.sgy/.segy   |                        |                                          |
 | R internal file format      |.rds         |                        |                                          |
 
-\* not yet implemented
-<sup>1</sup> date and time recording for each traces
-<sup>2</sup> markers
-<sup>3</sup> markers associated to the GPS data (.gps)
+\* not yet implemented<br/> <sup>1</sup> date and time recording for each traces<br/> <sup>2</sup> markers<br/> <sup>3</sup> markers associated to the GPS data (.gps)<br/>
 
-Indirectly supported file format - ENVI band-sequential files (.dat,.hdr) - Pickle files (.pkl)
+Indirectly supported file format:
+
+-   **ENVI band-sequential** files (.dat,.hdr)
+-   **Pickle** files (.pkl)
 
 Sensors and software data (`.dt1`)
 ----------------------------------

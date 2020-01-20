@@ -2219,6 +2219,7 @@ setMethod("fkFilter", "GPR", function(x, fk = NULL, L = c(5 , 5), npad = 1,
 #'                    reconstructred using tthe first two eigenvalues. 
 #'                    If \code{NULL}, the image is reconstructed using 
 #'                    all eigenvalues.
+#'                    The number of eigenvalue is equal to \code{min(dim(x))}.
 #' @param center      Logical or numeric. If \code{TRUE}, centering is done by 
 #'                    subtracting the layer means (omitting \code{NA}'s), and 
 #'                    if \code{FALSE}, no centering is done. If center is a 
@@ -2260,18 +2261,6 @@ setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA, center = TRUE,
   Xsvd <- svd(X)
   lambda <- Xsvd$d^2
   
-  if(is.null(ev)){
-    ev <- c(seq_len(ncol(X)))
-  }else if(!any(is.na(ev))){
-    if(max(ev) > ncol(X)){
-      stop("The number of eigenvalues selected cannot exceed the number ",
-           "of GPR traces.")
-    }
-    if(min(ev) < 0){
-      stop("The eigenvalues number must be strictly positive.")
-    }
-  }
-  
   if(any(is.na(ev))){
     plot(seq_along(lambda), lambda, type = "b", col = "blue", pch = 16,
          xlab = "Eigenvalue Index", ylab = "Eigenvalue", 
@@ -2288,6 +2277,19 @@ setMethod("eigenFilter", "GPR", function(x, eigenvalue = NA, center = TRUE,
            "either '2:12' or '1,2,3,4' or '10'.")
     }
   }
+  
+  if(is.null(ev)){
+    ev <- seq_len(min(dim(X)))
+  }else if(!any(is.na(ev))){
+    if(max(ev) > min(dim(X))){
+      stop("The number of eigenvalues selected cannot exceed ",
+           "'min(dim(x))'.")
+    }
+    if(min(ev) < 0){
+      stop("The eigenvalues number must be strictly positive.")
+    }
+  }
+  
   
   d <- numeric(length(Xsvd$d))
   d[ev] <- Xsvd$d[ev]

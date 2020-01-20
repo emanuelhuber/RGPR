@@ -329,7 +329,6 @@ setMethod(
     y@surveymodes    <- x@surveymodes[i]
     y@dates          <- x@dates[i]
     y@antseps        <- x@antseps[i]
-    y@crs            <- x@crs[i]
     y@coords         <- x@coords[x@names[i]]
     y@fids           <- x@fids[x@names[i]]
     y@intersections  <- x@intersections[x@names[i]]
@@ -338,6 +337,12 @@ setMethod(
     y@dz             <- x@dz[i]
     y@zunits         <- x@zunits[i]
     y@posunits       <- x@posunits[i]
+    # FIXME
+    if(length(x@crs) == 1){
+      y@crs <- x@crs
+    }else{
+      y@crs <- x@crs[i]
+    }
     return(y)
   }
 )
@@ -488,7 +493,12 @@ setMethod("getGPR", "GPRsurvey", function(x,id){
       ann(gpr) <- cbind(x@intersections[[gpr@name]]$trace,
                         x@intersections[[gpr@name]]$name)
     }
-    gpr@crs <- x@crs[no]
+    # FIXME
+    if(length(x@crs) == 1){
+      gpr@crs <- x@crs
+    }else{
+      gpr@crs <- x@crs[no]
+    }
     if(length(x@coordref)>0){
       gpr@coordref <- x@coordref
     }

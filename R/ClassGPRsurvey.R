@@ -938,9 +938,9 @@ setMethod("trProject", "GPRsurvey", function(x, CRSobj){
     x[, 1:2] <- y[[1]]
     return(x)
   }
+  x@crs <- as.character(CRSobj)
   coords(x) <- mapply(FUN, coords(x), xshpc_coords, 
                       USE.NAMES = FALSE, SIMPLIFY = FALSE)
-  x@crs <- as.character(CRSobj)
   return(x)
 })
 

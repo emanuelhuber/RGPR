@@ -103,12 +103,16 @@ setMethod("firstBreak",
             }
             
             if(method == "coppens"){
+              if( (w %% 2) == 0 ) w <- w + 1
               xs <- x@data[1:nmax, , drop = FALSE]^2
               
-              ns <- if(is.null(ns)) round(1.5 * w) else ns
-              if( (w %% 2) == 0 ) w <- w + 1
+              if(is.null(ns)){
+                ns <- round(1.5 * w)
+              }else{
+                ns <- round(ns / x@dz)
+              }
+              # ns <- if(is.null(ns)) round(1.5 * w) else ns
               
-              ns <- round(ns / x@dz)
               if(ns > nmax) ns <- nmax - 1
               if( (ns %% 2) == 0 )  ns <- ns + 1 
               if(is.null(bet))      bet <- 0.2 * max(xs)

@@ -72,9 +72,12 @@ setMethod("firstBreak",
             
             # shorten the file -> computation only up to the max value
             nmax <- nrow(x)
-            tst <- which(as.matrix(x) == max(x), arr.ind = TRUE)
+            # tst <- which(as.matrix(x) == max(x), arr.ind = TRUE)
+            tst <- max(apply(as.matrix(x), 2, which.max))
+            
             if(length(tst) > 0 ){
-              nmax <- max(tst[,"row"])
+              # nmax <- max(tst[,"row"])
+              nmax <- tst
             }
             
             #------------------- check arguments
@@ -83,7 +86,7 @@ setMethod("firstBreak",
                             c("coppens", "threshold",  "MER"))
             msg <- checkArg(thr   , msg, "PERCENT1")
             # msg <- checkArg(w     , msg, "NUMERIC1_SPOS", round((nmax - 1) * x@dz/1.5))
-            msg <- checkArg(w     , msg, "NUMERIC1_SPOS", max(x@depth))
+            msg <- checkArg(w     , msg, "NUMERIC1_SPOS", max(x@depth)/2)
             # msg <- checkArg(ns    , msg, "NUMERIC1_SPOS_NULL", round((nmax - 1) * x@dz))
             msg <- checkArg(ns    , msg, "NUMERIC1_SPOS_NULL", max(x@depth))
             msg <- checkArg(bet   , msg, "NUMERIC1_SPOS_NULL", Inf)
@@ -91,13 +94,18 @@ setMethod("firstBreak",
             #-----------------------------------
             
             
-            if( (nmax + w) < nrow(x) )  nmax <- max(tst[,"row"]) + w
+            w <- round(w / x@dz)
+            
+            if( (nmax + 2 * w ) < nrow(x) ){
+              nmax <- nmax + 2 * w
+            }else{
+              nmax <- nrow(x)
+            }
             
             if(method == "coppens"){
               xs <- x@data[1:nmax, , drop = FALSE]^2
               
               ns <- if(is.null(ns)) round(1.5 * w) else ns
-              w <- round(w / x@dz)
               if( (w %% 2) == 0 ) w <- w + 1
               
               ns <- round(ns / x@dz)
@@ -114,7 +122,7 @@ setMethod("firstBreak",
               thres <- thr * max(x)
               fb <- apply(abs(x@data), 2, .firstBreakThres, thr = thres, x@depth)
             }else if(method == "MER"){
-              w <- round(w / x@dz)
+              # w <- round(w / x@dz)
               fb <- .firstBreakMER(x@data[1:nmax, , drop = FALSE], w)
               fb <- x@depth[fb]
             }
@@ -141,8 +149,8 @@ setMethod("firstBreak",
   E1 <- E[v1,]
   E2 <- E[v2,]
   ER <- E2/E1
-  MER <- (ER * abs( x[v1 + w-1,]) )^3
-  fb <- apply(MER, 2, function(x) which.max(x)) + (w-1)
+  MER <- (ER * abs( x[v1 + w - 1,]) )^3
+  fb <- apply(MER, 2, function(x) which.max(x)) + (w - 1)
   return(fb)
 }
 

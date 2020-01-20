@@ -2752,8 +2752,8 @@ setMethod("interpPos", "GPR",
                         method = method)
       colnames(A) <- c("x", "y", "z")
       # add fiducial to indicate which points/traces were used for interpolation
-      x@fid[topo[,4]] <- paste0(x@fid[topo[,4]], " *")
-      fid(x) <- trimStr(fid(x))
+      # x@fid[topo[,4]] <- paste0(x@fid[topo[,4]], " *")
+      # fid(x) <- trimStr(fid(x))
     }
     # diagnostic plots
     dist3Dint <- posLine(A, last = FALSE)

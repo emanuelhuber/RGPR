@@ -17,7 +17,7 @@ the ground}
 \description{
 Remove the Normal Move-Out (NMO) from the trace given a constant velocity: 
 this is a non-linear 
-correction of the time axis that require interpolation. Note that
+correction of the time axis that requires interpolation. Note that
 only the conventional NMO correction is currently implemented. The 
 conventional NMO introduces a streching effect. A nonstretch NMO will
 be implemented in a near future.

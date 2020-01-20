@@ -22,7 +22,8 @@ the pair of selected eigenvalues separated by a comma.
 That is for example \code{1,2} will return the image 
 reconstructred using tthe first two eigenvalues. 
 If \code{NULL}, the image is reconstructed using 
-all eigenvalues.}
+all eigenvalues.
+The number of eigenvalue is equal to \code{min(dim(x))}.}
 
 \item{center}{Logical or numeric. If \code{TRUE}, centering is done by 
 subtracting the layer means (omitting \code{NA}'s), and 

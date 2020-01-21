@@ -378,7 +378,7 @@ setMethod("plotDelineations3D", "GPR",
                     xpos <- x@coord[tracePos,1] - x@coordref[1]
                     ypos <- x@coord[tracePos,2] - x@coordref[2]
                     z0 <- max(coord(x,3))   -   x@coordref[3]
-                    zpos <- z0 + deli[[i]][[j]][,5] 
+                    zpos <- z0 - deli[[i]][[j]][,5] 
                     rgl::lines3d(ypos, zpos, xpos, col = col[i], ...)
                   }
                 }else{
@@ -386,7 +386,7 @@ setMethod("plotDelineations3D", "GPR",
                   xpos <- x@coord[tracePos,1] - x@coordref[1]
                   ypos <- x@coord[tracePos,2] - x@coordref[2]
                   z0 <- max(coord(x, 3))   -   x@coordref[3]
-                  zpos <- z0 + deli[[i]][,5] 
+                  zpos <- z0 - deli[[i]][,5] 
                   rgl::lines3d(ypos, zpos, xpos, col = col[i], ...)
                 }
               }

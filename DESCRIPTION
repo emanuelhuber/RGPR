@@ -87,6 +87,8 @@ Collate:
   'exportFID.R'
   'exportCoord.R'
   'exportProc.R'
+  'spInterpToRaster.R'
+  'spExtractFromRaster.R'
 Imports:
     methods,
     graphics,

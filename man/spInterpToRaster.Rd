@@ -5,7 +5,8 @@
 \alias{spInterpToRaster}
 \title{spInterpToRaster}
 \usage{
-\S4method{spInterpToRaster}{GPR}(x, nx = 100, ny = 100, h = 5, ...)
+\S4method{spInterpToRaster}{GPRsurvey}(x, nx = 100, ny = 100, h = 5,
+  ...)
 }
 \description{
 spInterpToRaster

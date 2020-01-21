@@ -9,7 +9,7 @@ setGeneric("spInterpToRaster", function(x, nx = 100, ny = 100, h = 5, ...)
 #' @name spInterpToRaster
 #' @rdname spInterpToRaster
 #' @export
-setMethod("spInterpToRaster", "GPR", function(x, nx = 100, ny = 100, h = 5, ...){
+setMethod("spInterpToRaster", "GPRsurvey", function(x, nx = 100, ny = 100, h = 5, ...){
   # better way to do
   xyz <- do.call(rbind, coords(x))
   

@@ -3,11 +3,11 @@
 \docType{methods}
 \name{spInterpToRaster}
 \alias{spInterpToRaster}
-\title{spInterpToRaster}
+\title{Interpolate trace elevation to raster}
 \usage{
 \S4method{spInterpToRaster}{GPRsurvey}(x, nx = 100, ny = 100, h = 5,
   ...)
 }
 \description{
-spInterpToRaster
+Interpolate trace elevation to raster
 }

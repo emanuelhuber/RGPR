@@ -1,4 +1,4 @@
-setGeneric("envelope", function(x, method = c("hilbert", "peak"),
+setGeneric("envelope", function(x, method = c("peak", "hilbert"),
                                 npad = 100, threshold = 2) 
   standardGeneric("envelope"))
 
@@ -33,7 +33,7 @@ setGeneric("envelope", function(x, method = c("hilbert", "peak"),
 #' @name envelope
 #' @rdname envelope
 #' @export
-setMethod("envelope", "GPR", function(x, method = c("hilbert", "peak"),
+setMethod("envelope", "GPR", function(x, method = c("peak", "hilbert"),
                                       npad = 100, threshold = 2){
   #if(is.null(FUN)){
   method <- match.arg(method, c("hilbert", "peak"))

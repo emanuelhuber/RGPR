@@ -9,7 +9,7 @@
 \S4method{plotEnvelope}{GPR}(x, npad = 100, FUN = mean, add = FALSE,
   all = FALSE, plotLog = TRUE, ...)
 
-\S4method{envelope}{GPR}(x, method = c("hilbert", "peak"), npad = 100,
+\S4method{envelope}{GPR}(x, method = c("peak", "hilbert"), npad = 100,
   threshold = 2)
 }
 \arguments{

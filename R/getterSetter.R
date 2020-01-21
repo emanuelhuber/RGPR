@@ -140,8 +140,8 @@ setReplaceMethod(
     annnames <- as.character(value[,2])
     valuesList <- (tapply(annnames, traces, identity))
     test <- unlist(lapply(valuesList, paste, sep = "", collapse = "#"), 
-                   use.names = FALSE)
-    x@ann <- character(length(x))
+                   use.names = TRUE)
+    if(length(x@ann) != length(x)) x@ann <- character(length(x))
     x@ann[as.numeric(names(test))] <- test
     x@proc <- c(x@proc, "ann<-")
     # FIXME > sapply(test, trimStr)

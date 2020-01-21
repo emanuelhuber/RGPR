@@ -546,7 +546,8 @@ print.GPRsurvey <- function(x, ...){
   cat("- - - - - - - - - - - - - - -\n")
   #overview <- data.frame("name" = .fNameWExt(x@filepaths),
   overview <- data.frame("name"    = x@names,
-                        "length"   = round(x@lengths,2),
+                        # "length"   = round(x@lengths,2),
+                        "length"   = formatC(signif(x@lengths, digits = 4), digits = 2, format = "fg", flag = "#"),
                         "units"    = x@posunits,
                         "date"     = x@dates,
                         "freq"     = x@freqs,

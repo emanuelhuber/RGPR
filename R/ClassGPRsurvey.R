@@ -1147,7 +1147,11 @@ setMethod("papply", "GPRsurvey", function(x, prc = NULL){
     x@lengths[[i]]      <- y@dx * ncol(y@data)
     x@surveymodes[[i]]  <- y@surveymode
     x@posunits[[i]]     <- y@posunit
-    x@crs[[i]]          <- y@crs
+    if(length(x@crs) == 1){
+      x@crs <- y@crs
+    }else{
+      x@crs[[i]]          <- y@crs
+    }
     x@fids[[i]]         <- y@fid
     x@ntraces[[i]]      <- ncol(y)
     x@nz[[i]]           <- nrow(y)

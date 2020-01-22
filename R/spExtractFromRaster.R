@@ -16,6 +16,10 @@ setGeneric("spExtractFromRaster", function(x, r, method = "bilinear", ...)
 setMethod("spExtractFromRaster", "GPRsurvey", 
           function(x, r, method = "bilinear", ...){
   coords(x) <- lapply(coords(x), .extractRaster, r, method = method, ...) 
+  
+  if(any(is.na(do.call(rbind, coords(x))))){
+    warning("NA's were produced... take care!")
+  }
   return(x)
 })
           

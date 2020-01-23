@@ -103,7 +103,9 @@ setMethod("delineate", "GPR",
                 posyOnPlot >= 0 & posyOnPlot <= nrow(x)
               posxOnPlot2 <- posxOnPlot[mySel]
               posPts <- posyOnPlot[mySel]
-              posTrace <- x@traces[posxOnPlot2]
+              x_traces <- seq_len(ncol(x))
+              # posTrace <- x@traces[posxOnPlot2]
+              posTrace <- x_traces[posxOnPlot2]
               xpos <- x@coord[posxOnPlot2,1]
               ypos <- x@coord[posxOnPlot2,2]
               # zpos <- x@coord[posPts,3]
@@ -177,7 +179,9 @@ setMethod("addDelineation", "GPR", function(x, itp,
     posyOnPlot >= 0 & posyOnPlot <= nrow(x)
   posxOnPlot2 <- posxOnPlot[mySel]
   posPts <- posyOnPlot[mySel]
-  posTrace <- x@traces[posxOnPlot2]
+  x_traces <- seq_len(ncol(x))
+  # posTrace <- x@traces[posxOnPlot2]
+  posTrace <- x_traces[posxOnPlot2]
   xpos <- x@coord[posxOnPlot2,1]
   ypos <- x@coord[posxOnPlot2,2]
   # zpos <- x@coord[posPts,3]
@@ -278,7 +282,9 @@ setMethod("delineations", "GPR", function(x,sel=NULL,...){
         message(names(deli[i]))
         for(j in 1:n_sub_d){
           it <- it + 1
-          tracePos <- sapply( deli[[i]][[j]][,1], .which, x@traces)
+          x_traces <- seq_len(ncol(x))
+          # tracePos <- sapply( deli[[i]][[j]][,1], .which, x@traces)
+          tracePos <- sapply( deli[[i]][[j]][,1], .which, x_traces)
           xpos <- x_dist[tracePos]
           zpos <- deli[[i]][[j]][,4]
           message(it, ". length = ", round(diff(range(xpos)), 2), 
@@ -288,7 +294,9 @@ setMethod("delineations", "GPR", function(x,sel=NULL,...){
         }
       }else{
         it <- it + 1
-        tracePos <- sapply( deli[[i]][,1], .which, x@traces)
+        x_traces <- seq_len(ncol(x))
+        # tracePos <- sapply( deli[[i]][,1], .which, x@traces)
+        tracePos <- sapply( deli[[i]][,1], .which, x_traces)
         xpos <- x_dist[tracePos]
         zpos <- deli[[i]][,4]
         message(it, ". length =", round(diff(range(xpos)), 2),
@@ -324,7 +332,9 @@ setMethod("exportDelineations", "GPR", function(x, dirpath=""){
       n_sub_d <- length(deli[[i]])
       for(j in n_sub_d:1){
         it<-it+1
-        tracePos <- sapply( deli[[i]][[j]][,1], .which, x@traces)
+        x_traces <- seq_len(ncol(x))
+        # tracePos <- sapply( deli[[i]][[j]][,1], .which, x@traces)
+        tracePos <- sapply( deli[[i]][[j]][,1], .which, x_traces)
         xprofile <- x_dist[tracePos]
         zabs <- z0 + deli[[i]][[j]][,5] 
         # zpos <- deli[[i]][[j]][,5]
@@ -337,7 +347,9 @@ setMethod("exportDelineations", "GPR", function(x, dirpath=""){
       }
     }else{
       it <- it+1
-      tracePos <- sapply( deli[[i]][,1], .which, x@traces)
+      x_traces <- seq_len(ncol(x))
+      # tracePos <- sapply( deli[[i]][,1], .which, x@traces)
+      tracePos <- sapply( deli[[i]][,1], .which, x_traces)
       xprofile <- x_dist[tracePos]
       zabs <- z0 + deli[[i]][[j]][,5] 
       table_path_name <- paste0(dirpath, name(x), "_", it, "_", 
@@ -374,7 +386,9 @@ setMethod("plotDelineations3D", "GPR",
                 if(typeof(deli[[i]])=="list"){
                   n_sub_d <- length(deli[[i]])
                   for(j in 1:n_sub_d){
-                    tracePos <- sapply( deli[[i]][[j]][,1], .which, x@traces)
+                    x_traces <- seq_len(ncol(x))
+                    # tracePos <- sapply( deli[[i]][[j]][,1], .which, x@traces)
+                    tracePos <- sapply( deli[[i]][[j]][,1], .which, x_traces)
                     xpos <- x@coord[tracePos,1] - x@coordref[1]
                     ypos <- x@coord[tracePos,2] - x@coordref[2]
                     z0 <- max(coord(x,3))   -   x@coordref[3]
@@ -382,7 +396,9 @@ setMethod("plotDelineations3D", "GPR",
                     rgl::lines3d(ypos, zpos, xpos, col = col[i], ...)
                   }
                 }else{
-                  tracePos <- sapply( deli[[i]][,1], .which, x@traces)
+                  x_traces <- seq_len(ncol(x))
+                  # tracePos <- sapply( deli[[i]][,1], .which, x@traces)
+                  tracePos <- sapply( deli[[i]][,1], .which, x_traces)
                   xpos <- x@coord[tracePos,1] - x@coordref[1]
                   ypos <- x@coord[tracePos,2] - x@coordref[2]
                   z0 <- max(coord(x, 3))   -   x@coordref[3]
@@ -448,13 +464,17 @@ setMethod("plotDelineations", "GPR", function(x,sel=NULL,col=NULL,...){
       if(typeof(deli[[i]])=="list"){
         n_sub_d <- length(deli[[i]])
         for(j in 1:n_sub_d){
-          tracePos <- sapply( deli[[i]][[j]][,1], .which, x@traces)
+          x_traces <- seq_len(ncol(x))
+          # tracePos <- sapply( deli[[i]][[j]][,1], .which, x@traces)
+          tracePos <- sapply( deli[[i]][[j]][,1], .which, x_traces)
           xpos <- x_dist[tracePos]
           zpos <- deli[[i]][[j]][,5]
           lines(xpos, zpos,col=col[i],...)
         }
       }else{
-        tracePos <- sapply( deli[[i]][,1], .which, x@traces)
+        x_traces <- seq_len(ncol(x))
+        # tracePos <- sapply( deli[[i]][,1], .which, x@traces)
+        tracePos <- sapply( deli[[i]][,1], .which, x_traces)
         xpos <- x_dist[tracePos]
         zpos <- deli[[i]][,5]
         lines(xpos, zpos,col=col[i],...)
@@ -490,7 +510,9 @@ setMethod("identifyDelineation", "GPR", function(x,sel=NULL,...){
       if(typeof(deli[[i]])=="list"){
         n_sub_d <- length(deli[[i]])
         for(j in 1:n_sub_d){
-          tracePos <- sapply( deli[[i]][[j]][,1], .which, x@traces)
+          x_traces <- seq_len(ncol(x))
+          # tracePos <- sapply( deli[[i]][[j]][,1], .which, x@traces)
+          tracePos <- sapply( deli[[i]][[j]][,1], .which, x_traces)
           xpos <- x_dist[tracePos]
           zpos <- deli[[i]][[j]][,5]
           it <- it + 1
@@ -499,7 +521,9 @@ setMethod("identifyDelineation", "GPR", function(x,sel=NULL,...){
           # lines(xpos, zpos,col=col[i],...)
         }
       }else{
-        tracePos <- sapply( deli[[i]][,1], .which, x@traces)
+        x_traces <- seq_len(ncol(x))
+        # tracePos <- sapply( deli[[i]][,1], .which, x@traces)
+        tracePos <- sapply( deli[[i]][,1], .which, x_traces)
         xpos <- x_dist[tracePos]
         zpos <- deli[[i]][,5]
         it <- it + 1

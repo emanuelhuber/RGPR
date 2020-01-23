@@ -1,4 +1,9 @@
 
+#' @name name
+#' @rdname name
+#' @export
+setGenericVerif("name", function(x) standardGeneric("name"))
+
 #' Name of the GPR data
 #' 
 #' @name name
@@ -8,6 +13,11 @@ setMethod("name", "GPR", function(x){
   return(x@name)
 } 
 )
+
+#' @name name<-
+#' @rdname name
+#' @export
+setGenericVerif("name<-",function(x,value){standardGeneric("name<-")})
 
 #' @name name<-
 #' @rdname name
@@ -22,6 +32,23 @@ setReplaceMethod(
     return(x)
   }
 )
+
+#' @name setName
+#' @rdname name
+#' @export
+setGenericVerif("setName", function(x, value) standardGeneric("setName"))
+
+
+#' @name setName
+#' @rdname name
+#' @export
+setMethod("setName", "GPR", function(x, value){
+  name(x) <- value
+  return(x)
+} 
+)
+
+#------------------------------------------------------------------------------#
 
 #' Depth unit of the GPR data
 #' 
@@ -47,6 +74,8 @@ setReplaceMethod(
   }
 )
 
+#------------------------------------------------------------------------------#
+
 #' Position unit of the GPR data
 #' 
 #' @name posunit
@@ -71,6 +100,8 @@ setReplaceMethod(
   }
 )
 
+#------------------------------------------------------------------------------#
+
 #' Description of the GPR data
 #' 
 #' @name description
@@ -94,6 +125,9 @@ setReplaceMethod(
   }
 )
 
+#------------------------------------------------------------------------------#
+
+
 #' Filepath of the GPR data
 #' 
 #' @rdname filepath-methods
@@ -114,6 +148,8 @@ setReplaceMethod(
     return(x)
   }
 )
+
+#------------------------------------------------------------------------------#
 
 #' Annotations of the GPR data
 #' 
@@ -148,6 +184,9 @@ setReplaceMethod(
     return(x)
   }
 )
+
+#------------------------------------------------------------------------------#
+
 
 #' Coordinates of the GPR data
 #' 
@@ -184,6 +223,8 @@ setReplaceMethod(
   }
 )
 
+#------------------------------------------------------------------------------#
+
 #' Survey date
 #' 
 #' Return NULL if no date exists, else an object of the class 'Date'
@@ -219,6 +260,9 @@ setReplaceMethod(
   }
 )
 
+#------------------------------------------------------------------------------#
+
+
 #' Coordinate reference system (CRS) of the GPR data
 #' 
 #' @name crs
@@ -244,6 +288,13 @@ setReplaceMethod(
 )
 
 
+#------------------------------------------------------------------------------#
+
+#' @name vel
+#' @rdname vel
+#' @export
+setGenericVerif("vel", function(x) standardGeneric("vel"))
+
 #' Velocity model of the GPR data
 #' 
 #' @name vel
@@ -255,8 +306,12 @@ setMethod("vel", "GPR", function(x){
   }else{
     return(x@vel)
   }
-} 
-)
+})
+
+#' @name vel<-
+#' @rdname vel
+#' @export
+setGenericVerif("vel<-",function(x,value){standardGeneric("vel<-")})
 
 #' @name vel<-
 #' @rdname vel
@@ -271,8 +326,22 @@ setReplaceMethod(
     x@vel <- value
     x@proc <- c(x@proc, "vel<-")
     return(x)
-  }
-)
+})
+
+#' @name setVel
+#' @rdname vel
+#' @export
+setGenericVerif("setVel", function(x, v) standardGeneric("setVel"))
+
+#' @name setVel
+#' @rdname vel
+#' @export
+setMethod("setVel", "GPR", function(x, v){
+ vel(x) <- v 
+ return(x)
+})
+
+#------------------------------------------------------------------------------#
 
 setMethod("trTime", "GPR", function(x){
   dorigin <- x@date

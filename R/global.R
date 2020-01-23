@@ -104,15 +104,6 @@ setGenericVerif("svDate", function(x, i, ...) standardGeneric("svDate"))
 setGenericVerif("svDate<-",function(x,value){standardGeneric("svDate<-")})
 
 
-#' @name vel
-#' @rdname vel
-#' @export
-setGenericVerif("vel", function(x) standardGeneric("vel"))
-
-#' @name vel<-
-#' @rdname vel
-#' @export
-setGenericVerif("vel<-",function(x,value){standardGeneric("vel<-")})
 
 #' @name ann
 #' @rdname ann
@@ -124,15 +115,7 @@ setGenericVerif("ann", function(x) standardGeneric("ann"))
 #' @export
 setGenericVerif("ann<-",function(x,value){standardGeneric("ann<-")})
 
-#' @name name
-#' @rdname name
-#' @export
-setGenericVerif("name", function(x) standardGeneric("name"))
 
-#' @name name<-
-#' @rdname name
-#' @export
-setGenericVerif("name<-",function(x,value){standardGeneric("name<-")})
 
 #' @name depthunit
 #' @rdname depthunit

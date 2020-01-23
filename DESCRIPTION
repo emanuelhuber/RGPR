@@ -80,7 +80,7 @@ Collate:
   'optPhaseRotation.R'
   'NMOCor.R'
   'CMPAnalysis.R'
-  'migration.R'
+  'migrate.R'
   'upsample.R'
   'writeGPR.R'
   'exportPDF.R'

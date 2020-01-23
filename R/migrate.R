@@ -1,16 +1,36 @@
+
+#--------------------- 'migration()' = DEPRECATED -----------------------------#
 #' @name migration
-#' @rdname migration
+#' @rdname migrate
 #' @export
 setGenericVerif("migration", function(x, type = c("static", "kirchhoff"), ...) 
   standardGeneric("migration"))
 
 
-#---------------------- MIGRATION & OFFSET CORRECTION---------------------#
+#' Deprecated
+#'
+#' @name migration
+#' @rdname migrate
+#' @export
+setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"), ...){
+  message("Soon deprecated. Use 'migrate()' instead of 'migration()'.")
+  migrate(x, type = type, ...)
+})
+
+#------------------------------------------------------------------------------#
+
+#' @name migrate
+#' @rdname migrate
+#' @export
+setGenericVerif("migrate", function(x, type = c("static", "kirchhoff"), ...) 
+  standardGeneric("migrate"))
+
+
 # max_depth = to which depth should the migration be performed
 # dz = vertical resolution of the migrated data
 # fdo = dominant frequency of the GPR signal
 
-#' Migration of the GPR data
+#' Migrate of the GPR data
 #' 
 #' Fresnel zone defined according to 
 #' Perez-Gracia et al. (2008) Horizontal resolution in a non-destructive
@@ -18,10 +38,14 @@ setGenericVerif("migration", function(x, type = c("static", "kirchhoff"), ...)
 #' 41(8): 611-620.
 #' doi:10.1016/j.ndteint.2008.06.002
 #'
-#' @name migration
-#' @rdname migration
+#' @param max_depth maximum depth to appply the migration
+#' @param dz        vertical resolution of the migrated data
+#' @param fdo       dominant frequency of the GPR signal
+#' 
+#' @name migrate
+#' @rdname migrate
 #' @export
-setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"), ...){
+setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
   if(length(x@antsep) == 0 || (!is.numeric(x@antsep))){
     stop("You must first define the antenna separation ",
          "with 'antsep(x) <- 1' for example!")
@@ -139,6 +163,7 @@ setMethod("migration", "GPR", function(x, type = c("static", "kirchhoff"), ...){
   fdo <- fdo * 10^6   # from MHz to Hz
   lambda <- fdo / v * 10^-9
   v2 <- v^2
+  max_depth <- max_depth + max(z)
   kirTopoGPR <- matrix(0, nrow = max_depth/dz + 1, ncol = m)
   dx <- mean(diff(xpos))
   for( i in seq_len(m)){

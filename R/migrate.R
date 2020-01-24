@@ -163,28 +163,21 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
   fdo <- fdo * 10^6   # from MHz to Hz
   lambda <- fdo / v * 10^-9
   v2 <- v^2
+  message("max depth1 = ", max_depth)
   max_depth <- max_depth + max(z)
-  kirTopoGPR <- matrix(0, nrow = max_depth/dz + 1, ncol = m)
+  message("max depth2 = ", max_depth)
+  kirTopoGPR <- matrix(0, nrow = floor(max_depth/dz) + 1, ncol = m)
+  
   dx <- mean(diff(xpos))
   for( i in seq_len(m)){
-    # x_d <- (i - 1)*dx   # diffraction
     x_d <- xpos[i]   # diffraction
     z_d <- seq(z[i], max_depth, by = dz)
-    #     mt <- (i - migTpl):(i + migTpl) # migration template
-    #     mt <- mt[mt > 0 & mt <= m]
-    #     l_migtpl <- length(mt)
-    # if(i == 1){
-    #   dx <- xpos[2] - xpos[1]
-    # }else if (i == m){
-    #   dx <- xpos[m] - xpos[m-1]
-    # }else{
-    #   dx <- sum((diff(xpos[(i-1):(i+1)]))/2)
-    # }
-    
     for(k in seq_along(z_d)){
       t_0 <- 2*(z_d[k] - z[i])/v    # = k * dts in reality
-      z_idx <- round(z_d[k] /dz + 1)
-      if(z_idx <= nrow(kirTopoGPR) && z_idx > 0){
+      # z_idx <- round(z_d[k] /dz + 1)
+      z_idx <-  floor(z_d[k] /dz) + 1
+      # print(z_idx)
+      # if(z_idx <= nrow(kirTopoGPR) && z_idx > 0){
         # Fresnel zone
         # Pérez-Gracia et al. (2008) Horizontal resolution in a non-destructive
         # shallow GPR survey: An experimental evaluation. NDT & E International,
@@ -210,10 +203,10 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
             # ((1-w)*A[t1,j] + w*A[t2,j])
             # http://sepwww.stanford.edu/public/docs/sep87/SEP087.Bevc.pdf
             Ampl[j- mt[1] + 1] <- (dx/sqrt(2*pi*t_x*v))*
-              (t_top/t_x) * 
-              ((1-w)*x[t1,j] + w*x[t2,j])
+                                  (t_top/t_x) * 
+                                  ((1-w)*x[t1,j] + w*x[t2,j])
           }
-        }
+        # }
         kirTopoGPR[z_idx, i] <- FUN(Ampl)
       }
     }

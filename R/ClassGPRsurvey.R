@@ -195,7 +195,7 @@ setAs(from = "GPRsurvey", to = "SpatialPoints",
     warning("no CRS defined!\n")
   }else{
     if(length(unique(x@crs)) > 1){
-      stop( "Not all the coordinate reference systems are identica: \n",
+      warning( "Not all the coordinate reference systems are identical: \n",
             paste0(unique(x@crs), collaspe = ", "), "!\n") 
     } 
   }
@@ -279,7 +279,7 @@ setReplaceMethod(
 #' @rdname crs
 #' @export
 setMethod("crs", "GPRsurvey", function(x){
-    return(x@crs)
+    return(.getCheckedCRS(x))
   } 
 )
 
@@ -588,6 +588,7 @@ setMethod(f="length", signature="GPRsurvey", definition=function(x){
     length(x@filepaths)
   }
 )
+
 
 
 # intersection

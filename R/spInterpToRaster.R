@@ -35,6 +35,8 @@ setMethod("spInterpToRaster", "GPRsurvey", function(x, nx = 100, ny = 100, h = 5
   return(r)
 })
 
+#' @name spInterpToRaster
+#' @rdname spInterpToRaster
 #' @export
 setMethod("spInterpToRaster", "matrix", function(x, nx = 100, ny = 100, h = 5, CRSobj, ...){
   # better way to do

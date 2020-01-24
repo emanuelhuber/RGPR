@@ -60,7 +60,7 @@ setMethod("delineate", "GPR",
                           "with the function \"plot\"!\n"))
             }
             xsave <- x
-            itp <- locator(type="l", n=n)
+            itp <- locator(type = "l", n = n)
             if(length(itp)>0){
               if(length(x@vel)>0){  
                 velo <- x@vel[[1]]

@@ -184,36 +184,38 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
     for(k in seq_along(z_d)){
       t_0 <- 2*(z_d[k] - z[i])/v    # = k * dts in reality
       z_idx <- round(z_d[k] /dz + 1)
-      # Fresnel zone
-      # Pérez-Gracia et al. (2008) Horizontal resolution in a non-destructive
-      # shallow GPR survey: An experimental evaluation. NDT & E International,
-      # 41(8): 611–620. doi:10.1016/j.ndteint.2008.06.002
-      rf <- 0.5 * sqrt(lambda * 2 * (z_d[k] - z[i]))
-      rf_tr <- round(rf/dx)
-      mt <- (i - rf_tr):(i + rf_tr)
-      mt <- mt[mt > 0 & mt <= m]
-      
-      lmt <- length(mt)
-      Ampl <- numeric(lmt)
-      for(j in mt){
-        # x_a <- (j-1)*dx
-        x_a <- xpos[j]
-        t_top <-  t_0 - 2*(z[j] - z[i])/v
-        t_x <- sqrt( t_top^2 +   4*(x_a - x_d)^2 /v2)
-        t1 <- floor(t_x/dts) + 1 # the largest integers not greater
-        t2 <- ceiling(t_x/dts) + 1 # smallest integers not less
-        if(t2 <= n && t1 > 0 && t_x != 0){
-          w <- ifelse(t1 != t2, abs((t1 - t_x)/(t1 - t2)), 0)
-          # Dujardin & Bano amplitude factor weight: cos(alpha) = t_top/t_x
-          # Ampl[j- mt[1] + 1] <- (t_top/t_x) * 
-          # ((1-w)*A[t1,j] + w*A[t2,j])
-          # http://sepwww.stanford.edu/public/docs/sep87/SEP087.Bevc.pdf
-          Ampl[j- mt[1] + 1] <- (dx/sqrt(2*pi*t_x*v))*
-            (t_top/t_x) * 
-            ((1-w)*x[t1,j] + w*x[t2,j])
+      if(z_idx <= nrow(kirTopoGPR) && z_idx > 0){
+        # Fresnel zone
+        # Pérez-Gracia et al. (2008) Horizontal resolution in a non-destructive
+        # shallow GPR survey: An experimental evaluation. NDT & E International,
+        # 41(8): 611–620. doi:10.1016/j.ndteint.2008.06.002
+        rf <- 0.5 * sqrt(lambda * 2 * (z_d[k] - z[i]))
+        rf_tr <- round(rf/dx)
+        mt <- (i - rf_tr):(i + rf_tr)
+        mt <- mt[mt > 0 & mt <= m]
+        
+        lmt <- length(mt)
+        Ampl <- numeric(lmt)
+        for(j in mt){
+          # x_a <- (j-1)*dx
+          x_a <- xpos[j]
+          t_top <-  t_0 - 2*(z[j] - z[i])/v
+          t_x <- sqrt( t_top^2 +   4*(x_a - x_d)^2 /v2)
+          t1 <- floor(t_x/dts) + 1 # the largest integers not greater
+          t2 <- ceiling(t_x/dts) + 1 # smallest integers not less
+          if(t2 <= n && t1 > 0 && t_x != 0){
+            w <- ifelse(t1 != t2, abs((t1 - t_x)/(t1 - t2)), 0)
+            # Dujardin & Bano amplitude factor weight: cos(alpha) = t_top/t_x
+            # Ampl[j- mt[1] + 1] <- (t_top/t_x) * 
+            # ((1-w)*A[t1,j] + w*A[t2,j])
+            # http://sepwww.stanford.edu/public/docs/sep87/SEP087.Bevc.pdf
+            Ampl[j- mt[1] + 1] <- (dx/sqrt(2*pi*t_x*v))*
+              (t_top/t_x) * 
+              ((1-w)*x[t1,j] + w*x[t2,j])
+          }
         }
+        kirTopoGPR[z_idx, i] <- FUN(Ampl)
       }
-      kirTopoGPR[z_idx,i] <- FUN(Ampl)
     }
   }
   kirTopoGPR <- kirTopoGPR/max(kirTopoGPR, na.rm=TRUE) * 50

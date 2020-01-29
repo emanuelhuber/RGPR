@@ -25,7 +25,7 @@ setMethod("delineate", "GPR", function(x,
   plot(x, ...)
   if(is.null(plot_del)) plot_del <- list()
   plot_del[["x"]] <- x
-  do.call(plotDelineations, plot_del)
+  if(length(x@delineations) > 0 ) do.call(plotDelineations, plot_del)
   # plotDelineations(x)
   itp <- locator(type = "l", n = n)
   if(length(itp) > 0){
@@ -226,17 +226,17 @@ plotDelineations3D <- function(...){
 #' @name plot3DDelineations
 #' @rdname delineation
 #' @export
-setGenericVerif("plot3DDelineations", 
+setGeneric("plot3DDelineations", 
                 function(x , col = NULL, add = TRUE, ...)
                   standardGeneric("plot3DDelineations"))
 
 
 #' Plot the delineation on RGL
 #'
-#' @name plotDelineations3D
+#' @name plot3DDelineations
 #' @rdname delineation
 #' @export
-setMethod("plotDelineations3D", "GPR", 
+setMethod("plot3DDelineations", "GPR", 
           function(x, col = NULL, add = TRUE, ...){
   if(length(x@delineations) > 0){
     xyzrel <- .getXYZrel(x)

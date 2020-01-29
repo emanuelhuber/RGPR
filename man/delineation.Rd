@@ -8,7 +8,6 @@
 \alias{rmDelineations<-}
 \alias{exportDelineations}
 \alias{plot3DDelineations}
-\alias{plotDelineations3D}
 \alias{identifyDelineation}
 \title{Delineate structure on GPR data}
 \usage{
@@ -31,7 +30,9 @@ rmDelineations(x) <- value
 
 \S4method{exportDelineations}{GPR}(x, dirpath = "")
 
-\S4method{plotDelineations3D}{GPR}(x, col = NULL, add = TRUE, ...)
+plot3DDelineations(x, col = NULL, add = TRUE, ...)
+
+\S4method{plot3DDelineations}{GPR}(x, col = NULL, add = TRUE, ...)
 
 \S4method{identifyDelineation}{GPR}(x, ...)
 }

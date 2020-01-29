@@ -1,10 +1,5 @@
-setGenericVerif("gainSEC", function(x, a = 0.01, b = 1, 
-                                    t0   = NULL, 
-                                    tend = NULL, 
-                                    tcst = NULL,
-                                    track = TRUE) 
-  standardGeneric("gainSEC")) 
 
+#-------------------------- DEPRECATED ---------------------#
 setGenericVerif("getGainSEC", function(x, a = 0.01, b = 1, 
                                        t0   = NULL, 
                                        tend = NULL, 
@@ -12,7 +7,67 @@ setGenericVerif("getGainSEC", function(x, a = 0.01, b = 1,
                                        track = TRUE) 
   standardGeneric("getGainSEC"))
 
+#' Spreading and Exponential Compensation (SEC) gain
+#' 
+#' \code{getGainSEC} is deprecated.
+#'                   
+#' @name getGainSEC
+#' @rdname gainSEC
+#' @export
+setMethod("getGainSEC", "GPR", function(x, a = 0.01, b = 1, 
+                                        t0   = NULL, 
+                                        tend = NULL, 
+                                        tcst = NULL,
+                                        track = TRUE){
+  stop("Deprecated. Use 'gainSEC(x, ..., return_gain = TRUE)' instead!")
+  # if(is.null(t0)) t0 <- x@time0
+  # if(length(t0) == 1) t0 <- rep(t0, ncol(x))
+  # 
+  # #------------------- check arguments
+  # msg <- checkArgInit()
+  # msg <- checkArg(a,    msg, "NUMERIC1_POS", Inf)
+  # msg <- checkArg(b,    msg, "NUMERIC1_POS", Inf)
+  # msg <- checkArg(t0,   msg, "NUMERIC_LEN", c(1, ncol(x)))
+  # msg <- checkArg(tend, msg, "NUMERIC1_NULL", Inf)
+  # msg <- checkArg(tcst, msg, "NUMERIC1_NULL", Inf)
+  # checkArgStop(msg)
+  # #-----------------------------------
+  # 
+  # spls <- sapply(t0, function(y, d){floor(sum(d < y))}, 
+  #                x@depth)
+  # n <- nrow(x)
+  # g <- (0 + x@depth^b) * exp(a * x@depth)
+  # G <- sapply(spls, function(x, g, n){c(rep(1, x), g[1:(n-x)])}, g, n )
+  # 
+  # if(!is.null(tend)){
+  #   test_tend <- x@depth >= tend
+  #   if(any(test_tend)) G[test_tend, ] <- G[which(test_tend)[1],]
+  # }
+  # if(!is.null(tcst)){
+  #   test_tcst <- x@depth <= tcst
+  #   if(any(test_tcst)) G[test_tcst, ] <- G[tail(which(test_tcst),1),]
+  # }
+  # # xG <- x*G
+  # # scaling
+  # h1 <- quantile(as.vector(abs(x*G)), 0.99, na.rm = TRUE)
+  # h2 <- quantile(as.vector(abs(x)), 0.99, na.rm = TRUE)
+  # x@data <- G / h1 * h2
+  # # xG <- xG / h1 * h2
+  # if(isTRUE(track)) proc(x) <- getArgs()
+  # return(x)
+})
 
+#-------------------------------------------------------------------------#
+
+setGenericVerif("gainSEC", function(x, 
+                                    a = 0.01, 
+                                    b = 1, 
+                                    t0   = NULL, 
+                                    tend = NULL, 
+                                    tcst = NULL,
+                                    return_gain = FALSE,
+                                    track = TRUE) 
+  standardGeneric("gainSEC")) 
 
 
 #' Spreading and Exponential Compensation (SEC) gain
@@ -51,63 +106,55 @@ setGenericVerif("getGainSEC", function(x, a = 0.01, b = 1,
 #' @name gainSEC
 #' @rdname gainSEC
 #' @export
-setMethod("gainSEC", "GPR", function(x, a = 0.01, b = 1, 
-                                     t0   = NULL, 
-                                     tend = NULL, 
-                                     tcst = NULL,
-                                     track = TRUE){
+setMethod("gainSEC", "GPR", function(x, 
+                                     a           = 0.01, 
+                                     b           = 1, 
+                                     t0          = NULL, 
+                                     tend        = NULL, 
+                                     tcst        = NULL,
+                                     return_gain = FALSE,
+                                     track       = TRUE){
   
   if(is.null(t0)) t0 <- x@time0
   if(length(t0) == 1) t0 <- rep(t0, ncol(x))
   
-  #------------------- check arguments
+  #------------------- check arguments ----
   msg <- checkArgInit()
-  msg <- checkArg(a,    msg, "NUMERIC1_POS", Inf)
-  msg <- checkArg(b,    msg, "NUMERIC1_POS", Inf)
-  msg <- checkArg(t0,   msg, "NUMERIC_LEN", c(1, ncol(x)))
-  msg <- checkArg(tend, msg, "NUMERIC1_NULL", Inf)
-  msg <- checkArg(tcst, msg, "NUMERIC1_NULL", Inf)
-  
+  msg <- checkArg(a,           msg, "NUMERIC1_POS", Inf)
+  msg <- checkArg(b,           msg, "NUMERIC1_POS", Inf)
+  msg <- checkArg(t0,          msg, "NUMERIC_LEN", c(1, ncol(x)))
+  msg <- checkArg(tend,        msg, "NUMERIC1_NULL", Inf)
+  msg <- checkArg(tcst,        msg, "NUMERIC1_NULL", Inf)
+  msg <- checkArg(return_gain, msg, "LOGICAL_LEN", 1)
   checkArgStop(msg)
-  #-----------------------------------
-  
-  G <- getGainSEC(x, 
+  #-----------------------------------#
+
+  G <- .gainSEC(x, 
                   a  = a, 
                   b  = b,
                   t0 = t0,
                   tend = tend,
                   tcst = tcst)
-  x <- x*G
+  
   if(isTRUE(track)) proc(x) <- getArgs()
+  if(isTRUE(return_gain)){
+    return(G)
+  }else{
+    return(x*G)
+  }
+  # x <- x*G
   return(x)
 })
 
-#' Spreading and Exponential Compensation (SEC) gain
-#' 
-#' \code{getGainSEC} returns the SEC gain as an object of the class \code{GPR}.
-#'                   
-#' @name getGainSEC
-#' @rdname gainSEC
-#' @export
-setMethod("getGainSEC", "GPR", function(x, a = 0.01, b = 1, 
-                                        t0   = NULL, 
-                                        tend = NULL, 
-                                        tcst = NULL,
-                                        track = TRUE){
-  
-  if(is.null(t0)) t0 <- x@time0
-  if(length(t0) == 1) t0 <- rep(t0, ncol(x))
-  
-  #------------------- check arguments
-  msg <- checkArgInit()
-  msg <- checkArg(a,    msg, "NUMERIC1_POS", Inf)
-  msg <- checkArg(b,    msg, "NUMERIC1_POS", Inf)
-  msg <- checkArg(t0,   msg, "NUMERIC_LEN", c(1, ncol(x)))
-  msg <- checkArg(tend, msg, "NUMERIC1_NULL", Inf)
-  msg <- checkArg(tcst, msg, "NUMERIC1_NULL", Inf)
-  checkArgStop(msg)
-  #-----------------------------------
-  
+
+
+.gainSEC <- function(x, 
+                     a     = 0.01, 
+                     b     = 1, 
+                     t0    = NULL, 
+                     tend  = NULL, 
+                     tcst  = NULL,
+                     track = TRUE){
   spls <- sapply(t0, function(y, d){floor(sum(d < y))}, 
                  x@depth)
   n <- nrow(x)
@@ -128,6 +175,6 @@ setMethod("getGainSEC", "GPR", function(x, a = 0.01, b = 1,
   h2 <- quantile(as.vector(abs(x)), 0.99, na.rm = TRUE)
   x@data <- G / h1 * h2
   # xG <- xG / h1 * h2
-  if(isTRUE(track)) proc(x) <- getArgs()
   return(x)
-})
+}
+

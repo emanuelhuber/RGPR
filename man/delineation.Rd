@@ -3,34 +3,40 @@
 \docType{methods}
 \name{delineate}
 \alias{delineate}
-\alias{rmDelineations<-}
 \alias{delineations}
-\alias{addDelineation}
-\alias{exportDelineations}
-\alias{plotDelineations3D}
 \alias{plotDelineations}
+\alias{rmDelineations<-}
+\alias{exportDelineations}
+\alias{plot3DDelineations}
+\alias{plotDelineations3D}
 \alias{identifyDelineation}
 \title{Delineate structure on GPR data}
 \usage{
-\S4method{delineate}{GPR}(x, name = NULL, type = c("raster",
-  "wiggles"), addTopo = FALSE, nupspl = NULL, n = 10000, ...)
+delineate(x, name = NULL, n = 10000, plot_del = NULL, ...)
 
-\S4method{addDelineation}{GPR}(x, itp, name = NULL, type = c("raster",
-  "wiggles"), addTopo = FALSE, ...)
+\S4method{delineate}{GPR}(x, name = NULL, n = 10000, plot_del = NULL,
+  ...)
+
+delineations(x)
+
+\S4method{delineations}{GPR}(x)
+
+plotDelineations(x, col = NULL, ...)
+
+\S4method{plotDelineations}{GPR}(x, col = NULL, ...)
+
+rmDelineations(x) <- value
 
 \S4method{rmDelineations}{GPR}(x) <- value
 
-\S4method{delineations}{GPR}(x, sel = NULL, ...)
-
 \S4method{exportDelineations}{GPR}(x, dirpath = "")
 
-\S4method{plotDelineations3D}{GPR}(x, sel = NULL, col = NULL,
-  add = TRUE, ...)
+\S4method{plotDelineations3D}{GPR}(x, col = NULL, add = TRUE, ...)
 
-\S4method{plotDelineations}{GPR}(x, sel = NULL, col = NULL, ...)
-
-\S4method{identifyDelineation}{GPR}(x, sel = NULL, ...)
+\S4method{identifyDelineation}{GPR}(x, ...)
 }
 \description{
-Delineate structure on GPR data
+Print and invisible returns the GPR data delineations.
+
+Works only close to the points !!!
 }

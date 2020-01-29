@@ -89,6 +89,10 @@ Collate:
   'exportProc.R'
   'spInterpToRaster.R'
   'spExtractFromRaster.R'
+  'rmBackground.R'
+  'rmBackgroundMatrix.R'
+  'checkArgs.R'
+  'checkSlots.R'
 Imports:
     methods,
     graphics,

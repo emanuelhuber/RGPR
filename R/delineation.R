@@ -98,7 +98,11 @@ setMethod("delineations", "GPR", function(x){
 #' @name plotDelineations
 #' @rdname delineation
 #' @export
-setGeneric("plotDelineations", function(x, col = NULL, ...) 
+setGeneric("plotDelineations", 
+           function(x, 
+                    method = c("linear", "nearest", "pchip", 
+                               "cubic", "spline", "none"), 
+                    col = NULL, ...) 
   standardGeneric("plotDelineations"))
 
 #' Plot the delineation on a 2D plot
@@ -106,12 +110,24 @@ setGeneric("plotDelineations", function(x, col = NULL, ...)
 #' @name plotDelineations
 #' @rdname delineation
 #' @export
-setMethod("plotDelineations", "GPR", function(x, col = NULL, ...){
+setMethod("plotDelineations", "GPR", 
+          function(x, 
+                   method = c("linear", "nearest", "pchip", 
+                              "cubic", "spline", "none"), 
+                   col = NULL, ...){
   if(is.null(dev.list())){
     stop("You must first plot the GPR profile with the function \"plot\"!\n")
   }
   if(length(x@delineations) > 0){
-    xyzrel <- .getXYZrel(x)
+    method <- match.arg(method, c("linear", "nearest", "pchip", 
+                                  "cubic", "spline", "none"))
+    # print(method)
+    if(method == "none"){
+      xyzrel <- .getXYZrel(x)
+      # print("NULL")
+    }else{
+      xyzrel <- .getXYZrelIntp(x, method)
+    }
     nd <- length(xyzrel)
     if(is.null(col))     col <- 1
     if(length(col) <= nd) col <- rep(col, nd)
@@ -227,7 +243,10 @@ plotDelineations3D <- function(...){
 #' @rdname delineation
 #' @export
 setGeneric("plot3DDelineations", 
-                function(x , col = NULL, add = TRUE, ...)
+                function(x, 
+                         method = c("linear", "nearest", "pchip", 
+                                    "cubic", "spline", "none"), 
+                         col = NULL, add = TRUE, ...)
                   standardGeneric("plot3DDelineations"))
 
 
@@ -237,9 +256,20 @@ setGeneric("plot3DDelineations",
 #' @rdname delineation
 #' @export
 setMethod("plot3DDelineations", "GPR", 
-          function(x, col = NULL, add = TRUE, ...){
+          function(x, 
+                   method = c("linear", "nearest", "pchip", 
+                              "cubic", "spline", "none"), 
+                   col = NULL, 
+                   add = TRUE, 
+                   ...){
   if(length(x@delineations) > 0){
-    xyzrel <- .getXYZrel(x)
+    method <- match.arg(method, c("linear", "nearest", "pchip", 
+                                  "cubic", "spline", "none"))
+    if(method == "none"){
+      xyzrel <- .getXYZrel(x)
+    }else{
+      xyzrel <- .getXYZrelIntp(x, method)
+    }
     n_d <- length(xyzrel)
     if(is.null(col))      col <- 1:n_d
     if(length(col)<=n_d)  col <- rep(col, n_d)
@@ -257,11 +287,14 @@ setMethod("plot3DDelineations", "GPR",
 })
 
 #' @export
-setMethod("plotDelineations3D", "GPRsurvey", 
-          function(x, col = NULL, add = TRUE, ...){
-            add<-add
+setMethod("plot3DDelineations", "GPRsurvey", 
+          function(x, 
+                   method = c("linear", "nearest", "pchip", 
+                              "cubic", "spline", "none"), 
+                   col = NULL, add = TRUE, ...){
+            add <- add
             for(i in seq_along(x)){
-              plotDelineations3D(x[[i]], col = col, add = add, ...)
+              plot3DDelineations(x[[i]], method = method, col = col, add = add, ...)
               add <- TRUE
             }  
           })
@@ -272,7 +305,10 @@ setMethod("plotDelineations3D", "GPRsurvey",
 #' @name identifyDelineation
 #' @rdname delineation
 #' @export
-setGenericVerif("identifyDelineation", function(x, ...) 
+setGenericVerif("identifyDelineation", function(x, 
+                                                method = c("linear", "nearest", "pchip", 
+                                                           "cubic", "spline", "none"), 
+                                                ...) 
   standardGeneric("identifyDelineation"))
 
 #' Identify the delineation on a 2D plot
@@ -281,13 +317,21 @@ setGenericVerif("identifyDelineation", function(x, ...)
 #' @name identifyDelineation
 #' @rdname delineation
 #' @export
-setMethod("identifyDelineation", "GPR", function(x, ...){
+setMethod("identifyDelineation", "GPR", function(x, 
+                                                 method = c("linear", "nearest", "pchip", 
+                                                            "cubic", "spline", "none"), 
+                                                 ...){
   if(is.null(dev.list())){
     stop("You must first plot the GPR profile with the function \"plot\"!\n")
   }
   if(length(x@delineations) > 0){
-    # message("*** delineated lines ****")
-    xyzrel <- .getXYZrel(x)
+    method <- match.arg(method, c("linear", "nearest", "pchip", 
+                                  "cubic", "spline", "none"))
+    if(method == "none"){
+      xyzrel <- .getXYZrel(x)
+    }else{
+      xyzrel <- .getXYZrelIntp(x, method)
+    }
     xyzrel_id <- seq_along(xyzrel)
     xzrel <- Map(function(x, y) cbind(x[,4:5], y), xyzrel, xyzrel_id)
     xzrel <- do.call(rbind, xzrel) 
@@ -300,30 +344,6 @@ setMethod("identifyDelineation", "GPR", function(x, ...){
   }
 })
 
-
-
-#' @export
-setMethod("plotDelineations3D", "GPRsurvey", 
-          function(x, sel = NULL, col = NULL, add = TRUE, ...){
-  add<-add
-  for(i in seq_along(x)){
-    gpr <- readGPR(x@filepaths[[i]])
-    if(length(x@coords[[gpr@name]])>0){
-      gpr@coord <- x@coords[[gpr@name]]
-      # cat(x@coordref,"\n")
-      gpr@coordref <- x@coordref
-    }
-    if(length(coord(gpr))==0){
-      message(gpr@name, ": no coordinates, I cannot plot",
-              " this line!!")
-    }else if(length(gpr@delineations) == 0){
-      message(gpr@name, ": no delineations for this line!!")
-    }else{
-      plotDelineations3D(gpr,sel=sel,col=col,add=add,...)
-    }
-    add <- TRUE
-  }  
-})
 
 
 
@@ -345,6 +365,34 @@ setMethod("plotDelineations3D", "GPRsurvey",
   xyz[, 3] <- xyz[, 3] - zrel[x[, "j"]]
   xyz[, 4] <- xrel[x[, "i"]]
   xyz[, 5] <- zrel[x[, "j"]]
+  colnames(xyz) <- c("x", "y", "z", "xrel", "zrel")
+  return(xyz)
+}
+
+# same as above but lines are interpolated to each trace positions
+# use flattenlist (global.R)
+.getXYZrelIntp <- function(x, method = "linear"){
+  u <- flattenlist(x@delineations)
+  x_relPos <- relTrPos(x)
+  if(length(x@coord) == 0){
+    x@coord <- matrix(0, nrow = ncol(x), ncol = 3)
+    x@coord[, 1] <- x_relPos
+  }
+  lapply(u, .getXYZrel0Intp, x@coord, x_relPos, x@depth, method)
+}
+.getXYZrel0Intp <- function(x, xyz, xrel, zrel, method){
+  
+  # zpos <- depth(x)
+  # xpos <- relTrPos(x)
+  x_i <- seq(min(x[,"i"]), max(x[,"i"]), by = 1)
+  zrel_j <- signal::interp1(x = xrel[x[,"i"]], y = zrel[x[,"j"]], 
+                            xi = xrel[x_i], method = method)
+  
+  xyz <- xyz[x_i, ]
+  xyz <- xyz[, c(1, 2, 3, 3, 3)]
+  xyz[, 3] <- xyz[, 3] - zrel_j
+  xyz[, 4] <- xrel[x_i]
+  xyz[, 5] <- zrel_j
   colnames(xyz) <- c("x", "y", "z", "xrel", "zrel")
   return(xyz)
 }

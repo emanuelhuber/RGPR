@@ -20,9 +20,11 @@ delineations(x)
 
 \S4method{delineations}{GPR}(x)
 
-plotDelineations(x, col = NULL, ...)
+plotDelineations(x, method = c("linear", "nearest", "pchip", "cubic",
+  "spline", "none"), col = NULL, ...)
 
-\S4method{plotDelineations}{GPR}(x, col = NULL, ...)
+\S4method{plotDelineations}{GPR}(x, method = c("linear", "nearest",
+  "pchip", "cubic", "spline", "none"), col = NULL, ...)
 
 rmDelineations(x) <- value
 
@@ -30,11 +32,14 @@ rmDelineations(x) <- value
 
 \S4method{exportDelineations}{GPR}(x, dirpath = "")
 
-plot3DDelineations(x, col = NULL, add = TRUE, ...)
+plot3DDelineations(x, method = c("linear", "nearest", "pchip", "cubic",
+  "spline", "none"), col = NULL, add = TRUE, ...)
 
-\S4method{plot3DDelineations}{GPR}(x, col = NULL, add = TRUE, ...)
+\S4method{plot3DDelineations}{GPR}(x, method = c("linear", "nearest",
+  "pchip", "cubic", "spline", "none"), col = NULL, add = TRUE, ...)
 
-\S4method{identifyDelineation}{GPR}(x, ...)
+\S4method{identifyDelineation}{GPR}(x, method = c("linear", "nearest",
+  "pchip", "cubic", "spline", "none"), ...)
 }
 \description{
 Print and invisible returns the GPR data delineations.

@@ -16,9 +16,9 @@ delineate(x, name = NULL, n = 10000, plot_del = NULL, ...)
 \S4method{delineate}{GPR}(x, name = NULL, n = 10000, plot_del = NULL,
   ...)
 
-delineations(x)
+delineations(x, name = NULL)
 
-\S4method{delineations}{GPR}(x)
+\S4method{delineations}{GPR}(x, name = NULL)
 
 plotDelineations(x, method = c("linear", "nearest", "pchip", "cubic",
   "spline", "none"), col = NULL, ...)

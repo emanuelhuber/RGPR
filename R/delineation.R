@@ -37,9 +37,14 @@ setMethod("delineate", "GPR", function(x,
     xval <- relTrPos(x)
     i <- sapply(itp$x, .whichMin, xval)
     j <- sapply(itp$y, .whichMin, x@depth)
-    test <- i >= 0 & i <= length(x) & 
-      j >= 0 & j <= nrow(x)
+    # the indices should range from 1 to ncol/nrow
+    test <- ( i >= 1 & i <= length(x) & 
+      j >= 1 & j <= nrow(x) )
     if(any(!test)) warning("there is a problem")
+    # remove duplicated indices
+    ijDupl <- duplicated(i) & duplicated(j)
+    i <- i[!ijDupl]
+    j <- j[!ijDupl]
   }
   if(is.null(name)){
     x@delineations <- c(x@delineations, list(cbind(i, j)))
@@ -60,7 +65,7 @@ setMethod("delineate", "GPR", function(x,
 #' @name delineations
 #' @rdname delineation
 #' @export
-setGeneric("delineations", function(x) 
+setGeneric("delineations", function(x, name = NULL) 
   standardGeneric("delineations"))
 
 #' Print the list of delineation of the GPR data
@@ -69,10 +74,13 @@ setGeneric("delineations", function(x)
 #' @name delineations
 #' @rdname delineation
 #' @export
-setMethod("delineations", "GPR", function(x){
+setMethod("delineations", "GPR", function(x, name = NULL){
   if(length(x@delineations) > 0){
     message("*** delineated lines ****")
     xyzrel <- .getXYZrel(x)
+    if(!is.null(name)){
+      xyzrel <- xyzrel[names(xyzrel) %in% name]
+    }
     m <- unlist( lapply(xyzrel, .printdelineations) )
     m <- Map(c, paste0(names(m), "\n"), paste0(seq_along(m), m))
     message(unlist(m), appendLF = FALSE)
@@ -380,7 +388,22 @@ setMethod("identifyDelineation", "GPR", function(x,
   }
   lapply(u, .getXYZrel0Intp, x@coord, x_relPos, x@depth, method)
 }
+
+
 .getXYZrel0Intp <- function(x, xyz, xrel, zrel, method){
+  
+  tst <- interpToCoords(i = x[, "i"], u = zrel[x[,"j"]], xy = xyz, method = method)
+  
+  xyz <- xyz[tst[["i"]], ]
+  xyz <- xyz[, c(1, 2, 3, 3, 3)]
+  xyz[, 3] <- xyz[, 3] - tst[["u"]]
+  xyz[, 4] <- xrel[tst[["i"]]]
+  xyz[, 5] <- tst[["u"]]
+  colnames(xyz) <- c("x", "y", "z", "xrel", "zrel")
+  return(xyz)
+}
+
+.getXYZrel0Intp_old <- function(x, xyz, xrel, zrel, method){
   
   # zpos <- depth(x)
   # xpos <- relTrPos(x)

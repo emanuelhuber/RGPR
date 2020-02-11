@@ -93,6 +93,7 @@ Collate:
   'rmBackgroundMatrix.R'
   'checkArgs.R'
   'checkSlots.R'
+  'z_interp.R'
 Imports:
     methods,
     graphics,

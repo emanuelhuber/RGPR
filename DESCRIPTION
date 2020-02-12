@@ -24,6 +24,7 @@ Encoding: UTF-8
 ByteCompile: true
 Collate:
 	'RGPR.R'
+	'ClassGPRvirtual.R'
 	'ClassGPR.R'
 Imports:
     methods,

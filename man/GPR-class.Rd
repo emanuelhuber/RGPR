@@ -7,114 +7,33 @@
 \description{
 An S4 class to represent a ground-penetrating radar (GPR) data.
 }
+\details{
+Matrix of dimension \eqn{n \times m} (\eqn{n} samples, 
+\eqn{m} traces or A-scans).
+}
 \section{Slots}{
 
 \describe{
-\item{\code{version}}{A length-one character vector indicating the version of RGPR}
+\item{\code{z0}}{[\code{numeric(m)}]   Time-zero or depth-zero.}
 
-\item{\code{data}}{A \eqn{m \times n} numeric matrix consiting of a 
-cross-section of signal amplitudes as a function of the GPR 
-position. The columns of \code{data} correspond to the GPR 
-traces and the row of \code{data} to the time/depth samples.}
+\item{\code{time}}{[\code{numeric(m)}]   Recording time of every trace.}
 
-\item{\code{traces}}{A length-m numeric vector corresponding to the trace number.}
+\item{\code{antsep}}{[\code{numeric(m)}]   Antenna separation.}
 
-\item{\code{depth}}{A length-n numeric vector indicating the sampling time or
-the vertical position of the trace samples.}
+\item{\code{markers}}{[\code{character(m)}] Fiducial markers associated with the traces.}
 
-\item{\code{pos}}{A length-m numeric vector indicating the relative position of
-the trace along the survey profile.}
+\item{\code{ann}}{[\code{character(m)}] Annotations associated with the traces.}
 
-\item{\code{time0}}{A length-m numeric vector containing the 'time-zero' of every
-trace.}
+\item{\code{coord}}{[\code{matrix(m,3)}]  Trace positions.}
 
-\item{\code{time}}{A length-m numeric vector containing the recording time of 
-every trace.}
+\item{\code{rec}}{[\code{matrix(m,3)}]  Receiver positions}
 
-\item{\code{fid}}{A length-m character vector containing fiducial markers associated
-with the traces.}
+\item{\code{trans}}{[\code{matrix(m,3)}]  Transmitter positions}
 
-\item{\code{ann}}{A length-m character vector containing annotations associated 
-with the traces.}
+\item{\code{x}}{[\code{numeric}]      Relative trace position}
 
-\item{\code{coord}}{A \eqn{m \times 3} matrix containing the (x, y, z) positions of
-every trace.}
+\item{\code{z}}{[\code{numeric}]      Relative sample position}
 
-\item{\code{rec}}{A \eqn{m \times 3} matrix containing the (x, y, z) positions of
-the receiver for every trace.}
-
-\item{\code{trans}}{A \eqn{m \times 3} matrix containing the (x, y, z) positions of
-the transmitter for every trace.}
-
-\item{\code{coordref}}{A length-3 numeric vector containing the coordinates of a
-local reference.}
-
-\item{\code{freq}}{A length-one numeric vector corresponding to the GPR antennae
-frequency (in MHz).}
-
-\item{\code{dz}}{A length-one numeric vector corresponding to the time or depth
-sampling step.}
-
-\item{\code{dx}}{A length-one numeric vector corresponding to the trace step.}
-
-\item{\code{antsep}}{A length-one numeric vector corresponding to the antenna
-separation.}
-
-\item{\code{name}}{A length-one character vector containing the name of the GPR
-data.}
-
-\item{\code{description}}{A length-one character vector containing the description 
-of the GPR data.}
-
-\item{\code{filepath}}{A length-one character vector containing the file path of 
-the original GPR data.}
-
-\item{\code{depthunit}}{A length-one character vector corresponding to the 
-time/depth unit (e.g., "ns", "m").}
-
-\item{\code{posunit}}{A length-one character vector corresponding to the 
-(x, y)-unit (e.g., "m").}
-
-\item{\code{surveymode}}{A length-one character vector containing the survey mode
-(e.g., "Reflection", "CMP")}
-
-\item{\code{date}}{A length-one character vector containing the date of the survey
-in the format "yyyy-mm-dd".}
-
-\item{\code{crs}}{A length-one character vector containing the coordinate 
-reference system following the R notation of proj4string 
-from the PROJ.4 library.}
-
-\item{\code{proc}}{A length-varying character vector whose each element correspond
-to a processing step applied to the data.}
-
-\item{\code{vel}}{A list containing the velocity model.}
-
-\item{\code{delineations}}{A list containing delineated structures.}
-
-\item{\code{hd}}{A list containing less relevant additional informations.}
+\item{\code{angles}}{[\code{matrix(m,2)}]  Transmitter positions}
 }}
-
-\section{Survey mode}{
-  Difference between reflection and CMP and WARR
-\describe{
-  \item{reflection}{The trace positions increase from trace to trace. The
-                    antenna separation distance is constant.
-                    Amplitude = f(depth, position)}
-  \item{CMP}{The trace positions, \code{x@pos}, are constant and equal to 
-             zero. The antenna separation distance increases increase from
-             trace to trace.
-             Amplitude = f(depth, antsep)}
-  \item{WARR}{The trace positions, \code{x@pos}, are not constant because
-             while the signal is emitted from the same position, the signal
-             the signal is recorded from different positions. 
-             The antenna separation distance increases increase from
-             trace to trace.
-             Is "CMP" a special case of "WARR"?
-             Amplitude = f(depth, antsep)}
-  \item{CMPAnalysis}{No trace positions, \code{x@pos = numeric(0)},
-                     no antenna separation, \code{x@antsep = numeric(0)},
-                     coherence/semblance = f(depth, velocity)}
-}
-}
 

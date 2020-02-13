@@ -5,5 +5,26 @@
 \alias{GPRcube-class}
 \title{Class GPRcube}
 \description{
-An S4 class to represent 3D ground-penetrating radar (GPR) data.
+An S4 class to represent 3D ground-penetrating radar (GPR) data. 
+Array of dimension \eqn{n \times m \time p}  (\eqn{n} samples, 
+\eqn{m} traces or A-scans along \eqn{x}, 
+and \eqn{p} traces or A-scans along \eqn{y}), with grid cell sizes 
+\eqn{dx}, \eqn{dy}, and \eqn{dz}.
+We assume that the unit along y is the same as the unit along x.
 }
+\section{Slots}{
+
+\describe{
+\item{\code{dx}}{[\code{numeric(1)}] Grid cell size along x}
+
+\item{\code{dy}}{[\code{numeric(1)}] Grid cell size along y}
+
+\item{\code{dz}}{[\code{numeric(1)}] Grid cell size along z}
+
+\item{\code{ylab}}{[\code{character(1|p)}] Label of \code{y}.}
+
+\item{\code{center}}{[\code{numeric(3)}] Coordinates of the bottom left grid corner.}
+
+\item{\code{rot}}{[\code{numeric(1)}] Rotation angle}
+}}
+

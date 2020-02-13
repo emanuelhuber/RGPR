@@ -40,29 +40,27 @@
 #' @slot path         [\code{character(1)}] File path of the original GPR data.
 #' @slot desc         [\code{character(1)}] Description of the GPR data.
 #' @slot mode         [\code{character(1)}] Survey mode 
-#'                    (e.g., \code{"Reflection"}, \code{"CMP"}).
+#'                    (e.g., \code{"CO"}, \code{"CMP"}).
 #' @slot date         [\code{Date(1)}] Date of the survey (class \code{Date},
 #'                    e.g., \code{Sys.Date()}).
 #' @slot freq         [\code{numeric(1)}] GPR antennae frequency (in MHz).
 #' @slot data         [\code{array}] GPR data.
 #' @slot dunit        [\code{character(1)}] GPR data unit.
 #' @slot dlab         [\code{character(1)}] GPR data label.
-#' @slot crs          [\code{\character(1)}] Coordinate reference system following the 
+#' @slot crs          [\code{character(1)}] Coordinate reference system following the 
 #'                    R notation of proj4string from the PROJ.4 library. 
-#' @slot spunit       [\code{\character(1)}] Spatial units.
-#' @slot x            [\code{\numeric}] Relative trace position
-#' @slot xpunit       [\code{\character(1)}] Unit of \code{x}.
-#' @slot xlab         [\code{\character(1)}] Label of \code{x}.
-#' @slot z            [\code{\numeric}] Relative sample position
-#' @slot zpunit       [\code{\character(1)}] Unit of \code{z}.
-#' @slot zlab         [\code{\character(1)}] Label of \code{z}.
-#' @slot vel          [\code{\list}] Velocity model.
-#' @slot proc         [\code{\list}] Each element corresponds
+#' @slot spunit       [\code{character(1)}] Spatial units.
+#' @slot xunit        [\code{character(1)}] Unit of \code{x}.
+#' @slot xlab         [\code{character(1)}] Label of \code{x}.
+#' @slot zunit        [\code{character(1)}] Unit of \code{z}.
+#' @slot zlab         [\code{character(1)}] Label of \code{z}.
+#' @slot vel          [\code{list}] Velocity model.
+#' @slot proc         [\code{list}] Each element corresponds
 #'                    to a processing step applied to the data.
-#' @slot delineations [\code{\list}] Hand-delineated structures.
-#' @slot md           [\code{\list}] Additional meta data from GPR file.
-#' @name GPR-class
-#' @rdname GPR-class
+#' @slot delineations [\code{list}] Hand-delineated structures.
+#' @slot md           [\code{list}] Additional meta data from GPR file.
+#' @name GPRvirtual-class
+#' @rdname GPRvirtual-class
 #' @export
 setClass(
   Class = "GPRvirtual",
@@ -81,14 +79,12 @@ setClass(
     dlab         = "character", 
     
     spunit       = "character",  # spatial unit
-    crs          = "CRS",        # coordinate reference system of @coord
+    crs          = "character",  # coordinate reference system of @coord
     # ? coordref = "numeric",    # coordinates references or "center" or "centroid"
     
-    x            = "numeric",    # trace position
     xunit        = "character",  # horizontal unit
     xlab         = "character",
     
-    z            = "numeric",    # depth/time position (vertical)
     zunit        = "character",  # time/depth unit
     zlab         = "character",
     

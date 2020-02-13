@@ -30,6 +30,13 @@ Collate:
 	'ClassGPRcube.R'
 	'ClassGPRslice.R'
 	'ClassGPRsurvey.R'
+	'readDT1.R'
+	'GPS.R'
+	'clippedValues.R'
+	'z_utils.R'
+	'z_string.R'
+	'z_con.R'
+	'z_files.R'
 Imports:
     methods,
     graphics,

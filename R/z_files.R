@@ -1,17 +1,26 @@
+getFPath <- function(x){
+  if(inherits(x, "connection")){
+    summaryCon <- summary.connection(x)
+    return( summaryCon$description )
+  }else{
+    return(x)
+  }
+}
+
 
 #' Filepath(s) with correct extension(s)
 #' 
 #' Returns the filepaths with the correct extension and check for 
 #' upper and lower case extension (e.g., ".txt" or ".TXT")
-#' @param fPath length-one character vector (e.g., "xline01.dt1")
-#' @param ext   character vector of the extension required
-#' @param throwError boolean. If TRUE, an error is thrown if the filepath
-#'                   with one of the extension does not exist. If FALSE,
-#'                   it returns NULL for the missing extension
-#' @return A list whose keys correspond to \code{ext} and the values to 
-#'         the filepaths:
-#'         $hd  -> xline01.hd
-#'         $dt1 -> xline01.dt1
+#' @param fPath      [\code{character(1)}] Filepath.
+#' @param ext        [\code{character}] Extensions to check 
+#'                   (e.g., \code{".hd"}).
+#' @param throwError [\code{logical(1)}] If TRUE, an error is thrown if the 
+#'                   filepath with one of the extension does not exist. 
+#'                   If FALSE, it returns NULL for the missing extension
+#' @return           [\code{list}] The list keys correspond to \code{ext} and 
+#'                   the values to the filepaths 
+#'                   (e.g., \code{$hd  -> xline01.hd}).
 #' @export  
 getFName <- function(fPath, ext = c(".hd", ".dt1"), throwError = TRUE){
   fp <- file.path(dirname(fPath), .fNameWExt(fPath))
@@ -20,10 +29,8 @@ getFName <- function(fPath, ext = c(".hd", ".dt1"), throwError = TRUE){
   mfile <- list()
   for(i in seq_along(ext)){
     if(file.exists(f1 <- paste0(fp, Ext[i]))){
-      #mfile[[gsub("^[.]",  "", ext[i])]] <- paste0(fp, Ext[i])
       mfile[[gsub("^[.]",  "", ext[i])]] <- f1
     }else if(file.exists(f2 <- paste0(fp, ext[i]))){
-      #mfile[[gsub("^[.]",  "", ext[i])]] <- paste0(fp, ext[i])
       mfile[[gsub("^[.]",  "", ext[i])]] <- f2
     }else{
       if(isTRUE(throwError)){
@@ -71,13 +78,13 @@ safeName <- function(x, y){
 }
 
 
-#' return filename without extension
+# #' return filename without extension
 # #' @export
 .fNameWExt <- function(x){
   unlist(lapply(strsplit(basename(x),"[.]"), head , 1 ), use.names = FALSE)
 }
 
-#' return the file extension.
+# #' return the file extension.
 # #' @export
 .fExt <- function(x){
   #   cat("with caution... because split \'.\' may not be so good\n")

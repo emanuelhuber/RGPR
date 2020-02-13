@@ -10,6 +10,14 @@
 # an outward-pointing normal direction (i.e., "up") is used for the third 
 # coordinate on the sphere.
 
+#FIXME -> what does it return? A spatialPoints
+#' Read GPS file with GPGGA string
+#' @param dsn [\code{character(1)|connection object}] Data source name: 
+#'            either the filepath to the GPR data (character),
+#'            or an open file connection.
+#' @param sep [\code{character(1)}] The field separator character
+#'            (see\code{\link{read.table}}).
+#' @return [\code{SpatialPoints}]
 #' @export
 readGPGGA <- function(dsn, sep = ","){
   if(!inherits(dsn, "connection")){
@@ -23,11 +31,6 @@ readGPGGA <- function(dsn, sep = ","){
   a <- read.table(textConnection(content), 
                   header = FALSE, colClasses = "character",
                   stringsAsFactors = FALSE, sep = ",")
-  # a <- read.table(textConnection(gsub(sep, ";", content)), 
-  #                 header = FALSE, colClasses = "character",
-  #                 stringsAsFactors = FALSE, sep = ";")
-  # a <- read.table(x, header = FALSE, colClasses = "character",
-                  # sep = ",", stringsAsFactors = FALSE)
   llz <- getLonLatFromGPGGA(a)
   sp::coordinates(llz) <- cbind(x = llz$lon, y = llz$lat)
   sp::proj4string(llz) <- sp::CRS("+proj=longlat +datum=WGS84")
@@ -35,6 +38,11 @@ readGPGGA <- function(dsn, sep = ","){
   return(llz)
 }
 
+#' Get longitude and latitude from GPGGA sentence information (NMEA)
+#' 
+#' @param a [\code{data.frame}] GPGGA sentence information 
+#' @return [\code{data.frame}] Columns = latitude, longitude, elevation and
+#'         time
 #' @export
 getLonLatFromGPGGA <- function(a){  
   a <- as.data.frame(a, stringsAsFactors = FALSE)
@@ -82,14 +90,22 @@ stringToLat <- function(x, NW = "N"){
   return(lat)
 }
 
-#' longitude, latitude to UTM
+#' Convert longitude, latitude to UTM
 #' 
 #' see https://stackoverflow.com/a/30225804
 #' https://stackoverflow.com/questions/18639967/converting-latitude-and-longitude-points-to-utm
+#' @param lon [\code{numeric}] Longitude.
+#' @param lat [\code{numeric}] Latitude
+#' @param zone [\code{integer(1)}] UMT zone (optional).
+#' @param south [\code{logical(1)}] \code{TRUE} if the coordinates are in the
+#'              southern hemisphere, else \code{FALSE}.
+#' @return [\code{list(2)}] \code{xy} the coordinates in UTM, 
+#'         \code{crs} the UTM coordinate reference system (proj4string).
 #' @export
-llToUTM <- function(lon, lat, zone = NULL, south = NULL){
+lonlatToUTM <- function(lon, lat, zone = NULL, south = NULL){
+  #FIXME
   # todo: check if lat/long in hh:mm:ss and convert them into
-  #       decimal with the function 'll2dc()' (see below)
+  #       decimal with the function 'lonlatToDeci()' (see below)
   lat_mean <- median(lat)
   lon_mean <- median(lon)
   if(is.null(zone)){
@@ -113,6 +129,9 @@ llToUTM <- function(lon, lat, zone = NULL, south = NULL){
 
 #' Get UTM zone from lattidue and longitude
 #'
+#' @param lon [\code{numeric}] Longitude.
+#' @param lat [\code{numeric}] Latitude
+#' @return [\code{integer(1)}] The UTM zone.
 #' @export
 getUTMzone <- function(lat, lon){
   # see https://stackoverflow.com/a/9188972
@@ -135,24 +154,28 @@ getUTMzone <- function(lat, lon){
 }
 
 #' UTM to latitude-longitude
-#' @return a 2-column-matrix (longitude (N), latitude (E))
 #' 
+#' @param xy     [\code{matrix(,2)}] Columns = x and y coordinates.
+#' @param crsObj [\code{character(1)}] Coordinate reference system 
+#'               (proj4string)
+#' @return a 2-column-matrix (longitude (N), latitude (E))
 #' @export
-UTMToll <- function(xy, xy_crs = NULL){
+UTMTolonlat <- function(xy, crsObj = NULL){
   #if(max(xy[,1]) > 834000) stop("y-values (northing) are larger than 834000")
   #if(min(xy[,1]) < 166000) stop("x-values (easting) are smaller than 166000")
-  if(is.null(xy_crs)){
-    xy_crs <- "+proj=utm +zone=32 +ellps=WGS84"
+  if(is.null(crsObj)){
+    crsObj <- "+proj=utm +zone=32 +ellps=WGS84"
   } 
   ll <- data.frame(ID = 1:nrow(xy), X = xy[,1], Y = xy[,2])
   sp::coordinates(ll) <- c("X", "Y")
-  sp::proj4string(ll) <- sp::CRS(xy_crs)
+  sp::proj4string(ll) <- sp::CRS(crsObj)
   xy <- sp::spTransform(ll, sp::CRS("+init=epsg:4326"))
   as.matrix(as.data.frame(xy)[,2:3])
 }
 
+# old name ll2dc
 # conversion latitude longitude (hh:mm:ss into decimal
-ll2dc <- function(x){
+lonlatToDeci <- function(x){
   NS <- gsub('[^[:alpha:]]', "", x)
   w <- gsub('[^0-9:.]', "", x)
   V <- matrix(as.numeric(do.call(rbind, strsplit(w, ":"))), ncol = 3)

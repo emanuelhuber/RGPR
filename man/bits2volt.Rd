@@ -9,14 +9,14 @@ Convert bytes to volt values}
 bits2volt(Vmax = 50, Vmin = 50, nbits = 16)
 }
 \arguments{
-\item{Vmax}{length-one numeric vector: maximal nominal analog input voltage. 
+\item{Vmax}{[\code{numeric(1)}] Maximal nominal analog input voltage. 
 If \code{Vmax = NULL} it returns \code{1} (no bytes to volt 
 transformation)}
 
-\item{Vmin}{length-one numeric vector: minimal nominal analog input voltage. 
+\item{Vmin}{[\code{numeric(1)}] Minimal nominal analog input voltage. 
 If missing, then \code{Vmin = -Vmax}.}
 
-\item{nbits}{Length-one numeric vector: number of bits}
+\item{nbits}{[\code{integer(1)} Number of bits.}
 }
 \description{
 Bytes to volt conversion

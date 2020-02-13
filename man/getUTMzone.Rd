@@ -6,6 +6,14 @@
 \usage{
 getUTMzone(lat, lon)
 }
+\arguments{
+\item{lat}{[\code{numeric}] Latitude}
+
+\item{lon}{[\code{numeric}] Longitude.}
+}
+\value{
+[\code{integer(1)}] The UTM zone.
+}
 \description{
 Get UTM zone from lattidue and longitude
 }

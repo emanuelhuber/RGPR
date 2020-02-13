@@ -2,10 +2,16 @@
 % Please edit documentation in R/z_utils.R
 \name{verboseF}
 \alias{verboseF}
-\title{Suppressing output from cat(), warnings & messages}
+\title{Suppressing output from cat(), warnings & messages in functions}
 \usage{
 verboseF(g, verbose = TRUE)
 }
+\arguments{
+\item{g}{[\code{function}] A function.}
+
+\item{verbose}{[\code{logical(1)}] If \code{FALSE}, suppress any warnings
+and messages in function \code{g}, else do nothing.}
+}
 \description{
-Suppressing output from cat(), warnings & messages
+Suppressing output from cat(), warnings & messages in functions
 }

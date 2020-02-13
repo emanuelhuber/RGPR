@@ -7,19 +7,19 @@
 getFName(fPath, ext = c(".hd", ".dt1"), throwError = TRUE)
 }
 \arguments{
-\item{fPath}{length-one character vector (e.g., "xline01.dt1")}
+\item{fPath}{[\code{character(1)}] Filepath.}
 
-\item{ext}{character vector of the extension required}
+\item{ext}{[\code{character}] Extensions to check 
+(e.g., \code{".hd"}).}
 
-\item{throwError}{boolean. If TRUE, an error is thrown if the filepath
-with one of the extension does not exist. If FALSE,
-it returns NULL for the missing extension}
+\item{throwError}{[\code{logical(1)}] If TRUE, an error is thrown if the 
+filepath with one of the extension does not exist. 
+If FALSE, it returns NULL for the missing extension}
 }
 \value{
-A list whose keys correspond to \code{ext} and the values to 
-        the filepaths:
-        $hd  -> xline01.hd
-        $dt1 -> xline01.dt1
+[\code{list}] The list keys correspond to \code{ext} and 
+                  the values to the filepaths 
+                  (e.g., \code{$hd  -> xline01.hd}).
 }
 \description{
 Returns the filepaths with the correct extension and check for 

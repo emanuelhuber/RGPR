@@ -9,8 +9,8 @@
 # x = list containing all the data
 # return object of class GPR
 
-#' Private function read DT1
-#' @export
+# Private function read DT1
+# @export
 .gprDT1 <- function(x, fName = character(0), desc = character(0),
                  fPath = character(0), Vmax = 50){
   coord_rec   <- cbind(x$dt1$recx,   x$dt1$recy,   x$dt1$recz)

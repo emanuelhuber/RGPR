@@ -6,6 +6,21 @@
 \usage{
 freqFromString(s)
 }
+\arguments{
+\item{s}{[\code{character(1)}] Character string that may contain an 
+indication of a frequency.}
+}
+\value{
+[\code{numeric(1)}] The frequency.
+}
 \description{
 Extract with regex the antenna frequency in a string
+}
+\examples{
+s <- "1230 fds 200-MHZ 12.3"
+freqFromString(s) 
+s <- "1230MLF"
+freqFromString(s) 
+s <- "D1230MLF"
+freqFromString(s) 
 }

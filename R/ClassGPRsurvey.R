@@ -1,9 +1,8 @@
-
 # RULE
 #  - warnings & messages suppressed in functions other than 'GPRsurvey()'
+#  - raise an error when crs/zunit and spunit are different
 
-#' Class GPRsurvey
-#' 
+
 #' An S4 class to represent a collection of \eqn{k} GPR data. 
 #' An object of the class \code{GPRsurvey} does only contain the links to 
 #' the GPR data files as well as information about the GPR data such as 
@@ -33,47 +32,46 @@
 #' @slot freqs     [\code{numeric(k)}] Antennae frequency of the GPR data 
 #'                 (in MHz).               
 #' @slot antseps   [\code{numeric(k)}] Antennae separation of the GPR data 
-#' @slot lengths   [\code{numeric(k)}] Length of the GPR data.
-#' @slot ntraces   [\code{integer(k)}] Number of traces in each GPR data.
-#' @slot nz        [\code{integer(k)}] Number of samples in each GPR data.
-#' @slot zwin      [\code{numeric(k)}] Range along \code{z} in each GPR data.
-#' @slot zunit     [\code{character(1)}] Unit of \code{z}.
+#' @slot spunit    [\code{character(1)}] Spatial units.
 #' @slot crs       [\code{character(1)}] Coordinate reference system following the 
 #'                 R notation of proj4string from the PROJ.4 library. 
-#' @slot spunit    [\code{character(1)}] Spatial units.
 #' @slot coords    [\code{list(k)}] GPR data coordinates
 #' @slot intersecs [\code{list(k)}] Intersections coordinates of the GPR data
 #' @slot markers   [\code{list(k)}] Fiducial markers of the GPR data
+#' @slot nz        [\code{integer(k)}] Number of samples in each GPR data.
+#' @slot zlengths  [\code{numeric(k)}] Range along \code{z} in each GPR data.
+#' @slot zunits    [\code{character(1)}] Unit of \code{z}.
+#' @slot nx        [\code{integer(k)}] Number of traces in each GPR data.
+#' @slot xlengths  [\code{numeric(k)}] Length of the GPR data.
 #' @name GPRsurvey-class
 #' @rdname GPRsurvey-class
 #' @export
 setClass(
   Class = "GPRsurvey",  
   slots = c(
-    version   = "character",   # version of the class
-    paths     = "character",   # filepath of the GPR data
-    names     = "character",   # names of the GPR profiles
-    descs     = "character",   # descriptions of the GPR profiles
-    modes     = "character",   # survey mode (reflection/CMP)
+    version       = "character",  # version of the class
+    paths         = "character", # filepath of the GPR data
+    names         = "character",  # names of the GPR profiles
+    descs         = "character",  # descriptions of the GPR profiles
+    modes         = "character",  # survey mode (reflection/CMP)
     
-    dates     = "Date",        # dates  of the GPR profiles
-   
-    freqs     = "numeric",     # frequencies of the GPR profiles
-    antseps   = "numeric",     # antenna separation of the GPR profiles
-    lengths   = "numeric",     # length in metres of the GPR profiles = [n]
-
-    ntraces   = "integer",     # to control if nrow(@coord) == ncol(x[[i]])
-    nz        = "integer",
-    zwin      = "numeric",     # range z values
-    zunit     = "character",   # time/depth unit  !!!length = 1!!!
+    dates         = "Date",       # dates  of the GPR profiles
     
-    crs       = "character",   # coordinates reference system
-    spunit    = "character",   # position units 
-    #coordref = "numeric",     # reference position
+    freqs         = "numeric",    # frequencies of the GPR profiles
+    antseps       = "numeric",    # antenna separation of the GPR profiles
     
-    coords    = "list",        # (x,y,z) coordinates for each profiles
-    intersecs = "list",        # (x,y) position of the profile intersections
-    markers   = "list"         # fiducials of the GPR profiles
+    spunit        = "character",  # position units  !!!length = 1!!!
+    crs           = "character",  # coordinates reference system
+    #coordref      = "numeric",   # reference position
+    coords        = "list",       # (x,y,z) coordinates for each profiles
     
+    intersecs     = "list",       # (x,y) position of the profile intersections
+    markers       = "list",       # fiducials of the GPR profiles
+    
+    nz            = "integer",
+    zlengths      = "numeric",    # depth/time window (vertical)
+    zunits        = "character",  # time/depth unit  !!!length = 1!!!
+    nx            = "integer",    # to control if nrow(@coord) == ncol(x[[i]])
+    xlengths      = "numeric"     # depth/time window (vertical)
   )
 )

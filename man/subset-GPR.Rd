@@ -3,9 +3,14 @@
 \docType{methods}
 \name{[,GPR,ANY,ANY,ANY-method}
 \alias{[,GPR,ANY,ANY,ANY-method}
-\title{Extract parts of a GPR object}
+\alias{[,GPR-method}
+\alias{[<-,GPR,ANY,ANY,ANY-method}
+\alias{[<-,GPR-method}
+\title{Extract and replace parts of a GPR object}
 \usage{
 \S4method{[}{GPR,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
+
+\S4method{[}{GPR,ANY,ANY,ANY}(x, i, j, ...) <- value
 }
 \arguments{
 \item{x}{[\code{GPR}]}
@@ -17,6 +22,8 @@
 \item{...}{Not used.}
 
 \item{drop}{Not used.}
+
+\item{value}{[\code{numeric}] Value to set.}
 }
 \value{
 [\code{GPR}|\code{numeric}] Returns a numeric vector

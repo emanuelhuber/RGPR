@@ -1,22 +1,16 @@
 .gprDZT <- function(x, fName = character(0), desc = character(0),
                     fPath = character(0), Vmax = 50){
   
-  #  take the channel ch
-  # if(ch > length(x$data)){
-  #   stop("The data has only ", length(x$data), "channel(s)")
-  # }
-  # x$data <- x$data[[ch]]
-  # 
-  antName <- x$hd$ANT[1]
-  
+
   dd <- as.Date(x$hd$DATE, format = "%Y-%m-%d")
-  dd <- as.character(dd)
+  # dd <- as.character(dd)
   if(is.na(dd)){
-    dd <- format(Sys.time(), "%Y-%m-%d")
+    dd <- Sys.Date
   }
-  ttime <- yy <- 1/x$hd$SPS * (seq_len(ncol(x$data)) - 1)
-  traceTime <- as.double(as.POSIXct(strptime(paste(dd, "01:30:00"), 
-                                             "%Y-%m-%d %H:%M:%S") )) + ttime
+  # ttime <- yy <- 1/x$hd$SPS * (seq_len(ncol(x$data)) - 1)
+  # traceTime <- as.double(as.POSIXct(strptime(paste(dd, "01:30:00"), 
+                                             # "%Y-%m-%d %H:%M:%S") )) + ttime
+  traceTime <- rep(0, ncol(x$data))
   if(length(fName) == 0){
     x_name <- "LINE"
   }else{
@@ -82,41 +76,44 @@
     #   }
     # }
   }
-  antfreq <- switch(antName,
-                    '3200'   = numeric(0), # adjustable
-                    '3200MLF' = numeric(0), # adjustable
-                    '500MHz' = 500,
-                    '3207' = 100,
-                    '3207AP' = 100,
-                    '5106' = 200,
-                    '5106A' = 200,
-                    '50300' = 300,
-                    '350' = 350,
-                    '350HS' = 350,
-                    '50270' = 270,
-                    '50270S' = 270,
-                    '50400' = 400,
-                    '50400S' = 400,
-                    '800' = 800,
-                    '3101' = 900,
-                    '3101A' = 900,
-                    '51600' = 1600,
-                    '51600S' = 1600,
-                    '62000' = 2000,
-                    '62000-003' = 2000,
-                    '62300' = 2300,
-                    '62300XT' = 2300,
-                    '52600' = 2600,
-                    '52600S' = 2600,
-                    'D50800' = 800,
-                    numeric(0))  # 800,300,
+  antfreq <- getAntFreqGSSI(x$hd$ANT)
+  # antfreq <- switch(antName,
+  #                   '3200'   = numeric(0), # adjustable
+  #                   '3200MLF' = numeric(0), # adjustable
+  #                   '500MHz' = 500,
+  #                   '3207' = 100,
+  #                   '3207AP' = 100,
+  #                   '5106' = 200,
+  #                   '5106A' = 200,
+  #                   '50300' = 300,
+  #                   '350' = 350,
+  #                   '350HS' = 350,
+  #                   '50270' = 270,
+  #                   '50270S' = 270,
+  #                   '50400' = 400,
+  #                   '50400S' = 400,
+  #                   '800' = 800,
+  #                   '3101' = 900,
+  #                   '3101A' = 900,
+  #                   '51600' = 1600,
+  #                   '51600S' = 1600,
+  #                   '62000' = 2000,
+  #                   '62000-003' = 2000,
+  #                   '62300' = 2300,
+  #                   '62300XT' = 2300,
+  #                   '52600' = 2600,
+  #                   '52600S' = 2600,
+  #                   'D50800' = 800,
+  #                   numeric(0))  # 800,300,
   if(length(antfreq) == 0){
     # estimate anntenna frequency from the name (it it contains ### MHz)
-    antfreq <- freqFromString(antName)
+    antfreq <- freqFromString(x$hd$ANT)
   }
-  if(length(antfreq) == 0){
-    antfreq <- 0
-    message("Antenna frequency set to 0 MHz. Set it with 'antfreq(x) <- ... '")
+  is_naFreq <- is.na(antfreq) 
+  if(sum( is_naFreq ) > 0){
+    antfreq[antfreq] <- 0
+    message("Frequency of ", x$hd$ANT[is_naFreq], " set to 0 MHz.",
+            " Set frequency with 'antfreq(x) <- ... '")
     # antsep <- numeric(0)
   }
   #else{
@@ -129,36 +126,117 @@
   message("Antenna separation set to 0 ", x_posunit, 
           ". Set it with 'antsep(x) <- ... '")
   
-  new("GPR",   
-      version      = "0.2",
-      data        = bits2volt(Vmax = Vmax, nbits = x$hd$BITS) * x$data,
-      traces      = 1:ncol(x$data),
-      fid         = x_fid,
-      #coord = coord,
-      # coord       = matrix(nrow = 0, ncol = 0),
-      pos         = x_pos,
-      depth       = x$depth[1:nrow(x$data)],
-      rec         = matrix(nrow = 0, ncol = 0),
-      # trans       = matrix(nrow = 0, ncol = 0),
-      # time0       = rep(0, ncol(x$data)),
-      # time = x$hdt[1,] * 3600 + x$hdt[2,] * 60 + x$hdt[3,],
-      time        = traceTime,
-      proc        = character(0),
-      vel         = list(v),
-      name        = x_name,
-      description = desc,
-      filepath    = fPath,
-      dz          =  x$hd$RANGE /  (x$hd$NSAMP - 1 ), 
-      dx          = x_dx,
-      depthunit   = x_depthunit,
-      posunit     = x_posunit,
-      freq        = antfreq, 
-      antsep      = antsep,     # check
-      surveymode  = "reflection",
-      date        = as.character(dd), #format(Sys.time(), "%d/%m/%Y"),
-      crs         = character(0),
-      hd          = x$hd
-  )
+  #  take the channel ch
+  # if(ch > length(x$data)){
+  #   stop("The data has only ", length(x$data), "channel(s)")
+  # }
+  # x$data <- x$data[[ch]]
+  # 
+  # antName <- x$hd$ANT[1]
+  
+  if(is.null(Vmax)){
+    dunit <- "bits"
+  }else{
+    dunit <- "mV"
+  }
+  
+  colnames(x$data) <- 1: ncol(x$data)
+  
+  if(length(x$hd$NCHAN) > 1){
+    new("GPRset",   
+        #--- class GPRvirtual
+        version      = "0.3",  
+        name         = x_name,
+        path         = fPath,
+        desc         = desc,
+        mode         = "CO",
+        date         = dd,
+        freq         = antfreq, 
+        
+        data         = bits2volt(Vmax = Vmax, nbits = x$hd$BITS) * x$data,     
+        dunit        = dunit,  
+        dlab         = "amplitude", 
+        
+        # spunit       = "character",  
+        # crs          = "character",  
+        
+        xunit        = x_posunit,  
+        xlab         = "position",
+        
+        zunit        = x_depthunit,  
+        zlab         = "two-way travel time",
+        
+        vel          = list(v),   
+        
+        # proc         = "list",
+        # delineations = "list",
+        md           = x$hd,  
+        
+        #--- class GPR
+        z0           = rep(0, ncol(x$data)),    
+        # time         = ,    
+        antsep       = antsep,    
+        markers      = trimStr(x_fid), 
+        # ann          = "character", 
+        
+        # coord        = coord,     
+        # rec          = coord_rec,     
+        # trans        = coord_trans,     
+        
+        x            = x_pos,    
+        z            = x$depth[1:nrow(x$data)],  
+        
+        #--- class GPRset
+        y            = seq_len(x$hd$NCHAN),    # y-values, length = p
+        yunit        = "MHz",  # set units, length = 1|p
+        ylab         = "Antenna"  # set names, length = 1|p
+        
+    )
+  }else{
+    new("GPR",   
+        #--- class GPRvirtual
+        version      = "0.3",  
+        name         = x_name,
+        path         = fPath,
+        desc         = desc,
+        mode         = "CO",
+        date         = dd,
+        freq         = antfreq, 
+        
+        data         = bits2volt(Vmax = Vmax, nbits = x$hd$BITS) * x$data[,,1],     
+        dunit        = dunit,  
+        dlab         = "amplitude", 
+        
+        # spunit       = "character",  
+        # crs          = "character",  
+        
+        xunit        = x_posunit,  
+        xlab         = "position",
+        
+        zunit        = x_depthunit,  
+        zlab         = "two-way travel time",
+        
+        vel          = list(v),   
+        
+        # proc         = "list",
+        # delineations = "list",
+        md           = x$hd,  
+        
+        #--- class GPR
+        z0           = rep(0, ncol(x$data)),    
+        # time         = ,    
+        antsep       = antsep,    
+        markers      = trimStr(x_fid), 
+        # ann          = "character", 
+        
+        # coord        = coord,     
+        # rec          = coord_rec,     
+        # trans        = coord_trans,     
+        
+        x            = x_pos,    
+        z            = x$depth[1:nrow(x$data)]  
+    )
+  }
 }
 
 
@@ -297,12 +375,14 @@ readDZT <- function(dsn){
   # plot3D::image2D(x = tt, y = yy, z = A)
   
   yy <- 1/hd$SPM * (seq_len(ncol(A) / hd$NCHAN) - 1)
-  Adata <- vector(mode = "list", length = hd$NCHAN)
+  # Adata <- vector(mode = "list", length = hd$NCHAN)
+  Adata <- array(dim = c(length(tt), length(yy), hd$NCHAN))
   for(i in seq_len(hd$NCHAN)){
-    Adata[[i]] <- A[, seq(i, by = hd$NCHAN, to = ncol(A))]
+    # Adata[[i]] <- A[, seq(i, by = hd$NCHAN, to = ncol(A))]
+    Adata[ , , i] <- A[, seq(i, by = hd$NCHAN, to = ncol(A))]
     if(i == 1){
-      hd$MRKS <- Adata[[i]][2,]
-      Adata[[i]] <- Adata[[i]][-c(1, 2), ]   
+      hd$MRKS <- Adata[2,,1]
+      Adata[1:2, , 1] <- 0   
     }
     # plot3D::image2D(y = tt[1:nrow(Adata[[i]])], x = yy, 
     # z = t(Adata[[i]][nrow(Adata[[i]]):1,]))

@@ -3,13 +3,20 @@
 \name{plot}
 \alias{plot}
 \alias{plot.GPR}
+\alias{contour}
+\alias{contour.GPR}
 \title{Plot the GPR object.}
 \usage{
 \method{plot}{GPR}(x, add = FALSE, relTime0 = FALSE, note = NULL,
-  addFid = TRUE, addAnn = TRUE, addTime0 = TRUE, addDepth0 = TRUE,
-  addAmpl0 = TRUE, addTopo = FALSE, clip = NULL, ratio = 1,
-  barscale = TRUE, wsize = 1, wside = 1, pdfName = NULL,
-  NAcol = "white", ...)
+  addMarkers = TRUE, addAnn = TRUE, addTime0 = TRUE,
+  addDepth0 = TRUE, addAmpl0 = TRUE, addTopo = FALSE,
+  xclip = FALSE, ratio = 1, barscale = TRUE, wsize = 1,
+  wside = 1, pdfName = NULL, NAcol = "white", ...)
+
+\method{contour}{GPR}(x, relTime0 = FALSE, add = FALSE, note = NULL,
+  addMarkers = TRUE, addAnn = TRUE, addTime0 = TRUE,
+  addDepth0 = TRUE, addAmpl0 = TRUE, addTopo = FALSE,
+  xclip = FALSE, ratio = 1, barscale = TRUE, pdfName = NULL, ...)
 }
 \arguments{
 \item{x}{Object of class \code{GPR}}
@@ -23,7 +30,7 @@ is adjusted to the mean time-zero. Apply first the function
 
 \item{note}{note of something...}
 
-\item{addFid}{logical. Add fiducial marks}
+\item{addMarkers}{logical. Add fiducial marks}
 
 \item{addAnn}{logical. Add GPR annotations (line intersections)}
 
@@ -37,13 +44,13 @@ is adjusted to the mean time-zero. Apply first the function
 in time unit, the data are migrated with a static
 migration)}
 
-\item{clip}{numeric. If length-one numeric vector, clip the amplitudes 
-larger than \code{clip} and smaller than \code{-clip}.
-If length-two numeric vector, clip the amplitudes
-smaller than \code{clip[1]} and larger than 
-\code{clip[2]}. Per default, values below the 
+\item{xclip}{numeric. If length-one numeric vector, clip the amplitudes 
+larger than \code{xclip} and smaller than \code{-xclip}.
+If length-two numeric vector, xclip the amplitudes
+smaller than \code{xclip[1]} and larger than 
+\code{xclip[2]}. Per default, values below the 
 0.01-quantile and above the 0.99-quantile are clipped.
-If \code{clip = FALSE} the data are not clipped.}
+If \code{xclip = FALSE} the data are not clipped.}
 
 \item{ratio}{logical.}
 

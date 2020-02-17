@@ -3,7 +3,24 @@
 \docType{class}
 \name{GPRsurvey-class}
 \alias{GPRsurvey-class}
-\title{Class GPRsurvey}
+\title{An S4 class to represent a collection of \eqn{k} GPR data. 
+An object of the class \code{GPRsurvey} does only contain the links to 
+the GPR data files as well as information about the GPR data such as 
+coordinates, frequencies, antenna separation etc.  
+The methods of the \code{GPRsurvey} class exclusively manipulate the trace 
+(A-scan) coordinates. More specifically, the methods currently allow to:
+\itemize{
+  \item display map of the GPR measurement lines that can be superimposed 
+  on any raster or vector data,
+  \item display GPR data in three-dimensional interactive graphics 
+  (e.g., fence  diagram) with openGL,
+  \item add or interpolate trace coordinates (the elevation coordinates 
+  can be interpolated from raster data),
+  \item georeference the trace coordinates (e.g., from a local coordinate
+  reference system to a regional reference coordinate system),
+  \item project the GPR data to any coordinate reference system,
+  \item estimate the spatial shift between two (parallel)GPR profiles.
+}}
 \description{
 An S4 class to represent a collection of \eqn{k} GPR data. 
 An object of the class \code{GPRsurvey} does only contain the links to 
@@ -46,25 +63,25 @@ e.g., \code{Sys.Date()}).}
 
 \item{\code{antseps}}{[\code{numeric(k)}] Antennae separation of the GPR data}
 
-\item{\code{lengths}}{[\code{numeric(k)}] Length of the GPR data.}
-
-\item{\code{ntraces}}{[\code{integer(k)}] Number of traces in each GPR data.}
-
-\item{\code{nz}}{[\code{integer(k)}] Number of samples in each GPR data.}
-
-\item{\code{zwin}}{[\code{numeric(k)}] Range along \code{z} in each GPR data.}
-
-\item{\code{zunit}}{[\code{character(1)}] Unit of \code{z}.}
+\item{\code{spunit}}{[\code{character(1)}] Spatial units.}
 
 \item{\code{crs}}{[\code{character(1)}] Coordinate reference system following the 
 R notation of proj4string from the PROJ.4 library.}
-
-\item{\code{spunit}}{[\code{character(1)}] Spatial units.}
 
 \item{\code{coords}}{[\code{list(k)}] GPR data coordinates}
 
 \item{\code{intersecs}}{[\code{list(k)}] Intersections coordinates of the GPR data}
 
 \item{\code{markers}}{[\code{list(k)}] Fiducial markers of the GPR data}
+
+\item{\code{nz}}{[\code{integer(k)}] Number of samples in each GPR data.}
+
+\item{\code{zlengths}}{[\code{numeric(k)}] Range along \code{z} in each GPR data.}
+
+\item{\code{zunits}}{[\code{character(1)}] Unit of \code{z}.}
+
+\item{\code{nx}}{[\code{integer(k)}] Number of traces in each GPR data.}
+
+\item{\code{xlengths}}{[\code{numeric(k)}] Length of the GPR data.}
 }}
 

@@ -16,7 +16,7 @@
 
 .closeFileIfNot <- function(dsn){
   if(inherits(dsn, "connection")){
-    close(dsn )
+    invisible(tryCatch(close(dsn), error = function(e){NULL} ))
   }
 }
 

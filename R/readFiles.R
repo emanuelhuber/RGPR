@@ -89,6 +89,8 @@ readGPR <- function(dsn, desc = "", Vmax = 50,
     if(all(sapply(dsn, inherits, "connection"))){
       if(!("HD" %in% toupper(ext))) stop("Missing connection to '*.hd' file.") 
     }else{
+      if(is.na(fPath["HD"])) fPath["HD"] <- fPath["DT1"]
+      if(is.na(fPath["GPS"])) fPath["GPS"] <- fPath["DT1"]
       dsn[["DT1"]] <-  getFName(fPath["DT1"], ext = ".DT1")$dt1
       dsn[["HD"]]  <-  getFName(fPath["HD"],  ext = ".HD" )$hd
       dsn[["GPS"]] <-  getFName(fPath["GPS"], ext = ".GPS", 
@@ -166,6 +168,25 @@ readGPR <- function(dsn, desc = "", Vmax = 50,
     
   #----------------------------------- MALA -----------------------------------#
   #-------------------------- RD3 + RAD (+ COR) -------------------------------#
+ # }else if(any( c("RD3", "RD7") %in% toupper(ext) )){
+ #    if(all(sapply(dsn, inherits, "connection"))){
+ #      if(!("RAD" %in% toupper(ext))) stop("Missing connection to '*.rad' file.") 
+ #    }else{
+ #      dsn[["DT1"]] <-  getFName(fPath["DT1"], ext = ".DT1")$dt1
+ #      dsn[["RAD"]] <-  getFName(fPath["RAD"],  ext = ".RAD" )$rad
+ #      dsn[["COR"]] <-  getFName(fPath["COR"], ext = "COR", 
+ #                                throwError = FALSE)$cor
+ #    }
+ #    hd  <- verboseF( readHD(dsn[["HD"]]), verbose = verbose)
+ #    dt1 <- verboseF( readDT1(dsn[["DT1"]], ntr = hd$ntr, npt = hd$npt), 
+ #                     verbose = verbose)
+ #    x <- verboseF(.gprDT1(list(hd = hd$HD, dt1 = dt1$dt1hd, data = dt1$data ), 
+ #                          fName = fName[["DT1"]], fPath = fPath[["DT1"]], 
+ #                          desc = desc, Vmax = Vmax),  verbose = verbose)
+ #    if( !is.null(dsn[["GPS"]])){
+ #      x_gps <-  verboseF(readGPS(dsn[["GPS"]]), verbose = verbose)
+ #    }
+    #--- --- --- --- --- --- --- --- --- ---
   # }else if( any( c("RD3", "RD7") %in% toupper(ext) ) ){
   #   if(length(dsn) == 1){
   #     if(inherits(dsn, "connection")){
@@ -310,6 +331,29 @@ readGPR <- function(dsn, desc = "", Vmax = 50,
   #   }
   # #--------------------------------- GSSI -------------------------------------#
   # #------------------------------ DZT (+ DZX, DZG) ----------------------------#
+  }else if("DZT" %in% toupper(ext)){
+    if(all(sapply(dsn, inherits, "connection"))){
+      #if(!("HD" %in% toupper(ext))) stop("Missing connection to '*.hd' file.") 
+    }else{
+      if(is.na(fPath["DZX"])) fPath["DZX"] <- fPath["DZT"]
+      if(is.na(fPath["DZG"])) fPath["DZG"] <- fPath["DZT"]
+      dsn[["DZT"]] <-  getFName(fPath["DZT"], ext = ".DZT")$dzt
+      dsn[["DZX"]] <-  getFName(fPath["DZX"],  ext = ".DZX", 
+                                throwError = FALSE )$dzg
+      dsn[["GPS"]] <-  getFName(fPath["DZG"], ext = ".DZG", 
+                                throwError = FALSE)$dzg
+    }
+    dzt <- verboseF( readDZT(dsn[["DZT"]]), verbose = verbose)
+    if(!is.null(dsn[["DZX"]])){
+      dzx <- verboseF( readDZX(dsn[["DZX"]]), verbose = verbose)
+      dzt <- c(dzt, list(dzx = dzx))
+    }
+    x <- verboseF( .gprDZT(dzt, fName = fName[["DZT"]], fPath = fPath[["DZT"]], 
+                           desc = desc, Vmax = Vmax), 
+                   verbose = verbose)
+    if( !is.null(dsn[["DZG"]])){
+      x_gps <-  verboseF(readDZG(dsn[["DZG"]]), verbose = verbose)
+    }
   # }else if("DZT" %in% toupper(ext)){
   #   if(length(dsn) == 1){
   #     if(inherits(dsn, "connection")){

@@ -162,6 +162,13 @@
   traceTime <- as.double(as.POSIXct(x$dt1$time, origin = d))
   sup_hd[["clip"]] <- getClippedBits(x$data, nbits = 16)
   sup_hd[["hd"]] <- x$hd
+  xdata <- bits2volt(Vmax = Vmax)*x$data
+  colnames(xdata) <- seq_len(ncol(x$data))
+  if(is.null(Vmax)){
+    dunit <- "bits"
+  }else{
+    dunit <- "mV"
+  }
   new("GPR",   
       #--- class GPRvirtual
       version      = "0.3",  
@@ -172,8 +179,8 @@
       date         = d,
       freq         = antfreq, 
       
-      data         = bits2volt(Vmax = Vmax)*x$data,     
-      dunit        = "mV",  
+      data         = xdata,     
+      dunit        = dunit,  
       dlab         = "amplitude", 
       
       # spunit       = "character",  
@@ -253,9 +260,10 @@
 #' @rdname readDT1
 #' @export
 readDT1 <- function(dsn, ntr, npt){
-  if(!inherits(dsn, "connection")){
-    dsn <- file(dsn, 'rb')
-  }
+  # if(!inherits(dsn, "connection")){
+  #   dsn <- file(dsn, 'rb')
+  # }
+  dsn <- .openFileIfNot(dsn)
   tags <- c("traces",  "position", "samples", "topo",     "NA1",  "bytes",
             "tracenb", "stack",    "window",  "NA2",      "NA3",  "NA4",
             "NA5",     "NA6",      "recx",    "recy",     "recz", "transx",
@@ -387,7 +395,7 @@ readGPS <- function(dsn){
     stop("Problem - code 'qoiwelk'. Please contact me\n",
          "emanuel.huber@alumni.ethz.ch")
   }
-  .closeFileIfNot(dsn)
+  # .closeFileIfNot(dsn)
   return(list(tr_id = tr_id, tr_pos = tr_pos, gpgga = gpgga))
 }
 

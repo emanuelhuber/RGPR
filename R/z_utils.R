@@ -131,6 +131,16 @@ depth0 <- function(t0 = 0, v = 0.1, antsep = 1){#, c0 = 0.299){
   paste0(x@dlab, " (", x@dunit, ")")
 }
 
+.subsetMat <- function(x, i){
+  if(length(x) == 0) return(x)
+  if(nrow(x) == 1) return(x)
+  x[i,, drop = FALSE]
+}
+.subsetVec <- function(x, i){
+  if(length(x) == 0) return(x)
+  if(length(x) == 1) return(x)
+  x[i]
+}
 
 #' Frequency of GSSI antenna
 #' 

@@ -70,7 +70,7 @@ R notation of proj4string from the PROJ.4 library.}
 
 \item{\code{coords}}{[\code{list(k)}] GPR data coordinates}
 
-\item{\code{intersecs}}{[\code{list(k)}] Intersections coordinates of the GPR data}
+\item{\code{intersections}}{[\code{list(k)}] Intersections coordinates of the GPR data}
 
 \item{\code{markers}}{[\code{list(k)}] Fiducial markers of the GPR data}
 

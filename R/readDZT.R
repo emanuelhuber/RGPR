@@ -3,13 +3,9 @@
   
 
   dd <- as.Date(x$hd$DATE, format = "%Y-%m-%d")
-  # dd <- as.character(dd)
   if(is.na(dd)){
-    dd <- Sys.Date
+    dd <- Sys.Date()
   }
-  # ttime <- yy <- 1/x$hd$SPS * (seq_len(ncol(x$data)) - 1)
-  # traceTime <- as.double(as.POSIXct(strptime(paste(dd, "01:30:00"), 
-                                             # "%Y-%m-%d %H:%M:%S") )) + ttime
   traceTime <- rep(0, ncol(x$data))
   if(length(fName) == 0){
     x_name <- "LINE"
@@ -22,7 +18,6 @@
   x_pos       <- x$pos[1:ncol(x$data)]
   x_depth     <- x$depth[1:nrow(x$data)]
   x_dx        <- 1 / x$hd$SPM
-  
   # Fiducial markers > each class has a different name (letter)
   x_fid       <- rep("", ncol(x$data))
   test <- which(x$hd$MRKS < 0)
@@ -35,9 +30,7 @@
                                  sprintf(paste0("%0", max(nchar(fid_nb)), "d"), 
                                          fid_nb))
   }
-  
   if(!is.null(x$dzx)){
-    # spatial/horizontal units
     # pos
     if(!is.null(x$dzx$pos)){
       x_pos <- x$dzx$pos
@@ -46,20 +39,12 @@
     if(!is.null(x$dzx$dx)){
       x_dx <- x$dzx$dx
     } 
-    # if(!is.null(x$dzx$unitsPerScan)){
-    #   x_dx <- x$dzx$unitsPerScan
-    # }
-    # fids/markers
     if(all(x_fid == "") &&
        !is.null(x$dzx$markers) && 
        length(x$dzx$markers) == ncol(x$data)){
       x_fid <- x$dzx$markers
     }
-    # else if(all(x_fid == "") && !is.null(x$dzx$unitsPerMark)){
-    #   x_fid <- rep("", ncol(x$data))
-    #   x_fid_id <- which((x_pos %% x$dzx$unitsPerMark) == 0)
-    #   x_fid[x_fid_id] <- "FID"
-    # }
+
     if(!is.null(x$dzx$hUnit)){
       x_posunit <-x$dzx$hUnit
       if(grepl("in", x_posunit)){
@@ -67,57 +52,29 @@
         x_posunit <- "m"
       }
     }
-    # # depth/vertical units
-    # if(!is.null(x$dzx$vUnit)){
-    #   x_depthunit <- x$dzx$vUnit
-    #   if(grepl("in", x_depthunit)){
-    #     x_depth <- x_depth * 0.0254
-    #     x_depthunit <- "m"
-    #   }
-    # }
   }
   antfreq <- getAntFreqGSSI(x$hd$ANT)
-  # antfreq <- switch(antName,
-  #                   '3200'   = numeric(0), # adjustable
-  #                   '3200MLF' = numeric(0), # adjustable
-  #                   '500MHz' = 500,
-  #                   '3207' = 100,
-  #                   '3207AP' = 100,
-  #                   '5106' = 200,
-  #                   '5106A' = 200,
-  #                   '50300' = 300,
-  #                   '350' = 350,
-  #                   '350HS' = 350,
-  #                   '50270' = 270,
-  #                   '50270S' = 270,
-  #                   '50400' = 400,
-  #                   '50400S' = 400,
-  #                   '800' = 800,
-  #                   '3101' = 900,
-  #                   '3101A' = 900,
-  #                   '51600' = 1600,
-  #                   '51600S' = 1600,
-  #                   '62000' = 2000,
-  #                   '62000-003' = 2000,
-  #                   '62300' = 2300,
-  #                   '62300XT' = 2300,
-  #                   '52600' = 2600,
-  #                   '52600S' = 2600,
-  #                   'D50800' = 800,
-  #                   numeric(0))  # 800,300,
-  if(length(antfreq) == 0){
-    # estimate anntenna frequency from the name (it it contains ### MHz)
-    antfreq <- freqFromString(x$hd$ANT)
-  }
+ 
   is_naFreq <- is.na(antfreq) 
   if(sum( is_naFreq ) > 0){
-    antfreq[antfreq] <- 0
-    message("Frequency of ", x$hd$ANT[is_naFreq], " set to 0 MHz.",
-            " Set frequency with 'antfreq(x) <- ... '")
-    # antsep <- numeric(0)
+    # estimate anntenna frequency from the name (it it contains ### MHz)
+    antfreq[is_naFreq] <- freqFromString(x$hd$ANT[is_naFreq])
   }
-  #else{
-  #}
+  is_naFreq <- is.na(antfreq) 
+  if(all(is_naFreq)){
+    y_freq <- seq_along(antfreq)
+    y_unit <- ""
+  }else{
+    y_freq <- antfreq
+    y_freq[is_naFreq] <- 0
+    y_unit <- "MHz"
+  }
+  if(sum( is_naFreq ) > 0){
+    antfreq[is_naFreq] <- 0
+    message("Frequency of ", paste0(x$hd$ANT[is_naFreq], collapse = ", "), 
+            " set to 0 MHz.",
+            " Set frequency with 'antfreq(x) <- ... '")
+  }
   v <- 2 * x$hd$DEPTH / x$hd$RANGE
   
   # antenna sparation could be estimated from frequency...
@@ -126,23 +83,16 @@
   message("Antenna separation set to 0 ", x_posunit, 
           ". Set it with 'antsep(x) <- ... '")
   
-  #  take the channel ch
-  # if(ch > length(x$data)){
-  #   stop("The data has only ", length(x$data), "channel(s)")
-  # }
-  # x$data <- x$data[[ch]]
-  # 
-  # antName <- x$hd$ANT[1]
-  
   if(is.null(Vmax)){
     dunit <- "bits"
   }else{
     dunit <- "mV"
   }
   
-  colnames(x$data) <- 1: ncol(x$data)
   
-  if(length(x$hd$NCHAN) > 1){
+  if(x$hd$NCHAN > 1){
+    # print("yep!")
+    dimnames(x$data) <- list(NULL, seq_along(x_pos), NULL)
     new("GPRset",   
         #--- class GPRvirtual
         version      = "0.3",  
@@ -157,8 +107,8 @@
         dunit        = dunit,  
         dlab         = "amplitude", 
         
-        # spunit       = "character",  
-        # crs          = "character",  
+        spunit       = "",  
+        crs          = "",  
         
         xunit        = x_posunit,  
         xlab         = "position",
@@ -187,12 +137,13 @@
         z            = x$depth[1:nrow(x$data)],  
         
         #--- class GPRset
-        y            = seq_len(x$hd$NCHAN),    # y-values, length = p
-        yunit        = "MHz",  # set units, length = 1|p
-        ylab         = "Antenna"  # set names, length = 1|p
+        y            = y_freq, #seq_len(x$hd$NCHAN),    # y-values, length = p
+        yunit        = y_unit,  # set units, length = 1|p
+        ylab         = "frequency"  # set names, length = 1|p
         
     )
   }else{
+    colnames(x$data) <- 1:ncol(x$data)
     new("GPR",   
         #--- class GPRvirtual
         version      = "0.3",  

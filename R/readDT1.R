@@ -183,8 +183,8 @@
       dunit        = dunit,  
       dlab         = "amplitude", 
       
-      # spunit       = "character",  
-      # crs          = "character",  
+      spunit       = "",  
+      crs          = "",  
        
       xunit        = posunit,  
       xlab         = "position",
@@ -335,6 +335,7 @@ readHD <- function(dsn){
 #' @export
 readGPS <- function(dsn){
   X <- .readGPS(dsn)
+  if(length(X$tr_id) == 0) return(NULL)
   xyzt <- .getLonLatFromGPGGA(X$gpgga)
   mrk <- cbind(xyzt[ ,1:3], X$tr_id, X$tr_pos, xyzt[ ,4])
   names(mrk) <- c("x", "y", "z", "id", "pos", "time")

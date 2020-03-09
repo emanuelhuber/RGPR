@@ -23,9 +23,7 @@
   return(toprint[toprint != ""])      
 }    
 
-# > 2. S3 function:
-# #' @rdname show
-# #' @method print GPR 
+
 #' Print GPR
 #' @param x [\code{GPR}] 
 #' @param ... Not used. 
@@ -36,9 +34,7 @@ print.GPR <- function(x, ...){
   return(invisible(jj))
 }
 
-# #' @aliases show
-# > 3. And finally a call to setMethod():
-# #' @rdname show
+
 #' Show some information on the GPR object
 #'
 #' Identical to print().

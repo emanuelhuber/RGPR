@@ -36,7 +36,7 @@
 #' @slot crs       [\code{character(1)}] Coordinate reference system following the 
 #'                 R notation of proj4string from the PROJ.4 library. 
 #' @slot coords    [\code{list(k)}] GPR data coordinates
-#' @slot intersecs [\code{list(k)}] Intersections coordinates of the GPR data
+#' @slot intersections [\code{list(k)}] Intersections coordinates of the GPR data
 #' @slot markers   [\code{list(k)}] Fiducial markers of the GPR data
 #' @slot nz        [\code{integer(k)}] Number of samples in each GPR data.
 #' @slot zlengths  [\code{numeric(k)}] Range along \code{z} in each GPR data.
@@ -65,7 +65,7 @@ setClass(
     #coordref      = "numeric",   # reference position
     coords        = "list",       # (x,y,z) coordinates for each profiles
     
-    intersecs     = "list",       # (x,y) position of the profile intersections
+    intersections     = "list",       # (x,y) position of the profile intersections
     markers       = "list",       # fiducials of the GPR profiles
     
     nz            = "integer",

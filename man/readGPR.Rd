@@ -5,66 +5,86 @@
 \title{Read a GPR data file}
 \usage{
 readGPR(dsn, desc = "", Vmax = 50, verbose = TRUE,
-  interpGPS = TRUE, method = c("linear", "linear", "linear"))
+  interpGPS = TRUE, ...)
 }
 \arguments{
-\item{dsn}{data source name: either the filepath to the GPR data (character),
-or an open file connection (can be a list of filepahts or
-open file connections)}
+\item{dsn}{[\code{character|connection}] Data source name: either the 
+filepath to the GPR data (character),
+or an open file connection (can be a list of filepaths or
+open file connections). See Details.}
 
-\item{desc}{Short description of the file (character).}
+\item{desc}{[\code{character(1)}] Short description of the data.}
 
-\item{Vmax}{length-one numeric vector: nominal analog input voltage used 
+\item{Vmax}{[\code{numeric(1)|NULL}] Nominal analog input voltage used 
 for the bits to volt transformation. 
 It assumes that \code{Vmin = -Vmax}. If \code{Vmax = NULL},
 no bits to Volt transformation is applied.}
 
-\item{verbose}{(boolean). If \code{FALSE}, all messages and warnings are
+\item{verbose}{[\code{logical(1)}] If \code{FALSE}, all messages and warnings are
 suppressed (use with care).}
 
-\item{interpGPS}{logical: should the trace position be interpolated if possible? TRUE or FALSE}
+\item{interpGPS}{[\code{logical(1)}] Should the trace position be interpolated 
+if possible (that means if a GPS file is available)?}
 
-\item{method}{A length-three character vector defining the interpolation
-methods (same methods as in \code{signal::interp1}:
-"linear", "nearest", "pchip", "cubic", and "spline"). 
-First element for the interpolation of the 
-inter-trace distances, 
-second element for the interpolation of the horizontal 
-trace positions, and third element for the interpolation
-of the vertical trace positions.}
+\item{...}{additional parameters to be passed to \code{\link{spInterp}}}
 }
 \value{
-The GPR data as object of the class RGPR.
+[\code{GPR|GPRset}] If the data contains more than one frequency
+        data, it returns an object of the class \code{GPRset}. Else
+        an object of the class \code{GPR}.
 }
 \description{
-Note: argument \code{fPath} is depreacted. Use \code{dsn} instead.
+Read GPR data file from various manufacturers and interpolate trace 
+positions.
 }
-\details{
-Supported file format
+\section{Supported file format}{
+
+
+\tabular{llll}{
+\strong{Manufacturer}        \tab \strong{Mandatory files} \tab \strong{optional GPS files}  \tab \strong{other optional files}       \cr
+Sensors & software           \tab \strong{.dt1}, .hd      \tab .gps           \tab                        \cr
+MALA  16 bits                \tab \strong{.rd3}, .rad     \tab .cor           \tab                        \cr
+MALA  32 bits                \tab \strong{.rd7}, .rad     \tab .cor           \tab                        \cr
+ImpulseRadar                 \tab \strong{.iprb}, .iprh   \tab .cor           \tab .time , .mrk           \cr
+GSSI                         \tab \strong{.dzt}           \tab .dzg           \tab                        \cr
+Geomatrix Earth Science Ltd  \tab \strong{.dat}, .hdr     \tab .gps, .gpt     \tab                        \cr
+Radar Systems, Inc.          \tab \strong{.sgy/.segy}     \tab                \tab                        \cr
+SEG-Y                        \tab \strong{.sgy/.segy}     \tab                \tab                        \cr
+R internal file format       \tab \strong{.rds}           \tab                \tab                        \cr
+txt files                    \tab \strong{.txt}           \tab                \tab                        \cr
+}
+}
+
+\section{Notes}{
+
+
 \itemize{
-  \item Sensors & Software file format (*.dt1 , *.hd).
-        \code{readGPR(dsn = 'xline.dt1')}
-  \item MALA file format (*.rd3, *.rad).
-        \code{readGPR(dsn = 'xline.rd3')}
-  \item RadSys Zond GPR device (*.sgy). 
-        \strong{Note: it is not the SEG-Y file format)}.
-        \code{readGPR(dsn = 'xline.sgy')}  
-  \item GSSI file format (*.dzt).
-        \code{readGPR(dsn = 'xline.dzt')}
-  \item ASCII file format (*.txt): either 4-column format 
-        (x,t,amplitude) or matrix-format (without header/rownames).
-        \code{readGPR(dsn = 'xline.txt')}  
-  \item R object file format (*rds). These files are created by saving the
-        \code{GPR} object with 
-        \code{writeGPR(x, fPath = 'xline.rds', type = "rds")}.
-        \code{readGPR(dsn = 'xline.txt')}  
+  \item If the class of \code{dsn} is character, \code{readGPR} is 
+        insensitive to the case of the extension (.DT1 or dt1)
+  \item If \code{dsn} is a list of connections or a character vector, the 
+        order of the elements does not play any rolle.
+  \item If you use connections, \code{dsn} must contain at least all the 
+        connections to the mandatory files (in any order). If there is
+        more than one mandatory file, use a list of connection.
+  \item If you use a file path for \code{dsn} (character), you only
+        need to provide the path to the main mandatory file (marked in bold
+        in the table): RGPR will find the other files if they only differ
+        in their extension (same name). If the files have different names,
+        you must provide at least the path to all the mandatory files.
+  \item If an optional GPS data file is passed in \code{dsn} or exists,
+        the GPS data file will be red even if \code{interpGPS = FALSE}. 
+        The (formated) content of the GPS data file is then stored as 
+        meta-data and can be retrieved with \code{metadata(x)$GPS}.
+  \item If an optional GPS data file (longitude, latitude) is red 
+        (when \code{interpGPS = TRUE} and a GPS data file exists), the 
+        coordinates will be per default projected into the corresponding 
+        UTM (WGS 84) projection (see \code{\link{spInterp}}).
+  \item When reading GPR data, the clipped signal values are directly
+        estimated from the bit values and stored as metadata.
+        They can be retrieved with \code{metadata(x)$clip}.
 }
-TO DO:
-\itemize{
-  \item Impulse Radar: read markers file
-  \item ...
 }
-}
+
 \examples{
 \dontrun{
 # argument dsn is a file path
@@ -74,12 +94,12 @@ y1 <- readGPR("data/FILE____050.DZT")
 # argument dsn is a connection
 con <- file("data/RD3/DAT_0052.rd3", "rb")   # binary mode
 con2 <- file("data/RD3/DAT_0052.rad", "rt")  # text mode
-x2 <- readGPR(dsn = con, dsn2 = con2)
-close(con)
-close(con2)
+x2 <- readGPR(dsn = list(con, con2))
 
 con <- file(dsn = "data/FILE____050.DZT", "rb")
 y1 <- readGPR(con)
-close(con)
 }
+}
+\seealso{
+\code{\link{writeGPR}}, \code{\link{spInterp}}, and \code{\link{metadata}}
 }

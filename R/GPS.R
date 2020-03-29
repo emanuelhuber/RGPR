@@ -10,33 +10,6 @@
 # an outward-pointing normal direction (i.e., "up") is used for the third 
 # coordinate on the sphere.
 
-#FIXME -> what does it return? A spatialPoints
-#' Read GPS file with GPGGA string
-#' @param dsn [\code{character(1)|connection object}] Data source name: 
-#'            either the filepath to the GPR data (character),
-#'            or an open file connection.
-#' @param sep [\code{character(1)}] The field separator character
-#'            (see\code{\link{read.table}}).
-#' @return [\code{SpatialPoints}]
-#' @export
-readGPGGA <- function(dsn, sep = ","){
-  if(!inherits(dsn, "connection")){
-    dsn <- file(dsn, 'rb')
-  }
-  content <- verboseF(readLines(dsn), verbose = FALSE)
-  if(length(content) == 0){
-    .closeFileIfNot(dsn)
-    return(NULL)
-  }
-  a <- read.table(textConnection(content), 
-                  header = FALSE, colClasses = "character",
-                  stringsAsFactors = FALSE, sep = ",")
-  llz <- getLonLatFromGPGGA(a)
-  sp::coordinates(llz) <- cbind(x = llz$lon, y = llz$lat)
-  sp::proj4string(llz) <- sp::CRS("+proj=longlat +datum=WGS84")
-  .closeFileIfNot(dsn)
-  return(llz)
-}
 
 #' Get longitude and latitude from GPGGA sentence information (NMEA)
 #' 
@@ -156,19 +129,19 @@ getUTMzone <- function(lat, lon){
 #' UTM to latitude-longitude
 #' 
 #' @param xy     [\code{matrix(,2)}] Columns = x and y coordinates.
-#' @param crsObj [\code{character(1)}] Coordinate reference system 
+#' @param CRSobj [\code{character(1)}] Coordinate reference system 
 #'               (proj4string)
 #' @return a 2-column-matrix (longitude (N), latitude (E))
 #' @export
-UTMTolonlat <- function(xy, crsObj = NULL){
+UTMTolonlat <- function(xy, CRSobj = NULL){
   #if(max(xy[,1]) > 834000) stop("y-values (northing) are larger than 834000")
   #if(min(xy[,1]) < 166000) stop("x-values (easting) are smaller than 166000")
-  if(is.null(crsObj)){
-    crsObj <- "+proj=utm +zone=32 +ellps=WGS84"
+  if(is.null(CRSobj)){
+    CRSobj <- "+proj=utm +zone=32 +ellps=WGS84"
   } 
   ll <- data.frame(ID = 1:nrow(xy), X = xy[,1], Y = xy[,2])
   sp::coordinates(ll) <- c("X", "Y")
-  sp::proj4string(ll) <- sp::CRS(crsObj)
+  sp::proj4string(ll) <- sp::CRS(CRSobj)
   xy <- sp::spTransform(ll, sp::CRS("+init=epsg:4326"))
   as.matrix(as.data.frame(xy)[,2:3])
 }

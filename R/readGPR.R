@@ -1,52 +1,70 @@
 #' Read a GPR data file
 #' 
-#' Note: argument \code{fPath} is depreacted. Use \code{dsn} instead.
+#' Read GPR data file from various manufacturers and interpolate trace 
+#' positions.
 #' 
-#' Supported file format
-#' \itemize{
-#'   \item Sensors & Software file format (*.dt1 , *.hd).
-#'         \code{readGPR(dsn = 'xline.dt1')}
-#'   \item MALA file format (*.rd3, *.rad).
-#'         \code{readGPR(dsn = 'xline.rd3')}
-#'   \item RadSys Zond GPR device (*.sgy). 
-#'         \strong{Note: it is not the SEG-Y file format)}.
-#'         \code{readGPR(dsn = 'xline.sgy')}  
-#'   \item GSSI file format (*.dzt).
-#'         \code{readGPR(dsn = 'xline.dzt')}
-#'   \item ASCII file format (*.txt): either 4-column format 
-#'         (x,t,amplitude) or matrix-format (without header/rownames).
-#'         \code{readGPR(dsn = 'xline.txt')}  
-#'   \item R object file format (*rds). These files are created by saving the
-#'         \code{GPR} object with 
-#'         \code{writeGPR(x, fPath = 'xline.rds', type = "rds")}.
-#'         \code{readGPR(dsn = 'xline.txt')}  
+#' @section Supported file format:
+#' 
+#' \tabular{llll}{
+#' \strong{Manufacturer}        \tab \strong{Mandatory files} \tab \strong{optional GPS files}  \tab \strong{other optional files}       \cr
+#' Sensors & software           \tab \strong{.dt1}, .hd      \tab .gps           \tab                        \cr
+#' MALA  16 bits                \tab \strong{.rd3}, .rad     \tab .cor           \tab                        \cr
+#' MALA  32 bits                \tab \strong{.rd7}, .rad     \tab .cor           \tab                        \cr
+#' ImpulseRadar                 \tab \strong{.iprb}, .iprh   \tab .cor           \tab .time , .mrk           \cr
+#' GSSI                         \tab \strong{.dzt}           \tab .dzg           \tab                        \cr
+#' Geomatrix Earth Science Ltd  \tab \strong{.dat}, .hdr     \tab .gps, .gpt     \tab                        \cr
+#' Radar Systems, Inc.          \tab \strong{.sgy/.segy}     \tab                \tab                        \cr
+#' SEG-Y                        \tab \strong{.sgy/.segy}     \tab                \tab                        \cr
+#' R internal file format       \tab \strong{.rds}           \tab                \tab                        \cr
+#' txt files                    \tab \strong{.txt}           \tab                \tab                        \cr
 #' }
-#' TO DO:
+#' 
+#' @section Notes:
+#' 
 #' \itemize{
-#'   \item Impulse Radar: read markers file
-#'   \item ...
+#'   \item If the class of \code{dsn} is character, \code{readGPR} is 
+#'         insensitive to the case of the extension (.DT1 or dt1)
+#'   \item If \code{dsn} is a list of connections or a character vector, the 
+#'         order of the elements does not play any rolle.
+#'   \item If you use connections, \code{dsn} must contain at least all the 
+#'         connections to the mandatory files (in any order). If there is
+#'         more than one mandatory file, use a list of connection.
+#'   \item If you use a file path for \code{dsn} (character), you only
+#'         need to provide the path to the main mandatory file (marked in bold
+#'         in the table): RGPR will find the other files if they only differ
+#'         in their extension (same name). If the files have different names,
+#'         you must provide at least the path to all the mandatory files.
+#'   \item If an optional GPS data file is passed in \code{dsn} or exists,
+#'         the GPS data file will be red even if \code{interpGPS = FALSE}. 
+#'         The (formated) content of the GPS data file is then stored as 
+#'         meta-data and can be retrieved with \code{metadata(x)$GPS}.
+#'   \item If an optional GPS data file (longitude, latitude) is red 
+#'         (when \code{interpGPS = TRUE} and a GPS data file exists), the 
+#'         coordinates will be per default projected into the corresponding 
+#'         UTM (WGS 84) projection (see \code{\link{spInterp}}).
+#'   \item When reading GPR data, the clipped signal values are directly
+#'         estimated from the bit values and stored as metadata.
+#'         They can be retrieved with \code{metadata(x)$clip}.
 #' }
-#' @param dsn data source name: either the filepath to the GPR data (character),
-#'            or an open file connection (can be a list of filepahts or
-#'            open file connections)
-#' @param desc Short description of the file (character).
-#' @param Vmax length-one numeric vector: nominal analog input voltage used 
+#' 
+#' @param dsn [\code{character|connection}] Data source name: either the 
+#'            filepath to the GPR data (character),
+#'            or an open file connection (can be a list of filepaths or
+#'            open file connections). See Details.
+#' @param desc [\code{character(1)}] Short description of the data.
+#' @param Vmax [\code{numeric(1)|NULL}] Nominal analog input voltage used 
 #'             for the bits to volt transformation. 
 #'             It assumes that \code{Vmin = -Vmax}. If \code{Vmax = NULL},
 #'             no bits to Volt transformation is applied.
-#' @param verbose (boolean). If \code{FALSE}, all messages and warnings are
+#' @param verbose [\code{logical(1)}] If \code{FALSE}, all messages and warnings are
 #'                suppressed (use with care).
-#' @param interpGPS logical: should the trace position be interpolated if possible? TRUE or FALSE
-#' @param method A length-three character vector defining the interpolation
-#'               methods (same methods as in \code{signal::interp1}:
-#'               "linear", "nearest", "pchip", "cubic", and "spline"). 
-#'               First element for the interpolation of the 
-#'               inter-trace distances, 
-#'               second element for the interpolation of the horizontal 
-#'               trace positions, and third element for the interpolation
-#'               of the vertical trace positions.
-#' @return The GPR data as object of the class RGPR.
-# #' @seealso \code{\link{writeGPR}}
+#' @param interpGPS [\code{logical(1)}] Should the trace position be interpolated 
+#'                  if possible (that means if a GPS file is available)? 
+#' @param ... additional parameters to be passed to \code{\link{spInterp}}
+#' @return [\code{GPR|GPRset}] If the data contains more than one frequency
+#'         data, it returns an object of the class \code{GPRset}. Else
+#'         an object of the class \code{GPR}.
+#' @seealso \code{\link{writeGPR}}, \code{\link{spInterp}}, and \code{\link{metadata}}
 #' @examples
 #' \dontrun{
 #' # argument dsn is a file path
@@ -56,27 +74,54 @@
 #' # argument dsn is a connection
 #' con <- file("data/RD3/DAT_0052.rd3", "rb")   # binary mode
 #' con2 <- file("data/RD3/DAT_0052.rad", "rt")  # text mode
-#' x2 <- readGPR(dsn = con, dsn2 = con2)
-#' close(con)
-#' close(con2)
+#' x2 <- readGPR(dsn = list(con, con2))
 #' 
 #' con <- file(dsn = "data/FILE____050.DZT", "rb")
 #' y1 <- readGPR(con)
-#' close(con)
 #' }
 #' @name readGPR
 #' @rdname readGPR
 #' @export
 readGPR <- function(dsn, desc = "", Vmax = 50,
-                    verbose = TRUE, interpGPS = TRUE, 
-                    method = c("linear", "linear", "linear")){
+                    verbose = TRUE, interpGPS = TRUE,
+                    ...){
   
-  dsn <- Filter(Negate(is.null), dsn)
-  # file path, name and extension for character or connection
-  fPath <- sapply(dsn, getFPath, USE.NAMES = FALSE)
-  ext <- sapply(fPath, .fExt, USE.NAMES = FALSE)
+  #------------------- check arguments
+  msg <- checkArgInit()
+  FUN <- function(x){
+    inherits(x, "character") | inherits(x, "connection")
+  }
+  if(length(dsn) > 1){
+    test <- sapply(dsn, FUN, USE.NAMES = FALSE)
+  }else{
+    test <- FUN(dsn)
+  }
+  if(!all(test)){
+    msg <- c(msg, paste0("arg 'dsn': Must be a character or a ",
+             "connection of length one or more\n"))
+  } 
+  msg <- checkArg(desc,     msg, "STRING")
+  msg <- checkArg(Vmax,     msg, "NUMERIC1_NULL", Inf)
+  msg <- checkArg(verbose,   msg, "LOGICAL_LEN", 1)
+  msg <- checkArg(interpGPS,   msg, "LOGICAL_LEN", 1)
+  checkArgStop(msg)
+  #------------------- end check
+  
+  if(length(dsn) == 1 && inherits(dsn, "connection")){
+    fPath <- getFPath(dsn)
+  }else{
+    dsn <- Filter(Negate(is.null), dsn)
+    # file path, name and extension for character or connection
+    fPath <- sapply(dsn,   getFPath,   USE.NAMES = FALSE)
+  }
+  ext   <- sapply(fPath, .fExt,      USE.NAMES = FALSE)
   fName <- sapply(fPath, .fNameWExt, USE.NAMES = FALSE)
-  if(!is.list(dsn)) dsn <- as.list(dsn)
+  if(!is.list(dsn)){
+    if(inherits(dsn, "character")) dsn <- as.list(dsn)
+    if(inherits(dsn, "connection")){
+      dsn <- list(dsn)
+    } 
+  } 
   names(dsn)   <- toupper(ext)
   names(fName) <- toupper(ext)
   names(fPath) <- toupper(ext)
@@ -104,6 +149,9 @@ readGPR <- function(dsn, desc = "", Vmax = 50,
                           desc = desc, Vmax = Vmax),  verbose = verbose)
     if( !is.null(dsn[["GPS"]])){
       x_gps <-  verboseF(readGPS(dsn[["GPS"]]), verbose = verbose)
+      if(is.null(x_gps)){
+        message("I couldn't find coordinates in GPS file.")
+      }
     }
     # if(length(dsn) == 1){
     #   if(inherits(dsn, "connection")){
@@ -353,6 +401,9 @@ readGPR <- function(dsn, desc = "", Vmax = 50,
                    verbose = verbose)
     if( !is.null(dsn[["DZG"]])){
       x_gps <-  verboseF(readDZG(dsn[["DZG"]]), verbose = verbose)
+      if(is.null(x_gps)){
+        message("I couldn't find coordinates in GPS file.")
+      }
     }
   # }else if("DZT" %in% toupper(ext)){
   #   if(length(dsn) == 1){
@@ -472,8 +523,8 @@ readGPR <- function(dsn, desc = "", Vmax = 50,
   #   x <- verboseF( .gprTXT(A, fName = fName, fPath = fPath, 
   #                          desc = desc, Vmax = Vmax), verbose = verbose)
   # 
-  # }else if("RDS" %in% toupper(ext)){
-  #   x <- verboseF( readRDS(dsn[["RDS"]]), verbose = verbose)
+  }else if("RDS" %in% toupper(ext)){
+     x <- verboseF( .read_RDS(dsn[["RDS"]]), verbose = verbose)
   #   if(class(x) == "GPR"){
   #     x@filepath <- fPath
   #   }else if(class(x) == "list"){
@@ -525,20 +576,45 @@ readGPR <- function(dsn, desc = "", Vmax = 50,
   #-----
   if(!is.null(x_gps)){
     if(interpGPS){
-      message("No interpolation: interPos() & crs() not ready")
-      # x <- tryCatch({
-      #   x <- interpPos(x, x_gps, tol = sqrt(.Machine$double.eps), 
-      #                  method = method)
-      #   crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
-      #   x
-      # },
-      # error = function(cond){
-      #   message("I could not interpolate the GPS data.")
-      #   return(x)
-      # })
+      if(verbose) message("Coordinates interpolation from GPS data")
+      x <- tryCatch({
+        lst       <- list(...)
+        r         <- lst[["r"]]               # default = NULL
+        projToUTM <- ifelse(is.null(lst[["projToUTM"]]), TRUE, lst[["projToUTM"]])
+        CRSin     <- lst[["CRSin"]]          # default = NULL
+        CRSout    <- lst[["CRSout"]]          # default = NULL
+        odometer  <- lst[["odometer"]]        # default = NULL
+        tol       <- lst[["tol"]]             # default = NULL
+        plot      <- ifelse(is.null(lst[["plot"]]), FALSE, lst[["plot"]])
+        method    <- c("linear", "linear", "linear")
+        if(!is.null(lst[["method"]])){
+          if(length(lst[["method"]]) == 3){
+            method <- lst[["method"]]
+          }else{
+            warning("'method' must have 3 elements. I take default values.")
+          }
+        }
+        x <- spInterp(x, x_gps, tt = NULL, r = r, 
+                 lonlat = TRUE, projToUTM = projToUTM, 
+                 CRSin = CRSin, CRSout = CRSout,
+                 odometer = odometer,
+                 tol = tol, verbose = verbose, plot = plot,
+                 method = method)
+        # x <- interpPos(x, x_gps, tol = sqrt(.Machine$double.eps),
+        #                method = method)
+        x
+      },
+      error = function(cond){
+        message("I could not interpolate the GPS data.")
+        x@md[["GPS"]] <- x_gps
+        return(x)
+      })
     }else{
       x@md[["GPS"]] <- x_gps
     }
+  }else if(isTRUE(verbose) && isTRUE(interpGPS) && !is.null(dsn[["GPS"]])){
+      warning(x@name, ": Either I could not find a GPS file or ",
+              "could not find coordinates in the GPS file.") 
   }
   #-----
   if(grepl("CMP", x@mode)){

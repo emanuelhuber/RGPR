@@ -21,6 +21,11 @@ checkArg <- function(x, u, type, y, ...){
   arg <- sapply(match.call(expand.dots=TRUE)[-1], deparse)
   msg <- NULL
   switch(type,
+         "LENGTH" = { # length 1 or n
+           if(all(length(x) != y))
+             msg <- paste0("must have one of the following length: ", 
+                           paste0(y, collapse = ", "), ".")
+         },
          "COUNT" = {
            if(!checkmate::testCount(x)){
              msg <- "must be a positiv integer"

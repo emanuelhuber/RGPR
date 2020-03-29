@@ -1,5 +1,6 @@
 
 
+
 #' Bytes to volt conversion
 #'       
 #' Convert bytes to volt values
@@ -253,4 +254,7 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
   if(is.na(antsep)) antsep <- numeric(0)
   return(antsep)
 }
+
+
+
 

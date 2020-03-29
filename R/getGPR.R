@@ -15,36 +15,80 @@ setGeneric("getGPR", function(x, id, verbose = FALSE)
 #' @rdname getGPR
 #' @export
 setMethod("getGPR", "GPRsurvey", function(x, id, verbose = FALSE){
+  # if(length(id)>1){
+  #   warning("Length of id > 1, I take only the first element!\n")
+  #   id <- id[1]
+  # }
+  # if(is.numeric(id)){
+  #   no <- as.integer(id)
+  #   if(!(no %in% seq_along(x@paths))){
+  #     stop("'id' not in x!")
+  #   }
+  #   gpr <- verboseF(readGPR(x@paths[[no]]), verbose = verbose)
+  # }else if(is.character(id)){
+  #   no <- which(x@names == trimStr(id))
+  #   if(length(no > 0)){
+  #     gpr <- verboseF(readGPR(x@paths[[no]]), verbose = verbose)
+  #   }else{
+  #     stop("There is no GPR data with the name '", trimStr(id),"'\n")
+  #   }
+  # }
+  # # FIXME : check if nrow(x@coord)
+  # if(length(x@coords[[gpr@name]])>0){
+  #   gpr@coord <- x@coords[[gpr@name]]
+  # }
+  # # if(length(x@intersects[[gpr@name]])>0){
+  # #   ann(gpr) <- cbind(x@intersects[[gpr@name]]$trace,
+  # #                     x@intersects[[gpr@name]]$name)
+  # # }
+  # # FIXME
+  # if(length(x@crs) == 1){
+  #   gpr@crs <- x@crs
+  # }else{
+  #   gpr@crs <- x@crs[no]
+  # }
+  # # if(length(x@coordref)>0){
+  # #   gpr@coordref <- x@coordref
+  # # }
+  # return(gpr)
   if(length(id)>1){
     warning("Length of id > 1, I take only the first element!\n")
     id <- id[1]
   }
   if(is.numeric(id)){
-    no <- as.integer(id)
-    if(!(no %in% seq_along(x@paths))){
-      stop("'id' not in x!")
-    }
-    gpr <- verboseF(readGPR(x@paths[[no]]), verbose = verbose)
+    no <- id
+    gpr <- readGPR(x@paths[[id]])
   }else if(is.character(id)){
     no <- which(x@names == trimStr(id))
     if(length(no > 0)){
-      gpr <- verboseF(readGPR(x@paths[[no]]), verbose = verbose)
+      id <- no
+      gpr <- readGPR(x@paths[[id]])
     }else{
       stop("There is no GPR data with the name '", trimStr(id),"'\n")
     }
   }
-  if(length(x@coords[[gpr@name]])>0){
-    gpr@coord <- x@coords[[gpr@name]]
+  
+   # FIXME -> check that nrow(x@coords[[id]]) is correct!!!!
+  if(nrow(x@coords[[id]]) != ncol(gpr)){
+    stop("nrow(x@coords[[id]]) != ncol(gpr)")
   }
-  # if(length(x@intersects[[gpr@name]])>0){
-  #   ann(gpr) <- cbind(x@intersects[[gpr@name]]$trace,
-  #                     x@intersects[[gpr@name]]$name)
-  # }
+  gpr@coord <- unname(x@coords[[id]] )
+  if(length(x@intersections[[id]]) > 0 ){
+    
+    FUN <- function(y, x){
+      closestTr(x, y = y)
+    }
+    x_tr <- apply(x@intersections[[id]], 1, FUN, gpr)
+    ann(gpr) <- cbind(x_tr, as.character(x@intersections[[id]]$name))
+    
+    # ann(gpr) <- cbind(x@intersections[[id]]$trace,
+    # x@intersections[[id]]$name)
+  }
   # FIXME
   if(length(x@crs) == 1){
     gpr@crs <- x@crs
   }else{
-    gpr@crs <- x@crs[no]
+    gpr@crs <- x@crs[id]
   }
   # if(length(x@coordref)>0){
   #   gpr@coordref <- x@coordref

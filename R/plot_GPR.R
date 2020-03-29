@@ -20,6 +20,7 @@
 #' }
 #' 
 #' @param x Object of class \code{GPR}
+#' @param y Not used
 #' @param add logical. If \code{TRUE}, add to current plot
 #' @param relTime0 logical. If \code{TRUE}, adjust vertical axis to time-zero.
 #'                 If time-zero varies from trace to trace, the vertical axis
@@ -53,9 +54,24 @@
 #' @param ... additional arguments passed to the plotting methods 
 #'            \code{\link[graphics]{plot}} for 1D plot and 
 #'            \code{\link[plot3D]{Image}} for 2D plot. See also  \code{details}.
+#' @examples 
+#' \dontrun{
+#' ## PLOT GPRsurvey data (trace positions of several GPR data)
+#' plot(x, parLines = NULL, parMarkers = NULL, parArrows = NULL, parIntersect = NULL)
+#' # plot only arrows
+#' plot(x, parLines = NULL, parMarkers = NULL, parIntersect = NULL)  
+#' # plot only lines
+#' plot(x, parMarkers = NULL, parArrows = NULL, parIntersect = NULL) 
+#' # plot only markers
+#' plot(x, parLines = NULL, parArrows = NULL, parIntersect = NULL)   
+#' # plot only intersections
+#' plot(x, parLines = NULL, parArrows = NULL, parMarkers = NULL)   
+#' # plot only markers with other parameters
+#' plot(x, parLines = NULL, parArrows = NULL, parMarkers = list(pch = 3), parIntersect = NULL)   
+#' plot(x, parMarkers = NULL)
+#' }
 #' @method plot GPR 
 #' @name plot
-#' @rdname plot
 #' @export
 #Default 1D: "black". 2D: \code{palGPR(n = 101)}
 # ##' @param y \code{NULL,} not used
@@ -387,7 +403,7 @@ plot.GPR <- function(x,
 #' @param relTime0 [\code{logical(1)}] If \code{TRUE}, shift \code{x} to time-
 #'                                      zero. 
 #' @param ... Additional parameters to be passed to \code{\link{lines}}.
-#' @rdname lines
+#' @name lines
 #' @export
 lines.GPR <- function(x, relTime0 = FALSE, ...){
   if(length(x@vel) > 0){  
@@ -424,7 +440,7 @@ lines.GPR <- function(x, relTime0 = FALSE, ...){
 #' @param relTime0 [\code{logical(1)}] If \code{TRUE}, shift \code{x} to time-
 #'                                      zero. 
 #' @param ... Additional parameters to be passed to \code{\link{points}}.
-#' @rdname points
+#' @name points
 #' @export
 points.GPR <- function(x, relTime0 = FALSE, ...){
   if(length(x@vel) > 0){  
@@ -501,15 +517,15 @@ contour.GPR <- function(x,
 #' 
 #' @param x Object of the class GPR
 #' @param ... Arguments to be passed to \code{plot}/\code{line}
-#' @name trPlot
-setGeneric("trPlot", function(x, ...)
-  standardGeneric("trPlot"))
+#' @name plotTr
+setGeneric("plotTr", function(x, ...)
+  standardGeneric("plotTr"))
 
 
-#' @rdname trPlot
+#' @rdname plotTr
 #' @export
 setMethod(
-  f = "trPlot",
+  f = "plotTr",
   signature = "GPR",
   definition = function(x, ...){
     if(ncol(x) == 1){
@@ -648,22 +664,22 @@ setMethod(
     axis(side = side, at = t0 + depthat, labels = depth, tck = +0.02)
   }
   depthat2 <- depthToTime(seq(0.1, by = 0.1, 0.9), 0, v, antsep = x@antsep)
-  axis(side = side, at = t0 + depthat2, labels = FALSE, tck =+0.01)
+  axis(side = side, at = t0 + depthat2, labels = FALSE, tck = +0.01)
   mtext(paste0("depth (", x@xunit, "),  v = ", v, " ", 
                x@xunit, "/", x@zunit), side = side, line = 2)
 }
 
 
 
-.plotAnn <- function(ann, x, line=1.7){
-  if(length(ann)>0){
+.plotAnn <- function(ann, x, line = 1.7){
+  if(length(ann) > 0){
     testann <- (ann != "")
-    if(sum(testann)>0){
+    if(sum(testann) > 0){
       posann <- x
-      ann <- gsub("#","\n",ann)
-      abline(v=posann[testann],col="red",lwd=1)
-      mtext(ann[testann], side = 3, line = line, at=posann[testann],
-            col="red", cex=0.9)
+      ann <- gsub("#", "\n", ann)
+      abline(v = posann[testann], col = "red", lwd = 1)
+      mtext(ann[testann], side = 3, line = line, at = posann[testann],
+            col = "red", cex = 0.9)
     }
     return(TRUE)
   }else{

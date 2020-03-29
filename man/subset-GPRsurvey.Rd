@@ -4,9 +4,13 @@
 \name{[,GPRsurvey,ANY,ANY,ANY-method}
 \alias{[,GPRsurvey,ANY,ANY,ANY-method}
 \alias{[,GPRsurvey-method}
+\alias{[[,GPRsurvey,ANY,ANY-method}
+\alias{[[,GPRsurvey-method}
 \title{Extract and replace parts of a GPRsurvey object}
 \usage{
 \S4method{[}{GPRsurvey,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
+
+\S4method{[[}{GPRsurvey,ANY,ANY}(x, i, j, ..., exact = TRUE)
 }
 \arguments{
 \item{x}{[class \code{GPRsurvey}]}
@@ -18,10 +22,11 @@
 \item{...}{Not used.}
 
 \item{drop}{Not used.}
+
+\item{exact}{Not used.}
 }
 \value{
-[\code{GPR}|\code{numeric}] Returns a numeric vector
-       only if \code{x[]}.
+[\code{GPRsurvey}]
 }
 \description{
 Extract parts of a GPRsurvey object

@@ -4,12 +4,12 @@
 \alias{UTMTolonlat}
 \title{UTM to latitude-longitude}
 \usage{
-UTMTolonlat(xy, crsObj = NULL)
+UTMTolonlat(xy, CRSobj = NULL)
 }
 \arguments{
 \item{xy}{[\code{matrix(,2)}] Columns = x and y coordinates.}
 
-\item{crsObj}{[\code{character(1)}] Coordinate reference system 
+\item{CRSobj}{[\code{character(1)}] Coordinate reference system 
 (proj4string)}
 }
 \value{

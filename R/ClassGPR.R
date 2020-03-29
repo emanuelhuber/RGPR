@@ -37,6 +37,6 @@ setClass(
     x            = "numeric",    # trace position
     z            = "numeric",    # depth/time position (vertical)
     
-    angles      = "matrix"       # theta, phi
+    angles       = "matrix"       # theta, phi
   )
 )

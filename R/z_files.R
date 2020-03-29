@@ -92,9 +92,95 @@ safeName <- function(x, y){
 }
 
 
-# .saveTempFile <- function(x){
-#   tmpf <- tempfile(x@name)
-#   writeGPR(x, type = "rds", overwrite = FALSE, fPath = tmpf)
-#   return(paste0(tmpf, ".rds"))
-# }
+.saveTempFile <- function(x){
+  tmpf <- tempfile(x@name)
+  writeGPR(x, type = "rds", overwrite = FALSE, fPath = tmpf)
+  return(paste0(tmpf, ".rds"))
+}
 
+
+
+#' Get properties of ASCII file to read it with \code{read.table}
+#' 
+#' To get header, separator, column with na values, etc.
+#' 
+#' don't forget to skip blank line when reading dsn
+#' @param dsn   (character) File path or connection
+#' @param lns     (numeric) Number of lines to read to get the properties of the ASCII file
+#' @param verbose (boolean) If \code{TRUE} print messages allowed.
+#' @return 1) header, 2) skip, 3) 
+#' @export
+detectASCIIProp <- function(dsn, lns = 20, verbose = TRUE){
+  
+  # if(!inherits(dsn, "connection")){
+  #   dsn <- file(dsn, 'rb')
+  # }
+  #---------------------- read first 'lns' lines ------------------------------#
+  # con <- file(dsn , "rt")
+  x <- readLines(dsn, n = lns, skipNul = TRUE)
+  # close(dsn)
+  x <- x[ x!= ""]
+  
+  #------------------------------ detect header -------------------------------#
+  # y <- strsplit(x, split = "[^[:alnum:]]+")
+  # split at all punctuations signs except '-' and '-'
+  y <- strsplit(x, split = "[^[:alnum:]\\.\\-]+") 
+  test0 <- suppressWarnings(lapply(y, as.numeric))
+  test <- sapply(test0, function(x) sum(is.na(x)))
+  if( all(test[-1] > 0) ){
+    if(length(unique(test)) == 1){
+      nHeader <- 0
+    }else{
+      nHeader <- 1
+      if(verbose){
+        warning("Cannot detect header with certitude. ",
+                "I assume that the first non-empty line it the header.")
+      }
+    }
+  }else{
+    nHeader <- which(test > 0)
+    #message("there is ", length(nHeader), " header lines!")
+  }
+  
+  if(length(nHeader) > 0){
+    x0 <- x[-nHeader]
+    header <- TRUE
+    skip <- max(nHeader) - 1
+  }else{
+    x0 <- x
+    header <- FALSE
+    skip <- 0
+  }
+  
+  #--------------------------- detect column separator ------------------------#
+  sep <- unique(unlist(lapply(x0, detectSep)))
+  sepName <- sep
+  if(sep == "\t"){
+    sepName <- "\\t"
+  }
+  if(length(sep) > 1){
+    stop("seems that you have different column delimiters: ", sepName, "\n")
+  }else{
+    #message("Column delimiter is '", sepName, "'")
+  }
+  
+  #--------------------------- number of columns ------------------------------#
+  # z <- strsplit(x0, split = "[^[:alnum:]\\.\\-]+")
+  z <- strsplit(x0, split = sep)
+  nCols <- unique(sapply(z, length))
+  
+  return(list(header = header, skip = skip, sep = sep, nCols = nCols))
+}
+
+detectSep <- function(x){ 
+  # i <- gregexpr("[^[:alnum:]]+", x, perl = TRUE)
+  i <- gregexpr("[^[:alnum:]\\.\\-]+", x, perl = TRUE)
+  sep <- unique(substring(x, i[[1]], i[[1]]))
+}
+
+rmNaCol <- function(x){
+  # remove NA columns
+  rmCol <- which(apply(x, 2, function(x) sum(is.na(x))) > 0)
+  if(length(rmCol) > 0)    x <- x[, - rmCol]
+  return(x)
+}

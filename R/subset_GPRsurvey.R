@@ -9,13 +9,13 @@
 #' @param j [\code{integer}] Not used.
 #' @param ... Not used.
 #' @param drop Not used.
-#' @return [\code{GPR}|\code{numeric}] Returns a numeric vector
-#'        only if \code{x[]}.
+#' @param exact Not used.
+#' @return [\code{GPRsurvey}]
 #' @aliases [,GPRsurvey-method
 #' @rdname subset-GPRsurvey
 #' @export
 setMethod("[", signature(x = "GPRsurvey", i = "ANY", j = "ANY"),
-          function(x, i, j, ..., drop){
+          function(x, i, j, ..., drop = TRUE){
     if(missing(i)) i <- j
     # cat(typeof(i),"\n")
     # cat(j,"\n")
@@ -37,9 +37,9 @@ setMethod("[", signature(x = "GPRsurvey", i = "ANY", j = "ANY"),
     }else{
       y@crs <- x@crs[i]
     }
-    y@coords         <- x@coords[x@names[i]]
-    y@markers        <- x@markers[x@names[i]]
-    y@intersections  <- x@intersections[x@names[i]]
+    y@coords         <- x@coords[i]
+    y@markers        <- x@markers[i]
+    y@intersections  <- x@intersections[i]
     y@nz             <- x@nz[i]
     y@zlengths       <- x@zlengths[i]
     y@zunits         <- x@zunits[i]
@@ -47,5 +47,18 @@ setMethod("[", signature(x = "GPRsurvey", i = "ANY", j = "ANY"),
     y@xlengths       <- x@xlengths[i]
     
     return(y)
-  }
-)
+})
+
+
+
+#' @aliases [[,GPRsurvey-method
+#' @rdname subset-GPRsurvey
+#' @export
+setMethod("[[", signature(x = "GPRsurvey", i = "ANY", j = "ANY"),
+          function(x, i, j, ..., exact = TRUE){
+            if(missing(i)) i <- j
+            y <- getGPR(x, id = i)
+            return(y)
+})
+
+

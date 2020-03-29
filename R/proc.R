@@ -1,7 +1,3 @@
-
-
-#------------------------------------- PROC -----------------------------------#
-
 #' Get processing steps applied to the data
 #' 
 #' \code{processing} returns all the processing steps applied to the data.
@@ -29,7 +25,7 @@ setMethod("proc", "GPR", function(x){
 
 #' @rdname proc
 #' @export
-setReplaceMethod("proc", "GPR",function(x, value){
+setReplaceMethod("proc", "GPR", function(x, value){
   value <- as.character(value)
   x@proc <- c(x@proc, value)
   return(x)

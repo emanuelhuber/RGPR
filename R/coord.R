@@ -1,0 +1,124 @@
+
+
+#' Trace coordinates
+#' 
+#' Return or update the trace coordinates (x, y, z). Not that you cannot 
+#' change the number of coordinates with \code{coord}.
+#' 
+#' Modified slots class GPR
+#' \itemize{
+#'   \item \code{coord} the trace coordinates
+#'   \item \code{x} the local trace position (along profile)
+#' }
+#' Modified slots class GPRsurvey
+#' \itemize{
+#'   \item \code{coords} the trace coordinates
+#'   \item \code{xlengths} the local trace position (along profile)
+#'   \item \code{intersections} the local trace position (along profile)
+#' }
+#' @param x      [\code{GPR class}] An object of the class \code{GPR}
+#' @param value  [\code{matrix(n,3)|list}] coordinates (x, y, z)
+#' @return [\code{GPR class}] An object of the class \code{GPR}
+#' @name coord
+setGeneric("coord", function(x) 
+  standardGeneric("coord"))
+
+
+#' @rdname coord
+#' @aliases coord<-,GPR-method
+setGeneric("coord<-",function(x,value){standardGeneric("coord<-")})
+
+ 
+#' @rdname coord   
+#' @export
+setMethod("coord", "GPR", function(x){
+  return(x@coord)
+})
+
+#' @rdname coord
+#' @export
+setReplaceMethod("coord", signature="GPR", function(x, value){
+    value <- as.matrix(value)
+    
+    #---- check some stuff
+    msg <- c()
+    if(ncol(value) != 3){
+      msg <- c(msg, paste0("'value' must have 3 columns."))
+    }
+    if(nrow(value) != ncol(x)){
+      msg <- c(msg, paste0("'value' must have same row number as x."))
+    }
+    if(length(msg) > 0){
+      stop(paste0(paste0(seq_along(msg), ". "), msg, sep = "\n"))
+    } 
+    #------------------------ -
+    
+    x@coord  <- value
+    
+    x <- spRmDuplicates(x, verbose = FALSE)
+    x <- .updateXpos(x)
+    
+    x@proc   <- c(x@proc, "coord<-")
+    return(x)
+})
+
+
+
+#' @rdname coord   
+#' @export
+setMethod("coord", "GPRsurvey", function(x){
+  return(x@coords)
+})
+
+
+#' @rdname coord
+#' @export
+setReplaceMethod("coord", signature="GPRsurvey", function(x, value){
+  
+  # check length
+  if(length(value) != length(x@coords)){
+    stop("'value' must have the same length as 'coord(x)', ", 
+         length(x@coords), ".")
+  }
+  
+  test_value_len <- sapply(value, length) > 0 
+  # check number of columns
+  tst <- sapply(value, ncol) != 3 & test_value_len 
+  if(any(tst)){
+    stop("All elements must have 3 columns! ",
+         "Check element(s) ", paste0(which(tst), collapse = ", "), "...")
+  } 
+  
+  # check number of row
+  x_nrow <- x@nx 
+  tst2 <- sapply(value, nrow) != x_nrow & test_value_len 
+  if(any(tst2)){
+    stop("The following elements must have the correct number of rows: ",
+         paste("elt.", paste(which(tst2), x_nrow[tst2], sep = "->"),
+               collapse = ",  "))
+  }
+  x@coords  <- value
+  
+  x@xlengths[test_value_len] <- sapply(x@coords[test_value_len], pathLength, USE.NAMES = FALSE)
+  
+  x <- spIntersection(x)
+  
+  return(x)
+})
+
+
+# x = GPR
+.updateXpos <- function(x){
+  if(length(x@coord) > 0){
+    if(isCRSLonLat(x)){ 
+      dx <- verboseF(geodist::geodist(x@coord[,1:2], paired = FALSE, 
+                             sequential = TRUE, pad = FALSE, 
+                             measure = "geodesic"),
+                     verbose = FALSE)
+      x@x <- c(0, cumsum(dx))
+    }else{
+      x@x <- pathRelPos(x@coord[,1:2])
+    }
+  }
+  return(x)
+}

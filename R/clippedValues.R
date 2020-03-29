@@ -55,7 +55,7 @@
 }
 
 # return list of clipped values: min and max
-getClippedBits <- function(x, nbits){
+clippedBits <- function(x, nbits){
   xclipmin <- apply(x, 2, .getClipped, xclip = -2^nbits/2 )
   xclipmax <- apply(x, 2, .getClipped, xclip = 2^nbits/2 -1 )
   return(list(clipmin = xclipmin, clipmax = xclipmax))

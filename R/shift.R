@@ -62,7 +62,7 @@ setMethod("shift", "GPR",
   msg <- checkArg(crop,   msg, "LOGICAL_LEN", 1)
   msg <- checkArg(track,   msg, "LOGICAL_LEN", 1)
   checkArgStop(msg)
-  #-----------------------------------
+  #------------------- end check
   
   if(any(ts != 0)){
     x <- .traceShift(x, ts = ts, method = method, crop = crop)

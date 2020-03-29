@@ -30,7 +30,9 @@ Collate:
 	'ClassGPRcube.R'
 	'ClassGPRslice.R'
 	'ClassGPRsurvey.R'
-	'getterSetter.R'
+	'proc.R'
+	'ann.R'
+	'metadata.R'
 	'print_GPR.R'
 	'print_GPRsurvey.R'
 	'subset_GPR.R'
@@ -38,17 +40,37 @@ Collate:
 	'subset_GPRsurvey.R'
 	'getGPR.R'
 	'base_GPR.R'
+	'base_GPRsurvey.R'
 	'plot_GPR.R'
+	'plot_GPRsurvey.R'
 	'readGPR.R'
 	'readDT1.R'
 	'readDZT.R'
+	'readRDS.R'
+	'readTXT.R'
+	'readFID.R'
+	'readTopo.R'
+	'readGPGGA.R'
+	'writeGPR.R'
+	'z_interp.R'
+	'spInterp.R'
+	'spRmDuplicates.R'
 	'GPRsurvey.R'
+	'interpSlices.R'
 	'GPS.R'
 	'isCRSLonLat.R'
+	'isZunitTime.R'
+	'coord.R'
 	'crs.R'
 	'crsUnit.R'
-	'coercion_GPRsurvey.R'
-	'spIntersect.R'
+	'coercion_spatial.R'
+	'spunit.R'
+	'spProjectToCRS.R'
+	'spIntersection.R'
+	'spClosest.R'
+	'spOBB.R'
+	'spAngle.R'
+	'spGeoref.R'
 	'clippedValues.R'
 	'clip.R'
 	'shiftToTime0.R'
@@ -60,15 +82,21 @@ Collate:
 	'z_files.R'
 	'z_checkArgs.R'
 	'z_functions.R'
+	'z_path.R'
+	'z_units.R'
 Imports:
     methods,
     graphics,
     stats,
     grDevices,
     utils,
-    sp,
     rgdal,
     rgeos,
+    geodist,
+    raster,
+    sp,
+    sf,
+    geojsonsf,
     MASS,
     signal,
     colorspace,
@@ -77,16 +105,13 @@ Imports:
     mmand,
     e1071,
     plot3D,
-    adimpro,
-    raster,
     fields,
     magrittr,
     MBA,
-    geojsonsf,
-    sf,
     XML,
     checkmate,
-    RConics
+    RConics,
+    units
 RoxygenNote: 6.1.1
 Suggests: 
-    testthat
+    testthat (>= 2.1.0)

@@ -4,10 +4,10 @@
 \alias{crsUnit}
 \title{Unit of Coordinate Reference System (CRS)}
 \usage{
-crsUnit(x)
+crsUnit(CRSobj)
 }
 \arguments{
-\item{x}{[\code{character}] CRS (one or more)}
+\item{CRSobj}{[\code{sp::CRS|character}] CRS object (one or more)}
 }
 \value{
 [\code{character}] The unit abbreviation (except for degree)

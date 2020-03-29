@@ -101,14 +101,14 @@
         desc         = desc,
         mode         = "CO",
         date         = dd,
-        freq         = antfreq, 
+        freq         = unname(antfreq), 
         
         data         = bits2volt(Vmax = Vmax, nbits = x$hd$BITS) * x$data,     
         dunit        = dunit,  
         dlab         = "amplitude", 
         
         spunit       = "",  
-        crs          = "",  
+        crs          = NA_character_,  
         
         xunit        = x_posunit,  
         xlab         = "position",
@@ -158,8 +158,8 @@
         dunit        = dunit,  
         dlab         = "amplitude", 
         
-        # spunit       = "character",  
-        # crs          = "character",  
+        spunit       = "",  
+        crs          = NA_character_, 
         
         xunit        = x_posunit,  
         xlab         = "position",

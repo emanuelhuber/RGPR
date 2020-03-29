@@ -6,12 +6,14 @@
 #' @param x [\code{character(k)}]     Vector of \code{k} file paths of GPR data.
 #' @param verbose [\code{logical(1)}] If \code{TRUE} the function prints some
 #'                                    information.
+#' @param ...     Additional parameters to be passed to \code{\link{readGPR}}.
 #' @name GPRsurvey
 #' @export
 # LINES = list of datapath
-GPRsurvey <- function(x, verbose = FALSE){
+GPRsurvey <- function(x, verbose = TRUE, ...){
   LINES <- x
   n <- length(LINES)
+  line_paths    <- character(n)
   line_names    <- character(n)
   line_descs    <- character(n)
   line_modes    <- character(n)
@@ -31,7 +33,8 @@ GPRsurvey <- function(x, verbose = FALSE){
   
   for(i in seq_along(LINES)){
     verboseF(message("Read ", basename(LINES[i]), "..."), verbose = verbose)
-    gpr <- verboseF( readGPR(LINES[[i]], verbose = verbose), verbose = verbose)
+    gpr <- verboseF( readGPR(LINES[[i]], verbose = verbose, ...), verbose = verbose)
+    line_paths[i] <- .saveTempFile(gpr)
     # FIX ME!
     #  > check if name(gpr) is unique
     line_nx[i]           <- ncol(gpr)
@@ -68,7 +71,9 @@ GPRsurvey <- function(x, verbose = FALSE){
     }
     line_spunits[i]        <- gpr@spunit
     line_zunits[i]         <- gpr@zunit  
-    line_crs[i] <- ifelse(length(gpr@crs) > 0, gpr@crs[1], character(1))
+    line_crs[i]            <- ifelse(length(gpr@crs) > 0, 
+                                     gpr@crs[1], 
+                                     NA_character_)
     xyzCoords[[i]]         <- gpr@coord
     if(ncol(gpr@coord) == 3 )  colnames(xyzCoords[[i]]) <- c("x", "y", "z")
     # print(gpr@coord)
@@ -83,21 +88,28 @@ GPRsurvey <- function(x, verbose = FALSE){
     # line_markers[[line_names[i] ]] <- trimStr(gpr@markers)
     line_markers[[i]]      <- trimStr(gpr@markers)
   }
-  if( length(unique(line_spunits)) > 1 ){
-    warning("Position units are not identical: \n",
-            paste0(unique(line_spunits), collaspe = ", "), "!")
-  }
-  if(length(unique(line_zunits)) > 1){
-    warning("Depth units are not identical: \n",
-            paste0(unique(line_zunits), collaspe = ", "), "!\n")
-  }
-  if(length(unique(line_crs)) > 1){
-    warning("Not all the coordinate reference systems are identica: \n",
-            paste0(unique(line_crs), collaspe = ", "), "!\n")
+  line_spunits <- .checkSpunitsurvey(line_spunits)
+  line_crs <- .checkCRSsurvey(line_crs)
+  if(isTRUE(verbose)){
+    if( length(unique(line_spunits)) > 1 ){
+      warning("Position units are not identical: \n",
+              "check 'spunit(x)")
+    }
+    if(length(unique(line_zunits)) > 1){
+      warning("Depth units are not identical: \n",
+              "check 'zunit(x)'")
+    }
+    # ucrs <- unique(line_crs[!is.na(line_crs)])
+    # print(line_crs)
+    if(length(line_crs) > 1){
+      warning("Not all the coordinate reference systems are identical:\n",
+              "check 'crs(x)'")
+    }
   }
   x <- new("GPRsurvey",
            version       = "0.3",        # version of the class
-           paths         = LINES,        # filepath of the GPR data
+           # paths         = LINES,        # filepath of the GPR data
+           paths         = line_paths,        # filepath of the GPR data
            names         = line_names,   # names of the GPR profiles
            descs         = line_descs,   # descriptions of the GPR profiles
            modes         = line_modes,  # survey mode (reflection/CMP)
@@ -139,6 +151,7 @@ GPRsurvey <- function(x, verbose = FALSE){
            # dz            = line_dz,     # depth/time window (vertical)
            # zunits        = line_depthunits   # time/depth unit
   )
-  x <- spIntersect(x)
+  x <- spIntersection(x)
   return(x)
 }
+

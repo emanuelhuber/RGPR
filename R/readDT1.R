@@ -160,7 +160,7 @@
   #   dorigin <- "1970-01-01"
   # }
   traceTime <- as.double(as.POSIXct(x$dt1$time, origin = d))
-  sup_hd[["clip"]] <- getClippedBits(x$data, nbits = 16)
+  sup_hd[["clip"]] <- clippedBits(x$data, nbits = 16)
   sup_hd[["hd"]] <- x$hd
   xdata <- bits2volt(Vmax = Vmax)*x$data
   colnames(xdata) <- seq_len(ncol(x$data))
@@ -184,7 +184,8 @@
       dlab         = "amplitude", 
       
       spunit       = "",  
-      crs          = "",  
+      crs          = NA_character_,  
+      #crs          = "",  
        
       xunit        = posunit,  
       xlab         = "position",
@@ -213,33 +214,6 @@
       z            = seq(0, by = dz, length.out = nrow(x$data))  
       
       # angles      = "matrix" 
-      
-      # version     = "0.2",
-      # data        = bits2volt(Vmax = Vmax)*x$data,
-      # traces      = x$dt1$traces,
-      # fid         = trimStr(x$dt1$com),
-      # coord       = coord,
-      # pos         = x$dt1$pos,
-      # depth       = seq(0, by = dz, length.out = nrow(x$data)),
-      # rec         = coord_rec,
-      # trans       = coord_trans,
-      # time0       = time_0,
-      # time        = traceTime,
-      # proc        = character(0),
-      # vel         = list(0.1),                  # m/ns
-      # name        = fName,
-      # description = desc,
-      # filepath    = fPath,
-      # dz          = dz,  
-      # dx          = dx[1],
-      # depthunit   = "ns",
-      # posunit     = posunit[1],
-      # freq        = antfreq[1], 
-      # antsep      = antsep[1], 
-      # surveymode  = surveymode[1],
-      # date        = d,
-      # crs         = character(0),
-      # hd          = sup_hd                      # header
   )
 }
 
@@ -328,17 +302,27 @@ readHD <- function(dsn){
 #' @param dsn [\code{character(1)|connection object}] data source name: 
 #'             either the filepath to the GPR data (character),
 #'            or an open file connection.
-#' @return [\code{data.frame}] 
+#' @param returnSf [\code{logical(1)}] If \code{TRUE} returns an object of class
+#'              \code{sf} (see \code{\link{sf}{sf}}). If \code{FALSE} returns
+#'              a \code{data.frame}.
+#' @return [\code{sf|data.frame|NULL}] Either an object of class
+#'         \code{sf} or a \code{data.frame} or \code{NULL} if no
+#'         coordinates could be extracted.
 #' @seealso \code{\link{readDT1}}, \code{\link{readHD}}
 #' @name readGPS
 #' @rdname readGPS
 #' @export
-readGPS <- function(dsn){
+readGPS <- function(dsn, returnSf = TRUE){
   X <- .readGPS(dsn)
   if(length(X$tr_id) == 0) return(NULL)
   xyzt <- .getLonLatFromGPGGA(X$gpgga)
   mrk <- cbind(xyzt[ ,1:3], X$tr_id, X$tr_pos, xyzt[ ,4])
   names(mrk) <- c("x", "y", "z", "id", "pos", "time")
+  if(isTRUE(returnSf)){
+    mrk <- sf::st_as_sf(x      = mrk,
+                        coords = c("x", "y", "z"),
+                        crs    = 4326)
+  }
   .closeFileIfNot(dsn)
   return(mrk)
 }

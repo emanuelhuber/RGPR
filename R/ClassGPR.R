@@ -798,6 +798,19 @@ setMethod("as.double", "GPR",  function(x, ...) as.double(x@data))
 ###--- Coercion from ... to GPR
 setAs(from = "matrix", to = "GPR", def = function (from) as.GPR.matrix(from))
 
+setAs(from = "data.frame", to = "GPR", def = function (from) as.GPR.data.frame(from))
+
+
+#' Coercion from data.frame to GPR
+#'
+#' @name as.GPR.data.frame
+#' @rdname GPRcoercion
+#' @export
+as.GPR.data.frame <- function(x, ...){
+  as.GPR.matrix(as.matrix(x))
+}
+
+
 #' Coercion from matrix to GPR
 #'
 #' @name as.GPR.matrix
@@ -870,7 +883,7 @@ as.GPR.list <- function (x, ...){
     d_name <- paste(eval(myArg[2]))
     y <- new("GPR", 
              version     = "0.2",
-             data        = x[["data"]],
+             data        = as.matrix(x[["data"]]),
              traces      = 1:ncol(x[["data"]]),       # trace numbering
              pos         = x[["pos"]],                # trace position
              depth       = x[["depth"]],

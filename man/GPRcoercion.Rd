@@ -8,6 +8,7 @@
 \alias{as.SpatialPoints}
 \alias{as.numeric}
 \alias{as.integer}
+\alias{as.GPR.data.frame}
 \alias{as.GPR.matrix}
 \alias{as.GPR.list}
 \alias{as.GPRset.GPR}
@@ -24,6 +25,8 @@
 \S4method{as.numeric}{GPR}(x, ...)
 
 \S4method{as.integer}{GPR}(x, ...)
+
+as.GPR.data.frame(x, ...)
 
 as.GPR.matrix(x, ...)
 
@@ -43,6 +46,8 @@ Coercion to SpatialPoints
 Coercion to numeric
 
 Coercion to integer
+
+Coercion from data.frame to GPR
 
 Coercion from matrix to GPR
 

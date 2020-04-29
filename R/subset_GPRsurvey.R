@@ -45,7 +45,7 @@ setMethod("[", signature(x = "GPRsurvey", i = "ANY", j = "ANY"),
     y@zunits         <- x@zunits[i]
     y@nx             <- x@nx[i]
     y@xlengths       <- x@xlengths[i]
-    
+    y@transf         <- x@transf
     return(y)
 })
 

@@ -107,18 +107,26 @@ setReplaceMethod("coord", signature="GPRsurvey", function(x, value){
 })
 
 
-# x = GPR
 .updateXpos <- function(x){
-  if(length(x@coord) > 0){
-    if(isCRSLonLat(x)){ 
-      dx <- verboseF(geodist::geodist(x@coord[,1:2], paired = FALSE, 
-                             sequential = TRUE, pad = FALSE, 
-                             measure = "geodesic"),
-                     verbose = FALSE)
-      x@x <- c(0, cumsum(dx))
-    }else{
-      x@x <- pathRelPos(x@coord[,1:2])
-    }
+  xpos <- spPathRel(x)
+  if(length(xpos) > 0){
+    x@x <- xpos
   }
   return(x)
 }
+
+# # x = GPR
+# .updateXpos <- function(x){
+#   if(length(x@coord) > 0){
+#     if(isCRSLonLat(x)){ 
+#       dx <- verboseF(geodist::geodist(x@coord[,1:2], paired = FALSE, 
+#                              sequential = TRUE, pad = FALSE, 
+#                              measure = "geodesic"),
+#                      verbose = FALSE)
+#       x@x <- c(0, cumsum(dx))
+#     }else{
+#       x@x <- pathRelPos(x@coord[,1:2])
+#     }
+#   }
+#   return(x)
+# }

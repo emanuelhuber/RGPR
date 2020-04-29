@@ -67,12 +67,13 @@ setMethod("getGPR", "GPRsurvey", function(x, id, verbose = FALSE){
       stop("There is no GPR data with the name '", trimStr(id),"'\n")
     }
   }
-  
-   # FIXME -> check that nrow(x@coords[[id]]) is correct!!!!
-  if(nrow(x@coords[[id]]) != ncol(gpr)){
-    stop("nrow(x@coords[[id]]) != ncol(gpr)")
+  if(length(x@coords[[id]]) > 0 ){
+     # FIXME -> check that nrow(x@coords[[id]]) is correct!!!!
+    if(nrow(x@coords[[id]]) != ncol(gpr)){
+      stop("nrow(x@coords[[id]]) != ncol(gpr)")
+    }
+    gpr@coord <- unname(x@coords[[id]] )
   }
-  gpr@coord <- unname(x@coords[[id]] )
   if(length(x@intersections[[id]]) > 0 ){
     
     FUN <- function(y, x){

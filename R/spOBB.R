@@ -30,7 +30,8 @@ setGeneric("spOBB", function(x)
 #' @export
 setMethod("spOBB", "GPR", function(x){
   if(length(x@coord) > 0){
-    return(.OBB(x@coord[,1:2]))
+    x_obb <- .OBB(x@coord[,1:2])
+    return(matrix2polygon(x_obb))
   }else{
     stop("x has no coordinates.")
   }
@@ -44,7 +45,9 @@ setMethod("spOBB", "GPRsurvey", function(x){
     # xyz <- Filter(Negate(is.null), xyz)
     xyz <- xyz[sapply(xyz, function(x) length(x)> 0)]
     p <- do.call(rbind, xyz)
-    return(.OBB(p[,1:2]))
+    x_obb <- .OBB(p[,1:2])
+    # return(.OBB(p[,1:2]))
+    return(matrix2polygon(x_obb))
   }else{
     stop("x has no coordinates.")
   }
@@ -53,9 +56,24 @@ setMethod("spOBB", "GPRsurvey", function(x){
 #' @rdname spOBB   
 #' @export
 setMethod("spOBB", "matrix", function(x){
-  .OBB(x[,1:2])
+  x_obb <- .OBB(x[,1:2])
+  return(matrix2polygon(x_obb))
 })
 
+
+#' @rdname spOBB   
+#' @export
+setMethod("spOBB", "sfc", function(x){
+  x_obb <- .OBB(sf::st_coordinates(x)[,1:2])
+  return(matrix2polygon(x_obb))
+})
+
+#' @rdname spOBB   
+#' @export
+setMethod("spOBB", "sf", function(x){
+  x_obb <- .OBB(sf::st_coordinates(x)[,1:2])
+  return(matrix2polygon(x_obb))
+})
 
 
 # source "whuber" from stackexchange.com
@@ -78,5 +96,6 @@ setMethod("spOBB", "matrix", function(x){
   k <- which.min(areas)                           # Index of the best edge (smallest area)
   
   # Form a rectangle from the extremes of the best edge
-  cbind(x[c(1,2,2,1,1),k], y[c(1,1,2,2,1),k]) %*% rbind(v[k,], w[k,])
+  xy_obb <- cbind(x[c(1,2,2,1,1),k], y[c(1,1,2,2,1),k]) %*% rbind(v[k,], w[k,])
+  return(xy_obb)
 }

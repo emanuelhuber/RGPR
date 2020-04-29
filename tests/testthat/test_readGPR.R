@@ -8,6 +8,7 @@ dsn1 <- c("/mnt/data/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2014_04_25_frenke/LIN
           "/mnt/data/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2014_04_25_frenke/LINE02.DT1",
           "/mnt/data/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2014_04_25_frenke/LINE02.txt")
 
+# double Frequency
 dsn_db_freq <- "/mnt/data/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/dzt/data_Hide_double_frequencies/FILE____001.DZT"
 
 x <- readGPR(dsn0)
@@ -15,10 +16,33 @@ x
 x <- readGPR(dsn_db_freq)
 x
 
-paste0("survey mode: ", x@mode, "; ",
-       "line length: ", diff(range(x@x)), " ", x@xunit, "; ",
-       "window length = ", diff(range(x@z)), " ", x@zunit, "; ",
-       "frequency: ", x@freq, " MHz;")
+# CMP
+dsn_cmp <- "/mnt/data/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2014_04_25_frenke/CMP.DT1"
+x <- readGPR(dsn_cmp)
+plot(x)
+
+# WARR
+dsn_warr <- "/mnt/data/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/WAR_Guillaume/Line0058.DT1"
+x <- readGPR(dsn_warr)
+x
+
+plot(x, xaxis = "r")
+
+plot(x[1:100, ])
+?plot3D::image2D
+
+plot3D::image2D(t(as.matrix(x)), xaxis = "r")
+image(as.matrix(x))
+
+# plot(x)
+# plot(x[100:400,30:200,])
+# 
+# plotTr(x)
+# plotTr(x[,,1], add = TRUE, col = "blue")
+# plotTr(x[,,2], add = TRUE, col = "red")
+# 
+# x@freq
+# x@y
 
 test_that("'readGPR()': test on argument 'dsn'",{
   expect_message(readGPR(dsn0)) # Coordinates interpolation from GPS data

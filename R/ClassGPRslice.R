@@ -14,5 +14,8 @@
 #' @export
 setClass(
   Class = "GPRslice",  
-  contains = "GPRcube"
+  contains = "GPRcube",
+  slots=c(
+    z     = "numeric"    # depth of the slice
+  )
 )

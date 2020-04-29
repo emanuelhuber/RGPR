@@ -18,7 +18,7 @@ setMethod("spAngle", "GPR", function(x){
     dEN <- x@coord[1,1:2] - tail(x@coord[,1:2],1)
     angl_EN <- atan2(dEN[2], dEN[1])
     # angl_EN/pi * 180
-    orb <- spOBB(x)
+    orb <- sf::st_coordinates(spOBB(x))
     dEN <- orb[1,] - orb[2,]
     i <- which.max(diff(pathRelPos(orb)))[1]
     dOBB <- orb[i + 1,] - orb[i,]
@@ -41,7 +41,7 @@ setMethod("spAngle", "GPR", function(x){
 #' @export
 setMethod("spAngle", "GPRsurvey", function(x){
   if(length(x@coords) > 0){
-    orb <- spOBB(x)
+    orb <- sf::st_coordinates(spOBB(x))
     dEN <- orb[1,] - orb[2,]
     i <- which.max(diff(pathRelPos(orb)))[1]
     dOBB <- orb[i + 1,] - orb[i,]

@@ -21,10 +21,10 @@ trace unit) to shift the traces.
 the same amount \code{ts}) or a vector with \eqn{m} elements 
 (\eqn{m} is equal to the number of traces).}
 
-\item{method}{[\code{character(1)}] Interpolation method to be applied
-(one of \code{pchip} \code{linear}, \code{nearest}, 
-\code{spline}, \code{cubic}, \code{none}, 
-see also \code{\link[signal]{interp1}}). 
+\item{method}{[\code{character(1)}] Interpolation method to be applied:
+one of \code{pchip}, \code{linear}, \code{nearest}, 
+\code{spline}, \code{cubic}, \code{none} 
+(see also \code{\link[signal]{interp1}}). 
  \code{"none"} means that the trace is shifted by the
 amount of trace samples the closest to \code{ts} without
 interpolation.}

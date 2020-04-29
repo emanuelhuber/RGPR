@@ -2,9 +2,9 @@
 % Please edit documentation in R/z_utils.R
 \name{bits2volt}
 \alias{bits2volt}
-\title{Bytes to volt conversion
+\title{Bits to volt conversion
       
-Convert bytes to volt values}
+Convert bits to volt values}
 \usage{
 bits2volt(Vmax = 50, Vmin = 50, nbits = 16)
 }
@@ -19,7 +19,7 @@ If missing, then \code{Vmin = -Vmax}.}
 \item{nbits}{[\code{integer(1)} Number of bits.}
 }
 \description{
-Bytes to volt conversion
+Bits to volt conversion
       
-Convert bytes to volt values
+Convert bits to volt values
 }

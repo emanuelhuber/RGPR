@@ -21,7 +21,7 @@ setGeneric("clip", function(x, xclip = NULL, track = TRUE)
 #' @return [\code{GPR class}] Clipped GPR object.
 #' @rdname clip
 #' @export
-setMethod("clip", "GPR", function(x, xclip = NULL, track = TRUE){
+setMethod("clip", "GPRvirtual", function(x, xclip = NULL, track = TRUE){
   
   #------------------- check arguments
   msg <- checkArgInit()

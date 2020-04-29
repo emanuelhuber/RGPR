@@ -18,10 +18,10 @@
 #'               \code{ts} is eiter a single value (all the traces are shifted by 
 #'               the same amount \code{ts}) or a vector with \eqn{m} elements 
 #'               (\eqn{m} is equal to the number of traces).
-#' @param method [\code{character(1)}] Interpolation method to be applied
-#'               (one of \code{pchip} \code{linear}, \code{nearest}, 
-#'               \code{spline}, \code{cubic}, \code{none}, 
-#'               see also \code{\link[signal]{interp1}}). 
+#' @param method [\code{character(1)}] Interpolation method to be applied:
+#'               one of \code{pchip}, \code{linear}, \code{nearest}, 
+#'               \code{spline}, \code{cubic}, \code{none} 
+#'               (see also \code{\link[signal]{interp1}}). 
 #'                \code{"none"} means that the trace is shifted by the
 #'               amount of trace samples the closest to \code{ts} without
 #'               interpolation.
@@ -47,9 +47,8 @@ setMethod("shift", "GPR",
                               "cubic", "none"), 
                    crop = TRUE, track = TRUE){
   
-  method <- match.arg(method, c("spline", "linear", "nearest", "pchip", 
+  method <- match.arg(method[1], c("spline", "linear", "nearest", "pchip", 
                                 "cubic", "none"))
-  method <- method[1]
   if(length(ts) == 1){
     ts <- rep(ts, ncol(x))
   }

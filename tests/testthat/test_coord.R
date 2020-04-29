@@ -6,10 +6,26 @@
 
 LINES <- file.path("/mnt/data/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2011_10_10_flagogna",
                    paste0("XLINE", sprintf("%03d", 0:5), ".DT1"))
+LINES_GPS <- file.path("/mnt/data/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2011_10_10_flagogna",
+                   paste0("XLINE", sprintf("%03d", 0:5), ".GPS"))
 
 x <- GPRsurvey(LINES, verbose = FALSE)
 x_coords <- x@coords
 
+
+# # x <- readGPR(dsn0[1:2], interpGPS = FALSE)
+# # x_gps <- readGPS(dsn0[3])
+# x <- readGPR(LINES[2], verbose = TRUE)
+# x_gps <- readGPS(LINES_GPS[2])
+# x_int <- spInterp(x, topo = x_gps)
+# expect(nrow(x_int@coord) == ncol(x_int), "not same number coordinates as traces!!")
+# 
+# pathRelPos(sf::st_coordinates(x_gps))
+# spPathRel(x)
+# 
+# x@coord <- sf::st_coordinates(x_gps)
+# 
+# RGPR:::.updateXpos(x)
 
 test_that("'coord' for GPRsurvey",{
   expect_identical(x_coords, coord(x))

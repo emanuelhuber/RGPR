@@ -24,13 +24,14 @@ setMethod("[", signature(x = "GPRset", i = "ANY", j = "ANY"),
     if(missing(j) || length(j) == 0) j <- seq_len(ncol(x@data))
     if(missing(k) || length(k) == 0) k <- seq_len(dim(x@data)[3])
     # return a x-z object
+    # CASE where GPRset <- antenna 1, antenna 2, antenna 3, ...
+    x_freq <- x@freq
+    # if(x@ylab == "frequency"){
+    if(length(x_freq) > 1 && length(x_freq) >= max(k)){
+      x_freq <- x_freq[k]
+    }
     if(length(k) == 1) {
       # print("length(k) == 1")
-      # CASE where GPRset <- antenna 1, antenna 2, antenna 3, ...
-      x_freq <- x@freq
-      if(x@ylab == "frequency"){
-        x_freq <- x@y[k]
-      }
       x <- new("GPR",   
           #--- class GPRvirtual
           version      = "0.3",  
@@ -80,8 +81,57 @@ setMethod("[", signature(x = "GPRset", i = "ANY", j = "ANY"),
           # yunit        = "MHz",  # set units, length = 1|p
           # ylab         = "Antenna"  # set names, length = 1|p
       )
-    }else if(length(i) > 0){
-      print("kk")
+    }else{
+      x <- new("GPRset",   
+               #--- class GPRvirtual
+               version      = "0.3",  
+               name         = x@name,
+               path         = x@path,
+               desc         = x@desc,
+               mode         = x@mode,
+               date         = x@date,
+               freq         = x_freq[k], 
+               
+               data         = x@data[i, j ,k],     
+               dunit        = x@dunit,  
+               dlab         = x@dlab, 
+               
+               spunit       = x@spunit,  
+               crs          = x@crs,  
+               
+               xunit        = x@xunit,  
+               xlab         = x@xlab,
+               
+               zunit        = x@zunit,  
+               zlab         = x@zlab,
+               
+               vel          = x@vel,   
+               
+               proc         = x@proc,
+               delineations = x@delineations,
+               md           = x@md,  
+               
+               #--- class GPR
+               z0           = x@z0[j],    
+               
+               time         = x@time[j],    
+               antsep       = .subsetVec(x@antsep, j),    
+               markers      = .subsetVec(x@markers, j), 
+               ann          = .subsetVec(x@ann, j), 
+               
+               coord        = .subsetMat(x@coord, j),     
+               rec          = .subsetMat(x@rec, j),     
+               trans        = .subsetMat(x@trans, j),     
+               
+               x            = x@x[j],    
+               z            = x@z[i],
+               
+               #--- class GPRset
+               y            = x@y[k],    # y-values, length = p
+               yunit        = x@yunit,  # set units, length = 1|p
+               ylab         = x@ylab,
+               formula      = x@formula# set names, length = 1|p
+      )
     }
     # x@data <- rval
     return(x)

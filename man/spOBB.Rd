@@ -6,6 +6,8 @@
 \alias{spOBB,GPR-method}
 \alias{spOBB,GPRsurvey-method}
 \alias{spOBB,matrix-method}
+\alias{spOBB,sfc-method}
+\alias{spOBB,sf-method}
 \title{Oriented bounding box}
 \source{
 source "whuber" from stackexchange.com, 
@@ -19,6 +21,10 @@ spOBB(x)
 \S4method{spOBB}{GPRsurvey}(x)
 
 \S4method{spOBB}{matrix}(x)
+
+\S4method{spOBB}{sfc}(x)
+
+\S4method{spOBB}{sf}(x)
 }
 \arguments{
 \item{x}{[\code{GPR class}] An object of the class \code{GPR}}

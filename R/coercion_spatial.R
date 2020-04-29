@@ -26,6 +26,8 @@ setMethod("as.sf", signature(x = "GPR"), function(x){
   x_sf <- sf::st_as_sf(x      = as.data.frame(x@coord),
                        coords = 1:3,
                        crs    = x@crs)
+  x_sf <- sf::st_combine(x_sf)
+  x_sf <- sf::st_cast(x_sf, "LINESTRING")
   return(x_sf)
 })
 

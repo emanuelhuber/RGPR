@@ -210,7 +210,7 @@
       rec          = coord_rec,     
       trans        = coord_trans,     
       
-      x            = x$dt1$pos,    
+      x            = round(x$dt1$pos, 5),     
       z            = seq(0, by = dz, length.out = nrow(x$data))  
       
       # angles      = "matrix" 

@@ -14,7 +14,7 @@ setGeneric("isZunitTime", function(x)
 
 #' @rdname isZunitTime   
 #' @export
-setMethod("isZunitTime", "GPR", function(x){
+setMethod("isZunitTime", "GPRvirtual", function(x){
   return(grepl("(s|min|h)$", x@zunit))
 })
 
@@ -41,6 +41,6 @@ setMethod("isZunitLength", "GPRsurvey", function(x){
 
 #' @rdname isZunitTime   
 #' @export
-setMethod("isZunitLength", "GPR", function(x){
+setMethod("isZunitLength", "GPRvirtual", function(x){
   !isZunitTime(x)
 })

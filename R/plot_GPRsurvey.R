@@ -4,7 +4,7 @@
 #' @method plot GPRsurvey 
 #' @name plot
 #' @export
-plot.GPRsurvey <- function(x, y, ...){
+plot.GPRsurvey <- function(x, ...){
   if(length(x@coords) > 0 && any(sapply(x@coords, length) > 0)){
     #isNotNull <- which(!sapply(x@coords, is.null))
     #x <- x[isNotNull]
@@ -160,12 +160,4 @@ lines.GPRsurvey <- function(x, ...){
 }
 
 
-# x@intersections
-# 
-# plot(x, parLines = NULL, parMarkers = NULL, parArrows = NULL, parIntersect = NULL)
-# plot(x, parLines = NULL, parMarkers = NULL, parIntersect = NULL)  # arrows
-# plot(x, parMarkers = NULL, parArrows = NULL, parIntersect = NULL) # lines
-# plot(x, parLines = NULL, parArrows = NULL, parIntersect = NULL)   # markers
-# plot(x, parLines = NULL, parArrows = NULL, parMarkers = NULL)   # intersections
-# plot(x, parLines = NULL, parArrows = NULL, parMarkers = list(pch = 3), parIntersect = NULL)   # markers
-# plot(x, parMarkers = NULL)
+

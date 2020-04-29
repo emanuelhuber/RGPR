@@ -13,15 +13,22 @@
 #' 
 #' Additional arguments
 #' \itemize{
-#'   \item \code{type}: Possible values for 1D plot: see argument \code{type} in
-#'             \code{\link[graphics]{plot}}.
-#'              For 2D plot: \code{"raster"} (default) or \code{"wiggles"}.
+#'   \item \code{type}:
+#'   \itemize{
+#'      \item 1D plot: \code{p}, \code{l}, 
+#'             \code{b}, \code{c}, \code{o}, \code{h}, \code{s}, \code{S}, 
+#'             \code{n} (see argument \code{type} in
+#'             \code{\link[graphics]{plot}}).
+#'      \item  2D plot: \code{"raster"} (default), \code{"wiggles"} or
+#'             \code{contour}.
+#'   }
 #'   \item \code{col}: Color. Default 1D: "black". 2D: \code{palGPR(n = 101)}
 #' }
-#' 
 #' @param x Object of class \code{GPR}
-#' @param y Not used
-#' @param add logical. If \code{TRUE}, add to current plot
+#' @param add [\code{logical(1)}] If \code{TRUE}, add to current plot.
+#' @param NAcol color of NA values
+#' @param note note of something...
+#' @param clim [\code{numeric(2)}] Value range for the color palette.
 #' @param relTime0 logical. If \code{TRUE}, adjust vertical axis to time-zero.
 #'                 If time-zero varies from trace to trace, the vertical axis
 #'                 is adjusted to the mean time-zero. Apply first the function
@@ -49,8 +56,11 @@
 #'              colored.
 #' @param pdfName length-one character. Name/path of the PDF to export 
 #'                without extension
-#' @param NAcol color of NA values
-#' @param note note of something...
+#' @param col [\code{character}] FIXME Color palette.
+#' @param xlab [\code{character(1)}] A title for the x axis.
+#' @param ylab [\code{character(1)}] A title for the y axis.
+#' @param asp [\code{numeric(1)}] The y/x aspect ratio.
+#' @param main [\code{character(1)}] A main title for the plot,.
 #' @param ... additional arguments passed to the plotting methods 
 #'            \code{\link[graphics]{plot}} for 1D plot and 
 #'            \code{\link[plot3D]{Image}} for 2D plot. See also  \code{details}.
@@ -77,7 +87,9 @@
 # ##' @param y \code{NULL,} not used
 # options: type=c(raster,wiggles), addTopo, clip, normalize
 plot.GPR <- function(x, 
-                     #y = NULL, 
+                     col = NULL,
+                     NAcol = "white",
+                     clim = NULL,  # plot.GPRslice
                      add = FALSE, 
                      relTime0 = FALSE,
                      note = NULL, 
@@ -87,13 +99,12 @@ plot.GPR <- function(x,
                      addDepth0 = TRUE,
                      addAmpl0 = TRUE,
                      addTopo = FALSE,
-                     xclip = FALSE,
+                     xclip = NULL,
                      ratio = 1,
                      barscale = TRUE, 
                      wsize = 1,   # wiggles
                      wside = 1,   # wiggles
                      pdfName = NULL,
-                     NAcol = "white",
                      ...){
   # print(list(...))
   if(length(x@vel)>0){  
@@ -102,17 +113,21 @@ plot.GPR <- function(x,
     v <- 0
   }
   dots <- list(...)
+  type <- dots[["type"]]
+  dots[["type"]] <- NULL
   #------------------------ trace plot (1D) -----------------------------------#
   if(any(dim(x) == 1)){
+    if(is.null(type)) type <- "l"
     if(isTRUE(add)){
       lines(x, ...)
     }else{
-      .plotGPR1D(x, dots, v, relTime0, addDepth0, addAmpl0, addTime0)
+      .plotGPR1D(x, type, add, col, dots, v, relTime0, addDepth0, addAmpl0, addTime0)
     }
   #------------------------ radargram plot (2D) -------------------------------#
   }else{
-    
-    if(grepl("[s]$", x@zunit) && addTopo)    x <- migration(x)
+    if(is.null(type)) type <- "raster"
+    type <- match.arg(type, c("raster", "wiggles", "contour"))
+   if(grepl("[s]$", x@zunit) && addTopo)    x <- migration(x)
     
     if(isTRUE(relTime0)){
       x <- shiftToTime0(x, track = FALSE)
@@ -130,15 +145,26 @@ plot.GPR <- function(x,
     
     # time_0 <- x@z0    
     t0 <- median(x@z0)
-    z <- t( as.matrix(x@data) )
+    z <- t( x@data) 
     
     xvalues <- x@x
     yvalues <- x@z
 
     if(is.null(dots$xlab)) dots$xlab <- .xlab(x)
     if(is.null(dots$ylab)) dots$ylab <- .zlab(x)
-    if(is.null(dots$xlim)) dots$xlim <- range(xvalues)
-    if(is.null(dots$ylim)) dots$ylim <- rev(range(yvalues))
+    # if(is.null(dots$xlim)) dots$xlim <- range(xvalues)
+    if(is.null(dots[["xlim"]])){
+      xlim1 <- (xvalues[2] - xvalues[1])/2
+      xlim2 <- (xvalues[length(xvalues)] - xvalues[length(xvalues) - 1])/2
+      dots[["xlim"]] <- range(xvalues) + c(-xlim1, xlim2)
+    }
+    # if(is.null(dots$ylim)) dots$ylim <- rev(range(yvalues))
+    if(is.null(dots[["ylim"]])){
+      ylim1 <- (yvalues[2] - yvalues[1])/2
+      ylim2 <- (yvalues[length(yvalues)] - yvalues[length(yvalues) - 1])/2
+      dots[["ylim"]] <- range(yvalues) + c(-ylim1, ylim2)
+    } 
+    
     if(dots$ylim[1] < dots$ylim[2]) dots$ylim <- rev(dots$ylim)
     if(!is.null(dots$main)){
       mymain <- dots$main
@@ -146,8 +172,8 @@ plot.GPR <- function(x,
     }else{
       mymain <- x@name
     }
-    if(is.null(dots$type)) dots$type <- "raster"
-    dots$type <- match.arg(dots$type, c("raster", "wiggles", "contour"))
+    # if(is.null(dots$type)) dots$type <- "raster"
+    # dots$type <- match.arg(dots$type, c("raster", "wiggles", "contour"))
     
     op <- par(no.readonly=TRUE)
     
@@ -189,7 +215,7 @@ plot.GPR <- function(x,
                       title = pdfName)
     }
     #------------------------------ RASTER ------------------------------------#
-    if(dots$type %in% c("raster", "contour")){
+    if(type %in% c("raster", "contour")){
       dots$NAcol <- NAcol
       if(is.null(dots$clab))        dots$clab <- .dlab(x)
       if(is.null(dots$xaxs))        dots$xaxs <- "i"
@@ -197,12 +223,8 @@ plot.GPR <- function(x,
       if(is.null(dots$yaxt))        dots$yaxt <- "n"
       if(is.null(dots[["colkey"]])) dots[["colkey"]] <- FALSE
       
+      
       if(!is.null(dots$rasterImage) && isTRUE(rasterImage)){
-        # dy <- diff(yvalues)
-        # dx <- diff(yvalues)
-        # test1 <- abs(max(dx) - min(dx)) > sqrt(.Machine$double.eps)
-        # test2 <- abs(max(dy) - min(dy)) > sqrt(.Machine$double.eps)
-        # test1 <- abs(max(dx) - min(dx)) > sqrt(.Machine$double.eps)
         test1 <- abs(diff(range(diff(xvalues)))) > sqrt(.Machine$double.eps)
         test2 <- abs(diff(range(diff(yvalues)))) > sqrt(.Machine$double.eps)
         if(test1 && test2){ # all not equal
@@ -210,33 +232,37 @@ plot.GPR <- function(x,
         }
       }
       
-      if(!all(is.na(z)) && is.null(dots$zlim)){
-        if( min(z, na.rm = TRUE) >= 0 ){
-          # to plot amplitudes for example...
-          dots$zlim <- c(0, max(z, na.rm = TRUE))
-          # if I use 'dots$col', R returns 'dots$colkey'!!!!
-          if(is.null(dots[["col"]]) && diff(range(z, na.rm = TRUE)) != 0){
-            dots[["col"]] <- palGPR("slice", n = 101)
-          } 
-        }else if( tolower(x@mode) %in% c("cmp", "co")){
-          dots$zlim <- c(-1, 1) * max(abs(z), na.rm = TRUE)
+      #--- value range for the color palette
+      if(is.null(clim)){
+        if(!all(is.na(z)) ){
+          if(diff(range(z, na.rm = TRUE)) == 0){
+            clim <- rep(0, 2)
+            z[!is.na(z)] <- 0
+          }else if( min(z, na.rm = TRUE) >= 0 ){
+            # to plot amplitudes for example...
+            clim <- range(z, na.rm = TRUE)
+            # if I use 'dots$col', R returns 'dots$colkey'!!!!
+            if(is.null(col) && diff(range(z, na.rm = TRUE)) != 0){
+              col <- palGPR("slice", n = 101)
+            } 
+          }else if( tolower(x@mode) %in% c("cmp", "co")){
+            clim <- c(-1, 1) * max(abs(z), na.rm = TRUE)
+          }else{
+            clim <- range(z[is.finite(z)], na.rm = TRUE)
+          }
         }else{
-          dots$zlim <- range(z[is.finite(z)], na.rm = TRUE)
+          clim <- rep(0, 2)
         }
       }
-      clim <- dots$zlim
+      dots$clim <- clim
+      
       # if I use 'dots$col', R returns 'dots$colkey'!!!!
-      if(is.null(dots[["col"]])) dots[["col"]] <- palGPR(n = 101)
+      if(is.null(col)) col <- palGPR(n = 101)
       
-      if(!all(is.na(z)) && diff(range(z, na.rm = TRUE)) == 0){
-        dots$zlim <- rep(0, 2)
-        clim <- rep(z[1], 2)
-        z[!is.na(z)] <- 0
-      }
       
-      if(dots$type == "contour"){
-        if(is.null(dots[["col"]]))      dots[["col"]] <- "black"
-        if(length(dots[["col"]]) == 1)  barscale <- FALSE
+      if(type == "contour"){
+        if(is.null(col))      col <- "black"
+        if(length(col) == 1)  barscale <- FALSE
         if(add == TRUE){
           addDepth0 <- FALSE
           addAmpl0 <- FALSE
@@ -264,18 +290,20 @@ plot.GPR <- function(x,
         par( mai = mai)
       }
       
+      dots[["col"]] <- col
       
-      if(dots$type == "contour"){
-        dots$type <- NULL
+      
+      if(type == "contour"){
+        # dots$type <- NULL
         do.call(plot3D::contour2D, c(list(x = xvalues, y = yvalues, z = z), 
                                      dots))
-      }else if(dots$type == "raster"){
-        dots$type <- NULL
+      }else if(type == "raster"){
+        # dots$type <- NULL
         do.call(plot3D::image2D, c(list(x = xvalues, y = yvalues, z = z), dots))
       }
       #------------------------------ WIGGLES -----------------------------------#
-    }else if(dots$type == "wiggles"){
-      dots$type <- NULL
+    }else if(type == "wiggles"){
+      # dots$type <- NULL
       barscale <- FALSE
       
       op <- par(no.readonly = TRUE) 
@@ -299,8 +327,8 @@ plot.GPR <- function(x,
       bty <- "o"
       
       # col and lwd have no influence on plot
-      col <- dots$col
-      if(is.null(dots$col)) col <- "black"
+      # col <- dots$col
+      if(is.null(col)) col <- "black"
       lwd  <- dots$lwd
       if(is.null(dots$lwd)) lwd <- 0.5
       
@@ -330,14 +358,14 @@ plot.GPR <- function(x,
       }
       for(i in (seq_along(xvalues))){
         y2 <- yvalues + topo[i]
-        lines(xvalues[i] + wsize * z[, i], y2, lwd = lwd)  
+        lines(xvalues[i] + wsize * z[, i], y2, lwd = lwd, col = col)  
       }
       box(bty = bty)
     }
     #--------------------------------------------------------------------------#
     if(is.null(dots$ann) || dots$ann != FALSE){
       yat <- axis(side = 2)
-      if(grepl("[m]$", x@zunit) || grepl("CMP", toupper(x@mode))){
+      if(grepl("[m]$", x@zunit) || !grepl("CO", toupper(x@mode))){
         axis(side = 4)
       }else if(grepl("[s]$", x@zunit)){
         .depthAxis(x, yvalues, v, t0, yat, side = 4 )
@@ -388,7 +416,7 @@ plot.GPR <- function(x,
       } 
       fields::image.plot(zlim = clim, 
                          legend.only = TRUE, 
-                         col = dots$col, 
+                         col = col, 
                          legend.shrink = 1)
     }
     if(!is.null(pdfName)){
@@ -480,8 +508,11 @@ points.GPR <- function(x, relTime0 = FALSE, ...){
 #' @export
 # options: type=c(raster,wiggles), addTopo, clip, normalize
 contour.GPR <- function(x, 
-                        relTime0 = FALSE,
+                        col = NULL,
+                        NAcol = "white",
+                        clim = NULL,  # plot.GPRslice
                         add = FALSE, 
+                        relTime0 = FALSE,
                         note = NULL, 
                         addMarkers = TRUE,
                         addAnn = TRUE,
@@ -489,13 +520,18 @@ contour.GPR <- function(x,
                         addDepth0 = TRUE,
                         addAmpl0 = TRUE,
                         addTopo = FALSE,
-                        xclip = FALSE,
+                        xclip = NULL,
                         ratio = 1,
                         barscale = TRUE, 
+                        wsize = 1,   # wiggles
+                        wside = 1,   # wiggles
                         pdfName = NULL,
                         ...){
   
   plot.GPR(x, 
+           col = col,
+           NAcol = NAcol,
+           clim = clim,  # plot.GPRslice
            add = add, 
            relTime0 = relTime0,
            note = note, 
@@ -513,78 +549,10 @@ contour.GPR <- function(x,
            ...)
 }
 
-#' Plot all the traces in one 1D plot
-#' 
-#' @param x Object of the class GPR
-#' @param ... Arguments to be passed to \code{plot}/\code{line}
-#' @name plotTr
-setGeneric("plotTr", function(x, ...)
-  standardGeneric("plotTr"))
-
-
-#' @rdname plotTr
-#' @export
-setMethod(
-  f = "plotTr",
-  signature = "GPR",
-  definition = function(x, ...){
-    if(ncol(x) == 1){
-      plot(x, ...)
-    }else{
-      dots <- list(...)
-      if(!is.null(dots[["log"]]) && dots[["log"]] == "y"){
-        dots[["log"]] <- ""
-        x <- log(x)
-        # if(is.null(dots[["ylab"]])){
-        #   #FIXME : use .ylab (with option for log)
-        #   dots[["ylab"]] <- "amplitude envelope (log mV)"
-        # }
-      }
-      #FIXME : use .ylab (with option for log)
-      # if(is.null(dots[["ylab"]])) dots[["ylab"]] <- "amplitude envelope (mV)"
-      if(is.null(dots[["ylab"]])) dots[["ylab"]] <- .dlab(x)
-      
-      dotsLine <- list()
-      dotsLine[["X"]] <- x
-      dotsLine[["MARGIN"]] <- 2
-      dotsLine[["FUN"]] <- lines
-      dotsLine[["x"]] <- x@z
-      
-      dotsLine[["lty"]] <- dots[["lty"]]
-      dotsLine[["lwd"]] <- dots[["lwd"]]
-      dotsLine[["col"]] <- dots[["col"]]
-      # be carefull (dots$type redefined below)
-      dotsLine[["type"]] <- dots[["type"]]  
-      dotsLine[["pch"]] <- dots[["pch"]]
-      
-      if(is.null(dotsLine[["col"]])){
-        dotsLine[["col"]] <- rgb(0, 0, 0, 0.1)
-      }
-      
-      if(is.null(dots[["ylim"]])){
-        dots[["ylim"]] <- range(x@data, na.rm = TRUE)
-        if(dots[["ylim"]][1] > 0){
-          dots[["ylim"]][1] <- 0
-        }else{
-          dots[["ylim"]] <- max(abs(dots[["ylim"]])) * c(-1, 1)
-        }
-      }
-      
-      dots[["x"]] <- x[,1]
-      dots[["y"]] <- NULL
-      dots[["type"]] <- "n"
-      if(!is.null(dots[["add"]]) && isFALSE(dots[["add"]])){
-        dots[["add"]] <- NULL
-        invisible( do.call(plot, dots) )
-      }    
-      invisible(do.call(apply, dotsLine))
-    }
-  }
-)
 
 
 
-.plotGPR1D <- function(x, dots, v, relTime0, addDepth0, addAmpl0, addTime0){
+.plotGPR1D <- function(x, type, add, col, dots, v, relTime0, addDepth0, addAmpl0, addTime0){
   par(mar = c(5, 4, 3, 2) + 0.1, oma = c(0, 0, 3, 0), mgp = c(2, 0.5, 0))
   z <- x@z
   t0 <- x@z0
@@ -592,12 +560,15 @@ setMethod(
     z <- x@z - x@z0
     t0 <- 0
   }
+  if(is.null(col)) col <- "black"
+  
   if(is.null(dots$xlab)) dots$xlab <- .zlab(x)
-  if(is.null(dots$type)) dots$type <- "l"
-  if(is.null(dots$col))  dots$col <- "black"
+  if(is.null(dots$type)) dots$type <- type
+  if(is.null(dots$col))  dots$col <- col
   if(is.null(dots$ylab)) dots$ylab <- .dlab(x)
   dotsxaxt <- dots$xaxt 
   if(is.null(dots$xaxt)) dots$xaxt <- "n"
+  if(is.null(dots$xaxs)) dots$xaxs <- "i"
   if(is.null(dots$main)){
     myMain <- paste0(x@name, ": trace #", colnames(x@data)," @", round(x@x, 2), 
                      x@xunit)
@@ -609,8 +580,11 @@ setMethod(
     dots[["log"]] <- ""
     x@data <- log(x@data)
   }
-  
-  do.call(plot, c(list(x = z, y = x@data), dots))
+  if(isTRUE(add)){
+    do.call(lines, c(list(x = z, y = x@data), dots))
+  }else{
+    do.call(plot, c(list(x = z, y = x@data), dots))
+  }
   
   if(is.null(dots$ann) || dots$ann != FALSE){
     if(is.null(dotsxaxt) || dotsxaxt != "n"){
@@ -619,30 +593,11 @@ setMethod(
       if(grepl("[m]$", x@zunit)){
         axis(side = 3, tck = +0.02)
       }else if(grepl("[s]$", x@zunit)){
-        # if(length(x@antsep) > 0){
-        # if( x@antsep > 0){
-          .depthAxis(x, z, v, t0, xat, side = 3 )
-          if(isTRUE(addDepth0)){
-            depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
-            abline(v = depth_0, col = "grey", lty = 3)
-          }
-          # if(max(z)*v/2 > 1.3){
-          #   depth <- pretty(xat * v / 2, 10)
-          #   depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
-          #   axis(side = 3, at = t0 + depthat, labels = depth, tck = +0.02)
-          # }
-          # depthat2 <- depthToTime(seq(0.1, by = 0.1, 0.9), 0, v, antsep = x@antsep)
-          # axis(side = 3, at = t0 + depthat2, labels = FALSE, tck =+0.01)
-          # mtext(paste0("depth (", x@xunit, "),  v = ", v, " ", 
-          #              x@xunit, "/", x@zunit), side = 3, line = 2)
-          # }else{
-          #   depth <- pretty(xat * v / 2, 10)
-          #   depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
-          #   axis(side = 3, at = t0 + depthat, labels = depth, tck = +0.02)
-          # }
-        # }else{
-        #   axis(side = 3, tck = +0.02)
-        # }
+        .depthAxis(x, z, v, t0, xat, side = 3 )
+        if(isTRUE(addDepth0)){
+          depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
+          abline(v = depth_0, col = "grey", lty = 3)
+        }
       }
     }
   }
@@ -658,14 +613,18 @@ setMethod(
 # transmitter and receiver, there is an offset between time zero and depth,
 # the depth axes is squished.
 .depthAxis <- function(x, z, v, t0, xat, side = 3 ){
+  d <- seq(0.1, by = 0.1, 0.9)
+  depthat2 <- depthToTime(d, 0, v, antsep = x@antsep)
   if(max(z)*v/2 > 1.3){
     depth <- pretty(xat * v / 2, 10)
     depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
     axis(side = side, at = t0 + depthat, labels = depth, tck = +0.02)
+    labels_0To1 <- FALSE
+  }else{
+    labels_0To1 <- d
   }
-  depthat2 <- depthToTime(seq(0.1, by = 0.1, 0.9), 0, v, antsep = x@antsep)
-  axis(side = side, at = t0 + depthat2, labels = FALSE, tck = +0.01)
-  mtext(paste0("depth (", x@xunit, "),  v = ", v, " ", 
+  axis(side = side, at = t0 + depthat2, labels = labels_0To1, tck = +0.01)
+  mtext(paste0("depth (", x@xunit, "),  v = ", round(v, 4), " ", 
                x@xunit, "/", x@zunit), side = side, line = 2)
 }
 

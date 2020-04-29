@@ -155,15 +155,15 @@ detectASCIIProp <- function(dsn, lns = 20, verbose = TRUE){
   #--------------------------- detect column separator ------------------------#
   sep <- unique(unlist(lapply(x0, detectSep)))
   sepName <- sep
-  if(sep == "\t"){
-    sepName <- "\\t"
-  }
   if(length(sep) > 1){
     stop("seems that you have different column delimiters: ", sepName, "\n")
   }else{
     #message("Column delimiter is '", sepName, "'")
   }
   
+  if(sep == "\t"){
+    sepName <- "\\t"
+  }
   #--------------------------- number of columns ------------------------------#
   # z <- strsplit(x0, split = "[^[:alnum:]\\.\\-]+")
   z <- strsplit(x0, split = sep)
@@ -174,7 +174,7 @@ detectASCIIProp <- function(dsn, lns = 20, verbose = TRUE){
 
 detectSep <- function(x){ 
   # i <- gregexpr("[^[:alnum:]]+", x, perl = TRUE)
-  i <- gregexpr("[^[:alnum:]\\.\\-]+", x, perl = TRUE)
+  i <- gregexpr("[^[:alnum:]\\.\\-\\s]+", x, perl = TRUE)
   sep <- unique(substring(x, i[[1]], i[[1]]))
 }
 

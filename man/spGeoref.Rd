@@ -3,13 +3,13 @@
 \docType{methods}
 \name{spGeoref}
 \alias{spGeoref}
-\alias{spGeoref,spPRsurvey-method}
+\alias{spGeoref,GPRsurvey-method}
 \title{Rotate coordinates of the GPR traces}
 \usage{
 spGeoref(x, alpha = NULL, cloc = NULL, creg = NULL, ploc = NULL,
   preg = NULL, FUN = mean)
 
-\S4method{spGeoref}{spPRsurvey}(x, alpha = NULL, cloc = NULL,
+\S4method{spGeoref}{GPRsurvey}(x, alpha = NULL, cloc = NULL,
   creg = NULL, ploc = NULL, preg = NULL, FUN = mean)
 }
 \arguments{

@@ -3,12 +3,12 @@
 \docType{methods}
 \name{clip}
 \alias{clip}
-\alias{clip,GPR-method}
+\alias{clip,GPRvirtual-method}
 \title{Clip the amplitude}
 \usage{
 clip(x, xclip = NULL, track = TRUE)
 
-\S4method{clip}{GPR}(x, xclip = NULL, track = TRUE)
+\S4method{clip}{GPRvirtual}(x, xclip = NULL, track = TRUE)
 }
 \arguments{
 \item{x}{[\code{GPR}] GPR object.}

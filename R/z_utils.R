@@ -1,9 +1,9 @@
 
 
 
-#' Bytes to volt conversion
+#' Bits to volt conversion
 #'       
-#' Convert bytes to volt values
+#' Convert bits to volt values
 #' @param Vmax [\code{numeric(1)}] Maximal nominal analog input voltage. 
 #'             If \code{Vmax = NULL} it returns \code{1} (no bytes to volt 
 #'             transformation)
@@ -256,5 +256,16 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
 }
 
 
-
+inPoly <- function(x, y, vertx, verty){
+  inPo <- rep(0L, length(x))
+  nvert <- length(vertx)
+  for(i in 1:nvert){
+    j <- ifelse(i==1, nvert,i-1)
+    myTest <- ((verty[i] > y) != (verty[j]>y)) &
+      (x < (vertx[j]-vertx[i]) * (y-verty[i]) / 
+         (verty[j]-verty[i]) + vertx[i])
+    inPo[myTest] <- !inPo[myTest]
+  }
+  return(inPo)
+}
 

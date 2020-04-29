@@ -25,7 +25,7 @@ setClass(
     dz     = "numeric",
     ylab   = "character",  # set names, length = 1|p
     
-    center = "numeric",    # coordinates grid corner bottom left (0,0)
+    center = "numeric",    # coordinates grid corner bottom left (0, 0, 0)
     rot    = "numeric"     # affine transformation
   )
 )

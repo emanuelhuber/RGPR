@@ -3,16 +3,16 @@
 \docType{methods}
 \name{isZunitTime}
 \alias{isZunitTime}
-\alias{isZunitTime,GPR-method}
+\alias{isZunitTime,GPRvirtual-method}
 \alias{isZunitTime,GPRsurvey-method}
 \alias{isZunitLength}
 \alias{isZunitLength,GPRsurvey-method}
-\alias{isZunitLength,GPR-method}
+\alias{isZunitLength,GPRvirtual-method}
 \title{Oriented bounding box}
 \usage{
 isZunitTime(x)
 
-\S4method{isZunitTime}{GPR}(x)
+\S4method{isZunitTime}{GPRvirtual}(x)
 
 \S4method{isZunitTime}{GPRsurvey}(x)
 
@@ -20,7 +20,7 @@ isZunitLength(x)
 
 \S4method{isZunitLength}{GPRsurvey}(x)
 
-\S4method{isZunitLength}{GPR}(x)
+\S4method{isZunitLength}{GPRvirtual}(x)
 }
 \arguments{
 \item{x}{[\code{GPR class}] An object of the class \code{GPR}}

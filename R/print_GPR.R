@@ -24,7 +24,7 @@
   if(length(x@coord) > 0){
     toprint[11] <- paste0("coordinates:    YES")
   }else{
-    toprint[11] <- paste0("coordinates:    NO")
+    toprint[11] <- paste0("coordinates:    -")
     
   } 
     toprint[12] <- paste0("CRS:            ", x@crs)

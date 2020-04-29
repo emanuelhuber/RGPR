@@ -18,32 +18,36 @@
 #' @param preg [\code{numeric(2|3)}]
 #' @param FUN [\code{function}]
 #' @name spGeoref
-setGeneric( "spGeoref", function(x, alpha = NULL, cloc = NULL, creg = NULL,
+setGeneric("spGeoref", function(x, alpha = NULL, cloc = NULL, creg = NULL,
            ploc = NULL, preg = NULL, FUN = mean) 
   standardGeneric("spGeoref"))
 
 #' @rdname spGeoref
 #' @export
-setMethod("spGeoref", "spPRsurvey", 
+setMethod("spGeoref", "GPRsurvey", 
           function(x, alpha = NULL, cloc = NULL, creg = NULL,
                    ploc = NULL, preg = NULL, FUN = mean) {
+            test <- sapply(x@coords, function(x) length(x) > 0)
             if(is.null(cloc)){
-              cloc <- .centroid(x)[1:2]
+              cloc <- .centroid(x[test])[1:2]
             }
             if(is.null(alpha) && is.null(ploc) && is.null(preg)){
-              alpha <- spAngle(x)
+              alpha <- spAngle(x[test])
             }
             # here I cannot write FUN = FUN because FUN is an argument of
             # lapply...
-            xyz  <- lapply(x@coords, .georef, alpha = alpha, cloc = cloc,
+            xyz  <- lapply(x@coords[test], .georef, alpha = alpha, cloc = cloc,
                            creg = creg, ploc = ploc, preg = preg, FUN)
-            coord(x) <- xyz
+            coord(x)[test] <- xyz
+            if(is.null(creg)) creg <- cloc[1:2]
+            x@transf <- c(cloc[1:2], creg[1:2], alpha)
             # x@intersections <- list()
             # x <- coordref(x)
             return(x)
           })
 
 .centroid <- function(x){
+  # pos <- do.call(rbind, x@coords[sapply(x@coords, function(x) length(x)>0)])
   pos <- do.call(rbind, x@coords)
   return(colMeans(pos))
 }

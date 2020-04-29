@@ -83,5 +83,7 @@ R notation of proj4string from the PROJ.4 library.}
 \item{\code{nx}}{[\code{integer(k)}] Number of traces in each GPR data.}
 
 \item{\code{xlengths}}{[\code{numeric(k)}] Length of the GPR data.}
+
+\item{\code{transf}}{[\code{numeric(5)}] Translation vector before rotation, after and rotation angle}
 }}
 

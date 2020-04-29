@@ -6,16 +6,26 @@
 #'
 #' Relative position of each coordinates (knots) along a path (polyline).
 #' @param xy [\code{matrix}] Each column corresponding to a coordinate
+#' @param lonlat [\code{logical(1)}] If \code{TRUE} computes geodistance. 
+#'               Otherwise Euclidean distance.
 #' @return Relative position of the coordinates (cumulative distance).
 #' @export
-pathRelPos <- function(xy){
+pathRelPos <- function(xy, lonlat = FALSE){
   xy <- as.matrix(xy)
-  relDist <- cumsum(c(0, sqrt(apply(diff(xy)^2, 1, sum))))
-  # if(last){
-  # return(tail(all_dist, 1))
-  # }else{
-  return(as.numeric(relDist))
-  # }
+  if(isTRUE(lonlat)){
+    dx <- verboseF(geodist::geodist(xy[,1:2], paired = FALSE, 
+                                    sequential = TRUE, pad = FALSE, 
+                                    measure = "geodesic"),
+                   verbose = FALSE)
+    return( c(0, cumsum(dx)) )
+  }else{
+    relDist <- cumsum(c(0, sqrt(apply(diff(xy)^2, 1, sum))))
+    # if(last){
+    # return(tail(all_dist, 1))
+    # }else{
+    return(as.numeric(relDist))
+    # }
+  }
 }
 
 
@@ -25,8 +35,10 @@ pathRelPos <- function(xy){
 #'
 #' Path length
 #' @param xy [\code{matrix}] Each column corresponding to a coordinate
+#' @param lonlat [\code{logical(1)}] If \code{TRUE} computes geodistance. 
+#'               Otherwise Euclidean distance.
 #' @return Path length.
 #' @export
-pathLength <- function(xy){
-  return(tail(pathRelPos(xy), 1))
+pathLength <- function(xy, lonlat = FALSE){
+  return(tail(pathRelPos(xy, lonlat = lonlat), 1))
 }

@@ -143,9 +143,9 @@ palDisplay <- function(){
 #' @export
 palCol <- function(x , col = palGPR(n=101)){
   CCY = (x - min(x, na.rm = TRUE))/(max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
-  ClimY <- range(CCY, na.rm = TRUE)
-  ClenY <- ClimY[2] - ClimY[1] + 1
-  return(col[ (CCY)*(length(col) - 1) + 1 ] )
+  # ClimY <- range(CCY, na.rm = TRUE)
+  # ClenY <- ClimY[2] - ClimY[1] + 1
+  return(col[ CCY*(length(col) - 1) + 1 ] )
 }
 #--------------------------------#
 

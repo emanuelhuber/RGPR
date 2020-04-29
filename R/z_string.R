@@ -32,3 +32,6 @@ extractPattern <- function(x, pattern, start = 0, stop = 0){
 #' @param x [\code{character}] a string or a vector of strings (characters)
 #' @export
 trimStr <- function (x) gsub("^\\s+|\\s+$", "", x)
+
+
+  

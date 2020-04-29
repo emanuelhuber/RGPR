@@ -7,10 +7,12 @@
 \title{Interpolate horizontal slices}
 \usage{
 interpSlices(x, dx = NULL, dy = NULL, dz = NULL, h = 6,
-  extend = TRUE, buffer = NULL)
+  extend = c("bbox", "obbox", "chull", "buffer"), buffer = NULL,
+  shp = NULL, rot = FALSE)
 
 \S4method{interpSlices}{GPRsurvey}(x, dx = NULL, dy = NULL,
-  dz = NULL, h = 6, extend = TRUE, buffer = NULL)
+  dz = NULL, h = 6, extend = c("bbox", "obbox", "chull", "buffer"),
+  buffer = NULL, shp = NULL, rot = FALSE)
 }
 \arguments{
 \item{x}{[\code{GPRsurvey}]}
@@ -23,9 +25,16 @@ interpSlices(x, dx = NULL, dy = NULL, dz = NULL, h = 6,
 
 \item{h}{[\code{numeric(1)}] FIXME: see function...}
 
-\item{extend}{[\code{numeric(1)}] FIXME: see function...}
+\item{extend}{[\code{character(1)}] FIXME: see function...}
 
-\item{buffer}{[\code{numeric(2)}] FIXME: see function...}
+\item{buffer}{[\code{numeric(1)}] FIXME: see function...}
+
+\item{shp}{[\code{matrix(n,2)|list(2)|sf}] FIXME: see function...}
+
+\item{rot}{[\code{logical(1)|numeric(1)}] If \code{TRUE} the GPR lines are 
+fist rotated such to minimise their axis-aligned bounding box. 
+If \code{rot} is numeric, the GPR lines is rotated first
+rotated by \code{rot} (in radian).}
 }
 \description{
 Interpolate horizontal slices

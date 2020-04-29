@@ -43,6 +43,7 @@
 #' @slot zunits    [\code{character(1)}] Unit of \code{z}.
 #' @slot nx        [\code{integer(k)}] Number of traces in each GPR data.
 #' @slot xlengths  [\code{numeric(k)}] Length of the GPR data.
+#' @slot transf  [\code{numeric(5)}] Translation vector before rotation, after and rotation angle
 #' @name GPRsurvey-class
 #' @rdname GPRsurvey-class
 #' @export
@@ -72,6 +73,8 @@ setClass(
     zlengths      = "numeric",    # depth/time window (vertical)
     zunits        = "character",  # time/depth unit  !!!length = 1!!!
     nx            = "integer",    # to control if nrow(@coord) == ncol(x[[i]])
-    xlengths      = "numeric"     # depth/time window (vertical)
+    xlengths      = "numeric",     # depth/time window (vertical)
+    
+    transf        = "numeric"
   )
 )

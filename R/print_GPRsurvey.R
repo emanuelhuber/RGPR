@@ -36,7 +36,7 @@ print.GPRsurvey <- function(x, ...){
   # testIntersecs <- as.numeric(testIntersecs > 0)+1
   
   cat("- - - - - - - - - - - - - - -\n")
-  is_test <- c("NO","YES")
+  is_test <- c("-","YES")
   #overview <- data.frame("name" = .fNameWExt(x@filepaths),
   overview <- data.frame(
     "name"      = x@names,

@@ -58,7 +58,11 @@
 clippedBits <- function(x, nbits){
   xclipmin <- apply(x, 2, .getClipped, xclip = -2^nbits/2 )
   xclipmax <- apply(x, 2, .getClipped, xclip = 2^nbits/2 -1 )
-  return(list(clipmin = xclipmin, clipmax = xclipmax))
+  if(length(xclipmin) == 0 && length(xclipmax) == 0){
+    return(NULL)
+  }else{
+    return(list(clipmin = xclipmin, clipmax = xclipmax))
+  }
 }
 
 .clipTrace <- function(x, n){

@@ -4,10 +4,13 @@
 \alias{pathRelPos}
 \title{Relative position on a path}
 \usage{
-pathRelPos(xy)
+pathRelPos(xy, lonlat = FALSE)
 }
 \arguments{
 \item{xy}{[\code{matrix}] Each column corresponding to a coordinate}
+
+\item{lonlat}{[\code{logical(1)}] If \code{TRUE} computes geodistance. 
+Otherwise Euclidean distance.}
 }
 \value{
 Relative position of the coordinates (cumulative distance).

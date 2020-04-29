@@ -852,7 +852,13 @@ setAs(from = "list", to = "GPR", def = function (from) as.GPR.list(from))
 #' @export
 as.GPR.list <- function (x, ...){
   # prefix: "d_" for default
-  if(any("data" == tolower(names(x))) && is.matrix(x[["data"]])){
+  if(all("data" != tolower(names(x)))){
+    stop("The list must have a 'data' index name")
+  }
+  x[["data"]] <- as.matrix(x[["data"]])
+  if(!is.matrix(x[["data"]])){
+    stop("The element 'data' must be a matrix!")
+  }
     if(is.null(x[["pos"]]) && !is.null(x[["dx"]]) && is.numeric(x[["dx"]])){
       x[["pos"]] <- (1:ncol(x[["data"]]) -1) * x[["dx"]]
     }else if( is.null(x[["pos"]]) ){
@@ -913,9 +919,6 @@ as.GPR.list <- function (x, ...){
       }
     }
     return(y)
-  }else{
-    stop("The list must have a 'data' index name")
-  }
 }    
 
 

@@ -3483,9 +3483,13 @@ quiet <- function(x) {
   bb <- format(aa, format = "%Y-%m-%d")
   myDay <- as.double(as.POSIXct(as.Date(bb), origin="1970-01-01"))
   traces_hd$time <- x@time - myDay
-  traces_hd$x8 <- rep.int(0L,ncol(x@data)) 
-  traces_hd$x8[trimStr(x@fid)!=""] <- 1L
-  traces_hd$com <- x@fid 
+  traces_hd$x8 <- rep.int(0L, ncol(x@data)) 
+  if(length(x@fid) == 0){
+    traces_hd$com <- rep("", ncol(x@data))
+  }else{
+    traces_hd$x8[trimStr(x@fid) != ""] <- 1L
+    traces_hd$com <- x@fid 
+  }
   
   # FILE NAMES
   dirName   <- dirname(fPath)

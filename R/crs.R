@@ -11,7 +11,17 @@
 #'                       coordinate reference system.
 #' }
 #' @param x      [\code{GPR class}] An object of the class \code{GPR}
-#' @param value  [\code{sp::CRS|character}] CRS object (one or more)
+#' @param value  [\code{integer|character|sp::CRS|sf::CRS}] CRS object (one or more)
+#' @examples 
+#' \dontrun{
+#' x <- readGPR("LINE.DT1")
+#' crs(x) <- 3857
+#' crs(x) <- "+init=epsg:3857 +units=m"
+#' crs(x) <- "+proj=merc +lon_0=0 +lat_ts=0 +x_0=0 +y_0=0 +a=6378137
+#'            +b=6378137 +nadgrids=@null +units=m +no_defs "
+#' crs(x) <- sf::st_crs("+init=epsg:3857 +units=m")
+#' crs(x) <- sp::st_crs(3857)
+#' }
 #' @return [\code{GPR class}] An object of the class \code{GPR}
 #' @name crs
 setGeneric("crs", function(x) 
@@ -69,7 +79,7 @@ setReplaceMethod("crs", signature="GPRsurvey", function(x, value){
 # for class GPRsurvey!
 # FIXME -> delete! ONLY USED in coercion_spatial.R for sp.
 .getCheckedCRS <- function(x){
-  if(length(x@crs) == 0 || all(x@crs == "")){
+  if(length(x@crs) == 0 || all(is.na(x@crs))){
     warning("no CRS defined!\n")
   }else{
     if(length(unique(x@crs)) > 1){
@@ -101,7 +111,8 @@ setReplaceMethod("crs", signature="GPRsurvey", function(x, value){
   }else if(inherits(x, "CRS")){
     return(unname(x@projargs))
   }else if(inherits(x, "crs")){
-    return(x$proj4string)
+    # .checkCRS(x[[1]])
+    .checkCRS(x$proj4string)
   }else{
     test_num <- verboseF(as.numeric(x), verbose = FALSE)
     if(!is.na(test_num) && test_num %% 1 == 0 && test_num > 0){

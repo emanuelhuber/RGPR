@@ -619,7 +619,7 @@ readGPR <- function(dsn, desc = "", Vmax = 50,
   #-----
   if(grepl("CMP", x@mode)){
     x@mode <- "CMP"
-    x@xlab <- "antenna separation"
+    x@xlab <- "Antenna separation"
     if(length(x@rec) == 0 || length(x@trans) == 0){
       x@antsep <- x@x #seq(x@antsep, by = x@dx, length.out = length(x))
     }else{

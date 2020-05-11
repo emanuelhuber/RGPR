@@ -34,6 +34,9 @@ GPRsurvey <- function(x, verbose = TRUE, ...){
   for(i in seq_along(LINES)){
     verboseF(message("Read ", basename(LINES[i]), "..."), verbose = verbose)
     gpr <- verboseF( readGPR(LINES[[i]], verbose = verbose, ...), verbose = verbose)
+    if(inherits(gpr, "GPRset")){
+      stop("HOW TO HANDLE GPRset OBJECT????")
+    }
     line_paths[i] <- .saveTempFile(gpr)
     # FIX ME!
     #  > check if name(gpr) is unique
@@ -52,18 +55,21 @@ GPRsurvey <- function(x, verbose = TRUE, ...){
     line_descs[i] <- gpr@desc
     line_modes[i]  <- gpr@mode
     if(length(gpr@date) == 0){
-      warning(LINES[[i]], "\n", "date has length zero")
+      # should never happen
+      warning(LINES[[i]], "\n", "date has length zero. Should never happen!")
       line_dates[i]        <- Sys.Date()
     }else{
       line_dates[i]        <- gpr@date
     }
     if(length(gpr@freq) == 0){
-      warning(LINES[[i]], "\n", "frequency has length zero")
+      # should never happen
+      warning(LINES[[i]], "\n", "frequency has length zero Should never happen!")
       line_freq[i]         <- 0
     }else{
       line_freq[i]         <- gpr@freq
     }
     if(length(gpr@antsep) == 0){
+      # should never happen
       warning(LINES[[i]], "\n", "ant. sep. has length zero")
       line_antsep[i]       <- 0
     }else{

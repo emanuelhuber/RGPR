@@ -107,8 +107,11 @@ plot.GPR <- function(x,
                      pdfName = NULL,
                      ...){
   # print(list(...))
-  if(length(x@vel)>0){  
-    v <- x@vel[[1]]
+  if(length(x@vel) > 0){  
+    # FIXME: 
+    #   - v <- getVel()
+    #   - v <- mean(v)
+    v <- x@vel[[1]]  
   }else{
     v <- 0
   }
@@ -116,13 +119,52 @@ plot.GPR <- function(x,
   type <- dots[["type"]]
   dots[["type"]] <- NULL
   #------------------------ trace plot (1D) -----------------------------------#
-  if(any(dim(x) == 1)){
+  # if(any(dim(x) == 1)){
+  # FIXME: plot1D GPR on multiplot, e.g.: 
+  # par(mfrow = c(1, 2))
+  # plot(x[,1])
+  # plot(x[,2])
+  if(ncol(x) == 1){
+    print("1D")
     if(is.null(type)) type <- "l"
     if(isTRUE(add)){
       lines(x, ...)
     }else{
       .plotGPR1D(x, type, add, col, dots, v, relTime0, addDepth0, addAmpl0, addTime0)
     }
+  }else if(nrow(x) == 1){
+    par(mar = c(5, 4, 2, 2) + 0.1, oma = c(0, 0, 0, 0), mgp = c(2, 0.5, 0))
+    if(is.null(col)) col <- "black"
+    
+    if(is.null(dots$xlab)) dots$xlab <- .xlab(x)
+    if(is.null(dots$type)) dots$type <- "l"
+    if(is.null(dots$col))  dots$col <- col
+    if(is.null(dots$ylab)) dots$ylab <- .dlab(x)
+    dotsxaxt <- dots$xaxt 
+    if(is.null(dots$xaxt)) dots$xaxt <- "n"
+    if(is.null(dots$xaxs)) dots$xaxs <- "i"
+    if(is.null(dots$main)){
+      myMain <- paste0(x@name, ": ", x@dlab, " (", x@dunit, ")", 
+                       " @ ", round(x@z, 2), " ", x@zunit)
+    }else{
+      myMain <- dots$main
+      dots$main <- NULL
+    } 
+    if(!is.null(dots[["log"]]) && dots[["log"]] == "y"){
+      dots[["log"]] <- ""
+      x@data <- log(x@data)
+    }
+    if(isTRUE(add)){
+      do.call(lines, c(list(x = x@x, y = x@data), dots))
+    }else{
+      do.call(plot, c(list(x = x@x, y = x@data), dots))
+      title(myMain, outer = FALSE)
+      axis(side = 1,  tck = +0.02)
+      axis(side = 3,  tck = +0.02, labels = FALSE)
+      axis(4)
+    }
+    
+    # plot(x@x, x@data[], ..., type = "l")
   #------------------------ radargram plot (2D) -------------------------------#
   }else{
     if(is.null(type)) type <- "raster"
@@ -135,9 +177,18 @@ plot.GPR <- function(x,
     
     if(!isFALSE(xclip)){ # if xclip == FALSE, no clip at all
       if(is.null(xclip)){
-        xclip <- c(quantile(as.vector(x@data), 0.99, na.rm = TRUE),
-                  quantile(as.vector(x@data), 0.01, na.rm = TRUE))
+        if(x@mode == "velocitySpectrum"){
+          # print("before")
+          xclip <- range(as.vector(x@data), finite = TRUE) #, na.rm = TRUE)
+          # print("after")
+        }else{
+          x_vec <- as.vector(x@data)
+          x_vec <- x_vec[is.finite(x_vec)]
+          xclip <- c(quantile(x_vec, 0.99, na.rm = TRUE),
+                     quantile(x_vec, 0.01, na.rm = TRUE))
+        }
       }
+      # print(xclip)
       x <- clip(x, xclip = xclip, track = FALSE)
     }
     if(addMarkers == FALSE)  x@markers <- character(length(x@markers))
@@ -235,12 +286,14 @@ plot.GPR <- function(x,
       #--- value range for the color palette
       if(is.null(clim)){
         if(!all(is.na(z)) ){
-          if(diff(range(z, na.rm = TRUE)) == 0){
+          # if(diff(range(z, na.rm = TRUE)) == 0){
+          if(diff(range(z, finite = TRUE)) == 0){
             clim <- rep(0, 2)
             z[!is.na(z)] <- 0
           }else if( min(z, na.rm = TRUE) >= 0 ){
             # to plot amplitudes for example...
-            clim <- range(z, na.rm = TRUE)
+            # clim <- range(z, na.rm = TRUE)
+            clim <- range(z, finite = TRUE)
             # if I use 'dots$col', R returns 'dots$colkey'!!!!
             if(is.null(col) && diff(range(z, na.rm = TRUE)) != 0){
               col <- palGPR("slice", n = 101)
@@ -309,7 +362,7 @@ plot.GPR <- function(x,
       op <- par(no.readonly = TRUE) 
       dx <- mean(diff(xvalues)) # estimated x-step
       z <- x@data
-      z[is.na(z)] = 0
+      z[is.na(z) & is.infinite(z)] <- 0
       z <- z/max(abs(z)) * dx
       nr <- nrow(z)
       nc <- ncol(z)
@@ -365,15 +418,15 @@ plot.GPR <- function(x,
     #--------------------------------------------------------------------------#
     if(is.null(dots$ann) || dots$ann != FALSE){
       yat <- axis(side = 2)
-      if(grepl("[m]$", x@zunit) || !grepl("CO", toupper(x@mode))){
+      if(grepl("[m]$", x@zunit) || !grepl("CO", toupper(x@mode)) || anyNA(x@antsep)){
         axis(side = 4)
       }else if(grepl("[s]$", x@zunit)){
         .depthAxis(x, yvalues, v, t0, yat, side = 4 )
         if(isTRUE(addDepth0)){
           depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
           abline(h = depth_0, col = "grey", lty = 3)
+          axis(side = 4, at = depth_0, labels = "0", tick = FALSE)
         }
-        axis(side = 4, at = depth_0, labels = "0", tick = FALSE)
       }
     }
     
@@ -434,7 +487,10 @@ plot.GPR <- function(x,
 #' @name lines
 #' @export
 lines.GPR <- function(x, relTime0 = FALSE, ...){
-  if(length(x@vel) > 0){  
+  if(length(x@vel) > 0){ 
+    # FIXME: 
+    #   - v <- getVel()
+    #   - v <- mean(v)
     v <- x@vel[[1]]
   }else{
     v <- 0
@@ -472,7 +528,10 @@ lines.GPR <- function(x, relTime0 = FALSE, ...){
 #' @export
 points.GPR <- function(x, relTime0 = FALSE, ...){
   if(length(x@vel) > 0){  
-    v <- x@vel[[1]]
+    # FIXME: 
+    #   - v <- getVel()
+    #   - v <- mean(v)
+    v <- x@vel[[1]]  
   }else{
     v <- 0
   }
@@ -570,8 +629,8 @@ contour.GPR <- function(x,
   if(is.null(dots$xaxt)) dots$xaxt <- "n"
   if(is.null(dots$xaxs)) dots$xaxs <- "i"
   if(is.null(dots$main)){
-    myMain <- paste0(x@name, ": trace #", colnames(x@data)," @", round(x@x, 2), 
-                     x@xunit)
+    myMain <- paste0(x@name, ": trace #", colnames(x@data)," @ ", round(x@x, 2), 
+                     " ", x@xunit)
   }else{
     myMain <- dots$main
     dots$main <- NULL
@@ -590,13 +649,15 @@ contour.GPR <- function(x,
     if(is.null(dotsxaxt) || dotsxaxt != "n"){
       x_axis <- pretty(z, 10)
       xat <- axis(side = 1,  tck = +0.02)
-      if(grepl("[m]$", x@zunit)){
+      if(grepl("[m]$", x@zunit) || !grepl("CO", toupper(x@mode)) || anyNA(x@antsep) ){
         axis(side = 3, tck = +0.02)
       }else if(grepl("[s]$", x@zunit)){
         .depthAxis(x, z, v, t0, xat, side = 3 )
         if(isTRUE(addDepth0)){
           depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
           abline(v = depth_0, col = "grey", lty = 3)
+          
+          axis(side = 4, at = depth_0, labels = "0", tick = FALSE) # necessary?
         }
       }
     }

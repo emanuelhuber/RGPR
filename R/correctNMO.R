@@ -28,6 +28,10 @@
 #' \deqn{\Delta_{NMO} = t_{TWT}(x) - t_0}  
 #' \deqn{\Delta_{NMO} = t_0 (\sqrt{1 + \frac{x^2}{v^2 t_0^2}} - 1)}
 #' @param x An object of the class \code{GPR}
+#' @param thrs [\code{numeric(1)|NULL}] Definite the threshold for muting
+#'             (i.e., suppressing) the values where the NMO-stretching is
+#'             above the threshold. Setting \code{thrs = NULL}, the full data
+#'             will be used.
 #' @param v A length-one numeric vector defining the radar wave velocity in 
 #'          the ground
 #' @param method [\code{character(1)}] Interpolation method to be applied:
@@ -43,14 +47,14 @@
 #'         473-488}
 #' }
 #' @name correctNMO
-setGeneric("correctNMO", function(x, v = NULL, 
+setGeneric("correctNMO", function(x, thrs = NULL, v = NULL, 
                               method = c("linear", "nearest", 
                                                       "pchip", "cubic", "spline")) 
   standardGeneric("correctNMO"))
 
 #' @rdname correctNMO
 #' @export
-setMethod("correctNMO", "GPR", function(x, v = NULL, 
+setMethod("correctNMO", "GPR", function(x, thrs = NULL, v = NULL, 
                                     method = c("linear", "nearest", "pchip",   
                                                "cubic", "spline")){
   method <- match.arg(method[1], c("spline", "linear", "nearest", "pchip", 
@@ -60,14 +64,39 @@ setMethod("correctNMO", "GPR", function(x, v = NULL,
     stop("You must first shift the traces to time-zero with\n",
          "'shiftToTime0()'")
   }
+  if(!isZunitTime(x)){
+    stop("The signal is a function of depth and not time. If you\n",
+         "absolutely want to apply 'correctNMO()', change the unit with\n",
+         "xunit(x) <- 'm', for example.")
+  }
+  if(anyNA(x@antsep)){
+    stop("You must first set the antenna separation distances with\n",
+         "'antsep(x) <- ...")
+  }
+  if(isCMP(x)){
+    if(length(x@antsep) != ncol(x)){
+      stop("The length of the antenna separation distances must equal",
+           " to the number of columns of x. Use\n",
+           "'antsep(x) <- ...")
+    }
+  }
   asep <- x@antsep
   if(length(asep) == 1){
     asep <- rep(asep, ncol(x))
   }
   
   if(is.null(v)){
-    v <- x@vel[[1]]
+    if(is.null(x@vel[["v"]])){
+     x <- interpVel(x, type = "vrms", method = "pchip")
+    }
+    v <- x@vel[["v"]]
   } 
+  
+  if(!is.null(thrs)){
+    # SEL <- NMOstreching(x)@data > thrs
+    x[NMOstreching(x)@data > thrs] <- NA
+  }
+  
   x <- .NMOCor(x, v = v, asep = asep, method = method)
   proc(x) <- getArgs()
   return(x)
@@ -77,9 +106,9 @@ setMethod("correctNMO", "GPR", function(x, v = NULL,
 .NMOCor <- function(x, v = NULL, asep = NULL, method = "pchip"){
   x_nmoCor <- x
   x_nmoCor@data[] <- 0
-  if(is.null(v)){
-    v <- x@vel[[1]]
-  }
+  # if(is.null(v)){
+  #   v <- x@vel[[1]]
+  # }
   # works when v is a vector.
   tt <- outer(x@z, x@antsep, .t_NMO, v = v)
   for(i in seq_along(x)){
@@ -92,8 +121,8 @@ setMethod("correctNMO", "GPR", function(x, v = NULL,
     
     x_nmoCor@data[,i] <- valreg
   }
-  x_nmoCor@data[is.na(x_nmoCor@data)] <- 0
-  x_nmoCor@data[is.infinite(x_nmoCor@data)] <- 0
+  # x_nmoCor@data[is.na(x_nmoCor@data)] <- 0
+  x_nmoCor@data[is.infinite(x_nmoCor@data)] <- NA
   x_nmoCor@x <- asep
   return(x_nmoCor)
 }

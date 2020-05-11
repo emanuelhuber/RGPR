@@ -26,15 +26,26 @@ setMethod("NMO", "GPR", function(x, v = NULL){
     stop("You must first shift the traces to time-zero with\n",
          "'shiftToTime0()'")
   }
+  if(!isZunitTime(x)){
+    stop("The signal is a function of depth and not time. If you\n",
+         "absolutely want to apply 'NMO()', change the unit with\n",
+         "xunit(x) <- 'm', for example.")
+  }
   if(is.null(v)){
-    if(is.null(x@vel)){
+    if(length(x@vel) == 0){
       stop("You must assign a positiv numerical value to 'v'!")
     }else{
-      if(length(x@vel) > 1 || length(x@vel[[1]]) > 1){
-        message("check velocity!!!")
-      }
-      v <- x@vel[[1]]
+      if(is.null(v)){
+        if(is.null(x@vel[["v"]])){
+          x <- interpVel(x, type = "vrms", method = "pchip")
+        }
+        v <- x@vel[["v"]]
+      } 
     }
+  }
+  if(anyNA(x@antsep)){
+    stop("You must first set the antenna separation distances with\n",
+         "'antsep(x) <- ...")
   }
   D_NMO <- x
   if(!isCMP(x)){
@@ -47,6 +58,12 @@ setMethod("NMO", "GPR", function(x, v = NULL){
     D_NMO@rec <- matrix(nrow = 0, ncol = 3)
     D_NMO@trans <- matrix(nrow = 0, ncol = 3)
     D_NMO@angles <- numeric(0)
+  }else{
+    if(length(x@antsep) != ncol(x)){
+      stop("The length of the antenna separation distances must equal",
+           " to the number of columns of x. Use\n",
+           "'antsep(x) <- ...")
+    }
   }
   D_NMO[] <- outer(x@z, x@antsep, .NMO, v = v)
   D_NMO@dlab <- "NMO"

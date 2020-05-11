@@ -16,6 +16,8 @@ setGeneric("spunit", function(x)
 setGeneric("spunit<-",function(x,value){standardGeneric("spunit<-")})
 
 
+#-------------------------------- GPR -----------------------------------------#
+
 #' @rdname spunit   
 #' @export
 setMethod("spunit", "GPR", function(x){
@@ -25,7 +27,7 @@ setMethod("spunit", "GPR", function(x){
 #' @rdname spunit
 #' @export
 setReplaceMethod("spunit", signature="GPR", function(x, value){
-  if(x@crs == ""){
+  if(is.na(x@crs)){
     x@spunit <- .checkUnit(value)
     x@proc <- c(x@proc, "spunit<-")
   }else{
@@ -37,6 +39,7 @@ setReplaceMethod("spunit", signature="GPR", function(x, value){
 })
 
 
+#-------------------------------- GPRsurvey -----------------------------------#
 
 #' @rdname spunit   
 #' @export
@@ -48,9 +51,8 @@ setMethod("spunit", "GPRsurvey", function(x){
 #' @rdname spunit
 #' @export
 setReplaceMethod("spunit", signature="GPRsurvey", function(x, value){
-  if(x@crs == ""){
+  if(is.na(x@crs)){
     x@spunit <- .checkUnit(value)
-    x@proc <- c(x@proc, "spunit<-")
   }else{
     warning("Cannot change the spatial unit because it depends on the CRS. ",
             "Either update the CRS with 'crs(x) <- ...' or ",
@@ -59,6 +61,7 @@ setReplaceMethod("spunit", signature="GPRsurvey", function(x, value){
   return(x)
 })
 
+# used in GPRsurvey.R
 .checkSpunitsurvey <- function(x){
   sp_unit  <- unique(x[x != ""])
   if(length(sp_unit) == 1){

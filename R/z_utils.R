@@ -131,17 +131,36 @@ depth0 <- function(t0 = 0, v = 0.1, antsep = 1){#, c0 = 0.299){
 .dlab <- function(x){
   paste0(x@dlab, " (", x@dunit, ")")
 }
+.vlab <- function(x){
+  paste0("Velocity (", x@xunit,"/", x@zunit, ")")
+}
 
 .subsetMat <- function(x, i){
   if(length(x) == 0) return(x)
   if(nrow(x) == 1) return(x)
   x[i,, drop = FALSE]
 }
+
 .subsetVec <- function(x, i){
   if(length(x) == 0) return(x)
   if(length(x) == 1) return(x)
   x[i]
 }
+
+.subsetClip <- function(x, i, j){
+  if(!is.null(x@md[["clip"]])){
+    test <- .clipMat(x@md[["clip"]], n = nrow(x@data))
+    md_clip <- list()
+    md_clip[["clipmin"]] <- apply(test[i, j, drop = FALSE], 2, 
+                                  function(x) which(x == -1))
+    md_clip[["clipmax"]] <- apply(test[i, j, drop = FALSE], 2, 
+                                  function(x) which(x ==  1))
+    return(md_clip)
+  }else{
+    return(NULL)
+  }
+}
+
 
 #' Frequency of GSSI antenna
 #' 

@@ -38,16 +38,19 @@ setMethod("clip", "GPRvirtual", function(x, xclip = NULL, track = TRUE){
 )
 
 
-.clip <- function(A, Aclip = NULL){
-  if(!is.null(Aclip)){
-    if(length(Aclip) == 1){
-      A[A > Aclip] <- Aclip
-      A[A < -Aclip] <- -Aclip
-    }else if(length(Aclip) == 2){
-      Aclip <- sort(Aclip)
-      A[A > Aclip[2]] <- Aclip[2]
-      A[A < Aclip[1]] <- Aclip[1]
+.clip <- function(x, xclip = NULL){
+  sel <- !is.na(x) & !is.infinite(x)
+  x1 <- x[sel]
+  if(!is.null(xclip)){
+    if(length(xclip) == 1){
+      x1[x1 > xclip] <- xclip
+      x1[x1 < -xclip] <- -xclip
+    }else if(length(xclip) == 2){
+      xclip <- sort(xclip)
+      x1[x1 > xclip[2]] <- xclip[2]
+      x1[x1 < xclip[1]] <- xclip[1]
     }
   }
-  return(A)
+  x[sel] <- x1
+  return(x)
 }

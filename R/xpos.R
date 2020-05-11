@@ -34,7 +34,7 @@ setReplaceMethod("xpos", "GPR", function(x, value){
   if(any( abs(diff(value)) < sqrt(.Machine$double.eps))){
     stop("All values must be different!")
   }
-  if(length(coord) > 0){
+  if(length(x@coord) > 0){
     warning("Changing 'xpos' does not change the trace coordinates.")
   }
   x@x <- value

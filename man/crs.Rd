@@ -25,7 +25,7 @@ crs(x) <- value
 \arguments{
 \item{x}{[\code{GPR class}] An object of the class \code{GPR}}
 
-\item{value}{[\code{sp::CRS|character}] CRS object (one or more)}
+\item{value}{[\code{integer|character|sp::CRS|sf::CRS}] CRS object (one or more)}
 }
 \value{
 [\code{GPR class}] An object of the class \code{GPR}
@@ -39,5 +39,16 @@ Modified slots
   \item \code{crs} the coordinate reference system.
   \item \code{spunit} the spatial units are updated accroding to the new
                       coordinate reference system.
+}
+}
+\examples{
+\dontrun{
+x <- readGPR("LINE.DT1")
+crs(x) <- 3857
+crs(x) <- "+init=epsg:3857 +units=m"
+crs(x) <- "+proj=merc +lon_0=0 +lat_ts=0 +x_0=0 +y_0=0 +a=6378137
+           +b=6378137 +nadgrids=@null +units=m +no_defs "
+crs(x) <- sf::st_crs("+init=epsg:3857 +units=m")
+crs(x) <- sp::st_crs(3857)
 }
 }

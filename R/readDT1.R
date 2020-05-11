@@ -70,15 +70,15 @@
   if(!is.null(antfreq)){
     antfreq <- freqFromString(antfreq)
   }else{
-    antfreq <- 0
-    message("Antenna frequency set to 0 MHz. Set it with 'antfreq(x) <- ... '")
+    antfreq <- NA_real_
+    # message("Antenna frequency set to 0 MHz. Set it with 'antfreq(x) <- ... '")
   }
   
   antsep <- .getHD(x$hd, "ANTENNA SEPARATION")
   if(is.null(antsep)){
-    antsep <- 0
-    message("Antenna separation set to 0 ", posunit, 
-            ". Set it with 'antsep(x) <- ... '")
+    antsep <- NA_real_
+    # message("Antenna separation set to 0 ", posunit, 
+    #         ". Set it with 'antsep(x) <- ... '")
   }else{
     antsep <- as.numeric(antsep)
   }

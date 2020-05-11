@@ -70,6 +70,8 @@ clippedBits <- function(x, nbits){
   u[x] <- TRUE
   return(u)
 }
+
+# n = number of rows
 .clipMat <- function(x, n){
   # xclipmax - xclipmin
   if(length(x[["clipmin"]]) > 0){

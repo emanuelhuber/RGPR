@@ -7,7 +7,7 @@
 #' 
 #' @section \code{mode}: survey mode, difference between reflection and CMP and WARR
 #' \describe{
-#'   \item{reflection}{The trace positions increase from trace to trace. The
+#'   \item{CO}{Common-offset: The trace positions increase from trace to trace. The
 #'                     antenna separation distance is constant.
 #'                     Amplitude = f(depth, position)}
 #'   \item{CMP}{The trace positions, \code{x@pos}, are constant and equal to 

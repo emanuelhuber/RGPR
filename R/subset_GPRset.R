@@ -25,11 +25,11 @@ setMethod("[", signature(x = "GPRset", i = "ANY", j = "ANY"),
     if(missing(k) || length(k) == 0) k <- seq_len(dim(x@data)[3])
     # return a x-z object
     # CASE where GPRset <- antenna 1, antenna 2, antenna 3, ...
-    x_freq <- x@freq
-    # if(x@ylab == "frequency"){
-    if(length(x_freq) > 1 && length(x_freq) >= max(k)){
-      x_freq <- x_freq[k]
-    }
+    # x_freq <- x@freq
+ 
+    # if(length(x_freq) > 1 && length(x_freq) >= max(k)){
+    #   x_freq <- x_freq[k]
+    # }
     if(length(k) == 1) {
       # print("length(k) == 1")
       x <- new("GPR",   
@@ -40,7 +40,8 @@ setMethod("[", signature(x = "GPRset", i = "ANY", j = "ANY"),
           desc         = x@desc,
           mode         = x@mode,
           date         = x@date,
-          freq         = x_freq, #x@freq, 
+          # freq         = x_freq, #x@freq, 
+          freq         = .subsetVec(x_freq, k), #x@freq, 
           
           data         = x@data[i, j ,k],     
           dunit        = x@dunit,  
@@ -66,8 +67,10 @@ setMethod("[", signature(x = "GPRset", i = "ANY", j = "ANY"),
           
           time         = x@time[j],    
           antsep       = .subsetVec(x@antsep, j),    
-          markers      = .subsetVec(x@markers, j), 
-          ann          = .subsetVec(x@ann, j), 
+          # markers      = .subsetVec(x@markers, j), 
+          markers      = x@markers[j], 
+          # ann          = .subsetVec(x@ann, j), 
+          ann          = x@ann[j], 
           
           coord        = .subsetMat(x@coord, j),     
           rec          = .subsetMat(x@rec, j),     
@@ -90,7 +93,8 @@ setMethod("[", signature(x = "GPRset", i = "ANY", j = "ANY"),
                desc         = x@desc,
                mode         = x@mode,
                date         = x@date,
-               freq         = x_freq[k], 
+               # freq         = x_freq[k], 
+               freq         = .subsetVec(x_freq, k), 
                
                data         = x@data[i, j ,k],     
                dunit        = x@dunit,  
@@ -116,8 +120,10 @@ setMethod("[", signature(x = "GPRset", i = "ANY", j = "ANY"),
                
                time         = x@time[j],    
                antsep       = .subsetVec(x@antsep, j),    
-               markers      = .subsetVec(x@markers, j), 
-               ann          = .subsetVec(x@ann, j), 
+               # markers      = .subsetVec(x@markers, j), 
+               markers      = x@markers[j], 
+               # ann          = .subsetVec(x@ann, j), 
+               ann          = x@ann[j], 
                
                coord        = .subsetMat(x@coord, j),     
                rec          = .subsetMat(x@rec, j),     
@@ -133,6 +139,7 @@ setMethod("[", signature(x = "GPRset", i = "ANY", j = "ANY"),
                formula      = x@formula# set names, length = 1|p
       )
     }
+    x@md[["clip"]] <- .subsetClip(x, i, j)
     # x@data <- rval
     return(x)
   })

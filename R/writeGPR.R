@@ -206,9 +206,13 @@ setMethod("writeGPR", "GPRsurvey",
   bb <- format(aa, format = "%Y-%m-%d")
   myDay <- as.double(as.POSIXct(as.Date(bb), origin="1970-01-01"))
   traces_hd$time <- x@time - myDay
-  traces_hd$x8 <- rep.int(0L,ncol(x@data)) 
-  traces_hd$x8[trimStr(x@markers)!=""] <- 1L
-  traces_hd$com <- x@markers 
+  traces_hd$x8 <- rep.int(0L, ncol(x@data)) 
+  if(length(x@fid) == 0){
+    traces_hd$com <- rep("", ncol(x@data))
+  }else{
+    traces_hd$x8[trimStr(x@fid) != ""] <- 1L
+    traces_hd$com <- x@fid 
+  }
   
   # FILE NAMES
   dirName   <- dirname(fPath)
@@ -299,9 +303,11 @@ setMethod("writeGPR", "GPRsurvey",
   if(x@posunit != "m"){
     warning('Position units were defined as "metres"!\n')
   }
-  writeLines(paste0("NOMINAL FREQUENCY"," = ", as.character(x@freq)), 
+  x_freq <- ifelse(is.na(x@freq), 0, x@freq)
+  writeLines(paste0("NOMINAL FREQUENCY"," = ", as.character(x_freq)), 
              con = hd_file, sep = "\r\n")
-  writeLines(paste0("ANTENNA SEPARATION"," = ", as.character(x@antsep)), 
+  x_antsep <- ifelse(is.na(x@antsep), 0, x@antsep)
+  writeLines(paste0("ANTENNA SEPARATION"," = ", as.character(x_antsep)), 
              con = hd_file, sep = "\r\n")
   pulservoltage <- 0
   if(!is.null(x@hd$PULSER_VOLTAGE_V)){

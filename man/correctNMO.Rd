@@ -6,14 +6,19 @@
 \alias{correctNMO,GPR-method}
 \title{Normal Move-Out correction}
 \usage{
-correctNMO(x, v = NULL, method = c("linear", "nearest", "pchip",
-  "cubic", "spline"))
-
-\S4method{correctNMO}{GPR}(x, v = NULL, method = c("linear", "nearest",
+correctNMO(x, thrs = NULL, v = NULL, method = c("linear", "nearest",
   "pchip", "cubic", "spline"))
+
+\S4method{correctNMO}{GPR}(x, thrs = NULL, v = NULL,
+  method = c("linear", "nearest", "pchip", "cubic", "spline"))
 }
 \arguments{
 \item{x}{An object of the class \code{GPR}}
+
+\item{thrs}{[\code{numeric(1)|NULL}] Definite the threshold for muting
+(i.e., suppressing) the values where the NMO-stretching is
+above the threshold. Setting \code{thrs = NULL}, the full data
+will be used.}
 
 \item{v}{A length-one numeric vector defining the radar wave velocity in 
 the ground}

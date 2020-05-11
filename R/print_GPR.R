@@ -12,10 +12,18 @@
   x_mode <- x@mode
   if(x_mode == "CO") x_mode <- "common-offset"
   toprint[6] <- paste0("survey mode:    ", x@mode)
+  # x_xunit <- x@xunit
+  # if(isCRSLonLat(x)){
+  #   # because line length will be computed in m and not in degree
+  #   x_xunit <- "m"  
+  # }
+  # toprint[7] <- paste0("line length:    ", diff(range(spPathRel(x))), " ", x_xunit)
   toprint[7] <- paste0("line length:    ", diff(range(x@x)), " ", x@xunit)
+  #}
   toprint[8] <- paste0("window length:  ", diff(range(x@z)), " ", x@zunit)
   if(length(x@freq) == 1){
-    toprint[9] <- paste0("frequency:      ", x@freq, " MHz")
+    x_freq <- ifelse(is.na(x@freq), "-", paste0(x@freq, " MHz"))
+    toprint[9] <- paste0("frequency:      ", x_freq)
   }else{
     toprint[9] <- paste0("frequencies:    ", paste0(x@freq, collapse = ", "), " MHz")
   }
@@ -27,7 +35,8 @@
     toprint[11] <- paste0("coordinates:    -")
     
   } 
-    toprint[12] <- paste0("CRS:            ", x@crs)
+  x_crs <- ifelse(is.na(x@crs), "-", x@crs)
+  toprint[12] <- paste0("CRS:            ", x_crs)
   # if(length(x@path) > 0) toprint[3] <- paste0("filepath:     ", x@path)
   #                                               "name:           "
   # if(nbfid > 0)          toprint[5] <- paste0(nbfid, " markers(s)")

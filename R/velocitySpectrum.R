@@ -55,13 +55,28 @@ setMethod("velocitySpectrum", "GPR",
             method <- match.arg(method, c("semblance", "winsemblance", "minsemblance",
                                           "wincoherence", "wincoherence2"))
             if(is.null(v)){
-              vlim <- x@vel[[1]] * c(0.5, 1.5)
-              vlim[vlim > 0.299] <- 0.299
-              v <- seq(vlim[1], vlim[2], length = 50)
+              # vlim <- x@vel[[1]] * c(0.5, 1.5)
+              # vlim[vlim > 0.299] <- 0.299
+              # v <- seq(vlim[1], vlim[2], length = 50)
+              v <- seq(0.02, 0.3, length = 100)
             }
             if(any(x@z0 > 0)){
               stop("You must first shift the traces to time-zero with\n",
                    "'shiftToTime0()'")
+            }
+            if(!isZunitTime(x)){
+              stop("The signal is a function of depth and not time. If you\n",
+                   "absolutely want to apply 'velocitySpectrum()', change the unit with\n",
+                   "xunit(x) <- 'm', for example.")
+            }
+            if(anyNA(x@antsep)){
+              stop("You must first set the antenna separation distances with\n",
+                   "'antsep(x) <- ...")
+            }
+            if(length(x@antsep) != ncol(x)){
+              stop("The length of the antenna separation distances must equal",
+                   " to the number of columns of x. Use\n",
+                   "'antsep(x) <- ...")
             }
             # as(matrix(0, nrow = nrow(x), ncol = length(v)), "GPR")
             x_tv <- x

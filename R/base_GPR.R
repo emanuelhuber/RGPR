@@ -94,28 +94,36 @@ setMethod("dim", "GPRvirtual", function(x)   dim(x@data))
 #' @rdname colSums
 #' @export
 setMethod("colSums", "GPRvirtual", function(x, na.rm = FALSE, dims = 1){
-  colSums (x, na.rm = na.rm, dims = dims)
+  x@data[1, ] <- colSums(x@data, na.rm = na.rm, dims = dims)
+  x <- x[1,]
+  return(x)
 })
 
 #' @aliases rowSums,GPRvirtual-method
 #' @rdname colSums
 #' @export
 setMethod("rowSums", "GPRvirtual", function(x, na.rm = FALSE, dims = 1){
-  rowSums (x, na.rm = na.rm, dims = dims)
+  x@data[, 1] <- rowSums(x@data, na.rm = na.rm, dims = dims)
+  x <- x[,1]
+  return(x)
 })
 
 #' @aliases colMeans,GPRvirtual-method
 #' @rdname colSums
 #' @export
 setMethod("colMeans", "GPRvirtual", function(x, na.rm = FALSE, dims = 1){
-  colMeans (x, na.rm = na.rm, dims = dims)
+  x@data[1, ] <-colMeans(x@data, na.rm = na.rm, dims = dims)
+  x <- x[1,]
+  return(x)
 })
 
 #' @aliases rowMeans,GPRvirtual-method
 #' @rdname colSums
 #' @export
 setMethod("rowMeans", "GPRvirtual", function(x, na.rm = FALSE, dims = 1){
-  rowMeans (x, na.rm = na.rm, dims = dims)
+  x@data[, 1] <- rowMeans(x@data, na.rm = na.rm, dims = dims)
+  x <- x[,1]
+  return(x)
 })
 
 # colSums (x, na.rm = FALSE, dims = 1)

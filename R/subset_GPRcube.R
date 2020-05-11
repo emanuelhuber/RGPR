@@ -138,7 +138,7 @@ setMethod(
               zunit        = x@zunit,  
               zlab         = x@zlab,
               
-              vel          = ifelse(is.null(x@vel) || length(x@vel) == 0, list(0.1), x@vel),   
+              vel          = ifelse(is.null(x@vel) || length(x@vel) == 0, list(), x@vel),   
               
               # proc         = "list",
               # delineations = "list",
@@ -158,35 +158,7 @@ setMethod(
               x            = xpos,    
               z            = vz[k]  #x@z[k]
       )
-      # y <- new("GPR",   
-      #          version     = "0.2",
-      #          data        = xdata,
-      #          traces      = seq_len(n),
-      #          fid         = rep("", n),
-      #          #coord      = coord,            FIXME!
-      #          pos         = xpos,        
-      #          depth       = x@depth,
-      #          #rec        = rec_coord,         
-      #          #trans      = trans_coord,
-      #          time0       = rep(0, n),          
-      #          #time       = traceTime,        
-      #          #proc       = character(0),     
-      #          vel         = list(0.1),         
-      #          name        = x@name,
-      #          #description = "",
-      #          #filepath    = "",
-      #          dz          = abs(diff(x@depth)), 
-      #          dx          = dx,              
-      #          depthunit   = x@depthunit,
-      #          posunit     = x@posunit,
-      #          freq        = x@freq, 
-      #          #antsep      = antsep[1], 
-      #          surveymode  = "reflection",
-      #          date        = x@date,
-      #          crs         = character(0)
-      #          #hd          = sup_hd                      # header
-      # )
-      # # extract sub-cube
+     
     }else{
       y <- new("GPRcube",
            #----------------- GPRvirtual --------------------------------------#

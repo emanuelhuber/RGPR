@@ -112,13 +112,8 @@ safeName <- function(x, y){
 #' @export
 detectASCIIProp <- function(dsn, lns = 20, verbose = TRUE){
   
-  # if(!inherits(dsn, "connection")){
-  #   dsn <- file(dsn, 'rb')
-  # }
   #---------------------- read first 'lns' lines ------------------------------#
-  # con <- file(dsn , "rt")
   x <- readLines(dsn, n = lns, skipNul = TRUE)
-  # close(dsn)
   x <- x[ x!= ""]
   
   #------------------------------ detect header -------------------------------#
@@ -142,7 +137,7 @@ detectASCIIProp <- function(dsn, lns = 20, verbose = TRUE){
     #message("there is ", length(nHeader), " header lines!")
   }
   
-  if(length(nHeader) > 0){
+  if(length(nHeader) > 0 && nHeader > 0){
     x0 <- x[-nHeader]
     header <- TRUE
     skip <- max(nHeader) - 1
@@ -173,8 +168,7 @@ detectASCIIProp <- function(dsn, lns = 20, verbose = TRUE){
 }
 
 detectSep <- function(x){ 
-  # i <- gregexpr("[^[:alnum:]]+", x, perl = TRUE)
-  i <- gregexpr("[^[:alnum:]\\.\\-\\s]+", x, perl = TRUE)
+  i <- gregexpr("[^[:alnum:]\\.\\-\\+]+", x, perl = TRUE)
   sep <- unique(substring(x, i[[1]], i[[1]]))
 }
 

@@ -13,6 +13,28 @@ dsn_db_freq <- "/mnt/data/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/dzt/data_Hide_double
 
 x <- readGPR(dsn0)
 x
+
+
+x <- readGPR(dsn1)
+x_clip <- x
+x_clip@data <- .clipMat(x@md$clip, n = nrow(x))
+plot(x_clip)
+
+plot(x_clip[,1:20])
+x_clip1 <- x[, 1:20]
+x_clip1@data <- .clipMat(x_clip1@md$clip, n = nrow(x_clip1))
+plot(x_clip1)
+
+plot(x_clip[1:200,])
+x_clip1 <- x[1:200,]
+x_clip1@data <- .clipMat(x_clip1@md$clip, n = nrow(x_clip1))
+plot(x_clip1)
+
+
+plot(x_clip[1:200,1:20])
+
+dim(x)
+
 x <- readGPR(dsn_db_freq)
 x
 
@@ -29,7 +51,7 @@ x
 plot(x, xaxis = "r")
 
 plot(x[1:100, ])
-?plot3D::image2D
+
 
 plot3D::image2D(t(as.matrix(x)), xaxis = "r")
 image(as.matrix(x))

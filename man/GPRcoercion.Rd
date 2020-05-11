@@ -11,6 +11,9 @@
 \alias{as.numeric,GPRvirtual-method}
 \alias{as.integer}
 \alias{as.integer,GPRvirtual-method}
+\alias{as.GPR.data.frame}
+\alias{as.GPR.matrix}
+\alias{as.GPR.list}
 \title{Coercion to matrix, vector or numeri}
 \usage{
 as.matrix(x, ...)
@@ -24,6 +27,12 @@ as.matrix(x, ...)
 \S4method{as.numeric}{GPRvirtual}(x, ...)
 
 \S4method{as.integer}{GPRvirtual}(x, ...)
+
+as.GPR.data.frame(x, ...)
+
+as.GPR.matrix(x, ...)
+
+as.GPR.list(x, ...)
 }
 \arguments{
 \item{x}{[\code{GPR}]}
@@ -34,4 +43,10 @@ as.matrix(x, ...)
 }
 \description{
 Coercion to matrix, vector or numeri
+
+Coercion from data.frame to GPR
+
+Coercion from matrix to GPR
+
+Coercion from list to GPR
 }

@@ -1098,7 +1098,19 @@ setReplaceMethod(
     rval <- x@data
     n <- nrow(rval)
     if(missing(i)) i <- 1:n
-    if(missing(j)) j <- 1:ncol(x@data)
+    if(missing(j)){
+      if(length(dim(i)) == 2 ){
+        i <- as.matrix(i)
+        if(!is.matrix(i)){
+          stop("invalid subscript: cannot be converted to matrix...")
+        }
+        x@data[i] <- value
+        x@proc <- c(x@proc, "[<-")
+        return (x)
+      }else{
+        j <- 1:ncol(x@data)
+      }
+    } #j <- 1:ncol(x@data)
     if(length(dim(x@data)) == 2) {
       x@data[i,j] <- value
     }else{

@@ -452,8 +452,12 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
     }else if(class(x) == "list"){
       versRGPR <- x[["version"]]
       if(versRGPR == "0.1"){
-        for(i in seq_along(x[['delineations']])){
-          x[['delineations']][[i]][, 5] <- -x[['delineations']][[i]][, 5]
+        if(!is.null(x[['delineations']])){
+          if(ncol(x[['delineations']][[1]]) >= 5 ){
+            for(i in seq_along(x[['delineations']])){
+              x[['delineations']][[i]][, 5] <- -x[['delineations']][[i]][, 5]
+            }
+          }
         }
       }
       y <- new("GPR",

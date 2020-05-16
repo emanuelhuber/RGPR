@@ -19,7 +19,7 @@
 #' @seealso \code{\link{readGPR}}
 #' @name writeGPR
 setGeneric("writeGPR", function(x, fPath = NULL, 
-                                type = c("DT1", "rds", "ASCII", "xta", "xyza"),
+                                type = c("rds", "DT1", "ASCII", "xta", "xyza"),
                                 overwrite = FALSE, ...){ standardGeneric("writeGPR")})
 
 
@@ -27,9 +27,9 @@ setGeneric("writeGPR", function(x, fPath = NULL,
 #' @rdname writeGPR
 #' @export
 setMethod("writeGPR", "GPR", function(x, fPath = NULL, 
-                                      type = c("DT1", "rds", "ASCII", "xta", "xyza"),
+                                      type = c("rds", "DT1", "ASCII", "xta", "xyza"),
                                       overwrite = FALSE, ...){
-  type <- match.arg(tolower(type), c("dt1", "rds", "ascii", "xta", "xyza"))
+  type <- match.arg(tolower(type), c("rds", "dt1", "ascii", "xta", "xyza"))
   fPath <- ifelse(is.null(fPath), x@name, 
                   file.path(dirname(fPath), .fNameWExt(fPath)))
   ext <- switch(type,
@@ -46,6 +46,7 @@ setMethod("writeGPR", "GPR", function(x, fPath = NULL,
     stop("File already exists. Cannot overwrite!\n")
   }
   x@path <- fPath
+  x@data[is.na(x@data) | is.infinite(x@data)] <- 0
   switch(type,
          "dt1" = {.writeDT1(x, fPath)},
          "rds" = {namesSlot <- slotNames(x)

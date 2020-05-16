@@ -2,7 +2,7 @@
 #' @rdname writeGPR
 #' @export
 setGeneric("writeGPR", function(x, fPath = NULL, 
-                                type = c("DT1", "rds", "ASCII", "xta", "xyza"),
+                                type = c("rds", "DT1", "ASCII", "xta", "xyza"),
                                 overwrite = FALSE, ...){ standardGeneric("writeGPR")})
 
 

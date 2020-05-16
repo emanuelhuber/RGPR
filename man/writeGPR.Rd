@@ -5,10 +5,10 @@
 \alias{writeGPR}
 \title{Write the GPR object in a file.}
 \usage{
-writeGPR(x, fPath = NULL, type = c("DT1", "rds", "ASCII", "xta",
+writeGPR(x, fPath = NULL, type = c("rds", "DT1", "ASCII", "xta",
   "xyza"), overwrite = FALSE, ...)
 
-\S4method{writeGPR}{GPR}(x, fPath = NULL, type = c("DT1", "rds",
+\S4method{writeGPR}{GPR}(x, fPath = NULL, type = c("rds", "DT1",
   "ASCII", "xta", "xyza"), overwrite = FALSE, ...)
 }
 \arguments{

@@ -23,7 +23,7 @@ setGeneric("writeGPR", function(x, fPath = NULL,
 #' @seealso \code{\link{readGPR}}
 #' @export
 setMethod("writeGPR", "GPR", function(x, fPath = NULL, 
-                                      type = c("DT1", "rds", "ASCII", "xta", "xyza"),
+                                      type = c("rds", "DT1", "ASCII", "xta", "xyza"),
                                       overwrite = FALSE, ...){
   type <- match.arg(tolower(type), c("dt1", "rds", "ascii", "xta", "xyza"))
   fPath <- ifelse(is.null(fPath), x@name, 

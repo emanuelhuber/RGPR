@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Import GPR data
-date: 2020-01-17
+date: 2020-05-19
 ---
 
 <!--
@@ -23,7 +23,7 @@ Table of Contents
 -   [Read/import GPR data](#readimport-gpr-data)
     -   [Overview](#overview)
     -   [Sensors and software data (`.dt1`)](#sensors-and-software-data-dt1)
-    -   [GSSI data (`.dtz`)](#gssi-data-dtz)
+    -   [GSSI data (`.dzt`)](#gssi-data-dzt)
         -   [Multi-channel data](#multi-channel-data)
     -   [MALA data (`.rd3`, `.dr7`)](#mala-data-rd3-dr7)
     -   [ImpulseRadar data (`.iprb`)](#impulseradar-data-iprb)
@@ -99,13 +99,13 @@ x <- readGPR(dsn = "XLINE00.DT1")
 plot(x)
 ```
 
-GSSI data (`.dtz`)
+GSSI data (`.dzt`)
 ------------------
 
 To read the GPR data, enter
 
 ``` r
-x <- readGPR(dsn = "XLINE00.dtz")
+x <- readGPR(dsn = "XLINE00.dzt")
 plot(x)
 ```
 
@@ -116,14 +116,14 @@ To read multi-channel data, simply specify the channel number you want to read b
 -   read channel 1:
 
     ``` r
-    x <- readGPR(dsn = "YLINE00.dtz", ch = 1)
+    x <- readGPR(dsn = "YLINE00.dzt", ch = 1)
     plot(x)
     ```
 
 -   read channel 2:
 
     ``` r
-    x <- readGPR(dsn = "YLINE00.dtz", ch = 2)
+    x <- readGPR(dsn = "YLINE00.dzt", ch = 2)
     plot(x)
     ```
 

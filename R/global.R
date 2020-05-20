@@ -1408,7 +1408,7 @@ extrema <- function(x, type=c("max","min")){
 }
 
 #--- see trTime in "ClassGPR.R"
-# #' @export                  
+#  @export                  
 # trRecTime <- function(x, origin = "1970-01-01"){
 #   return(as.POSIXct(x@time, origin = origin))
 # }

@@ -17,14 +17,8 @@ setGeneric("convertTimeToDepth", function(x, dz = NULL, dmax = NULL, ...)
 #         d_max is set equal to the largest depth in x_depth.
 # method = method for the interpolation (see ?signal::interp1)
 
-#' Migrate of the GPR data
+#' Time to depth conversion
 #' 
-#' Fresnel zone defined according to 
-#' Perez-Gracia et al. (2008) Horizontal resolution in a non-destructive
-#' shallow GPR survey: An experimental evaluation. NDT & E International,
-#' 41(8): 611-620.
-#' doi:10.1016/j.ndteint.2008.06.002
-#'
 #' @param max_depth maximum depth to appply the migration
 #' @param dz        vertical resolution of the migrated data
 #' @param fdo       dominant frequency of the GPR signal

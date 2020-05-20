@@ -3,7 +3,7 @@
 \docType{methods}
 \name{convertTimeToDepth}
 \alias{convertTimeToDepth}
-\title{Migrate of the GPR data}
+\title{Time to depth conversion}
 \usage{
 convertTimeToDepth(x, dz = NULL, dmax = NULL, ...)
 
@@ -18,9 +18,5 @@ convertTimeToDepth(x, dz = NULL, dmax = NULL, ...)
 \item{fdo}{dominant frequency of the GPR signal}
 }
 \description{
-Fresnel zone defined according to 
-Perez-Gracia et al. (2008) Horizontal resolution in a non-destructive
-shallow GPR survey: An experimental evaluation. NDT & E International,
-41(8): 611-620.
-doi:10.1016/j.ndteint.2008.06.002
+Time to depth conversion
 }

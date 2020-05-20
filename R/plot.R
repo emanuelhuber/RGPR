@@ -127,7 +127,7 @@ plot.GPR <- function(x,
             axis(side = 3, tck = +0.02)
             #FIXME: use fx .depthAxis()
           }else if(grepl("[s]$", x@depthunit)){
-            if(length(x@antsep) > 0 && is.null(dim(x@vel[[1]]))){
+            if( length(x@antsep) > 0 && is.null(dim(x@vel[[1]])) ){
               if( x@antsep > 0){
                 depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
                 depth2  <- seq(0.1, by = 0.1, 0.9)
@@ -444,7 +444,7 @@ plot.GPR <- function(x,
         axis(side = 4)
         #FIXME: use fx .depthAxis()
       }else if(grepl("[s]$", x@depthunit)){
-        if(length(x@antsep) > 0 && is.null(dim(x@vel[[1]]))){
+        if(length(x@antsep) > 0 && is.null(dim(x@vel[[1]])) ){
           if(x@antsep > 0){
             depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
             depth2  <- seq(0.1, by = 0.1, 0.9)

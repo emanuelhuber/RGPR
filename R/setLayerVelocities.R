@@ -9,6 +9,9 @@ setGeneric("setLayerVelocities", function(x, v, twt = NULL, method = "pchip",
 
 
 #' Set layer velocities
+#' 
+#' Given delineation or the output of the function... and velocity values,
+#' set 2D velocity model
 #'
 #' @param x GPR object   
 #' @param v velocities (\code{length(v) = nrow(twt_int + 1)}, (\code{+1} because of the last layers)

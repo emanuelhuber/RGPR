@@ -21,5 +21,6 @@ setLayerVelocities(x, v, twt = NULL, method = "pchip", clean = TRUE,
 \item{method}{interpolation method}
 }
 \description{
-Set layer velocities
+Given delineation or the output of the function... and velocity values,
+set 2D velocity model
 }

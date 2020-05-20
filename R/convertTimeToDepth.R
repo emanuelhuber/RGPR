@@ -81,7 +81,7 @@ setMethod("convertTimeToDepth", "GPR", function(x, type = c("static", "kirchhoff
     }else{
       dmax <- max(x_depth, na.rm = TRUE)
     }
-    print(dmax)
+    # print(dmax)
     if( !is.null(dots$method)){
       method <- match.arg(dots$method, c("linear", "nearest", "pchip", "cubic", "spline"))
     }else{
@@ -109,7 +109,7 @@ setMethod("convertTimeToDepth", "GPR", function(x, type = c("static", "kirchhoff
     x@depth     <- d
     x@dz        <- dz
       
-    print("lkj")
+    # print("lkj")
   # matrix velocity
   }else if(is.matrix(x@vel[[1]])){
     x_depth <- apply(c(0, diff(depth(x))) * x@vel[[1]]/2, 2, cumsum)

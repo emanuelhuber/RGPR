@@ -25,6 +25,15 @@ setGeneric("writeGPR", function(x, fPath = NULL,
 setMethod("writeGPR", "GPR", function(x, fPath = NULL, 
                                       type = c("rds", "DT1", "ASCII", "xta", "xyza"),
                                       overwrite = FALSE, ...){
+  lst <- list(...)
+  if(!is.null(lst$format)){
+    if(tolower(lst$format) %in% c("dt1", "rds", "ascii", "xta", "xyza")){
+      type <- lst$format
+    }else{
+      stop("use 'type' in instead of format.\n",
+           "'type' must be one of the following: 'DT1', 'rds', 'ASCII', 'xta', 'xyzv'. ")
+    }
+  }
   type <- match.arg(tolower(type), c("dt1", "rds", "ascii", "xta", "xyza"))
   fPath <- ifelse(is.null(fPath), x@name, 
                   file.path(dirname(fPath), .fNameWExt(fPath)))

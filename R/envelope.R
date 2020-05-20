@@ -36,7 +36,7 @@ setGeneric("envelope", function(x, method = c("peak", "hilbert"),
 setMethod("envelope", "GPR", function(x, method = c("peak", "hilbert"),
                                       npad = 100, threshold = 2){
   #if(is.null(FUN)){
-  method <- match.arg(method, c("hilbert", "peak"))
+  method <- match.arg(method[1], c("peak", "hilbert"))
   if(method == "hilbert"){
     # xmax <- max(abs(x), na.rm = TRUE)
     # # xH <- apply(x, 2, HilbertTransf, npad = npad)

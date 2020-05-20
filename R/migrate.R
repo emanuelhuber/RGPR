@@ -30,6 +30,13 @@ setGenericVerif("migrate", function(x, type = c("static", "kirchhoff"), ...)
 # dz = vertical resolution of the migrated data
 # fdo = dominant frequency of the GPR signal
 
+# for static time-to-depth migration 
+# dz = depth resolution for the time to depth conversion. If dz = NULL, then
+#      dz is set equal to the smallest depth resolution computed from x_depth.
+# d_max = maximum depth for the time to depth conversion. If d_max = NULL, then
+#         d_max is set equal to the largest depth in x_depth.
+# method = method for the interpolation (see ?signal::interp1)
+
 #' Migrate of the GPR data
 #' 
 #' Fresnel zone defined according to 
@@ -69,19 +76,50 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
       x <- time0Cor(x, method = c("pchip"))
     }
     if(x@depthunit == "ns"){
-      message("time to depth conversion with constant velocity (", x@vel[[1]],
-              " ", x@posunit, "/", x@depthunit, ")")
-      z <- timeToDepth(x@depth, time_0 = 0, v = vel(x), 
-                       antsep = antsep(x))
-      x <- x[!is.na(z),]
-      x@dz <-  x@dz * x@vel[[1]]/ 2
-      x@depth <- seq(from = 0, to = tail(z, 1), by = x@dz)
-      funInterp <- function(x, z, zreg){
-        signal::interp1(x = z, y = x, xi = zreg, 
-                        method = "pchip", extrap = TRUE)
+      if(length(x@vel[[1]]) == 1){
+        message("time to depth conversion with constant velocity (", x@vel[[1]],
+                " ", x@posunit, "/", x@depthunit, ")")
+        z <- timeToDepth(x@depth, time_0 = 0, v = vel(x), 
+                         antsep = antsep(x))
+        x <- x[!is.na(z),]
+        x@dz <-  x@dz * x@vel[[1]]/ 2
+        x@depth <- seq(from = 0, to = tail(z, 1), by = x@dz)
+        funInterp <- function(x, z, zreg){
+          signal::interp1(x = z, y = x, xi = zreg, 
+                          method = "pchip", extrap = TRUE)
+        }
+        x@data <- apply(x@data, 2, funInterp, 
+                        z = z[!is.na(z)], zreg = x@depth)
+      }else if(is.matrix(x@vel[[1]])){
+        x_depth <- apply(c(0, diff(depth(x))) * x@vel[[1]]/2, 2, cumsum)
+        dots <- list(...)
+        if( !is.null(dots$dz)){
+          dz <- dots$dz
+        }else{
+          dz <- min(apply(x_depth, 2, diff))
+        }
+        if( !is.null(dots$dmax)){
+          dmax <- dots$dmax
+        }else{
+          dmax <- max(x_depth)
+        }
+        if( !is.null(dots$method)){
+          method <- match.arg(dots$method, c("linear", "nearest", "pchip", "cubic", "spline"))
+        }else{
+          method <- "pchip"
+        }
+        d <- seq(from = 0, by = dz, to = dmax)
+        x_new <- matrix(nrow = length(d), ncol = ncol(x))
+        for(i in seq_along(x)){
+          x_new[, i] <- signal::interp1(x  = as.numeric(x_depth[,i]),
+                                        y  = as.numeric(x[,i]),
+                                        xi = d,
+                                        method = method)
+        }
+        x@data      <- x_new
+        x@depth     <- d
+        x@dz        <- dz
       }
-      x@data <- apply(x@data, 2, funInterp, 
-                      z = z[!is.na(z)], zreg = x@depth)
       x@depthunit <- "m"
     }else{
       # interpolation at regular interval if x@dz is not unique!!
@@ -97,12 +135,13 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
       }
     }
     zShift <- (max(topo) - topo)
-    #all(zShift != 0)
-    x <- traceShift(x,  ts = zShift, method = c("pchip"), crop = FALSE)
-    x@vel <- list() 
+    if( all(zShift != 0) ){
+      x <- traceShift(x,  ts = zShift, method = c("pchip"), crop = FALSE)
+    }
     if(length(x@coord) > 0 && ncol(x@coord) == 3 ){
       x@coord[, 3] <- max(x@coord[,3])
     }
+    x@vel <- list() 
   }else if(type == "kirchhoff"){
     A <- x@data
     #topo <- x@coord[,3]

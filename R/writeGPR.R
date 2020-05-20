@@ -81,6 +81,15 @@ setMethod("writeGPR", "GPRsurvey",
                    type = c("DT1", "rds", "ASCII", "xta", "xyzv"),
                    overwrite = FALSE, ...){
             #setMethod("writeGPR", "GPRsurvey", 
+            lst <- list(...)
+            if(!is.null(lst$format)){
+              if(tolower(lst$format) %in% c("dt1", "rds", "ascii", "xta", "xyza")){
+                type <- lst$format
+              }else{
+                stop("use 'type' in instead of format.\n",
+                     "'type' must be one of the following: 'DT1', 'rds', 'ASCII', 'xta', 'xyzv'. ")
+              }
+            }
             #    function(x,fPath, format=c("DT1","rds"), overwrite=FALSE){
             type <- match.arg(tolower(type), c("dt1", "rds", "ascii", "xta", "xyza"))
             mainDir <- dirname(fPath)

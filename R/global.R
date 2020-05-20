@@ -1417,10 +1417,15 @@ extrema <- function(x, type=c("max","min")){
 #'
 #' time to depth conversion
 #' @export                  
-timeToDepth <- function(tt, time_0, v = 0.1, antsep = 1, c0 = 0.299){
+timeToDepth <- function(tt, time_0, v = 0.1, antsep = 1){
   # t0 <- time_0 - antsep/c0
-  y <- v^2 * (tt - time_0)^2 - antsep^2
-  test <- (y >= 0) & ((tt - time_0) >= 0)
+  if(length(v) == 1){
+    y <- v^2 * (tt - time_0)^2 - antsep^2
+    test <- (y >= 0) & ((tt - time_0) >= 0)
+  }else if(length(v) == length(tt)){
+    y <- cumsum( c(0, diff(tt)) * v )^2  - antsep^2
+    test <- (y >= 0)
+  }
   y[!test] <- NA
   y[test] <- sqrt(y[test])/2
   return(y)

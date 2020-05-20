@@ -4,7 +4,7 @@
 \alias{timeToDepth}
 \title{time to depth conversion}
 \usage{
-timeToDepth(tt, time_0, v = 0.1, antsep = 1, c0 = 0.299)
+timeToDepth(tt, time_0, v = 0.1, antsep = 1)
 }
 \description{
 time to depth conversion

@@ -1,10 +1,10 @@
 
-#' @name setLayerVelocites
-#' @rdname setLayerVelocites
+#' @name setLayerVelocities
+#' @rdname setLayerVelocities
 #' @export
-setGeneric("setLayerVelocites", function(x, v, twt = NULL, method = "pchip", 
+setGeneric("setLayerVelocities", function(x, v, twt = NULL, method = "pchip", 
                                          clean = TRUE, extrap = NA) 
-  standardGeneric("setLayerVelocites"))
+  standardGeneric("setLayerVelocities"))
 
 
 
@@ -15,10 +15,10 @@ setGeneric("setLayerVelocites", function(x, v, twt = NULL, method = "pchip",
 #' @param twt        vertical resolution of the migrated data
 #' @param method       interpolation method
 #' 
-#' @name setLayerVelocites
-#' @rdname setLayerVelocites
+#' @name setLayerVelocities
+#' @rdname setLayerVelocities
 #' @export
-setMethod("setLayerVelocites", "GPR", function(x, v, twt = NULL, 
+setMethod("setLayerVelocities", "GPR", function(x, v, twt = NULL, 
                                                method = "pchip", clean = TRUE, 
                                                extrap = NA){
   if(is.null(twt)){

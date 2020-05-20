@@ -97,7 +97,7 @@ Collate:
   'convertTimeToDepth.R'
   'getVel.R'
   'getDepth.R'
-  'setLayerVelocites.R'
+  'setLayerVelocities.R'
 Imports:
     methods,
     graphics,

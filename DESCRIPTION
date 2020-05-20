@@ -95,6 +95,7 @@ Collate:
   'checkSlots.R'
   'z_interp.R'
   'zz_karlee.R'
+  'convertTimeToDepth.R'
 Imports:
     methods,
     graphics,

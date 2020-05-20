@@ -25,7 +25,7 @@ setMethod("setLayerVelocities", "GPR", function(x, v, twt = NULL,
   }
   # twt
   # x@delineations <- twt is a matrix
-  x@vel <- list(getVel(x, twt, v))
+  x@vel <- list(.getVelFromInterface(x, twt, v))
   return(x)
 })
 
@@ -88,13 +88,13 @@ interpInterface <- function(x, extrap = TRUE, method = "pchip", clean = TRUE){
 # v = velocities (length(v) = nrow(twt_int + 1))  
 #     (+1 because of the last layers)
 # RETURN: a GPR object (like x) but with values equal to the velocity at (x, t)
-# getVel <- function(x, twt_int, v){
-#   if(nrow(twt_int) != length(v) - 1){
-#     stop("'length(v)' must be equal to ", nrow(twt_int) + 1)
-#   }
-#   xvel <- apply(twt_int, 2, .getVel, t_twt = depth(x), v = v)
-#   return(xvel)
-# }
+.getVelFromInterface <- function(x, twt_int, v){
+   if(nrow(twt_int) != length(v) - 1){
+     stop("'length(v)' must be equal to ", nrow(twt_int) + 1)
+   }
+   xvel <- apply(twt_int, 2, .getVel, t_twt = depth(x), v = v)
+   return(xvel)
+}
 
 # private function
 .getVel <- function(z, t_twt, v){

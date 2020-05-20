@@ -24,13 +24,16 @@ setMethod("setLayerVelocities", "GPR", function(x, v, twt = NULL,
     twt <- interpInterface(x, extrap = extrap, method = method, clean = clean)
   }
   # twt
-  # x@delineations <- twt is a matrix
+  x@delineations <- apply(twt, 1, .twt_to_delineations, dtt = x@dz)
   x@vel <- list(.getVelFromInterface(x, twt, v))
   return(x)
 })
 
 
-
+.twt_to_delineations <- function(x, dtt){
+  tst <- !is.na(x)
+  cbind(which(tst), round(x[tst]/dtt))
+}
 
 # x = GPR object with delineations
 # extrap = should the delineation be extrapolated over all the traces

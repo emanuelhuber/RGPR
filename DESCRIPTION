@@ -94,6 +94,7 @@ Collate:
   'checkArgs.R'
   'checkSlots.R'
   'z_interp.R'
+  'zz_karlee.R'
 Imports:
     methods,
     graphics,

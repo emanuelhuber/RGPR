@@ -27,7 +27,7 @@ setMethod("setLayerVelocities", "GPR", function(x, v, twt = NULL,
     twt <- interpInterface(x, extrap = extrap, method = method, clean = clean)
   }
   # twt
-  x@delineations <- apply(twt, 1, .twt_to_delineations, dtt = x@dz)
+  x@delineations <- list(apply(twt, 1, .twt_to_delineations, dtt = x@dz))
   x@vel <- list(.getVelFromInterface(x, twt, v))
   return(x)
 })

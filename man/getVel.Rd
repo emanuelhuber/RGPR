@@ -13,5 +13,5 @@ getVel(x)
 \item{x}{GPR object}
 }
 \description{
-Get velocity model
+Return the velocity as a function of two-way travel time.
 }

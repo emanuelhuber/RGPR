@@ -7,6 +7,8 @@ setGeneric("getVel", function(x)
 
 #' Get velocity model
 #'
+#' Return the velocity as a function of two-way travel time.
+#'
 #' @param x GPR object
 #' @name getVel
 #' @rdname getVel

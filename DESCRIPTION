@@ -94,10 +94,10 @@ Collate:
   'checkArgs.R'
   'checkSlots.R'
   'z_interp.R'
+  'setLayerVelocities.R'
   'convertTimeToDepth.R'
   'getVel.R'
   'getDepth.R'
-  'setLayerVelocities.R'
 Imports:
     methods,
     graphics,

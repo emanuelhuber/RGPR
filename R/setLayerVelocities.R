@@ -11,10 +11,9 @@ setGeneric("setLayerVelocities", function(x, v, twt = NULL, method = "pchip",
 #' Set layer velocities
 #'
 #' @param x GPR object   
-#' @param v velocities (length(v) = nrow(twt_int + 1))  (+1 because of the last layers)
+#' @param v velocities (\code{length(v) = nrow(twt_int + 1)}, (\code{+1} because of the last layers)
 #' @param twt        vertical resolution of the migrated data
 #' @param method       interpolation method
-#' 
 #' @name setLayerVelocities
 #' @rdname setLayerVelocities
 #' @export

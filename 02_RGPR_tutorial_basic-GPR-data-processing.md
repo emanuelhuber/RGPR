@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Basic GPR data processing
-date: 2020-01-17
+date: 2020-05-20
 ---
 
 <!--
@@ -305,12 +305,26 @@ Frequency filter
 Let's have a look at the amplitude-frequency and phase-frequency plot (the spectrum given by the Fourier decomposition):
 
 ``` r
-spec(x3)
+spec1D(x3)
 ```
 
-    ## Soon deprecated. Use 'spec1D()' or 'spec2D()' instead
-
 ![plot spectrum](02_RGPR_tutorial_basic-GPR-data-processing_tp_files/figure-markdown_github/fFilter_spectrum-1.png)
+
+    ## *** Class GPRset ***
+    ##  name        = LINE00
+    ##  n sets    = 2
+    ##  filepath    = rawGPR/LINE00.DT1
+    ##  description =
+    ##  survey date = 2014-04-25
+    ##  Reflection, 100 MHz, Window length = 177.6 MHz, dz = 0.4 MHz
+    ##  223 traces, 55.5 m
+    ##  > PROCESSING
+    ##    1. time0<-
+    ##    2. dcshift//u=1:110
+    ##    3. time0Cor//method=pchip
+    ##    4. dewow//type=runmed+w=50
+    ##    5. spec1D//
+    ##  ****************
 
 The curve in red is the averaged amplitude/phase over all the trace amplitudes/phases.
 
@@ -595,17 +609,17 @@ Save and export
 Save the processed GPR record into the directory /processing. Use the `.rds` format (this is a R internal format)
 
 ``` r
-writeGPR(x9, fPath = file.path(getwd(), "processing", paste0(name(x9), ".rds")),
-         format = "rds", overwrite = TRUE)
+writeGPR(x9, fPath = file.path(getwd(), "processing", name(x9)),
+         type = "rds", overwrite = TRUE)
 ```
 
     ## *** Class GPR ***
     ##  name        = LINE00
-    ##  filepath    = /mnt/data/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/processing/LINE00.dt1
+    ##  filepath    = /mnt/data/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/processing/LINE00.rds
     ##  1 fiducial(s)
     ##  description =
     ##  survey date = 2014-04-25
-    ##  Reflection, 100 MHz, Window length = 351.6 ns, dz = 0.4 ns
+    ##  Reflection, 100 MHz, Window length = 354.8 ns, dz = 0.4 ns
     ##  223 traces, 55.5 m
     ##  > PROCESSING
     ##    1. time0<-

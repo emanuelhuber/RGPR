@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Adding coordinates to GPR data
-date: 2020-01-17
+date: 2020-05-20
 ---
 
 <!--
@@ -181,11 +181,11 @@ mySurvey
     ## Unique directory: /mnt/data/RGPR/CODE/RGPR-gh-pages/2014_04_25_frenke/rawGPR
     ## - - - - - - - - - - - - - - -
     ##     name length units       date freq coord int   filename
-    ## 1 LINE00  55.75     m 2014-04-25  100    NO  NO LINE00.DT1
-    ## 2 LINE01  11.50     m 2014-04-25  100    NO  NO LINE01.DT1
-    ## 3 LINE02  68.75     m 2014-04-25  100    NO  NO LINE02.DT1
-    ## 4 LINE03  90.00     m 2014-04-25  100    NO  NO LINE03.DT1
-    ## 5 LINE04 111.25     m 2014-04-25  100    NO  NO LINE04.DT1
+    ## 1 LINE00    56.     m 2014-04-25  100    NO  NO LINE00.DT1
+    ## 2 LINE01    12.     m 2014-04-25  100    NO  NO LINE01.DT1
+    ## 3 LINE02    69.     m 2014-04-25  100    NO  NO LINE02.DT1
+    ## 4 LINE03    90.     m 2014-04-25  100    NO  NO LINE03.DT1
+    ## 5 LINE04   111.     m 2014-04-25  100    NO  NO LINE04.DT1
     ## ****************
 
 You can see that no coordinates (x,y,z) are associated with the GPR data. Therefore, if you try to plot the suvey you will get:
@@ -407,7 +407,7 @@ exportCoord(mySurvey, fPath="coord/shapefiles/frenke")
 To export the coordinates as ASCII (`.txt`) files (on file per GPR record):
 
 ``` r
-exportCoord(mySurvey, folder="coord/topo", type="ASCII")
+exportCoord(mySurvey, fPath="coord/topo", type="ASCII")
 ```
 
 Remark
@@ -429,6 +429,15 @@ plot(mySurvey)
 
 ![plot survey](04_RGPR_tutorial_GPR-data-survey_tp_files/figure-markdown_github/unnamed-chunk-26-1.png) The red arrows indicate the direction of the survey, the red dots the fiducial markers and the circles the GPR profile intersections.
 
+Highlight a GPR line:
+
+``` r
+plot(mySurvey)
+lines(mySurvey[2], col = "darkred", lwd = 3)
+```
+
+![plot survey single line](04_RGPR_tutorial_GPR-data-survey_tp_files/figure-markdown_github/unnamed-chunk-27-1.png)
+
 Plot the GPR data
 -----------------
 
@@ -438,9 +447,11 @@ To plot the first GPR record, enter:
 plot(mySurvey[[1]], addTopo=TRUE)
 ```
 
+    ## Soon deprecated. Use 'migrate()' instead of 'migration()'.
+
     ## time to depth conversion with constant velocity (0.1 m/ns)
 
-![plot GPR data](04_RGPR_tutorial_GPR-data-survey_tp_files/figure-markdown_github/unnamed-chunk-27-1.png)
+![plot GPR data](04_RGPR_tutorial_GPR-data-survey_tp_files/figure-markdown_github/unnamed-chunk-28-1.png)
 
 Three-dimensional plot of the GPR data
 --------------------------------------
@@ -481,7 +492,7 @@ for(i in seq_along(mySurvey)){
  exportPDF(A, clip = 30, fPath = file.path(procDir, name(A)), addTopo = TRUE,
           lwd = 0.5, ws = 1.5)
   # save the processed GPR-line into ".rds" format
-  writeGPR(A, fPath = file.path(procDir, paste0(name(A),".rds")),
+  writeGPR(A, fPath = file.path(procDir, name(A)),
           type = "rds", overwrite = TRUE)
   cat("!\n")
 }

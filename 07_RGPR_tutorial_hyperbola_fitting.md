@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Hyperbola fitting
-date: 2020-01-17
+date: 2020-05-20
 ---
 
 <!--

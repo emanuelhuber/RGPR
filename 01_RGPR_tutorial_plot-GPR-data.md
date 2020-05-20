@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Plot GPR data
-date: 2020-01-17
+date: 2020-05-20
 ---
 
 <!--
@@ -126,20 +126,6 @@ Plot wiggles
 ``` r
 plot(x, type = "wiggles")
 ```
-
-    ## Warning in plot.window(...): "NAcol" is not a graphical parameter
-
-    ## Warning in plot.xy(xy, type,...): "NAcol" is not a graphical parameter
-
-    ## Warning in axis(side = side, at = at, labels = labels,...): "NAcol" is not a
-    ## graphical parameter
-
-    ## Warning in axis(side = side, at = at, labels = labels,...): "NAcol" is not a
-    ## graphical parameter
-
-    ## Warning in box(...): "NAcol" is not a graphical parameter
-
-    ## Warning in title(...): "NAcol" is not a graphical parameter
 
 ![plot(A) with wiggles](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_wiggles-1.png)
 

@@ -14,7 +14,7 @@ setLayerVelocities(x, v, twt = NULL, method = "pchip", clean = TRUE,
 \arguments{
 \item{x}{GPR object}
 
-\item{v}{velocities (length(v) = nrow(twt_int + 1))  (+1 because of the last layers)}
+\item{v}{velocities (\code{length(v) = nrow(twt_int + 1)}, (\code{+1} because of the last layers)}
 
 \item{twt}{vertical resolution of the migrated data}
 

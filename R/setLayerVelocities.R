@@ -37,6 +37,7 @@ setMethod("setLayerVelocities", "GPR", function(x, v, twt = NULL,
   tst <- !is.na(x)
   u <- cbind(which(tst), round(x[tst]/dtt))
   colnames(u) <- c("i", "j")
+  return(u)
 }
 
 # x = GPR object with delineations

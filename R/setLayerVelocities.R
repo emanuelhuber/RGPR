@@ -21,25 +21,81 @@ setGeneric("setLayerVelocities", function(x, v, twt = NULL, method = "pchip",
 #' @rdname setLayerVelocities
 #' @export
 setMethod("setLayerVelocities", "GPR", function(x, v, twt = NULL, 
-                                               method = "pchip", clean = TRUE, 
-                                               extrap = NA){
+                                                method = "pchip", clean = TRUE, 
+                                                extrap = NA){
   if(is.null(twt)){
     twt <- interpInterface(x, extrap = extrap, method = method, clean = clean)
   }
   # twt
-  x@delineations <- list(apply(twt, 1, .twt_to_delineations, dtt = x@dz))
+  x_del <- (apply(twt, 1, .twt_to_delineations, dtt = x@dz))
+  
+  # FUN <- function(x){
+  #   if(is.list(x[[1]])){
+  #     unlist(x, recursive = FALSE)
+  #   }else{
+  #     x[[1]]
+  #   }
+  # }
+  # 
+  # x@delineations <- lapply(x_del, FUN)
+  x@delineations <- unlist(x_del, recursive = FALSE)
   x@vel <- list(.getVelFromInterface(x, twt, v))
   return(x)
 })
 
 
 .twt_to_delineations <- function(x, dtt){
+  # idx <- seq_along(x)
+  # idx[is.na(x)] <- NA
+  # idx_splt <- splitVectAtNA(idx)
+  # 
+  # u <- lapply(idx_splt, .makeMatrixDel, x, dtt)
+  # names(u) <- NULL
+  # if(length(u) > 1) return(u)
+  # return(u[[1]])
   tst <- !is.na(x)
-  u <- cbind(which(tst), round(x[tst]/dtt))
+  u <- matrix(nrow = length(x), ncol = 2)
+  # print(dim(u))
+  u[, 1] <- seq_along(x)
+  u[tst, 2] <- 1L + round(x[tst]/dtt)
+  u[!tst, 2] <- NA
+  # u <- cbind(which(tst), round(x[tst]/dtt))
+  colnames(u) <- c("i", "j")
+  return(list(u))
+}
+# .twt_to_delineations <- function(x, dtt){
+#   idx <- seq_along(x)
+#   idx[is.na(x)] <- NA
+#   idx_splt <- splitVectAtNA(idx)
+#   
+#   u <- lapply(idx_splt, .makeMatrixDel, x, dtt)
+#   names(u) <- NULL
+#   if(length(u) > 1) return(u)
+#   return(u[[1]])
+#   # tst <- !is.na(x)
+#   # u <- matrix(nrow = length(x), ncol = 2)
+#   # print(dim(u))
+#   # u[, 1] <- seq_along(x)
+#   # u[tst, 2] <- round(x[tst]/dtt)
+#   # u[!tst, 2] <- NA
+#   # # u <- cbind(which(tst), round(x[tst]/dtt))
+#   # colnames(u) <- c("i", "j")
+#   # return(list(u))
+# }
+
+.makeMatrixDel <- function(x, y, dtt){
+  u <- matrix(nrow = length(x), ncol = 2)
+  u[, 1] <- x
+  u[, 2] <- round(y[x]/dtt)
   colnames(u) <- c("i", "j")
   return(u)
 }
 
+splitVectAtNA <- function( x ){
+  idx <- 1 + cumsum( is.na( x ) )
+  not.na <- ! is.na( x )
+  split( x[not.na], idx[not.na] )
+}
 # x = GPR object with delineations
 # extrap = should the delineation be extrapolated over all the traces
 # (I recommend you to set extrap = NA and 
@@ -52,7 +108,7 @@ setMethod("setLayerVelocities", "GPR", function(x, v, twt = NULL,
 #' @export
 interpInterface <- function(x, extrap = TRUE, method = "pchip", clean = TRUE){
   
-  int <- RGPR:::.getXYZrelIntp(x, method = "pchip") # not necessary in fact (for 2D)
+  int <- .getXYZrelIntp(x, method = "pchip") # not necessary in fact (for 2D)
   
   int_xy <- sapply(int, .extrapInterface, x = x, 
                    extrap = extrap, method = method)
@@ -68,15 +124,20 @@ interpInterface <- function(x, extrap = TRUE, method = "pchip", clean = TRUE){
 
 # private function
 .extrapInterface <- function(int, x, extrap = TRUE, method = "pchip"){
-  # FIX - 20200516
-  test <- diff(int[, "xrel"]) > sqrt(.Machine$double.eps)
-  int <- int[test, ]
-  #--- end fix
-  signal::interp1(x = int[, "xrel"],
-                  y = int[, "zrel"],
-                  xi = pos(x),
-                  extrap = extrap,
-                  method = method)
+  # no interpolation required
+  if(nrow(int) == ncol(x) && all(int[, "xrel"] == pos(x) )){ 
+    return(int[, "zrel"])
+  }else{
+    # FIX - 20200516
+    test <- diff(int[, "xrel"]) > sqrt(.Machine$double.eps)
+    int <- int[test, ]
+    #--- end fix
+    signal::interp1(x = int[, "xrel"],
+                    y = int[, "zrel"],
+                    xi = pos(x),
+                    extrap = extrap,
+                    method = method)
+  }
 }
 
 # private function

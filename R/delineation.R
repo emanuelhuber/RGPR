@@ -392,13 +392,23 @@ setMethod("identifyDelineation", "GPR", function(x,
 
 .getXYZrel0Intp <- function(x, xyz, xrel, zrel, method){
   
-  tst <- interpToCoords(i = x[, "i"], u = zrel[x[,"j"]], xy = xyz, method = method)
+  # no interpolation required
+  if(nrow(x) == nrow(xyz) && all(diff(x[, "i"]) == 1)){   
+    xyz <- x[, c(1, 2, 2, 2, 2)]
+    xyz[, 1:2] <- xyz[, 1:2]
+    xyz[,   3] <- xyz[, 3] -  zrel[x[,"j"]]
+    xyz[,   4] <- xrel[x[, "i"]]
+    xyz[,   5] <- zrel[x[,"j"]]
+  }else{   # interpolation
   
-  xyz <- xyz[tst[["i"]], ]
-  xyz <- xyz[, c(1, 2, 3, 3, 3)]
-  xyz[, 3] <- xyz[, 3] - tst[["u"]]
-  xyz[, 4] <- xrel[tst[["i"]]]
-  xyz[, 5] <- tst[["u"]]
+    tst <- interpToCoords(i = x[, "i"], u = zrel[x[,"j"]], xy = xyz, method = method)
+    
+    xyz <- xyz[tst[["i"]], ]
+    xyz <- xyz[, c(1, 2, 3, 3, 3)]
+    xyz[, 3] <- xyz[, 3] - tst[["u"]]
+    xyz[, 4] <- xrel[tst[["i"]]]
+    xyz[, 5] <- tst[["u"]]
+  }
   colnames(xyz) <- c("x", "y", "z", "xrel", "zrel")
   return(xyz)
 }

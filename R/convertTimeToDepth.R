@@ -48,7 +48,6 @@ setMethod("convertTimeToDepth", "GPR", function(x, type = c("static", "kirchhoff
     
   dots <- list(...)
     
-    
   # single velocity value
   if(length(x@vel[[1]]) == 1){
     message("time to depth conversion with constant velocity (", x@vel[[1]],

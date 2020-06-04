@@ -34,14 +34,14 @@ extend by the value defined by \code{buffer}.}
 extend.}
 }
 \value{
-[\code{array(m, n, k + 1)}] An array consisting of \eqn{k + 1} 
+[\code{GPRcube}] A \code{GPRcube} object consisting of \eqn{k + 1} 
         surfaces of dimension \eqn{m \times n}. \eqn{k} is the number of
         delineations. The first surface corresponds to the topography while
         the others to the interpolated delineations.
 }
 \description{
 Takes the delineations having the same name or index and interpolates
-them to a surface. Interpolate also the topography (surface elevation
+them to a surface. It interpolates also the topography (surface elevation
 given by the coordinates).
 }
 \details{

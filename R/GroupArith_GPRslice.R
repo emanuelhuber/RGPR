@@ -2,7 +2,7 @@
 # > getGroupMembers("Ops")
 # > getGroupMembers("Arith")
 # [1] "+"   "-"   "*"   "^"   "%%"  "%/%" "/" 
-.GPR.add <- function(a, b){
+.GPR.addslice <- function(a, b){
   if(missing(b)){
     return(a)
   }
@@ -18,7 +18,7 @@
   x@data <- a + b
   return(x)
 }
-.GPR.sub <- function(a, b){
+.GPR.subslice <- function(a, b){
   if(missing(b)){
     a@data <- -a@data
     return(a)
@@ -34,7 +34,7 @@
   x@data <- a - b
   return(x)
 }
-.GPR.mul <- function(a, b){
+.GPR.mulslice <- function(a, b){
   if(is(b,"GPRslice")){
     x <- b
     b <- b@data
@@ -46,7 +46,7 @@
   x@data <- a * b
   return(x)
 }
-.GPR.div <- function(a, b){
+.GPR.divslice <- function(a, b){
   if(is(b,"GPRslice")){
     x <- b
     b <- b@data
@@ -58,7 +58,7 @@
   x@data <- a / b
   return(x)
 }
-.GPR.pow <- function(a, b){
+.GPR.powslice <- function(a, b){
   if(is(b,"GPRslice")){
     x <- b
     b <- b@data
@@ -73,11 +73,11 @@
 
 .GPR.arith <- function(e1,e2){
   switch(.Generic,
-         "+" = .GPR.add(e1, e2),
-         "-" = .GPR.sub(e1, e2),
-         "*" = .GPR.mul(e1, e2),
-         "/" = .GPR.div(e1, e2),
-         "^" = .GPR.pow(e1, e2),
+         "+" = .GPR.addslice(e1, e2),
+         "-" = .GPR.subslice(e1, e2),
+         "*" = .GPR.mulslice(e1, e2),
+         "/" = .GPR.divslice(e1, e2),
+         "^" = .GPR.powslice(e1, e2),
          stop(paste("binary operator \"", .Generic, "\" not defined for GPRslice"))
   )
 }

@@ -2,7 +2,7 @@
 # > getGroupMembers("Ops")
 # > getGroupMembers("Arith")
 # [1] "+"   "-"   "*"   "^"   "%%"  "%/%" "/" 
-.GPR.add <- function(a, b){
+.GPR.addcube <- function(a, b){
   if(missing(b)){
     return(a)
   }
@@ -18,7 +18,7 @@
   x@data <- a + b
   return(x)
 }
-.GPR.sub <- function(a, b){
+.GPR.subcube <- function(a, b){
   if(missing(b)){
     a@data <- -a@data
     return(a)
@@ -34,7 +34,7 @@
   x@data <- a - b
   return(x)
 }
-.GPR.mul <- function(a, b){
+.GPR.mulcube <- function(a, b){
   if(is(b,"GPRcube")){
     x <- b
     b <- b@data
@@ -46,7 +46,7 @@
   x@data <- a * b
   return(x)
 }
-.GPR.div <- function(a, b){
+.GPR.divcube <- function(a, b){
   if(is(b,"GPRcube")){
     x <- b
     b <- b@data
@@ -58,7 +58,7 @@
   x@data <- a / b
   return(x)
 }
-.GPR.pow <- function(a, b){
+.GPR.powcube <- function(a, b){
   if(is(b,"GPRcube")){
     x <- b
     b <- b@data
@@ -73,11 +73,11 @@
 
 .GPR.arith <- function(e1,e2){
   switch(.Generic,
-         "+" = .GPR.add(e1, e2),
-         "-" = .GPR.sub(e1, e2),
-         "*" = .GPR.mul(e1, e2),
-         "/" = .GPR.div(e1, e2),
-         "^" = .GPR.pow(e1, e2),
+         "+" = .GPR.addcube(e1, e2),
+         "-" = .GPR.subcube(e1, e2),
+         "*" = .GPR.mulcube(e1, e2),
+         "/" = .GPR.divcube(e1, e2),
+         "^" = .GPR.powcube(e1, e2),
          stop(paste("binary operator \"", .Generic, "\" not defined for GPRcube"))
   )
 }

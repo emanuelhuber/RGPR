@@ -71,7 +71,7 @@
   return(x)
 }
 
-.GPR.arith <- function(e1,e2){
+.GPR.arith <- function(e1, e2){
   switch(.Generic,
          "+" = .GPR.add(e1, e2),
          "-" = .GPR.sub(e1, e2),

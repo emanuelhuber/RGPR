@@ -21,7 +21,7 @@
   colkey = NULL, add = FALSE, col = NULL, inttype = 2, ...)
 
 \method{plot}{GPRslice}(x, main = NULL, xlab = NULL, ylab = NULL,
-  col = NULL, clim = NULL, ...)
+  col = NULL, clim = NULL, relCoords = FALSE, ...)
 
 \method{plot}{GPR}(x, add = FALSE, relTime0 = FALSE, note = NULL,
   addFid = TRUE, addAnn = TRUE, addTime0 = TRUE, addDepth0 = TRUE,

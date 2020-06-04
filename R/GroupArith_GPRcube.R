@@ -7,11 +7,11 @@
     return(a)
   }
   #FIXME #TODO: case where a (or b) is a vector trace
-  if(is(b,"GPR")){
+  if(is(b,"GPRcube")){
     x <- b
     b <- b@data
   }
-  if(is(a,"GPR")){
+  if(is(a,"GPRcube")){
     x <- a
     a <- a@data
   }
@@ -23,11 +23,11 @@
     a@data <- -a@data
     return(a)
   }
-  if(is(b,"GPR")){
+  if(is(b,"GPRcube")){
     x <- b
     b <- b@data
   }
-  if(is(a,"GPR")){
+  if(is(a,"GPRcube")){
     x <- a
     a <- a@data
   }
@@ -35,11 +35,11 @@
   return(x)
 }
 .GPR.mul <- function(a, b){
-  if(is(b,"GPR")){
+  if(is(b,"GPRcube")){
     x <- b
     b <- b@data
   }
-  if(is(a,"GPR")){
+  if(is(a,"GPRcube")){
     x <- a
     a <- a@data
   }
@@ -47,11 +47,11 @@
   return(x)
 }
 .GPR.div <- function(a, b){
-  if(is(b,"GPR")){
+  if(is(b,"GPRcube")){
     x <- b
     b <- b@data
   }
-  if(is(a,"GPR")){
+  if(is(a,"GPRcube")){
     x <- a
     a <- a@data
   }
@@ -59,11 +59,11 @@
   return(x)
 }
 .GPR.pow <- function(a, b){
-  if(is(b,"GPR")){
+  if(is(b,"GPRcube")){
     x <- b
     b <- b@data
   }
-  if(is(a,"GPR")){
+  if(is(a,"GPRcube")){
     x <- a
     a <- a@data
   }
@@ -78,7 +78,7 @@
          "*" = .GPR.mul(e1, e2),
          "/" = .GPR.div(e1, e2),
          "^" = .GPR.pow(e1, e2),
-         stop(paste("binary operator \"", .Generic, "\" not defined for GPR"))
+         stop(paste("binary operator \"", .Generic, "\" not defined for GPRcube"))
   )
 }
 
@@ -87,33 +87,33 @@
 #' Basic arithmetical functions
 #'
 #' 
-#' @param e1 An object of the class GPR
-#' @param e2 An object of the class GPR
+#' @param e1 An object of the class GPRcube
+#' @param e2 An object of the class GPRcube
 # @examples
 # data(frenkeLine00)
 # A <- exp(frenkeLine00)
 # B <- A + frenkeLine00
 #' @rdname Arith-methods
-#' @aliases Arith,GPR,ANY-method
+#' @aliases Arith,GPRcube,ANY-method
 setMethod(
   f = "Arith",
-  signature = c(e1 = "GPR", e2 = "ANY"), 
+  signature = c(e1 = "GPRcube", e2 = "ANY"), 
   definition = .GPR.arith
 )
 
 #' @name Arith
 #' @rdname Arith-methods
-#' @aliases Arith,GPR,GPR-method
+#' @aliases Arith,GPRcube,GPRcube-method
 setMethod(
   f = "Arith",
-  signature = c(e1 = "GPR", e2 = "GPR"), 
+  signature = c(e1 = "GPRcube", e2 = "GPRcube"), 
   definition = .GPR.arith
 )
 #' @name Arith
 #' @rdname Arith-methods
-#' @aliases Arith,ANY,GPR-method
+#' @aliases Arith,ANY,GPRcube-method
 setMethod(
   f = "Arith",
-  signature = c(e1 = "ANY", e2 = "GPR"), 
+  signature = c(e1 = "ANY", e2 = "GPRcube"), 
   definition = .GPR.arith
 )

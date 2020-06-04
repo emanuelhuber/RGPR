@@ -1,7 +1,7 @@
 #' Basic summary functions
 #'
 #' Methods for the base Summary methods \link[methods]{S4groupGeneric}
-#' @param x An object of the class GPR
+#' @param x An object of the class GPRcube
 #' @param ... further arguments 
 #' @param na.rm [\code{logical(1)}] should missing values be removed?
 #' @details Currently implemented methods include:
@@ -9,10 +9,10 @@
 #'  \item{all, any, sum, prod, min, max, range}
 #'  }
 #' @rdname Summary-methods
-#' @aliases Summary-GPR-method
+#' @aliases Summary-GPRcube-method
 setMethod(
   f = "Summary",
-  signature = "GPR",
+  signature = "GPRcube",
   definition = function(x, ..., na.rm = FALSE){
     # x <- list(...)[[1]]
     x_summary <- switch(.Generic,

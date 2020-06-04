@@ -98,6 +98,11 @@ Collate:
   'convertTimeToDepth.R'
   'getVel.R'
   'getDepth.R'
+  'interp2DDelineations.R'
+  'GroupArith_GPRslice.R'
+  'GroupArith_GPRcube.R'
+  'GroupSummary_GPRslice.R'
+  'GroupSummary_GPRcube.R'
 Imports:
     methods,
     graphics,

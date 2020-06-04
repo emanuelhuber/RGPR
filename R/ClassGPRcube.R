@@ -328,12 +328,18 @@ plot.GPRslice <- function(x,
                      ylab = NULL,
                      col = NULL,
                      clim = NULL,
+                     relCoords = FALSE,
                      ...){
   if(is.null(main)){
     if(isTimeUnit(x)){
       main <- paste0("time = ", x@depth, " ", x@depthunit)
     }else{
-      main <- paste0("depth = ", x@depth, " ", x@depthunit)
+      if(x@depthunit == "-"){
+        main <- x@depth
+      }else{
+        main <- paste0("depth = ", x@depth, " ", x@depthunit)
+        
+      }
     }
   }
   if(is.null(xlab)){
@@ -345,14 +351,18 @@ plot.GPRslice <- function(x,
   
   if( min(x@data, na.rm = TRUE) >= 0 ){
     # to plot amplitudes for example...
-    if(is.null(clim)) clim <- c(0, max(x@data, na.rm = TRUE))
+    if(is.null(clim)) clim <- range(x@data, na.rm = TRUE)
+    if(isFALSE(clim)) clim <-  range(x@data, na.rm = TRUE)
     if(is.null(col))  col <- palGPR("slice")
   }else{
     if(is.null(clim)) clim <- c(-1, 1) * max(abs(x@data), na.rm = TRUE)
+    if(isFALSE(clim)) clim <-  range(x@data, na.rm = TRUE)
     if(is.null(col))  col <-  palGPR(n = 101)
   }
-  
-  plot3D::image2D(x = x@x, y = x@y, z = x@data,
+  if(isTRUE(relCoords)){
+    x@coord <- c(0,0,0)
+  }
+  plot3D::image2D(x = x@coord[1] + x@x, y = x@coord[2] +x@y, z = x@data,
                 main = main, xlab, ylab, clim = clim, col = col, ...)
 }
 

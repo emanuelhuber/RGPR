@@ -40,9 +40,14 @@ extend.}
         the others to the interpolated delineations.
 }
 \description{
-Takes the delineations having the same name or index and interpolates
-them to a surface. It interpolates also the topography (surface elevation
-given by the coordinates).
+This function groups the delineations by their indexes or names and 
+interpolates each group separately. You need to check, that all your 
+delineations are either in the same order (e.g., for every data, your first 
+delineated the lake bottom, than the sediment below) or the delineations 
+have consistent names across all the data set 
+(e.g., "lake_bottom", "lake_sediments"). 
+It interpolates also the topography (surface elevation given by the 
+coordinates).
 }
 \details{
 \describe{

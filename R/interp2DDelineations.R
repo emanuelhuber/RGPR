@@ -1,9 +1,14 @@
 
 #' 2D interpolation of the delineations and surface topography
 #' 
-#' Takes the delineations having the same name or index and interpolates
-#' them to a surface. It interpolates also the topography (surface elevation
-#' given by the coordinates).
+#' This function groups the delineations by their indexes or names and 
+#' interpolates each group separately. You need to check, that all your 
+#' delineations are either in the same order (e.g., for every data, your first 
+#' delineated the lake bottom, than the sediment below) or the delineations 
+#' have consistent names across all the data set 
+#' (e.g., "lake_bottom", "lake_sediments"). 
+#' It interpolates also the topography (surface elevation given by the 
+#' coordinates).
 #' 
 #' \describe{
 #'   \item{\code{bbox}}{axis-aligned bounding box}
@@ -13,10 +18,10 @@
 #'                        specified (i.e., not \code{NULL})}
 #' }
 #' 
-#' @param x      [\code{GPRsurvey class}] An object of the class \code{GPRsurvey}
-#' @param dx      [\code{numeric(1)}] x-resolution
-#' @param dy      [\code{numeric(1)}] y-resolution
-#' @param h      [\code{integer(1)}] Number of levels in the hierarchical 
+#' @param x     [\code{GPRsurvey class}] An object of the class \code{GPRsurvey}
+#' @param dx    [\code{numeric(1)}] x-resolution
+#' @param dy    [\code{numeric(1)}] y-resolution
+#' @param h     [\code{integer(1)}] Number of levels in the hierarchical 
 #'               construction (see \code{\link[MBA]{mba.surf}}).
 #' @param extend [\code{character(1)}] Extend type for the interpolation based 
 #'               on the GPR data (if \code{shp = NULL} or on the object passed

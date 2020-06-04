@@ -711,3 +711,37 @@ setMethod("interpSlices", "GPRsurvey", function(x,
           )
    return(y)
 })
+
+
+
+setGeneric("as.raster", function(x) standardGeneric("as.raster"))
+
+
+#' Coercion to rasterstack
+#'
+#' @name as.raster
+#' @rdname GPRcoercion
+#' @export
+setMethod("as.raster", signature(x = "GPRslice"), function(x){
+  r <- raster::raster(t(x@data[,ncol(x@data):1]), 
+                 xmn = x@coord[1], 
+                 xmx = x@coord[1] + max(x@x),
+                 ymn = x@coord[2], 
+                 ymx = x@coord[2] + max(x@y),
+                 crs = x@crs[1])
+  return(r)
+})
+
+#' Coercion to rasterstack
+#'
+#' @name as.raster
+#' @rdname GPRcoercion
+#' @export
+setMethod("as.raster", signature(x = "GPRcube"), function(x){
+  r <- as.raster(x[,,1])
+  
+  for(i in 2:dim(x@data)[3]){
+    r <- raster::addLayer(r,  as.raster(x[,,i]))
+  }
+  return(r)
+})

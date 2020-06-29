@@ -75,7 +75,7 @@ setMethod("dcshift", "GPR", function(x, u = NULL, FUN = mean, ...,
       return(x)
     }
   }else{
-    OUT <- apply(x[u, ], 2, FUN, ...)
+    OUT <- apply(x@data[u, ], 2, FUN, ...)
   }
   x_shift <- matrix(OUT, nrow = nrow(x), ncol = ncol(x), byrow = TRUE)
   x <-  x - x_shift

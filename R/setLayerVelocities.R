@@ -108,7 +108,7 @@ splitVectAtNA <- function( x ){
 #' @export
 interpInterface <- function(x, extrap = TRUE, method = "pchip", clean = TRUE){
   
-  int <- .getXYZrelIntp(x, method = "pchip") # not necessary in fact (for 2D)
+  int <- .getXYZrelIntp(x, method = method) # not necessary in fact (for 2D)
   
   int_xy <- sapply(int, .extrapInterface, x = x, 
                    extrap = extrap, method = method)

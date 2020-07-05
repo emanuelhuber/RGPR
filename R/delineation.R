@@ -394,22 +394,24 @@ setMethod("identifyDelineation", "GPR", function(x,
   
   # no interpolation required
   if(nrow(x) == nrow(xyz) && all(diff(x[, "i"]) == 1)){   
-    xyz <- x[, c(1, 2, 2, 2, 2)]
+    xyz <- x[, c(1, 2, 2, 2, 2, 2)]
     xyz[, 1:2] <- xyz[, 1:2]
     xyz[,   3] <- xyz[, 3] -  zrel[x[,"j"]]
     xyz[,   4] <- xrel[x[, "i"]]
     xyz[,   5] <- zrel[x[,"j"]]
+    xyz[,   6] <- tst[["i"]]
   }else{   # interpolation
   
     tst <- interpToCoords(i = x[, "i"], u = zrel[x[,"j"]], xy = xyz, method = method)
     
     xyz <- xyz[tst[["i"]], ]
-    xyz <- xyz[, c(1, 2, 3, 3, 3)]
+    xyz <- xyz[, c(1, 2, 3, 3, 3, 3)]
     xyz[, 3] <- xyz[, 3] - tst[["u"]]
     xyz[, 4] <- xrel[tst[["i"]]]
     xyz[, 5] <- tst[["u"]]
+    xyz[, 6] <- tst[["i"]]
   }
-  colnames(xyz) <- c("x", "y", "z", "xrel", "zrel")
+  colnames(xyz) <- c("x", "y", "z", "xrel", "zrel", "i")
   return(xyz)
 }
 

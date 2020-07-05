@@ -110,35 +110,50 @@ interpInterface <- function(x, extrap = TRUE, method = "pchip", clean = TRUE){
   
   int <- .getXYZrelIntp(x, method = method) # not necessary in fact (for 2D)
   
-  int_xy <- sapply(int, .extrapInterface, x = x, 
-                   extrap = extrap, method = method)
-  int_xy <- t(int_xy)
+  twt <- matrix(nrow = length(int), ncol = ncol(x))
+  for(i in seq_along(int)){
+    twt[i, int[[i]][, "i"]] <- int[[i]][,"zrel"]
+  }
+  
   if(isTRUE(clean)){
-    int_xy <- apply(int_xy, 2, .rmOlder, n = nrow(int_xy))
+    twt <- apply(twt, 2, .rmOlder, n = nrow(twt))
   }
-  if(is.null(dim(int_xy))){
-    dim(int_xy) <- c(1, length(int_xy))
+  if(is.null(dim(twt))){
+    dim(twt) <- c(1, length(twt))
   }
-  return(int_xy)
+  return(twt)
+  
+  # int <- .getXYZrelIntp(x, method = method) # not necessary in fact (for 2D)
+  # int_xy <- sapply(int, .extrapInterface, x = x, 
+  #                  extrap = extrap, method = method)
+  # int_xy <- t(int_xy)
+  # if(isTRUE(clean)){
+  #   int_xy <- apply(int_xy, 2, .rmOlder, n = nrow(int_xy))
+  # }
+  # if(is.null(dim(int_xy))){
+  #   dim(int_xy) <- c(1, length(int_xy))
+  # }
+  # return(int_xy)
 }
 
-# private function
-.extrapInterface <- function(int, x, extrap = TRUE, method = "pchip"){
-  # no interpolation required
-  if(nrow(int) == ncol(x) && all(int[, "xrel"] == pos(x) )){ 
-    return(int[, "zrel"])
-  }else{
-    # FIX - 20200516
-    test <- diff(int[, "xrel"]) > sqrt(.Machine$double.eps)
-    int <- int[test, ]
-    #--- end fix
-    signal::interp1(x = int[, "xrel"],
-                    y = int[, "zrel"],
-                    xi = pos(x),
-                    extrap = extrap,
-                    method = method)
-  }
-}
+# # private function
+# .extrapInterface <- function(int, x, extrap = TRUE, method = "pchip"){
+#   # no interpolation required
+#   if(nrow(int) == ncol(x) && all(int[, "xrel"] == relTrPos(x) )){ 
+#     return(int[, "zrel"])
+#   }else{
+#     # FIX - 20200516
+#     # int <- int[!is.na(int[, "y"]), ]
+#     test <- diff(int[, "xrel"]) > sqrt(.Machine$double.eps)
+#     int <- int[test, ]
+#     #--- end fix
+#     signal::interp1(x = int[, "xrel"],
+#                     y = int[, "zrel"],
+#                     xi = relTrPos(x),
+#                     extrap = extrap,
+#                     method = method)
+#   }
+# }
 
 # private function
 .rmOlder <- function(z, n){

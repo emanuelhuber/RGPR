@@ -502,6 +502,7 @@ setMethod("getGPR", "GPRsurvey", function(x,id){
     if(length(x@coordref)>0){
       gpr@coordref <- x@coordref
     }
+    gpr@pos <- relTrPos(gpr)
     return(gpr)
   }
 )

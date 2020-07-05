@@ -4,8 +4,18 @@
 \alias{hyperbolaPlot}
 \title{Plot a hyperbola}
 \usage{
-hyperbolaPlot(hyp, x = NULL, add = TRUE, ann = FALSE, ann.pos = 3,
-  ann.offset = 0.5, ann.col = "green", ann.font = 2, n = 100, ...)
+hyperbolaPlot(
+  hyp,
+  x = NULL,
+  add = TRUE,
+  ann = FALSE,
+  ann.pos = 3,
+  ann.offset = 0.5,
+  ann.col = "green",
+  ann.font = 2,
+  n = 100,
+  ...
+)
 }
 \arguments{
 \item{hyp}{[\code{list}|\code{class hyperbola}] 
@@ -47,17 +57,12 @@ See argument \code{col}
 of the function \code{\link[graphics]{text}}.}
 
 \item{ann.font}{[\code{integer(1)}]
-An integer which specifies which font to use for text.
-See argument \code{font}
-of the function \code{\link[graphics]{par}}.}
+Number of points used to plot the hyperbola when
+\code{x} is not specified.}
 
 \item{...}{Additional arguments passed to 
 \code{\link[graphics]{lines}} (if \code{add = TRUE}) or to
 \code{\link[graphics]{plot}} (if \code{add = FALSE})    .}
-
-\item{ann.font}{[\code{integer(1)}]
-Number of points used to plot the hyperbola when
-\code{x} is not specified.}
 }
 \description{
 Plot a hyperbola

@@ -4,7 +4,9 @@
 \name{frenkeLine00}
 \alias{frenkeLine00}
 \title{Ground-penetrating radar data: common-offset survey}
-\format{An object of the class RGPR}
+\format{
+An object of the class RGPR
+}
 \source{
 University of Basel (Switzerland)
 }

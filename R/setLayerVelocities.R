@@ -1,9 +1,35 @@
 
+
+#' @name plotVelocityLayers
+#' @rdname setLayerVelocities
+#' @export
+setGeneric("plotVelocityLayers", 
+           function(x, 
+                    method = c("linear", "nearest", "pchip", 
+                               "cubic", "spline", "none"), 
+                    col = NULL, ...) 
+             standardGeneric("plotVelocityLayers"))
+
+#' Plot the delineation on a 2D plot
+#'
+#' @name plotVelocityLayers
+#' @rdname setLayerVelocities
+#' @export
+setMethod("plotVelocityLayers", "GPR", 
+          function(x, 
+                   method = c("linear", "nearest", "pchip", 
+                              "cubic", "spline", "none"), 
+                   col = NULL, ...){
+            x@delineations <- x@hd[["velocity_interfaces"]] 
+            plotDelineations(x, method = method, col = col, ...)
+})
+
+
 #' @name setLayerVelocities
 #' @rdname setLayerVelocities
 #' @export
 setGeneric("setLayerVelocities", function(x, v, twt = NULL, method = "pchip", 
-                                         clean = TRUE, extrap = NA) 
+                                         clean = TRUE) 
   standardGeneric("setLayerVelocities"))
 
 
@@ -14,15 +40,16 @@ setGeneric("setLayerVelocities", function(x, v, twt = NULL, method = "pchip",
 #' set 2D velocity model
 #'
 #' @param x GPR object   
-#' @param v velocities (\code{length(v) = nrow(twt_int + 1)}, (\code{+1} because of the last layers)
+#' @param v [\code{numeric}] velocities (length equal number of delineations plus one)
 #' @param twt        vertical resolution of the migrated data
-#' @param method       interpolation method
+#' @param method [\code{character(1)}] interpolation method. 
+#'               One of \code{linear}, \code{nearest}, \code{pchip},
+#'               \code{cubic}, \code{spline}.
 #' @name setLayerVelocities
 #' @rdname setLayerVelocities
 #' @export
 setMethod("setLayerVelocities", "GPR", function(x, v, twt = NULL, 
-                                                method = "pchip", clean = TRUE, 
-                                                extrap = NA){
+                                                method = "pchip", clean = TRUE){
   if(is.null(twt)){
     twt <- interpInterface(x, extrap = extrap, method = method, clean = clean)
   }
@@ -38,7 +65,7 @@ setMethod("setLayerVelocities", "GPR", function(x, v, twt = NULL,
   # }
   # 
   # x@delineations <- lapply(x_del, FUN)
-  x@delineations <- unlist(x_del, recursive = FALSE)
+  x@hd[["velocity_interfaces"]] <- unlist(x_del, recursive = FALSE)
   x@vel <- list(.getVelFromInterface(x, twt, v))
   return(x)
 })

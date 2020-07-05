@@ -4,9 +4,18 @@
 \alias{readGPR}
 \title{Read a GPR data file}
 \usage{
-readGPR(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
-  fPath, ch = 1, verbose = TRUE, interp_pos = TRUE,
-  method = c("linear", "linear", "linear"))
+readGPR(
+  dsn,
+  desc = "",
+  dsn2 = NULL,
+  format = NULL,
+  Vmax = 50,
+  fPath,
+  ch = 1,
+  verbose = TRUE,
+  interp_pos = TRUE,
+  method = c("linear", "linear", "linear")
+)
 }
 \arguments{
 \item{dsn}{data source name: either the filepath to the GPR data (character),

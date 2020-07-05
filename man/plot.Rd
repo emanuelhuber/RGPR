@@ -11,33 +11,96 @@
 \alias{plot.GPRsurvey}
 \title{Plot a GPR cube}
 \usage{
-\method{plot}{GPRset}(x, add = FALSE, relTime0 = FALSE, note = NULL,
-  addFid = TRUE, addAnn = TRUE, addTime0 = TRUE, addDepth0 = TRUE,
-  addAmpl0 = TRUE, addTopo = FALSE, clip = NULL, ratio = 1,
-  barscale = TRUE, wsize = 1, wside = 1, pdfName = NULL, ...)
+\method{plot}{GPRset}(
+  x,
+  add = FALSE,
+  relTime0 = FALSE,
+  note = NULL,
+  addFid = TRUE,
+  addAnn = TRUE,
+  addTime0 = TRUE,
+  addDepth0 = TRUE,
+  addAmpl0 = TRUE,
+  addTopo = FALSE,
+  clip = NULL,
+  ratio = 1,
+  barscale = TRUE,
+  wsize = 1,
+  wside = 1,
+  pdfName = NULL,
+  ...
+)
 
-\method{plot}{GPRcube}(x, i = NULL, j = NULL, k = NULL,
-  xlim = NULL, ylim = NULL, zlim = NULL, clim = NULL,
-  colkey = NULL, add = FALSE, col = NULL, inttype = 2, ...)
+\method{plot}{GPRcube}(
+  x,
+  i = NULL,
+  j = NULL,
+  k = NULL,
+  xlim = NULL,
+  ylim = NULL,
+  zlim = NULL,
+  clim = NULL,
+  colkey = NULL,
+  add = FALSE,
+  col = NULL,
+  inttype = 2,
+  ...
+)
 
-\method{plot}{GPRslice}(x, main = NULL, xlab = NULL, ylab = NULL,
-  col = NULL, clim = NULL, relCoords = FALSE, ...)
+\method{plot}{GPRslice}(
+  x,
+  main = NULL,
+  xlab = NULL,
+  ylab = NULL,
+  col = NULL,
+  clim = NULL,
+  relCoords = FALSE,
+  ...
+)
 
-\method{plot}{GPR}(x, add = FALSE, relTime0 = FALSE, note = NULL,
-  addFid = TRUE, addAnn = TRUE, addTime0 = TRUE, addDepth0 = TRUE,
-  addAmpl0 = TRUE, addTopo = FALSE, clip = NULL, ratio = 1,
-  barscale = TRUE, wsize = 1, wside = 1, pdfName = NULL,
-  NAcol = "white", ...)
+\method{plot}{GPR}(
+  x,
+  add = FALSE,
+  relTime0 = FALSE,
+  note = NULL,
+  addFid = TRUE,
+  addAnn = TRUE,
+  addTime0 = TRUE,
+  addDepth0 = TRUE,
+  addAmpl0 = TRUE,
+  addTopo = FALSE,
+  clip = NULL,
+  ratio = 1,
+  barscale = TRUE,
+  wsize = 1,
+  wside = 1,
+  pdfName = NULL,
+  NAcol = "white",
+  ...
+)
 
-\method{contour}{GPR}(x, relTime0 = FALSE, add = FALSE, note = NULL,
-  addFid = TRUE, addAnn = TRUE, addTime0 = TRUE, addDepth0 = TRUE,
-  addAmpl0 = TRUE, addTopo = FALSE, clip = NULL, ratio = 1,
-  barscale = TRUE, pdfName = NULL, ...)
+\method{contour}{GPR}(
+  x,
+  relTime0 = FALSE,
+  add = FALSE,
+  note = NULL,
+  addFid = TRUE,
+  addAnn = TRUE,
+  addTime0 = TRUE,
+  addDepth0 = TRUE,
+  addAmpl0 = TRUE,
+  addTopo = FALSE,
+  clip = NULL,
+  ratio = 1,
+  barscale = TRUE,
+  pdfName = NULL,
+  ...
+)
 
 \method{plot}{GPRsurvey}(x, y, ...)
 }
 \arguments{
-\item{x}{Object of class \code{GPRcube}}
+\item{x}{Object of class \code{GPR}}
 
 \item{add}{logical. If \code{TRUE}, add to current plot}
 
@@ -68,7 +131,7 @@ smaller than \code{clip[1]} and larger than
 0.01-quantile and above the 0.99-quantile are clipped.
 If \code{clip = FALSE} the data are not clipped.}
 
-\item{ratio}{logical. Add fiducial markes}
+\item{ratio}{logical.}
 
 \item{barscale}{logical. Add a colorbar scale}
 
@@ -86,24 +149,6 @@ without extension}
 \code{\link[plot3D]{Image}} for 2D plot. See also  \code{details}.}
 
 \item{main}{character. Plot title.}
-
-\item{x}{Object of class \code{GPRslice}}
-
-\item{add}{logical. If \code{TRUE}, add to current plot}
-
-\item{ratio}{logical. Add fiducial markes}
-
-\item{barscale}{logical. Add a colorbar scale}
-
-\item{main}{character. Plot title.}
-
-\item{x}{Object of class \code{GPR}}
-
-\item{add}{logical. If \code{TRUE}, add to current plot}
-
-\item{ratio}{logical.}
-
-\item{barscale}{logical. Add a colorbar scale}
 }
 \description{
 Plot GPR data cube.

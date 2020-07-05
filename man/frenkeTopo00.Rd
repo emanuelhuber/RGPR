@@ -4,8 +4,10 @@
 \name{frenkeTopo00}
 \alias{frenkeTopo00}
 \title{Trace coordinates of \code{frenkeLine00}.}
-\format{\code{data.frame}, three columns for the East, North and vertical
-coordinates}
+\format{
+\code{data.frame}, three columns for the East, North and vertical
+coordinates
+}
 \source{
 University of Basel (Switzerland)
 }

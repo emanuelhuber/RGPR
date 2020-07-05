@@ -4,7 +4,9 @@
 \name{frenkeCMP}
 \alias{frenkeCMP}
 \title{Ground-penetrating radar data: CMP.}
-\format{An object of the class RGPR}
+\format{
+An object of the class RGPR
+}
 \source{
 University of Basel (Switzerland)
 }

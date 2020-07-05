@@ -4,8 +4,17 @@
 \alias{plotTensor}
 \title{Plot structure tensor on GPR data}
 \usage{
-plotTensor(x, O, type = c("vectors", "ellipses"), normalise = FALSE,
-  spacing = c(6, 4), len = 1.9, n = 10, ratio = 1, ...)
+plotTensor(
+  x,
+  O,
+  type = c("vectors", "ellipses"),
+  normalise = FALSE,
+  spacing = c(6, 4),
+  len = 1.9,
+  n = 10,
+  ratio = 1,
+  ...
+)
 }
 \description{
 Plot structure tensor on GPR data

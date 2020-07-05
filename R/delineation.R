@@ -399,7 +399,7 @@ setMethod("identifyDelineation", "GPR", function(x,
     xyz[,   3] <- xyz[, 3] -  zrel[x[,"j"]]
     xyz[,   4] <- xrel[x[, "i"]]
     xyz[,   5] <- zrel[x[,"j"]]
-    xyz[,   6] <- tst[["i"]]
+    xyz[,   6] <- x[, "i"]
   }else{   # interpolation
   
     tst <- interpToCoords(i = x[, "i"], u = zrel[x[,"j"]], xy = xyz, method = method)

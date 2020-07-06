@@ -21,7 +21,7 @@ setMethod("spec2D", "GPR", function(x, plotSpec = TRUE,
   # dim(X$pha)
   # dim(x)
   
-  xs <- as.GPRset.GPR(x[seq_along(X$freq), ])
+  xs <- as.GPRset.GPR(x[seq_along(X$freq), seq_along(X$wnb) ])
   xs@data <- array(0, dim(xs) + c(0,0,1 ))
   xs@data[,,1] <- X$pow
   xs@data[,,2] <- X$pha

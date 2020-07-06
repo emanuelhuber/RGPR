@@ -24,12 +24,12 @@ setMethod("delineate", "GPR", function(x,
                                        n = 10000, 
                                        plot_del = NULL, 
                                        ...){
-  plot(x, ...)
-  if(is.null(plot_del)) plot_del <- list()
-  plot_del[["x"]] <- x
-  if(length(x@delineations) > 0 ) do.call(plotDelineations, plot_del)
   # plotDelineations(x)
   if(is.null(values)){
+    plot(x, ...)
+    if(is.null(plot_del)) plot_del <- list()
+    plot_del[["x"]] <- x
+    if(length(x@delineations) > 0 ) do.call(plotDelineations, plot_del)
     itp <- locator(type = "l", n = n)
   }else{
     itp <- values

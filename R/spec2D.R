@@ -16,21 +16,24 @@ setMethod("spec2D", "GPR", function(x, plotSpec = TRUE,
   X <- .FKSpectrum(x@data, dx = x@dx, dz = x@dz, plotSpec = plotSpec, ...)
   # X <- spec(x, plotSpec = plotSpec, unwrapPhase = unwrapPhase)
   # names(X)
-  # length(X$freq)
+  # length(X$fre)
   # dim(X$pow)
   # dim(X$pha)
   # dim(x)
   
-  xs <- as.GPRset.GPR(x[seq_along(X$freq), seq_along(X$wnb) ])
+  # create GPRset object
+  xs <- as.GPRset.GPR(x[rep(1, length(X$fre)), rep(1, length(X$wnb)) ])
   xs@data <- array(0, dim(xs) + c(0,0,1 ))
+  # dim(xs)
+  
   xs@data[,,1] <- X$pow
   xs@data[,,2] <- X$pha
   xs@sets <- 1:2
   xs@setnames <- c("power", "phase")
   xs@setunit <- "-"
-  xs@depth <- X$freq
+  xs@depth <- X$fre
   xs@depthunit <- "MHz"
-  xs@pos <- X$wbn
+  xs@pos <- X$wnb
   xs@posunit <- "m"
   proc(xs) <- getArgs()
   return(xs)

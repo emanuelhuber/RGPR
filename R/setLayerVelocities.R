@@ -52,6 +52,8 @@ setMethod("setLayerVelocities", "GPR", function(x, v, twt = NULL,
                                                 method = "pchip", clean = TRUE){
   if(is.null(twt)){
     twt <- interpInterface(x, extrap = extrap, method = method, clean = clean)
+  }else{
+    if(is.null(dim(twt))) dim(twt) <- c(1, length(twt))
   }
   # twt
   x_del <- (apply(twt, 1, .twt_to_delineations, dtt = x@dz))

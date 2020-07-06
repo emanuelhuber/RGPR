@@ -7,6 +7,7 @@
 #' @export
 setGeneric("delineate", function(x, 
                                  name     = NULL,
+                                 values   = NULL,
                                  n        = 10000, 
                                  plot_del = NULL, 
                                  ...) 
@@ -18,7 +19,8 @@ setGeneric("delineate", function(x,
 #' @rdname delineation
 #' @export
 setMethod("delineate", "GPR", function(x, 
-                                       name = NULL, 
+                                       name = NULL,
+                                       values   = NULL, 
                                        n = 10000, 
                                        plot_del = NULL, 
                                        ...){
@@ -27,7 +29,11 @@ setMethod("delineate", "GPR", function(x,
   plot_del[["x"]] <- x
   if(length(x@delineations) > 0 ) do.call(plotDelineations, plot_del)
   # plotDelineations(x)
-  itp <- locator(type = "l", n = n)
+  if(is.null(values)){
+    itp <- locator(type = "l", n = n)
+  }else{
+    itp <- values
+  }
   if(length(itp) > 0){
     if(length(x@coord) == 0){
       x@coord <- matrix(0, nrow = ncol(x), ncol = 3)

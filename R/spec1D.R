@@ -14,7 +14,7 @@ setGenericVerif("spec", function(x, type = c("f-x", "f-k"), plotSpec = TRUE,
 #' @export
 setMethod("spec", "GPR", function(x, type = c("f-x","f-k"), plotSpec = TRUE, 
                                   unwrapPhase = TRUE, ...){
-  message("Soon deprecated. Use 'spec1D()' or 'spec2D()' instead")
+  #message("Soon deprecated. Use 'spec1D()' or 'spec2D()' instead")
   type <- match.arg(type, c("f-x","f-k"))
   if(type == "f-x"){
     S <- powSpec(x@data, dT = x@dz, fac = 1000000, 
@@ -46,11 +46,11 @@ setMethod("spec1D", "GPR", function(x, MARGIN = 2, plotSpec = TRUE,
   # X <- spec(x, plotSpec = plotSpec, unwrapPhase = unwrapPhase)
   X <- powSpec(x@data, dT = x@dz, fac = 1000000, 
                plotSpec = plotSpec, titleSpec = x@name)
-  names(X)
-  length(X$freq)
-  dim(X$pow)
-  dim(X$pha)
-  dim(x)
+  # names(X)
+  # length(X$freq)
+  # dim(X$pow)
+  # dim(X$pha)
+  # dim(x)
   
   xs <- as.GPRset.GPR(x[seq_along(X$freq), ])
   xs@data <- array(0, dim(xs) + c(0,0,1 ))

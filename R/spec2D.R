@@ -13,13 +13,13 @@ setGeneric("spec2D", function(x, plotSpec = TRUE,
 setMethod("spec2D", "GPR", function(x, plotSpec = TRUE,
                                     unwrapPhase = TRUE, ...){
   # FIXME: don't use "spec()" but "trFFT()"
-  S <- .FKSpectrum(x@data, dx = x@dx, dz = x@dz, plotSpec = plotSpec, ...)
+  X <- .FKSpectrum(x@data, dx = x@dx, dz = x@dz, plotSpec = plotSpec, ...)
   # X <- spec(x, plotSpec = plotSpec, unwrapPhase = unwrapPhase)
-  names(X)
-  length(X$freq)
-  dim(X$pow)
-  dim(X$pha)
-  dim(x)
+  # names(X)
+  # length(X$freq)
+  # dim(X$pow)
+  # dim(X$pha)
+  # dim(x)
   
   xs <- as.GPRset.GPR(x[seq_along(X$freq), ])
   xs@data <- array(0, dim(xs) + c(0,0,1 ))

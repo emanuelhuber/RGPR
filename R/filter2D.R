@@ -25,7 +25,7 @@ setMethod("filter2D", "GPR", function(x,
     # img.smooth <- adimpro::awsimage(adimg, hmax = 2)
     # img.smooth <- adimpro::awsimage(adimg, hmax = 2)
     # img.smooth <- adimpro::awsaniso(adimg, hmax = 2,...)
-    img.smooth <- adimpro::awspimage(adimg,...)
+    img.smooth <- adimpro::awsaniso(adimg,...)
     AA <- adimpro::extract.image(img.smooth)
     AAA <- ( (AA - mean(AA))/sd(AA) ) * sd(x@data)
     x@data <- AAA

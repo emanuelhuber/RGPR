@@ -3181,7 +3181,7 @@ setMethod("strTensor", "GPR", function(x,  blksze = c(2, 4),
                                        kBlur   = list(n = 1, m = 1, sd = 1), 
                                        kEdge   = list(n = 5, m = 5, sd = 1), 
                                        kTensor = list(n = 5, m = 5, sd = 1),
-                                       thresh = 0.02, what = c("tensor", "mask"), ...){
+                                       thresh = 0.02, what = c("tensor", "mask", "orientation"), ...){
   O <- .strucTensor(P = x@data, dxy = c(x@dx, x@dz), 
                     blksze = blksze,
                     kBlur   = kBlur, 
@@ -3189,12 +3189,12 @@ setMethod("strTensor", "GPR", function(x,  blksze = c(2, 4),
                     kTensor = kTensor,
                     thresh = thresh)  
   output <- list()
-  whatref <- c("tensor", "vectors", "values", "polar", "mask")
+  whatref <- c("tensor", "mask", "orientation")
   what <- what[what %in% whatref]
   if(length(what) == 0){
     stop(paste0("argument 'what' only accepts a character vector composed of",
                 " at least one of the following words:\n",
-                "'tensor', 'vectors', 'values', 'polar', 'mask'"))
+                "'tensor', 'mask', 'orientation'"))
   }
   if( "orientation" %in% what){ 
     xOrient <- x

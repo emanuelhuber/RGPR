@@ -73,10 +73,15 @@ setMethod("spec2D", "GPR", function(x, plotSpec = TRUE,
   
   #============== PLOT F-K SPECTRUM ===============#
   # padding (try also 2*(2^nextpow2(nc))
-  nk <- npad*(nextpower2(nc))
-  nf <- npad*(nextpower2(nr))
-  A1 <- matrix(0,nrow=nf,ncol=nk)
-  A1[1:nr,1:nc] <- A
+  # nk <- npad*(nextpower2(nc))
+  # nf <- npad*(nextpower2(nr))
+  
+  # Padd matrix with zero's
+  nk <- ifelse((nc %% 2) != 0, nc + 1, nc)
+  nf <- ifelse((nr %% 2) != 0, nr + 1, nr)
+
+  A1 <- matrix(0, nrow = nf, ncol = nk)
+  A1[1:nr, 1:nc] <- A
   
   # function to center the spectrum!! (no need of fttshift!)
   #centres spectrum: Gonzalez & Wintz (1977) Digital Image Processing p.53
@@ -84,12 +89,12 @@ setMethod("spec2D", "GPR", function(x, plotSpec = TRUE,
   A1_fft <- stats::fft(A1)
   A1_fft_pow <- Mod(A1_fft)
   A1_fft_phase <- Arg(A1_fft)
-  # plotGPR((A1_fft_phase[1:(nf/2),])^0.05)
+ 
   
   # Sampling frequency [Hz] = 1 / Sample time [s]
   Fs = 1/(dz*10^(-9))
   fac = 1000000
-  fre = Fs*seq(0,nf/2)/nf/fac
+  fre = Fs*seq(0, nf/2)/nf/fac
   
   # wavenumber
   Ks <- 1/dx      # [1/m] Sampling frequency
@@ -106,14 +111,16 @@ setMethod("spec2D", "GPR", function(x, plotSpec = TRUE,
   #       increase the visibility of small events 
   # p = 0.05
   if(plotSpec){
-    plot3D::image2D(x = knutot, y = fre, z = (t(A1_fft_pow[1:(nf/2),])^p), 
-                    xlab="wavenumber (1/m)",
-                    ylab="frequency MHz")
-    #      axis(side=4, labels=TRUE)
+    plot3D::image2D(x    = knutot, 
+                    y = fre, 
+                    # z = (t(A1_fft_pow[1:(nf/2),])^p), 
+                    z = (t(A1_fft_pow[seq_along(fre),])^p), 
+                    xlab = "wavenumber (1/m)",
+                    ylab= "frequency MHz")
     
   }
-  return(list(pow=A1_fft_pow[1:(nf/2),], 
-              pha=A1_fft_phase[1:(nf/2),],
+  return(list(pow = A1_fft_pow[seq_along(fre),],   # A1_fft_pow[1:(nf/2),], 
+              pha = A1_fft_phase[seq_along(fre),],        #A1_fft_phase[1:(nf/2),],
               fre = fre,
               wnb = knutot))
 }

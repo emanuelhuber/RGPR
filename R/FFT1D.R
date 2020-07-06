@@ -29,11 +29,13 @@ setMethod("FFT1D", "GPR", function(x){
   A0   <- as.matrix(A)
   nr  <- nrow(A0)
   nc  <- ncol(A0)
+  
+  # Padd matrix with zero's
   # N   <- 2^(ceiling(log2(nr)))
   N <- nr
   if((N %% 2) != 0) N <- N + 1
   A <- matrix(0, nrow = N, ncol = nc)
-  A[1:nr,1:nc] <- A0
+  A[1:nr, 1:nc] <- A0
   
   # samping interval GPR = 0.8 ns
   Ts    <- dT*(10^(-9))     # [s] Sample time
@@ -44,7 +46,7 @@ setMethod("FFT1D", "GPR", function(x){
   # if y <- fft(z), then z is 
   # fft(y, inverse = TRUE) / length(y).
   # each column = discrete Fourier transform. 
-  fft_A <- stats::mvfft(A)[1:nfreq,,drop=FALSE]
+  fft_A <- stats::mvfft(A)[1:nfreq, , drop=FALSE]
   
   fre = Fs*seq(0, N/2)/N/fac
   

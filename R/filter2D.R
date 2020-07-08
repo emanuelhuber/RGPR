@@ -1,7 +1,7 @@
 #' @name filter2D
 #' @rdname filter2D
 #' @export
-setGenericVerif("filter2D", function(x, type=c("median3x3", "adimpro"), 
+setGenericVerif("filter2D", function(x, type=c("median3x3", "adimpro", "smooth"), 
                                      ..., track = TRUE) 
   standardGeneric("filter2D"))
 
@@ -12,10 +12,10 @@ setGenericVerif("filter2D", function(x, type=c("median3x3", "adimpro"),
 #' @rdname filter2D
 #' @export
 setMethod("filter2D", "GPR", function(x, 
-                                      type = c("median3x3", "adimpro"), 
+                                      type = c("median3x3", "adimpro", "smooth"), 
                                       ...,
                                       track = TRUE){
-  type <- match.arg(type, c("median3x3", "adimpro"))
+  type <- match.arg(type, c("median3x3", "adimpro", "smooth"))
   if(type == "median3x3"){
     x@data <-  .medianFilter3x3(x@data)
   }else if( type == "adimpro"){
@@ -25,10 +25,12 @@ setMethod("filter2D", "GPR", function(x,
     # img.smooth <- adimpro::awsimage(adimg, hmax = 2)
     # img.smooth <- adimpro::awsimage(adimg, hmax = 2)
     # img.smooth <- adimpro::awsaniso(adimg, hmax = 2,...)
-    img.smooth <- adimpro::awsaniso(adimg,...)
+    img.smooth <- adimpro::awsaniso(adimg, ...)
     AA <- adimpro::extract.image(img.smooth)
     AAA <- ( (AA - mean(AA))/sd(AA) ) * sd(x@data)
     x@data <- AAA
+  }else if(type == "smooth"){
+    tonic466_5@data <- mmand::gaussianSmooth(tonic466_5@data, ...)
   }
   if(isTRUE(track)) proc(x) <- getArgs()
   #     x@proc <- c(x@proc, proc)

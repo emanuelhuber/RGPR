@@ -7,15 +7,32 @@
     return(a)
   }
   #FIXME #TODO: case where a (or b) is a vector trace
-  if(is(b,"GPR")){
-    x <- b
-    b <- b@data
+  if(is(a, "GPR") && is(b, "GPR")){
+    if(all(dim(a) == dim(b))){
+      x <- a
+      x@data <- a@data + b@data
+    }else if( nrow(a) == nrow(b) || all(dim(a) == c(1, 1)) || all(dim(b) == c(1, 1)) ){
+      if(ncol(a) == 1){
+        x <- b
+        x@data <- as.vector(a@data) + b@data
+      }else if(ncol(b) == 1){
+        x <- a
+        x@data <- a@data + as.vector(b@data)
+      }
+    }else{
+      stop("non conformable GPR data")
+    }
+  }else{
+    if(is(b,"GPR")){
+      x <- b
+      b <- b@data
+    }
+    if(is(a,"GPR")){
+      x <- a
+      a <- a@data
+    }
+    x@data <- a + b
   }
-  if(is(a,"GPR")){
-    x <- a
-    a <- a@data
-  }
-  x@data <- a + b
   return(x)
 }
 .GPR.sub <- function(a, b){
@@ -23,15 +40,32 @@
     a@data <- -a@data
     return(a)
   }
-  if(is(b,"GPR")){
-    x <- b
-    b <- b@data
+  if(is(a, "GPR") && is(b, "GPR")){
+    if(all(dim(a) == dim(b))){
+      x <- a
+      x@data <- a@data - b@data
+    }else if( nrow(a) == nrow(b) || all(dim(a) == c(1, 1)) || all(dim(b) == c(1, 1)) ){
+      if(ncol(a) == 1){
+        x <- b
+        x@data <- as.vector(a@data) - b@data
+      }else if(ncol(b) == 1){
+        x <- a
+        x@data <- a@data - as.vector(b@data)
+      }
+    }else{
+      stop("non conformable GPR data")
+    }
+  }else{
+    if(is(b,"GPR")){
+      x <- b
+      b <- b@data
+    }
+    if(is(a,"GPR")){
+      x <- a
+      a <- a@data
+    }
+    x@data <- a - b
   }
-  if(is(a,"GPR")){
-    x <- a
-    a <- a@data
-  }
-  x@data <- a - b
   return(x)
 }
 .GPR.mul <- function(a, b){

@@ -4,7 +4,7 @@
 \alias{filter2D}
 \title{Two-dimensional filters}
 \usage{
-\S4method{filter2D}{GPR}(x, type = c("median3x3", "adimpro"), ..., track = TRUE)
+\S4method{filter2D}{GPR}(x, type = c("median3x3", "adimpro", "smooth"), ..., track = TRUE)
 }
 \description{
 Two-dimensional filters

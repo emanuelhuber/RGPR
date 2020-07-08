@@ -129,7 +129,8 @@ Imports:
     sf,
     XML,
     checkmate,
-    RConics
+    RConics,
+    robfilter
 RoxygenNote: 7.1.1
 Suggests: 
     testthat

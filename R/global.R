@@ -580,7 +580,33 @@ setGeneric("georef", function(x, alpha = NULL, cloc = NULL, creg = NULL,
 
 #------------------------------BOTH
 
-
+#' Robust smoothing
+#' 
+#' A wrapper for the functions \code{robfilter::hybrid.filte} and
+#' \code{smooth.spline}
+#' @param x       a numeric vector or (univariate) time series object.
+#' @param spar    smoothing parameter, typically (but not necessarily) in (0,1].
+#'                See \code{\link[stats]{smooth.spline}}.
+#' @param width	  an odd positive integer (>=3) defining the window width 
+#'                used for fitting.
+#'                See \code{\link[robfilter]{hybrid.filter}}.
+#' @param method	a (vector of) character string(s) containing the method(s) 
+#'                to be used for the estimation of the signal level. 
+#'                Method choice: "MED", "RM", 
+#'                "MEAN", FMH, "PFMH", "CFMH", "MH", "PRMH", "CRMH", "MMH", 
+#'                "PRMMH", "CRMMH".
+#'                See \code{\link[robfilter]{hybrid.filter}}.
+#' @param extrapolate	a logical indicating whether the level estimations 
+#'                    should be extrapolated to the edges of the time series.  
+#'                    See \code{\link[robfilter]{hybrid.filter}}.              
+robustSmooth <- function(x, spar = NULL, width,  method = "PRMMH", extrapolate = TRUE){
+  if (missing(width)) {
+    stop("argument 'width' is missing with no default")
+  }
+  xf <- robfilter::hybrid.filter(x, width = width, method = method, extrapolate = extrapolate)
+  xfs <- smooth.spline(x = xf$level$PRMMH,  spar = spar)$y
+  return(xfs)
+}
 
 
 #setGenericVerif("adimproSmooth", function(x,hmax=2,...) standardGeneric("

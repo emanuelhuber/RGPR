@@ -10,9 +10,9 @@
 \alias{identifyDelineation}
 \title{Delineate structure on GPR data}
 \usage{
-delineate(x, name = NULL, n = 10000, plot_del = NULL, ...)
+delineate(x, name = NULL, values = NULL, n = 10000, plot_del = NULL, ...)
 
-\S4method{delineate}{GPR}(x, name = NULL, n = 10000, plot_del = NULL, ...)
+\S4method{delineate}{GPR}(x, name = NULL, values = NULL, n = 10000, plot_del = NULL, ...)
 
 delineations(x, name = NULL)
 

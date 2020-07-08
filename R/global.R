@@ -598,7 +598,8 @@ setGeneric("georef", function(x, alpha = NULL, cloc = NULL, creg = NULL,
 #'                See \code{\link[robfilter]{hybrid.filter}}.
 #' @param extrapolate	a logical indicating whether the level estimations 
 #'                    should be extrapolated to the edges of the time series.  
-#'                    See \code{\link[robfilter]{hybrid.filter}}.              
+#'                    See \code{\link[robfilter]{hybrid.filter}}.  
+#' @export            
 robustSmooth <- function(x, spar = NULL, width,  method = "PRMMH", extrapolate = TRUE){
   if (missing(width)) {
     stop("argument 'width' is missing with no default")

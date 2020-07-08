@@ -19,9 +19,9 @@ setGeneric("delineate", function(x,
 #' @rdname delineation
 #' @export
 setMethod("delineate", "GPR", function(x, 
-                                       name = NULL,
+                                       name     = NULL,
                                        values   = NULL, 
-                                       n = 10000, 
+                                       n        = 10000, 
                                        plot_del = NULL, 
                                        ...){
   # plotDelineations(x)

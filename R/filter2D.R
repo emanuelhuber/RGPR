@@ -30,7 +30,7 @@ setMethod("filter2D", "GPR", function(x,
     AAA <- ( (AA - mean(AA))/sd(AA) ) * sd(x@data)
     x@data <- AAA
   }else if(type == "smooth"){
-    tonic466_5@data <- mmand::gaussianSmooth(tonic466_5@data, ...)
+    x@data <- mmand::gaussianSmooth(x@data, ...)
   }
   if(isTRUE(track)) proc(x) <- getArgs()
   #     x@proc <- c(x@proc, proc)

@@ -114,15 +114,14 @@ setMethod("estimateTime0", "GPR",
             msg <- checkArgInit()
             msg <- checkArg(method,  msg, "STRING_CHOICE", 
                             c("coppens", "threshold",  "MER"))
-            msg <- checkArg(thr,     msg, "PERCENT1")
-            # msg <- checkArg(w     , msg, "NUMERIC1_SPOS", round((nmax - 1) * x@dz/1.5))
-            msg <- checkArg(w,       msg, "NUMERIC1_SPOS", max(x@depth)/2)
-            # msg <- checkArg(ns,      msg, "NUMERIC1_SPOS_NULL", round((nmax - 1) * x@dz))
+            msg <- checkArg(thr,     msg, "PERCENT1_NULL")
+            msg <- checkArg(w,       msg, "NUMERIC1_SPOS_NULL", max(x@depth)/2)
+            # msg <- checkArg(ns     , msg, "NUMERIC1_SPOS_NULL", round((nmax - 1) * x@dz))
             msg <- checkArg(ns,      msg, "NUMERIC1_SPOS_NULL", max(x@depth))
             msg <- checkArg(bet,     msg, "NUMERIC1_SPOS_NULL", Inf)
+            msg <- checkArg(shorten, msg, "LOGICAL_LEN", 1)
             msg <- checkArg(c0,      msg, "NUMERIC1_SPOS", Inf)
             msg <- checkArg(FUN,     msg, "FUNCTION_NULL")
-            msg <- checkArg(shorten, msg, "LOGICAL_LEN", 1)
             checkArgStop(msg)
             #-----------------------------------
             

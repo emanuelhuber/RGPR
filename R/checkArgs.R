@@ -59,6 +59,15 @@ checkArg <- function(x, u, type, y, ...){
              msg <- "must be a numeric value between 0 and 1"
            } 
          },
+         "PERCENT1_NULL" = {
+           if(!checkmate::testNumeric(x, lower = 0, upper = 1, finite = TRUE,
+                                      any.missing = FALSE, 
+                                      all.missing = FALSE,
+                                      len = 1,
+                                      null.ok = TRUE)){
+             msg <- "must be a numeric value between 0 and 1"
+           } 
+         },
          "NUMERIC" = {
            if(!checkmate::testNumeric(x,
                                       finite = TRUE,

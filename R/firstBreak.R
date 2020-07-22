@@ -82,10 +82,7 @@ setMethod("firstBreak",
             msg <- checkArgInit()
             msg <- checkArg(method,  msg, "STRING_CHOICE", 
                             c("coppens", "threshold",  "MER"))
-            if(method == "threshold"){
-              msg <- checkArg(thr,     msg, "PERCENT1")
-            }else if(method == "coppens")
-            # msg <- checkArg(w      , msg, "NUMERIC1_SPOS", round((nmax - 1) * x@dz/1.5))
+            msg <- checkArg(thr,     msg, "PERCENT1_NULL")
             msg <- checkArg(w,       msg, "NUMERIC1_SPOS_NULL", max(x@depth)/2)
             # msg <- checkArg(ns     , msg, "NUMERIC1_SPOS_NULL", round((nmax - 1) * x@dz))
             msg <- checkArg(ns,      msg, "NUMERIC1_SPOS_NULL", max(x@depth))

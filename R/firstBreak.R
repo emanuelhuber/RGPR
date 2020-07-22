@@ -77,15 +77,6 @@ setMethod("firstBreak",
             #method <- match.arg(method, c("coppens", "threshold", "MER"))
             method <- method[1]
             
-            # # shorten the file -> computation only up to the max value
-            # nmax <- nrow(x)
-            # # tst <- which(as.matrix(x) == max(x), arr.ind = TRUE)
-            # tst <- max(apply(as.matrix(x), 2, which.max))
-            # 
-            # if(length(tst) > 0 ){
-            #   # nmax <- max(tst[,"row"])
-            #   nmax <- tst
-            # }
             
             #------------------- check arguments
             msg <- checkArgInit()
@@ -102,12 +93,18 @@ setMethod("firstBreak",
             #-----------------------------------
             
             
-            w <- round(w / x@dz)
-            
+            # # # shorten the file -> computation only up to the max value
+            # nmax <- nrow(x)
+            # tst <- min(apply(x@data, 2, which.max))
+            # if(length(tst) > 0 ){
+            #    nmax <- tst
+            # }
+            # w <- round(w / x@dz)
+            # 
             # if( (nmax + 2 * w ) < nrow(x) ){
-            #   nmax <- nmax + 2 * w
+            #    nmax <- nmax + 2 * w
             # }else{
-            #   nmax <- nrow(x)
+            #    nmax <- nrow(x)
             # }
             
             if(method == "coppens"){
@@ -129,7 +126,8 @@ setMethod("firstBreak",
               # the vectorized version of "coppens" (though not really faster)
               #  fb <- .firstBreakModCoppens2(xs, w = w, ns = ns, bet = bet)
               # below: the not vectorised version of Coppens...
-              fb <- apply(x, 2, .firstBreakModCoppens, w = w, ns = ns, 
+              # fb <- apply(x@data[1:nmax, , drop = FALSE], 2, .firstBreakModCoppens, w = w, ns = ns, 
+              fb <- apply(x@data, 2, .firstBreakModCoppens, w = w, ns = ns, 
                           bet = bet, shorten = shorten)
               fb <- x@depth[fb] # fb * x@dz
             }else if(method == "threshold"){
@@ -138,7 +136,8 @@ setMethod("firstBreak",
                           x@depth)
             }else if(method == "MER"){
               # w <- round(w / x@dz)
-              fb <- .firstBreakMER(x@data[1:nmax, , drop = FALSE], w = w,
+              # fb <- .firstBreakMER(x@data[1:nmax, , drop = FALSE], w = w,
+              fb <- .firstBreakMER(x@data, w = w,
                                    shorten = shorten)
               fb <- x@depth[fb]
             }
@@ -264,12 +263,11 @@ setMethod("firstBreak",
   if(is.null(bet)) bet <- 0.2 * max(abs(x))
   if(shorten == TRUE){
     nmax <- which.max(x)
-    if( (nmax + w + 2 * w ) < length(x) ){
-      nmax <- nmax + 2 * w
+    if( (nmax + w ) < length(x) ){
+      nmax <- nmax + w
     }else{
       nmax <- length(x)
     }
-    
     if(ns > nmax){
       ns <- nmax - 1
       if( (ns %% 2) == 0 ) ns <- ns + 1 

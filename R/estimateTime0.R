@@ -95,19 +95,20 @@ setMethod("estimateTime0", "GPR",
             
             method <- method[1]
             
-            # shorten the file -> computed only for argument checking
-            nmax <- nrow(x)
-            tst <- which(as.matrix(x) == max(x), arr.ind = TRUE)
-            if(length(tst) > 0 ){
-              nmax <- max(tst[,"row"])
-            }
+            # # shorten the file -> computed only for argument checking
+            # nmax <- nrow(x)
+            # tst <- which(as.matrix(x) == max(x), arr.ind = TRUE)
+            # if(length(tst) > 0 ){
+            #   nmax <- max(tst[,"row"])
+            # }
             
             #------------------- check arguments
             msg <- checkArgInit()
             msg <- checkArg(method, msg, "STRING_CHOICE", 
                             c("coppens", "threshold",  "MER"))
             msg <- checkArg(thr   , msg, "PERCENT1")
-            msg <- checkArg(w     , msg, "NUMERIC1_SPOS", round((nmax - 1) * x@dz/1.5))
+            # msg <- checkArg(w     , msg, "NUMERIC1_SPOS", round((nmax - 1) * x@dz/1.5))
+            msg <- checkArg(w     , msg, "NUMERIC1_SPOS", max(x@depth)/2)
             msg <- checkArg(ns    , msg, "NUMERIC1_SPOS_NULL", round((nmax - 1) * x@dz))
             msg <- checkArg(bet   , msg, "NUMERIC1_SPOS_NULL", Inf)
             msg <- checkArg(c0    , msg, "NUMERIC1_SPOS", Inf)

@@ -99,8 +99,9 @@ setMethod("firstBreak",
             # if(length(tst) > 0 ){
             #    nmax <- tst
             # }
-            # w <- round(w / x@dz)
-            # 
+            
+            w <- round(w / x@dz)
+             
             # if( (nmax + 2 * w ) < nrow(x) ){
             #    nmax <- nmax + 2 * w
             # }else{

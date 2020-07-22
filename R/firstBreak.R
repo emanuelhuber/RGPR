@@ -212,7 +212,7 @@ setMethod("firstBreak",
       return(NA)
     }
   } else{
-    return( which.max(x))
+    return(  tt[which.max(x)])
   }
   #   }
   

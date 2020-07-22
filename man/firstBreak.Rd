@@ -10,7 +10,8 @@
   thr = 0.12,
   w = 11,
   ns = NULL,
-  bet = NULL
+  bet = NULL,
+  shorten = TRUE
 )
 }
 \arguments{
@@ -27,20 +28,27 @@ amplitude (in \%) at which time zero is picked (only for the
 threshold method). \code{thr} ranges between 0 and 1.}
 
 \item{w}{[\code{numeric(1)}] Length of the leading window in unit of time
-(only for the modified Coppens and modified energy ratio 
-methods). Recommended value: about one period of the first-arrival 
+(only for \code{method = "coppens"} or \code{method = "MER"}). 
+Recommended value: about one period of the first-arrival 
 waveform.}
 
 \item{ns}{[\code{numeric(1)}] Length of the edge preserving smoothing 
-window in unit of time (only for the modified Coppens 
-method). Recommended value: between one and two signal periods.
+window in unit of time (only for  \code{method = "coppens"}). 
+Recommended value: between one and two signal periods.
 When \code{ns = NULL} the value of \code{ns} is set to 
 \code{1.5 * w}.}
 
-\item{bet}{[\code{numeric(1)}] Stabilisation constant (only for the 
-modified Coppens method). Not critical. 
+\item{bet}{[\code{numeric(1)}] Stabilisation constant (only for 
+\code{method = "coppens"}). Not critical. 
 When \code{bet = NULL} the value of \code{bet} is set to 
 20\% of the maximal signal amplitude.}
+
+\item{shorten}{[\code{logical(1)}] If \code{TRUE}, each trace is shortened
+by removing the samples that are \eqn{2 \times w} after the
+maximum value (only for \code{method = "coppens"} or 
+\code{method = "MER"}). You may set 
+\code{shorten = FALSE} if the first wave break occurs 
+after the maximum absolute amplitude time.}
 }
 \value{
 [\code{numeric(n)}] The time of the first wave break for every

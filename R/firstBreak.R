@@ -1,6 +1,7 @@
-setGenericVerif("firstBreak", function(x, method = c("coppens",
-                                                     "threshold",  "MER"), thr = 0.12, w = 11, ns = NULL, 
-                                       bet = NULL)
+setGenericVerif("firstBreak", 
+                function(x, method = c("coppens", "threshold",  "MER"), 
+                         thr = 0.12, w = 11, ns = NULL, bet = NULL,
+                         shorten = TRUE)
   standardGeneric("firstBreak"))
 
 
@@ -20,18 +21,24 @@ setGenericVerif("firstBreak", function(x, method = c("coppens",
 #'              amplitude (in \%) at which time zero is picked (only for the
 #'              threshold method). \code{thr} ranges between 0 and 1.
 #' @param w [\code{numeric(1)}] Length of the leading window in unit of time
-#'          (only for the modified Coppens and modified energy ratio 
-#'          methods). Recommended value: about one period of the first-arrival 
+#'          (only for \code{method = "coppens"} or \code{method = "MER"}). 
+#'          Recommended value: about one period of the first-arrival 
 #'          waveform.
 #' @param ns [\code{numeric(1)}] Length of the edge preserving smoothing 
-#'           window in unit of time (only for the modified Coppens 
-#'           method). Recommended value: between one and two signal periods.
+#'           window in unit of time (only for  \code{method = "coppens"}). 
+#'           Recommended value: between one and two signal periods.
 #'           When \code{ns = NULL} the value of \code{ns} is set to 
 #'           \code{1.5 * w}.
-#' @param bet [\code{numeric(1)}] Stabilisation constant (only for the 
-#'            modified Coppens method). Not critical. 
+#' @param bet [\code{numeric(1)}] Stabilisation constant (only for 
+#'            \code{method = "coppens"}). Not critical. 
 #'            When \code{bet = NULL} the value of \code{bet} is set to 
 #'            20\% of the maximal signal amplitude.
+#' @param shorten [\code{logical(1)}] If \code{TRUE}, each trace is shortened
+#'                 by removing the samples that are \eqn{2 \times w} after the
+#'                 maximum value (only for \code{method = "coppens"} or 
+#'                 \code{method = "MER"}). You may set 
+#'                 \code{shorten = FALSE} if the first wave break occurs 
+#'                 after the maximum absolute amplitude time.
 #'            
 #' @return [\code{numeric(n)}] The time of the first wave break for every
 #'         traces in unit of time (\code{n = ncol(x) =} number of traces).
@@ -66,45 +73,46 @@ setGenericVerif("firstBreak", function(x, method = c("coppens",
 setMethod("firstBreak", 
           "GPR",
           function(x, method = c("coppens","threshold",  "MER"), 
-                   thr = 0.12, w = 11, ns = NULL, bet = NULL){
+                   thr = 0.12, w = 11, ns = NULL, bet = NULL, shorten = TRUE){
             #method <- match.arg(method, c("coppens", "threshold", "MER"))
             method <- method[1]
             
-            # shorten the file -> computation only up to the max value
-            nmax <- nrow(x)
-            # tst <- which(as.matrix(x) == max(x), arr.ind = TRUE)
-            tst <- max(apply(as.matrix(x), 2, which.max))
-            
-            if(length(tst) > 0 ){
-              # nmax <- max(tst[,"row"])
-              nmax <- tst
-            }
+            # # shorten the file -> computation only up to the max value
+            # nmax <- nrow(x)
+            # # tst <- which(as.matrix(x) == max(x), arr.ind = TRUE)
+            # tst <- max(apply(as.matrix(x), 2, which.max))
+            # 
+            # if(length(tst) > 0 ){
+            #   # nmax <- max(tst[,"row"])
+            #   nmax <- tst
+            # }
             
             #------------------- check arguments
             msg <- checkArgInit()
-            msg <- checkArg(method, msg, "STRING_CHOICE", 
+            msg <- checkArg(method,  msg, "STRING_CHOICE", 
                             c("coppens", "threshold",  "MER"))
-            msg <- checkArg(thr   , msg, "PERCENT1")
-            # msg <- checkArg(w     , msg, "NUMERIC1_SPOS", round((nmax - 1) * x@dz/1.5))
-            msg <- checkArg(w     , msg, "NUMERIC1_SPOS", max(x@depth)/2)
-            # msg <- checkArg(ns    , msg, "NUMERIC1_SPOS_NULL", round((nmax - 1) * x@dz))
-            msg <- checkArg(ns    , msg, "NUMERIC1_SPOS_NULL", max(x@depth))
-            msg <- checkArg(bet   , msg, "NUMERIC1_SPOS_NULL", Inf)
+            msg <- checkArg(thr,     msg, "PERCENT1")
+            # msg <- checkArg(w      , msg, "NUMERIC1_SPOS", round((nmax - 1) * x@dz/1.5))
+            msg <- checkArg(w,       msg, "NUMERIC1_SPOS", max(x@depth)/2)
+            # msg <- checkArg(ns     , msg, "NUMERIC1_SPOS_NULL", round((nmax - 1) * x@dz))
+            msg <- checkArg(ns,      msg, "NUMERIC1_SPOS_NULL", max(x@depth))
+            msg <- checkArg(bet,     msg, "NUMERIC1_SPOS_NULL", Inf)
+            msg <- checkArg(shorten, msg, "LOGICAL_LEN", 1)
             checkArgStop(msg)
             #-----------------------------------
             
             
             w <- round(w / x@dz)
             
-            if( (nmax + 2 * w ) < nrow(x) ){
-              nmax <- nmax + 2 * w
-            }else{
-              nmax <- nrow(x)
-            }
+            # if( (nmax + 2 * w ) < nrow(x) ){
+            #   nmax <- nmax + 2 * w
+            # }else{
+            #   nmax <- nrow(x)
+            # }
             
             if(method == "coppens"){
               if( (w %% 2) == 0 ) w <- w + 1
-              xs <- x@data[1:nmax, , drop = FALSE]^2
+              # xs <- x@data[1:nmax, , drop = FALSE]^2
               
               if(is.null(ns)){
                 ns <- round(1.5 * w)
@@ -113,21 +121,25 @@ setMethod("firstBreak",
               }
               # ns <- if(is.null(ns)) round(1.5 * w) else ns
               
-              if(ns > nmax) ns <- nmax - 1
+              # if(ns > nmax) ns <- nmax - 1
               if( (ns %% 2) == 0 )  ns <- ns + 1 
-              if(is.null(bet))      bet <- 0.2 * max(xs)
+              # if(is.null(bet))      bet <- 0.2 * max(xs)
+              # if(is.null(bet))      bet <- 0.2 * max(abs(x))
               
               # the vectorized version of "coppens" (though not really faster)
               #  fb <- .firstBreakModCoppens2(xs, w = w, ns = ns, bet = bet)
               # below: the not vectorised version of Coppens...
-              fb <- apply(xs, 2, .firstBreakModCoppens, w = w, ns = ns, bet = bet)
+              fb <- apply(x, 2, .firstBreakModCoppens, w = w, ns = ns, 
+                          bet = bet, shorten = shorten)
               fb <- x@depth[fb] # fb * x@dz
             }else if(method == "threshold"){
               thres <- thr * max(x)
-              fb <- apply(abs(x@data), 2, .firstBreakThres, thr = thres, x@depth)
+              fb <- apply(abs(x@data), 2, .firstBreakThres, thr = thres, 
+                          x@depth)
             }else if(method == "MER"){
               # w <- round(w / x@dz)
-              fb <- .firstBreakMER(x@data[1:nmax, , drop = FALSE], w)
+              fb <- .firstBreakMER(x@data[1:nmax, , drop = FALSE], w = w,
+                                   shorten = shorten)
               fb <- x@depth[fb]
             }
             if(any(is.na(fb))){
@@ -145,19 +157,39 @@ setMethod("firstBreak",
 #----------------------- FIRST WAVE BREAK -------------------------------------#
 
 # Modified Energy ratio method
-.firstBreakMER <- function(x, w){
-  E <- wapplyMat2(x, width = w, by = 1, FUN = function(x) sum(x^2), 
-                  MARGIN = 2)
-  v1 <- 1:(nrow(x) - 2*(w-1))
+.firstBreakMER <- function(x, w, shorten = TRUE){
+  if(shorten == TRUE){
+    nmax <- which.max(x)
+    if( (nmax + w + 2 * w ) < length(x) ){
+      nmax <- nmax + 2 * w
+    }else{
+      nmax <- length(x)
+    }
+    x <- x[1:nmax]
+  }
+  E <- wapply(x^2, width = w, by = 1, FUN = sum)
+  v1 <- 1:(length(x) - 2*(w-1))
   v2 <- v1 + (w-1)
-  E1 <- E[v1,]
-  E2 <- E[v2,]
+  E1 <- E[v1]
+  E2 <- E[v2]
   ER <- E2/E1
-  MER <- (ER * abs( x[v1 + w - 1,]) )^3
-  fb <- apply(MER, 2, function(x) which.max(x)) + (w - 1)
+  MER <- (ER * abs( x[v1 + w - 1]) )^3
+  fb <- which.max(MER) + (w - 1)
   return(fb)
 }
-
+# .firstBreakMER <- function(x, w){
+#   E <- wapplyMat2(x, width = w, by = 1, FUN = function(x) sum(x^2), 
+#                   MARGIN = 2)
+#   v1 <- 1:(nrow(x) - 2*(w-1))
+#   v2 <- v1 + (w-1)
+#   E1 <- E[v1,]
+#   E2 <- E[v2,]
+#   ER <- E2/E1
+#   MER <- (ER * abs( x[v1 + w - 1,]) )^3
+#   fb <- apply(MER, 2, function(x) which.max(x)) + (w - 1)
+#   return(fb)
+# }
+# 
 # Threshold method for first breack picking
 .firstBreakThres <- function(x, thr = 0.12, tt){
   #   first_breacks <- rep(NA, ncol(x))
@@ -184,6 +216,7 @@ setMethod("firstBreak",
   #   return(first_breacks)
 }
 
+# vectorized version
 # Jaun I. Sabbione and Danilo Velis (2010). Automatic first-breaks picking: 
 # New strategies and algorithms. Geophysics, 75 (4): v67-v76
 # -> modified Coppens's Method
@@ -192,35 +225,60 @@ setMethod("firstBreak",
 # between one and two signal periods
 #        -> default values ns= 1.5*w
 # bet = stabilisation constant, not critical, set to 0.2*max(amplitude) 
-.firstBreakModCoppens2 <- function(x, w = 11, ns = NULL, bet = 0.2){
-  if(is.null(ns)){
-    ns <- 1.5 * w
-  }
-  
-  E1all <- matrix(0, nrow=nrow(x), ncol= ncol(x))
-  E1all[1:(nrow(E1all) - w +1),] <- wapplyMat2(x, width = w, by = 1, 
-                                               FUN = sum, MARGIN=2)
-  E2all <- apply(x, 2, cumsum)
-  Erall <- E1all/(E2all + bet)
-  
-  xmeanall <- wapplyMat(Erall, width = ns, by = 1, FUN = mean, MARGIN=2)
-  xsdall <- wapplyMat(Erall, width = ns, by = 1, FUN = sd, MARGIN=2)
-  xtestall <- wapplyMat2(xsdall, width = ns, by = 1, FUN = which.min, MARGIN=2)
-  xtestall <- xtestall + seq_len(nrow(xtestall))
-  meantstall <- matrix(xmeanall[xtestall],nrow=nrow(xtestall), 
-                       ncol=ncol(xmeanall), byrow=FALSE)
-  meantstall2 <- matrix(0, nrow=nrow(x), ncol= ncol(x))
-  meantstall2[seq_len(nrow(meantstall)) + (ns-1)/2,] <- meantstall
-  fb <- apply(meantstall2, 2, function(x) which.max(abs(diff(x))))
-  return(fb)
-}
+# .firstBreakModCoppens2 <- function(x, w = 11, ns = NULL, bet = 0.2){
+#   if(is.null(ns)){
+#     ns <- 1.5 * w
+#   }
+#   
+#   E1all <- matrix(0, nrow=nrow(x), ncol= ncol(x))
+#   E1all[1:(nrow(E1all) - w +1),] <- wapplyMat2(x, width = w, by = 1, 
+#                                                FUN = sum, MARGIN=2)
+#   E2all <- apply(x, 2, cumsum)
+#   Erall <- E1all/(E2all + bet)
+#   
+#   xmeanall <- wapplyMat(Erall, width = ns, by = 1, FUN = mean, MARGIN=2)
+#   xsdall <- wapplyMat(Erall, width = ns, by = 1, FUN = sd, MARGIN=2)
+#   xtestall <- wapplyMat2(xsdall, width = ns, by = 1, FUN = which.min, MARGIN=2)
+#   xtestall <- xtestall + seq_len(nrow(xtestall))
+#   meantstall <- matrix(xmeanall[xtestall],nrow=nrow(xtestall), 
+#                        ncol=ncol(xmeanall), byrow=FALSE)
+#   meantstall2 <- matrix(0, nrow=nrow(x), ncol= ncol(x))
+#   meantstall2[seq_len(nrow(meantstall)) + (ns-1)/2,] <- meantstall
+#   fb <- apply(meantstall2, 2, function(x) which.max(abs(diff(x))))
+#   return(fb)
+# }
 
-.firstBreakModCoppens <- function(x, w = 11, ns = NULL, bet = 0.2){
-  if(is.null(ns)){
-    ns <- 1.5 * w
+# not so vectorized version
+# Jaun I. Sabbione and Danilo Velis (2010). Automatic first-breaks picking: 
+# New strategies and algorithms. Geophysics, 75 (4): v67-v76
+# -> modified Coppens's Method
+# w = length leading window: about one period of the first-arrival waveform
+# ns = length eps (edge preserving smoothing) window: good results with ns 
+# between one and two signal periods
+#        -> default values ns= 1.5*w
+# bet = stabilisation constant, not critical, set to 0.2*max(amplitude) 
+.firstBreakModCoppens <- function(x, w = 11, ns = NULL, bet = NULL, shorten = TRUE){
+  # if(is.null(ns)){
+  #   ns <- 1.5 * w
+  # }
+  if(is.null(bet)) bet <- 0.2 * max(abs(x))
+  if(shorten == TRUE){
+    nmax <- which.max(x)
+    if( (nmax + w + 2 * w ) < length(x) ){
+      nmax <- nmax + 2 * w
+    }else{
+      nmax <- length(x)
+    }
+    
+    if(ns > nmax){
+      ns <- nmax - 1
+      if( (ns %% 2) == 0 ) ns <- ns + 1 
+    }
+    x <- x[1:nmax]
   }
+  x <- x^2
   
-  E1 <- c(wapply(x, width = w, by = 1, FUN = sum), rep(0, 2*floor(w/2)))
+  E1 <- c(wapply(x, width = w, by = 1, FUN = sum), rep(0, 2 * floor(w/2)))
   E2 <- cumsum(x)
   Er <- E1/(E2 + bet)
   Er_fil <- .eps(Er, ns = ns)

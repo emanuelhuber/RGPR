@@ -11,6 +11,7 @@
   w = 11,
   ns = NULL,
   bet = NULL,
+  shorten = TRUE,
   c0 = 0.299,
   FUN = NULL,
   ...,
@@ -45,6 +46,13 @@ When \code{ns = NULL} the value of \code{ns} is set to
 modified Coppens method). Not critical. 
 When \code{bet = NULL} the value of \code{bet} is set to 
 20\% of the maximal signal amplitude.}
+
+\item{shorten}{[\code{logical(1)}] If \code{TRUE}, each trace is shortened
+by removing the samples that are \eqn{2 \times w} after the
+maximum value (only for \code{method = "coppens"} or 
+\code{method = "MER"}). You may set 
+\code{shorten = FALSE} if the first wave break occurs 
+after the maximum absolute amplitude time.}
 
 \item{c0}{[\code{numeric(1)}] Propagation speed of the GPR wave 
 through air in unit of space per unit of time 

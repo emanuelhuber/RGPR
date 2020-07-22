@@ -9,7 +9,8 @@ time0Estimation <- function(...){
 #' @export
 setGenericVerif("estimateTime0",
                 function(x, method = c("coppens", "threshold", "MER"), 
-                         thr = 0.12, w = 11, ns = NULL, bet = NULL, c0 = 0.299, 
+                         thr = 0.12, w = 11, ns = NULL, bet = NULL, 
+                         shorten = TRUE, c0 = 0.299, 
                          FUN = NULL, ..., track = TRUE)
                   standardGeneric("estimateTime0"))
 
@@ -60,6 +61,12 @@ setGenericVerif("estimateTime0",
 #'            modified Coppens method). Not critical. 
 #'            When \code{bet = NULL} the value of \code{bet} is set to 
 #'            20\% of the maximal signal amplitude. 
+#' @param shorten [\code{logical(1)}] If \code{TRUE}, each trace is shortened
+#'                 by removing the samples that are \eqn{2 \times w} after the
+#'                 maximum value (only for \code{method = "coppens"} or 
+#'                 \code{method = "MER"}). You may set 
+#'                 \code{shorten = FALSE} if the first wave break occurs 
+#'                 after the maximum absolute amplitude time.
 #' @param c0     [\code{numeric(1)}] Propagation speed of the GPR wave 
 #'               through air in unit of space per unit of time 
 #'               (generally in m/ns).
@@ -90,7 +97,8 @@ setGenericVerif("estimateTime0",
 #' @export
 setMethod("estimateTime0", "GPR", 
           function(x, method = c("coppens", "threshold", "MER"), 
-                   thr = 0.12, w = 11, ns = NULL, bet = NULL, c0 = 0.299, 
+                   thr = 0.12, w = 11, ns = NULL, bet = NULL, 
+                   shorten = TRUE, c0 = 0.299, 
                    FUN = NULL, ..., track = TRUE){
             
             method <- method[1]
@@ -104,20 +112,21 @@ setMethod("estimateTime0", "GPR",
             
             #------------------- check arguments
             msg <- checkArgInit()
-            msg <- checkArg(method, msg, "STRING_CHOICE", 
+            msg <- checkArg(method,  msg, "STRING_CHOICE", 
                             c("coppens", "threshold",  "MER"))
-            msg <- checkArg(thr   , msg, "PERCENT1")
+            msg <- checkArg(thr,     msg, "PERCENT1")
             # msg <- checkArg(w     , msg, "NUMERIC1_SPOS", round((nmax - 1) * x@dz/1.5))
-            msg <- checkArg(w     , msg, "NUMERIC1_SPOS", max(x@depth)/2)
-            msg <- checkArg(ns    , msg, "NUMERIC1_SPOS_NULL", round((nmax - 1) * x@dz))
-            msg <- checkArg(bet   , msg, "NUMERIC1_SPOS_NULL", Inf)
-            msg <- checkArg(c0    , msg, "NUMERIC1_SPOS", Inf)
-            msg <- checkArg(FUN   , msg, "FUNCTION_NULL")
+            msg <- checkArg(w,       msg, "NUMERIC1_SPOS", max(x@depth)/2)
+            msg <- checkArg(ns,      msg, "NUMERIC1_SPOS_NULL", round((nmax - 1) * x@dz))
+            msg <- checkArg(bet,     msg, "NUMERIC1_SPOS_NULL", Inf)
+            msg <- checkArg(c0,      msg, "NUMERIC1_SPOS", Inf)
+            msg <- checkArg(FUN,     msg, "FUNCTION_NULL")
+            msg <- checkArg(shorten, msg, "LOGICAL_LEN", 1)
             checkArgStop(msg)
             #-----------------------------------
             
             tfb <- firstBreak(x, method = method, thr = thr, w = w, 
-                              ns = ns, bet = bet)
+                              ns = ns, bet = bet, shorten = shorten)
             t0 <- firstBreakToTime0(tfb, x, c0 = c0)
             
             if(!is.null(FUN)) t0 <- FUN(t0, ...)

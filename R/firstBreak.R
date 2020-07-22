@@ -263,8 +263,8 @@ setMethod("firstBreak",
   if(is.null(bet)) bet <- 0.2 * max(abs(x))
   if(shorten == TRUE){
     nmax <- which.max(x)
-    if( (nmax + w ) < length(x) ){
-      nmax <- nmax + w
+    if( (nmax + 2*w ) < length(x) ){
+      nmax <- nmax + 2*w
     }else{
       nmax <- length(x)
     }

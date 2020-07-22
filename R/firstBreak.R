@@ -128,7 +128,7 @@ setMethod("firstBreak",
               #  fb <- .firstBreakModCoppens2(xs, w = w, ns = ns, bet = bet)
               # below: the not vectorised version of Coppens...
               # fb <- apply(x@data[1:nmax, , drop = FALSE], 2, .firstBreakModCoppens, w = w, ns = ns, 
-              fb <- apply(x@data, 2, .firstBreakModCoppens, w = w, ns = ns, 
+              fb <- apply(x@data^2, 2, .firstBreakModCoppens, w = w, ns = ns, 
                           bet = bet, shorten = shorten)
               fb <- x@depth[fb] # fb * x@dz
             }else if(method == "threshold"){
@@ -141,8 +141,7 @@ setMethod("firstBreak",
               w <- round(w / x@dz)
               # w <- round(w / x@dz)
               # fb <- .firstBreakMER(x@data[1:nmax, , drop = FALSE], w = w,
-              fb <- .firstBreakMER(x@data, w = w,
-                                   shorten = shorten)
+              fb <- apply(x@data^2, 2, .firstBreakMER, w = w, shorten = shorten)
               fb <- x@depth[fb]
             }
             if(any(is.na(fb))){
@@ -170,13 +169,13 @@ setMethod("firstBreak",
     }
     x <- x[1:nmax]
   }
-  E <- wapply(x^2, width = w, by = 1, FUN = sum)
+  E <- wapply(x, width = w, by = 1, FUN = sum)
   v1 <- 1:(length(x) - 2*(w-1))
   v2 <- v1 + (w-1)
   E1 <- E[v1]
   E2 <- E[v2]
-  ER <- E2/E1
-  MER <- (ER * abs( x[v1 + w - 1]) )^3
+  ER <- (E2/E1)^3
+  MER <- ER * x[v1 + w - 1]^1.5
   fb <- which.max(MER) + (w - 1)
   return(fb)
 }
@@ -260,11 +259,12 @@ setMethod("firstBreak",
 # between one and two signal periods
 #        -> default values ns= 1.5*w
 # bet = stabilisation constant, not critical, set to 0.2*max(amplitude) 
+# x is already squared
 .firstBreakModCoppens <- function(x, w = 11, ns = NULL, bet = NULL, shorten = TRUE){
   # if(is.null(ns)){
   #   ns <- 1.5 * w
   # }
-  if(is.null(bet)) bet <- 0.2 * max(abs(x))
+  if(is.null(bet)) bet <- 0.2 * sqrt(abs(x))
   if(shorten == TRUE){
     nmax <- which.max(x)
     if( (nmax + 2*w ) < length(x) ){
@@ -278,7 +278,7 @@ setMethod("firstBreak",
     }
     x <- x[1:nmax]
   }
-  x <- x^2
+  # x <- x^2
   
   E1 <- c(wapply(x, width = w, by = 1, FUN = sum), rep(0, 2 * floor(w/2)))
   E2 <- cumsum(x)

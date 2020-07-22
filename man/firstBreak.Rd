@@ -7,8 +7,8 @@
 \S4method{firstBreak}{GPR}(
   x,
   method = c("coppens", "threshold", "MER"),
-  thr = 0.12,
-  w = 11,
+  thr = NULL,
+  w = NULL,
   ns = NULL,
   bet = NULL,
   shorten = TRUE

@@ -9,7 +9,7 @@ time0Estimation <- function(...){
 #' @export
 setGenericVerif("estimateTime0",
                 function(x, method = c("coppens", "threshold", "MER"), 
-                         thr = 0.12, w = 11, ns = NULL, bet = NULL, 
+                         thr = NULL, w = NULL, ns = NULL, bet = NULL, 
                          shorten = TRUE, c0 = 0.299, 
                          FUN = NULL, ..., track = TRUE)
                   standardGeneric("estimateTime0"))
@@ -97,7 +97,7 @@ setGenericVerif("estimateTime0",
 #' @export
 setMethod("estimateTime0", "GPR", 
           function(x, method = c("coppens", "threshold", "MER"), 
-                   thr = 0.12, w = 11, ns = NULL, bet = NULL, 
+                   thr = NULL, w = NULL, ns = NULL, bet = NULL, 
                    shorten = TRUE, c0 = 0.299, 
                    FUN = NULL, ..., track = TRUE){
             

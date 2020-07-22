@@ -1,6 +1,6 @@
 setGenericVerif("firstBreak", 
                 function(x, method = c("coppens", "threshold",  "MER"), 
-                         thr = 0.12, w = 11, ns = NULL, bet = NULL,
+                         thr = NULL, w = NULL, ns = NULL, bet = NULL,
                          shorten = TRUE)
   standardGeneric("firstBreak"))
 
@@ -73,7 +73,7 @@ setGenericVerif("firstBreak",
 setMethod("firstBreak", 
           "GPR",
           function(x, method = c("coppens","threshold",  "MER"), 
-                   thr = 0.12, w = 11, ns = NULL, bet = NULL, shorten = TRUE){
+                   thr = NULL, w = NULL, ns = NULL, bet = NULL, shorten = TRUE){
             #method <- match.arg(method, c("coppens", "threshold", "MER"))
             method <- method[1]
             
@@ -82,9 +82,11 @@ setMethod("firstBreak",
             msg <- checkArgInit()
             msg <- checkArg(method,  msg, "STRING_CHOICE", 
                             c("coppens", "threshold",  "MER"))
-            msg <- checkArg(thr,     msg, "PERCENT1")
+            if(method == "threshold"){
+              msg <- checkArg(thr,     msg, "PERCENT1")
+            }else if(method == "coppens")
             # msg <- checkArg(w      , msg, "NUMERIC1_SPOS", round((nmax - 1) * x@dz/1.5))
-            msg <- checkArg(w,       msg, "NUMERIC1_SPOS", max(x@depth)/2)
+            msg <- checkArg(w,       msg, "NUMERIC1_SPOS_NULL", max(x@depth)/2)
             # msg <- checkArg(ns     , msg, "NUMERIC1_SPOS_NULL", round((nmax - 1) * x@dz))
             msg <- checkArg(ns,      msg, "NUMERIC1_SPOS_NULL", max(x@depth))
             msg <- checkArg(bet,     msg, "NUMERIC1_SPOS_NULL", Inf)
@@ -100,7 +102,6 @@ setMethod("firstBreak",
             #    nmax <- tst
             # }
             
-            w <- round(w / x@dz)
              
             # if( (nmax + 2 * w ) < nrow(x) ){
             #    nmax <- nmax + 2 * w
@@ -109,6 +110,8 @@ setMethod("firstBreak",
             # }
             
             if(method == "coppens"){
+              if(is.null(w)) w <- abs(diff(range(x@depth)))/10
+              w <- round(w / x@dz)
               if( (w %% 2) == 0 ) w <- w + 1
               # xs <- x@data[1:nmax, , drop = FALSE]^2
               
@@ -132,10 +135,13 @@ setMethod("firstBreak",
                           bet = bet, shorten = shorten)
               fb <- x@depth[fb] # fb * x@dz
             }else if(method == "threshold"){
+              if(is.null(thr)) thr <- 0.1
               thres <- thr * max(x)
               fb <- apply(abs(x@data), 2, .firstBreakThres, thr = thres, 
                           x@depth)
             }else if(method == "MER"){
+              if(is.null(w)) w <- abs(diff(range(x@depth)))/10
+              w <- round(w / x@dz)
               # w <- round(w / x@dz)
               # fb <- .firstBreakMER(x@data[1:nmax, , drop = FALSE], w = w,
               fb <- .firstBreakMER(x@data, w = w,

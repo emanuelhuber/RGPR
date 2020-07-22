@@ -197,6 +197,7 @@ setMethod("firstBreak",
   #   first_breacks <- rep(NA, ncol(x))
   #   thres <- thr * max(x)
   #   for(j in seq_len(ncol(x))){
+ 
   if( max(x) > thr){
     fb <- which(x > thr)
     if(length(fb) > 0){
@@ -211,7 +212,7 @@ setMethod("firstBreak",
       return(NA)
     }
   } else{
-    return(NA)
+    return( which.max(x))
   }
   #   }
   

@@ -586,7 +586,7 @@ tfb <- firstBreak(A1, w = 20, method = "coppens")   # take some time
 
 Convert the first wave break time *t*<sub>fb</sub> into time-zero *t*<sub>0</sub> with `firstBreakToTime0()`.
 
-Here we define *t*<sub>0</sub> = *t*<sub>fb</sub> − *a*/*c*<sub>0</sub>, where *a* is the distance between the transmitter and receiver and *c*<sub>0</sub> is the wave velocity in the media between the transmitter and receiver (in our case, air). The value *a*/*c*<sub>0</sub> corresponds to the wave travel time from the transmitter to the receiver.
+Here we define $t\_0 = t\_{\\text{fb}} -\\frac{a}{c\_0}$, where *a* is the distance between the transmitter and receiver and *c*<sub>0</sub> is the wave velocity in the media between the transmitter and receiver (in our case, air). The value $\\frac{a}{c\_0}$ corresponds to the wave travel time from the transmitter to the receiver.
 
 ``` r
 t0 <- firstBreakToTime0(tfb, A1)

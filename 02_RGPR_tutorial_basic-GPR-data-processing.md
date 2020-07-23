@@ -1,12 +1,11 @@
 ---
 layout: page
 title: Basic GPR data processing
-date: 2020-05-20
+date: 2020-06-04
 ---
 
 <!--
-"/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
-"G:/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
+
 -->
 
 ------------------------------------------------------------------------
@@ -612,6 +611,8 @@ Save the processed GPR record into the directory /processing. Use the `.rds` for
 writeGPR(x9, fPath = file.path(getwd(), "processing", name(x9)),
          type = "rds", overwrite = TRUE)
 ```
+
+    ## File overwritten
 
     ## *** Class GPR ***
     ##  name        = LINE00

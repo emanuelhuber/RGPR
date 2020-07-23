@@ -1,7 +1,7 @@
 ---
 layout: page
 title: GPR data migration
-date: 2020-05-20
+date: 2020-07-23
 ---
 
 <!--
@@ -92,6 +92,452 @@ A <- readGPR(fPath = "rawGPR/LINE00.DT1")   # the filepath is case sensitive!
     ## Warning in readGPR(fPath = "rawGPR/LINE00.DT1"): Use argument 'dsn' instead of
     ## 'fPath' because argument 'fPath' is deprecated.
 
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
+    ## Warning in readChar(dsn, 28): truncating string with embedded nuls
+
 Pre-processing
 ==============
 
@@ -132,15 +578,15 @@ A1 <- dcshift(A, 1:110)   # new object A1
 First wave break estimation and set time-zero
 ---------------------------------------------
 
-The first wave break time, t\_{}, is estimated for each traces
+The first wave break time, *t*<sub>fb</sub>, is estimated for each traces
 
 ``` r
-tfb <- firstBreak(A1)   # take some time
+tfb <- firstBreak(A1, w = 20, method = "coppens")   # take some time
 ```
 
-Convert the first wave break time *t*<sub>*f**b*</sub> into time-zero *t*<sub>0</sub> with `firstBreakToTime0()`.
+Convert the first wave break time *t*<sub>fb</sub> into time-zero *t*<sub>0</sub> with `firstBreakToTime0()`.
 
-Here we define *t*<sub>0</sub> = *t*<sub>*f**b*</sub> − *a*/*c*<sub>0</sub>, where *a* is the distance between the transmitter and receiver and *c*<sub>0</sub> is the wave velocity in the media between the transmitter and receiver (in our case, air). The value *a*/*c*<sub>0</sub> corresponds to the wave travel time from the transmitter to the receiver.
+Here we define *t*<sub>0</sub> = *t*<sub>fb</sub> − *a*/*c*<sub>0</sub>, where *a* is the distance between the transmitter and receiver and *c*<sub>0</sub> is the wave velocity in the media between the transmitter and receiver (in our case, air). The value *a*/*c*<sub>0</sub> corresponds to the wave travel time from the transmitter to the receiver.
 
 ``` r
 t0 <- firstBreakToTime0(tfb, A1)
@@ -211,9 +657,9 @@ A8 <- upsample(A7, n = c(3,1))
 Topographic Kirchhoff migration.
 --------------------------------
 
-Vertical resolution of the migrated data: `dz = 0.01`m.
+Vertical resolution of the migrated data, we set `dz = 0.01`m.
 
-Dominant frequency from `spec(A9)`: `fdo = 80` MHz (used to estimate the Fresnel zone).
+The dominant *return* frequency can be estimated by visual inspection of the spectrum of `A8` (to display the frequency spectrum of `A8` use the function `spec()`, e.g. `spec(A8)`). Here, the dominant return frequency is estimated to be $80 MHz$ and therefore we set `fdo = 80` (the dominant frequency is used to estimate the Fresnel zone).
 
 For the moment the algorithm works **only with a constant radar wave velocity**. In this example the velocity is:
 
@@ -236,7 +682,7 @@ vel(A8)  <- 0.09        # velocity in ns
 ```
 
 ``` r
-A9 <- migration(A8, type="kirchhoff", max_depth = 20,
+A9 <- migrate(A8, type="kirchhoff", max_depth = 20,
                  dz = 0.01, fdo = 80)
 plot(A9)
 ```

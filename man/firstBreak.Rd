@@ -25,10 +25,12 @@ and \code{"MER"} to the modified energy ratio method.}
 
 \item{thr}{[\code{numeric(1)}] Threshold for the signal 
 amplitude (in \%) at which time zero is picked (only for the
-threshold method). \code{thr} ranges between 0 and 1.}
+threshold method). 
+\code{thr} ranges between 0 (0%) and 1 (100%).}
 
-\item{w}{[\code{numeric(1)}] Length of the leading window in unit of time
-(only for \code{method = "coppens"} or \code{method = "MER"}). 
+\item{w}{[\code{numeric(1)}] Length of the short-term leading window in 
+unit of time (only for \code{method = "coppens"} or 
+\code{method = "MER"}). 
 Recommended value: about one period of the first-arrival 
 waveform.}
 
@@ -55,8 +57,25 @@ after the maximum absolute amplitude time.}
         traces in unit of time (\code{n = ncol(x) =} number of traces).
 }
 \description{
-Pick the time corresponding to the first break of each trace in the GPR profile.
-Return a vector containing the first break times.
+Pick the time of the first wave break in each trace 
+(trace-by-trace function).
+}
+\details{
+The Modified Coppens's method (\code{coppens}) computes the energy ratio 
+between a long term window (with increasing length) and a short-term leading 
+window (fixed length).
+Edge-preserving smoothing is then applied and the first wave break is 
+assigned to the sample in which the derivative of the output is largest.
+
+The modified energy ratio method (\code{MER}) computes the energy ratio between
+a preceding and trailing windows of equal length. The energy ratio is
+then multiplied by the absolute values of the trace and the output to the 
+power of three is returned.
+
+In the threshold method (\code{"threshold"}), the sample before the first 
+sample that is larger than the threshold times the maximum absolute 
+amplitude is picked. Then the time of the first wave break is linearly 
+interpolated between these two samples.
 }
 \references{
 \describe{

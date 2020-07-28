@@ -8,8 +8,24 @@ setGenericVerif("firstBreak",
 #----------------- FIRST-BREAK
 #' Time of first wave break
 #'
-#' Pick the time corresponding to the first break of each trace in the GPR profile.
-#' Return a vector containing the first break times.
+#' Pick the time of the first wave break in each trace 
+#' (trace-by-trace function).
+#' 
+#' The Modified Coppens's method (\code{coppens}) computes the energy ratio 
+#' between a long term window (with increasing length) and a short-term leading 
+#' window (fixed length).
+#' Edge-preserving smoothing is then applied and the first wave break is 
+#' assigned to the sample in which the derivative of the output is largest.
+#' 
+#' The modified energy ratio method (\code{MER}) computes the energy ratio between
+#' a preceding and trailing windows of equal length. The energy ratio is
+#' then multiplied by the absolute values of the trace and the output to the 
+#' power of three is returned.
+#' 
+#' In the threshold method (\code{"threshold"}), the sample before the first 
+#' sample that is larger than the threshold times the maximum absolute 
+#' amplitude is picked. Then the time of the first wave break is linearly 
+#' interpolated between these two samples.
 #' 
 #' @param x [\code{GPR class}] An object of the class \code{GPR}
 #' @param method [\code{character(1)}] Method to be applied (either
@@ -19,9 +35,11 @@ setGenericVerif("firstBreak",
 #'              and \code{"MER"} to the modified energy ratio method.
 #' @param thr [\code{numeric(1)}] Threshold for the signal 
 #'              amplitude (in \%) at which time zero is picked (only for the
-#'              threshold method). \code{thr} ranges between 0 and 1.
-#' @param w [\code{numeric(1)}] Length of the leading window in unit of time
-#'          (only for \code{method = "coppens"} or \code{method = "MER"}). 
+#'              threshold method). 
+#'              \code{thr} ranges between 0 (0%) and 1 (100%).
+#' @param w [\code{numeric(1)}] Length of the short-term leading window in 
+#'          unit of time (only for \code{method = "coppens"} or 
+#'          \code{method = "MER"}). 
 #'          Recommended value: about one period of the first-arrival 
 #'          waveform.
 #' @param ns [\code{numeric(1)}] Length of the edge preserving smoothing 
@@ -267,16 +285,17 @@ setMethod("firstBreak",
   # }
   if(is.null(bet)) bet <- 0.2 * sqrt(max(x))
   if(shorten == TRUE){
-    nmax <- which.max(x)
-    if( (nmax + 2*w ) < length(x) ){
-      nmax <- nmax + 2*w
-    }else{
-      nmax <- length(x)
-    }
-    if(ns > nmax){
-      ns <- nmax - 1
-      if( (ns %% 2) == 0 ) ns <- ns + 1 
-    }
+    nmax <- min(which.max(x) + nmax + 2*w, length(x))
+    # if( (nmax + 2*w ) < length(x) ){
+    #   nmax <- nmax + 2*w
+    # }else{
+    #   nmax <- length(x)
+    # }
+    ns <- min(nmax-1, ns)
+    # if(ns > nmax){
+    #   ns <- nmax - 1
+    if( (ns %% 2) == 0 ) ns <- ns + 1 
+    # }
     x <- x[1:nmax]
   }
   # x <- x^2

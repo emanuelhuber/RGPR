@@ -343,7 +343,7 @@ setGenericVerif("interpPos", function(x, topo, plot = FALSE, r = NULL, tol = NUL
                                       method = c("linear", "linear", "linear"), crs = NULL, ...) 
   standardGeneric("interpPos"))
 
-setGenericVerif("interpPosArray", function(x, d, GPGGA = NULL, geojson = NULL, 
+setGeneric("interpPosArray", function(x, d, GPGGA = NULL, geojson = NULL, 
                    tol = NULL, backproject = FALSE)
   standardGeneric("interpPosArray"))
 

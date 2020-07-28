@@ -36,7 +36,7 @@ setGenericVerif("firstBreak",
 #' @param thr [\code{numeric(1)}] Threshold for the signal 
 #'              amplitude (in \%) at which time zero is picked (only for the
 #'              threshold method). 
-#'              \code{thr} ranges between 0 (0%) and 1 (100%).
+#'              \code{thr} ranges between 0 (0\%) and 1 (100\%).
 #' @param w [\code{numeric(1)}] Length of the short-term leading window in 
 #'          unit of time (only for \code{method = "coppens"} or 
 #'          \code{method = "MER"}). 

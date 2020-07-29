@@ -203,9 +203,9 @@ readDZT <- function(dsn){
   # number of passes for 2-D files
   hd$NPASS <- .readBin_ushort(dsn)        # rh_npass
   # creation date
-  creaDT <- .readRFDate(dsn, where = 31)
+  creaDT <- .readRFDate(dsn, where = 32)
   # modification date
-  modDT  <- .readRFDate(dsn, where = 35)
+  modDT  <- .readRFDate(dsn, where = 36)
   hd$DATE <- creaDT$date
   hd$TIME <- creaDT$time
   # skip across some proprietary stuff
@@ -231,7 +231,7 @@ readDZT <- function(dsn){
   ant_name <- character(hd$NCHAN)
   for(i in seq_len(hd$NCHAN)){
     seek(dsn, where = 98 + MINHEADSIZE * (i - 1), origin = "start")
-    ant_name[i] <- readChar(dsn, nchars = 14, useBytes = FALSE)
+    ant_name[i] <- suppressWarnings(readChar(dsn, nchars = 14, useBytes = FALSE))
   }
   # hd$ANT <- readChar(dsn, nchars = 14, useBytes = TRUE)
   hd$ANT <- ant_name
@@ -451,12 +451,12 @@ readDZX <- function(dsn){
   rhb_cdt0 <- readBin(con, what = "raw", n = 4L, size = 1L, endian = "little")
   
   aa <- rawToBits(rhb_cdt0)
-  xdate <- paste(.bit2int(aa[25 + (1:7)]) + 1980, 
-                 sprintf("%02d", .bit2int(aa[21 + (1:4)])),  # sprintf()
-                 sprintf("%02d", .bit2int(aa[16 + (1:5)])), sep = "-")
-  xtime <- paste(sprintf("%02d", .bit2int(aa[11 + (1:5)])),
-                 sprintf("%02d", .bit2int(aa[5 + (1:6)])),
-                 sprintf("%02d", .bit2int(aa[1:5])* 2), sep = ":" )
+  xdate <- paste(.bit2int(aa[25 + (7:1)]) + 1980, 
+                 sprintf("%02d", .bit2int(aa[21 + (4:1)])),  # sprintf()
+                 sprintf("%02d", .bit2int(aa[16 + (5:1)])), sep = "-")
+  xtime <- paste(sprintf("%02d", .bit2int(aa[11 + (5:1)])),
+                 sprintf("%02d", .bit2int(aa[5 + (6:1)])),
+                 sprintf("%02d", .bit2int(aa[5:1])* 2), sep = ":" )
   return(list(date = xdate, time = xtime))
 }
 

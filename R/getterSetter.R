@@ -445,6 +445,7 @@ setReplaceMethod(
   definition = function(x, value){
     if(length(value) == length(x@depth)){
       x@depth <- value
+      x@dz <- mean(abs(diff(value)))
     }else{
       stop("length(value) != length(x@depth)")
     }
@@ -475,7 +476,7 @@ setReplaceMethod(
     }
     if(length(value) == length(x@pos)){
       x@pos <- value
-      dx <- mean(abs(diff(value)))
+      x@dx <- mean(abs(diff(value)))
     }else{
       stop("length(value) != length(x@depth)")
     }

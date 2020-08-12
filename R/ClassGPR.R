@@ -1789,19 +1789,17 @@ setMethod("dewow", "GPR", function(x, type = c("runmed", "runmean",
     freq <- a$freq[which.max(rowMeans(a$pow))]
     # pw <- 1/(x@freq * 10^6)/10^-9
     pw <- 1/(freq * 10^6)/10^-9
-    w <- (5 * pw)/x@dz
+    w <- round((5 * pw)/x@dz)
   }else{
     w <- round(w / x@dz)
   }
   if(type == "mad"){  
     warning("Soon deprecated. Use instead:\n",
             "dewow(x, type = 'runmed', w = 2*w)")
-    x@data <- x@data - .runmmmMat(x@data, 2*w, type = "runmed")
+    x@data <- x@data - .runmmmMat(x@data, 2*w+1, type = "runmed")
   }else if(type == "runmed"){
-    if( (w %% 2) == 0 ) w <- w + 1
     x@data <- x@data - .runmmmMat(x@data, w, type = "runmed")
   }else if(type == "runmean"){
-    if( (w %% 2) == 0 ) w <- w + 1
     x@data <- x@data - .runmmmMat(x@data, w, type = "runmean")
   }else if(type == "gaussian"){
     xdata <- x@data

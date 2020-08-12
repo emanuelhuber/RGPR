@@ -1798,8 +1798,10 @@ setMethod("dewow", "GPR", function(x, type = c("runmed", "runmean",
             "dewow(x, type = 'runmed', w = 2*w)")
     x@data <- x@data - .runmmmMat(x@data, 2*w, type = "runmed")
   }else if(type == "runmed"){
+    if( (w %% 2) == 0 ) w <- w + 1
     x@data <- x@data - .runmmmMat(x@data, w, type = "runmed")
   }else if(type == "runmean"){
+    if( (w %% 2) == 0 ) w <- w + 1
     x@data <- x@data - .runmmmMat(x@data, w, type = "runmean")
   }else if(type == "gaussian"){
     xdata <- x@data

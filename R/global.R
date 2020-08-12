@@ -1477,11 +1477,12 @@ depth0 <- function(time_0, v=0.1, antsep=1, c0 = 0.299){
   time_0 - antsep/c0 + antsep/v
 }
 
-#' Convert first wave break to time-zero
+#' Convert first wave break time to time-zero
 #'
 #' Account for the delay time between time of wave emission and time of first
 #' wave break recording due to the antenna separation (offset).
-#' @rdname timeCorOffset
+#' 
+#' @rdname firstBreakToTime0
 #' @export
 firstBreakToTime0 <- function(fb, x, c0 = 0.299){
   if(length(x@antsep) == 0 || (!is.numeric(x@antsep))){

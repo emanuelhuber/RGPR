@@ -58,6 +58,8 @@ html {
   padding: 2rem 1rem;
   color: rgba(255,255,255,.5);
   background-color: #202020;
+  overflow-x: hidden; 
+  overflow-y: auto; 
 }
 @media (min-width: 48em) {
   .sidebar {

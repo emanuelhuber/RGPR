@@ -2957,7 +2957,11 @@ interpPosFromGeoJSON <- function(x, geojson, tol = NULL, backproject = TRUE){
 #' @rdname relTrPos
 #' @export
 setMethod("relTrPos", "GPR", function(x, last = FALSE){
-  return(posLine(x@coord[ ,1:2], last = last))
+  if(length(x@coord) > 0){
+    return(posLine(x@coord[ ,1:2], last = last))
+  }else{
+    stop("No coordinates")
+  }
 } 
 )
 

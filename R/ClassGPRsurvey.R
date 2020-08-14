@@ -485,10 +485,11 @@ setMethod("getGPR", "GPRsurvey", function(x,id){
         stop("There is no GPR data with the name '", trimStr(id),"'\n")
       }
     }
-    if(length(x@coords[[gpr@name]])>0){
+    if(length(x@coords[[gpr@name]]) > 0){
       gpr@coord <- x@coords[[gpr@name]]
+      gpr@pos <- relTrPos(gpr)
     }
-    if(length(x@intersections[[gpr@name]])>0){
+    if(length(x@intersections[[gpr@name]]) > 0){
       #ann(gpr) <- x@intersections[[gpr@name]][,3:4,drop=FALSE]
       ann(gpr) <- cbind(x@intersections[[gpr@name]]$trace,
                         x@intersections[[gpr@name]]$name)
@@ -499,10 +500,9 @@ setMethod("getGPR", "GPRsurvey", function(x,id){
     }else{
       gpr@crs <- x@crs[no]
     }
-    if(length(x@coordref)>0){
+    if(length(x@coordref) > 0){
       gpr@coordref <- x@coordref
     }
-    gpr@pos <- relTrPos(gpr)
     return(gpr)
   }
 )

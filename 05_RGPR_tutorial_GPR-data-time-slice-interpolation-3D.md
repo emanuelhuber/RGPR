@@ -75,11 +75,11 @@ Set the filepaths
 
 Read all the GPR records (".DZT") located in the directory `/exampleDataCube/Grid-dir1-Rawdata/`
 
-    ```r
-    LINES <- file.path( paste0("FILE____", sprintf("%03d", 1:46), ".DZT"))
-    ```
+``` r
+LINES <- file.path( paste0("FILE____", sprintf("%03d", 1:46), ".DZT"))
+```
 
-`sprintf` format the integer values ranging from 1 to 46 such that they match the file names (e.g., 1 becomes 001, 2 becomes 002,..., 46 becomes 046). The `0` in `"%03d"` means pad with zeros to the field, `3` means that the field length is `3`, `d` that the values are integer.
+`sprintf` format the integer values ranging from 1 to 46 such that they match the file names (e.g., 1 becomes `"001"`, 2 becomes `"002"`,..., 46 becomes `"046"`). The `0` in `"%03d"` means pad with zeros to the field, `3` means that the field length is `3`, `d` that the values are integer.
 
 Create an object of the class `GPRsurvey`
 -----------------------------------------

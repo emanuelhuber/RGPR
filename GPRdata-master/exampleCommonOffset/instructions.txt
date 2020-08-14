@@ -1,0 +1,12 @@
+INSTRUCTIONS
+------------
+
+Example on how to process common-offset profiles without using the GUI.
+
+On windows, run in a python command prompt (like Anaconda Prompt):
+
+CommonOffset.py
+
+On Mac or Linux, run in the terminal:
+
+python3 CommonOffset.py

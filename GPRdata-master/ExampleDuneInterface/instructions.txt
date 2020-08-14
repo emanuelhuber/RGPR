@@ -1,0 +1,42 @@
+INSTRUCTIONS
+------------
+
+Preprocessing the profiles and exporting to VTK (for Paraview)
+
+For windows, run in a python command prompt:
+
+processProfiles.py
+
+For Mac, Linux, Chrome OS, run in a terminal:
+
+python3 processProfiles.py
+
+To create an interpolated surface from the picked points:
+
+Windows:
+
+picksToSurface.py
+
+Mac, Linux, Chrome OS:
+
+python3 picksToSurface.py
+
+
+Now open profile1.vts, profile2.vts, and surface_spline21.vts in Paraview
+(available from https://www.paraview.org/download/)
+
+To pick your own points and create a surface:
+1) Preprocess the data using the GPRPy Profile GUI.
+   Use 3D data for topo correction
+2) Pick points using "start pick".
+   To save the picked points, use "stop pick".
+3) The for each profile, the picked points are saved in a txt file
+   with _3D.txt at the end. Merge them into one file (for example
+   using copy-paste).
+4) In python, run
+   from gprpy.interpSurface import *
+   interpSurface('pick_combined.txt','outname',nxgrid=200,
+                 nygrid=200,method='spline',kx=2,ky=1)
+   adapt the options to your liking
+
+

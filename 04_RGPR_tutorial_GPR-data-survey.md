@@ -1,7 +1,6 @@
 ---
 layout: page
-title: Adding coordinates to GPR data
-date: 2020-06-04
+title: Add coordinates date: 2020-08-14
 ---
 
 <!--
@@ -188,7 +187,7 @@ mySurvey
     ## 5 LINE04   111.     m 2014-04-25  100    NO  NO LINE04.DT1
     ## ****************
 
-You can see that no coordinates (x,y,z) are associated with the GPR data. Therefore, if you try to plot the suvey you will get:
+You can see that no coordinates (x,y,z) are associated with the GPR data. Therefore, if you try to plot the survey you will get:
 
 ``` r
 plot(mySurvey, asp = 1) # throw an error

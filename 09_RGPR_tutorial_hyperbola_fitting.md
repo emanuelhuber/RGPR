@@ -1,13 +1,8 @@
 ---
 layout: page
 title: Hyperbola fitting
-date: 2020-05-20
+date: 2020-08-14
 ---
-
-<!--
-"/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
-"G:/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
--->
 
 ------------------------------------------------------------------------
 
@@ -62,7 +57,7 @@ x <- frenkeLine00
 plot(x)
 ```
 
-![plot(x)](07_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/x-1.png)
+![plot(x)](09_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/x-1.png)
 
 Basic processing
 ----------------
@@ -79,7 +74,7 @@ x <- x %>%  estimateTime0(w = 5, method = "MER", FUN = mean) %>%
 plot(x)
 ```
 
-![proc](07_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/proc-1.png)
+![proc](09_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/proc-1.png)
 
 Hyperbola fitting
 =================
@@ -124,7 +119,7 @@ Plot the fitted hyperbola
     hyperbolaPlot(hyp, x = seq(5, 50, by = 0.01), col = "red", lwd = 2)
     ```
 
-![plot1a](07_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/plot1a-1.png)
+![plot1a](09_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/plot1a-1.png)
 
 -   Plot the hyperbola without defining its x-position (in this case the hyperbola is displayed over the entire plot)
 
@@ -134,7 +129,7 @@ Plot the fitted hyperbola
     hyperbolaPlot(hyp, col = "red", lwd = 2)
     ```
 
-![plot1b](07_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/plot1b-1.png)
+![plot1b](09_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/plot1b-1.png)
 
 -   Define the hyperbola range with `xlim` and add some annotations:
 
@@ -144,7 +139,7 @@ Plot the fitted hyperbola
     hyperbolaPlot(hyp, col = "red", lwd = 2, xlim = c(10, 40), ann = TRUE)
     ```
 
-![plot1c](07_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/plot1c-1.png)
+![plot1c](09_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/plot1c-1.png)
 
 Plot an hyperbola defined by its vertex position and the root-mean-square velocity
 ----------------------------------------------------------------------------------
@@ -163,7 +158,7 @@ points(hyp$x0, hyp$t0, pch = 20, col = "red", cex = 1.3)
 hyperbolaPlot(hyp2, col = "blue", lwd = 2, ann = TRUE)
 ```
 
-![hyp\_parameters\_plot](07_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/hyp2_plot-1.png)
+![hyp\_parameters\_plot](09_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/hyp2_plot-1.png)
 
 Simulate an hyperbola
 ---------------------
@@ -178,7 +173,7 @@ Simulate an hyperbola
     lines(xv, y)
     ```
 
-![sim1](07_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/sim1-1.png)
+![sim1](09_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/sim1-1.png)
 
 -   Defining its vertex position and the root-mean-square velocity:
 
@@ -191,4 +186,4 @@ Simulate an hyperbola
     points(hyp$x0, hyp$t0, pch = 20, col = "blue")
     ```
 
-![sim2](07_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/sim2-1.png)
+![sim2](09_RGPR_tutorial_hyperbola_fitting_tp_files/figure-markdown_github/sim2-1.png)

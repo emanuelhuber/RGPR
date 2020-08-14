@@ -1,13 +1,8 @@
 ---
 layout: page
 title: Class GPR
-date: 2020-05-20
+date: 2020-08-14
 ---
-
-<!--
-"/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
-"G:/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
--->
 
 ------------------------------------------------------------------------
 

@@ -1,13 +1,8 @@
 ---
 layout: page
 title: GPR data deconvolution
-date: 2020-06-04
+date: 2020-08-14
 ---
-
-<!--
-"/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
-"G:/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
--->
 
 ------------------------------------------------------------------------
 
@@ -97,7 +92,7 @@ plot(pos(x), tfb, pch = 20, ylab = "first wave break",
      xlab = "position (m)")
 ```
 
-![plot first wave break time](08_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/first_wave_break-1.png)
+![plot first wave break time](10_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/first_wave_break-1.png)
 
 Convert first wave break to time-zero and set time-zero
 
@@ -132,13 +127,13 @@ x3 <- dewow(x2, type = "runmed", w = 50)     # dewowing:
 plot(x3)                                     # plot the result
 ```
 
-![plot after dewow](08_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/dewow-1.png)
+![plot after dewow](10_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/dewow-1.png)
 
 ``` r
 plot(x3 - x2)                           # plot the difference
 ```
 
-![plot after dewow](08_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/dewow-2.png)
+![plot after dewow](10_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/dewow-2.png)
 
 Frequency filter
 ----------------
@@ -150,7 +145,7 @@ x4 <- fFilter(x3, f = c(5, 20, 300, 400), type = "bandpass",
                 plotSpec = TRUE)
 ```
 
-![](08_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/unnamed-chunk-2-1.png)
+![](10_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/unnamed-chunk-2-1.png)
 
 Time gain
 ---------
@@ -170,7 +165,7 @@ legend("topright",legend=c("before","power gain", "exponential gain"),
        lwd=c(1,1,1), col=c("red","blue","green"))
 ```
 
-![](08_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/unnamed-chunk-3-1.png)
+![](10_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/unnamed-chunk-3-1.png)
 
 Mixed phase deconvolution
 -------------------------
@@ -184,7 +179,7 @@ W <- which(depth(x6) > tWin[1] & depth(x6) < tWin[2])
 plot(x6[W, ], main = "selected time window")
 ```
 
-![](08_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/unnamed-chunk-4-1.png)
+![](10_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/unnamed-chunk-4-1.png)
 
 ### Minimum-phase deconvolution and phase rotation
 
@@ -195,7 +190,7 @@ x_dec <- deconv(x6, method="mixed-phase", W = tWin, wtr = 5, nf = 35,
                 mu = 0.00001)
 ```
 
-![](08_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/unnamed-chunk-5-1.png)
+![](10_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/unnamed-chunk-5-1.png)
 
 ``` r
 x <- x6@data[,1]
@@ -217,7 +212,7 @@ phi <- 0.324
   xrot <- phaseRotation(x6[,1], 0.234)
 ```
 
-Estimated phase rotation: 114.59°.
+Estimated phase rotation: 103.13°.
 
 The function `deconv()` (when `method = "mixed-phase"`) returns a list of following elements:
 
@@ -255,7 +250,7 @@ apply(w_mix$y,2,lines, x = w_mix$x, col=rgb(0.2,0.2,0.2,0.2))
 lines(w_mix$x, apply(w_mix$y,1,mean), col="red", lwd=3)
 ```
 
-![](08_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/unnamed-chunk-6-1.png)
+![](10_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/unnamed-chunk-6-1.png)
 
 Frequency filter
 ----------------
@@ -267,7 +262,7 @@ x7 <- fFilter(x_dec$x, f = c(5, 20, 160, 210), type = "bandpass",
                     plot = TRUE)
 ```
 
-![](08_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/unnamed-chunk-7-1.png)
+![](10_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/unnamed-chunk-7-1.png)
 
 Trace scaling
 -------------
@@ -283,10 +278,10 @@ Comparison
 plot(x6, main = "before deconvolution", clip = 30)
 ```
 
-![](08_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/unnamed-chunk-9-1.png)
+![](10_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
 ``` r
 plot(x8, main = "after deconvolution",  clip = 2)
 ```
 
-![](08_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/unnamed-chunk-9-2.png)
+![](10_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/unnamed-chunk-9-2.png)

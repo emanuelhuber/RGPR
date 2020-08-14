@@ -1,6 +1,7 @@
 ---
 layout: page
-title: Add coordinates date: 2020-08-14
+title: Add coordinates
+date: 2020-08-14
 ---
 
 <!--

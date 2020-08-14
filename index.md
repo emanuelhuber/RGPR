@@ -49,8 +49,13 @@ I am developing this package on my free time as a gift to the GPR community. Any
 3. [Basic GPR data processing](02_RGPR_tutorial_basic-GPR-data-processing)
 4. [Pipe processing](03_RGPR_tutorial_processing-GPR-data-with-pipe-operator)
 5. [Add coordinates to GPR data](04_RGPR_tutorial_GPR-data-survey)
-6. [GPR data migration](05_RGPR_tutorial_GPR-data-migration)
-7. [Some explanations on the class GPR](06_RGPR_tutorial_class-GPR)
+6. [Time/depth slice interpolation](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D)
+7. [GPR data migration](07_RGPR_tutorial_GPR-data-migration)
+8. [Hyperbola fitting](09_RGPR_tutorial_hyperbola_fitting)
+9. [Deconvolution](10_RGPR_mixed-phase-wavelet-deconvolution)
+10. [Some explanations on the classes of RGPR](70_RGPR_tutorial_class-GPR)
+11. [Free GPR data to download](80_RGPR_GPR-data-free-to-download)
+12. [RGPR in the web](99_GPR_on_the_web)
 
 
 ## How to install/load

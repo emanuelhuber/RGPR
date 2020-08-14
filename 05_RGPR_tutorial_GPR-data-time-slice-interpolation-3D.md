@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Adding coordinates to GPR data
+title: Time/depth slice interpolation
 date: 2020-08-14
 ---
 
@@ -165,13 +165,14 @@ Reverse GPR line direction (if necessary)
 For this approach, all the data must be oriented in the same direction (the x-lines must have the same direction, the y-lines must have the same direction). If this is not the case for your data, you can use the function `reverse()` to reverse the GPR line. You can specifiy which lines must be reversed:
 
 ``` r
-SU <- reverse(SU, id = seq(from = 2, to = 11, by = 2)) # equivalent to above
+SU <- reverse(SU, id = seq(from = 2, to = 11, by = 2))
 ```
 
 or if your data were collected in zig-zag (two adjacent GPR lines have opposite direction), you can use the argument `"zigzag"`:
 
 ``` r
-SU <- reverse(SU, id = "zigzag")   #all the even GPR lines are reversed
+#all the even GPR lines are reversed
+SU <- reverse(SU, id = "zigzag")
 ```
 
 Set grid coordinaes
@@ -191,16 +192,20 @@ For example, if your data were collected as follows:
 
 ``` r
 setGridCoord(SU) <- list(xlines = 1:10,
-                         xpos   = seq(0, by = 2, length.out = 10),
+                         xpos   = seq(0,
+                                      by = 2,
+                                      length.out = 10),
                          ylines = 15 + (1:10),
                          ypos   = c(0, 1, 2, 4, 6))
 ```
 
-In our case we have only x-lines, so we set `NULL` to `ylines` and `ypos`:
+In our case we have only x-lines, so we set `ylines` and `ypos` equal to `NULL`:
 
 ``` r
 setGridCoord(SU) <- list(xlines = seq_along(SU),
-                         xpos   = seq(0, by = 0.2, length.out = length(SU)),
+                         xpos   = seq(0,
+                                      by = 0.2,
+                                      length.out = length(SU)),
                          ylines = NULL,
                          ypos   = NULL)
 ```
@@ -216,12 +221,7 @@ plot(SU, asp = TRUE)
 If you want to shift the coordinates by 1 m along x-direction, 0.5 m along the y-direction for your 3rd GPR data line, use `tpShift()` as follows
 
 ``` r
-SU2 <- tpShift(SU, 3, dx = 1, dy = 0.5)
-```
-
-    ## Coordinates of the local system: 0 0 0
-
-``` r
+SU2 <- tpShift(SU, 3, dx = 0.1, dy = 0.5)
 plot(SU2)
 ```
 
@@ -247,62 +247,14 @@ We apply some basic processing steps sequentially (estimate time-zero and shift 
 ``` r
 SU <- papply(SU,
              prc = list(estimateTime0 = list(method = "coppens", w = 2),
-                        time0Cor = NULL,   # "NULL" because we take the default
+                        # "NULL" because we take the default
+                        time0Cor = NULL,
                         dewow = list(w = 3),
                         gain = list(type = "agc", w = 1.2) #,
                         # traceStat = list(w = 20, FUN = mean),
                         # envelope = NULL)
 ))
 ```
-
-    ## Processing FILE____001... done!
-    ## Processing FILE____002... done!
-    ## Processing FILE____003... done!
-    ## Processing FILE____004... done!
-    ## Processing FILE____005... done!
-    ## Processing FILE____006... done!
-    ## Processing FILE____007... done!
-    ## Processing FILE____008... done!
-    ## Processing FILE____009... done!
-    ## Processing FILE____010... done!
-    ## Processing FILE____011... done!
-    ## Processing FILE____012... done!
-    ## Processing FILE____013... done!
-    ## Processing FILE____014... done!
-    ## Processing FILE____015... done!
-    ## Processing FILE____016... done!
-    ## Processing FILE____017... done!
-    ## Processing FILE____018... done!
-    ## Processing FILE____019... done!
-    ## Processing FILE____020... done!
-    ## Processing FILE____021... done!
-    ## Processing FILE____022... done!
-    ## Processing FILE____023... done!
-    ## Processing FILE____024... done!
-    ## Processing FILE____025... done!
-    ## Processing FILE____026... done!
-    ## Processing FILE____027... done!
-    ## Processing FILE____028... done!
-    ## Processing FILE____029... done!
-    ## Processing FILE____030... done!
-    ## Processing FILE____031... done!
-    ## Processing FILE____032... done!
-    ## Processing FILE____033... done!
-    ## Processing FILE____034... done!
-    ## Processing FILE____035... done!
-    ## Processing FILE____036... done!
-    ## Processing FILE____037... done!
-    ## Processing FILE____038... done!
-    ## Processing FILE____039... done!
-    ## Processing FILE____040... done!
-    ## Processing FILE____041... done!
-    ## Processing FILE____042... done!
-    ## Processing FILE____043... done!
-    ## Processing FILE____044... done!
-    ## Processing FILE____045... done!
-    ## Processing FILE____046... done!
-
-    ## Coordinates of the local system: 0 0 0
 
 Does it look better now?
 
@@ -360,7 +312,7 @@ You can define the same color range for each plot:
 ``` r
 # color range (over all possible slice values)
 clim <- range(SXY)
-plot(SXY[,,50])
+plot(SXY[,,50], clim = clim)
 ```
 
 ![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-20-1.png)

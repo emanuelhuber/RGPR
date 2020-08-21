@@ -155,11 +155,10 @@ readDT <- function(dsn){
       hd$rx_alpha <- ascii2num(dsn, 16)
       hd$rx_freq <- ascii2num(dsn, 5)
     }else if(substr(u, 1, 2) == "GI"){
-      message("'GI' not yet implemented!")
+      #message("'GI' not yet implemented!")
       hd$GI <- ascii2num(dsn, 16)  # 0 in 1 file.
     }else{
       message("'", u, "' not yet implemented!")
-      
     }
     # else if(substr(u, 1, 3) == "AC1"){
     #   message("'AC1' not yet implemented!")
@@ -172,7 +171,11 @@ readDT <- function(dsn){
   
   invisible(seek(dsn, where = pos, origin = "start"))
   
-  if(hd$n_sampler_y > 0 && hd$n_sampler_x > 0) print("OK")
+  if(!(hd$n_sampler_y > 0 && hd$n_sampler_x > 0)){
+    warning("Something is weird with you file (", hd$n_sampler_y, ", ",
+            hd$n_sampler_x, ") ... ",
+            "Please contact me: emanuel.huber@alumni.ethz.ch")
+  }
   
   DD <- matrix(nrow = hd$n_sampler_y, ncol = hd$n_sampler_x)
   DDhd1 <- numeric(hd$n_sampler_x)

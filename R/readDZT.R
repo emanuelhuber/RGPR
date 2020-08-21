@@ -1,5 +1,7 @@
 .gprDZT <- function(x, fName = character(0), desc = character(0),
-                    fPath = character(0), Vmax = 50, ch = 1){
+                    fPath = character(0), Vmax = NULL, ch = 1){
+  if(is.null(Vmax)) Vmax <- 50
+  
   
   #  take the channel ch
   if(ch > length(x$data)){

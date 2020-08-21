@@ -3,6 +3,15 @@ setGenericVerif("upsample", function(x,n) standardGeneric("upsample"))
 #---------------------- INTERPOLATION ---------------------#  
 #' Up-sample the GPR data (1D and 2D sinc-interpolation)
 #'
+#' When upsampling is performed on a GPR data, it produces an approximation of 
+#' the data that would have been collected by sampling them at a higher rate in
+#' time/depth domain and/or in spatial domain (trace sampling). 
+#' 
+#' @param x [\code{GPR class}]
+#' @param n [\code{integer(1|2)}] Two positive integer values. The GPR data are
+#'          upsampled in the time/depth domain by a factor of \code{n[1]} and 
+#'          in the spatial domain (trace sampling) by a factor of \code{n[2]}. 
+#'          If only one value is passed, then \code{n[2] <- n[1]}.
 #' @name upsample
 #' @rdname upsample
 #' @export

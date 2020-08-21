@@ -1,6 +1,10 @@
 
 .gprSGY <- function(x, fName = character(0), desc = character(0),
-                    fPath = character(0), Vmax = 50){
+                    fPath = character(0), Vmax = NULL){
+  
+  if(is.null(Vmax)) Vmax <- 50
+  
+  
   n <- ncol( x$DTR$data)
   data_xyz <- matrix( c(x$DTR$trHD[16,], x$DTR$trHD[17,], x$DTR$trHD[12,]),
                       nrow = n, ncol = 3, byrow = FALSE)

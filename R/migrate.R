@@ -202,9 +202,9 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
   fdo <- fdo * 10^6   # from MHz to Hz
   lambda <- fdo / v * 10^-9
   v2 <- v^2
-  message("max depth1 = ", max_depth)
+  # message("max depth1 = ", max_depth)
   max_depth <- max_depth + max(z)
-  message("max depth2 = ", max_depth)
+  # message("max depth2 = ", max_depth)
   kirTopoGPR <- matrix(0, nrow = floor(max_depth/dz) + 1, ncol = m)
   
   dx <- mean(diff(xpos))

@@ -3,7 +3,10 @@
 
 
 .gprImpulseRadar <- function(x, fName = character(0), desc = character(0),
-                             fPath = character(0), Vmax = 50){ 
+                             fPath = character(0), Vmax = NULL){ 
+  
+  if(is.null(Vmax)) Vmax <- 50
+  
   rec_coord <- matrix(nrow = 0, ncol = 0)
   trans_coord <- matrix(nrow = 0, ncol = 0)
   coord <- matrix(nrow = 0, ncol = 0)

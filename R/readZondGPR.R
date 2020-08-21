@@ -1,7 +1,10 @@
 
 
 .gprSEGY <- function(x, fName = character(0), desc = character(0),
-                     fPath = character(0), Vmax = 50){  
+                     fPath = character(0), Vmax = NULL){  
+  
+  if(is.null(Vmax)) Vmax <- 50
+  
   
   if( all(diff(x$hdt[4,]) > 0) || all(diff(x$hdt[5,]) > 0)){
     x_coord <- matrix(0, nrow = ncol(x$data), ncol = 3)

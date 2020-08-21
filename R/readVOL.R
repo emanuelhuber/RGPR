@@ -1,4 +1,8 @@
 .gprVOL <- function(x, fName = "", fPath = "", desc = "", Vmax = 50){
+  
+  if(is.null(Vmax)) Vmax <- 50
+  
+  
   if(is.null(x$hd$zmin) && !is.null(x$hd$dz)){
     x_depth <- seq(x$hd$zmin, by = as.numeric(x$hd$dz), length.out = x$hd$z_dim)
   }else{

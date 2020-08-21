@@ -2116,7 +2116,7 @@ byte2volt <- function( Vmax = 50, Vmin = 50, nBytes = 16) {
 #' @param nbits Length-one numeric vector: number of bits
 #' @export
 bits2volt <- function( Vmax = 50, Vmin = 50, nbits = 16) {
-  if(is.null(Vmax)){
+  if(is.null(Vmax) || isFALSE(Vmax)){
     return(1L)
   }else{
     if( missing(Vmin) ){

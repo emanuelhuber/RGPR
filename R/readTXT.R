@@ -3,6 +3,9 @@
 .gprTXT <- function(A, fName = character(0), desc = character(0),
                     fPath = character(0), Vmax = NULL){  
   
+  if(is.null(Vmax)) Vmax <- 50
+  
+  
   if(!is.null(A$depth) && !is.null(A$pos)){
     x <- list(data = bits2volt(Vmax = Vmax)*A$data,
               pos = A$pos,

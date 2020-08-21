@@ -45,6 +45,8 @@ Collate:
   'readVOL.R'
   'readUTSI.R'
   'readTXT.R'
+  'readIDS.R'
+  'readSGPR.R'
   'data.R'
   'ampl.R'
   'adjustGamma.R'

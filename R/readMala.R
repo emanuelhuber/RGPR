@@ -3,8 +3,11 @@
 #--------------- read MALA files -------------------#
 
 .gprRD3 <- function(x, fName = character(0), desc = character(0),
-                    fPath = character(0), nbits = 16, Vmax = 50){  
+                    fPath = character(0), nbits = NULL, Vmax = NULL){  
   #====== HEADER DATA (FILE *.HD) ======#
+  if(is.null(Vmax)) Vmax <- 50
+  if(is.null(nbits)) Vmax <- 16
+  
   pos_used <- integer(nrow(x$hd))
   # OK
   ttw  <- .getHD(x$hd,"TIMEWINDOW", position = TRUE)
@@ -90,7 +93,7 @@
       traces      = 1:ncol(x$data),
       fid         = rep("", ncol(x$data)),
       #coord = coord,
-      coord       = matrix(nrow=0, ncol = 0),
+      coord       = matrix(nrow = 0, ncol = 0),
       pos         = seq(0, by = dx[1], length.out = ncol(x$data)),
       depth       = seq(0, by = dz, length.out = nrow(x$data)),
       rec         = matrix(nrow = 0, ncol = 0),

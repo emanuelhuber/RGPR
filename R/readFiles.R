@@ -4,15 +4,24 @@
 #' 
 #' Supported file format
 #' \itemize{
-#'   \item Sensors & Software file format (*.dt1 , *.hd).
+#'   \item Sensors & Software file format (*.dt1 , *.hd, *.gps).
 #'         \code{readGPR(dsn = 'xline.dt1')}
-#'   \item MALA file format (*.rd3, *.rad).
+#'   \item MALA file format (*.rd3/*.rd7, *.rad, *.cor).
 #'         \code{readGPR(dsn = 'xline.rd3')}
+#'   \item ImpulseRadar file format  (*.iprb, *.iprh, *.cor, *.time).
+#'         \code{readGPR(dsn = 'xline.iprb')}
+#'   \item GSSI file format (*.dzt, *.dzx, *.dzg).
+#'         \code{readGPR(dsn = 'xline.dzt')}
+#'   \item Geomatrix Earth Science Ltd file format (*.sgpr).
+#'         \code{readGPR(dsn = 'xline.sgpr')}
+#'   \item Transient Technologies (*.dat, *.hdr, *.gpt, *.gps).
+#'   \item IDS (*.dt, *.gec).
+#'         \code{readGPR(dsn = 'xline.dt')}
+#'   \item SEG-Y file format (*.sgy/*.segy).
+#'         \code{readGPR(dsn = 'xline.sgy')}  
 #'   \item RadSys Zond GPR device (*.sgy). 
 #'         \strong{Note: it is not the SEG-Y file format)}.
 #'         \code{readGPR(dsn = 'xline.sgy')}  
-#'   \item GSSI file format (*.dzt).
-#'         \code{readGPR(dsn = 'xline.dzt')}
 #'   \item ASCII file format (*.txt): either 4-column format 
 #'         (x,t,amplitude) or matrix-format (without header/rownames).
 #'         \code{readGPR(dsn = 'xline.txt')}  
@@ -20,11 +29,6 @@
 #'         \code{GPR} object with 
 #'         \code{writeGPR(x, fPath = 'xline.rds', type = "rds")}.
 #'         \code{readGPR(dsn = 'xline.txt')}  
-#' }
-#' TO DO:
-#' \itemize{
-#'   \item Impulse Radar: read markers file
-#'   \item ...
 #' }
 #' @param dsn data source name: either the filepath to the GPR data (character),
 #'            or an open file connection (can be a list of filepahts or
@@ -37,8 +41,11 @@
 #'               \code{txt}, \code{rds})
 #' @param Vmax length-one numeric vector: nominal analog input voltage used 
 #'             for the bits to volt transformation. 
-#'             It assumes that \code{Vmin = -Vmax}. If \code{Vmax = NULL},
-#'             no bits to Volt transformation is applied.
+#'             It assumes that \code{Vmin = -Vmax}. If \code{Vmax = NULL}, the 
+#'             default values depending on the file format and given by the
+#'             GPR device manufacturer will be used. If \code{Vmax = FALSE},
+#'             no bits to Volt transformation is applied (i.e., the bit values
+#'             are returned).
 #' @param fPath Filepath (character). DEPRECATED. Use \code{dsn} instead.
 #' @param ch For multi-frequency GSSI files (*.dzt), which channel is red.
 #' @param verbose (boolean). If \code{FALSE}, all messages and warnings are
@@ -74,7 +81,7 @@
 #' @name readGPR
 #' @rdname readGPR
 #' @export
-readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
+readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
                     fPath, ch = 1, verbose = TRUE, interp_pos = TRUE, 
                     method = c("linear", "linear", "linear")){
   
@@ -82,8 +89,8 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
     if(missing(dsn)){
       dsn <- fPath
     }
-    warning("Use argument 'dsn' instead of 'fPath' because ",
-            "argument 'fPath' is deprecated.")
+    warning("Argument 'fPath' is deprecated. Use instead ",
+            "'dsn' (data source name)")
   }
   
   if(!is.null(dsn2)){
@@ -218,7 +225,46 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
               # Choose a return value in case of error
               return(x)
             })
+    }    
+  #----------------------------------- IDS -----------------------------------#
+  #-------------------------- DT  (+ GEC) -------------------------------#
+  }else if( "DT" %in% toupper(ext)  ){
+    if(length(dsn) == 1){
+      dsn <- list(DT  = dsn[["DT"]], 
+                  GEC = getFName(fPath[1], ext = ".GEC", throwError = FALSE)$gec)
+    }else{
+      if( !("GEC" %in% toupper(ext)) ){
+        dsn <- c(dsn, list(GEC = getFName(fPath[1], ext = ".GEC", throwError = FALSE)$gec))
+      }
     }
+    y <- verboseF( readDT(dsn[["DT"]]), verbose = verbose)
+    x <- verboseF( .gprDT(y, 
+                           fName = fName[["DT"]], fPath = fPath[["DT"]], 
+                           desc = desc, Vmax = Vmax), verbose = verbose)
+    if( !is.null(dsn[["GEC"]]) && isTRUE(interp_pos)){
+      x <- tryCatch({
+        x_mrk <-  verboseF(readGEC(dsn[["GEC"]]), verbose = verbose)
+        x <- interpPos(x, x_mrk, tol = sqrt(.Machine$double.eps), 
+                       method = method)
+        crs(x) <- paste0("+init=epsg:32635 +proj=utm +zone=", 
+                         x_mrk[1,"crs"], 
+                         " +datum=WGS84 +units=m +no_defs## +ellps=WGS84 +towgs84=0,0,0")
+        x
+      },
+      error = function(cond) {
+        message("I could neither read your GPS data ",
+                "nor interpolate the trace position.")
+        # Choose a return value in case of error
+        return(x)
+      })
+    }
+  #----------------------- TRANSIENT TECHNOLOGIES -----------------------------#
+  #---------------------------------- SGPR ------------------------------------#
+  }else if( "SGPR" %in% toupper(ext)  ){
+    y <- verboseF( readSGPR(dsn[["SGPR"]]), verbose = verbose)
+    x <- verboseF( .gprSGPR(y, 
+                           fName = fName[["SGPR"]], fPath = fPath[["SGPR"]], 
+                           desc = desc, Vmax = Vmax), verbose = verbose)
   #---------------------------SEG-Y +  EASY RADAR -----------------------------#
   #------------------------------- SEG/SEG-Y ----------------------------------#
   }else if(any(c("SGY", "SEGY") %in% toupper(ext))){
@@ -329,10 +375,6 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
   #------------------------------ DZT (+ DZX, DZG) ----------------------------#
   }else if("DZT" %in% toupper(ext)){
     if(length(dsn) == 1){
-      if(inherits(dsn, "connection")){
-        stop("Please add an additional connection to 'dsn' in 'readGPR()' for ",
-             "the header file '*.iprh'")
-      }
       dsn <- list(DZT = dsn[["DZT"]], 
                   DZX = getFName(fPath[1], ext = ".DZX", throwError = FALSE)$dzx,
                   DZG = getFName(fPath[1], ext = ".DZG", throwError = FALSE)$dzg)
@@ -496,8 +538,8 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = 50,
     }
   }else{
     stop(paste0("File extension not recognised!\n",
-                "Must be '.DT1', '.dzt', '.rd3', '.sgy', '.segy', '.rds'\n",
-                "'.iprb', '.iprh', '.dat', or '.vol'."))
+                "Must be '.dt1', '.dzt', '.rd3', '.sgy', '.segy', '.rds'\n",
+                "'.iprb', '.iprh', '.dat', '.sgpr', '.dt' or '.vol', ."))
   }
   if(grepl("CMP", x@surveymode)){
     x@surveymode <- "CMP"
@@ -650,3 +692,15 @@ getFPath <- function(x){
 # .skipBin <- function(con, n, size = 1L){
 #   if(n > 0) invisible(readBin(con, "integer", n = n, size = size))
 # }
+
+# read characters and coerce them to numeric
+ascii2num <- function(con, n){
+  x <- readBin(con, what = integer(), n = n, size = 1)
+  return( as.numeric(intToUtf8(x)) )
+}
+
+readBinChar <- function(con, n = 1L, size = NA_integer_, signed = TRUE, 
+                        endian = .Platform$endian){
+  intToUtf8(readBin(con, what = integer(), n = n, size = size, 
+                    signed = signed, endian = endian))
+}

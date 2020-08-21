@@ -9,7 +9,7 @@ readGPR(
   desc = "",
   dsn2 = NULL,
   format = NULL,
-  Vmax = 50,
+  Vmax = NULL,
   fPath,
   ch = 1,
   verbose = TRUE,
@@ -33,8 +33,11 @@ not appearent in the filepath or the connection (either
 
 \item{Vmax}{length-one numeric vector: nominal analog input voltage used 
 for the bits to volt transformation. 
-It assumes that \code{Vmin = -Vmax}. If \code{Vmax = NULL},
-no bits to Volt transformation is applied.}
+It assumes that \code{Vmin = -Vmax}. If \code{Vmax = NULL}, the 
+default values depending on the file format and given by the
+GPR device manufacturer will be used. If \code{Vmax = FALSE},
+no bits to Volt transformation is applied (i.e., the bit values
+are returned).}
 
 \item{fPath}{Filepath (character). DEPRECATED. Use \code{dsn} instead.}
 
@@ -63,15 +66,24 @@ Note: argument \code{fPath} is depreacted. Use \code{dsn} instead.
 \details{
 Supported file format
 \itemize{
-  \item Sensors & Software file format (*.dt1 , *.hd).
+  \item Sensors & Software file format (*.dt1 , *.hd, *.gps).
         \code{readGPR(dsn = 'xline.dt1')}
-  \item MALA file format (*.rd3, *.rad).
+  \item MALA file format (*.rd3/*.rd7, *.rad, *.cor).
         \code{readGPR(dsn = 'xline.rd3')}
+  \item ImpulseRadar file format  (*.iprb, *.iprh, *.cor, *.time).
+        \code{readGPR(dsn = 'xline.iprb')}
+  \item GSSI file format (*.dzt, *.dzx, *.dzg).
+        \code{readGPR(dsn = 'xline.dzt')}
+  \item Geomatrix Earth Science Ltd file format (*.sgpr).
+        \code{readGPR(dsn = 'xline.sgpr')}
+  \item Transient Technologies (*.dat, *.hdr, *.gpt, *.gps).
+  \item IDS (*.dt, *.gec).
+        \code{readGPR(dsn = 'xline.dt')}
+  \item SEG-Y file format (*.sgy/*.segy).
+        \code{readGPR(dsn = 'xline.sgy')}  
   \item RadSys Zond GPR device (*.sgy). 
         \strong{Note: it is not the SEG-Y file format)}.
         \code{readGPR(dsn = 'xline.sgy')}  
-  \item GSSI file format (*.dzt).
-        \code{readGPR(dsn = 'xline.dzt')}
   \item ASCII file format (*.txt): either 4-column format 
         (x,t,amplitude) or matrix-format (without header/rownames).
         \code{readGPR(dsn = 'xline.txt')}  
@@ -79,11 +91,6 @@ Supported file format
         \code{GPR} object with 
         \code{writeGPR(x, fPath = 'xline.rds', type = "rds")}.
         \code{readGPR(dsn = 'xline.txt')}  
-}
-TO DO:
-\itemize{
-  \item Impulse Radar: read markers file
-  \item ...
 }
 }
 \examples{

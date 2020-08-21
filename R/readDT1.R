@@ -8,7 +8,9 @@
 
 # x = classical GPR list
 .gprDT1 <- function(x, fName = character(0), desc = character(0),
-                 fPath = character(0), Vmax = 50){
+                 fPath = character(0), Vmax = NULL){
+  if(is.null(Vmax)) Vmax <- 50
+  
   rec_coord <- cbind(x$dt1$recx, x$dt1$recy, x$dt1$recz)
   trans_coord <- cbind(x$dt1$transx, x$dt1$transy, x$dt1$transz)
   if(sum(is.na(rec_coord)) > 0){

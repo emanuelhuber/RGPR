@@ -1,5 +1,7 @@
-.gprUtsi <- function(x, fName = fName, fPath = fPath, 
-                     desc = desc, Vmax = Vmax){
+.gprUtsi <- function(x, fName = "", fPath = "", 
+                     desc = "", Vmax = NULL){
+  
+  if(is.null(Vmax)) Vmax <- 50
   
   y <- new("GPR", 
            version     = "0.2",

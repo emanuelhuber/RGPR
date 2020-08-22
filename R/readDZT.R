@@ -166,7 +166,7 @@
 
 
 
-
+#' @export
 readDZT <- function(dsn){
   
   if(!inherits(dsn, "connection")){
@@ -310,7 +310,7 @@ readDZT <- function(dsn){
 # dsn <- "dzt/jarvis/PROJECT001__014.DZT"
 # mrk <- readDZG(dsn)
 
-
+#' @export
 readDZG <- function(dsn){
   x <- scan(dsn, what = character(), sep = "\n", quiet = TRUE)
   
@@ -366,7 +366,6 @@ readDZG <- function(dsn){
 #'         sampling.
 #' @export
 readDZX <- function(dsn){
-  
   if(!inherits(dsn, "connection")){
     dsn <- file(dsn, 'rb')
   }
@@ -415,34 +414,120 @@ readDZX <- function(dsn){
     if(length(s1) > 0){
       s0 <- as.integer(strsplit(XML::xmlValue(s1[[1]]), split = ",")[[1]])
       nscans <- length(s0[1]:s0[2])
-      #--- distance
+      #--- select all the distance tags
       dst <- XML::xmlElementsByTagName(fl, "distance", recursive = TRUE)
+      #--- select the sibling tags "scan" and "mark"
+      # here I assume that all tags "distance" have a sibling tag "mark" and "scan"
       if(length(dst) > 0){
-        d0 <- as.numeric(sapply(dst, XML::xmlValue))
-        lst$dx <- (d0[2] - d0[1])/(nscans- 1)
-        lst$pos <- seq(from = d0[1], by = lst$dx, length.out = nscans)
-      }
-      
-      #--- marks !!
-      tst <- XML::xmlElementsByTagName(fl, "mark", recursive = TRUE)
-      if(length(tst) > 0){
-        markers_name <- as.character(sapply(tst, XML::xmlValue))
-        markers_pos <- as.numeric(sapply(tst, .xmlValueSibling ))
-        lst$markers <- character(length = nscans)
-        lst$markers[markers_pos] <- markers_name
+        f <- function(x){
+          papa <- XML::xmlParent(x)
+          i1 <- as.numeric(XML::xmlValue(XML::xmlElementsByTagName(papa, "scan")))
+          i2 <- XML::xmlValue(XML::xmlElementsByTagName(papa, "mark"))
+          if(length(i2) == 0) i2 <- ""
+          i3 <- as.numeric(XML::xmlValue(x))  # distance
+          return(unname(c(i1, i2, i3)))
+        }
+        uu <- sapply(dst, f, USE.NAMES = FALSE)
+        if(inherits(uu, "matrix")){
+          id <- as.integer(uu[1, ]) + 1L
+          pos <- as.numeric(uu[3,])
+          lst$dx <- mean(diff(pos)/ (diff(id) - 1))
+          lst$pos <- approx(id, pos, seq_len(nscans))$y
+          lst$markers <- character(length = nscans)
+          lst$markers[id] <- uu[2,]
+        }else{
+          message("I was unable to read the markers in the file *.dzx")
+        }
+        
       }
     }
-    # return(list(markers = markers, pos = pos, dx = dx))
-  }
-  
-  .closeFileIfNot(dsn)
-  
-  if(length(lst) > 0){
-    return(lst)
-  }else{
-    return(NULL)
+    .closeFileIfNot(dsn)
+    
+    if(length(lst) > 0){
+      return(lst)
+    }else{
+      return(NULL)
+    }
   }
 }
+# readDZX <- function(dsn){
+#   
+#   if(!inherits(dsn, "connection")){
+#     dsn <- file(dsn, 'rb')
+#   }
+#   
+#   xmltxt <-  verboseF(readLines(dsn), verbose = FALSE)
+#   if(length(xmltxt) == 0){
+#     return(NULL)
+#   }
+#   doc <- verboseF(XML::xmlParse(xmltxt),  verbose = FALSE)
+#   
+#   lst <- list()
+#   
+#   glbProp <- XML::xmlChildren(doc)$DZX[["GlobalProperties"]]
+#   if(!is.null(glbProp)){
+#     unitsPerMark <- XML::xmlElementsByTagName(glbProp, "unitsPerMark")
+#     if(length(unitsPerMark) > 0){
+#       unitsPerMark <- as.numeric(XML::xmlValue(unitsPerMark[[1]]))
+#       if(unitsPerMark > 0){
+#         lst$unitsPerMark <- unitsPerMark
+#       }
+#     }
+#     unitsPerScan <- XML::xmlElementsByTagName(glbProp, "unitsPerScan")
+#     if(length(unitsPerScan) > 0){
+#       unitsPerScan <- as.numeric(XML::xmlValue(unitsPerScan[[1]]))
+#       if(unitsPerScan > 0){
+#         lst$unitsPerScan <- unitsPerScan
+#       }
+#     }
+#     vUnit <- XML::xmlElementsByTagName(glbProp, "verticalUnit")
+#     if(length(vUnit) > 0){
+#       vUnit <- XML::xmlValue(vUnit[[1]])
+#       lst$vUnit <- vUnit
+#     }
+#     hUnit <- XML::xmlElementsByTagName(glbProp, "horizontalUnit")
+#     if(length(hUnit) > 0){
+#       hUnit <- XML::xmlValue(hUnit[[1]])
+#       lst$hUnit <- hUnit
+#     }
+#   }
+#   
+#   # Scan range !!
+#   # FIXME : multi channel files
+#   fl <- XML::xmlChildren(doc)$DZX[["File"]]
+#   if(!is.null(fl)){
+#     s1 <- XML::xmlElementsByTagName(fl, "scanRange", recursive = TRUE)
+#     if(length(s1) > 0){
+#       s0 <- as.integer(strsplit(XML::xmlValue(s1[[1]]), split = ",")[[1]])
+#       nscans <- length(s0[1]:s0[2])
+#       #--- distance
+#       dst <- XML::xmlElementsByTagName(fl, "distance", recursive = TRUE)
+#       if(length(dst) > 0){
+#         d0 <- as.numeric(sapply(dst, XML::xmlValue))
+#         lst$dx <- (d0[2] - d0[1])/(nscans- 1)
+#         lst$pos <- seq(from = d0[1], by = lst$dx, length.out = nscans)
+#       }
+#       
+#       #--- marks !!
+#       tst <- XML::xmlElementsByTagName(fl, "mark", recursive = TRUE)
+#       if(length(tst) > 0){
+#         markers_name <- as.character(sapply(tst, XML::xmlValue))
+#         markers_pos <- as.numeric(sapply(tst, .xmlValueSibling ))
+#         lst$markers <- character(length = nscans)
+#         lst$markers[markers_pos] <- markers_name
+#       }
+#     }
+#     # return(list(markers = markers, pos = pos, dx = dx))
+#   }
+#   
+#   .closeFileIfNot(dsn)
+#   
+#   if(length(lst) > 0){
+#     return(lst)
+#   }else{
+#     return(NULL)
+#   }
+# }
 
 .xmlValueSibling <- function(x, after = FALSE){
   XML::xmlValue(XML::getSibling(x, after = after))

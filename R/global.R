@@ -1314,6 +1314,21 @@ wapply <- function(x=NULL, width = NULL, by = NULL, FUN = NULL, ...){
   return(OUT)
 }
 
+#' @export
+wapplyc <- function(x=NULL, width = NULL, by = NULL, FUN = NULL, ...){
+  FUN <- match.fun(FUN)
+  if (is.null(by)) by <- width
+  lenX <- length(x)
+  SEQ1 <- seq(-(width-1)/2 + 1, lenX -(width-1)/2, by = by)
+  SEQ2 <- lapply(SEQ1, function(x){ xnew <- x:(x + width - 1)
+  xnew <- xnew[xnew > 0]
+  xnew <- xnew[xnew <= lenX]})
+  
+  OUT <- lapply(SEQ2, function(a) FUN(x[a], ...))
+  OUT <- base::simplify2array(OUT, higher = TRUE)
+  return(OUT)
+}
+
 #' Wapply on the row of a matrix (windowed)
 #'
 #' NOT CURRENTLY USED.

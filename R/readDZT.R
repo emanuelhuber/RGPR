@@ -372,6 +372,7 @@ readDZX <- function(dsn){
   
   xmltxt <-  verboseF(readLines(dsn), verbose = FALSE)
   if(length(xmltxt) == 0){
+    .closeFileIfNot(dsn)
     return(NULL)
   }
   doc <- verboseF(XML::xmlParse(xmltxt),  verbose = FALSE)

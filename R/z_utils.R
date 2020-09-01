@@ -5,14 +5,14 @@
 #'       
 #' Convert bits to volt values
 #' @param Vmax [\code{numeric(1)}] Maximal nominal analog input voltage. 
-#'             If \code{Vmax = NULL} it returns \code{1} (no bytes to volt 
-#'             transformation)
+#'             If \code{Vmax = NULL} or \code{Vmax = FALSE} 
+#'             it returns \code{1} (no bytes to volt transformation)
 #' @param Vmin [\code{numeric(1)}] Minimal nominal analog input voltage. 
 #'             If missing, then \code{Vmin = -Vmax}.
 #' @param nbits [\code{integer(1)} Number of bits.
 #' @export
 bits2volt <- function( Vmax = 50, Vmin = 50, nbits = 16) {
-  if(is.null(Vmax)){
+  if(is.null(Vmax) || isFALSE(Vmax)){
     return(1L)
   }else{
     if( missing(Vmin) ){

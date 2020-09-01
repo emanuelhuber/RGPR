@@ -9,17 +9,17 @@
 #' @param fPath Filepath (Length-one character vector). If \code{fPath = NULL},
 #'              the file will be save in the current working directory with
 #'              the name of x (\code{name(x)}) with the extension depending 
-#'              of \code{type}.
-#' @param type Format type. See Details.
+#'              of \code{format}.
+#' @param format Format type. See Details.
 #' @param overwrite Boolean. If \code{TRUE} existing files will be overwritten,
 #'                  if \code{FALSE} an error will be thrown if the file(s) 
 #'                  already exist(s).
 #' @param ... additional parameters to be passed to \code{\link{write.table}}
-#'            when \code{type = "ASCII"} or \code{type = "xyza"}.
+#'            when \code{format = "ASCII"} or \code{format = "xyza"}.
 #' @seealso \code{\link{readGPR}}
 #' @name writeGPR
 setGeneric("writeGPR", function(x, fPath = NULL, 
-                                type = c("rds", "DT1", "ASCII", "xta", "xyza"),
+                                format = c("rds", "dt1", "ascii", "xta", "xyza"),
                                 overwrite = FALSE, ...){ standardGeneric("writeGPR")})
 
 
@@ -27,12 +27,12 @@ setGeneric("writeGPR", function(x, fPath = NULL,
 #' @rdname writeGPR
 #' @export
 setMethod("writeGPR", "GPR", function(x, fPath = NULL, 
-                                      type = c("rds", "DT1", "ASCII", "xta", "xyza"),
+                                      format = c("rds", "dt1", "ascii", "xta", "xyza"),
                                       overwrite = FALSE, ...){
-  type <- match.arg(tolower(type), c("rds", "dt1", "ascii", "xta", "xyza"))
+  format <- match.arg(tolower(format), c("rds", "dt1", "ascii", "xta", "xyza"))
   fPath <- ifelse(is.null(fPath), x@name, 
                   file.path(dirname(fPath), .fNameWExt(fPath)))
-  ext <- switch(type,
+  ext <- switch(format,
                 "dt1" = ".dt1",
                 "rds" = ".rds",
                 "ascii" = ".txt",
@@ -47,7 +47,7 @@ setMethod("writeGPR", "GPR", function(x, fPath = NULL,
   }
   x@path <- fPath
   x@data[is.na(x@data) | is.infinite(x@data)] <- 0
-  switch(type,
+  switch(format,
          "dt1" = {.writeDT1(x, fPath)},
          "rds" = {namesSlot <- slotNames(x)
                    xList <- list()
@@ -82,11 +82,11 @@ setMethod("writeGPR", "GPR", function(x, fPath = NULL,
 #' @export
 setMethod("writeGPR", "GPRsurvey", 
   function(x, fPath = NULL, 
-           type = c("DT1", "rds", "ASCII", "xta", "xyzv"),
+           format = c("DT1", "rds", "ASCII", "xta", "xyzv"),
            overwrite = FALSE, ...){
     #setMethod("writeGPR", "GPRsurvey", 
     #    function(x,fPath, format=c("DT1","rds"), overwrite=FALSE){
-    type <- match.arg(tolower(type), c("dt1", "rds", "ascii", "xta", "xyza"))
+    format <- match.arg(tolower(format), c("dt1", "rds", "ascii", "xta", "xyza"))
     mainDir <- dirname(fPath)
     if(mainDir =="." || mainDir =="/" ){
       mainDir <- ""
@@ -99,8 +99,8 @@ setMethod("writeGPR", "GPRsurvey",
     for(i in seq_along(x)){
       z <- x[[i]]
       fPath <- file.path(mainDir, subDir, z@name)
-      x@paths[[i]] <- paste0(fPath, ".", tolower(type))
-      writeGPR(z, fPath = fPath, type = type , overwrite = overwrite)
+      x@paths[[i]] <- paste0(fPath, ".", tolower(format))
+      writeGPR(z, fPath = fPath, format = format , overwrite = overwrite)
       message("Saved: ", x@paths[[i]] )
       # gpr <- verboseF( x[[i]] , verbose = FALSE)
       # #if(length(x@coords[[i]]) > 0){
@@ -112,8 +112,8 @@ setMethod("writeGPR", "GPRsurvey",
       #                     x@intersections[[i]]$name)
       # }
       # fPath <- file.path(mainDir, subDir, gpr@name)
-      # x@paths[[i]] <- paste0(fPath, ".", tolower(type))
-      # writeGPR(gpr, fPath = fPath, type = type , overwrite = overwrite, ...)
+      # x@paths[[i]] <- paste0(fPath, ".", tolower(format))
+      # writeGPR(gpr, fPath = fPath, format = format , overwrite = overwrite, ...)
       # message("Saved: ", fPath )
     } 
     # invisible(x)

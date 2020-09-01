@@ -24,7 +24,8 @@ setMethod("spPathRel", "GPR", function(x){
     # }
     # return(x)
   }else{
-    return(numeric())
+    stop("No coordinates")
+    # return(numeric())
   }
 })
 

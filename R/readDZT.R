@@ -244,9 +244,9 @@ readDZT <- function(dsn){
   # number of passes for 2-D files
   hd$NPASS <- .readBin_ushort(dsn)        # rh_npass
   # creation date
-  creaDT <- .readRFDate(dsn, where = 31)
+  creaDT <- .readRFDate(dsn, where = 32)
   # modification date
-  modDT  <- .readRFDate(dsn, where = 35)
+  modDT  <- .readRFDate(dsn, where = 36)
   hd$DATE <- creaDT$date
   hd$TIME <- creaDT$time
   # skip across some proprietary stuff
@@ -272,7 +272,7 @@ readDZT <- function(dsn){
   ant_name <- character(hd$NCHAN)
   for(i in seq_len(hd$NCHAN)){
     seek(dsn, where = 98 + MINHEADSIZE * (i - 1), origin = "start")
-    ant_name[i] <- readChar(dsn, nchars = 14, useBytes = FALSE)
+    ant_name[i] <- suppressWarnings(readChar(dsn, nchars = 14, useBytes = FALSE))
   }
   # hd$ANT <- readChar(dsn, nchars = 14, useBytes = TRUE)
   hd$ANT <- ant_name

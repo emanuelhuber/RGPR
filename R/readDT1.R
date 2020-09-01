@@ -12,7 +12,10 @@
 # Private function read DT1
 # @export
 .gprDT1 <- function(x, fName = character(0), desc = character(0),
-                 fPath = character(0), Vmax = 50){
+                 fPath = character(0), Vmax = NULL){
+  
+  if(is.null(Vmax)) Vmax <- 50
+  
   coord_rec   <- cbind(x$dt1$recx,   x$dt1$recy,   x$dt1$recz)
   coord_trans <- cbind(x$dt1$transx, x$dt1$transy, x$dt1$transz)
   if(sum(is.na(coord_rec)) > 0){

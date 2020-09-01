@@ -82,7 +82,7 @@
 #' @name readGPR
 #' @rdname readGPR
 #' @export
-readGPR <- function(dsn, desc = "", Vmax = 50,
+readGPR <- function(dsn, desc = "", Vmax = NULL,
                     verbose = TRUE, interpGPS = TRUE,
                     ...){
   

@@ -4,8 +4,7 @@
 \alias{readGPR}
 \title{Read a GPR data file}
 \usage{
-readGPR(dsn, desc = "", Vmax = 50, verbose = TRUE,
-  interpGPS = TRUE, ...)
+readGPR(dsn, desc = "", Vmax = NULL, verbose = TRUE, interpGPS = TRUE, ...)
 }
 \arguments{
 \item{dsn}{[\code{character|connection}] Data source name: either the 

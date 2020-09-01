@@ -10,8 +10,8 @@ bits2volt(Vmax = 50, Vmin = 50, nbits = 16)
 }
 \arguments{
 \item{Vmax}{[\code{numeric(1)}] Maximal nominal analog input voltage. 
-If \code{Vmax = NULL} it returns \code{1} (no bytes to volt 
-transformation)}
+If \code{Vmax = NULL} or \code{Vmax = FALSE} 
+it returns \code{1} (no bytes to volt transformation)}
 
 \item{Vmin}{[\code{numeric(1)}] Minimal nominal analog input voltage. 
 If missing, then \code{Vmin = -Vmax}.}

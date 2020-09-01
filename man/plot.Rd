@@ -12,31 +12,91 @@
 \alias{plot.GPRslice}
 \title{Plot the GPR object.}
 \usage{
-\method{plot}{GPR}(x, col = NULL, NAcol = "white", clim = NULL,
-  add = FALSE, relTime0 = FALSE, note = NULL, addMarkers = TRUE,
-  addAnn = TRUE, addTime0 = TRUE, addDepth0 = TRUE,
-  addAmpl0 = TRUE, addTopo = FALSE, xclip = NULL, ratio = 1,
-  barscale = TRUE, wsize = 1, wside = 1, pdfName = NULL, ...)
+\method{plot}{GPR}(
+  x,
+  col = NULL,
+  NAcol = "white",
+  clim = NULL,
+  add = FALSE,
+  relTime0 = FALSE,
+  note = NULL,
+  addMarkers = TRUE,
+  addAnn = TRUE,
+  addTime0 = TRUE,
+  addDepth0 = TRUE,
+  addAmpl0 = TRUE,
+  addTopo = FALSE,
+  xclip = NULL,
+  ratio = 1,
+  barscale = TRUE,
+  wsize = 1,
+  wside = 1,
+  pdfName = NULL,
+  ...
+)
 
-\method{contour}{GPR}(x, col = NULL, NAcol = "white", clim = NULL,
-  add = FALSE, relTime0 = FALSE, note = NULL, addMarkers = TRUE,
-  addAnn = TRUE, addTime0 = TRUE, addDepth0 = TRUE,
-  addAmpl0 = TRUE, addTopo = FALSE, xclip = NULL, ratio = 1,
-  barscale = TRUE, wsize = 1, wside = 1, pdfName = NULL, ...)
+\method{contour}{GPR}(
+  x,
+  col = NULL,
+  NAcol = "white",
+  clim = NULL,
+  add = FALSE,
+  relTime0 = FALSE,
+  note = NULL,
+  addMarkers = TRUE,
+  addAnn = TRUE,
+  addTime0 = TRUE,
+  addDepth0 = TRUE,
+  addAmpl0 = TRUE,
+  addTopo = FALSE,
+  xclip = NULL,
+  ratio = 1,
+  barscale = TRUE,
+  wsize = 1,
+  wside = 1,
+  pdfName = NULL,
+  ...
+)
 
-\method{plot}{GPRset}(x, col = NULL, NAcol = "white", clim = NULL,
-  add = FALSE, relTime0 = FALSE, note = NULL, addMarkers = TRUE,
-  addAnn = TRUE, addTime0 = TRUE, addDepth0 = TRUE,
-  addAmpl0 = TRUE, addTopo = FALSE, xclip = NULL, ratio = 1,
-  barscale = TRUE, wsize = 1, wside = 1, pdfName = NULL, ...)
+\method{plot}{GPRset}(
+  x,
+  col = NULL,
+  NAcol = "white",
+  clim = NULL,
+  add = FALSE,
+  relTime0 = FALSE,
+  note = NULL,
+  addMarkers = TRUE,
+  addAnn = TRUE,
+  addTime0 = TRUE,
+  addDepth0 = TRUE,
+  addAmpl0 = TRUE,
+  addTopo = FALSE,
+  xclip = NULL,
+  ratio = 1,
+  barscale = TRUE,
+  wsize = 1,
+  wside = 1,
+  pdfName = NULL,
+  ...
+)
 
 \method{plot}{GPRsurvey}(x, ...)
 
 \method{plot}{GPRcube}(x, ...)
 
-\method{plot}{GPRslice}(x, main = NULL, xlab = NULL, ylab = NULL,
-  col = NULL, asp = 1, xclip = NULL, clim = NULL, add = FALSE,
-  ...)
+\method{plot}{GPRslice}(
+  x,
+  main = NULL,
+  xlab = NULL,
+  ylab = NULL,
+  col = NULL,
+  asp = 1,
+  xclip = NULL,
+  clim = NULL,
+  add = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{Object of class \code{GPR}}

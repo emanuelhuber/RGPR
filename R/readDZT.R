@@ -1,7 +1,8 @@
 .gprDZT <- function(x, fName = character(0), desc = character(0),
-                    fPath = character(0), Vmax = 50){
+                    fPath = character(0), Vmax = NULL){
   
-
+  if(is.null(Vmax)) Vmax <- 50
+  
   dd <- as.Date(x$hd$DATE, format = "%Y-%m-%d")
   if(is.na(dd)){
     dd <- Sys.Date()
@@ -48,8 +49,8 @@
     if(!is.null(x$dzx$hUnit)){
       x_posunit <-x$dzx$hUnit
       if(grepl("in", x_posunit)){
-        x_pos <- x_pos * 0.0254
-        x_posunit <- "m"
+        # x_pos <- x_pos * 0.0254
+        x_posunit <- "in"
       }
     }
   }
@@ -83,7 +84,7 @@
   message("Antenna separation set to 0 ", x_posunit, 
           ". Set it with 'antsep(x) <- ... '")
   
-  if(is.null(Vmax)){
+  if(isFALSE(Vmax)){
     dunit <- "bits"
   }else{
     dunit <- "mV"
@@ -426,6 +427,7 @@ readDZX <- function(dsn){
   
   xmltxt <-  verboseF(readLines(dsn), verbose = FALSE)
   if(length(xmltxt) == 0){
+    .closeFileIfNot(dsn)
     return(NULL)
   }
   doc <- verboseF(XML::xmlParse(xmltxt),  verbose = FALSE)
@@ -468,32 +470,40 @@ readDZX <- function(dsn){
     if(length(s1) > 0){
       s0 <- as.integer(strsplit(XML::xmlValue(s1[[1]]), split = ",")[[1]])
       nscans <- length(s0[1]:s0[2])
-      #--- distance
+      #--- select all the distance tags
       dst <- XML::xmlElementsByTagName(fl, "distance", recursive = TRUE)
+      #--- select the sibling tags "scan" and "mark"
+      # here I assume that all tags "distance" have a sibling tag "mark" and "scan"
       if(length(dst) > 0){
-        d0 <- as.numeric(sapply(dst, XML::xmlValue))
-        lst$dx <- (d0[2] - d0[1])/(nscans- 1)
-        lst$pos <- seq(from = d0[1], by = lst$dx, length.out = nscans)
-      }
-      
-      #--- marks !!
-      tst <- XML::xmlElementsByTagName(fl, "mark", recursive = TRUE)
-      if(length(tst) > 0){
-        markers_name <- as.character(sapply(tst, XML::xmlValue))
-        markers_pos <- as.numeric(sapply(tst, .xmlValueSibling ))
-        lst$markers <- character(length = nscans)
-        lst$markers[markers_pos] <- markers_name
+        f <- function(x){
+          papa <- XML::xmlParent(x)
+          i1 <- as.numeric(XML::xmlValue(XML::xmlElementsByTagName(papa, "scan")))
+          i2 <- XML::xmlValue(XML::xmlElementsByTagName(papa, "mark"))
+          if(length(i2) == 0) i2 <- ""
+          i3 <- as.numeric(XML::xmlValue(x))  # distance
+          return(unname(c(i1, i2, i3)))
+        }
+        uu <- sapply(dst, f, USE.NAMES = FALSE)
+        if(inherits(uu, "matrix")){
+          id <- as.integer(uu[1, ]) + 1L
+          pos <- as.numeric(uu[3,])
+          lst$dx <- mean(diff(pos)/ (diff(id) - 1))
+          lst$pos <- approx(id, pos, seq_len(nscans))$y
+          lst$markers <- character(length = nscans)
+          lst$markers[id] <- uu[2,]
+        }else{
+          message("I was unable to read the markers in the file *.dzx")
+        }
+        
       }
     }
-    # return(list(markers = markers, pos = pos, dx = dx))
-  }
+    .closeFileIfNot(dsn)
   
-  .closeFileIfNot(dsn)
-  
-  if(length(lst) > 0){
-    return(lst)
-  }else{
-    return(NULL)
+    if(length(lst) > 0){
+      return(lst)
+    }else{
+      return(NULL)
+    }
   }
 }
 
@@ -506,12 +516,11 @@ readDZX <- function(dsn){
   rhb_cdt0 <- readBin(con, what = "raw", n = 4L, size = 1L, endian = "little")
   
   aa <- rawToBits(rhb_cdt0)
-  xdate <- paste(.bit2int(aa[25 + (1:7)]) + 1980, 
-                 sprintf("%02d", .bit2int(aa[21 + (1:4)])),  # sprintf()
-                 sprintf("%02d", .bit2int(aa[16 + (1:5)])), sep = "-")
-  xtime <- paste(sprintf("%02d", .bit2int(aa[11 + (1:5)])),
-                 sprintf("%02d", .bit2int(aa[5 + (1:6)])),
-                 sprintf("%02d", .bit2int(aa[1:5])* 2), sep = ":" )
+  xdate <- paste(.bit2int(aa[25 + (7:1)]) + 1980, 
+                 sprintf("%02d", .bit2int(aa[21 + (4:1)])),  # sprintf()
+                 sprintf("%02d", .bit2int(aa[16 + (5:1)])), sep = "-")
+  xtime <- paste(sprintf("%02d", .bit2int(aa[11 + (5:1)])),
+                 sprintf("%02d", .bit2int(aa[5 + (6:1)])),
+                 sprintf("%02d", .bit2int(aa[5:1])* 2), sep = ":" )
   return(list(date = xdate, time = xtime))
 }
-

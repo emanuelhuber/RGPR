@@ -180,6 +180,91 @@ setMethod(
   }
 }
 
+#' @export
+setMethod(
+  f="nrow", 
+  signature="GPRcube", 
+  definition=function(x){
+    nrow(x@data)
+  }
+)
+
+#' @export
+setMethod(
+  f="ncol", 
+  signature="GPRcube", 
+  definition=function(x){
+    ncol(x@data)
+  }
+)
+#' @export
+setMethod(
+  f="dim", 
+  signature="GPRcube", 
+  definition=function(x){
+    dim(x@data)
+  }
+)
+
+#' @name xpos
+#' @rdname xpos
+#' @export
+setGeneric("xpos", function(x) standardGeneric("xpos"))
+
+
+#' Return x-positions
+#' 
+#' Return x-positions
+#' @name xpos
+#' @rdname xpos
+#' @export
+setMethod("xpos", "GPRcube", function(x){
+  return(x@x)
+})
+
+#' @name ypos
+#' @rdname ypos
+#' @export
+setGeneric("ypos", function(x) standardGeneric("ypos"))
+
+
+#' Return y-positions
+#' 
+#' Return y-positions
+#' @name ypos
+#' @rdname ypos
+#' @export
+setMethod("ypos", "GPRcube", function(x){
+  return(x@y)
+})
+
+#' @name res
+#' @rdname res
+#' @export
+setGeneric("res", function(x) standardGeneric("res"))
+
+
+#' Return resolution
+#' 
+#' Return resolution x, y
+#' @name res
+#' @rdname res
+#' @export
+setMethod("res", "GPRcube", function(x){
+  return(c(mean(diff(x@x)), mean(diff(x@y))))
+})
+
+
+###--- Coercion from GPR to ...
+setAs(from = "GPRcube", to = "array", def = function(from){ from@data } )
+
+#' Coercion to matrix
+#'
+#' @name as.array
+#' @rdname GPRcube-coercion
+#' @export
+setMethod("as.array",signature(x="GPRcube"),function(x){as(x,"array")})
+
 #' Class GPRslice
 #' 
 #' An S4 class to represent time/depth slices of 

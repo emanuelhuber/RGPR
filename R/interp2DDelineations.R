@@ -75,8 +75,8 @@ setMethod("interp2DDelineations", "GPRsurvey", function(x, dx = NULL, dy = NULL,
   if(n < 1) n <- 1L
   
   test <- list()
-  for(i in seq_along(X_del)){
-    test[[i]] <- extractDelineations(X_del[[i]])
+  for(i in seq_along(x)){
+    test[[i]] <- extractDelineations(x[[i]])
   }
   
   test_names <- lapply(test, names)

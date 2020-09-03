@@ -14,9 +14,9 @@
 
 # FIXME: layer depth + internal velocity
 
-TWThyperbolic_d <- function(a, t0, v){
-  sqrt(t0^2 + (a/v)^2)
-}
+# TWThyperbolic_d <- function(a, t0, v){
+#   sqrt(t0^2 + (a/v)^2)
+# }
 
 lyr <- list(vint = c(0.1, 0.095, 0.08, 0.09, 0.105, 0.09, 0.095),
             d    = c(0.5,   0.75,  1.01,  1.4,     1.9,  2.2, 2.6))
@@ -24,7 +24,7 @@ lyr[["vrms"]] <- sqrt(cumsum(lyr$vint * 2 * lyr$d)/(2 * cumsum(lyr$d/lyr$vint)))
 lyr[["t0"]]   <- 2 * cumsum(lyr$d/lyr$vint)
 a <- seq(0, to = 20, by = 0.25)
 
-U <- t(sapply(a, TWThyperbolic_d, t0 = lyr$t0, v = lyr$vrms))
+U <- t(sapply(a, hyperbolicTWT, t0 = lyr$t0, v = lyr$vrms))
 
 dim(U)
 plot3D::image2D(U)
@@ -217,10 +217,10 @@ stackNMO <- function(x, thrs = NULL){
 #--- plot CMP with hyperbola & NMO correction
 par(mfrow = c(1,2))
 plot(x[,sel], barscale = FALSE, main = "CMP")
-.t_NMO <- function(t0, v, antsep){
-  sqrt(t0^2 + (antsep/v)^2)
-}
-TT <- mapply(.t_NMO, vv$y, vv$x, MoreArgs = list(antsep = x@x))
+# .t_NMO <- function(t0, v, antsep){
+#   sqrt(t0^2 + (antsep/v)^2)
+# }
+TT <- mapply(hyperbolicTWT, vv$y, vv$x, MoreArgs = list(antsep = x@x))
 for(i in seq_along(vv$y)){
   lines(x@x, TT[,i], col = "green", lwd = 2)
 }
@@ -233,10 +233,10 @@ plotVel(x)
 
 par(mfrow = c(1,2))
 plot(x[,sel], barscale = FALSE, main = "CMP")
-.t_NMO <- function(t0, v, antsep){
-  sqrt(t0^2 + (antsep/v)^2)
-}
-TT <- mapply(.t_NMO, vv$y, vv$x, MoreArgs = list(antsep = x@x))
+# .t_NMO <- function(t0, v, antsep){
+#   sqrt(t0^2 + (antsep/v)^2)
+# }
+TT <- mapply(hyperbolicTWT, vv$y, vv$x, MoreArgs = list(antsep = x@x))
 for(i in seq_along(vv$y)){
   lines(x@x, TT[,i], col = "green", lwd = 2)
 }
@@ -248,10 +248,10 @@ plotVel(x)
 
 par(mfrow = c(1,2))
 plot(x[,sel], barscale = FALSE, main = "CMP")
-.t_NMO <- function(t0, v, antsep){
-  sqrt(t0^2 + (antsep/v)^2)
-}
-TT <- mapply(.t_NMO, vv$y, vv$x, MoreArgs = list(antsep = x@x))
+# .t_NMO <- function(t0, v, antsep){
+#   sqrt(t0^2 + (antsep/v)^2)
+# }
+TT <- mapply(hyperbolicTWT, vv$y, vv$x, MoreArgs = list(antsep = x@x))
 for(i in seq_along(vv$y)){
   lines(x@x, TT[,i], col = "green", lwd = 2)
 }
@@ -268,10 +268,10 @@ x <- interpVel(x, type = "vint", method = "pchip")
 plotVel(x)
 par(mfrow = c(1,2))
 plot(x[,sel], barscale = FALSE, main = "CMP")
-.t_NMO <- function(t0, v, antsep){
-  sqrt(t0^2 + (antsep/v)^2)
-}
-TT <- mapply(.t_NMO, vv$y, vv$x, MoreArgs = list(antsep = x@x))
+# .t_NMO <- function(t0, v, antsep){
+#   sqrt(t0^2 + (antsep/v)^2)
+# }
+TT <- mapply(hyperbolicTWT, vv$y, vv$x, MoreArgs = list(antsep = x@x))
 for(i in seq_along(vv$y)){
   lines(x@x, TT[,i], col = "green", lwd = 2)
 }
@@ -307,10 +307,10 @@ lines(vrms_smooth, x@z, type = "l", col = "red")
 #--- plot CMP with hyperbola & NMO correction
 par(mfrow = c(1,2))
 plot(x[,sel], barscale = FALSE, main = "CMP")
-.t_NMO <- function(t0, v, antsep){
-  sqrt(t0^2 + (antsep/v)^2)
-}
-TT <- mapply(.t_NMO, vv$y, vv$x, MoreArgs = list(antsep = x@x))
+# .t_NMO <- function(t0, v, antsep){
+#   sqrt(t0^2 + (antsep/v)^2)
+# }
+TT <- mapply(hyperbolicTWT, vv$y, vv$x, MoreArgs = list(antsep = x@x))
 for(i in seq_along(vv$y)){
   lines(x@x, TT[,i], col = "green", lwd = 2)
 }
@@ -326,10 +326,10 @@ plot(rowSums(correctNMO(x[,sel])@data), x@z, ylim = rev(range(x@z)), type = "l" 
 #-----
 par(mfrow = c(1,2))
 plot(x, barscale = FALSE, main = "CMP")
-.t_NMO <- function(t0, v, antsep){
-  sqrt(t0^2 + (antsep/v)^2)
-}
-TT <- mapply(.t_NMO, vv$y, vv$x, MoreArgs = list(antsep = x@x))
+# .t_NMO <- function(t0, v, antsep){
+#   sqrt(t0^2 + (antsep/v)^2)
+# }
+TT <- mapply(hyperbolicTWT, vv$y, vv$x, MoreArgs = list(antsep = x@x))
 for(i in seq_along(vv$y)){
   lines(x@x, TT[,i], col = "green", lwd = 2)
 }
@@ -339,10 +339,10 @@ plot(correctNMO(x, method = "pchip"))
 x@vel <- list(vrms_smooth)
 par(mfrow = c(1,2))
 plot(x, barscale = FALSE, main = "CMP")
-.t_NMO <- function(t0, v, antsep){
-  sqrt(t0^2 + (antsep/v)^2)
-}
-TT <- mapply(.t_NMO, vv$y, vv$x, MoreArgs = list(antsep = x@x))
+# .t_NMO <- function(t0, v, antsep){
+#   sqrt(t0^2 + (antsep/v)^2)
+# }
+TT <- mapply(hyperbolicTWT, vv$y, vv$x, MoreArgs = list(antsep = x@x))
 for(i in seq_along(vv$y)){
   lines(x@x, TT[,i], col = "green", lwd = 2)
 }
@@ -356,10 +356,10 @@ xnew <- x
 xnew[NMOstreching(xnew) > 0.2] <- 0
 par(mfrow = c(1,2))
 plot(xnew, barscale = FALSE, main = "CMP")
-.t_NMO <- function(t0, v, antsep){
-  sqrt(t0^2 + (antsep/v)^2)
-}
-TT <- mapply(.t_NMO, vv$y, vv$x, MoreArgs = list(antsep = x@x))
+# .t_NMO <- function(t0, v, antsep){
+#   sqrt(t0^2 + (antsep/v)^2)
+# }
+TT <- mapply(hyperbolicTWT, vv$y, vv$x, MoreArgs = list(antsep = x@x))
 for(i in seq_along(vv$y)){
   lines(xnew@x, TT[,i], col = "green", lwd = 2)
 }
@@ -429,14 +429,14 @@ points(lyr$vrms, lyr$t0, pch = 21, col = "darkslateblue", lwd = 2, bg = "gold")
 
 par(mfrow = c(1,2))
 plot(x[,1:25], barscale = FALSE, main = "CMP")
-.t_NMO <- function(t0, antsep, v){
-  sqrt(t0^2 + (antsep/v)^2)
-}
+# .t_NMO <- function(t0, antsep, v){
+#   sqrt(t0^2 + (antsep/v)^2)
+# }
 
 t0 <- vv$y
 TT <- matrix(nrow = length(vv$y), ncol = length(x@x))
 for(i in seq_along(vv$y)){
-  TT[i,] <- .t_NMO(vv$y[i], x@x, vv$x[i])
+  TT[i,] <- hyperbolicTWT(vv$y[i], x@x, vv$x[i])
   lines(x@x, TT[i,], col = "green", lwd = 2)
 }
 plot(x_tv[1:nrow(x_tv),], barscale = FALSE,

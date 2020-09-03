@@ -110,7 +110,7 @@ setMethod("correctNMO", "GPR", function(x, thrs = NULL, v = NULL,
   #   v <- x@vel[[1]]
   # }
   # works when v is a vector.
-  tt <- outer(x@z, x@antsep, .t_NMO, v = v)
+  tt <- outer(x@z, x@antsep, hyperbolicTWT, v = v)
   for(i in seq_along(x)){
     # tt <- sqrt( x@z^2 + (asep[i]^2 )/v^2 )
     valreg <- signal::interp1(x  = x@z, 
@@ -127,6 +127,4 @@ setMethod("correctNMO", "GPR", function(x, thrs = NULL, v = NULL,
   return(x_nmoCor)
 }
 
-.t_NMO <- function(t0, antsep, v){
-  sqrt(t0^2 + (antsep/v)^2)
-}
+

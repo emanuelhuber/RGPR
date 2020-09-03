@@ -41,7 +41,7 @@ setMethod("[", signature(x = "GPRset", i = "ANY", j = "ANY"),
           mode         = x@mode,
           date         = x@date,
           # freq         = x_freq, #x@freq, 
-          freq         = .subsetVec(x_freq, k), #x@freq, 
+          freq         = .subsetVec(x@freq, k), #x@freq, 
           
           data         = x@data[i, j ,k],     
           dunit        = x@dunit,  

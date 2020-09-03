@@ -103,6 +103,7 @@ Collate:
 	'NMO.R'
 	'NMOstreching.R'
 	'velocitySpectrum.R'
+	'hyperbolicTWT.R'
 	'smooth2D.R'
 	'color.R'
 	'z_utils.R'

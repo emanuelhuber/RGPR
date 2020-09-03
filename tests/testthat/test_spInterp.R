@@ -51,7 +51,7 @@ test_that("Manual interpolation of GPS data",{
   # plot(x_gps)
   
   # interpolate GPGGA files
-  gpgga <- "/mnt/data/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/SEGY/Ali_Khankan/2019-10-10-006.txt"
+  gpgga <- "/mnt/data/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/SEGY/Ali_Khankan_mutli_segy/2019-10-10-006.txt"
   xyz <- readGPGGA(gpgga)
   
   tt <- as.character(as.POSIXct(xyz$time))

@@ -7,67 +7,122 @@
 
 
 
-
-
-#-------------------------------------------------------------------------
-# Simulate CMP
-
-# FIXME: layer depth + internal velocity
-
-TWThyperbolic_d <- function(a, t0, v){
-  sqrt(t0^2 + (a/v)^2)
+#--- internal velocities
+DixVel <- function(twt, v){
+  if(twt[1] != 0){
+    twt <- c(0, twt)
+  }
+  if(v[1] != 0){
+    v <- c(0, v)
+  }
+  twt_v2 <- twt * v^2
+  vint <- sqrt(diff(twt_v2)/diff(twt))
+  sel <- is.na(vint)
+  if(sum(sel) > 0){
+    message(rep("*", sum(sel)))
+  }
+  return(list(t = twt[-1], v = vint))
 }
 
+setVel <- function(x, v, twt, type = c("vrms", "vint")){
+  type <- match.arg(type, c("vrms", "vint"))
+  if(length(v) != length(twt)){
+    stop("'v' and 'twt' must have the same length!")
+  }
+  i <- order(twt)
+  v <- v[i]
+  twt <- twt[i]
+  if(type == "vrms"){
+    v <- list("vrms" = list("t" = twt,
+                            "v" = v),
+              "vint" = DixVel(twt = twt, v = v))
+  }else{
+    v <- list("vint" = DixVel(twt = twt, v = v))
+  }
+  x@vel <- v
+  return(x)
+}
+
+interpVel <- function(x, type = c("vrms", "vint"),
+                      method = c("stairs", "linear", "nearest", "pchip", "cubic", "spline")){
+  type <- match.arg(type, c("vrms", "vint"))
+  method <- match.arg(method, c("stairs", "linear", "nearest", "pchip", "cubic", "spline"))
+  if(method == "stairs"){
+    v_stairs <- approxfun(x@vel[[type]][["t"]], x@vel[[type]][["v"]], 
+                          rule = 2, method = "constant", f = 1)
+    x@vel[["v"]] <- v_stairs(x@z)
+  }else{
+    x@vel[["v"]] <- signal::interp1(x = x@vel[[type]][["t"]], y = x@vel[[type]][["v"]],
+                                    xi = x@z, method = method,
+                                    extrap = TRUE)
+  }
+  return(x)
+}
+
+
+
+plotVel <- function(x){
+  v_lim <- range(sapply(x@vel, function(x) x$v))
+  plot(0, type = "n", ylim = rev(range(x_tv@z)),  xlim = v_lim, yaxs = "i",
+       xlab = .vlab(x),
+       ylab = .zlab(x))
+  if(!is.null(x@vel[["vrms"]])){
+    v_rms <- approxfun(x@vel[["vrms"]][["t"]], x@vel[["vrms"]][["v"]], rule = 2, method = "constant", f = 1)
+    lines(v_rms(x@z), x@z, type = "s", lty = 1)
+  }
+  if(!is.null(x@vel[["vint"]])){
+    v_int <- approxfun(x@vel[["vint"]][["t"]], x@vel[["vint"]][["v"]], rule = 2, method = "constant", f = 1)
+    lines(v_int(x@z), x@z, type = "s", lty = 3)
+  }
+  if(!is.null(x@vel[["v"]])){
+    lines(v, x@z, type = "s", lty = 2)
+  }
+  
+}
+#-------------------------------------------------------------------------
+
+# See RGPR::hyperbolicTWT()
+# # return two-way travel time as a function of
+# # a = antenna separation
+# # t0 = two-way travel time when a = 0
+# # v = layer velocity (vrms)
+# TWThyperbolic_d <- function(a, t0, v){
+#   sqrt(t0^2 + (a/v)^2)
+# }
+
+#------------------------------------------------------------------------------#
+#---------------------------- SIMULATE CMP ------------------------------------#
+#------------------------------------------------------------------------------#
+
+#----- 1. velocity model
 lyr <- list(vint = c(0.1, 0.095, 0.08, 0.09, 0.105, 0.09, 0.095),
             d    = c(0.5,   0.75,  1.01,  1.4,     1.9,  2.2, 2.6))
 lyr[["vrms"]] <- sqrt(cumsum(lyr$vint * 2 * lyr$d)/(2 * cumsum(lyr$d/lyr$vint)))
 lyr[["t0"]]   <- 2 * cumsum(lyr$d/lyr$vint)
+
+
+#----- 2. two-way travel time
+# antenna separation
 a <- seq(0, to = 20, by = 0.25)
+# two-way travel time
+TWT <- t(sapply(a, hyperbolicTWT, t0 = lyr$t0, v = lyr$vrms))
 
-U <- t(sapply(a, TWThyperbolic_d, t0 = lyr$t0, v = lyr$vrms))
+matplot(TWT, type = "l", col = "black", ylim = rev(range(U[,1])))
 
-dim(U)
-plot3D::image2D(U)
 
-# GPR wavelet:
-#   Check chap 11 of Anan in the book Near-Surface Geophysics
-# "The radiated wavelet from a GPR system is a compli-
-# cated function of the antenna construction and the electronics
-# drive circuitry.For impulse style ultra wideband systems using
-# short electric dipole antennas, a simple mathematical model is
-# helpful for numerical simulation."
-
-vt <- function(xt, xT){
-  test <- xt > 0 & xt < xT
-  vt <- numeric(length(xt))
-  vt[test] <-  0.5 * ( 1 + cos(pi * (xt[test]- xT/2)/(xT/2)))
-  return(vt)
-}
-
-# xt = time in ns
-# where 0 < q < 1 (damping factor)
-# fc = center frequency in MHz
-wavGPR <- function(xt, q, fc){
-  xt <- xt / 1000
-  xT <- (2/3 + (1-q)/7)/fc
-  vt(xt, xT) - (2 - q)* vt(xt - xT/2, xT) + (1 - q)*vt(xt-xT, xT)
-}
-
+#----- 3. wavelet model
 dz <- 0.25
 fc <- 100 # MHz
 wt <- seq(0, by = dz, to = 15) # ns
-
-plot(wt, wavGPR(wt, q = 0.9, fc = fc), type = "l")
-
 w <- wavGPR(wt, q = 0.9, fc = fc)
 
 plot(wt, w, type = "l")
 
 
+
+#----- 4. simulated CMP
 zt <- seq(0, to = 250, by = dz)
 X <- matrix(0, nrow = length(zt), ncol = length(a))
-
-
 for(i in 1:ncol(U)){
   for(j in 1:nrow(U)){
     uij <- U[j, i]
@@ -77,15 +132,16 @@ for(i in 1:ncol(U)){
   }
 }
 
-plot3D::image2D(X)
-
 X_list <- list(data = X, x = a, z = zt, mode = "CMP", freq = 100)
 x <- as(X_list, "GPR")
+
 plot(x)
 plot(x[,1])
 
 x
 
+#------------------------------------------------------------------------------#
+#---------------------------- SIMULATE CMP ------------------------------------#
 #------------------------------------------------------------------------------#
 
 
@@ -284,46 +340,13 @@ lines(v(x_tv@z), x_tv@z, lwd = 2, col = "green")
 points(vv, pch = 20)
 
 
-#--- internal velocities
-DixVel <- function(twt, v){
-  if(twt[1] != 0){
-    twt <- c(0, twt)
-  }
-  if(v[1] != 0){
-    v <- c(0, v)
-  }
-  twt_v2 <- twt * v^2
-  vint <- sqrt(diff(twt_v2)/diff(twt))
-  sel <- is.na(vint)
-  if(sum(sel) > 0){
-    message(rep("*", sum(sel)))
-  }
-  return(list(t = twt[-1], v = vint))
-}
 
 vin <- DixVel(twt = vv$y, v = vv$x)
 
 vint <- approxfun(vin$t, vin$vel, rule = 2, method = "constant", f = 1)
 vrms <- approxfun(tnmo, vnmo, rule = 2, method = "constant", f = 1)
 
-setVel <- function(x, v, twt, type = c("vrms", "vint")){
-  type <- match.arg(type, c("vrms", "vint"))
-  if(length(v) != length(twt)){
-    stop("'v' and 'twt' must have the same length!")
-  }
-  i <- order(twt)
-  v <- v[i]
-  twt <- twt[i]
-  if(type == "vrms"){
-    v <- list("vrms" = list("t" = twt,
-                            "v" = v),
-              "vint" = DixVel(twt = twt, v = v))
-  }else{
-    v <- list("vint" = DixVel(twt = twt, v = v))
-  }
-  x@vel <- v
-  return(x)
-}
+
 
 x <- setVel(x, v = vnmo, twt = tnmo, type = "vrms")
 x@vel
@@ -331,42 +354,10 @@ plot(x)
 
 range(sapply(x@vel, function(x) x$v))
 
-plotVel <- function(x){
-  v_lim <- range(sapply(x@vel, function(x) x$v))
-  plot(0, type = "n", ylim = rev(range(x_tv@z)),  xlim = v_lim, yaxs = "i",
-       xlab = .vlab(x),
-       ylab = .zlab(x))
-  if(!is.null(x@vel[["vrms"]])){
-    v_rms <- approxfun(x@vel[["vrms"]][["t"]], x@vel[["vrms"]][["v"]], rule = 2, method = "constant", f = 1)
-    lines(v_rms(x@z), x@z, type = "s", lty = 1)
-  }
-  if(!is.null(x@vel[["vint"]])){
-    v_int <- approxfun(x@vel[["vint"]][["t"]], x@vel[["vint"]][["v"]], rule = 2, method = "constant", f = 1)
-    lines(v_int(x@z), x@z, type = "s", lty = 3)
-  }
-  if(!is.null(x@vel[["v"]])){
-   lines(v, x@z, type = "s", lty = 2)
-  }
-
-}
 
 plotVel(x)
 
-interpVel <- function(x, type = c("vrms", "vint"),
-                      method = c("stairs", "linear", "nearest", "pchip", "cubic", "spline")){
-  type <- match.arg(type, c("vrms", "vint"))
-  method <- match.arg(method, c("stairs", "linear", "nearest", "pchip", "cubic", "spline"))
-  if(method == "stairs"){
-    v_stairs <- approxfun(x@vel[[type]][["t"]], x@vel[[type]][["v"]], 
-                              rule = 2, method = "constant", f = 1)
-    x@vel[["v"]] <- v_stairs(x@z)
-  }else{
-    x@vel[["v"]] <- signal::interp1(x = x@vel[[type]][["t"]], y = x@vel[[type]][["v"]],
-                                   xi = x@z, method = method,
-                                   extrap = TRUE)
-  }
-  return(x)
-}
+
 
 x <- interpVel(x)
 
@@ -401,10 +392,10 @@ lines(vrms_smooth, x@z, type = "l", col = "red")
 #--- plot CMP with hyperbola & NMO correction
 par(mfrow = c(1,2))
 plot(x[,sel], barscale = FALSE, main = "CMP")
-.t_NMO <- function(t0, v, antsep){
-  sqrt(t0^2 + (antsep/v)^2)
-}
-TT <- mapply(.t_NMO, vv$y, vv$x, MoreArgs = list(antsep = x@x))
+# .t_NMO <- function(t0, v, antsep){
+#   sqrt(t0^2 + (antsep/v)^2)
+# }
+TT <- mapply(hyperbolicTWT, vv$y, vv$x, MoreArgs = list(antsep = x@x))
 for(i in seq_along(vv$y)){
   lines(x@x, TT[,i], col = "green", lwd = 2)
 }
@@ -420,10 +411,10 @@ plot(rowSums(correctNMO(x[,sel])@data), x@z, ylim = rev(range(x@z)), type = "l" 
 #-----
 par(mfrow = c(1,2))
 plot(x, barscale = FALSE, main = "CMP")
-.t_NMO <- function(t0, v, antsep){
-  sqrt(t0^2 + (antsep/v)^2)
-}
-TT <- mapply(.t_NMO, vv$y, vv$x, MoreArgs = list(antsep = x@x))
+# .t_NMO <- function(t0, v, antsep){
+#   sqrt(t0^2 + (antsep/v)^2)
+# }
+TT <- mapply(hyperbolicTWT, vv$y, vv$x, MoreArgs = list(antsep = x@x))
 for(i in seq_along(vv$y)){
   lines(x@x, TT[,i], col = "green", lwd = 2)
 }
@@ -433,10 +424,10 @@ plot(correctNMO(x, method = "pchip"))
 x@vel <- list(vrms_smooth)
 par(mfrow = c(1,2))
 plot(x, barscale = FALSE, main = "CMP")
-.t_NMO <- function(t0, v, antsep){
-  sqrt(t0^2 + (antsep/v)^2)
-}
-TT <- mapply(.t_NMO, vv$y, vv$x, MoreArgs = list(antsep = x@x))
+# .t_NMO <- function(t0, v, antsep){
+#   sqrt(t0^2 + (antsep/v)^2)
+# }
+TT <- mapply(hyperbolicTWT, vv$y, vv$x, MoreArgs = list(antsep = x@x))
 for(i in seq_along(vv$y)){
   lines(x@x, TT[,i], col = "green", lwd = 2)
 }
@@ -450,10 +441,10 @@ xnew <- x
 xnew[NMOstreching(xnew) > 0.2] <- 0
 par(mfrow = c(1,2))
 plot(xnew, barscale = FALSE, main = "CMP")
-.t_NMO <- function(t0, v, antsep){
-  sqrt(t0^2 + (antsep/v)^2)
-}
-TT <- mapply(.t_NMO, vv$y, vv$x, MoreArgs = list(antsep = x@x))
+# .t_NMO <- function(t0, v, antsep){
+#   sqrt(t0^2 + (antsep/v)^2)
+# }
+TT <- mapply(hyperbolicTWT, vv$y, vv$x, MoreArgs = list(antsep = x@x))
 for(i in seq_along(vv$y)){
   lines(xnew@x, TT[,i], col = "green", lwd = 2)
 }
@@ -530,14 +521,14 @@ points(lyr$vrms, lyr$t0, pch = 21, col = "darkslateblue", lwd = 2, bg = "gold")
 
 par(mfrow = c(1,2))
 plot(x[,1:25], barscale = FALSE, main = "CMP")
-.t_NMO <- function(t0, antsep, v){
-  sqrt(t0^2 + (antsep/v)^2)
-}
+# .t_NMO <- function(t0, antsep, v){
+#   sqrt(t0^2 + (antsep/v)^2)
+# }
 
 t0 <- vv$y
 TT <- matrix(nrow = length(vv$y), ncol = length(x@x))
 for(i in seq_along(vv$y)){
-  TT[i,] <- .t_NMO(vv$y[i], x@x, vv$x[i])
+  TT[i,] <- hyperbolicTWT(vv$y[i], x@x, vv$x[i])
   lines(x@x, TT[i,], col = "green", lwd = 2)
 }
 plot(x_tv[1:nrow(x_tv),], barscale = FALSE,

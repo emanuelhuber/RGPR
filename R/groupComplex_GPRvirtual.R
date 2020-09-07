@@ -3,7 +3,7 @@
 #' Methods for the base Complex methods \link[methods]{S4groupGeneric}: "Arg", "Conj", "Im", "Mod", "Re"
 #' @param z An object of the class GPRvirtual
 #' @rdname Complex-methods
-#' @aliases Complex-GPRvirtual-method
+#' @aliases Complex,GPRvirtual-method
 setMethod(
   f = "Complex",
   signature = "GPRvirtual",

@@ -80,7 +80,7 @@ Collate:
 	'interpSlices.R'
 	'GPS.R'
 	'isCRSLonLat.R'
-	'isZunitTime.R'
+	'isZTime.R'
 	'isCMP.R'
 	'coord.R'
 	'crs.R'

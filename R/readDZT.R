@@ -117,7 +117,7 @@
         zunit        = x_depthunit,  
         zlab         = "two-way travel time",
         
-        vel          = list(v),   
+        vel          = list(v = v),   
         
         # proc         = "list",
         # delineations = "list",
@@ -168,7 +168,7 @@
         zunit        = x_depthunit,  
         zlab         = "two-way travel time",
         
-        vel          = list(v),   
+        vel          = list(v = v),   
         
         # proc         = "list",
         # delineations = "list",

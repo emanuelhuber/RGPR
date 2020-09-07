@@ -126,6 +126,7 @@ plot.GPR <- function(x,
   # plot(x[,2])
   if(ncol(x) == 1){
     print("1D")
+    x[is.infinite(x) | is.na(x)] <- 0
     if(is.null(type)) type <- "l"
     if(isTRUE(add)){
       lines(x, ...)
@@ -133,6 +134,7 @@ plot.GPR <- function(x,
       .plotGPR1D(x, type, add, col, dots, v, relTime0, addDepth0, addAmpl0, addTime0)
     }
   }else if(nrow(x) == 1){
+    x[is.infinite(x) | is.na(x)] <- 0
     par(mar = c(5, 4, 2, 2) + 0.1, oma = c(0, 0, 0, 0), mgp = c(2, 0.5, 0))
     if(is.null(col)) col <- "black"
     
@@ -356,13 +358,14 @@ plot.GPR <- function(x,
       }
       #------------------------------ WIGGLES -----------------------------------#
     }else if(type == "wiggles"){
+      
       # dots$type <- NULL
       barscale <- FALSE
       
       op <- par(no.readonly = TRUE) 
       dx <- mean(diff(xvalues)) # estimated x-step
       z <- x@data
-      z[is.na(z) & is.infinite(z)] <- 0
+      z[is.na(z) | is.infinite(z)] <- 0
       z <- z/max(abs(z)) * dx
       nr <- nrow(z)
       nc <- ncol(z)
@@ -385,7 +388,7 @@ plot.GPR <- function(x,
       lwd  <- dots$lwd
       if(is.null(dots$lwd)) lwd <- 0.5
       
-      par(mai = mai, omi = omi, mgp = mgp)
+      par(mai = mai)
       
       do.call(plot, c( list( x = 0, type = "n", xaxs = "i", yaxs = "i", 
                              yaxt = "n", bty = "n"), dots))
@@ -612,7 +615,8 @@ contour.GPR <- function(x,
 
 
 .plotGPR1D <- function(x, type, add, col, dots, v, relTime0, addDepth0, addAmpl0, addTime0){
-  par(mar = c(5, 4, 3, 2) + 0.1, oma = c(0, 0, 3, 0), mgp = c(2, 0.5, 0))
+  # par(mar = c(5, 4, 3, 2) + 0.1)
+  par(mai = c(1.1, 1.02, 1.02, 1.02))
   z <- x@z
   t0 <- x@z0
   if(isTRUE(relTime0)){
@@ -662,7 +666,7 @@ contour.GPR <- function(x,
       }
     }
   }
-  title(myMain, outer = TRUE)
+  title(myMain, outer = FALSE, line = 3)
   if(isTRUE(addAmpl0))  abline(h = 0, lty = 3, col = "grey")
   if(isTRUE(addTime0))  abline(v = t0, col = "red")
 }

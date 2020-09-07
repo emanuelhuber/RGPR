@@ -196,7 +196,7 @@
       zunit        = "ns",  
       zlab         = "two-way travel time",
       
-      vel          = list(0.1),   
+      vel          = list(v = 0.1),   
       
       # proc         = "list",
       # delineations = "list",

@@ -2,7 +2,6 @@
 % Please edit documentation in R/groupMath2_GPRvirtual.R
 \name{Math2,GPRvirtual-method}
 \alias{Math2,GPRvirtual-method}
-\alias{Math2-GPRvirtual-method}
 \title{Round and signif}
 \usage{
 \S4method{Math2}{GPRvirtual}(x, digits)

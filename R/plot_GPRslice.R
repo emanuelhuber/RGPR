@@ -16,7 +16,7 @@ plot.GPRslice <- function(x,
   if(is.null(main)){
     # z_lab <- x@zlab
     # if(z_lab == ""){
-    #   z_lab <- ifelse(isZunitTime(x), "time", "depth")
+    #   z_lab <- ifelse(isZTime(x), "time", "depth")
     # }
     main <- paste0("Slice : ", x@z, " ", x@zunit)
   }

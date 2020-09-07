@@ -82,6 +82,8 @@ setMethod("ncol", "GPRvirtual", function(x)  ncol(x@data))
 setMethod("dim", "GPRvirtual", function(x)   dim(x@data))
 
 
+#---------------------------- COLSUMS -----------------------------------------#
+
 #' Form Row and Column Sums and Means
 #' 
 #' Form row and column sums and means 
@@ -130,3 +132,59 @@ setMethod("rowMeans", "GPRvirtual", function(x, na.rm = FALSE, dims = 1){
 # rowSums (x, na.rm = FALSE, dims = 1)
 # colMeans(x, na.rm = FALSE, dims = 1)
 # rowMeans(x, na.rm = FALSE, dims = 1)
+
+
+#---------------------------- FINITE ------------------------------------------#
+#' Finite, Infinite and NAN Numbers
+#' 
+#' is.finite and is.infinite return an object of the same dimension as x, 
+#' indicating which elements are finite (not infinite and not missing) or 
+#' infinite.
+#' @param x [\code{GPR*}]
+#' @return  [\code{GPR*}] With logical values (\code{TRUE} is the value is 
+#'          finite, \code{FALSE} if not.)
+#' @name is.finite
+#' @aliases is.finite,GPRvirtual-method
+#' @rdname is.finite-GPRvirtual
+#' @export
+setMethod("is.finite", "GPRvirtual", function(x){
+  x@data <- is.finite(x@data)
+  return(x)
+}
+)
+
+#' @name is.infinite
+#' @aliases is.infinite,GPRvirtual-method
+#' @rdname is.finite-GPRvirtual
+#' @export
+setMethod("is.infinite", "GPRvirtual", function(x){
+  x@data <- is.infinite(x@data)
+  return(x)
+}
+)
+
+#' @name is.nan
+#' @aliases is.nan,GPRvirtual-method
+#' @rdname is.finite-GPRvirtual
+#' @export
+setMethod("is.nan", "GPRvirtual", function(x){
+  x@data <- is.nan(x@data)
+  return(x)
+}
+)
+
+#------------------------------- NA -------------------------------------------#
+
+#' Logical negation
+#' 
+#'  Indicates which elements are missing.
+#' @param x [\code{GPR*}]
+#' @return  [\code{GPR*}] With logical values (\code{TRUE} is the value is 
+#'          \code{NA}, \code{FALSE} if not.)
+#' @rdname is.na
+setMethod("is.na", "GPRvirtual", function(x){
+  x@data <- is.na(x@data)
+  return(x)
+}
+)
+

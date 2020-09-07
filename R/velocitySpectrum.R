@@ -58,13 +58,13 @@ setMethod("velocitySpectrum", "GPR",
               # vlim <- x@vel[[1]] * c(0.5, 1.5)
               # vlim[vlim > 0.299] <- 0.299
               # v <- seq(vlim[1], vlim[2], length = 50)
-              v <- seq(0.02, 0.3, length = 100)
+              v <- exp(seq(log(0.02), log(0.3), length = 100))
             }
             if(any(x@z0 > 0)){
               stop("You must first shift the traces to time-zero with\n",
                    "'shiftToTime0()'")
             }
-            if(!isZunitTime(x)){
+            if(!isZTime(x)){
               stop("The signal is a function of depth and not time. If you\n",
                    "absolutely want to apply 'velocitySpectrum()', change the unit with\n",
                    "xunit(x) <- 'm', for example.")

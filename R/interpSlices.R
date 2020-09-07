@@ -140,7 +140,7 @@ defVz <- function(x){
   }
   # if(!all(grepl("[s]$", x@zunits))
   # x@zunits != "ns"  
-  if(all(isZunitLength(x)) && all(sapply(x@coords, length) > 0)){
+  if(all(isZDepth(x)) && all(sapply(x@coords, length) > 0)){
     # elevation coordinates
     zmax <- sapply(x@coords, function(x) max(x[,3]))
     zmin <- sapply(x@coords, function(x) min(x[,3])) - max(x@zlengths)
@@ -180,7 +180,7 @@ trInterp <- function(x, z, zi){
   # default z-values (get elevation range)
   x_zi0 <- defVz(X)
   x_zi <- seq(min(x_zi0), by = dz, to = max(x_zi0))
-  if(all(isZunitLength(X)) ){
+  if(all(isZDepth(X)) ){
     x_zi <- sort(x_zi, decreasing = TRUE)
   }
   
@@ -197,7 +197,7 @@ trInterp <- function(x, z, zi){
   V <- list()
   for(i in seq_along(X)){
     X_i <- X[[i]]
-    if(isZunitLength(X_i)){
+    if(isZDepth(X_i)){
       if(length(unique(X_i@coord[,3])) > 1){
         stop("The traces have different elevation!")
       } 

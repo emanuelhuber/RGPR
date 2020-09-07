@@ -33,7 +33,7 @@
                zunit = x[['depthunit']],
                zlab  = "two-way travel time",         # FIXME???
                
-               vel = x[['vel']],                
+               vel = list(v = x[['vel']][[1]]),                
                
                proc         = x[['proc']],
                delineations = x[['delineations']],

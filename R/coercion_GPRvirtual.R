@@ -103,7 +103,7 @@ as.GPR.matrix <- function (x, ...){
       zunit        = "ns",  
       zlab         = "two-way travel time",
       
-      vel          = list(0.1),   
+      vel          = list(v = 0.1),   
       
       # proc         = "list",
       # delineations = "list",
@@ -148,7 +148,7 @@ as.GPR.list <- function (x, ...){
     x[["z"]] <- 1:nrow(x[["z"]]) - 1
   }
   if(!is.null(x[["vel"]]) && !is.list(x[["vel"]])){
-    x[["vel"]] <- list(x[["vel"]])
+    x[["vel"]] <- list(v = x[["vel"]])
   }
   # FIXME -> check values for all slots!!!!
   if(!is.null(x[["mode"]])){
@@ -189,7 +189,7 @@ as.GPR.list <- function (x, ...){
            zunit        = "ns",  
            zlab         = "two-way travel time",
            
-           vel          = list(0.1),   
+           vel          = list(v = 0.1),   
            
            # proc         = "list",
            # delineations = "list",

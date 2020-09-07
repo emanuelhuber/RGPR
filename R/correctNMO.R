@@ -64,7 +64,7 @@ setMethod("correctNMO", "GPR", function(x, thrs = NULL, v = NULL,
     stop("You must first shift the traces to time-zero with\n",
          "'shiftToTime0()'")
   }
-  if(!isZunitTime(x)){
+  if(!isZTime(x)){
     stop("The signal is a function of depth and not time. If you\n",
          "absolutely want to apply 'correctNMO()', change the unit with\n",
          "xunit(x) <- 'm', for example.")
@@ -86,10 +86,7 @@ setMethod("correctNMO", "GPR", function(x, thrs = NULL, v = NULL,
   }
   
   if(is.null(v)){
-    if(is.null(x@vel[["v"]])){
-     x <- interpVel(x, type = "vrms", method = "pchip")
-    }
-    v <- x@vel[["v"]]
+    v <- .getVel(x)
   } 
   
   if(!is.null(thrs)){

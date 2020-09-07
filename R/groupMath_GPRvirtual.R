@@ -15,7 +15,7 @@
 # data(frenkeLine00)
 # A <- exp(frenkeLine00)
 #' @rdname Math-methods
-#' @aliases Math-GPRvirtual-method
+#' @aliases Math,GPRvirtual-method
 setMethod(
   f = "Math",
   signature = "GPRvirtual",

@@ -30,20 +30,21 @@ setMethod("NMOstreching", "GPR", function(x, v = NULL){
     stop("You must first shift the traces to time-zero with\n",
          "'shiftToTime0()'")
   }
-  if(!isZunitTime(x)){
+  if(!isZTime(x)){
     stop("The signal is a function of depth and not time. If you\n",
          "absolutely want to apply 'NMOstreching()', change the unit with\n",
          "xunit(x) <- 'm', for example.")
   }
   if(is.null(v)){
-    if(length(x@vel) == 0){
-      stop("You must assign a positiv numerical value to 'v'!")
-    }else{
-      if(is.null(x@vel[["v"]])){
-        x <- interpVel(x, type = "vrms", method = "pchip")
-      }
-      v <- x@vel[["v"]]
-    }
+    # if(length(x@vel) == 0){
+    #   stop("You must assign a positiv numerical value to 'v'!")
+    # }else{
+    #   if(is.null(x@vel[["v"]])){
+    #     x <- interpVel(x, type = "vrms", method = "pchip")
+    #   }
+    #   v <- x@vel[["v"]]
+    # }
+    v <- .getVel(x)
   }
   if(anyNA(x@antsep)){
     stop("You must first set the antenna separation distances with\n",

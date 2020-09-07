@@ -4,7 +4,7 @@
 #' @param x An object of the class GPRvirtual
 #' @param digits number of digits to be used in round or signif.
 #' @rdname Math2-methods
-#' @aliases Math2-GPRvirtual-method
+#' @aliases Math2,GPRvirtual-method
 setMethod(
   f = "Math2",
   signature = "GPRvirtual",

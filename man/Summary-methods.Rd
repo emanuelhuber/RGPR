@@ -2,7 +2,6 @@
 % Please edit documentation in R/groupSummary_GPRvirtual.R
 \name{Summary,GPRvirtual-method}
 \alias{Summary,GPRvirtual-method}
-\alias{Summary-GPRvirtual-method}
 \title{Basic summary functions}
 \usage{
 \S4method{Summary}{GPRvirtual}(x, ..., na.rm = FALSE)

@@ -26,22 +26,23 @@ setMethod("NMO", "GPR", function(x, v = NULL){
     stop("You must first shift the traces to time-zero with\n",
          "'shiftToTime0()'")
   }
-  if(!isZunitTime(x)){
+  if(!isZTime(x)){
     stop("The signal is a function of depth and not time. If you\n",
          "absolutely want to apply 'NMO()', change the unit with\n",
          "xunit(x) <- 'm', for example.")
   }
   if(is.null(v)){
-    if(length(x@vel) == 0){
-      stop("You must assign a positiv numerical value to 'v'!")
-    }else{
-      if(is.null(v)){
-        if(is.null(x@vel[["v"]])){
-          x <- interpVel(x, type = "vrms", method = "pchip")
-        }
-        v <- x@vel[["v"]]
-      } 
-    }
+    # if(length(x@vel) == 0){
+    #   stop("You must assign a positiv numerical value to 'v'!")
+    # }else{
+    #   if(is.null(v)){
+    #     if(is.null(x@vel[["v"]])){
+    #       x <- interpVel(x, type = "vrms", method = "pchip")
+    #     }
+    #     v <- x@vel[["v"]]
+    #   } 
+    # }
+    v <- .getVel(x)
   }
   if(anyNA(x@antsep)){
     stop("You must first set the antenna separation distances with\n",
@@ -80,4 +81,22 @@ setMethod("NMO", "GPR", function(x, v = NULL){
 
 .NMO <- function(t0, antsep, v){
   sqrt(t0^2 + (antsep/v)^2) - t0
+}
+
+
+# return either 1 value, a vector or FIXME: a matrix
+.getVel <- function(x){
+  if(length(x@vel) == 0){
+    stop("You must assign a positiv numerical value to 'v'!")
+  }else{
+    if(is.null(x@vel[["v"]])){
+      if(!is.null(x@vel[["vrms"]])){
+        x <- interpVel(x, type = "vrms", method = "pchip")
+      }else{
+        stop("VEL NOT DEFINED")
+      }
+    }
+    v <- x@vel[["v"]]
+    return(v)
+  }
 }

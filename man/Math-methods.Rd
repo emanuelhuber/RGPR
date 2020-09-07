@@ -2,7 +2,6 @@
 % Please edit documentation in R/groupMath_GPRvirtual.R
 \name{Math,GPRvirtual-method}
 \alias{Math,GPRvirtual-method}
-\alias{Math-GPRvirtual-method}
 \title{Basic mathematical functions}
 \usage{
 \S4method{Math}{GPRvirtual}(x)

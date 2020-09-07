@@ -2,7 +2,6 @@
 % Please edit documentation in R/groupComplex_GPRvirtual.R
 \name{Complex,GPRvirtual-method}
 \alias{Complex,GPRvirtual-method}
-\alias{Complex-GPRvirtual-method}
 \title{Complex operations}
 \usage{
 \S4method{Complex}{GPRvirtual}(z)

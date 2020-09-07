@@ -11,7 +11,7 @@
 #'  \item{all, any, sum, prod, min, max, range}
 #'  }
 #' @rdname Summary-methods
-#' @aliases Summary-GPRvirtual-method
+#' @aliases Summary,GPRvirtual-method
 setMethod(
   f = "Summary",
   signature = "GPRvirtual",

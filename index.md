@@ -78,7 +78,7 @@ I am developing this package on my free time as a gift to the GPR community. Any
     Alternatively, you can download the package as a zip file and install it in R
     following these instructions:
 
-    https://riptutorial.com/r/example/5556/install-package-from-local-source
+    [https://riptutorial.com/r/example/5556/install-package-from-local-source](https://riptutorial.com/r/example/5556/install-package-from-local-source)
 
 
 **New to R?** Try this *free* interactive course from DataCamp: [Introduction to R](https://www.datacamp.com/courses/free-introduction-to-r)

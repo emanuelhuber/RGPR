@@ -119,6 +119,11 @@ plot(frenkeLine00)
 
 ```
 
+Alternatively, you can download the package as a zip file and install it in R
+following these instructions:
+
+https://riptutorial.com/r/example/5556/install-package-from-local-source
+
 ## Function overview
 
 The documentation is still incomplete (but check the tutorials, http://emanuelhuber.github.io/RGPR)

@@ -18,7 +18,7 @@
 #'   \item \code{proc}: updated with function name and arguments.
 #' }
 #'  
-#' @param x      [\code{GPR class}] An object of the class \code{GPR}
+#' @param x      [\code{GPR* object}] An object of the class \code{GPR}
 #' @param method [\code{character(1)}] Interpolation method to be applied
 #'               (one of \code{pchip} \code{linear}, \code{nearest}, 
 #'               \code{spline}, \code{cubic}, \code{none}, 

@@ -20,7 +20,7 @@ shiftToTime0(
 )
 }
 \arguments{
-\item{x}{[\code{GPR class}] An object of the class \code{GPR}}
+\item{x}{[\code{GPR* object}] An object of the class \code{GPR}}
 
 \item{method}{[\code{character(1)}] Interpolation method to be applied
 (one of \code{pchip} \code{linear}, \code{nearest}, 

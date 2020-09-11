@@ -1,7 +1,7 @@
 ---
 layout: page
 title: GPR data deconvolution
-date: 2020-08-14
+date: 2020-09-11
 ---
 
 ------------------------------------------------------------------------
@@ -191,26 +191,6 @@ x_dec <- deconv(x6, method="mixed-phase", W = tWin, wtr = 5, nf = 35,
 ```
 
 ![](10_RGPR_mixed-phase-wavelet-deconvolution_tp_files/figure-markdown_github/unnamed-chunk-5-1.png)
-
-``` r
-x <- x6@data[,1]
-npad <- 0
-phi <- 0.324
-  n <- length(x)
-  x <- c(rev(head(x, npad)), x, rev(tail(x, npad)))   # add MANU
-  nf <- length(x)
-  X <- stats::fft(x)
-  # phi2 <- numeric(nf)
-  # phi2[2:(nf/2)] <- phi
-  phi2 <- rep(phi, nf)
-  phi2[(nf/2+1):(nf)] <- -phi
-  Phase <- exp( complex(imaginary = 1) * phi2)
-  xcor <- stats::fft(X*Phase, inverse=TRUE)/nf
-  return(Re(xcor)[npad + 1:n])
-
-  xrot <- phaseRotation(x6, 0.234)
-  xrot <- phaseRotation(x6[,1], 0.234)
-```
 
 Estimated phase rotation: 103.13°.
 

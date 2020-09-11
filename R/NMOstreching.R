@@ -18,7 +18,7 @@ setMethod("NMOstreching", "GPR", function(x, v = NULL){
   #        "'shiftToTime0()'")
   # }
   # if(is.null(v)){
-  #   stop("You must assign a positiv numerical value to 'v'!")
+  #   stop("You must assign a positiv velocity value!")
   # }
   # S_NMO <- NMO(x, v) / x@z
   # S_NMO@data[is.infinite(S_NMO@data)] <- 0
@@ -27,17 +27,14 @@ setMethod("NMOstreching", "GPR", function(x, v = NULL){
   # 
   # proc(S_NMO) <- getArgs()
   if(any(x@z0 > 0)){
-    stop("You must first shift the traces to time-zero with\n",
-         "'shiftToTime0()'")
+    stop(msg_do_shiftToTime0)
   }
   if(!isZTime(x)){
-    stop("The signal is a function of depth and not time. If you\n",
-         "absolutely want to apply 'NMOstreching()', change the unit with\n",
-         "xunit(x) <- 'm', for example.")
+    stop(msg_set_zunitToDepth)
   }
   if(is.null(v)){
     # if(length(x@vel) == 0){
-    #   stop("You must assign a positiv numerical value to 'v'!")
+    #   stop("You must assign a positiv velocity value!")
     # }else{
     #   if(is.null(x@vel[["v"]])){
     #     x <- interpVel(x, type = "vrms", method = "pchip")
@@ -47,8 +44,7 @@ setMethod("NMOstreching", "GPR", function(x, v = NULL){
     v <- .getVel(x)
   }
   if(anyNA(x@antsep)){
-    stop("You must first set the antenna separation distances with\n",
-         "'antsep(x) <- ...")
+    stop(msg_set_antsep)
   }
   S_NMO <- x
   if(!isCMP(x)){

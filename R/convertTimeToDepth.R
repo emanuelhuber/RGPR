@@ -40,7 +40,7 @@ setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, dmax = NULL,
     message("Trace vertical positions set to zero!")
   }
   
-  if(any(x@time0 != 0)){
+  if(any(x@z0 != 0)){
     x <- shiftToTime0(x, method = c("pchip"))
   }
   
@@ -48,6 +48,7 @@ setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, dmax = NULL,
     stop("Vertical unit (", x@zunit , ") is not a time unit...")
   }
   
+  x[is.infinite(x) | is.na(x)] <- 0
 
   
   # single velocity value
@@ -95,6 +96,9 @@ setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, dmax = NULL,
                     x_depth = x_depth, 
                     x_depth_int = d, 
                     method = method)
+    # signal::interp1(x = x_depth, y = x@data[,2], xi = d, 
+    #                 method = method)
+    
     
     # x_new <- matrix(nrow = length(d), ncol = ncol(x))
     # for(i in seq_along(x)){
@@ -146,7 +150,7 @@ setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, dmax = NULL,
   
   x@vel <- list() 
   x@zunit <- x@xunit # FIXME: check that
-  
+  x@zlab <- "depth"
   proc(x) <- getArgs()
   return(x)
 } 

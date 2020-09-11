@@ -61,17 +61,13 @@ setMethod("velocitySpectrum", "GPR",
               v <- exp(seq(log(0.02), log(0.3), length = 100))
             }
             if(any(x@z0 > 0)){
-              stop("You must first shift the traces to time-zero with\n",
-                   "'shiftToTime0()'")
+              stop(msg_do_shiftToTime0)
             }
             if(!isZTime(x)){
-              stop("The signal is a function of depth and not time. If you\n",
-                   "absolutely want to apply 'velocitySpectrum()', change the unit with\n",
-                   "xunit(x) <- 'm', for example.")
+              stop(msg_set_zunitToDepth)
             }
             if(anyNA(x@antsep)){
-              stop("You must first set the antenna separation distances with\n",
-                   "'antsep(x) <- ...")
+              stop(msg_set_antsep)
             }
             if(length(x@antsep) != ncol(x)){
               stop("The length of the antenna separation distances must equal",

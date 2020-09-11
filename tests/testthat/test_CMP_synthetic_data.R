@@ -1,4 +1,16 @@
 
+# ---------------------------------------------------------------------------- #
+# -------------------------- TODO -------------------------------------------- 
+# ---------------------------------------------------------------------------- #
+
+# For every function with @vel, check
+# - if length(vel) > 0
+# - if isZDepth/isZTime
+# - use .getVel to get velocity "v"
+# - check if 1 numeric value, 1 vector, 1 matrix or ???
+
+
+
 #------------------------------------------------------------------------------#
 
 # identify 2D peaks:
@@ -45,7 +57,8 @@ setVel <- function(x, v, twt, type = c("vrms", "vint")){
                             "v" = v),
               "vint" = DixVel(twt = twt, v = v))
   }else{
-    v <- list("vint" = DixVel(twt = twt, v = v))
+    v <- list("vint" = list(twt = twt, v = v),
+              )
   }
   x@vel <- v
   return(x)
@@ -88,20 +101,29 @@ smoothVel <- function(x, w, type = c("vrms", "vint")){
 }
 
 plotVel <- function(x){
-  v_lim <- range(sapply(x@vel, .getAllVel))
-  plot(0, type = "n", ylim = rev(range(x_tv@z)),  xlim = v_lim, yaxs = "i",
-       xlab = RGPR:::.vlab(x),
-       ylab = RGPR:::.zlab(x))
-  if(!is.null(x@vel[["vrms"]])){
-    v_rms <- approxfun(x@vel[["vrms"]][["t"]], x@vel[["vrms"]][["v"]], rule = 2, method = "constant", f = 1)
-    lines(v_rms(x@z), x@z, type = "s", lty = 1)
-  }
-  if(!is.null(x@vel[["vint"]])){
-    v_int <- approxfun(x@vel[["vint"]][["t"]], x@vel[["vint"]][["v"]], rule = 2, method = "constant", f = 1)
-    lines(v_int(x@z), x@z, type = "s", lty = 3)
-  }
-  if(!is.null(x@vel[["v"]]) && is.numeric(x@vel[["v"]])){
-    lines(x@vel[["v"]], x@z, type = "s", lty = 2, col = "red")
+  if(length(x@vel)){
+    
+    v_lim <- range(sapply(x@vel, .getAllVel))
+    plot(0, type = "n", ylim = rev(range(x_tv@z)),  xlim = v_lim, yaxs = "i",
+         xlab = RGPR:::.vlab(x),
+         ylab = RGPR:::.zlab(x))
+    if(!is.null(x@vel[["vrms"]])){
+      v_rms <- approxfun(x@vel[["vrms"]][["t"]], x@vel[["vrms"]][["v"]], rule = 2, method = "constant", f = 1)
+      lines(v_rms(x@z), x@z, type = "s", lty = 1)
+    }
+    if(!is.null(x@vel[["vint"]])){
+      v_int <- approxfun(x@vel[["vint"]][["t"]], x@vel[["vint"]][["v"]], rule = 2, method = "constant", f = 1)
+      lines(v_int(x@z), x@z, type = "s", lty = 3)
+    }
+    if(!is.null(x@vel[["v"]]) && is.numeric(x@vel[["v"]])){
+      lines(x@vel[["v"]], x@z, type = "s", lty = 2, col = "red")
+    }
+  }else{
+    if(isZDepth(x)){
+      stop(msg_set_zunitToDepth)
+    }else{
+      stop("")
+    }
   }
 }
 
@@ -287,7 +309,7 @@ points(lyr$vrms, lyr$t0, pch = 21, col = "darkslateblue", lwd = 2, bg = "gold")
 
 sel <- 1:20
 
-# both identical
+# both identical: semblance + win-semblance (w = 1)
 x_tv <- velocitySpectrum(x[,sel], v = seq(0.02, to = 0.11, length.out = 50),
                          method = "winsemblance", w = 1)
 plot(x_tv)
@@ -308,6 +330,7 @@ sel <- 1:25
 sel <- 1:ncol(x)
 par(mfrow = c(1,2))
 plot(x[,sel], barscale = FALSE, main = "CMP")
+x_tv <- velocitySpectrum(x, v = seq(0.05, to = 0.11, length.out = 50))
 plot(x_tv[1:nrow(x_tv),], barscale = FALSE,
      main = "semblance analysis")
 contour(x_tv[1:nrow(x_tv),], add = TRUE, nlevels = 5)
@@ -322,10 +345,10 @@ vv <- locator(type = "o", pch = 20, col = "green")
 vnmo <-  vv$x
 tnmo <-  vv$y
 xy.coords(vv)
-v <- approxfun(tnmo, vnmo, rule = 2, method = "linear", f = 0)
-# v <- approxfun(vnmo, tnmo, rule = 2, method = "constant")
+v <- approxfun(vv$y, vv$x, rule = 2, method = "linear", f = 0)
+# v <- approxfun(vv$x, vv$y, rule = 2, method = "constant")
 # plot(v(x@z), x@z, type = "l", ylim = rev(range(x@z)))
-# points(vnmo, tnmo, pch = 20)
+# points(vv$x, vv$y, pch = 20)
 
 lines(v(x_tv@z), x_tv@z, lwd = 2, col = "green")
 points(vv, pch = 20)
@@ -335,17 +358,14 @@ points(vv, pch = 20)
 vin <- DixVel(twt = vv$y, v = vv$x)
 
 
-x <- setVel(x, v = vnmo, twt = tnmo, type = "vrms")
+x <- setVel(x, v = vv$x, twt = vv$y, type = "vrms")
 x@vel
-plot(x)
-
-round(cbind(lyr$vint, x@vel[["vint"]]$v), 3)
-round(cbind(lyr$vrms, x@vel[["vrms"]]$v), 3)
-
-
+plot(x, barscale = FALSE)
 plotVel(x)
 
+# FIXME - Function to write
 getVel(x)
+
 
 x <- interpVel(x)
 plotVel(x)
@@ -354,14 +374,18 @@ x <- interpVel(x, method = "pchip")
 plotVel(x)
 
 x <- smoothVel(x, w = 10, type = "vint")
-x <- smoothVel(x, w = 10, type = "vrms")
 plotVel(x)
 
-plot(correctNMO(x))
+par(mfrow = c(1, 2))
+x <- smoothVel(x, w = 10, type = "vrms")
+plot(correctNMO(x), main = "smoothing")
+
+x <- interpVel(x)
+plot(correctNMO(x), main = "no interpolation")
 
 # Comparison: velocity model vs. true velocities
 plotVel(x)
-lines(lyr$vrms, lyr$t0, type = "s", lty = 3, col = "darkblue")
+lines(lyr$vrms, lyr$t0, type = "s", lty = 3, col = "dodgerblue")
 points(lyr$vrms, lyr$t0, pch = 21, col = "darkslateblue", lwd = 2, bg = "gold")
 
 
@@ -373,7 +397,7 @@ par(mfrow = c(1,2))
 plot(x[,sel], barscale = FALSE, main = "CMP")
 matplot(HPB$twt, HPB$antsep, type = "l", col = "green", lwd = 2, add = TRUE, lty = 1)
 
-plot(correctNMO(x[,sel]))
+plot(correctNMO(x[,sel]), barscale = FALSE)
 
 
 
@@ -381,12 +405,6 @@ plot(correctNMO(x[,sel]))
 par(mfrow = c(1,2))
 plot(x, type = "wiggles", wsize = 1, col = "black")
 plot(correctNMO(x), type = "wiggles", wsize = 1, col = "black")
-
-
-
-
-     
-
 
 par(mfrow= c(1,2))
 plot(NMOstreching(x))
@@ -404,6 +422,17 @@ plot(stackNMO(x, thrs = 0.2))
 
 ## TEST with our data
 
+x <- smoothVel(x, w = 10, type = "vrms")
+xc <- correctNMO(x)
+xc@antsep <- 0
+plot(xc)
+x <- smoothVel(x, w = 10, type = "vint")
+# x_save <- x
+x <- xc
+x2 <- convertTimeToDepth(xc)
+
+plot(x2)
+plotVel(x2)
 
 names(lyr)
 #  "vint" "d"    "vrms" "t0"  

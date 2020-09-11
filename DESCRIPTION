@@ -116,6 +116,7 @@ Collate:
 	'z_path.R'
 	'z_spatial.R'
 	'z_units.R'
+	'z_messages.R'
 Imports:
     methods,
     graphics,

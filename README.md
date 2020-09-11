@@ -9,3 +9,11 @@ Work in progress
   - [ ] GPRset (decomposition)
   - [ ] GPRcube
   - [ ] GPRslice
+- [ ] Units management
+- [ ] Conversion
+
+
+
+## Internal features
+
+- [ ] constant messages

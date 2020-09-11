@@ -61,17 +61,13 @@ setMethod("correctNMO", "GPR", function(x, thrs = NULL, v = NULL,
                                 "cubic"))
   # method <- method[1]
   if(any(x@z0 > 0)){
-    stop("You must first shift the traces to time-zero with\n",
-         "'shiftToTime0()'")
+    stop(msg_do_shiftToTime0)
   }
   if(!isZTime(x)){
-    stop("The signal is a function of depth and not time. If you\n",
-         "absolutely want to apply 'correctNMO()', change the unit with\n",
-         "xunit(x) <- 'm', for example.")
+    stop(msg_set_zunitToDepth)
   }
   if(anyNA(x@antsep)){
-    stop("You must first set the antenna separation distances with\n",
-         "'antsep(x) <- ...")
+    stop(msg_set_antsep)
   }
   if(isCMP(x)){
     if(length(x@antsep) != ncol(x)){
@@ -99,6 +95,7 @@ setMethod("correctNMO", "GPR", function(x, thrs = NULL, v = NULL,
   return(x)
 })
 
+# FIXME: does it work when v is a matrix?
 # c("linear", "nearest", "pchip",   "cubic", "spline")
 .NMOCor <- function(x, v = NULL, asep = NULL, method = "pchip"){
   x_nmoCor <- x

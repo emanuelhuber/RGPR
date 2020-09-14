@@ -1855,7 +1855,7 @@ rmsScaling <- function(...){
 .fFilter1D <- function(A, f = c(100), type = c('low', 'high', 'bandpass'), 
                        L = 257, dT = 0.8, plotSpec = FALSE, fac = 1000000){
   type <- match.arg(type)
-  A <- as.matrix(A)
+  # A <- as.matrix(A)
   nr <- nrow(A)      # signal length
   
   # samping interval GPR = 0.8 ns
@@ -1917,7 +1917,7 @@ rmsScaling <- function(...){
   Nfft = 2^(ceiling(log2(L + nr-1)))
   # Zero pad the signal and impulse response:
   h_long = c( h, rep(0, Nfft - L) )
-  A = rbind(as.matrix(A) , matrix(0,nrow=Nfft-nr,ncol=ncol(A)) )
+  A = rbind(A , matrix(0, nrow = Nfft - nr, ncol = ncol(A)) )
   
   fft_A = stats::mvfft(A)    # signal
   fft_h = stats::fft(h_long)        # filter
@@ -1931,8 +1931,8 @@ rmsScaling <- function(...){
   pow_y = Mod(Y)
   # si matrix -> moyenne sur les colonnes
   if(!is.null(dim(A))){
-    pow_A = apply(pow_A,1, mean, na.rm=TRUE)
-    pow_y = apply(pow_y,1, mean, na.rm=TRUE)
+    pow_A = apply(pow_A, 1, mean, na.rm=TRUE)
+    pow_y = apply(pow_y, 1, mean, na.rm=TRUE)
   }
   # select only first half of vectors
   pow_A = pow_A[1:(Nfft/2+1)] 
@@ -1947,7 +1947,7 @@ rmsScaling <- function(...){
     m = seq(0,900,by=50)
     #par(mfrow=c(2,1), mar=c(5, 4, 4, 6) + 0.1 )
     par( mar=c(0, 4, 0.3, 2) + 0.1, oma=c(3,2,1,2) )
-    plot(fre,pow_A, type="l",
+    plot(fre, pow_A, type="l",
          ylim=c(0,max(pow_A,pow_y)),
          ylab="power",lwd=2)
     lines(fre,pow_y, type="l",col="blue",lwd=2)
@@ -1960,7 +1960,7 @@ rmsScaling <- function(...){
   }
   a = (L-1)/2
   y = stats::mvfft(Y, inverse = TRUE)
-  y = y[a:(a+nr-1),]/nrow(y)
+  y = y[a:(a+nr-1), ,drop = FALSE]/nrow(y)
   return(Re(y))
 }
 

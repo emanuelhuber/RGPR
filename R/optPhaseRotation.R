@@ -47,6 +47,7 @@ optPhaseRotation <- function(x, rot = 0.01, plot = TRUE){
 .spikingFilter <- function(y, nf = 32, mu = 0.1, shft = 1){
   # R = t(Y)%*%Y = Toepliz matrix of ACF
   y_acf <- as.numeric(acf(y, lag.max = nf - 1, plot= FALSE)[[1]])
+  nf <- length(y_acf)  # because length(y_acf) can be < lag.max
   taper <- hammingWindow(2*nf)
   y_acf <- y_acf*taper[(nf+1):(2*nf)] 
   y_acf[1] <- y_acf[1] + mu

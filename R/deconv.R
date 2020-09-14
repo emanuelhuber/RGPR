@@ -53,7 +53,8 @@ setMethod("deconv", "GPR", function(x,
     if(is.null(dots$W)){
       stop(paste0("W must be defined\n"))
     }else{
-      W <- dots$W
+      if(length(dots$W)!= 2) stop("'W' must have equal to 2")
+      W <- sort(dots$W)
     }
     if(is.null(dots$wtr)){
       stop(paste0("wtr must be defined\n"))
@@ -75,8 +76,13 @@ setMethod("deconv", "GPR", function(x,
     }else{
       shft <- dots$shft
     }
-    
-    W <- seq(W[1], W[2])
+    W <- which(depth(x) > W[1] & depth(x) < W[2])
+    # W <- seq(W[1], W[2])
+    if(nf < length(W)){
+      message("'nf' is longer that the window length and therefore\n",
+              "I set 'nf' as long as the window length")
+      nf <- length(W)
+    }
     X <- traceScaling(x, type = "rms")@data
     # X <- X / apply(as.matrix(X),2,RMS)
     Xdec <- matrix(nrow = nrow(X), ncol = ncol(X))
@@ -85,13 +91,13 @@ setMethod("deconv", "GPR", function(x,
     for(i in 1:ncol(X)){
       ww <- (i-wtr):(i+wtr)
       ww <- ww[ww <= ncol(X) & ww >= 1]
-      supertrace <- as.vector(X[W,ww])
+      supertrace <- as.vector(X[W, ww])
       # inverse minimum-phase wavelet estimation # variante 1 (Emanuel)
-      Fmin[,i] <- .spikingFilter(supertrace,nf=nf ,mu=mu, shft=shft)
+      Fmin[,i] <- .spikingFilter(supertrace, nf = nf , mu = mu, shft = shft)
       # Wmin[,i] <- deconv(c(1,rep(0,nf-1)),Fmin[,i], nf=nf,mu=mu)
-      Wmin[,i] <- deconvolve(c(1,rep(0,nf-1)), Fmin[,i], mu=mu)
+      Wmin[,i] <- deconvolve(c(1,rep(0, nf-1)), Fmin[,i], mu = mu)
       # minimum-phase deconvolued data
-      Xdec[,i] <- convolution(X[,i],Fmin[,i])[1:nrow(X)]
+      Xdec[,i] <- convolution(X[,i], Fmin[,i])[1:nrow(X)]
     }
     # estimated min-phase wavelet
     w_0 <- matrix(0, nrow=round(nf/3),ncol=ncol(Wmin))

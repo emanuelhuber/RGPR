@@ -32,6 +32,7 @@ Collate:
   'GroupArith.R'
   'GroupMath.R'
   'GroupSummary.R'
+  'GroupCompare.R'
   'getterSetter.R'
   'hyperbola.R'
   'GPS.R'

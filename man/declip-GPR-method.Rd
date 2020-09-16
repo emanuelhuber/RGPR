@@ -6,12 +6,36 @@
 \usage{
 \S4method{declip}{GPR}(x, xclip = NULL, xrange = NULL, lambda = 1)
 }
+\arguments{
+\item{x}{[\code{GPR}]}
+
+\item{xclip}{[\code{matrix(m,n)}] The clipped values, a matrix 
+with the Same dimension as \code{x}, with \code{1} for 
+the positively clipped values, \code{-1} for the negatively
+clipped values and \code{0} everywhere else. If 
+\code{xclip = NULL}, the clipped values are estimated with
+the function \code{\link{clippedValues}}.}
+
+\item{xrange}{[\code{numeric(2)}] the desired range of the declipped values
+(for the negatively and positively clipped values) used as 
+a constraint whose strength depends on the value of 
+\code{lambda}. If \code{xrange = NULL}, the desired range is
+set equal to the clipped data range +/- 10\%.}
+
+\item{lambda}{[\code{numeric(1)}] Positive value defining the strength of
+signal range constraint. The larger \code{lamda} is the larger
+the constraint on the signal range. 
+If \code{lambda = 0}, there is no constraint on the data range
+and \code{xrange} is not used.}
+}
+\value{
+[\code{GPR}]
+}
 \description{
 Use constrained least squares. Based on the code of Ivan Selesnick:
- "we minimize
-  the energy of the the third derivative. This encourages the filled in data 
- to have the form of a parabola (second order polynomial), because the third
-  derivative of a parabola is zero."
-+ constraint (i.e., constrained least squares) like in
-http://www.cs.cmu.edu/~robust/Papers/HarvillaStern15a.pdf
+ "we minimize the energy of the the third derivative. This encourages the 
+ filled in data to have the form of a parabola (second order polynomial), 
+ because the third derivative of a parabola is zero.". A constraint on the
+ declipped data range was added (i.e., constrained least squares) like in
+ http://www.cs.cmu.edu/~robust/Papers/HarvillaStern15a.pdf
 }

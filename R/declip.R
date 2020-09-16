@@ -1,10 +1,3 @@
-
-setGeneric("declip", function(x, 
-                                xclip = NULL, 
-                                xrange = NULL, 
-                                lambda = 1) 
-  standardGeneric("declip"))
-
 #' Declip the GPR signal
 #' 
 #' Use constrained least squares. Based on the code of Ivan Selesnick:
@@ -31,7 +24,15 @@ setGeneric("declip", function(x,
 #'               the constraint on the signal range. 
 #'               If \code{lambda = 0}, there is no constraint on the data range
 #'               and \code{xrange} is not used.
-#' @return [\code{GPR}]              
+#' @return [\code{GPR}]    
+#' @name declip     
+setGeneric("declip", function(x, 
+                                xclip = NULL, 
+                                xrange = NULL, 
+                                lambda = 1) 
+  standardGeneric("declip"))
+
+#' @rdname declip      
 #' @export
 setMethod("declip", "GPR", function(x, 
                                       xclip = NULL, 

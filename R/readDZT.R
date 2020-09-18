@@ -264,8 +264,8 @@ readDZT <- function(dsn){
                       size = 2L))
     A <- matrix(nrow = hd$NSAMP, ncol = nNumScans * hd$NCHAN)
     A[] <- readBin(dsn, what = "int", n = prod(dim(A)),  size = 1)
-    test <- A > 0
-    A[ test] <- A[ test] - 129
+    test <- A >= 0
+    A[ test] <- A[ test] - 128
     A[!test] <- A[!test] + 127
   }else if(hd$BITS == 16){
     #.skipBin(dsn, hd$NSAMP * nNumSkipScans * hd$NCHAN, size = 2)
@@ -273,8 +273,8 @@ readDZT <- function(dsn){
                       size = 2L))
     A <- matrix(nrow = hd$NSAMP, ncol = nNumScans * hd$NCHAN)
     A[] <- readBin(dsn, what = "int", n = prod(dim(A)),  size = 2)
-    test <- A > 0
-    A[ test] <- A[ test] - 32769
+    test <- A >= 0
+    A[ test] <- A[ test] - 32768
     A[!test] <- A[!test] + 32767
   }else if(hd$BITS == 32){
     # invisible(readBin(dsn, "integer", n = hd$NSAMP * nNumSkipScans * hd$NCHAN, 

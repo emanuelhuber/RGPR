@@ -5,9 +5,9 @@
 \alias{declip,GPR-method}
 \title{Declip the GPR signal}
 \usage{
-declip(x, xclip = NULL, xrange = NULL, lambda = 1)
+declip(x, xclip = NULL, xrange = NULL, lambda = 1, mu = 0)
 
-\S4method{declip}{GPR}(x, xclip = NULL, xrange = NULL, lambda = 1)
+\S4method{declip}{GPR}(x, xclip = NULL, xrange = NULL, lambda = 1, mu = 0)
 }
 \arguments{
 \item{x}{[\code{GPR}]}
@@ -25,11 +25,10 @@ a constraint whose strength depends on the value of
 \code{lambda}. If \code{xrange = NULL}, the desired range is
 set equal to the clipped data range +/- 10\%.}
 
-\item{lambda}{[\code{numeric(1)}] Positive value defining the strength of
-signal range constraint. The larger \code{lamda} is the larger
-the constraint on the signal range. 
-If \code{lambda = 0}, there is no constraint on the data range
-and \code{xrange} is not used.}
+\item{lambda}{[\code{numeric(1)}] Positive value that add some noise to
+stabilize the matrix inversion used in the least-square 
+approach (could be useful if the matrix to invert is singular,
+use small value, e.g., 0.00001 of the signal amplitude).}
 }
 \value{
 [\code{GPR}]

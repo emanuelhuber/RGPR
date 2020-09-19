@@ -24,12 +24,17 @@
 #'               the constraint on the signal range. 
 #'               If \code{lambda = 0}, there is no constraint on the data range
 #'               and \code{xrange} is not used.
+#' @param lambda [\code{numeric(1)}] Positive value that add some noise to
+#'               stabilize the matrix inversion used in the least-square 
+#'               approach (could be useful if the matrix to invert is singular,
+#'               use small value, e.g., 0.00001 of the signal amplitude).
 #' @return [\code{GPR}]    
 #' @name declip     
 setGeneric("declip", function(x, 
-                                xclip = NULL, 
-                                xrange = NULL, 
-                                lambda = 1) 
+                              xclip  = NULL, 
+                              xrange = NULL, 
+                              lambda = 1,
+                              mu     = 0) 
   standardGeneric("declip"))
 
 #' @rdname declip      
@@ -37,7 +42,8 @@ setGeneric("declip", function(x,
 setMethod("declip", "GPR", function(x, 
                                       xclip = NULL, 
                                       xrange = NULL, 
-                                      lambda = 1){
+                                      lambda = 1,
+                                      mu = 0){
   if(is.null(xclip)){
     #try to estimate it
     xclip <- clippedValues(x)
@@ -58,14 +64,9 @@ setMethod("declip", "GPR", function(x,
   }
   xdata_old <- x@data
   # if(is.null(xrange)) stop("'NULL' value for 'xrange' not allowed!")
-  x@data <- sapply(seq_len(ncol(x)), function(i, a, amin, amax){
-    rLSClip(a[, i], 
-            xclipmin = amin[,i], 
-            xclipmax = amax[,i], 
-            xrange = xrange, 
-            lambda = lambda)
-  },
-  a = x@data,  amin = xclipmin, amax = xclipmax)
+  x@data <- sapply(seq_len(ncol(x)), FUNrslClip, a = x@data,  
+                   amin = xclipmin, amax = xclipmax, xrange = xrange, 
+                   lambda = lambda, mu = mu)
   proc(x) <- getArgs()
   testmax <- sum(x@data[xclipmax] < xdata_old[xclipmax])
   testmin <- sum(x@data[xclipmin] > xdata_old[xclipmin])
@@ -77,6 +78,14 @@ setMethod("declip", "GPR", function(x,
   }
   return(x)
 })
+
+FUNrslClip <- function(i, a, amin, amax){
+  rLSClip(a[, i], 
+          xclipmin = amin[,i], 
+          xclipmax = amax[,i], 
+          xrange = xrange, 
+          lambda = lambda)
+}
 
 #--------------------- LEAST-SQUARES DECLIPPING -------------------------------#
 # based on the code of Ivan Selesnick:

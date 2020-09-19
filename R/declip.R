@@ -79,12 +79,13 @@ setMethod("declip", "GPR", function(x,
   return(x)
 })
 
-FUNrslClip <- function(i, a, amin, amax){
+FUNrslClip <- function(i, a, amin, amax, range, lambda, mu){
   rLSClip(a[, i], 
           xclipmin = amin[,i], 
           xclipmax = amax[,i], 
           xrange = xrange, 
-          lambda = lambda)
+          lambda = lambda,
+          mu = mu)
 }
 
 #--------------------- LEAST-SQUARES DECLIPPING -------------------------------#

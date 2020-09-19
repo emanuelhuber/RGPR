@@ -90,69 +90,139 @@ setMethod("declip", "GPR", function(x,
 # xclip = boolean matrix (TRUE for clipped values)
 # xrange = range of the values of the unclipped signal
 # lambda = ...
-rLSClip <- function(x, xclipmin = NULL, xclipmax = NULL, xrange = NULL, lambda = 5){
+
+rLSClip <- function(x, xclipmin = NULL, xclipmax = NULL, xrange = NULL, 
+                    lambda = 5, mu = 0){
   xclip <- xclipmin | xclipmax
   
   if(any(xclip)){
+    nx <- length(x)
+    # -------------------------- SHORTEN TO SPEED UP ------------------------- #
+    # take a short part of the signal around the clipped values
+    # to speed up the computations
+    # remove the clipped values at the very end of the signal
+    x_rle <- rle(xclip)
+    # if the last values of the signal are clipped
+    nrm <- 0
+    if(tail(x_rle$values, 1) == TRUE){
+      # if these values are the only one that are clipped
+      if(length(x_rle$lengths) == 2) return(x)
+      # else: remove
+      nrm <- tail(x_rle$lengths, 1)
+      xclip <- xclip[1:(nx - nrm)]
+    }
     test <- range(which(xclip))
     D <- diff(test)
     if(D <  30) D <- 30
     testi <- test + round(c(-D/2, D/2))
     i <- seq(from = testi[1], to = testi[2], by = 1L)
-    i <- i[i > 0 & i < length(x)]
-    x0 <- x
-    x <- x[i]
+    i <- i[i > 0 & i <= (nx - nrm) ]
+    # if(length(i) == 0) return(x)
+    # x0 <- x
+    # shorten x and other variables
+    xs <- x[i]
     xclip <- xclip[i]
     xclipmin <- xclipmin[i]
     xclipmax <- xclipmax[i]
     
+    nxs <- length(xs)
     
-    if(is.null(xrange)){
-      dx <- diff(range(x)) * 0.15
-      xrange <- c(min(x), max(x)) + c(- dx, + dx)
-    }
-    
-    N <- length(x)
-    
-    D <- matrix(0, nrow = N-3, ncol = N)
+    D <- matrix(0, nrow = nxs - 3, ncol = nxs)
     D[ col(D) == row(D)  ] <- 1
     D[ col(D) == row(D) +1  ] <- -2
     D[ col(D) == row(D) +2  ] <- 1
     
-    S <- matrix(0L, N, N)
-    diag(S) <- 1L
-    Sc <- S
-    Sm <- S
-    Sp <- S
-    
-    S <- S[!xclip,, drop = FALSE]   # S : sampling matrix
+    S  <- diag(1L, nrow = nxs, ncol = nxs, names = TRUE)
+    Sc <- diag(1L, nrow = nxs, ncol = nxs, names = TRUE)
+    S  <- S[!xclip,, drop = FALSE]   # S : sampling matrix
     Sc <- Sc[xclip,, drop = FALSE]   # S : complement of S (zmin & zmax)
-    Sm <- Sm[xclipmin, xclip, drop = FALSE]   # S : complement of S (zmin)
-    Sp <- Sp[xclipmax, xclip, drop = FALSE]   # S : complement of S (zmax)
+    # x_lsq <- x
+    A <- -Sc %*% (t(D) %*% D) %*% t(Sc) 
+    B <- Sc %*% t(D) %*% D %*% t(S) %*% xs[!xclip]
+    if(lambda > 0){
+      Sm <- diag(1L, nrow = nxs, ncol = nxs, names = TRUE)
+      Sp <- diag(1L, nrow = nxs, ncol = nxs, names = TRUE)
+      Sm <- Sm[xclipmin, xclip, drop = FALSE]   # S : complement of S (zmin)
+      Sp <- Sp[xclipmax, xclip, drop = FALSE]   # S : complement of S (zmax)
+      A <- A + lambda * (t(Sm) %*% Sm + t(Sp) %*% Sp)
+      B <- B +  lambda * ( t(Sm) %*% rep(xrange[1], sum(xclipmin)) + 
+                             t(Sp) %*% rep(xrange[2], sum(xclipmax)))
+    }
+    Nc <- sum(xclip)
+    if(mu > 0){
+      A <- A + diag(x = mu, nrow = Nc, ncol = Nc)
+    }
     
-    L = sum(xclip)                        # L : number of missing values
+    x[i][xclip] <- solve(A , B)
+    # x[i] <- xs
     
-    x_lsq <- x
-    I_L <- matrix(0L,L,L)
-    # diag(I_L) <- 1L
-    # lambda <- 1
-    
-    
-    x_lsq[xclip] <- solve(-(Sc %*% (t(D) %*% D) %*% t(Sc) + 
-                              lambda * (t(Sm) %*% Sm + t(Sp) %*% Sp) ), 
-                          ( Sc %*% t(D) %*% D %*% t(S) %*% x[!xclip] -
-                              lambda * ( t(Sm) %*% rep(xrange[1], sum(xclipmin)) + 
-                                           t(Sp) %*% rep(xrange[2], sum(xclipmax))))
-    )
-    
-    # least-square without regularization for min/max
-    # x_lsq[xclip] <- solve(-(Sc %*% (t(D) %*% D) %*% t(Sc) + lambda*I_L ), 
-    #                       ( Sc %*% t(D) %*% D %*% t(S) %*% x[!xclip]))
-    
-    x0[i] <- x_lsq
-    # print(range(i))
-    return(x0)
-  }else{
-    return(x)
   }
+  return(x)
 }
+
+# rLSClip <- function(x, xclipmin = NULL, xclipmax = NULL, xrange = NULL, lambda = 5){
+#   xclip <- xclipmin | xclipmax
+#   
+#   if(any(xclip)){
+#     test <- range(which(xclip))
+#     D <- diff(test)
+#     if(D <  30) D <- 30
+#     testi <- test + round(c(-D/2, D/2))
+#     i <- seq(from = testi[1], to = testi[2], by = 1L)
+#     i <- i[i > 0 & i < length(x)]
+#     x0 <- x
+#     x <- x[i]
+#     xclip <- xclip[i]
+#     xclipmin <- xclipmin[i]
+#     xclipmax <- xclipmax[i]
+#     
+#     
+#     if(is.null(xrange)){
+#       dx <- diff(range(x)) * 0.15
+#       xrange <- c(min(x), max(x)) + c(- dx, + dx)
+#     }
+#     
+#     N <- length(x)
+#     
+#     D <- matrix(0, nrow = N-3, ncol = N)
+#     D[ col(D) == row(D)  ] <- 1
+#     D[ col(D) == row(D) +1  ] <- -2
+#     D[ col(D) == row(D) +2  ] <- 1
+#     
+#     S <- matrix(0L, N, N)
+#     diag(S) <- 1L
+#     Sc <- S
+#     Sm <- S
+#     Sp <- S
+#     
+#     S <- S[!xclip,, drop = FALSE]   # S : sampling matrix
+#     Sc <- Sc[xclip,, drop = FALSE]   # S : complement of S (zmin & zmax)
+#     Sm <- Sm[xclipmin, xclip, drop = FALSE]   # S : complement of S (zmin)
+#     Sp <- Sp[xclipmax, xclip, drop = FALSE]   # S : complement of S (zmax)
+#     
+#     L = sum(xclip)                        # L : number of missing values
+#     
+#     x_lsq <- x
+#     I_L <- matrix(0L,L,L)
+#     # diag(I_L) <- 1L
+#     # lambda <- 1
+#     
+#     
+#     x_lsq[xclip] <- solve(-(Sc %*% (t(D) %*% D) %*% t(Sc) + 
+#                               lambda * (t(Sm) %*% Sm + t(Sp) %*% Sp) ), 
+#                           ( Sc %*% t(D) %*% D %*% t(S) %*% x[!xclip] -
+#                               lambda * ( t(Sm) %*% rep(xrange[1], sum(xclipmin)) + 
+#                                            t(Sp) %*% rep(xrange[2], sum(xclipmax))))
+#     )
+#     
+#     # least-square without regularization for min/max
+#     # x_lsq[xclip] <- solve(-(Sc %*% (t(D) %*% D) %*% t(Sc) + lambda*I_L ), 
+#     #                       ( Sc %*% t(D) %*% D %*% t(S) %*% x[!xclip]))
+#     
+#     x0[i] <- x_lsq
+#     # print(range(i))
+#     return(x0)
+#   }else{
+#     return(x)
+#   }
+# }

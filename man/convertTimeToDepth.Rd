@@ -4,16 +4,31 @@
 \alias{convertTimeToDepth}
 \title{Time to depth conversion}
 \usage{
-convertTimeToDepth(x, dz = NULL, dmax = NULL, ...)
+convertTimeToDepth(
+  x,
+  dz = NULL,
+  zmax = NULL,
+  method = c("pchip", "linear", "nearest", "cubic", "spline")
+)
 
-\S4method{convertTimeToDepth}{GPR}(x, type = c("static", "kirchhoff"), ...)
+\S4method{convertTimeToDepth}{GPR}(
+  x,
+  dz = NULL,
+  zmax = NULL,
+  method = c("pchip", "linear", "nearest", "cubic", "spline")
+)
 }
 \arguments{
-\item{dz}{vertical resolution of the migrated data}
+\item{dz}{vertical resolution of the migrated data. 
+If \code{dz = NULL}, then \code{dz} is set equal to the 
+smallest depth resolution inferred from the data.}
 
-\item{max_depth}{maximum depth to appply the migration}
+\item{zmax}{maximum depth for the time to depth conversion. If 
+\code{zmax = NULL}, then \code{zmax} is set equal to the 
+largest depth inferred from the data.}
 
-\item{fdo}{dominant frequency of the GPR signal}
+\item{method}{method for the interpolation 
+(see \code{\link[signal]{interp1}}).}
 }
 \description{
 Time to depth conversion

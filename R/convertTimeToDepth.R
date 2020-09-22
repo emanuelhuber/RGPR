@@ -2,7 +2,8 @@
 #' @name convertTimeToDepth
 #' @rdname convertTimeToDepth
 #' @export
-setGeneric("convertTimeToDepth", function(x, dz = NULL, dmax = NULL, ...) 
+setGeneric("convertTimeToDepth", function(x, dz = NULL, zmax = NULL, 
+                                          method = c("pchip", "linear", "nearest", "cubic", "spline")) 
   standardGeneric("convertTimeToDepth"))
 
 
@@ -19,14 +20,20 @@ setGeneric("convertTimeToDepth", function(x, dz = NULL, dmax = NULL, ...)
 
 #' Time to depth conversion
 #' 
-#' @param max_depth maximum depth to appply the migration
-#' @param dz        vertical resolution of the migrated data
-#' @param fdo       dominant frequency of the GPR signal
+#' @param dz        vertical resolution of the migrated data. 
+#'                  If \code{dz = NULL}, then \code{dz} is set equal to the 
+#'                  smallest depth resolution inferred from the data.
+#' @param zmax      maximum depth for the time to depth conversion. If 
+#'                  \code{zmax = NULL}, then \code{zmax} is set equal to the 
+#'                  largest depth inferred from the data.
+#' @param method    method for the interpolation 
+#'                  (see \code{\link[signal]{interp1}}).
 #' 
 #' @name convertTimeToDepth
 #' @rdname convertTimeToDepth
 #' @export
-setMethod("convertTimeToDepth", "GPR", function(x, type = c("static", "kirchhoff"), ...){
+setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, zmax = NULL, 
+                                                method = c("pchip", "linear", "nearest", "cubic", "spline")){
   if(is.null(x@vel) || length(x@vel)==0){
     stop("You must first define the EM wave velocity ",
          "with 'vel(x) <- 0.1' for example!")
@@ -46,23 +53,38 @@ setMethod("convertTimeToDepth", "GPR", function(x, type = c("static", "kirchhoff
     stop("Vertical unit (", x@depthunit , ") is not a time unit...")
   }
     
-  dots <- list(...)
+  # dots <- list(...)
+  if( is.null(dz)){
+    dz <- min(x@vel[[1]]) * min(diff(depth(x)))/2
+  }
+  # print(zmax)
+  method <- match.arg(method, c("pchip", "linear", "nearest", "cubic", "spline"))
     
   # single velocity value
   if(length(x@vel[[1]]) == 1){
     message("time to depth conversion with constant velocity (", x@vel[[1]],
             " ", x@posunit, "/", x@depthunit, ")")
-    z <- timeToDepth(x@depth, time_0 = 0, v = vel(x), 
+    x_depth <- timeToDepth(x@depth, time_0 = 0, v = vel(x), 
                      antsep = antsep(x))
-    x <- x[!is.na(z),]
-    x@dz <-  x@dz * x@vel[[1]]/ 2
-    x@depth <- seq(from = 0, to = tail(z, 1), by = x@dz)
-    funInterp <- function(x, z, zreg){
-      signal::interp1(x = z, y = x, xi = zreg, 
-                      method = "pchip", extrap = TRUE)
+    test <- !is.na(x_depth)
+    x <- x[test,]
+    x_depth <- x_depth[test]
+    
+    if( is.null(zmax)){
+      zmax <- max(x_depth, na.rm = TRUE)
+    }
+    
+    # x@dz <-  x@dz * x@vel[[1]]/ 2
+    # x@depth <- seq(from = 0, to = tail(z, 1), by = x@dz)
+    d <- seq(from = 0, to = zmax, by = dz)
+    funInterp <- function(xt, x_depth, x_depth_int, method){
+      signal::interp1(x = x_depth, y = xt, xi = x_depth_int, 
+                      method = method, extrap = TRUE)
     }
     x@data <- apply(x@data, 2, funInterp, 
-                    z = z[!is.na(z)], zreg = x@depth)
+                    x_depth = x_depth, 
+                    x_depth_int = d, 
+                    method = method)
   # vector velocity
   }else if( is.null(dim(x@vel[[1]])) && length(x@vel[[1]]) == nrow(x) ){
     x_depth <- timeToDepth(x@depth, 0, v = x@vel[[1]], 
@@ -70,26 +92,14 @@ setMethod("convertTimeToDepth", "GPR", function(x, type = c("static", "kirchhoff
     test <- !is.na(x_depth)
     x <- x[test,]
     x_depth <- x_depth[test]
-    if( !is.null(dots$dz)){
-      dz <- dots$dz
-    }else{
-      dz <- min(x@vel[[1]]) * min(diff(depth(x)))/2
-    }
-    if( !is.null(dots$dmax)){
-      dmax <- dots$dmax
-    }else{
-      dmax <- max(x_depth, na.rm = TRUE)
-    }
-    # print(dmax)
-    if( !is.null(dots$method)){
-      method <- match.arg(dots$method, c("linear", "nearest", "pchip", "cubic", "spline"))
-    }else{
-      method <- "pchip"
+    
+    if( is.null(zmax)){
+      zmax <- max(x_depth, na.rm = TRUE)
     }
     
-    d <- seq(from = 0, by = dz, to = dmax)
-    funInterp <- function(A, x_depth, x_depth_int, method){
-      signal::interp1(x = x_depth, y = A, xi = x_depth_int, 
+    d <- seq(from = 0, to = zmax, by = dz)
+    funInterp <- function(xt, x_depth, x_depth_int, method){
+      signal::interp1(x = x_depth, y = xt, xi = x_depth_int, 
                       method = method)
     }
     x@data <- apply(x@data, 2, funInterp, 
@@ -105,8 +115,8 @@ setMethod("convertTimeToDepth", "GPR", function(x, type = c("static", "kirchhoff
     #                                 method = method)
     # }
     # x@data      <- x_new
-    x@depth     <- d
-    x@dz        <- dz
+    # x@depth     <- d
+    # x@dz        <- dz
       
     # print("lkj")
   # matrix velocity
@@ -118,22 +128,27 @@ setMethod("convertTimeToDepth", "GPR", function(x, type = c("static", "kirchhoff
     # test <- (x_detph >= 0)
     # x_detph[!test] <- NA
     # x_detph[test] <- sqrt(x_detph[test])/2
-    if( !is.null(dots$dz)){
-      dz <- dots$dz
-    }else{
-      dz <- min(x@vel[[1]]) * min(diff(depth(x)))/2
+    
+    if( is.null(zmax)){
+      zmax <- max(x_depth, na.rm = TRUE)
     }
-    if( !is.null(dots$dmax)){
-      dmax <- dots$dmax
-    }else{
-      dmax <- max(x_depth)
-    }
-    if( !is.null(dots$method)){
-      method <- match.arg(dots$method, c("linear", "nearest", "pchip", "cubic", "spline"))
-    }else{
-      method <- "pchip"
-    }
-    d <- seq(from = 0, by = dz, to = dmax)
+    
+    # if( !is.null(dots$dz)){
+    #   dz <- dots$dz
+    # }else{
+    #   dz <- min(x@vel[[1]]) * min(diff(depth(x)))/2
+    # }
+    # if( !is.null(dots$zmax)){
+    #   zmax <- dots$zmax
+    # }else{
+    #   zmax <- max(x_depth)
+    # }
+    # if( !is.null(dots$method)){
+    #   method <- match.arg(dots$method, c("linear", "nearest", "pchip", "cubic", "spline"))
+    # }else{
+    #   method <- "pchip"
+    # }
+    d <- seq(from = 0, by = dz, to = zmax)
     x_new <- matrix(nrow = length(d), ncol = ncol(x))
     for(i in seq_along(x)){
       x_new[, i] <- signal::interp1(x  = as.numeric(x_depth[,i]),
@@ -142,9 +157,9 @@ setMethod("convertTimeToDepth", "GPR", function(x, type = c("static", "kirchhoff
                                     method = method)
     }
     x@data      <- x_new
-    x@depth     <- d
-    x@dz        <- dz
   }
+  x@depth     <- d
+  x@dz        <- dz
   x@depthunit <- "m"
   
   zShift <- (max(topo) - topo)

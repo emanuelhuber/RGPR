@@ -2934,7 +2934,7 @@ convolution <- function(A,k){
   #   B0 <- rbind(B0, B, B0)
   Y <- Re(stats::mvfft(stats::mvfft(Apad) * stats::mvfft(k0), 
                        inverse=TRUE))/nrow(Apad)
-  return(Y[nk + 1:nA, ])
+  return(Y[nk + seq_len(nA + nk), ])
 }
 
 
@@ -2943,19 +2943,20 @@ convolution <- function(A,k){
 # whose product with another vector 
 # is the convolution of the two vectors.
 
-# A = convmtx(y,nf) returns the convolution matrix, A, 
+# A = convmtx(y, nf) returns the convolution matrix, A, 
 # such that the product of A and a vector, x, 
 # is the convolution of y and x. 
-# If y is a column vector of length m, A is (m+nf-1)-by-nf and the 
+# If y is a column vector of length m, A is (m + nf)-by-nf and the 
 # product of A and a column vector, x, of length n is the 
 # convolution of y and x. 
 convmtx <- function(y, nf){
   ny <- length(y)
-  L <- nf + ny -1
+  L <- nf + ny #-1
   # convolution matrix Y
-  yext <- rep(c(y,rep(0,L-ny+1)),nf)
-  yext <- yext[1:(L*nf)]
-  return( matrix(yext,nrow=L,ncol=nf))
+  # yext <- rep(c(y, rep(0, L - ny + 1)), nf)
+  yext <- rep(c(y, rep(0, nf)), nf)
+  yext <- yext[1:(L * nf)]
+  return( matrix(yext, nrow = L, ncol = nf))
 }
 
 

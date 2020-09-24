@@ -2934,7 +2934,7 @@ convolution <- function(A,k){
   #   B0 <- rbind(B0, B, B0)
   Y <- Re(stats::mvfft(stats::mvfft(Apad) * stats::mvfft(k0), 
                        inverse=TRUE))/nrow(Apad)
-  return(Y[1:nA + nk + nk/2 + 1, ])
+  return(Y[nk + 1:nA, ])
 }
 
 

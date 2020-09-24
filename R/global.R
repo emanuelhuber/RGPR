@@ -2954,7 +2954,7 @@ convmtx <- function(y, nf){
   L <- nf + ny #-1
   # convolution matrix Y
   # yext <- rep(c(y, rep(0, L - ny + 1)), nf)
-  yext <- rep(c(y, rep(0, nf)), nf)
+  yext <- rep(c(y, rep(0, nf + 1)), nf)
   yext <- yext[1:(L * nf)]
   return( matrix(yext, nrow = L, ncol = nf))
 }

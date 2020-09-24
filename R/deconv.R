@@ -140,12 +140,12 @@ setMethod("deconv", "GPR", function(x,
 # convolution model: y = h*x 
 # h and y are known, x is unknown
 # x ~ H^h * Y / (H^h * H + mu)
-deconvolve <- function(y,h,mu=0.0001){
+deconvolve <- function(y, h, mu = 0.0001){
   ny <- length(y)
   nh <- length(h)
-  L  <- ny + ny - 1
-  H  <- stats::fft(c(h,rep(0,ny-1)))
-  Y  <- stats::fft(c(y, rep(0,nh-1)))
+  L  <- ny + ny
+  H  <- stats::fft(c(h, rep(0, ny)))
+  Y  <- stats::fft(c(y, rep(0, nh)))
   Re(stats::fft( t(Conj(H))*Y/(t(Conj(H))*H + mu) ,inverse=TRUE))[1:ny]/L
   # Re(fft( Y/(H + mu) ,inverse=TRUE))[1:ny]/L
 }

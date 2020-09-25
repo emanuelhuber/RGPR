@@ -46,31 +46,33 @@ optPhaseRotation <- function(x, rot = 0.01, plot = TRUE){
 # mu = percent of pre-whitening
 .spikingFilter <- function(y, nf = 32, mu = 0.1, shft = 1){
   # R = t(Y)%*%Y = Toepliz matrix of ACF
-  y_acf <- as.numeric(acf(y, lag.max = nf - 1, plot= FALSE)[[1]])
+  y_acf <- as.numeric(acf(y, lag.max = nf, plot= FALSE)[[1]])
   nf <- length(y_acf)  # because length(y_acf) can be < lag.max
   taper <- hammingWindow(2*nf)
   y_acf <- y_acf*taper[(nf+1):(2*nf)] 
   y_acf[1] <- y_acf[1] + mu
+  y_acf <- y_acf/y_acf[1] 
   YtY <- toeplitz(y_acf)
   # all the spiking filters
   if(is.null(shft)){
     ny <- length(y)
     L <- nf + ny -1
     # convolution matrix Y
-    Y <- convmtx(y,nf)
-    H <- solve(YtY) %*% t(Y) 
+    Y <- convmtx(y, nf)
+    H <- chol2inv(chol(YtY)) %*% t(Y) 
     v <- numeric(L)
     # performance matrix: all spiking filter outputs
     P <- Y %*% H
     # optimal delay (smallest error)
     i <- which.max(diag(P))
     v[i] <- 1
-    h <- H%*%v
+    h <- H %*% v
     return(list("h"=h,"delay"=i))
   }else{
     v <- numeric(nf)
     v[shft] <- 1
-    h <- solve(YtY) %*% v 
+    # h <- solve(YtY) %*% v 
+    h <- chol2inv(chol(YtY)) %*% v 
     return(h)
   }
 }

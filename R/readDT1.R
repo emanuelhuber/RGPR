@@ -28,10 +28,10 @@
   if(sum(abs(rec_coord),na.rm = TRUE) == 0 ){
     rec_coord <- matrix(nrow = 0, ncol = 0) 
   }
-  if(sum(abs(trans_coord), na.rm = TRUE)== 0){
+  if(sum(abs(trans_coord), na.rm = TRUE) == 0){
     trans_coord <- matrix(nrow = 0, ncol = 0) 
   }
-  if(sum(abs(x$dt1$topo),na.rm=TRUE)== 0){
+  if(sum(abs(x$dt1$topo), na.rm = TRUE) == 0){
     coord <- matrix(nrow = 0, ncol = 0) 
   }else{
     coord <- matrix(0, nrow = ncol(x$data), ncol = 3)

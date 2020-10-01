@@ -59,6 +59,7 @@ optPhaseRotation <- function(x, rot = 0.01, plot = TRUE){
     L <- nf + ny -1
     # convolution matrix Y
     Y <- convmtx(y, nf)
+    # H <- solve(YtY) %*% t(Y) 
     H <- chol2inv(chol(YtY)) %*% t(Y) 
     v <- numeric(L)
     # performance matrix: all spiking filter outputs

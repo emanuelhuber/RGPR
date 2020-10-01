@@ -3489,7 +3489,7 @@ quiet <- function(x) {
   traces_hd$traces <- x@traces
   traces_hd$position <- x@pos
   traces_hd$samples <- rep(nrow(x@data),ncol(x@data))
-  if(length(x@coord) > 0 && sum(is.na(x@coord)) > 0){
+  if(length(x@coord) > 0 && sum(is.na(x@coord)) == 0){
     traces_hd$topo <- x@coord[,3]
   }else{
     traces_hd$topo <- rep.int(0L,ncol(x@data))
@@ -3505,7 +3505,7 @@ quiet <- function(x) {
   traces_hd$NA4 <- traces_hd$NA1 
   traces_hd$NA5 <- traces_hd$NA1 
   traces_hd$NA6 <- traces_hd$NA1 
-  if(length(x@rec) > 0 && sum(is.na(x@rec)) > 0){
+  if(length(x@rec) > 0 && sum(is.na(x@rec)) == 0){
     traces_hd$recx <- x@rec[,1]
     traces_hd$recy <- x@rec[,2]
     traces_hd$recz <- x@rec[,3]
@@ -3514,7 +3514,7 @@ quiet <- function(x) {
     traces_hd$recy <- rep.int(0L,ncol(x@data))
     traces_hd$recz <- rep.int(0L,ncol(x@data))
   }
-  if(length(x@trans) > 0 && sum(is.na(x@trans)) > 0){
+  if(length(x@trans) > 0 && sum(is.na(x@trans)) == 0){
     traces_hd$transx <- x@trans[,1]
     traces_hd$transy <- x@trans[,2]
     traces_hd$transz <- x@trans[,3]
@@ -3648,21 +3648,21 @@ quiet <- function(x) {
   writeLines(paste0("SURVEY MODE", " = ", as.character(x@surveymode)), 
              con = hd_file, sep = "\r\n")
   
-  if(length(x@hd) > 0){
-    hdNames <- names(x@hd)
-    hdNames <- hdNames[!(hdNames %in% c("startpos", "endpos",
-                                        "NUMBER_OF_STACKS",
-                                        "PULSER_VOLTAGE_V", "gprdevice"))]
-    for(i in seq_along(hdNames)){
-      hdName <- gsub("_", replacement = " ", as.character(hdNames[i]))
-      hdName <- gsub("Serial", replacement = "Serial#", hdName)
-      hdName <- gsub("CAL tm", replacement = "CAL (t/m)", hdName)
-      
-      writeLines(paste0(as.character(hdName), " = ", 
-                        as.character(x@hd[[hdNames[i]]])), 
-                 con = hd_file, sep = "\r\n")
-    }
-  }
+  # if(length(x@hd) > 0){
+  #   hdNames <- names(x@hd)
+  #   hdNames <- hdNames[!(hdNames %in% c("startpos", "endpos",
+  #                                       "NUMBER_OF_STACKS",
+  #                                       "PULSER_VOLTAGE_V", "gprdevice"))]
+  #   for(i in seq_along(hdNames)){
+  #     hdName <- gsub("_", replacement = " ", as.character(hdNames[i]))
+  #     hdName <- gsub("Serial", replacement = "Serial#", hdName)
+  #     hdName <- gsub("CAL tm", replacement = "CAL (t/m)", hdName)
+  #     
+  #     writeLines(paste0(as.character(hdName), " = ", 
+  #                       as.character(x@hd[[hdNames[i]]])), 
+  #                con = hd_file, sep = "\r\n")
+  #   }
+  # }
   close(hd_file)
   return(fPath)
 }

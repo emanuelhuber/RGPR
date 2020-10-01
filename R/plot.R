@@ -26,6 +26,7 @@
 #' @param addTopo logical. For 2D plot, add topography (if the data are sampled
 #'                         in time unit, the data are migrated with a static
 #'                         migration)
+#' @param elev logical. Display elevation instead of depth on y-axis.
 #' @param clip numeric. If length-one numeric vector, clip the amplitudes 
 #'                      larger than \code{clip} and smaller than \code{-clip}.
 #'                      If length-two numeric vector, clip the amplitudes
@@ -62,6 +63,7 @@ plot.GPR <- function(x,
                      addDepth0 = TRUE,
                      addAmpl0 = TRUE,
                      addTopo = FALSE,
+                     elev    = FALSE,
                      clip = NULL,
                      ratio = 1,
                      barscale = TRUE, 
@@ -77,6 +79,14 @@ plot.GPR <- function(x,
     v <- 0
   }
   dots <- list(...)
+  if(length(x@coord) == 0 || grepl("[s]$", x@depthunit)){
+    elev <- FALSE
+  }
+  if(isTRUE(elev)){
+    y_lab <- "elevation"
+  }else{
+    y_lab <- "depth"
+  }
   #------------------------ trace plot (1D) -----------------------------------#
   if(any(dim(x) == 1)){
     if(isTRUE(add)){
@@ -89,9 +99,17 @@ plot.GPR <- function(x,
         z <- x@depth - x@time0
         t0 <- 0
       }
+      if(isTRUE(elev)){
+      z <- max(x@coord[,3]) - z
+        if(is.null(dots$xlim)){
+          dots$xlim <- rev(range(z))
+        }
+        if(dots$xlim[1] < dots$xlim[2]) dots$xlim <- rev(dots$xlim)
+      }
+      
       if(is.null(dots$xlab)){
         if(grepl("[m]$", x@depthunit)){
-          dots$xlab <- paste0("depth (",x@depthunit,")")
+          dots$xlab <- paste0(y_lab, " (",x@depthunit,")")
         }else if(grepl("[s]$", x@depthunit)){
           dots$xlab <- paste0("two-way travel time (",x@depthunit,")")
         }else{
@@ -163,7 +181,7 @@ plot.GPR <- function(x,
     #------------------------ radargram plot (2D) -------------------------------#
   }else{
     if(grepl("[s]$", x@depthunit) && addTopo){
-      x <- migration(x)
+      x <- migrate(x)
     }
     if(!is.null(clip) && is.numeric(clip)){
       if(length(clip) > 1){
@@ -207,7 +225,7 @@ plot.GPR <- function(x,
       xvalues <- relTrPos(x)
     }
     if(grepl("[m]$", x@depthunit)){
-      myylab <- paste0("depth (", x@depthunit, ")")
+      myylab <- paste0(y_lab, " (", x@depthunit, ")")
     }else if( grepl("[s]$", x@depthunit) ){
       myylab <- paste0("two-way travel time (", x@depthunit, ")")
     }else{
@@ -242,8 +260,18 @@ plot.GPR <- function(x,
       time_0 <- x@time0 - t0
       t0 <- 0
     }
-    if(is.null(dots$ylim)) dots$ylim <- rev(range(yvalues))
-    if(dots$ylim[1] < dots$ylim[2]) dots$ylim <- rev(dots$ylim)
+    if(isTRUE(elev)){
+      yvalues <- max(x@coord[,3]) - yvalues
+      if(is.null(dots$ylim)){
+        dots$ylim <- range(yvalues)
+      }
+    }else{
+      if(is.null(dots$ylim)){
+        dots$ylim <- rev(range(yvalues))
+      }
+      if(dots$ylim[1] < dots$ylim[2]) dots$ylim <- rev(dots$ylim)
+    }
+    
     if(is.null(dots$xlim)) dots$xlim <- range(xvalues)
     
     op <- par(no.readonly=TRUE)

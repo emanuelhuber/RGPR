@@ -151,20 +151,20 @@ deconvolve <- function(y, h, mu = 0.0001){
 }
 
 
-# TO CHECK!!!!
-# deconvolution with known wavelet
-# convolution model: y = h*x 
-# h and y are known, x is unknown
-# x ~ H^h * Y / (H^h * H + mu)
-deconvolutionMtx <- function(y, h, nf, mu = 0.0001){
-  # ny <- length(y)
-  # nh <- length(h)
-  # L  <- ny + ny - 1
-  H  <- convmtx(h,nf)
-  y_acf <- as.numeric(acf(y, lag.max = nf - 1, plot = FALSE)[[1]])
-  y_acf[1] <- y_acf[1] + mu
-  HtH <- toeplitz(y_acf)
-  x <-  solve(HtH) %*% (t(H[1:nf,1:nf]) %*% y)
-  return(x)
-}
+# # TO CHECK!!!!
+# # deconvolution with known wavelet
+# # convolution model: y = h*x 
+# # h and y are known, x is unknown
+# # x ~ H^h * Y / (H^h * H + mu)
+# deconvolutionMtx <- function(y, h, nf, mu = 0.0001){
+#   # ny <- length(y)
+#   # nh <- length(h)
+#   # L  <- ny + ny - 1
+#   H  <- convmtx(h,nf)
+#   y_acf <- as.numeric(acf(y, lag.max = nf - 1, plot = FALSE)[[1]])
+#   y_acf[1] <- y_acf[1] + mu
+#   HtH <- toeplitz(y_acf)
+#   x <-  solve(HtH) %*% (t(H[1:nf,1:nf]) %*% y)
+#   return(x)
+# }
 

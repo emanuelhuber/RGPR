@@ -79,7 +79,10 @@ plot.GPR <- function(x,
     v <- 0
   }
   dots <- list(...)
-  if(length(x@coord) == 0 || grepl("[s]$", x@depthunit)){
+  if(length(x@coord) == 0 ){
+    elev <- FALSE
+  }
+  if(grepl("[s]$", x@depthunit) && isFALSE(addTopo)){
     elev <- FALSE
   }
   if(isTRUE(elev)){

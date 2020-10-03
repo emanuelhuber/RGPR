@@ -11,32 +11,58 @@
                  fPath = character(0), Vmax = NULL){
   if(is.null(Vmax)) Vmax <- 50
   
-  rec_coord <- cbind(x$dt1$recx, x$dt1$recy, x$dt1$recz)
-  trans_coord <- cbind(x$dt1$transx, x$dt1$transy, x$dt1$transz)
-  if(sum(is.na(rec_coord)) > 0){
-    warning(paste(fName,": ",sum(is.na(rec_coord)), 
-                  "NA's in the receiver coordinates\n"))
+  ntr <- ncol(x$data)
+  rec_coord <- matrix(nrow = ntr, ncol = 3)
+  trans_coord <- rec_coord
+  coord <- rec_coord
+  
+  if(sum(abs(c(x$dt1$recx, x$dt1$recy, x$dt1$recz))) > 0){
+    rec_coord[, 1] <- x$dt1$recx
+    rec_coord[, 2] <- x$dt1$recy
+    rec_coord[, 3] <- x$dt1$recz
   }
-  if(sum(is.na(trans_coord)) > 0){
-    warning(paste(fName,": ",sum(is.na(trans_coord)), 
-                  "NA's in the transmitter coordinates\n"))
-  }
-  if(sum(is.na(x$dt1$topo)) > 0){
-    warning(paste(fName,": ",sum(is.na(x$dt1$topo)), 
-                  "NA's in the topo coordinates\n"))
-  }
-  if(sum(abs(rec_coord),na.rm = TRUE) == 0 ){
-    rec_coord <- matrix(nrow = 0, ncol = 0) 
-  }
-  if(sum(abs(trans_coord), na.rm = TRUE) == 0){
-    trans_coord <- matrix(nrow = 0, ncol = 0) 
-  }
-  if(sum(abs(x$dt1$topo), na.rm = TRUE) == 0){
-    coord <- matrix(nrow = 0, ncol = 0) 
-  }else{
-    coord <- matrix(0, nrow = ncol(x$data), ncol = 3)
+  
+  if(sum(abs(c(x$dt1$transx, x$dt1$transy, x$dt1$transz))) > 0){
+    trans_coord[, 1] <- x$dt1$transx
+    trans_coord[, 2] <- x$dt1$transy
+    trans_coord[, 3] <- x$dt1$transz
+  }  
+  
+  if(sum(abs(c(x$dt1$GPSx, x$dt1$GPSy, x$dt1$GPSz))) > 0){
+    coord[, 1] <- x$dt1$GPSx
+    coord[, 2] <- x$dt1$GPSy
+    coord[, 3] <- x$dt1$GPSz
+  }else if(sum(abs(x$dt1$topo), na.rm = TRUE) > 0){
     coord[,3] <- x$dt1$topo
   }
+  
+  # rec_coord[, 1] <- cbind(x$dt1$recx, x$dt1$recy, x$dt1$recz)
+  # trans_coord <- cbind(x$dt1$transx, x$dt1$transy, x$dt1$transz)
+  # if(sum(is.na(rec_coord)) > 0){
+  #   warning(paste(fName,": ",sum(is.na(rec_coord)), 
+  #                 "NA's in the receiver coordinates\n"))
+  # }
+  # if(sum(is.na(trans_coord)) > 0){
+  #   warning(paste(fName,": ",sum(is.na(trans_coord)), 
+  #                 "NA's in the transmitter coordinates\n"))
+  # }
+  # if(sum(is.na(x$dt1$topo)) > 0){
+  #   warning(paste(fName,": ",sum(is.na(x$dt1$topo)), 
+  #                 "NA's in the topo coordinates\n"))
+  # }
+  # if(sum(abs(rec_coord),na.rm = TRUE) == 0 ){
+  #   rec_coord <- matrix(nrow = 0, ncol = 0) 
+  # }
+  # if(sum(abs(trans_coord), na.rm = TRUE) == 0){
+  #   trans_coord <- matrix(nrow = 0, ncol = 0) 
+  # }
+  # if(sum(abs(x$dt1$topo), na.rm = TRUE) == 0){
+  #   coord <- matrix(nrow = 0, ncol = 0) 
+  # }else{
+  #   coord <- matrix(0, nrow = ncol(x$data), ncol = 3)
+  #   coord[,3] <- x$dt1$topo
+  # }
+  
   #====== HEADER DATA (FILE *.HD) ======#
   pos_used <- integer(nrow(x$hd))
   ttw  <- .getHD(x$hd,"TOTAL TIME WINDOW", position = TRUE)
@@ -198,27 +224,46 @@
 }
 
 
+readBinary <- function(con, what, n = 1L, size = NA_integer_, signed = TRUE,
+                       endian = .Platform$endian, useBytes = FALSE){
+  if(what == "character"){
+    readChar(con, nchars = size, useBytes = useBytes)
+  }else{
+    readBin(con, what = what, n = n, size = size, signed = signed, endian = endian)
+  }
+}
 
 #------------------------------------------------------------------------------#
+#' @export
 readDT1 <- function(dsn, ntr, npt){
   if(!inherits(dsn, "connection")){
     dsn <- file(dsn, 'rb')
   }
-  tags <- c("traces", "position", "samples","topo", "NA1", "bytes",
-            "tracenb", "stack","window","NA2", "NA3", "NA4",
-            "NA5", "NA6", "recx","recy","recz","transx","transy",
-            "transz","time0","zeroflag", "NA7", "time","x8","com")  
+  tags <- c("traces", "position", "samples", "topo", "NA1", "bytes",
+            "window", "stacks", 
+            "GPSx", "GPSy", "GPSz", 
+            "recx", "recy", "recz",
+            "transx", "transy", "transz",
+            "time0", "zeroflag", "NA7", "time", "flag", "com")
+  binSize <- rep(4, 23)
+  binSize[9:11] <- 8
+  binSize[23] <- 28
+  binMod <- rep("numeric", 23)
+  binMod[23] <- "character"
+  
+  
   hDT1 <- list()
   dataDT1 <- matrix(NA, nrow = npt, ncol = ntr)
   
   for(i in 1:ntr){
-    for(j in 1:25){
-      hDT1[[tags[j]]][i] <- readBin(dsn, what = numeric(), n = 1L, size = 4)
+    for(j in 1:23){
+      hDT1[[tags[j]]][i] <- readBinary(dsn, what = binMod[j], n = 1L, 
+                                       size =  binSize[j])
     }
     # read the 28 characters long comment
-    hDT1[[tags[26]]][i] <- readChar(dsn, 28)
+    # hDT1[[tags[26]]][i] <- readChar(dsn, 28)
     # read the npt * 2 bytes trace data
-    dataDT1[,i] <- readBin(dsn, what = integer(), n = npt, size = 2)
+    dataDT1[,i] <- readBinary(dsn, what = "integer", n = npt, size = 2)
   }
   .closeFileIfNot(dsn)
   return( list(dt1hd = hDT1, data = dataDT1) )

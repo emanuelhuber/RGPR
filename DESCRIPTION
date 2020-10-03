@@ -48,6 +48,7 @@ Collate:
   'readTXT.R'
   'readIDS.R'
   'readSGPR.R'
+  'writeFile.R'
   'data.R'
   'ampl.R'
   'adjustGamma.R'

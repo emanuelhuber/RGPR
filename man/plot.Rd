@@ -69,6 +69,7 @@
   addDepth0 = TRUE,
   addAmpl0 = TRUE,
   addTopo = FALSE,
+  elev = FALSE,
   clip = NULL,
   ratio = 1,
   barscale = TRUE,
@@ -149,6 +150,8 @@ without extension}
 \code{\link[plot3D]{Image}} for 2D plot. See also  \code{details}.}
 
 \item{main}{character. Plot title.}
+
+\item{elev}{logical. Display elevation instead of depth on y-axis.}
 }
 \description{
 Plot GPR data cube.

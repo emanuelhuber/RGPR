@@ -127,12 +127,35 @@ convolution <- function(A,k){
 # If y is a column vector of length m, A is (m + nf)-by-nf and the 
 # product of A and a column vector, x, of length n is the 
 # convolution of y and x. 
-convmtx <- function(y, nf){
-  ny <- length(y)
-  L <- nf + ny #-1
+# convmtx <- function(y, nf){
+#   ny <- length(y)
+#   L <- nf + ny #-1
+#   # convolution matrix Y
+#   # yext <- rep(c(y, rep(0, L - ny + 1)), nf)
+#   yext <- rep(c(y, rep(0, nf + 1)), nf)
+#   yext <- yext[1:(L * nf)]
+#   return( matrix(yext, nrow = L, ncol = nf))
+# }
+
+#' Returns the convolution matrix
+#'  
+#' Returns the convolution matrix, A, 
+#' such that the product of A and a vector, x, 
+#' is the convolution of y and x. 
+#' @return If y is a column vector of length m, A is m-by-nf.
+#' @export
+convmtx <- function(w, n){
+  nw <- length(w)
+  #L <- nf + nw #-1
+  L <- n #-1
   # convolution matrix Y
-  # yext <- rep(c(y, rep(0, L - ny + 1)), nf)
-  yext <- rep(c(y, rep(0, nf + 1)), nf)
-  yext <- yext[1:(L * nf)]
-  return( matrix(yext, nrow = L, ncol = nf))
+  # yext <- rep(c(y, rep(0, L - nw + 1)), n)
+  w0 <- numeric(L + 1)
+  w0[1:nw] <- w
+  # yext <- rep(c(y, rep(0, n - nw )), n)
+  wext <- rep(w0, n)
+  wext <- wext[1:(L * n)]
+  W <- matrix(wext, nrow = L, ncol = n)
+  W[upper.tri(W)] <- 0
+  return(W )
 }

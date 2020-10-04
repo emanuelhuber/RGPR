@@ -107,6 +107,7 @@ Collate:
   'GroupArith_GPRcube.R'
   'GroupSummary_GPRslice.R'
   'GroupSummary_GPRcube.R'
+  'GPRsim.R'
 Imports:
     methods,
     graphics,

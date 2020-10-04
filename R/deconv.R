@@ -136,9 +136,6 @@ setMethod("deconv", "GPR", function(x,
 
 
 #---------------- DECONVOLUTION --------------------#
-# spectral deconvolution with known wavelet
-# convolution model: y = h*x 
-# h and y are known, x is unknown
 # x ~ H^h * Y / (H^h * H + mu)
 # deconvolve <- function(y, h, mu = 0.0001){
 #   ny <- length(y)
@@ -149,7 +146,14 @@ setMethod("deconv", "GPR", function(x,
 #   Re(stats::fft( t(Conj(H))*Y/(t(Conj(H))*H + mu) ,inverse=TRUE))[1:ny]/L
 #   # Re(fft( Y/(H + mu) ,inverse=TRUE))[1:ny]/L
 # }
-deconvolve <- function(y, h, mu = 0.0001){
+
+#' spectral deconvolution with known wavelet
+#' 
+#' convolution model: \eqn{y = h \times x} where h and y are known, 
+#' x is unknown
+#' @return Vector with same length as \code{y} 
+#' @export
+deconvolveF <- function(y, h, mu = 0.0001){
   ny <- length(y)
   nh <- length(h)
   if(nh > ny){
@@ -168,9 +172,12 @@ deconvolve <- function(y, h, mu = 0.0001){
   # Re(fft( Y/(H + mu) ,inverse=TRUE))[1:ny]/L
 }
 
-
-# same as deconvolve but matrix based. Same results as deconvolve
-deconvolveLS <- function(y, h, lambda){
+#' Matrix based deconvolution
+#' 
+#' same as \code{deconvolveF} but matrix based (same results)
+#' @return Vector with same length as \code{y} 
+#' @export
+deconvolveMtx <- function(y, h, lambda){
   ny <- length(y)
   nh <- length(h)
   if(nh > ny){
@@ -180,6 +187,48 @@ deconvolveLS <- function(y, h, lambda){
   W <- convmtx(w = h, n = ny)
   solve(t(W) %*% W + lambda * diag(ny), t(W) %*% y)
 }
+
+#--- l1 constrained
+# sparse deeoncolution
+# %  Reference: Penalty and Threshold Functions for Sparse Signal Processing
+# % Ivan Selesnick, NYU-Poly, selesi@poly.edu, 2012
+# %
+# % http://eeweb.poly.edu/iselesni/lecture_notes/
+
+#' Sparse deconvolution
+#'
+#' Reference: Penalty and Threshold Functions for Sparse Signal Processing
+#' Ivan Selesnick, NYU-Poly, selesi@poly.edu, 2012
+#' http://eeweb.poly.edu/iselesni/lecture_notes/
+#' @export
+deconvolveSparse <- function(y, w, Nit, eps, phifun, wfun, ...){
+  if(missing(phifun)){
+    phifun  <- function(x, thr) thr * abs(x)
+  }
+  if(missing(wfun)){
+    wfun <- function(x, thr) abs(x) / thr
+  }
+  y    <- as.vector(y)                    # convert to column vector
+  # y0    <- as.vector(y)                    # convert to column vector
+  # y <- numeric(length(y0) + length(w))
+  # y[seq_along(y0)] <- y0
+  W <- convmtx(w, length(y))
+  cost <- rep(0, Nit)                    # cost function history
+  M_N  <- dim(W)
+  x    <- y                               # initialization
+  g    <- t(W) %*% y                      # W'*y
+  for(k in seq_len(Nit)){
+    XLam <- diag(wfun(as.vector(x), ...), M_N[2], M_N[2])   # Lam : diagonal matrix    
+    FF  <- diag(1, M_N[1], M_N[1]) + W %*% XLam %*% t(W)    # F : banded matrix    
+    # cost function value
+    # update x (solve banded system)
+    x   <- XLam %*% (g - (t(W) %*% solve(FF, (W %*% (XLam %*% g)))))            
+    cost[k] <- 0.5 * sum(abs(y - W %*% x)^2) + sum(phifun(x, ...)) 
+    if(!is.null(eps) && k > 1 && cost[k-1] - cost[k] < eps) break
+  }
+  return(list(x = x[seq_along(y0)], cost = cost[1:k]))
+}
+
 
 # # TO CHECK!!!!
 # # deconvolution with known wavelet

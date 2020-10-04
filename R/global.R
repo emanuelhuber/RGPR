@@ -2909,6 +2909,34 @@ inPoly <- function(x, y, vertx, verty){
 
 
 
+# a between 0 and 0.5 (only for cosine taper (cos))
+#' @export
+taper <- function(n, type = c("hamming", "hanning", "triang", "bartlett", "blackman", "boxcar", "cos"), half = FALSE, reverse = FALSE, a = 0.1){
+  type <- match.arg(type,  c("hamming", "hanning", "triang", "bartlett", "blackman", "boxcar", "cos"))
+  n0 <- n
+  if(isTRUE(half)) n <- 2 * n
+  if(type == "cos"){
+    if(a < 0 || a > 0.5) stop("'a' must be > 0 and <= 0.5")
+    tp <- numeric(n)
+    tp[] <- 1
+    vn <- seq_len(n) - 1
+    n1 <- n - 1
+    sel1 <- vn/n <= a
+    sel2 <- (1 - a) <= vn/n1
+    tp[sel1] <- 0.5 * (1 - cospi(vn[sel1]/n1/a))
+    tp[sel2] <- 0.5 * (1 - cospi((1 - vn[sel2]/n1)/a))
+  }else{
+    tp <- do.call(get(type, asNamespace("signal")), list(n = n))
+  }
+  if(isTRUE(half)){
+    if(isTRUE(reverse)){
+      tp <- tp[(n/2):n]
+    }else{
+      tp <- tp[1:(n/2)]
+    }
+  }
+  return(tp)
+}
 
 
 .FKFilter <- function(A, fk, L = c(5, 5), npad=1){

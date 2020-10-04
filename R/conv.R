@@ -64,3 +64,75 @@ convolution2D <- function(A,k){
   # g2 <- g[nk + 1:nh, mk + 1:mh]
   return(g2)
 }
+
+# # linear convolution with fft
+# # a = vector
+# # b = vector
+# convolution <- function(a,b){
+#   na <- length(a)
+#   nb <- length(b)
+#   L <- na + nb - 1
+#   a0 <- c(a,rep(0,nb-1))
+#   b0 <- c(b, rep(0,na-1))
+#   y <- Re(fft(fft(a0)*fft(b0),inverse=TRUE))/L
+#   return(y[1:(max(na,nb))])
+# }
+
+
+#' Linear convolution based on FFT
+#'
+#' If A (or B) is a numeric vector, it is converted into a one-column 
+#' matrix. Then if A and B do not have the same number of column, then the 
+#' first column of the matrix with the smallest number of column is repeated to
+#' match the dimension of the other matrix.
+#' match the dimension of the other matrix.
+#' @param A A numeric vector or matrix.
+#' @param k B numeric vector or matrix.
+#' @name convolution
+#' @rdname convolution
+#' @export
+convolution <- function(A,k){
+  if(is.null(dim(A))){
+    dim(A) <- c(length(A),1)
+  }
+  if(is.null(dim(k))){
+    dim(k) <- c(length(k),1)
+  }
+  if(ncol(k) < ncol(A)){
+    k <- repmat(k[,1, drop = FALSE], 1, ncol(A)) 
+  }
+  #   else if(ncol(B) > ncol(A)){
+  #     A <- repmat(A[,1, drop = FALSE], 1, ncol(B)) 
+  #   }
+  nA <- nrow(A)
+  nk <- nrow(k)
+  Apad <- paddMatrix(A, nk, 0)
+  k0 <- matrix(0, nrow = nrow(Apad), ncol= ncol(Apad))
+  k0[1:nk, ] <- k
+  #   B0 <- rbind(B0, B, B0)
+  Y <- Re(stats::mvfft(stats::mvfft(Apad) * stats::mvfft(k0), 
+                       inverse=TRUE))/nrow(Apad)
+  return(Y[nk + seq_len(nA), ])
+}
+
+
+# cf. matlab
+# A convolution matrix is a matrix, formed from a vector, 
+# whose product with another vector 
+# is the convolution of the two vectors.
+
+# A = convmtx(y, nf) returns the convolution matrix, A, 
+# such that the product of A and a vector, x, 
+# is the convolution of y and x. 
+# If y is a column vector of length m, A is (m + nf)-by-nf and the 
+# product of A and a column vector, x, of length n is the 
+# convolution of y and x. 
+convmtx <- function(y, nf){
+  ny <- length(y)
+  L <- nf + ny #-1
+  # convolution matrix Y
+  # yext <- rep(c(y, rep(0, L - ny + 1)), nf)
+  yext <- rep(c(y, rep(0, nf + 1)), nf)
+  yext <- yext[1:(L * nf)]
+  return( matrix(yext, nrow = L, ncol = nf))
+}

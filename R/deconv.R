@@ -140,16 +140,46 @@ setMethod("deconv", "GPR", function(x,
 # convolution model: y = h*x 
 # h and y are known, x is unknown
 # x ~ H^h * Y / (H^h * H + mu)
+# deconvolve <- function(y, h, mu = 0.0001){
+#   ny <- length(y)
+#   nh <- length(h)
+#   L  <- ny + ny
+#   H  <- stats::fft(c(h, rep(0, ny)))
+#   Y  <- stats::fft(c(y, rep(0, nh)))
+#   Re(stats::fft( t(Conj(H))*Y/(t(Conj(H))*H + mu) ,inverse=TRUE))[1:ny]/L
+#   # Re(fft( Y/(H + mu) ,inverse=TRUE))[1:ny]/L
+# }
 deconvolve <- function(y, h, mu = 0.0001){
   ny <- length(y)
   nh <- length(h)
-  L  <- ny + ny
-  H  <- stats::fft(c(h, rep(0, ny)))
-  Y  <- stats::fft(c(y, rep(0, nh)))
-  Re(stats::fft( t(Conj(H))*Y/(t(Conj(H))*H + mu) ,inverse=TRUE))[1:ny]/L
+  if(nh > ny){
+    h <- h[1:ny]
+    warning("'h' is longer than 'y' and is therefore shortened.")
+  }
+  h0 <- numeric(ny)
+  h0[1:nh] <- h
+  # L  <- ny + ny
+  # H  <- stats::fft(c(h, rep(0, ny)))
+  # Y  <- stats::fft(c(y, rep(0, nh)))
+  H  <- stats::fft(h0)
+  Y  <- stats::fft(y)
+  y_dec <- Re(stats::fft( Y * Conj(H)/ (H * Conj(H) + mu^2), inverse = TRUE))/(ny )
+  return(y_dec)
   # Re(fft( Y/(H + mu) ,inverse=TRUE))[1:ny]/L
 }
 
+
+# same as deconvolve but matrix based. Same results as deconvolve
+deconvolveLS <- function(y, h, lambda){
+  ny <- length(y)
+  nh <- length(h)
+  if(nh > ny){
+    h <- h[1:ny]
+    warning("'h' is longer than 'y' and is therefore shortened.")
+  }
+  W <- convmtx(w = h, n = ny)
+  solve(t(W) %*% W + lambda * diag(ny), t(W) %*% y)
+}
 
 # # TO CHECK!!!!
 # # deconvolution with known wavelet

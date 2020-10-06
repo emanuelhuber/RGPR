@@ -151,7 +151,9 @@ without extension}
 
 \item{main}{character. Plot title.}
 
-\item{elev}{logical. Display elevation instead of depth on y-axis.}
+\item{elev}{logical. If \code{TRUE} the elevation instead of depth is
+displayed on y-axis (and therefore, time-to-depth
+conversion is applied).}
 }
 \description{
 Plot GPR data cube.

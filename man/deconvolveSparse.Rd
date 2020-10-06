@@ -4,7 +4,17 @@
 \alias{deconvolveSparse}
 \title{Sparse deconvolution}
 \usage{
-deconvolveSparse(y, w, Nit, eps, phifun, wfun, ...)
+deconvolveSparse(
+  y,
+  w,
+  Nit = 50,
+  eps = 0.01,
+  sigma = 0.1,
+  thr = NULL,
+  phifun,
+  wfun,
+  ...
+)
 }
 \description{
 Reference: Penalty and Threshold Functions for Sparse Signal Processing

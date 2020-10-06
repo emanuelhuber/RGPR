@@ -26,7 +26,9 @@
 #' @param addTopo logical. For 2D plot, add topography (if the data are sampled
 #'                         in time unit, the data are migrated with a static
 #'                         migration)
-#' @param elev logical. Display elevation instead of depth on y-axis.
+#' @param elev logical. If \code{TRUE} the elevation instead of depth is
+#'                      displayed on y-axis (and therefore, time-to-depth
+#'                      conversion is applied).
 #' @param clip numeric. If length-one numeric vector, clip the amplitudes 
 #'                      larger than \code{clip} and smaller than \code{-clip}.
 #'                      If length-two numeric vector, clip the amplitudes

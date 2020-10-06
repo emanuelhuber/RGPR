@@ -1913,7 +1913,7 @@ rmsScaling <- function(...){
   # L <- length(h)
   
   # Choose the next power of 2 greater than L+nr-1 
-  Nfft = 2^(ceiling(log2(L + nr-1)))
+  Nfft = 2^(ceiling(log2(L + nr - 1)))
   # Zero pad the signal and impulse response:
   h_long = c( h, rep(0, Nfft - L) )
   A = rbind(A , matrix(0, nrow = Nfft - nr, ncol = ncol(A)) )
@@ -2914,7 +2914,7 @@ inPoly <- function(x, y, vertx, verty){
 taper <- function(n, type = c("hamming", "hanning", "triang", "bartlett", "blackman", "boxcar", "cos"), half = FALSE, reverse = FALSE, a = 0.1){
   type <- match.arg(type,  c("hamming", "hanning", "triang", "bartlett", "blackman", "boxcar", "cos"))
   n0 <- n
-  if(isTRUE(half)) n <- 2 * n
+  if(isTRUE(half)) n <- 2 * n + 1
   if(type == "cos"){
     if(a < 0 || a > 0.5) stop("'a' must be > 0 and <= 0.5")
     tp <- numeric(n)
@@ -2930,7 +2930,7 @@ taper <- function(n, type = c("hamming", "hanning", "triang", "bartlett", "black
   }
   if(isTRUE(half)){
     if(isTRUE(reverse)){
-      tp <- tp[(n/2):n]
+      tp <- tp[(n/2 + 1):n]
     }else{
       tp <- tp[1:(n/2)]
     }

@@ -62,7 +62,8 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
          "with 'vel(x) <- 0.1' for example!")
   }
   if(length(x@coord) != 0 && ncol(x@coord) == 3){
-    topo <- x@coord[1:ncol(x@data), 3]
+    topo <- x@coord[, 3]
+    # print("OK")
     # stop("You must first set coordinates to the traces ",
     #      "with 'coord(x) <- ...' or ",
     #      "'x <- interpPos(x, ...)' !")
@@ -135,7 +136,8 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
       }
     }
     zShift <- (max(topo) - topo)
-    if( all(zShift != 0) ){
+    if( any(zShift != 0) ){
+      # print(zShift)
       x <- traceShift(x,  ts = zShift, method = c("pchip"), crop = FALSE)
     }
     if(length(x@coord) > 0 && ncol(x@coord) == 3 ){

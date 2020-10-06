@@ -82,11 +82,12 @@ plot.GPR <- function(x,
   if(length(x@coord) == 0 ){
     elev <- FALSE
   }
-  if(grepl("[s]$", x@depthunit) && isFALSE(addTopo)){
-    elev <- FALSE
-  }
+  # if(grepl("[s]$", x@depthunit)){
+  #   elev <- FALSE
+  # }
   if(isTRUE(elev)){
     y_lab <- "elevation"
+    addTopo <- TRUE
   }else{
     y_lab <- "depth"
   }
@@ -183,7 +184,7 @@ plot.GPR <- function(x,
     }
     #------------------------ radargram plot (2D) -------------------------------#
   }else{
-    if(grepl("[s]$", x@depthunit) && addTopo){
+    if(grepl("[s]$", x@depthunit) && isTRUE(addTopo)){
       x <- migrate(x)
     }
     if(!is.null(clip) && is.numeric(clip)){

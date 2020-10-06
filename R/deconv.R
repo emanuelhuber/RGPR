@@ -147,36 +147,72 @@ setMethod("deconv", "GPR", function(x,
 #   # Re(fft( Y/(H + mu) ,inverse=TRUE))[1:ny]/L
 # }
 
-#' spectral deconvolution with known wavelet
+#' Deconvolution with known wavelet
 #' 
 #' convolution model: \eqn{y = h \times x} where h and y are known, 
-#' x is unknown
+#' x is unknown. Spectral or matrix-based.
 #' @return Vector with same length as \code{y} 
 #' @export
-deconvolveF <- function(y, h, mu = 0.0001){
-  ny <- length(y)
-  nh <- length(h)
-  if(nh > ny){
-    h <- h[1:ny]
-    warning("'h' is longer than 'y' and is therefore shortened.")
+deconvolve <- function(y, h, mu = 0.0001, type = c("FFT", "matrix")){
+  type <- match.arg(type, c("FFT", "matrix"))
+  if(type == "FFT"){
+    deconvolveFFT(y = y, h = h, mu = mu)
+  }else if(type == "matrix"){
+    deconvolveMtx(y = y, h = h, lambda = mu)
   }
-  h0 <- numeric(ny)
-  h0[1:nh] <- h
-  # L  <- ny + ny
-  # H  <- stats::fft(c(h, rep(0, ny)))
-  # Y  <- stats::fft(c(y, rep(0, nh)))
-  H  <- stats::fft(h0)
-  Y  <- stats::fft(y)
-  y_dec <- Re(stats::fft( Y * Conj(H)/ (H * Conj(H) + mu^2), inverse = TRUE))/(ny )
-  return(y_dec)
-  # Re(fft( Y/(H + mu) ,inverse=TRUE))[1:ny]/L
 }
 
-#' Matrix based deconvolution
-#' 
-#' same as \code{deconvolveF} but matrix based (same results)
-#' @return Vector with same length as \code{y} 
-#' @export
+
+# spectral deconvolution with known wavelet
+
+# convolution model: \eqn{y = h \times x} where h and y are known,
+# x is unknown
+# @return Vector with same length as \code{y}
+# @export
+# Checked: padding helps!!!
+deconvolveFFT <- function(y, h, mu = 0.0001){
+  ny <- length(y)
+  nh <- length(h)
+  L  <- ny + nh 
+  if(nh > L){
+    h <- h[1:L]
+    warning("'h' is longer than '...' and is therefore shortened.")
+  }
+  h0 <- numeric(L)
+  y0 <- h0
+  h0[1:nh] <- h
+  y0[1:ny] <- y
+  H  <- stats::fft(h0)
+  Y  <- stats::fft(y0)
+  y_dec <- Re(stats::fft( Y * Conj(H)/ (H * Conj(H) + abs(mu)), inverse = TRUE))
+  return(y_dec[1:ny]/L)
+  # Re(fft( Y/(H + mu) ,inverse=TRUE))[1:ny]/L
+}
+# deconvolveFFT <- function(y, h, mu = 0.0001){
+#   ny <- length(y)
+#   nh <- length(h)
+#   # L  <- ny + ny
+#   if(nh > ny){
+#     h <- h[1:ny]
+#     warning("'h' is longer than 'y' and is therefore shortened.")
+#   }
+#   h0 <- numeric(ny)
+#   h0[1:nh] <- h
+#   # H  <- stats::fft(c(h, rep(0, ny)))
+#   # Y  <- stats::fft(c(y, rep(0, nh)))
+#   H  <- stats::fft(h0)
+#   Y  <- stats::fft(y)
+#   y_dec <- Re(stats::fft( Y * Conj(H)/ (H * Conj(H) + abs(mu)), inverse = TRUE))/(ny )
+#   return(y_dec)
+#   # Re(fft( Y/(H + mu) ,inverse=TRUE))[1:ny]/L
+# }
+
+# Matrix based deconvolution
+# 
+# same as \code{deconvolveF} but matrix based (same results)
+# @return Vector with same length as \code{y} 
+# @export
+# Checked: no need for padding
 deconvolveMtx <- function(y, h, lambda){
   ny <- length(y)
   nh <- length(h)
@@ -187,6 +223,95 @@ deconvolveMtx <- function(y, h, lambda){
   W <- convmtx(w = h, n = ny)
   solve(t(W) %*% W + lambda * diag(ny), t(W) %*% y)
 }
+
+#' @export
+deconvolveSpikingInvFilter <- function(x, n = 35, i = 1, mu = 0.001){ #, returnDelay = FALSE ){
+  if(is.null(dim(x))){
+    dim(x) <- c(length(x),1)
+  }
+  xdeconv <- apply(x, 2, .deconvolveSpikingInvFilter, n = n, i = i, mu = mu) #, returnDelay = returnDelay)
+  # if(isTRUE(returnDelay)){
+  #   return(xdeconv[[1]])
+  # }
+  return(xdeconv[[1]])
+}
+
+.deconvolveSpikingInvFilter <- function(x, n = 35, i = 1, mu = 0.001){ #, returnDelay = FALSE){
+  x_acf <- as.numeric(acf(x, lag.max = n, plot= FALSE)[[1]])
+  n <- length(x_acf)  # because length(x_acf) can be < lag.max
+  x_acf <- x_acf * taper(n, type = "hamming", half = TRUE, reverse = TRUE, a = 0.1) # tapering
+  # print(x_acf)
+  x_acf <- x_acf/x_acf[1]
+  x_acf[1] <- x_acf[1] + mu^2
+  XtX <- toeplitz(x_acf)
+  v <- numeric(n)
+  if(is.null(i)){
+    X <- convmtx(x, n)
+    Fmin <- chol2inv(chol(XtX)) %*% t(X) 
+    # v <- numeric(L)
+    # performance matrix: all spiking filter outputs
+    P <- X %*% Fmin
+    # optimal delay (smallest error)
+    i <- which.max(diag(P))[1]
+    v[i] <- 1
+    fmin <- Fmin %*% v
+    print(i)
+    # if(isTRUE(returnDelay)){
+    # }else{
+    #   return(fmin)
+    # }
+  }else{
+    v[i] <- 1
+    fmin <- chol2inv(chol(XtX)) %*% v 
+    # return(fmin)
+  }
+  return(list("fmin" = fmin, "delay" = i))
+}
+
+# y is the wavelet and we want 
+# a filter f s.t. f*y = d 
+# with d = [0 ... 0 1 0 ...0]
+# 1 at the postion i = shft
+# if shft = NULL, the shift is chosen by the
+#     algorithm and also returned
+# if shift is not NULL, case of wavelet estimation
+#     from the trace via the autocorrelation matrix.
+# mu = percent of pre-whitening
+deconvolveSpikes <- function(y, nf = 32, mu = 0.1, shft = 1){
+  # R = t(Y)%*%Y = Toepliz matrix of ACF
+  y_acf <- as.numeric(acf(y, lag.max = nf, plot= FALSE)[[1]])
+  nf <- length(y_acf)  # because length(y_acf) can be < lag.max
+  taper <- hammingWindow(2*nf)
+  y_acf <- y_acf*taper[(nf+1):(2*nf)] 
+  y_acf[1] <- y_acf[1] + mu
+  y_acf <- y_acf/y_acf[1] 
+  YtY <- toeplitz(y_acf)
+  # all the spiking filters
+  if(is.null(shft)){
+    ny <- length(y)
+    L <- nf + ny -1
+    # convolution matrix Y
+    Y <- convmtx(y, nf)
+    # H <- solve(YtY) %*% t(Y) 
+    H <- chol2inv(chol(YtY)) %*% t(Y) 
+    v <- numeric(L)
+    # performance matrix: all spiking filter outputs
+    P <- Y %*% H
+    # optimal delay (smallest error)
+    i <- which.max(diag(P))
+    v[i] <- 1
+    h <- H %*% v
+    return(list("h"=h,"delay"=i))
+  }else{
+    v <- numeric(nf)
+    v[shft] <- 1
+    # h <- solve(YtY) %*% v 
+    h <- chol2inv(chol(YtY)) %*% v 
+    return(h)
+  }
+}
+
+
 
 #--- l1 constrained
 # sparse deeoncolution
@@ -201,17 +326,19 @@ deconvolveMtx <- function(y, h, lambda){
 #' Ivan Selesnick, NYU-Poly, selesi@poly.edu, 2012
 #' http://eeweb.poly.edu/iselesni/lecture_notes/
 #' @export
-deconvolveSparse <- function(y, w, Nit, eps, phifun, wfun, ...){
+deconvolveSparse <- function(y, w, Nit = 50, eps = 0.01, sigma = 0.1,
+                             thr = NULL, phifun, wfun, ...){
+  if(is.null(thr))  thr <- 3 * sigma * sqrt(sum(abs(w)^2))   
+  
   if(missing(phifun)){
-    phifun  <- function(x, thr) thr * abs(x)
+    phifun  <- function(x){
+      thr * abs(x)
+    }
   }
   if(missing(wfun)){
-    wfun <- function(x, thr) abs(x) / thr
+    wfun <- function(x) abs(x) / thr
   }
   y    <- as.vector(y)                    # convert to column vector
-  # y0    <- as.vector(y)                    # convert to column vector
-  # y <- numeric(length(y0) + length(w))
-  # y[seq_along(y0)] <- y0
   W <- convmtx(w, length(y))
   cost <- rep(0, Nit)                    # cost function history
   M_N  <- dim(W)
@@ -226,8 +353,9 @@ deconvolveSparse <- function(y, w, Nit, eps, phifun, wfun, ...){
     cost[k] <- 0.5 * sum(abs(y - W %*% x)^2) + sum(phifun(x, ...)) 
     if(!is.null(eps) && k > 1 && cost[k-1] - cost[k] < eps) break
   }
-  return(list(x = x[seq_along(y0)], cost = cost[1:k]))
+  return(list(x = x, cost = cost[1:k]))
 }
+
 
 
 # # TO CHECK!!!!

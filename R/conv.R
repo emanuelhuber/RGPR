@@ -81,38 +81,41 @@ convolution2D <- function(A,k){
 
 #' Linear convolution based on FFT
 #'
-#' If A (or B) is a numeric vector, it is converted into a one-column 
-#' matrix. Then if A and B do not have the same number of column, then the 
+#' If x (or w) is a numeric vector, it is converted into a one-column 
+#' matrix. Then if x and B do not have the same number of column, then the 
 #' first column of the matrix with the smallest number of column is repeated to
 #' match the dimension of the other matrix.
 #' match the dimension of the other matrix.
-#' @param A A numeric vector or matrix.
-#' @param k B numeric vector or matrix.
+#' @param x A numeric vector or matrix: the signal to be convolued with 
+#'          \code{w}.
+#' @param w A numeric vector or matrix: the wavelet.
 #' @name convolution
 #' @rdname convolution
 #' @export
-convolution <- function(A,k){
-  if(is.null(dim(A))){
-    dim(A) <- c(length(A),1)
+# gives the same results as
+# y <- convmtx(w, n = n) %*% r         # y : observed data
+convolution <- function(x, w){
+  if(is.null(dim(x))){
+    dim(x) <- c(length(x), 1)
   }
-  if(is.null(dim(k))){
-    dim(k) <- c(length(k),1)
+  if(is.null(dim(w))){
+    dim(w) <- c(length(w), 1)
   }
-  if(ncol(k) < ncol(A)){
-    k <- repmat(k[,1, drop = FALSE], 1, ncol(A)) 
+  if(ncol(w) < ncol(x)){
+    # FIXME -> mabye w <- w[, 1] would be enough
+    w <- repmat(w[, 1, drop = FALSE], 1, ncol(x)) 
   }
-  #   else if(ncol(B) > ncol(A)){
-  #     A <- repmat(A[,1, drop = FALSE], 1, ncol(B)) 
+  #   else if(ncol(B) > ncol(x)){
+  #     x <- repmat(x[,1, drop = FALSE], 1, ncol(B)) 
   #   }
-  nA <- nrow(A)
-  nk <- nrow(k)
-  Apad <- paddMatrix(A, nk, 0)
-  k0 <- matrix(0, nrow = nrow(Apad), ncol= ncol(Apad))
-  k0[1:nk, ] <- k
-  #   B0 <- rbind(B0, B, B0)
-  Y <- Re(stats::mvfft(stats::mvfft(Apad) * stats::mvfft(k0), 
-                       inverse=TRUE))/nrow(Apad)
-  return(Y[nk + seq_len(nA), ])
+  nx <- nrow(x)
+  nw <- nrow(w)
+  xpad <- paddMatrix(x, nw, 0)
+  w0 <- matrix(0, nrow = nrow(xpad), ncol= ncol(xpad))
+  w0[1:nw, ] <- w
+  Y <- Re(stats::mvfft(stats::mvfft(xpad) * stats::mvfft(w0), 
+                       inverse=TRUE))/nrow(xpad)
+  return(Y[nw + seq_len(nx), ])
 }
 
 

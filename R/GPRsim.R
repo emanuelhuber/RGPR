@@ -31,3 +31,13 @@ wavGPR <- function(xt, q, fc){
   xT <- (2/3 + (1-q)/7)/fc
   vt(xt, xT) - (2 - q)* vt(xt - xT/2, xT) + (1 - q)*vt(xt - xT, xT)
 }
+
+
+
+#' Simulate Hat wave
+#' 
+#' Simulate Hat wave
+#' @export 
+wavHat <- function(x, sig){
+  (2/((pi)^(1/4)*sqrt(3*sig)))*(1- (x^2)/(sig^2))*exp( - (x^2)/(2*sig^2))
+}

@@ -153,17 +153,19 @@ setMethod("deconv", "GPR", function(x,
 #' x is unknown. Spectral or matrix-based.
 #' @return Vector with same length as \code{y} 
 #' @export
-deconvolve <- function(y, h, mu = 0.0001, type = c("FFT", "matrix")){
-  type <- match.arg(type, c("FFT", "matrix"))
+deconvolve <- function(y, h, mu = 0.0001, type = c("matrix", "FFT"),
+                       regDeriv = FALSE){
+  type <- match.arg(type[1], c("FFT", "matrix"))
   if(type == "FFT"){
     deconvolveFFT(y = y, h = h, mu = mu)
   }else if(type == "matrix"){
-    deconvolveMtx(y = y, h = h, lambda = mu)
+    deconvolveMtx(y = y, h = h, lambda = mu, regDeriv = regDeriv)
   }
 }
 
 
-# spectral deconvolution with known wavelet
+
+# Wiener deconvolution in the frequency domain
 
 # convolution model: \eqn{y = h \times x} where h and y are known,
 # x is unknown
@@ -173,18 +175,25 @@ deconvolve <- function(y, h, mu = 0.0001, type = c("FFT", "matrix")){
 deconvolveFFT <- function(y, h, mu = 0.0001){
   ny <- length(y)
   nh <- length(h)
-  L  <- ny + nh 
-  if(nh > L){
-    h <- h[1:L]
+  if(nh > ny){
+    h <- h[1:ny]
+    nh <- ny
     warning("'h' is longer than '...' and is therefore shortened.")
   }
+  L  <- 2*(ny + nh ) + 1
+  # simply extend the response function h and the signal y to length L 
+  # by padding it with zeros
   h0 <- numeric(L)
   y0 <- h0
   h0[1:nh] <- h
   y0[1:ny] <- y
-  H  <- stats::fft(h0)
-  Y  <- stats::fft(y0)
-  y_dec <- Re(stats::fft( Y * Conj(H)/ (H * Conj(H) + abs(mu)), inverse = TRUE))
+  # win <- taper(L, "cos")
+  H  <- stats::fft( h0)
+  Y  <- stats::fft( y0)
+  # tH <- t(H)
+  # y_dec <- Re(stats::fft( Y * Conj(tH)/ (Conj(tH) * H  + abs(mu)), inverse = TRUE))
+  # Note: Mod(H)^2 = Conj(tH) * H
+  y_dec <- Re(stats::fft( Y * Conj(H)/ (Mod(H)^2 + abs(mu)), inverse = TRUE))
   return(y_dec[1:ny]/L)
   # Re(fft( Y/(H + mu) ,inverse=TRUE))[1:ny]/L
 }
@@ -213,7 +222,7 @@ deconvolveFFT <- function(y, h, mu = 0.0001){
 # @return Vector with same length as \code{y} 
 # @export
 # Checked: no need for padding
-deconvolveMtx <- function(y, h, lambda){
+deconvolveMtx <- function(y, h, lambda, regDeriv = FALSE){
   ny <- length(y)
   nh <- length(h)
   if(nh > ny){
@@ -221,7 +230,17 @@ deconvolveMtx <- function(y, h, lambda){
     warning("'h' is longer than 'y' and is therefore shortened.")
   }
   W <- convmtx(w = h, n = ny)
-  solve(t(W) %*% W + lambda * diag(ny), t(W) %*% y)
+  if(isTRUE(regDeriv)){
+    # See Least Squares with Examples in Signal Processing
+    # Ivan Selesnic, kMarch 7, 2013, NYU-Poly
+    # To improve the deconvolution result in the presence of noise, we can 
+    # minimize the energy of the derivative (or second-order derivative) of 
+    # y instead
+    D <- derivativeMtx2d(ny)
+    solve(t(W) %*% W + lambda * t(D) %*% D, t(W) %*% y)
+  }else{
+    solve(t(W) %*% W + lambda * diag(ny), t(W) %*% y)
+  }
 }
 
 #' @export
@@ -351,7 +370,7 @@ deconvolveSparse <- function(y, w, Nit = 50, eps = 0.01, sigma = 0.1,
     # update x (solve banded system)
     x   <- XLam %*% (g - (t(W) %*% solve(FF, (W %*% (XLam %*% g)))))            
     cost[k] <- 0.5 * sum(abs(y - W %*% x)^2) + sum(phifun(x, ...)) 
-    if(!is.null(eps) && k > 1 && cost[k-1] - cost[k] < eps) break
+    if(!is.null(eps) && k > 1 && (cost[k-1] - cost[k])/cost[1] < eps) break
   }
   return(list(x = x, cost = cost[1:k]))
 }

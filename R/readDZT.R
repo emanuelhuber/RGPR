@@ -287,7 +287,11 @@ readDZT <- function(dsn){
   # yy <- 1/hd$SPM * (seq_len(ncol(A) ) - 1)
   # plot3D::image2D(x = tt, y = yy, z = A)
   
-  yy <- 1/hd$SPM * (seq_len(ncol(A) / hd$NCHAN) - 1)
+  if(hd$SPM  > 0){
+    yy <- 1/hd$SPM * (seq_len(ncol(A) / hd$NCHAN) - 1)
+  }else{
+    yy <- seq_len(ncol(A))
+  }
   Adata <- vector(mode = "list", length = hd$NCHAN)
   for(i in seq_len(hd$NCHAN)){
     Adata[[i]] <- A[, seq(i, by = hd$NCHAN, to = ncol(A))]

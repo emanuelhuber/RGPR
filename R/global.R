@@ -634,39 +634,24 @@ setGenericVerif("strTensor", function(x,  blksze = c(2, 4),
 ################## GPR PROCESSING ######################3
 
 
-# TAPER WINDOWS
-# tapertype = MinPhase.tapertype;
-# tabpZL = nlags;
+# # second derivative
+derivativeMtx2d <- function(nr, nc){
+  if(missing(nc)) nc <- nr
+  D <- diag(x = 1, nrow = nr, ncol = nc) 
+  D[ col(D) == row(D) +1  ] <- -2
+  D[ col(D) == row(D) +2  ] <-  1
+  return(D)
+}
 
-# switch lower(tapertype)
-# case 'cos'
-# taper = (sin(linspace(0,pi/2,tabpZL)).^2)';
-# ACFoutput(1:tabpZL) = ACFoutput(1:tabpZL).*taper;
-# ACFoutput(end-tabpZL+1:end) = ACFoutput(end-tabpZL+1:end).*
-#           flipud(taper);
-# case 'triang'
-# taper = triang(2*tabpZL+1);
-# ACFoutput = ACFoutput.*taper;
-# case 'hamming'
-# taper = hamming(2*tabpZL+1);
-# ACFoutput = ACFoutput.*taper;
-# case 'bartlett'
-# taper = bartlett(2*tabpZL+1);
-# ACFoutput = ACFoutput.*taper;
-# case 'none'
-# % taper = ones(2*tabpZL+1,1);
-# % ACFoutput = ACFoutput-ACFoutput(end);
-# case 'limtaper'
-# % taper = ones(size(ACFoutput));
-# % taper = cs_taper(taper,'hann',round(length(ACFoutput)*0.25));
-# % ACFoutput = cs_taper(ACFoutput,'cos',round(length(ACFoutput)*0.25));
-# ACFoutput = cs_taper(ACFoutput,'cos',round(length(ACFoutput)*0.05));
-# case 'hann'
-# ACFoutput = cs_taper(ACFoutput,'hann');
-# case 'flattop'
-# taper = flattopwin(2*tabpZL+1);
-# ACFoutput = ACFoutput.*taper;
-# end
+# third derivative
+derivativeMtx3rd <- function(nr, nc){
+  if(missing(nc)) nc <- nr
+  D <- diag(x = 1, nrow = nr, ncol = nc) 
+  D[ col(D) == row(D) +1  ] <- -3
+  D[ col(D) == row(D) +2  ] <-  3
+  D[ col(D) == row(D) +3  ] <- -1
+  return(D)
+}
 
 
 ##----------- helper functions -------------------##

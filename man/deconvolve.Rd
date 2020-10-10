@@ -4,7 +4,7 @@
 \alias{deconvolve}
 \title{Deconvolution with known wavelet}
 \usage{
-deconvolve(y, h, mu = 1e-04, type = c("FFT", "matrix"))
+deconvolve(y, h, mu = 1e-04, type = c("matrix", "FFT"), regDeriv = FALSE)
 }
 \value{
 Vector with same length as \code{y}

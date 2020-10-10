@@ -4,16 +4,17 @@
 \alias{convolution}
 \title{Linear convolution based on FFT}
 \usage{
-convolution(A, k)
+convolution(x, w)
 }
 \arguments{
-\item{A}{A numeric vector or matrix.}
+\item{x}{A numeric vector or matrix: the signal to be convolued with 
+\code{w}.}
 
-\item{k}{B numeric vector or matrix.}
+\item{w}{A numeric vector or matrix: the wavelet.}
 }
 \description{
-If A (or B) is a numeric vector, it is converted into a one-column 
-matrix. Then if A and B do not have the same number of column, then the 
+If x (or w) is a numeric vector, it is converted into a one-column 
+matrix. Then if x and B do not have the same number of column, then the 
 first column of the matrix with the smallest number of column is repeated to
 match the dimension of the other matrix.
 match the dimension of the other matrix.

@@ -10,6 +10,8 @@
 \S4method{migrate}{GPR}(x, type = c("static", "kirchhoff"), ...)
 }
 \arguments{
+\item{type}{Either \code{static} or \code{kirchhoff}. See Details.}
+
 \item{max_depth}{maximum depth to appply the migration}
 
 \item{dz}{vertical resolution of the migrated data}
@@ -17,7 +19,21 @@
 \item{fdo}{dominant frequency of the GPR signal}
 }
 \description{
-Fresnel zone defined according to 
+Migrate the GPR data (time-to-depth conversion accounting for the 
+topography).
+}
+\details{
+\itemize{
+  \item \code{static} a trace-by-trace time-to-depth conversion that
+        shifts the traces vertically according to their elevation.
+  \item \code{kirchhoff} Topographic Kirchhoff migration (a Krichhoff
+        migration that accounts for the topography). See Dujardin and Bano 
+        (2013) Topographic migration of GPR data: Examples from Chad and 
+        Mongolia, Comptes Rendus Géoscience, 345(2):73-80. 
+        Doi: 10.1016/j.crte.2013.01.003
+}
+
+Fresnel zone (used in the Kirchhoff migration) is defined according to 
 Perez-Gracia et al. (2008) Horizontal resolution in a non-destructive
 shallow GPR survey: An experimental evaluation. NDT & E International,
 41(8): 611-620.

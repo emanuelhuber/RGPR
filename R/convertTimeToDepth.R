@@ -20,6 +20,10 @@ setGeneric("convertTimeToDepth", function(x, dz = NULL, zmax = NULL,
 
 #' Time to depth conversion
 #' 
+#' Convert the two-way travel time of the recorded waves into depth. It does
+#' not account for the topography. To add the topography, 
+#' use \code{\link{migrate}} instead.
+#' 
 #' @param dz        vertical resolution of the migrated data. 
 #'                  If \code{dz = NULL}, then \code{dz} is set equal to the 
 #'                  smallest depth resolution inferred from the data.

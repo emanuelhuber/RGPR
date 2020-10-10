@@ -1372,6 +1372,7 @@ setMethod("traceShift",
                                           "cubic", "none"), crop = TRUE){
   x@data <- .traceShiftMat(x@data, ts = ts, tt = x@depth, 
                            dz = x@dz, method = method)
+  x@depth <- (seq_len(nrow(x@data)) - 1) * x@dz
   if(crop == TRUE){
     testCrop <- apply(abs(x@data), 1, sum)
     x <- x[!is.na(testCrop), ]

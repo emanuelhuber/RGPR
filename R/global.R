@@ -1628,27 +1628,25 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
 
 # FIXME > vectorise that!
 .traceShiftMat <- function(A, ts = 0, tt = NULL, dz = 0.4, method = "linear"){
-  nShift <-  floor(ts/dz)
-  # n_new <- floor(ps)
-  Anew <- matrix(NA, nrow = nrow(A) + max(nShift), ncol = ncol(A))
+  nShift <- floor(ts/dz)
+  if(max(nShift) < 0){
+    n_plus <- 0
+  }else{
+    n_plus <- max(nShift)
+  }
+  Anew <- matrix(NA, nrow = nrow(A) + n_plus, ncol = ncol(A))
   v0 <- 1:nrow(A)
-  for(i in seq_len(ncol(A))){
+  for (i in seq_len(ncol(A))) {
     relts <- nShift[i] * dz - ts[i]
     vShift <- v0 + nShift[i]
-    if(method == "none"){
-      Anew[vShift, i] <- A[,i]
-    }else{
-      Anew[vShift, i] <- signal::interp1(tt, A[,i], tt + relts, 
-                                         method = method, extrap = TRUE)
+    tst <- vShift > 0
+    if (method == "none") {
+      Anew[vShift[tst], i] <- A[tst, i]
     }
-    # }else{
-    #   ynew <- signal::interp1(tt, A[,i], tt + relts, 
-    #                           method = method, extrap = TRUE)
-    # }
-    # vShift <- v0 + nShift[i]
-    # test <- vShift > 0 & vShift <= nrow(Anew)
-    # vShift <- vShift[test]
-    # Anew[vShift, i] <- ynew
+    else {
+      Anew[vShift[tst], i] <- signal::interp1(tt, A[, i], tt + 
+                                                relts, method = method, extrap = TRUE)[tst]
+    }
   }
   return(Anew)
 }

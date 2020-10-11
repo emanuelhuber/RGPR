@@ -12,28 +12,35 @@
   if(is.null(Vmax)) Vmax <- 50
   
   ntr <- ncol(x$data)
-  rec_coord <- matrix(nrow = ntr, ncol = 3)
-  trans_coord <- rec_coord
-  coord <- rec_coord
   
   if(sum(abs(c(x$dt1$recx, x$dt1$recy, x$dt1$recz))) > 0){
+    rec_coord <- matrix(nrow = ntr, ncol = 3)
     rec_coord[, 1] <- x$dt1$recx
     rec_coord[, 2] <- x$dt1$recy
     rec_coord[, 3] <- x$dt1$recz
+  }else{
+    rec_coord <- matrix(nrow = 0, ncol = 3)
   }
   
   if(sum(abs(c(x$dt1$transx, x$dt1$transy, x$dt1$transz))) > 0){
+    trans_coord <- matrix(nrow = ntr, ncol = 3)
     trans_coord[, 1] <- x$dt1$transx
     trans_coord[, 2] <- x$dt1$transy
     trans_coord[, 3] <- x$dt1$transz
+  }else{
+    trans_coord <- matrix(nrow = 0, ncol = 3)
   }  
   
   if(sum(abs(c(x$dt1$GPSx, x$dt1$GPSy, x$dt1$GPSz))) > 0){
+    coord <- matrix(nrow = ntr, ncol = 3)
     coord[, 1] <- x$dt1$GPSx
     coord[, 2] <- x$dt1$GPSy
     coord[, 3] <- x$dt1$GPSz
   }else if(sum(abs(x$dt1$topo), na.rm = TRUE) > 0){
+    coord <- matrix(0, nrow = ntr, ncol = 3)
     coord[,3] <- x$dt1$topo
+  }else{
+    coord <- matrix(nrow = 0, ncol = 3)
   }
   
   # rec_coord[, 1] <- cbind(x$dt1$recx, x$dt1$recy, x$dt1$recz)

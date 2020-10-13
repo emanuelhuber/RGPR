@@ -110,7 +110,7 @@ setMethod("deconv", "GPR", function(x,
       stop(paste0("wavelet deconvolution requires the following arguments:",
                   "h and mu\n"))
     }
-    x <- traceScaling(x, type="rms")
+    # x <- traceScaling(x, type="rms")
     x@data <- apply(x@data, 2, deconvolve, dots[["h"]], dots[["mu"]])      
   }else if(method== "min-phase"){
     stop("min-phase deconvolution has to be first written!!!\n")
@@ -159,7 +159,29 @@ deconvolve <- function(y, h, mu = 0.0001, type = c("matrix", "FFT"),
   if(type == "FFT"){
     deconvolveFFT(y = y, h = h, mu = mu)
   }else if(type == "matrix"){
-    deconvolveMtx(y = y, h = h, lambda = mu, regDeriv = regDeriv)
+    if(is.null(dim(y)) && is.null(dim(h))){
+      deconvolveMtx(y = y, h = h, lambda = mu, regDeriv = regDeriv)
+    }else{
+      if(is.null(dim(y))){
+        dim(y) <- c(length(y), 1)
+      }
+      if(is.null(dim(h))){
+        dim(h) <- c(length(h), 1)
+      }
+      if(ncol(h) < ncol(y)){
+        # FIXME -> mabye w <- w[, 1] would be enough
+        h <- repmat(h[, 1, drop = FALSE], 1, ncol(y)) 
+      }
+      if(nrow(h) > nrow(y)){
+        h <- h[1:nrow(y), ]
+        warning("'h' is longer than '...' and is therefore shortened.")
+      }
+      y_dec <- y
+      for(i in 1:ncol(y)){
+        y_dec[, i] <- deconvolveMtx(y = y[, i], h = h[, i], lambda = mu, regDeriv = regDeriv)
+      }
+      return(y_dec)
+    }
   }
 }
 
@@ -172,31 +194,57 @@ deconvolve <- function(y, h, mu = 0.0001, type = c("matrix", "FFT"),
 # @return Vector with same length as \code{y}
 # @export
 # Checked: padding helps!!!
+
 deconvolveFFT <- function(y, h, mu = 0.0001){
-  ny <- length(y)
-  nh <- length(h)
-  if(nh > ny){
-    h <- h[1:ny]
-    nh <- ny
+  if(is.null(dim(y))){
+    dim(y) <- c(length(y), 1)
+  }
+  if(is.null(dim(h))){
+    dim(h) <- c(length(h), 1)
+  }
+  if(ncol(h) < ncol(y)){
+    # FIXME -> mabye w <- w[, 1] would be enough
+    h <- repmat(h[, 1, drop = FALSE], 1, ncol(y)) 
+  }
+  if(nrow(h) > nrow(y)){
+    h <- h[1:nrow(y), ]
     warning("'h' is longer than '...' and is therefore shortened.")
   }
-  L  <- 2*(ny + nh ) + 1
-  # simply extend the response function h and the signal y to length L 
-  # by padding it with zeros
-  h0 <- numeric(L)
-  y0 <- h0
-  h0[1:nh] <- h
-  y0[1:ny] <- y
-  # win <- taper(L, "cos")
-  H  <- stats::fft( h0)
-  Y  <- stats::fft( y0)
-  # tH <- t(H)
-  # y_dec <- Re(stats::fft( Y * Conj(tH)/ (Conj(tH) * H  + abs(mu)), inverse = TRUE))
-  # Note: Mod(H)^2 = Conj(tH) * H
-  y_dec <- Re(stats::fft( Y * Conj(H)/ (Mod(H)^2 + abs(mu)), inverse = TRUE))
-  return(y_dec[1:ny]/L)
-  # Re(fft( Y/(H + mu) ,inverse=TRUE))[1:ny]/L
+  L  <- 2*(nrow(y) + nrow(h) ) + 1
+  
+  y0 <- paddMatrix(y, nrow(h), 0, zero = TRUE)
+  h0 <- matrix(0, nrow = nrow(y0), ncol = ncol(y0))
+  h0[1:nrow(h), ] <- h
+  H  <- stats::mvfft( h0)
+  Y  <- stats::mvfft( y0)
+  
+  y_dec <- Re(stats::mvfft( Y * Conj((H))/ (Mod(H)^2 + abs(mu)), inverse = TRUE))
+  return(y_dec[nrow(h) + 1:nrow(y), ]/nrow(y0))
 }
+
+# deconvolveFFT <- function(y, h, mu = 0.0001){
+#   ny <- length(y)
+#   nh <- length(h)
+#   if(nh > ny){
+#     h <- h[1:ny]
+#     nh <- ny
+#     warning("'h' is longer than '...' and is therefore shortened.")
+#   }
+#   L  <- 2*(ny + nh ) + 1
+#   # simply extend the response function h and the signal y to length L 
+#   # by padding it with zeros
+#   h0 <- numeric(L)
+#   y0 <- h0
+#   h0[1:nh] <- h
+#   y0[1:ny] <- y
+#   H  <- stats::fft( h0)
+#   Y  <- stats::fft( y0)
+#   # Note: Mod(H)^2 = Conj(tH) * H
+#   y_dec <- Re(stats::fft( Y * Conj(H)/ (Mod(H)^2 + abs(mu)), inverse = TRUE))
+#   return(y_dec[1:ny]/L)
+#   # Re(fft( Y/(H + mu) ,inverse=TRUE))[1:ny]/L
+# }
+
 # deconvolveFFT <- function(y, h, mu = 0.0001){
 #   ny <- length(y)
 #   nh <- length(h)
@@ -256,7 +304,7 @@ deconvolveSpikingInvFilter <- function(x, n = 35, i = 1, mu = 0.001){ #, returnD
 }
 
 .deconvolveSpikingInvFilter <- function(x, n = 35, i = 1, mu = 0.001){ #, returnDelay = FALSE){
-  x_acf <- as.numeric(acf(x, lag.max = n, plot= FALSE)[[1]])
+  x_acf <- as.numeric(acf(x, lag.max = n - 1, plot= FALSE)[[1]])
   n <- length(x_acf)  # because length(x_acf) can be < lag.max
   x_acf <- x_acf * taper(n, type = "hamming", half = TRUE, reverse = TRUE, a = 0.1) # tapering
   # print(x_acf)

@@ -110,7 +110,7 @@ convolution <- function(x, w){
   #   }
   nx <- nrow(x)
   nw <- nrow(w)
-  xpad <- paddMatrix(x, nw, 0)
+  xpad <- paddMatrix(x, nw, 0, zero = TRUE)
   w0 <- matrix(0, nrow = nrow(xpad), ncol= ncol(xpad))
   w0[1:nw, ] <- w
   Y <- Re(stats::mvfft(stats::mvfft(xpad) * stats::mvfft(w0), 

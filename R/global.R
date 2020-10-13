@@ -2824,7 +2824,7 @@ padmat <- function(x, n, m, what = 0){
 # SOURCE: http://matlabgeeks.com/tips-tutorials/how-to-blur-an-image-with-a-
 # fourier-transform-in-matlab-part-i/
 # service@matlabgeeks.com i
-paddMatrix <- function(I, p1, p2=NULL, zero = FALSE){
+paddMatrix <- function(I, p1, p2 = NULL, zero = FALSE){
   if(is.null(p2)){
     p2 <- p1
   }

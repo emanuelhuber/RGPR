@@ -1,3 +1,60 @@
+
+
+# crewes/seismic/deconw.m -> Wiener deconvolution (time domain)
+#                  y_dec <- conv(fmin, y)
+# crewes/seismic/deconf.m -> frequency domain spiking deconvolution
+
+# Schmelzbach
+# f_min
+# w_min <- real(ifft(1. ./(fft(f_min'))));
+# w_min = cs_taper(w_min,'cos' ,TaperLength,'bottom');
+
+
+#-------------
+# ressources/existing_codes/Processing of Seismic Reflection Data Using MATLAB/Book_codes/Codes/spiking_decon.m
+# function Ds=spiking_decon(Data,max_lag,mu,dt)
+# % This code is written to perform spiking deconvolution for seismic traces.
+# % It uses the auto-correlation generated based on the whole record time.
+# %
+# % The required inputs are:
+#   % Data: seismic shot gather(s)
+# % max_lag: maximum lag value(Note that the min lag is set to be the first sample)
+# % mu: White noise percentage
+# % dt: time sampling interval
+# % 
+# % The output is:
+#   % Ds: the deconvolved seismic data
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+# % The code if for the book titled: Processing Surface Seismic Reflection
+# % Data Using MATLAB by Wail A. Mousa & Abdullatif A. Al-Shuhail
+# % September 2011.
+# 
+# N=round(max_lag/dt);
+# p_noise=mu/100;
+# [nt,nx]=size(Data);
+# Dauto=zeros(N,nx);
+# Ds=zeros(nt+N-1,nx);
+# Rxd=zeros(1,N);
+# 
+# for i=1:nx
+# Dauto(:,i)=my_xcorr(Data(:,i)',N)'; 
+#                     Rxd=Rxd+my_xcorr(Data(:,i)',N,1);
+# end
+# Rxd=abs(Rxd);
+# 
+# DDauto=sum(Dauto,2);
+# Rxx=toeplitz(DDauto);
+# Rxx(1,1)=Rxx(1,1)*(p_noise);
+# 
+# 
+# h_opt=(inv(Rxx+eps))*Rxd';
+#                                      for i=1:nx
+#                                      Ds(:,i)=conv(Data(:,i),h_opt);
+#                                      end
+#                                      
+#                                      Ds=Ds(1:nt,:);
+                                     
+                                     
 setGenericVerif("deconv", function(x, method=c("spiking", "wavelet",
                                                "min-phase", "mixed-phase"), 
                                    ...,
@@ -292,21 +349,23 @@ deconvolveMtx <- function(y, h, lambda, regDeriv = FALSE){
 }
 
 #' @export
-deconvolveSpikingInvFilter <- function(x, n = 35, i = 1, mu = 0.001){ #, returnDelay = FALSE ){
+deconvolveSpikingInvFilter <- function(x, n = 35, i = 1, mu = 0.001, taperType = "hamming"){ #, returnDelay = FALSE ){
   if(is.null(dim(x))){
     dim(x) <- c(length(x),1)
   }
-  xdeconv <- apply(x, 2, .deconvolveSpikingInvFilter, n = n, i = i, mu = mu) #, returnDelay = returnDelay)
+  xdeconv <- apply(x, 2, .deconvolveSpikingInvFilter, n = n, i = i, mu = mu, taperType = taperType) #, returnDelay = returnDelay)
   # if(isTRUE(returnDelay)){
   #   return(xdeconv[[1]])
   # }
   return(xdeconv[[1]])
 }
 
-.deconvolveSpikingInvFilter <- function(x, n = 35, i = 1, mu = 0.001){ #, returnDelay = FALSE){
+
+
+.deconvolveSpikingInvFilter <- function(x, n = 35, i = 1, mu = 0.001, taperType = "hamming"){ #, returnDelay = FALSE){
   x_acf <- as.numeric(acf(x, lag.max = n - 1, plot= FALSE)[[1]])
   n <- length(x_acf)  # because length(x_acf) can be < lag.max
-  x_acf <- x_acf * taper(n, type = "hamming", half = TRUE, reverse = TRUE, a = 0.1) # tapering
+  x_acf <- x_acf * taper(n, type = taperType, half = TRUE, reverse = TRUE, a = 0.1) # tapering
   # print(x_acf)
   x_acf <- x_acf/x_acf[1]
   x_acf[1] <- x_acf[1] + mu^2

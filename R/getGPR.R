@@ -73,6 +73,7 @@ setMethod("getGPR", "GPRsurvey", function(x, id, verbose = FALSE){
       stop("nrow(x@coords[[id]]) != ncol(gpr)")
     }
     gpr@coord <- unname(x@coords[[id]] )
+    gpr@x <- spPathRel(gpr)
   }
   if(length(x@intersections[[id]]) > 0 ){
     

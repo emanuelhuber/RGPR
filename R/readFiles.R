@@ -565,7 +565,12 @@ freqFromString <- function(s){
     a <- regexpr("[0-9]+",  s, ignore.case = TRUE, perl = TRUE)
   }
   b <- regmatches(s,  a)
-  as.numeric(gsub("[^0-9]", "", b))
+  b <- as.numeric(gsub("[^0-9]", "", b))
+  if(length(b) == 0){
+    return(NULL)
+  }else{
+    return(b)
+  }
 }
 # s <- "1230 fds 200-MHZ 12.3"
 # s <- "1230MLF"

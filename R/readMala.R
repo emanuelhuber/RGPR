@@ -11,7 +11,7 @@
   pos_used <- integer(nrow(x$hd))
   # OK
   ttw  <- .getHD(x$hd,"TIMEWINDOW", position = TRUE)
-  if(!is.null(ttw)){
+  if(!is.null(ttw) &&  ttw[1] > 0){
     dz <- ttw[1] / nrow(x$data)
     pos_used[ttw[2]] <- 1L
   }else{

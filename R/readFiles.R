@@ -704,6 +704,11 @@ ascii2num <- function(con, n){
   return( as.numeric(intToUtf8(x)) )
 }
 
+int2ascii <- function(con, n){
+  x <- readBin(con, what = integer(), n = n, size = 1)
+  return( (intToUtf8(x)) )
+}
+
 readBinChar <- function(con, n = 1L, size = NA_integer_, signed = TRUE, 
                         endian = .Platform$endian){
   intToUtf8(readBin(con, what = integer(), n = n, size = size, 

@@ -8,12 +8,16 @@ readDT <- function(dsn){
   
   hd <- c()
   seek(dsn, where = 0, origin = "start")
-  hd$code <- readBin(dsn, what = character(), n = 1L, size = 1)
+  hd$code <- int2ascii(dsn, n = 1L)
+  # hd$code <- readBin(dsn, what = character(), n = 1L, size = 1)
   if(substr(hd$code, 1, 1) != "V") stop("Error reading file. Please contact me!")
-  hd$file_version <- substr(hd$code, 2, 2)
-  hd$len_rec <- sum( readBin(dsn, what = integer(), n = 2L, size = 2) )
+  # hd$file_version <- substr(hd$code, 2, 2)
+  hd$file_version <- readBin(dsn, what = integer(), n = 3L, size = 1)
+  hd$len_rec <- readBin(dsn, what = integer(), n = 1L, size = 2) 
   
   pos <- hd$len_rec 
+  # 2052 or 1024 (until now)
+  
   invisible(seek(dsn, where = pos, origin = "start"))
   # seek(dsn, where = NA)
   while((u <- readBin(dsn, what = character(), n = 1L, size = 1)) != "R"){
@@ -158,6 +162,7 @@ readDT <- function(dsn){
       #message("'GI' not yet implemented!")
       hd$GI <- ascii2num(dsn, 16)  # 0 in 1 file.
     }else{
+      u <- gsub("[[:blank:]]", "", u)
       message("'", u, "' not yet implemented!")
     }
     # else if(substr(u, 1, 3) == "AC1"){

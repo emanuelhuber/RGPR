@@ -5,12 +5,12 @@ Title: Ground-penetrating radar (GPR) data visualisation, processing and
 Version: 0.0.7
 Date: 2019-09-15
 Authors@R: c(
-  person("Emanuel", "Huber", email = "emanuel.huber@alumni.ethz.ch",
+  person("Emanuel", "Huber", email = "emanuel.huber@pm.me",
   role = c("aut", "cre")),
   person("Guillaume", "Hans", email = "guillaume.hans@fpinnovations.ca", 
   role = "aut"))
 Author: Emanuel Huber and Guillaume Hans
-Maintainer: Emanuel Huber <emanuel.huber@alumni.ethz.ch>
+Maintainer: Emanuel Huber <emanuel.huber@pm.me>
 Description: S4 classes and R functions to read, write, analyse and visualise
     ground-penetrating radar (GPR) data.
 Depends:

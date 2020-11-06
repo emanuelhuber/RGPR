@@ -420,10 +420,10 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
       warning("return a 'GPRcube' object with complex numbers.",
               " Current processing and plotting functions will most likely not ",
               "work on the returned object. Please contact me:\n",
-              "emanuel.huber@alumni.ethz.ch")
+              "emanuel.huber@pm.me")
     }else{
       warning("Still experimental. Don't hesitate to contact me:\n",
-              "emanuel.huber@alumni.ethz.ch")
+              "emanuel.huber@pm.me")
     }
     return(x)
   #------------------------------- UTSI ---------------------------------------#

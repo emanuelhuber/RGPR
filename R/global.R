@@ -2,7 +2,7 @@
 .onAttach <- function(libname, pkgname) {
   packageStartupMessage(paste0("Don't hesitate to contact me if you ",
                                "have any question:\n",
-                               "emanuel.huber@alumni.ethz.ch"))
+                               "emanuel.huber@pm.me"))
 }
 
 # check lockBinding  (bibliotheque/documents/R/manuel-S4)

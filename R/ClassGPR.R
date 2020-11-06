@@ -678,10 +678,10 @@ setClass(
 #       warning("return a 'GPRcube' object with complex numbers.",
 #               " Current processing and plotting functions are likely to not ",
 #               "work on the returned object. Please contact me:\n",
-#               "emanuel.huber@alumni.ethz.ch")
+#               "emanuel.huber@pm.me")
 #     }else{
 #       warning("Still experimental. Don't hesitate to contact me:\n",
-#               "emanuel.huber@alumni.ethz.ch")
+#               "emanuel.huber@pm.me")
 #     }
 #     return(x)
 #   }else if("DAT" == toupper(ext) || "HDR" == toupper(ext)){

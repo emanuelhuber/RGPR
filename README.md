@@ -1,7 +1,7 @@
 # [RGPR](http://emanuelhuber.github.io/RGPR): a free and open-source software package for ground-penetrating radar (GPR) data processing
 
 **If you have any questions, comments or suggestions, feel free to contact me (in english, french or german):**
-**emanuel.huber@alumni.ethz.ch**
+**emanuel.huber@pm.me**
 
 > I am developing this package on my free time as a gift to the GPR community. Any support will be appreciated! 
 
@@ -95,7 +95,8 @@ Do you miss your preferred file format? Send me the file format description with
 To report bugs, contribute to the development of [RGPR](http://emanuelhuber.github.io/RGPR), see [how to contribute](https://github.com/emanuelhuber/RGPR/blob/master/CONTRIBUTING.md).
 
 If you have any questions, comments or suggestions, feel free to contact me (in english, french or german):
-emanuel.huber@alumni.ethz.ch
+
+**emanuel.huber@pm.me**
 
 Thank you!
 

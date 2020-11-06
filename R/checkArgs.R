@@ -158,7 +158,7 @@ checkArg <- function(x, u, type, y, ...){
          },
          warning("Arg not checked. ",
                  "Please contact me with a copy of this message: \n",
-                 "emanuel.huber@alumni.ethz.ch")
+                 "emanuel.huber@pm.me")
          # return(u)
   )
   if(is.null(msg)){

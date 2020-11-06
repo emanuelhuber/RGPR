@@ -179,7 +179,7 @@ readDT <- function(dsn){
   if(!(hd$n_sampler_y > 0 && hd$n_sampler_x > 0)){
     warning("Something is weird with you file (", hd$n_sampler_y, ", ",
             hd$n_sampler_x, ") ... ",
-            "Please contact me: emanuel.huber@alumni.ethz.ch")
+            "Please contact me: emanuel.huber@pm.me")
   }
   
   DD <- matrix(nrow = hd$n_sampler_y, ncol = hd$n_sampler_x)

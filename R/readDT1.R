@@ -397,7 +397,7 @@ readGPS <- function(dsn){
   
   if(any(c(nrow(gpgga), length(tr_id)) != length(tr_pos))){
     stop("Problem - code 'qoiwelk'. Please contact me\n",
-         "emanuel.huber@alumni.ethz.ch")
+         "emanuel.huber@pm.me")
   }
   .closeFileIfNot(dsn)
   return(list(tr_id = tr_id, tr_pos = tr_pos, gpgga = gpgga))

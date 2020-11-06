@@ -39,7 +39,7 @@ I am developing this package on my free time as a gift to the GPR community. Any
 <p>To report bugs, contribute to the development of <acronym title="R-package for Ground Penetrating Radar data processing">RGPR</acronym>, see <a href="https://github.com/emanuelhuber/RGPR/blob/master/CONTRIBUTING.md" title="how to contribute">how to contribute</a>.</p>
 
 
-<p>If you have any questions, comments or suggestions, feel free to contact me (in english, french or german):<br/><a href="mailto:emanuel.huber@alumni.ethz.ch">emanuel.huber@alumni.ethz.ch</a></p>
+<p>If you have any questions, comments or suggestions, feel free to contact me (in english, french or german):<br/><a href="mailto:emanuel.huber@pm.me">emanuel.huber@pm.me</a></p>
 
 
 ## Tutorials
@@ -105,7 +105,7 @@ I am developing this package on my free time as a gift to the GPR community. Any
     
 See tutorial [Import GPR data](http://emanuelhuber.github.io/RGPR/00_RGPR_import_data/).
 
-<p>Do you miss your preferred file format? Send me the file format description with a test file and I will adapt the RGPR-package to support this file format:<br/><a href="mailto:emanuel.huber@alumni.ethz.ch">emanuel.huber@alumni.ethz.ch</a></p>
+<p>Do you miss your preferred file format? Send me the file format description with a test file and I will adapt the RGPR-package to support this file format:<br/><a href="mailto:emanuel.huber@pm.me">emanuel.huber@pm.me</a></p>
 
 ### Supported export file formats
 

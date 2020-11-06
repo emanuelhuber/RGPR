@@ -13,7 +13,7 @@ date: 2020-06-04
 **Note**:
 
 -   This R-package is still in development, and therefore some of the functions may change in a near future.
--   If you have any questions, comments or suggestions, feel free to contact me (in english, french or german): <emanuel.huber@alumni.ethz.ch>.
+-   If you have any questions, comments or suggestions, feel free to contact me (in english, french or german): <emanuel.huber@pm.me>.
 
 Table of Contents
 =================

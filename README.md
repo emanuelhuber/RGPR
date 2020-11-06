@@ -47,6 +47,16 @@ doi       = {10.1109/ICGPR.2018.8441658},
 ISSN      = {2474-3844}}
 ```
 
+My current affiliation:
+
+```
+Emanuel Huber,
+GEOTEST AG
+Bernstrasse 165
+3052 Zollikofen 
+Switzerland
+```
+
 ## Notes
 
 

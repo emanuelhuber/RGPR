@@ -41,7 +41,7 @@ setMethod("NMOstreching", "GPR", function(x, v = NULL){
     #   }
     #   v <- x@vel[["v"]]
     # }
-    v <- .getVel(x)
+    v <- .getVel(x, strict = FALSE)
   }
   if(anyNA(x@antsep)){
     stop(msg_set_antsep)

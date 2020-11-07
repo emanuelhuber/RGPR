@@ -18,6 +18,10 @@
 # - https://www.sthu.org/blog/13-perstopology-peakdetection/index.html
 
 
+vel <- function(x){
+  return(x@vel)
+}
+
 
 stackNMO <- function(x, thrs = NULL){
   x_NMOcor <- correctNMO(x, thrs = thrs)
@@ -53,16 +57,22 @@ setVel <- function(x, v, twt, type = c("vrms", "vint")){
   v <- v[i]
   twt <- twt[i]
   if(type == "vrms"){
-    v <- list("vrms" = list("t" = twt,
-                            "v" = v),
-              "vint" = DixVel(twt = twt, v = v))
+    v <- list("vrms" = list("t"    = twt,
+                            "v"    = v,
+                            "intp" = "stairs"),
+              "vint" = c(DixVel(twt = twt, v = v),
+                         "intp" = "stairs"))
   }else{
-    v <- list("vint" = list(twt = twt, v = v),
+    v <- list("vint" = list("t"    = twt, 
+                            "v"    = v,
+                            "intp" = "stairs"),
               )
   }
   x@vel <- v
   return(x)
 }
+
+
 
 interpVel <- function(x, 
                       type = c("vrms", "vint"),
@@ -70,24 +80,16 @@ interpVel <- function(x,
                                  "pchip", "cubic", "spline")){
   type <- match.arg(type, c("vrms", "vint"))
   method <- match.arg(method, c("stairs", "linear", "nearest", "pchip", "cubic", "spline"))
-  if(method == "stairs"){
-    v_stairs <- approxfun(x@vel[[type]][["t"]], x@vel[[type]][["v"]], 
-                          rule = 2, method = "constant", f = 1)
-    x@vel[["v"]] <- v_stairs(x@z)
-  }else{
-    x@vel[["v"]] <- signal::interp1(x = x@vel[[type]][["t"]], y = x@vel[[type]][["v"]],
-                                    xi = x@z, method = method,
-                                    extrap = TRUE)
-  }
+  x@vel[[type]][["intp"]] <- method
   return(x)
 }
 
-
 smoothVel <- function(x, w, type = c("vrms", "vint")){
   type <- match.arg(type, c("vrms", "vint"))
-  v_stairs <- approxfun(x@vel[[type]][["t"]], x@vel[[type]][["v"]], 
-                        rule = 2, method = "constant", f = 1)
-  x@vel[["v"]] <- mmand::gaussianSmooth(v_stairs(x@z), sigma = w)
+  # v_stairs <- approxfun(x@vel[[type]][["t"]], x@vel[[type]][["v"]], 
+                        # rule = 2, method = "constant", f = 1)
+  # mmand::gaussianSmooth(v_stairs(x@z), sigma = w)
+  x@vel[[type]][["smooth"]] <- w
   return(x)
 }
 
@@ -100,23 +102,61 @@ smoothVel <- function(x, w, type = c("vrms", "vint")){
   }
 }
 
+
+.intpSmoothVel <- function(x_vel_i, x_z){
+  if(is.list(x_vel_i) && !is.null(x_vel_i$intp)){
+    if(x_vel_i$intp == "stairs"){
+      v_stairs <- approxfun(x_vel_i[["t"]], x_vel_i[["v"]], 
+                            rule = 2, method = "constant", f = 1)
+      x_vel_i[["v"]] <- v_stairs(x_z)
+      x_vel_i[["t"]] <- x_z
+      
+    }else{
+      print(x_vel_i$intp)
+      x_vel_i[["v"]]  <- signal::interp1(x = x_vel_i[["t"]], y = x_vel_i[["v"]],
+                                            xi = x_z, method = x_vel_i$intp,
+                                            extrap = TRUE)
+      x_vel_i[["t"]] <- x_z
+      x_vel_i[["intp"]] <- "stairs"
+    }
+    if(!is.null(x_vel_i$smooth) && x_vel_i$smooth > 0){
+      x_vel_i[["v"]]  <- mmand::gaussianSmooth(x_vel_i[["v"]], sigma = x_vel_i$smooth)
+    }
+  }
+  return(x_vel_i)
+}
+
+
+.intpSmoothAllVel <- function(x_vel, x_z){
+  if(length(x_vel) > 0){
+    # interpolate velocities
+    for(i in seq_along(x_vel)){
+      # vi <- x_vel[[i]]
+      x_vel[[i]] <- .intpSmoothVel(x_vel[[i]], x_z)
+      
+    }
+  }
+  return(x_vel)
+}
+
 plotVel <- function(x){
-  if(length(x@vel)){
-    
+  if(length(x@vel) > 0){
+    x@vel <- .intpSmoothAllVel(x@vel, x@z)
     v_lim <- range(sapply(x@vel, .getAllVel))
     plot(0, type = "n", ylim = rev(range(x_tv@z)),  xlim = v_lim, yaxs = "i",
          xlab = RGPR:::.vlab(x),
          ylab = RGPR:::.zlab(x))
     if(!is.null(x@vel[["vrms"]])){
-      v_rms <- approxfun(x@vel[["vrms"]][["t"]], x@vel[["vrms"]][["v"]], rule = 2, method = "constant", f = 1)
-      lines(v_rms(x@z), x@z, type = "s", lty = 1)
+      # v_rms <- approxfun(x@vel[["vrms"]][["t"]], x@vel[["vrms"]][["v"]], rule = 2, method = "constant", f = 1)
+      lines(x@vel[["vrms"]][["v"]], x@vel[["vrms"]][["t"]], type = "s", lty = 1)
     }
     if(!is.null(x@vel[["vint"]])){
-      v_int <- approxfun(x@vel[["vint"]][["t"]], x@vel[["vint"]][["v"]], rule = 2, method = "constant", f = 1)
-      lines(v_int(x@z), x@z, type = "s", lty = 3)
+      # v_int <- approxfun(x@vel[["vint"]][["t"]], x@vel[["vint"]][["v"]], rule = 2, method = "constant", f = 1)
+      # lines(v_int(x_z), x_z, type = "s", lty = 3)
+      lines(x@vel[["vint"]][["v"]], x@vel[["vint"]][["t"]], type = "s", lty = 3)
     }
     if(!is.null(x@vel[["v"]]) && is.numeric(x@vel[["v"]])){
-      lines(x@vel[["v"]], x@z, type = "s", lty = 2, col = "red")
+      lines(x@vel[["v"]], x_z, type = "s", lty = 2, col = "red")
     }
   }else{
     if(isZDepth(x)){
@@ -126,6 +166,47 @@ plotVel <- function(x){
     }
   }
 }
+
+# plotVel <- function(x){
+#   if(length(x@vel)){
+#     # interpolate velocities
+#     for(i in seq_along(x@vel)){
+#       vi <- x@vel[[i]]
+#       if()
+#     }
+#     if(method == "stairs"){
+#       v_stairs <- approxfun(x@vel[[type]][["t"]], x@vel[[type]][["v"]], 
+#                             rule = 2, method = "constant", f = 1)
+#       x@vel[["v"]] <- v_stairs(x@z)
+#     }else{
+#       x@vel[["v"]] <- signal::interp1(x = x@vel[[type]][["t"]], y = x@vel[[type]][["v"]],
+#                                       xi = x@z, method = method,
+#                                       extrap = TRUE)
+#     }
+#     
+#     v_lim <- range(sapply(x@vel, .getAllVel))
+#     plot(0, type = "n", ylim = rev(range(x_tv@z)),  xlim = v_lim, yaxs = "i",
+#          xlab = RGPR:::.vlab(x),
+#          ylab = RGPR:::.zlab(x))
+#     if(!is.null(x@vel[["vrms"]])){
+#       v_rms <- approxfun(x@vel[["vrms"]][["t"]], x@vel[["vrms"]][["v"]], rule = 2, method = "constant", f = 1)
+#       lines(v_rms(x@z), x@z, type = "s", lty = 1)
+#     }
+#     if(!is.null(x@vel[["vint"]])){
+#       v_int <- approxfun(x@vel[["vint"]][["t"]], x@vel[["vint"]][["v"]], rule = 2, method = "constant", f = 1)
+#       lines(v_int(x@z), x@z, type = "s", lty = 3)
+#     }
+#     if(!is.null(x@vel[["v"]]) && is.numeric(x@vel[["v"]])){
+#       lines(x@vel[["v"]], x@z, type = "s", lty = 2, col = "red")
+#     }
+#   }else{
+#     if(isZDepth(x)){
+#       stop(msg_set_zunitToDepth)
+#     }else{
+#       stop("")
+#     }
+#   }
+# }
 
 getHyperbolaFromVrms <- function(x){
   if(is.null(x@vel[["vrms"]])){
@@ -161,14 +242,7 @@ simGPRwavelet <- function(xt, q, fc){
 }
 
 
-# See RGPR::hyperbolicTWT()
-# # return two-way travel time as a function of
-# # a = antenna separation
-# # t0 = two-way travel time when a = 0
-# # v = layer velocity (vrms)
-# TWThyperbolic_d <- function(a, t0, v){
-#   sqrt(t0^2 + (a/v)^2)
-# }
+
 
 # ---------------------------------------------------------------------------- #
 # -------------------------  SIMULATE CMP ------------------------------------ 
@@ -193,10 +267,10 @@ matplot(TWT, type = "l", col = "black", ylim = rev(range(TWT[,1])))
 #----- 3. wavelet model
 dz <- 0.25
 fc <- 100 # MHz
-wt <- seq(0, by = dz, to = 15) # ns
-w <- simGPRwavelet(wt, q = 0.9, fc = fc)
+t_w <- seq(0, by = dz, to = 15) # ns
+w <- simGPRwavelet(t_w, q = 0.9, fc = fc)
 
-plot(wt, w, type = "l")
+plot(t_w, w, type = "l")
 
 
 
@@ -206,7 +280,7 @@ X <- matrix(0, nrow = length(zt), ncol = length(a))
 for(i in 1:ncol(TWT)){
   for(j in 1:nrow(TWT)){
     uij <- TWT[j, i]
-    k <- round(uij/dz) + wt/dz +1
+    k <- round(uij/dz) + t_w/dz +1
     k <- k[k > 0 & k < nrow(X)]
     X[k,j] <- X[k,j]  + w[seq_along(k)]
   }
@@ -340,18 +414,19 @@ points(lyr$vrms, lyr$t0, pch = 21, col = "darkslateblue", lwd = 2, bg = "gold")
 # if the NMO velocity change is large. Such problems were not encountered in our case.
 vv <- locator(type = "o", pch = 20, col = "green")
 
-#--- NMO-velocities
-# vnmo <- c(vv$x[1], vv$x)
-vnmo <-  vv$x
-tnmo <-  vv$y
-xy.coords(vv)
-v <- approxfun(vv$y, vv$x, rule = 2, method = "linear", f = 0)
-# v <- approxfun(vv$x, vv$y, rule = 2, method = "constant")
-# plot(v(x@z), x@z, type = "l", ylim = rev(range(x@z)))
-# points(vv$x, vv$y, pch = 20)
-
-lines(v(x_tv@z), x_tv@z, lwd = 2, col = "green")
-points(vv, pch = 20)
+# #--- NMO-velocities
+# # vnmo <- c(vv$x[1], vv$x)
+# i_vv <- order(vv$y)
+# vnmo <-  vv$x[i_vv]
+# tnmo <-  vv$y[i_vv]
+# xy.coords(vv)
+# v <- approxfun(vv$y, vv$x, rule = 2, method = "linear", f = 0)
+# # v <- approxfun(vv$x, vv$y, rule = 2, method = "constant")
+# # plot(v(x@z), x@z, type = "l", ylim = rev(range(x@z)))
+# # points(vv$x, vv$y, pch = 20)
+# 
+# lines(v(x_tv@z), x_tv@z, lwd = 2, col = "green")
+# points(vv, pch = 20)
 
 
 # Dix's velocities
@@ -359,18 +434,20 @@ vin <- DixVel(twt = vv$y, v = vv$x)
 
 
 x <- setVel(x, v = vv$x, twt = vv$y, type = "vrms")
-x@vel
+# x@vel
+vel(x)
 plot(x, barscale = FALSE)
 plotVel(x)
 
-# FIXME - Function to write
-getVel(x)
-
+# FIXME - Functions to write
+getVel(x)  # return GPR object
 
 x <- interpVel(x)
+vel(x)
 plotVel(x)
 
 x <- interpVel(x, method = "pchip")
+vel(x)
 plotVel(x)
 
 x <- smoothVel(x, w = 10, type = "vint")
@@ -430,6 +507,13 @@ x <- smoothVel(x, w = 10, type = "vint")
 # x_save <- x
 x <- xc
 x2 <- convertTimeToDepth(xc)
+
+v <- RGPR:::.getVel(xc, type = "vrms", strict = FALSE)
+
+plot(v, type = "l")
+# x0 <- x
+
+x <- x0
 
 plot(x2)
 plotVel(x2)

@@ -39,7 +39,7 @@ setMethod("NMO", "GPR", function(x, v = NULL){
     #     v <- x@vel[["v"]]
     #   } 
     # }
-    v <- .getVel(x)
+    v <- .getVel(x, strict = FALSE)
   }
   if(anyNA(x@antsep)){
     stop(msg_set_antsep)
@@ -79,43 +79,3 @@ setMethod("NMO", "GPR", function(x, v = NULL){
   sqrt(t0^2 + (antsep/v)^2) - t0
 }
 
-
-# return either 1 value, a vector or FIXME: a matrix
-.getVel <- function(x, type = c("vrms", "vint")){
-  type <- match.arg(type, c("vrms", "vint"))
-  if(length(x@vel) == 0){
-    stop("You must assign a positiv velocity value!")
-  }else{
-    if(is.null(x@vel[[type]])){
-      stop("You must first set this type of velocity: ", type)
-    }else{
-      if(!is.null(x@vel[["type"]][["intp"]])){
-        v <- .interpVel(x, type = type, method = x@vel[[type]][["intp"]])
-      }
-      if(!is.null(x@vel[["type"]][["smooth"]])){
-        v <-  mmand::gaussianSmooth(v, sigma = x@vel[["type"]][["smooth"]]) 
-      }
-    }
-    v <- x@vel[["v"]]
-    return(v)
-  }
-}
-
-
-.interpVel <- function(x, 
-                      type = c("vrms", "vint"),
-                      method = c("stairs", "linear", "nearest", 
-                                 "pchip", "cubic", "spline")){
-  type <- match.arg(type, c("vrms", "vint"))
-  method <- match.arg(method, c("stairs", "linear", "nearest", "pchip", "cubic", "spline"))
-  if(method == "stairs"){
-    v_stairs <- approxfun(x@vel[[type]][["t"]], x@vel[[type]][["v"]], 
-                          rule = 2, method = "constant", f = 1)
-    v <- v_stairs(x@z)
-  }else{
-   v <- signal::interp1(x = x@vel[[type]][["t"]], y = x@vel[[type]][["v"]],
-                                    xi = x@z, method = method,
-                                    extrap = TRUE)
-  }
-  return(v)
-}

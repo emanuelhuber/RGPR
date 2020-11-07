@@ -126,7 +126,7 @@ setMethod("[", signature(x = "GPR", i = "ANY", j = "ANY"),
     #   }
     #   if(drop && length(rval) == 1){ rval <- c(rval)}
     # }else{   # if(length(i) > 0){
-    #   stop("Problem: not a matrix. Please contact me: emanuel.huber@alumni.ethz.ch")
+    #   stop("Problem: not a matrix. Please contact me: emanuel.huber@pm.me")
     #   # rval <- rval[i]
     #   # x@z <- x@z[i]
     #   # if(!is.null(x@md[["clip"]])){
@@ -175,7 +175,7 @@ setReplaceMethod("[", signature(x = "GPR", i = "ANY", j = "ANY"),
     if(length(dim(x@data)) == 2) {
       x@data[i, j] <- value
     }else{
-      stop("Problem: not a matrix. Please contact me: emanuel.huber@alumni.ethz.ch")
+      stop("Problem: not a matrix. Please contact me: emanuel.huber@pm.me")
     }
     x@proc <- c(x@proc, "[<-")
     return (x)

@@ -16,7 +16,7 @@
 
 ## Share your wishes, user experience, etc.
 
-Open a new issue on github or send me an email: emanuel.huber@alumni.ethz.ch
+Open a new issue on github or send me an email: emanuel.huber@pm.me
 
 ## Share R, Matlab or Python code
 

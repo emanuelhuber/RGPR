@@ -82,7 +82,7 @@ setMethod("correctNMO", "GPR", function(x, thrs = NULL, v = NULL,
   }
   
   if(is.null(v)){
-    v <- .getVel(x)
+    v <- .getVel(x, strict = FALSE)
   } 
   
   if(!is.null(thrs)){

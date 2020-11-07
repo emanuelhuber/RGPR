@@ -14,15 +14,13 @@
 
 # FIXME: layer depth + internal velocity
 
-# TWThyperbolic_d <- function(a, t0, v){
-#   sqrt(t0^2 + (a/v)^2)
-# }
 
 lyr <- list(vint = c(0.1, 0.095, 0.08, 0.09, 0.105, 0.09, 0.095),
             d    = c(0.5,   0.75,  1.01,  1.4,     1.9,  2.2, 2.6))
 lyr[["vrms"]] <- sqrt(cumsum(lyr$vint * 2 * lyr$d)/(2 * cumsum(lyr$d/lyr$vint)))
 lyr[["t0"]]   <- 2 * cumsum(lyr$d/lyr$vint)
 a <- seq(0, to = 20, by = 0.25)
+
 
 U <- t(sapply(a, hyperbolicTWT, t0 = lyr$t0, v = lyr$vrms))
 
@@ -55,13 +53,11 @@ wavGPR <- function(xt, q, fc){
 
 dz <- 0.25
 fc <- 100 # MHz
-wt <- seq(0, by = dz, to = 15) # ns
+t_w <- seq(0, by = dz, to = 15) # ns
 
-plot(wt, wavGPR(wt, q = 0.9, fc = fc), type = "l")
+w <- wavGPR(t_w, q = 0.9, fc = fc)
 
-w <- wavGPR(wt, q = 0.9, fc = fc)
-
-plot(wt, w, type = "l")
+plot(t_w, w, type = "l")
 
 
 zt <- seq(0, to = 250, by = dz)
@@ -71,7 +67,7 @@ X <- matrix(0, nrow = length(zt), ncol = length(a))
 for(i in 1:ncol(U)){
   for(j in 1:nrow(U)){
     uij <- U[j, i]
-    k <- round(uij/dz) + wt/dz +1
+    k <- round(uij/dz) + t_w/dz +1
     k <- k[k > 0 & k < nrow(X)]
     X[k,j] <- X[k,j]  + w[seq_along(k)]
   }
@@ -82,6 +78,7 @@ plot3D::image2D(X)
 X_list <- list(data = X, x = a, z = zt, mode = "CMP", freq = 100)
 x <- as(X_list, "GPR")
 plot(x)
+
 plot(x[,1])
 
 x
@@ -110,8 +107,9 @@ vv <- locator(type = "o", pch = 20, col = "green")
 
 #--- NMO-velocities
 # vnmo <- c(vv$x[1], vv$x)
-vnmo <-  vv$x
-tnmo <-  vv$y
+i_vv <- order(vv$y)
+vnmo <-  vv$x[i_vv]
+tnmo <-  vv$y[i_vv]
 xy.coords(vv)
 v <- approxfun(tnmo, vnmo, rule = 2, method = "linear", f = 0)
 # v <- approxfun(vnmo, tnmo, rule = 2, method = "constant")

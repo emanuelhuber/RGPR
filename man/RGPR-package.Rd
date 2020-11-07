@@ -18,7 +18,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Emanuel Huber \email{emanuel.huber@alumni.ethz.ch}
+\strong{Maintainer}: Emanuel Huber \email{emanuel.huber@pm.me}
 
 Authors:
 \itemize{

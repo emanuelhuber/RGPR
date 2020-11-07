@@ -16,7 +16,7 @@ NMO(x, v = NULL)
 the ground}
 }
 \description{
-Compute the Normal Move-Out (NMO) for a data set given a constant velocity: 
+Compute the Normal Move-Out (NMO) for a data set given a constant velocity (?? FIXME): 
 The Normal Move-out is defined as the
 difference between the two-way time at a given offset and the two-way 
 zero-offset time.

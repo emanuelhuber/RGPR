@@ -2615,7 +2615,7 @@ setMethod("interpPos", "GPR",
           function(x, topo, plot = FALSE, r = NULL, tol = NULL,
                    method = c("linear", "linear", "linear"), crs = NULL,
                    ...){
-    if(is.list(topo)) topo <- topo[[1]]
+    if(is.list(topo) && !is.data.frame(topo)) topo <- topo[[1]]
     if(all(is.na(topo[,4]))){
       stop(x@name, ": no link between the measured points",
                   " and the GPR traces!")

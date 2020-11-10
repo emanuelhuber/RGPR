@@ -1,6 +1,6 @@
 #' Normal Move-Out correction
 #' 
-#' Remove the Normal Move-Out (NMO) from the trace given a constant velocity: 
+#' Remove the Normal Move-Out (NMO) from the trace given a velocity: 
 #' this is a non-linear 
 #' correction of the time axis that requires interpolation. Note that
 #' only the conventional NMO correction is currently implemented. The 

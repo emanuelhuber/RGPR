@@ -18,155 +18,139 @@
 # - https://www.sthu.org/blog/13-perstopology-peakdetection/index.html
 
 
-vel <- function(x){
-  return(x@vel)
-}
+# vel <- function(x){
+#   return(x@vel)
+# }
 
 
-stackNMO <- function(x, thrs = NULL){
-  x_NMOcor <- correctNMO(x, thrs = thrs)
-  x <- rowMeans(x_NMOcor, na.rm = TRUE)    
-  return(x)
-  
-}
+# stackNMO <- function(x, thrs = NULL){
+#   x_NMOcor <- correctNMO(x, thrs = thrs)
+#   x <- rowMeans(x_NMOcor, na.rm = TRUE)    
+#   return(x)
+#   
+# }
 
 
-#--- internal velocities
-DixVel <- function(twt, v){
-  if(twt[1] != 0){
-    twt <- c(0, twt)
-  }
-  if(v[1] != 0){
-    v <- c(0, v)
-  }
-  twt_v2 <- twt * v^2
-  vint <- sqrt(diff(twt_v2)/diff(twt))
-  sel <- is.na(vint)
-  if(sum(sel) > 0){
-    message(rep("*", sum(sel)))
-  }
-  return(list(t = twt[-1], v = vint))
-}
-
-setVel <- function(x, v, twt, type = c("vrms", "vint")){
-  type <- match.arg(type, c("vrms", "vint"))
-  if(length(v) != length(twt)){
-    stop("'v' and 'twt' must have the same length!")
-  }
-  i <- order(twt)
-  v <- v[i]
-  twt <- twt[i]
-  if(type == "vrms"){
-    v <- list("vrms" = list("t"    = twt,
-                            "v"    = v,
-                            "intp" = "stairs"),
-              "vint" = c(DixVel(twt = twt, v = v),
-                         "intp" = "stairs"))
-  }else{
-    v <- list("vint" = list("t"    = twt, 
-                            "v"    = v,
-                            "intp" = "stairs"),
-              )
-  }
-  x@vel <- v
-  return(x)
-}
+# 
+# setVel <- function(x, v, twt, type = c("vrms", "vint")){
+#   type <- match.arg(type, c("vrms", "vint"))
+#   if(length(v) != length(twt)){
+#     stop("'v' and 'twt' must have the same length!")
+#   }
+#   i <- order(twt)
+#   v <- v[i]
+#   twt <- twt[i]
+#   if(type == "vrms"){
+#     v <- list("vrms" = list("t"    = twt,
+#                             "v"    = v,
+#                             "intp" = "stairs"),
+#               "vint" = c(dixVel(twt = twt, v = v),
+#                          "intp" = "stairs"))
+#   }else{
+#     v <- list("vint" = list("t"    = twt, 
+#                             "v"    = v,
+#                             "intp" = "stairs"),
+#               )
+#   }
+#   x@vel <- v
+#   return(x)
+# }
+# 
 
 
+# interpVel <- function(x, 
+#                       type = c("vrms", "vint"),
+#                       method = c("stairs", "linear", "nearest", 
+#                                  "pchip", "cubic", "spline")){
+#   type <- match.arg(type, c("vrms", "vint"))
+#   method <- match.arg(method, c("stairs", "linear", "nearest", "pchip", "cubic", "spline"))
+#   x@vel[[type]][["intp"]] <- method
+#   return(x)
+# }
 
-interpVel <- function(x, 
-                      type = c("vrms", "vint"),
-                      method = c("stairs", "linear", "nearest", 
-                                 "pchip", "cubic", "spline")){
-  type <- match.arg(type, c("vrms", "vint"))
-  method <- match.arg(method, c("stairs", "linear", "nearest", "pchip", "cubic", "spline"))
-  x@vel[[type]][["intp"]] <- method
-  return(x)
-}
-
-smoothVel <- function(x, w, type = c("vrms", "vint")){
-  type <- match.arg(type, c("vrms", "vint"))
-  # v_stairs <- approxfun(x@vel[[type]][["t"]], x@vel[[type]][["v"]], 
-                        # rule = 2, method = "constant", f = 1)
-  # mmand::gaussianSmooth(v_stairs(x@z), sigma = w)
-  x@vel[[type]][["smooth"]] <- w
-  return(x)
-}
-
-
-.getAllVel <- function(x){
-  if(inherits(x, "list") && !is.null(x[["v"]])){
-    return(x[["v"]])
-  }else if(is.numeric(x)){
-    return(x)
-  }
-}
+# smoothVel <- function(x, w, type = c("vrms", "vint")){
+#   type <- match.arg(type, c("vrms", "vint"))
+#   # v_stairs <- approxfun(x@vel[[type]][["t"]], x@vel[[type]][["v"]], 
+#                         # rule = 2, method = "constant", f = 1)
+#   # mmand::gaussianSmooth(v_stairs(x@z), sigma = w)
+#   x@vel[[type]][["smooth"]] <- w
+#   return(x)
+# }
 
 
-.intpSmoothVel <- function(x_vel_i, x_z){
-  if(is.list(x_vel_i) && !is.null(x_vel_i$intp)){
-    if(x_vel_i$intp == "stairs"){
-      v_stairs <- approxfun(x_vel_i[["t"]], x_vel_i[["v"]], 
-                            rule = 2, method = "constant", f = 1)
-      x_vel_i[["v"]] <- v_stairs(x_z)
-      x_vel_i[["t"]] <- x_z
-      
-    }else{
-      print(x_vel_i$intp)
-      x_vel_i[["v"]]  <- signal::interp1(x = x_vel_i[["t"]], y = x_vel_i[["v"]],
-                                            xi = x_z, method = x_vel_i$intp,
-                                            extrap = TRUE)
-      x_vel_i[["t"]] <- x_z
-      x_vel_i[["intp"]] <- "stairs"
-    }
-    if(!is.null(x_vel_i$smooth) && x_vel_i$smooth > 0){
-      x_vel_i[["v"]]  <- mmand::gaussianSmooth(x_vel_i[["v"]], sigma = x_vel_i$smooth)
-    }
-  }
-  return(x_vel_i)
-}
 
+# 
+# .intpSmoothVel <- function(x_vel_i, x_z){
+#   if(is.list(x_vel_i) && !is.null(x_vel_i$intp)){
+#     if(x_vel_i$intp == "stairs"){
+#       v_stairs <- approxfun(x_vel_i[["t"]], x_vel_i[["v"]], 
+#                             rule = 2, method = "constant", f = 1)
+#       x_vel_i[["v"]] <- v_stairs(x_z)
+#       x_vel_i[["t"]] <- x_z
+#       
+#     }else{
+#       print(x_vel_i$intp)
+#       x_vel_i[["v"]]  <- signal::interp1(x = x_vel_i[["t"]], y = x_vel_i[["v"]],
+#                                             xi = x_z, method = x_vel_i$intp,
+#                                             extrap = TRUE)
+#       x_vel_i[["t"]] <- x_z
+#       x_vel_i[["intp"]] <- "stairs"
+#     }
+#     if(!is.null(x_vel_i$smooth) && x_vel_i$smooth > 0){
+#       x_vel_i[["v"]]  <- mmand::gaussianSmooth(x_vel_i[["v"]], sigma = x_vel_i$smooth)
+#     }
+#   }
+#   return(x_vel_i)
+# }
+# 
+# 
+# .intpSmoothAllVel <- function(x_vel, x_z){
+#   if(length(x_vel) > 0){
+#     # interpolate velocities
+#     for(i in seq_along(x_vel)){
+#       # vi <- x_vel[[i]]
+#       x_vel[[i]] <- .intpSmoothVel(x_vel[[i]], x_z)
+#       
+#     }
+#   }
+#   return(x_vel)
+# }
 
-.intpSmoothAllVel <- function(x_vel, x_z){
-  if(length(x_vel) > 0){
-    # interpolate velocities
-    for(i in seq_along(x_vel)){
-      # vi <- x_vel[[i]]
-      x_vel[[i]] <- .intpSmoothVel(x_vel[[i]], x_z)
-      
-    }
-  }
-  return(x_vel)
-}
-
-plotVel <- function(x){
-  if(length(x@vel) > 0){
-    x@vel <- .intpSmoothAllVel(x@vel, x@z)
-    v_lim <- range(sapply(x@vel, .getAllVel))
-    plot(0, type = "n", ylim = rev(range(x_tv@z)),  xlim = v_lim, yaxs = "i",
-         xlab = RGPR:::.vlab(x),
-         ylab = RGPR:::.zlab(x))
-    if(!is.null(x@vel[["vrms"]])){
-      # v_rms <- approxfun(x@vel[["vrms"]][["t"]], x@vel[["vrms"]][["v"]], rule = 2, method = "constant", f = 1)
-      lines(x@vel[["vrms"]][["v"]], x@vel[["vrms"]][["t"]], type = "s", lty = 1)
-    }
-    if(!is.null(x@vel[["vint"]])){
-      # v_int <- approxfun(x@vel[["vint"]][["t"]], x@vel[["vint"]][["v"]], rule = 2, method = "constant", f = 1)
-      # lines(v_int(x_z), x_z, type = "s", lty = 3)
-      lines(x@vel[["vint"]][["v"]], x@vel[["vint"]][["t"]], type = "s", lty = 3)
-    }
-    if(!is.null(x@vel[["v"]]) && is.numeric(x@vel[["v"]])){
-      lines(x@vel[["v"]], x_z, type = "s", lty = 2, col = "red")
-    }
-  }else{
-    if(isZDepth(x)){
-      stop(msg_set_zunitToDepth)
-    }else{
-      stop("")
-    }
-  }
-}
-
+# plotVel <- function(x){
+#   if(length(x@vel) > 0){
+#     x@vel <- .intpSmoothAllVel(x@vel, x@z)
+#     v_lim <- range(sapply(x@vel, .getAllVel))
+#     plot(0, type = "n", ylim = rev(range(x_tv@z)),  xlim = v_lim, yaxs = "i",
+#          xlab = RGPR:::.vlab(x),
+#          ylab = RGPR:::.zlab(x))
+#     if(!is.null(x@vel[["vrms"]])){
+#       # v_rms <- approxfun(x@vel[["vrms"]][["t"]], x@vel[["vrms"]][["v"]], rule = 2, method = "constant", f = 1)
+#       lines(x@vel[["vrms"]][["v"]], x@vel[["vrms"]][["t"]], type = "s", lty = 1)
+#     }
+#     if(!is.null(x@vel[["vint"]])){
+#       # v_int <- approxfun(x@vel[["vint"]][["t"]], x@vel[["vint"]][["v"]], rule = 2, method = "constant", f = 1)
+#       # lines(v_int(x_z), x_z, type = "s", lty = 3)
+#       lines(x@vel[["vint"]][["v"]], x@vel[["vint"]][["t"]], type = "s", lty = 3)
+#     }
+#     if(!is.null(x@vel[["v"]]) && is.numeric(x@vel[["v"]])){
+#       lines(x@vel[["v"]], x_z, type = "s", lty = 2, col = "red")
+#     }
+#   }else{
+#     if(isZDepth(x)){
+#       stop(msg_set_zunitToDepth)
+#     }else{
+#       stop("")
+#     }
+#   }
+# }
+# 
+# .getAllVel <- function(x){
+#   if(inherits(x, "list") && !is.null(x[["v"]])){
+#     return(x[["v"]])
+#   }else if(is.numeric(x)){
+#     return(x)
+#   }
+# }
 # plotVel <- function(x){
 #   if(length(x@vel)){
 #     # interpolate velocities
@@ -208,38 +192,38 @@ plotVel <- function(x){
 #   }
 # }
 
-getHyperbolaFromVrms <- function(x){
-  if(is.null(x@vel[["vrms"]])){
-    stop("You must first set v_rms velocities with 'setVel()'")
-  }
-  y <- mapply(hyperbolicTWT, x@vel[["vrms"]]$t, x@vel[["vrms"]]$v, 
-              MoreArgs = list(antsep = x@x))
-  list(twt = x@x, antsep = y)
-}
+# hyperbolaFromVrms <- function(x){
+#   if(is.null(x@vel[["vrms"]])){
+#     stop("You must first set v_rms velocities with 'setVel()'")
+#   }
+#   y <- mapply(hyperbolicTWT, x@vel[["vrms"]]$t, x@vel[["vrms"]]$v, 
+#               MoreArgs = list(antsep = x@x))
+#   list(twt = x@x, antsep = y)
+# }
 
-# GPR wavelet:
-#   Check chap 11 of Anan in the book Near-Surface Geophysics
-# "The radiated wavelet from a GPR system is a compli-
-# cated function of the antenna construction and the electronics
-# drive circuitry.For impulse style ultra wideband systems using
-# short electric dipole antennas, a simple mathematical model is
-# helpful for numerical simulation."
-
-vt <- function(xt, xT){
-  test <- xt > 0 & xt < xT
-  vt <- numeric(length(xt))
-  vt[test] <-  0.5 * ( 1 + cos(pi * (xt[test]- xT/2)/(xT/2)))
-  return(vt)
-}
-
-# xt = time in ns
-# where 0 < q < 1 (damping factor)
-# fc = center frequency in MHz
-simGPRwavelet <- function(xt, q, fc){
-  xt <- xt / 1000
-  xT <- (2/3 + (1-q)/7)/fc
-  vt(xt, xT) - (2 - q)* vt(xt - xT/2, xT) + (1 - q)*vt(xt-xT, xT)
-}
+# # GPR wavelet:
+# #   Check chap 11 of Anan in the book Near-Surface Geophysics
+# # "The radiated wavelet from a GPR system is a compli-
+# # cated function of the antenna construction and the electronics
+# # drive circuitry.For impulse style ultra wideband systems using
+# # short electric dipole antennas, a simple mathematical model is
+# # helpful for numerical simulation."
+# 
+# vt <- function(xt, xT){
+#   test <- xt > 0 & xt < xT
+#   vt <- numeric(length(xt))
+#   vt[test] <-  0.5 * ( 1 + cos(pi * (xt[test]- xT/2)/(xT/2)))
+#   return(vt)
+# }
+# 
+# # xt = time in ns
+# # where 0 < q < 1 (damping factor)
+# # fc = center frequency in MHz
+# simWavelet <- function(xt, q, fc){
+#   xt <- xt / 1000
+#   xT <- (2/3 + (1-q)/7)/fc
+#   vt(xt, xT) - (2 - q)* vt(xt - xT/2, xT) + (1 - q)*vt(xt-xT, xT)
+# }
 
 
 
@@ -268,7 +252,7 @@ matplot(TWT, type = "l", col = "black", ylim = rev(range(TWT[,1])))
 dz <- 0.25
 fc <- 100 # MHz
 t_w <- seq(0, by = dz, to = 15) # ns
-w <- simGPRwavelet(t_w, q = 0.9, fc = fc)
+w <- simWavelet(t_w, q = 0.9, fc = fc)
 
 plot(t_w, w, type = "l")
 
@@ -430,7 +414,7 @@ vv <- locator(type = "o", pch = 20, col = "green")
 
 
 # Dix's velocities
-vin <- DixVel(twt = vv$y, v = vv$x)
+vin <- dixVel(twt = vv$y, v = vv$x)
 
 
 x <- setVel(x, v = vv$x, twt = vv$y, type = "vrms")
@@ -468,7 +452,7 @@ points(lyr$vrms, lyr$t0, pch = 21, col = "darkslateblue", lwd = 2, bg = "gold")
 
 
 #--- plot CMP with hyperbola & NMO correction
-HPB <- getHyperbolaFromVrms(x)
+HPB <- hyperbolaFromVrms(x)
 
 par(mfrow = c(1,2))
 plot(x[,sel], barscale = FALSE, main = "CMP")
@@ -507,13 +491,13 @@ x <- smoothVel(x, w = 10, type = "vint")
 # x_save <- x
 x <- xc
 x2 <- convertTimeToDepth(xc)
-
-v <- RGPR:::.getVel(xc, type = "vrms", strict = FALSE)
-
-plot(v, type = "l")
-# x0 <- x
-
-x <- x0
+# 
+# v <- RGPR:::.getVel(xc, type = "vrms", strict = FALSE)
+# 
+# plot(v, type = "l")
+# # x0 <- x
+# 
+# x <- x0
 
 plot(x2)
 plotVel(x2)

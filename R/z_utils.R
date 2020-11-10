@@ -69,15 +69,29 @@ quiet <- function(x) {
 #'                transmitter and the receiver).
 #' @return [\code{numeric}] Corresponding depth.
 #' @export                  
-timeToDepth <- function(twt, t0 = 0, v = 0.1, antsep = 1){
+timeToDepth <- function(twt, t0, v = 0.1, antsep = 1){
   # t0 <- t0 - antsep/c0
-  y <- v^2 * (twt - t0)^2 - antsep^2
-  test <- (y >= 0) & ((twt - t0) >= 0)
+  if(length(v) == 1){
+    y <- v^2 * (twt - t0)^2 - antsep^2
+    test <- (y >= 0) & ((twt - t0) >= 0)
+  }else if(length(v) == length(twt)){
+    y <- cumsum( c(0, diff(twt)) * v )^2  - antsep^2
+    test <- (y >= 0)
+  }
   y[!test] <- NA
   y[test] <- sqrt(y[test])/2
   return(y)
-  # sqrt(v^2*(x - t0)- antsep^2)/2
+  # sqrt(v^2*(twt - t0)- antsep^2)/2
 }
+# timeToDepth <- function(twt, t0 = 0, v = 0.1, antsep = 1){
+#   # t0 <- t0 - antsep/c0
+#   y <- v^2 * (twt - t0)^2 - antsep^2
+#   test <- (y >= 0) & ((twt - t0) >= 0)
+#   y[!test] <- NA
+#   y[test] <- sqrt(y[test])/2
+#   return(y)
+#   # sqrt(v^2*(x - t0)- antsep^2)/2
+# }
 
 # #' @param c0     [\code{numeric(1)}] Electromagnetic wave propagation in 
 # #'               the air.

@@ -4,7 +4,7 @@
 \alias{timeToDepth}
 \title{Time to depth conversion}
 \usage{
-timeToDepth(twt, t0 = 0, v = 0.1, antsep = 1)
+timeToDepth(twt, t0, v = 0.1, antsep = 1)
 }
 \arguments{
 \item{twt}{[\code{numeric}] Two-way travel time vector.}

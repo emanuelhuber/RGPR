@@ -1,4 +1,12 @@
 
+#' Velocity
+#' 
+#' Returns velocity data
+#'
+#' @export
+vel <- function(x){
+  return(x@vel)
+}
 
 
 # return either 1 value, a vector or FIXME: a matrix

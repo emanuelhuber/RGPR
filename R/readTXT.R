@@ -196,7 +196,7 @@ detectASCIIProp <- function(dsn, lns = 20, verbose = TRUE){
     }else{
       nHeader <- 1
       if(verbose){
-        warning("Cannot detect header with certitude. ",
+        message("Cannot detect header with certitude. ",
                 "I assume that the first non-empty line it the header.")
       }
     }

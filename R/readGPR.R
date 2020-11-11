@@ -149,9 +149,9 @@ readGPR <- function(dsn, desc = "", Vmax = NULL,
                           desc = desc, Vmax = Vmax),  verbose = verbose)
     if( !is.null(dsn[["GPS"]])){
       x_gps <-  verboseF(readGPS(dsn[["GPS"]]), verbose = verbose)
-      if(is.null(x_gps)){
-        message("I couldn't find coordinates in GPS file.")
-      }
+      # if(is.null(x_gps)){
+      #   message("I couldn't find coordinates in GPS file.")
+      # }
     }
     # if(length(dsn) == 1){
     #   if(inherits(dsn, "connection")){
@@ -401,9 +401,9 @@ readGPR <- function(dsn, desc = "", Vmax = NULL,
                    verbose = verbose)
     if( !is.null(dsn[["DZG"]])){
       x_gps <-  verboseF(readDZG(dsn[["DZG"]]), verbose = verbose)
-      if(is.null(x_gps)){
-        message("I couldn't find coordinates in GPS file.")
-      }
+      # if(is.null(x_gps)){
+      #   message("I couldn't find coordinates in GPS file.")
+      # }
     }
   # }else if("DZT" %in% toupper(ext)){
   #   if(length(dsn) == 1){

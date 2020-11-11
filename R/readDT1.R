@@ -237,26 +237,30 @@
 #' @rdname readDT1
 #' @export
 readDT1 <- function(dsn, ntr, npt){
-  # if(!inherits(dsn, "connection")){
-  #   dsn <- file(dsn, 'rb')
-  # }
   dsn <- .openFileIfNot(dsn)
-  tags <- c("traces",  "position", "samples", "topo",     "NA1",  "bytes",
-            "tracenb", "stack",    "window",  "NA2",      "NA3",  "NA4",
-            "NA5",     "NA6",      "recx",    "recy",     "recz", "transx",
-            "transy",  "transz",   "time0",   "zeroflag", "NA7",  "time",
-            "x8",       "com")  
+  tags <- c("traces", "position", "samples", "topo", "NA1", "bytes",
+            "window", "stacks", 
+            "GPSx", "GPSy", "GPSz", 
+            "recx", "recy", "recz",
+            "transx", "transy", "transz",
+            "time0", "zeroflag", "NA7", "time", "flag", "com")
+  binSize <- rep(4, 23)
+  binSize[9:11] <- 8
+  binSize[23] <- 28
+  binMod <- rep("numeric", 23)
+  binMod[23] <- "character"
+  
+  
   hDT1 <- list()
   dataDT1 <- matrix(NA, nrow = npt, ncol = ntr)
   
   for(i in 1:ntr){
-    for(j in 1:25){
-      hDT1[[tags[j]]][i] <- readBin(dsn, what = numeric(), n = 1L, size = 4)
+    for(j in 1:23){
+      hDT1[[tags[j]]][i] <- readBinary(dsn, what = binMod[j], n = 1L, 
+                                       size =  binSize[j])
     }
-    # read the 28 characters long comment
-    hDT1[[tags[26]]][i] <- readChar(dsn, 28)
     # read the npt * 2 bytes trace data
-    dataDT1[,i] <- readBin(dsn, what = integer(), n = npt, size = 2)
+    dataDT1[,i] <- readBinary(dsn, what = "integer", n = npt, size = 2)
   }
   .closeFileIfNot(dsn)
   return( list(dt1hd = hDT1, data = dataDT1) )

@@ -18,10 +18,10 @@
 simWavelet <- function(xt, q, fc){
   xt <- xt / 1000
   xT <- (2/3 + (1-q)/7)/fc
-  vt(xt, xT) - (2 - q)* vt(xt - xT/2, xT) + (1 - q)*vt(xt-xT, xT)
+  .vttt(xt, xT) - (2 - q)* .vttt(xt - xT/2, xT) + (1 - q)*.vttt(xt-xT, xT)
 }
 
-vt <- function(xt, xT){
+.vttt <- function(xt, xT){
   test <- xt > 0 & xt < xT
   vt <- numeric(length(xt))
   vt[test] <-  0.5 * ( 1 + cos(pi * (xt[test]- xT/2)/(xT/2)))

@@ -30,6 +30,15 @@
   return(pos)
 }
 
+readBinary <- function(con, what, n = 1L, size = NA_integer_, signed = TRUE,
+                       endian = .Platform$endian, useBytes = FALSE){
+  if(what == "character"){
+    verboseF(readChar(con, nchars = size, useBytes = useBytes), verbose = FALSE)
+  }else{
+    readBin(con, what = what, n = n, size = size, signed = signed, endian = endian)
+  }
+}
+
 # unsigned integer, 2 bytes
 .readBin_int1 <- function(x, n = 1){
   readBin(x, what = "int", n = n, size = 1, signed = FALSE, endian = "little")

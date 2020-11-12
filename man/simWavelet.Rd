@@ -2,10 +2,41 @@
 % Please edit documentation in R/simWavelet.R
 \name{simWavelet}
 \alias{simWavelet}
-\title{Simulates GPR wavelet}
+\title{Simulates a GPR wavelet}
 \usage{
-simWavelet(xt, q, fc)
+simWavelet(twt, type = c("annan", "ricker"), fc = 100, lag = 0, q = 1)
+}
+\arguments{
+\item{twt}{[\code{numeric(n)}] Two-way travel time (generally positive if 
+\code{lag = 0})}
+
+\item{type}{[\code{annan}|\code{ricker}] The Annan wavelet 
+(\code{type = "annan"}) with dampling factor or the classical
+Ricker wavelet (\code{type = "ricker"})}
+
+\item{fc}{[\code{numeric(1)}] Center frequency in MHz}
+
+\item{lag}{[\code{numeric(1)}] Used to shift the wavelet in time. For the
+Ricker wavelet, \code{lag = -3e3/(pi * fc)} centers the wavelet
+at \code{twt = 0}.}
+}
+\value{
+[\code{numeric(n)}] The wavelet
 }
 \description{
-Simulates GPR wavelet
+Simulates a GPR wavelet with specified center frequency.
+}
+\examples{
+fc <- 100 # MHz 
+
+xt <- seq(-50, by = 0.1, to = 50) # ns 
+
+plot(xt, simWavelet(xt, fc = fc, q = 0.9), type = "l")
+plot(xt, simWavelet(xt, fc = fc, q = 0.9, lag = 5), type = "l")
+
+plot(xt, simWavelet(xt, type = "ricker", fc = fc, q = 0.9), type = "l")
+plot(xt, simWavelet(xt, type = "ricker", fc = fc, q = 0.9, lag = 5), type = "l")
+plot(xt, simWavelet(xt, type = "ricker", fc = fc, q = 0.9, lag = -10), type = "l")
+plot(xt, simWavelet(xt, type = "ricker", fc = fc, q = 0.9, lag = -3e3/(pi * fc)), type = "l")
+abline(v = 0)
 }

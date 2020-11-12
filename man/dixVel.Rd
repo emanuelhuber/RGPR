@@ -2,10 +2,20 @@
 % Please edit documentation in R/dixVel.R
 \name{dixVel}
 \alias{dixVel}
-\title{Computes Dix' velocities}
+\title{Computes Dix velocities}
 \usage{
 dixVel(twt, v)
 }
+\arguments{
+\item{twt}{[\code{numeric(n)}] $n$ two-way travel times ($n > 0$)}
+
+\item{v}{[\code{numeric(n)}] $n$ corresponding velocities}
+}
+\value{
+[\code{list}] List with two elements: \code{t} (time) and
+        [\code{v}] (corresponding Dix velocities)
+}
 \description{
-Computes Dix' velocities
+Computes Dix velocities from root-mean-square velocity and corresponding
+two-way travel times
 }

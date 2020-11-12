@@ -39,8 +39,7 @@ setMethod("setVel", "GPR", function(x, v, twt, type = c("vrms", "vint")){
   }else{
     v <- list("vint" = list("t"    = twt, 
                             "v"    = v,
-                            "intp" = "stairs"),
-    )
+                            "intp" = "stairs"))
   }
   x@vel <- v
   return(x)

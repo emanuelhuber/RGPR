@@ -413,7 +413,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
   #------------------------------- 3d RADAR -----------------------------------#
   #------------------------------------ VOL -----------------------------------#
   }else if("VOL" %in% toupper(ext)){
-    A <- verboseF( readVOL(dsn), verbose = verbose)
+    A <- verboseF( readVOL(dsn$VOL), verbose = verbose)
     x <- verboseF( .gprVOL(A, fName = fName, fPath = fPath, 
                            desc = desc, Vmax = Vmax), verbose = verbose)
     if(A$hd$dim == "3D"){

@@ -2,6 +2,7 @@
 % Please edit documentation in R/interpVel.R
 \name{interpVel}
 \alias{interpVel}
+\alias{interpVel,GPR-method}
 \title{Interpolate velocity model}
 \usage{
 interpVel(
@@ -9,7 +10,30 @@ interpVel(
   type = c("vrms", "vint"),
   method = c("stairs", "linear", "nearest", "pchip", "cubic", "spline")
 )
+
+\S4method{interpVel}{GPR}(
+  x,
+  type = c("vrms", "vint"),
+  method = c("stairs", "linear", "nearest", "pchip", "cubic", "spline")
+)
+}
+\arguments{
+\item{x}{[\code{GPR class}] An object of the class \code{GPR}}
+
+\item{type}{[\code{character(1)}] Which type of velocity values has to be
+updated? The root-mean-square velocity (\code{vrms}) or the
+internal velocity (\code{vint})?}
+
+\item{method}{[\code{character(1)}] Interpolation method to be applied:
+one of \code{stairs}, \code{linear}, \code{nearest}, 
+\code{pchip}, \code{spline}, \code{cubic} 
+(see also \code{\link[signal]{interp1}}).}
+}
+\value{
+[\code{GPR class}] An object of the class GPR.
 }
 \description{
-Interpolate velocity model
+Define the interpolation parameters that will be used when the velocities 
+will be plotted or used in other functions.
+To undo the interpolation, simply set \code{method = stairs}.
 }

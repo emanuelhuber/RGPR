@@ -2,10 +2,20 @@
 % Please edit documentation in R/vel.R
 \name{vel}
 \alias{vel}
+\alias{vel,GPR-method}
 \title{Velocity}
 \usage{
 vel(x)
+
+\S4method{vel}{GPR}(x)
+}
+\arguments{
+\item{x}{[\code{GPR class}] An object of the class \code{GPR}}
+}
+\value{
+[\code{list}|\code{numeric}|\code{matrix}] The velocities as they
+        are stored in \code{x}.
 }
 \description{
-Returns velocity data
+Returns (raw) velocity data.
 }

@@ -2,10 +2,16 @@
 % Please edit documentation in R/plotVel.R
 \name{plotVel}
 \alias{plotVel}
+\alias{plotVel,GPR-method}
 \title{Plot Velocities}
 \usage{
 plotVel(x)
+
+\S4method{plotVel}{GPR}(x)
+}
+\arguments{
+\item{x}{[\code{GPR class}] An object of the class \code{GPR}}
 }
 \description{
-Plot Velocities
+Plot Velocities (only 1D for now)
 }

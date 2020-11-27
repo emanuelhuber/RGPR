@@ -81,7 +81,8 @@ safeName <- function(x, y){
 # #' return filename without extension
 # #' @export
 .fNameWExt <- function(x){
-  unlist(lapply(strsplit(basename(x),"[.]"), head , 1 ), use.names = FALSE)
+  sub(pattern = "(.*)\\..*$", replacement = "\\1", basename(x))
+  # unlist(lapply(strsplit(basename(x),"[.]"), head , 1 ), use.names = FALSE)
 }
 
 # #' return the file extension.

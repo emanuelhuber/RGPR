@@ -17,8 +17,6 @@
 \item{k}{[\code{integer}] Indices specifying elements to extract or replace.}
 
 \item{drop}{Not used.}
-
-\item{...}{Not used.}
 }
 \value{
 [\code{GPR}|\code{numeric}] Returns a numeric vector

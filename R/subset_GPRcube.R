@@ -6,7 +6,7 @@
 #' @param i [\code{integer}] Indices specifying elements to extract or replace.
 #' @param j [\code{integer}] Indices specifying elements to extract or replace.
 #' @param k [\code{integer}] Indices specifying elements to extract or replace.
-#' @param ... Not used.
+# @param ... Not used.
 #' @param drop Not used.
 # #' @param value [\code{numeric}] Value to set.
 #' @return [\code{GPR}|\code{numeric}] Returns a numeric vector

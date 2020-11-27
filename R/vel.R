@@ -1,12 +1,20 @@
-
 #' Velocity
 #' 
-#' Returns velocity data
-#'
+#' Returns (raw) velocity data.
+#' @param x [\code{GPR class}] An object of the class \code{GPR}
+#' @return [\code{list}|\code{numeric}|\code{matrix}] The velocities as they
+#'         are stored in \code{x}.
+#' @name vel
+#' @rdname vel
+setGeneric("vel", function(x) standardGeneric("vel"))
+
+#' @rdname vel
 #' @export
-vel <- function(x){
+setMethod("vel", "GPR", function(x){
   return(x@vel)
-}
+} 
+)
+
 
 
 # return either 1 value, a vector or FIXME: a matrix

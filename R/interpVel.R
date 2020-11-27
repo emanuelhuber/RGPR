@@ -1,17 +1,37 @@
 
 #' Interpolate velocity model
 #' 
-#' Interpolate velocity model
+#' Define the interpolation parameters that will be used when the velocities 
+#' will be plotted or used in other functions.
+#' To undo the interpolation, simply set \code{method = stairs}.
+#' @param x [\code{GPR class}] An object of the class \code{GPR}
+#' @param type [\code{character(1)}] Which type of velocity values has to be
+#'             updated? The root-mean-square velocity (\code{vrms}) or the
+#'             internal velocity (\code{vint})?
+#' @param method [\code{character(1)}] Interpolation method to be applied:
+#'               one of \code{stairs}, \code{linear}, \code{nearest}, 
+#'               \code{pchip}, \code{spline}, \code{cubic} 
+#'               (see also \code{\link[signal]{interp1}}). 
+#' @return [\code{GPR class}] An object of the class GPR.
+#' @name interpVel
+setGeneric("interpVel", function(x, 
+                                 type = c("vrms", "vint"),
+                                 method = c("stairs", "linear", "nearest", 
+                                            "pchip", "cubic", "spline")) 
+  standardGeneric("interpVel"))
+
+#' @rdname interpVel
 #' @export
-interpVel <- function(x, 
-                      type = c("vrms", "vint"),
-                      method = c("stairs", "linear", "nearest", 
-                                 "pchip", "cubic", "spline")){
+setMethod("interpVel", "GPR", 
+          function(x, 
+                   type = c("vrms", "vint"),
+                   method = c("stairs", "linear", "nearest",
+                              "pchip", "cubic", "spline")){
   type <- match.arg(type, c("vrms", "vint"))
   method <- match.arg(method, c("stairs", "linear", "nearest", "pchip", "cubic", "spline"))
   x@vel[[type]][["intp"]] <- method
   return(x)
-}
+})
 
 
 

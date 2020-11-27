@@ -16,13 +16,15 @@
 #' 
 #' @param twt [\code{numeric(n)}] Two-way travel time (generally positive if 
 #'            \code{lag = 0})
-#' @param type [\code{annan}|\code{ricker}] The Annan wavelet 
+#' @param type [\code{character(1)}] The Annan wavelet 
 #'              (\code{type = "annan"}) with dampling factor or the classical
 #'              Ricker wavelet (\code{type = "ricker"})
 #' @param fc [\code{numeric(1)}] Center frequency in MHz
 #' @param lag [\code{numeric(1)}] Used to shift the wavelet in time. For the
 #'            Ricker wavelet, \code{lag = -3e3/(pi * fc)} centers the wavelet
 #'            at \code{twt = 0}.
+#' @param q [\code{numeric(1)}] Damping factor, where 0 < q < 1
+#'                              (only for \code{type = "annan"})
 #' @return [\code{numeric(n)}] The wavelet
 #' @export
 #' @examples 

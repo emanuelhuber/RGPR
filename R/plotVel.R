@@ -3,9 +3,15 @@
 
 #' Plot Velocities
 #' 
-#' Plot Velocities
+#' Plot Velocities (only 1D for now)
+#' @param x [\code{GPR class}] An object of the class \code{GPR}
+#' @name plotVel
+#' @rdname plotVel
+setGeneric("plotVel", function(x) standardGeneric("plotVel"))
+
+#' @rdname plotVel
 #' @export
-plotVel <- function(x){
+setMethod("plotVel", "GPR", function(x){
   if(length(x@vel) > 0){
     x@vel <- .intpSmoothAllVel(x@vel, x@z)
     v_lim <- range(sapply(x@vel, .getAllVel))
@@ -28,7 +34,7 @@ plotVel <- function(x){
       stop("")
     }
   }
-}
+})
 
 .getAllVel <- function(x){
   if(inherits(x, "list") && !is.null(x[["v"]])){

@@ -454,6 +454,8 @@ readDZX <- function(dsn){
       return(NULL)
     }
   }
+  .closeFileIfNot(dsn)
+  return(NULL)
 }
 # readDZX <- function(dsn){
 #   

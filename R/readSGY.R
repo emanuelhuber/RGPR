@@ -45,21 +45,24 @@
   data_crs <- character(0)
   # if(all(validEnc(x$THD))){
   k <- verboseF(grepl("epsg:", x$THD, ignore.case = TRUE), verbose = FALSE)
-  epsg_code <- regmatches(x$THD[k], regexpr("epsg:[0-9]+" , x$THD[k], ignore.case = TRUE))
-  if(length(epsg_code) >= 1){
-    epsg_code <- gsub("[^0-9.]", "", epsg_code[1], ignore.case = TRUE)
-    data_crs <- paste0("+init=epsg:", epsg_code)
+  if(any(k)){
+    epsg_code <- regmatches(x$THD[k], regexpr("epsg:[0-9]+" , x$THD[k], ignore.case = TRUE))
+    if(length(epsg_code) >= 1){
+      epsg_code <- gsub("[^0-9.]", "", epsg_code[1], ignore.case = TRUE)
+      data_crs <- paste0("+init=epsg:", epsg_code)
+    }
   }
   
   k <- verboseF(grepl("scale factor ", x$THD, ignore.case = TRUE), verbose = FALSE)
-  scale_fact <- regexpr("scale factor (?<scale>[0-9.]+)", x$THD[k], 
-                        perl = TRUE, ignore.case = TRUE)
-  if(length(k) > 1 && scale_fact[1] != -1){
-    i1 <- attr(scale_fact, "capture.start")
-    i2 <- i1 + attr(scale_fact, "capture.length") -1
-    scl <- as.numeric(substr(x$THD[k], i1, i2))
+  if(any(k)){
+    scale_fact <- regexpr("scale factor (?<scale>[0-9.]+)", x$THD[k], 
+                          perl = TRUE, ignore.case = TRUE)
+    if(length(k) > 1 && scale_fact[1] != -1){
+      i1 <- attr(scale_fact, "capture.start")
+      i2 <- i1 + attr(scale_fact, "capture.length") -1
+      scl <- as.numeric(substr(x$THD[k], i1, i2))
+    }
   }
-  # }
   
   y <- new("GPR",   
            version      = "0.2",
@@ -90,7 +93,7 @@
            hd          = c(x$THD, x$BHD)
   )
   
-  if( identical(x$DTR$trHD[1, ], x$DTR$trHD[2, ])){
+  if( identical(x$DTR$trHD[1, ], x$DTR$trHD[2, ]) ){
     # plot(y)
     return(y)
   }else{

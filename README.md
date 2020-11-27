@@ -62,6 +62,14 @@ Switzerland
 
 ### Supported file formats (read only):
 
+**NOTE FOR *.SGY AND *.SEGY FILES:** if you get an error while reading a *.sgy or *.segy file, set the `endian` parameter in `readGPR()` equal to `"big"` or `"little"`.
+
+```r
+x <- readGPR(dsn = "my_file.sgy", endian = "big")
+# or 
+x <- readGPR(dsn = "my_file.sgy", endian = "little")
+```
+
 - [X] [Sensors & Software](https://www.sensoft.ca) file format (**\*.dt1**, **\*.hd**, **\*.gps**).
 - [X] [MALA](https://www.malagpr.com.au) file format (**\*.rd3**, **\*.rd7**, **\*.rad**, **\*.cor**).
 - [X] [ImpulseRadar](https://www.impulseradar.se) file format (**\*.iprb**, **\*.iprh**, **\*.cor**, **\*.time**, **\*.mrk**).

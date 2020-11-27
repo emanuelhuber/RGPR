@@ -14,7 +14,8 @@ readGPR(
   ch = 1,
   verbose = TRUE,
   interp_pos = TRUE,
-  method = c("linear", "linear", "linear")
+  method = c("linear", "linear", "linear"),
+  endian = .Platform$endian
 )
 }
 \arguments{
@@ -56,6 +57,9 @@ inter-trace distances,
 second element for the interpolation of the horizontal 
 trace positions, and third element for the interpolation
 of the vertical trace positions.}
+
+\item{endian}{The endian-ness ("big" or "little") of the target system for 
+the file.}
 }
 \value{
 The GPR data as object of the class RGPR.

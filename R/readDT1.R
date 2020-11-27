@@ -264,8 +264,8 @@ readDT1 <- function(dsn, ntr, npt){
   
   for(i in 1:ntr){
     for(j in 1:23){
-      hDT1[[tags[j]]][i] <- readBinary(dsn, what = binMod[j], n = 1L, 
-                                       size =  binSize[j])
+      hDT1[[tags[j]]][i] <- verboseF(readBinary(dsn, what = binMod[j], n = 1L, 
+                                       size =  binSize[j]), verbose = FALSE)
     }
     # read the 28 characters long comment
     # hDT1[[tags[26]]][i] <- readChar(dsn, 28)

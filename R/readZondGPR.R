@@ -106,7 +106,7 @@
 
 # Prism2 ” software
 #--------------- read RadSys Zond GPR device files -------------------#
-readSEGY_RadSys_Zond_GPR <- function(dsn){
+readSEGY_RadSys_Zond_GPR <- function(dsn, ENDIAN = "little"){
   #dirName     <- dirname(fPath)
   #baseName    <- .fNameWExt(fPath)
   #fName    <- file.path(dirName, paste0(baseName, ".sgy"))
@@ -121,36 +121,36 @@ readSEGY_RadSys_Zond_GPR <- function(dsn){
   }
   
   ##---- SEGY file
-  uu <- readBin(dsn, what = character(), n = 1, size = 1)
+  uu <- readBin(dsn, what = character(), n = 1, size = 1, endian = ENDIAN)
   vv <- strsplit(uu, split ="\r\n", perl = TRUE)
   hd$EBCDIC <- sub("\\s+$", "", vv[[1]])
   invisible(seek(dsn, where = 3200, origin = "start"))
   # Job identification number
-  hd$JOB_ID <- readBin(dsn, what = integer(), n = 1, size = 4)
+  hd$JOB_ID <- readBin(dsn, what = integer(), n = 1, size = 4, endian = ENDIAN)
   # Line number
-  hd$LINE_NUMBER <-  readBin(dsn, what = integer(), n = 1, size = 4)
+  hd$LINE_NUMBER <-  readBin(dsn, what = integer(), n = 1, size = 4, endian = ENDIAN)
   # Reel number
-  hd$REEL_NUMBER <- readBin(dsn, what = integer(), n = 1, size = 4)
+  hd$REEL_NUMBER <- readBin(dsn, what = integer(), n = 1, size = 4, endian = ENDIAN)
   # Number of data traces per record
-  hd$NB_DATA_TRACES <- readBin(dsn, what = integer(), n = 1, size = 2)
+  hd$NB_DATA_TRACES <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
   # Number of auxiliary traces per record
-  hd$NB_AUX_TRACES <- readBin(dsn, what = integer(), n = 1, size = 2)
+  hd$NB_AUX_TRACES <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
   # tspl > Sample interval of this reel's data in PICOseconds
   # hd$TIME_SAMPLING in nanoseconds
-  hd$TIME_SAMPLING <-  readBin(dsn, what = integer(), n = 1, size = 2) * 1e-3
+  hd$TIME_SAMPLING <-  readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN) * 1e-3
   # Number of samples per trace for this reel's data
-  invisible(readBin(dsn, what = integer(), n = 1, size = 2))
+  invisible(readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN))
   # samples per trace for this reel's data
   # Nspl
-  hd$NB_SAMPLES <- readBin(dsn, what = integer(), n = 1, size = 2)
+  hd$NB_SAMPLES <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
   #unused
-  invisible(readBin(dsn, what = integer(), n = 1, size = 2))
+  invisible(readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN))
   # data sample format code
   # 1 = 32-bit IBM floating point;
   # 2 = 32-bit fixed-point (integer);
   # 3 = 16-bit fixed-point (integer);
   # 4 = 16-bit fixed-point with gain code 
-  hd$DATA_FORMAT_CODE <- readBin(dsn, what = integer(), n = 1, size = 2)
+  hd$DATA_FORMAT_CODE <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
   hd$DATA_FORMAT <- switch(hd$DATA_FORMAT_CODE,
                            "1" = "32-bit IBM floating point",
                            "2" = "32-bit fixed-point",
@@ -162,18 +162,18 @@ readSEGY_RadSys_Zond_GPR <- function(dsn){
                           "3"  = 2,
                           "4"  = 2)
   #number of traces per ensemble
-  invisible(readBin(dsn, what = integer(), n = 1, size = 2))
+  invisible(readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN))
   # not used
-  invisible(readBin(dsn, what = integer(), n = 13, size = 2))
+  invisible(readBin(dsn, what = integer(), n = 13, size = 2, endian = ENDIAN))
   # mesuring system
   # 1 = meters
   # 2 = feet
-  pos_unit <- readBin(dsn, what = integer(), n = 1, size = 2)
+  pos_unit <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
   hd$POS_UNIT <- switch(pos_unit,
                         "1" = "meter",
                         "2" = "feet")
   # not used
-  invisible(readBin(dsn, what = integer(), n = 172, size = 2))
+  invisible(readBin(dsn, what = integer(), n = 172, size = 2, endian = ENDIAN))
   
   # 240-byte binary tracer header + trace data
   hd$NB_TRACES <- (.flen(dsn) - seek(dsn))/(240 + hd$NB_SAMPLES * hd$DATA_BYTES)
@@ -185,25 +185,25 @@ readSEGY_RadSys_Zond_GPR <- function(dsn){
     #--------- header ---------#
     # trace sequence number within line
     invisible(readBin(dsn, what = integer(), n = 1, size = 4, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # not used
     invisible(readBin(dsn, what = integer(), n = 1, size = 4, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # Original field record number
     invisible(readBin(dsn, what = integer(), n = 1, size = 4, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # Trace sequence number within original field record
     invisible(readBin(dsn, what = integer(), n = 1, size = 4, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # not used
     invisible(readBin(dsn, what = integer(), n = 1, size = 4, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # CDP ensemble number || CDP = CMP
     invisible(readBin(dsn, what = integer(), n = 1, size = 4, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # Trace sequence number within CDP ensemble
     invisible(readBin(dsn, what = integer(), n = 1, size = 4, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # Trace identification code:
     # 1 = seismic data;
     # 2 = dead;
@@ -215,125 +215,125 @@ readSEGY_RadSys_Zond_GPR <- function(dsn){
     # 8 = water break;
     # 9 = optional use
     invisible(readBin(dsn, what = integer(), n = 1, size = 2, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # Number of vertically summed traces yielding this trace
     invisible(readBin(dsn, what = integer(), n = 1, size = 2, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # Number of horizontally summed traces yielding this trace
     invisible(readBin(dsn, what = integer(), n = 1, size = 2, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # data use:
     # 1 = production;
     # 2 = test.
     invisible(readBin(dsn, what = integer(), n = 1L, size = 2, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # not used
     invisible(readBin(dsn, what = integer(), n = 1L, size = 4, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # Altitude (mean-sea-level)
     invisible(readBin(dsn, what = numeric(), n = 1L, size = 4, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # Height of geoid above WGS84 ellipsoid
     invisible(readBin(dsn, what = numeric(), n = 1L, size = 4, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # Backward/toward direction (if negative -backward)
     invisible(readBin(dsn, what = integer(), n = 1, size = 4, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # Datum elevation at source in m (topography offset)
     invisible(readBin(dsn, what = numeric(), n = 1L, size = 4, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # not used
     invisible(readBin(dsn, what = integer(), n = 7L, size = 2, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # Scalar for coordinates:
     # + = multiplier; 
     # –= divisor.
     xyfac[i] <- readBin(dsn, what = integer(), n = 1L, size = 2, 
-                        endian = "little")
+                        endian = ENDIAN)
     # X source coordinate (Longitude in 32-bit float accuracy for arc seconds)
     invisible(readBin(dsn, what = integer(), n = 1L, size = 4, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # Y source coordinate (Longitude in 32-bit float accuracy for arc seconds)
     invisible(readBin(dsn, what = integer(), n = 1L, size = 4, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # X receiver group coordinate
     hdt[4,i] <- readBin(dsn, what = integer(), n = 1L, size = 4, 
-                        endian = "little")
+                        endian = ENDIAN)
     # Y receiver group coordinate
     hdt[5,i] <- readBin(dsn, what = integer(), n = 1L, size = 4, 
-                        endian = "little")
+                        endian = ENDIAN)
     # Coordinate units:
     # 1 = length in meters or feets; 
     # 2 = arc seconds (DDMM.SSSS).
     invisible(readBin(dsn, what = integer(), n = 1L, size = 2, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # GPS signal quality
     invisible(readBin(dsn, what = numeric(), n = 1L, size = 4, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # not used
     invisible(readBin(dsn, what = integer(), n = 7L, size = 2, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # Lag time between shot and recording start in PICOseconds
     invisible(readBin(dsn, what = integer(), n = 1L, size = 2, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # not used
     invisible(readBin(dsn, what = numeric(), n = 1L, size = 4, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # Number of samples in this trace = hd$NB_SAMPLES
     invisible(readBin(dsn, what = integer(), n = 1L, size = 2, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # Sample interval of this reel's data in PICOseconds 
     # = hd$TIME_SAMPLING *1e3
     invisible(readBin(dsn, what = integer(), n = 1L, size = 2, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # not used
     invisible(readBin(dsn, what = integer(), n = 21L, size = 2, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # Hour of day (24 hour clock)
     hdt[1,i] <- readBin(dsn, what = integer(), n = 1L, size = 2, 
-                        endian = "little")
+                        endian = ENDIAN)
     # Minute of hour
     hdt[2,i] <- readBin(dsn, what = integer(), n = 1L, size = 2, 
-                        endian = "little")
+                        endian = ENDIAN)
     # Second of minute
     hdt[3,i] <- readBin(dsn, what = integer(), n = 1L, size = 2, 
-                        endian = "little")
+                        endian = ENDIAN)
     # Time basis code (1 –Local, 2 -GMT)
     invisible(readBin(dsn, what = integer(), n = 1L, size = 2, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # not used
     invisible(readBin(dsn, what = integer(), n = 7L, size = 2, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # Longitude in 64-bit double accuracy
     invisible(readBin(dsn, what = numeric(), n = 1L, size = 8, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # Latitude in 64-bit double accuracy
     invisible(readBin(dsn, what = numeric(), n = 1L, size = 8, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # not used
     invisible(readBin(dsn, what = integer(), n = 8L, size = 2, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # Time scalar. If positive, scalar is used as a 
     # multiplier. If negative –divisor.
     invisible(readBin(dsn, what = integer(), n = 1L, size = 2, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # not used
     invisible(readBin(dsn, what = integer(), n = 10L, size = 2, 
-                      endian = "little"))
+                      endian = ENDIAN))
     # Marks indicator. If equal to 0x5555, trace is marked.
     hdt[6,i] <- readBin(dsn, what = integer(), n = 1L, size = 2, 
-                        endian = "little")
+                        endian = ENDIAN)
     # Mark number.
     hdt[7,i] <- readBin(dsn, what = integer(), n = 1L, size = 2, 
-                        endian = "little") 
+                        endian = ENDIAN) 
     #---------- trace ---------------#
     if(hd$DATA_FORMAT_CODE == 1){
       # "32-bit IBM floating point"
       dataSGY[,i] <- readBin(dsn, what = numeric(), n = hd$NB_SAMPLES, 
-                             size = hd$DATA_BYTES, endian = "little")
+                             size = hd$DATA_BYTES, endian = ENDIAN)
     }else{
       dataSGY[,i] <- readBin(dsn, what = integer(), n = hd$NB_SAMPLES,
-                             size = hd$DATA_BYTES, endian = "little")
+                             size = hd$DATA_BYTES, endian = ENDIAN)
     }
   }
   hdt[4,] <- hdt[4,] * abs(xyfac)^sign(xyfac)

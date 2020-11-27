@@ -59,6 +59,8 @@
 #'               second element for the interpolation of the horizontal 
 #'               trace positions, and third element for the interpolation
 #'               of the vertical trace positions.
+#' @param endian The endian-ness ("big" or "little") of the target system for 
+#'                the file.
 #' @return The GPR data as object of the class RGPR.
 #' @seealso \code{\link{writeGPR}}
 #' @examples
@@ -83,7 +85,8 @@
 #' @export
 readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
                     fPath, ch = 1, verbose = TRUE, interp_pos = TRUE, 
-                    method = c("linear", "linear", "linear")){
+                    method = c("linear", "linear", "linear"), 
+                    endian =  .Platform$endian){
   
   if(!missing(fPath)){
     if(missing(dsn)){
@@ -272,22 +275,58 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
     if( !inherits(dsn[[i]], "connection") ){
       dsn <- file(dsn[[i]], "rb")
     }
-    ENDIAN <- "big"
-    THD <- readSGY_textual_file_header(dsn, ENDIAN = "big")
-    test <- FALSE
-    # if(all(validEnc(THD))){
+    # if(is.null(endian)) endian <- .Platform$endian
+    # ENDIAN <- "big"
+    THD <- readSGY_textual_file_header(dsn, ENDIAN = endian)
     test <- any(verboseF(grepl("Prism", THD), verbose = FALSE)) & 
       any(verboseF(grepl("Radar Systems, Inc.", THD), 
                    verbose = FALSE))
-    # }
     # read RadSys Zond System
     if( test ){
-      A <- verboseF( readSEGY_RadSys_Zond_GPR(dsn), verbose = verbose)
+      message("This is a classical SEG-Y file... I try to read it!")
+      ndn <- c("little", "big")
+      A <- tryCatch({verboseF( readSEGY_RadSys_Zond_GPR(dsn, ENDIAN = endian), 
+                               verbose = verbose)},
+                    error = function(cond){
+                      message("failed attempt... ",
+                              "I try the other endianness, namely '",
+                              ndn[ndn != endian], "'!")
+                      return(NULL)})
+      if(is.null(A)){
+        A <- tryCatch({verboseF(readSEGY_RadSys_Zond_GPR(dsn, 
+                                                         ENDIAN = ndn[ndn != endian]), 
+                        verbose = verbose)},
+                        error = function(cond){
+                          message("failed attempt, again... ",
+                                  "please contact me\n",
+                                  "emanuel.huber@pm.me")
+                          return(NULL)})
+      }
+      if(is.null(A)){ stop() }
       x <- verboseF( .gprSEGY(A, fName = fName, fPath = fPath, 
                               desc = desc, Vmax = Vmax), verbose = verbose)
       # read classical SEG-Y file
     }else{
-      A <- verboseF(readSGY(dsn), verbose = verbose)
+      message("This is not a classical SEG-Y file... I try to read it!")
+      ndn <- c("little", "big")
+      A <- tryCatch({verboseF(readSGY(dsn, ENDIAN = endian), 
+                              verbose = verbose)},
+                    error = function(cond){
+                      message("failed attempt... ",
+                               "I try the other endianness, namely '",
+                              ndn[ndn != endian], "'!")
+                      return(NULL)})
+      if(is.null(A)){
+        A <- tryCatch({verboseF(readSGY(dsn, ENDIAN = ndn[ndn != endian]), 
+                                verbose = verbose)},
+                      error = function(cond){
+                        message("failed attempt, again... ",
+                                "please contact me\n",
+                                "emanuel.huber@pm.me")
+                        return(NULL)})
+      }
+      if(is.null(A)){ stop() }
+      # A <- verboseF(readSGY(dsn, ENDIAN = endian), verbose = verbose)
       x <- verboseF( .gprSGY(A, fName = fName, fPath = fPath, 
                              desc = desc, Vmax = Vmax), verbose = verbose)
       return(x)

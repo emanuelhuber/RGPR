@@ -59,8 +59,13 @@
 #'               second element for the interpolation of the horizontal 
 #'               trace positions, and third element for the interpolation
 #'               of the vertical trace positions.
-#' @param endian The endian-ness ("big" or "little") of the target system for 
-#'                the file.
+#' @param endian The endian-ness (\code{"big"} or \code{"little"}) of the 
+#'                target system for 
+#'                the file. Default value is \code{.Platform$endian}. 
+#'                If the endianness is not correct, RGPR will automatically 
+#'                detect it and try the other endianness. That means that it is 
+#'                not necessary to set the correct endianness 
+#'                (but if you do so, 'readGPR()' will be faster).
 #' @return The GPR data as object of the class RGPR.
 #' @seealso \code{\link{writeGPR}}
 #' @examples

@@ -137,6 +137,8 @@ https://riptutorial.com/r/example/5556/install-package-from-local-source
 
 ## Function overview
 
+**NOTE: this overview is not up to date!! More functions than those listed below are available!** 
+
 The documentation is still incomplete (but check the tutorials, http://emanuelhuber.github.io/RGPR)
 
 ### Input/output functions

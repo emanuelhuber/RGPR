@@ -123,7 +123,6 @@ Imports:
     Cairo,
     rgl,
     mmand,
-    e1071,
     plot3D,
     adimpro,
     raster,

@@ -144,18 +144,20 @@ setMethod("deconv", "GPR", function(x,
     # X <- X / apply(as.matrix(X),2,RMS)
     Xdec <- matrix(nrow = nrow(X), ncol = ncol(X))
     Fmin <- matrix(nrow = nf, ncol = ncol(X))
-    Wmin <- matrix(nrow = nf, ncol = ncol(X))
+    # Wmin <- matrix(nrow = nf, ncol = ncol(X))
     for(i in 1:ncol(X)){
       ww <- (i-wtr):(i+wtr)
       ww <- ww[ww <= ncol(X) & ww >= 1]
       supertrace <- as.vector(X[W, ww])
       # inverse minimum-phase wavelet estimation # variante 1 (Emanuel)
-      Fmin[,i] <- .spikingFilter(supertrace, nf = nf , mu = mu, shft = shft)
+      # Fmin[,i] <- .spikingFilter(supertrace, nf = nf , mu = mu, shft = shft)
+      Fmin[,i] <- deconvolveSpikingInvFilter(supertrace, n = nf, i = shft, mu = mu, taperType = "hamming")$fmin
       # Wmin[,i] <- deconv(c(1,rep(0,nf-1)),Fmin[,i], nf=nf,mu=mu)
-      Wmin[,i] <- deconvolve(c(1,rep(0, nf-1)), Fmin[,i], mu = mu)
+      # Wmin[,i] <- deconvolve(c(1,rep(0, nf-1)), Fmin[,i], mu = mu)
       # minimum-phase deconvolued data
       Xdec[,i] <- convolution(X[,i], Fmin[,i])[1:nrow(X)]
     }
+    Wmin <- Re(mvfft( 1 / mvfft(Fmin), inverse = TRUE))/nrow(Fmin)
     # estimated min-phase wavelet
     w_0 <- matrix(0, nrow=round(nf/3),ncol=ncol(Wmin))
     w_min <- list(x = seq(-round(nf/3),to =  nf , by = 1)*x@dz,

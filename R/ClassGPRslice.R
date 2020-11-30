@@ -4,7 +4,7 @@
 #' 
 #' An S4 class to represent time/depth slices of 
 #' ground-penetrating radar (GPR) data.
-#' Array of dimension \eqn{1 \times m \time p}  
+#' Array of dimension \eqn{1 \times m \times p}  
 #' (\eqn{m} traces or A-scans along \eqn{x}, 
 #' and \eqn{p} traces or A-scans along \eqn{y}), with grid cell sizes 
 #' \eqn{dx}, \eqn{dy}.

@@ -17,9 +17,6 @@
 #' @method window GPRvirtual 
 #' @name window
 #' @export
-#Default 1D: "black". 2D: \code{palGPR(n = 101)}
-# ##' @param y \code{NULL,} not used
-# options: type=c(raster,wiggles), addTopo, clip, normalize
 window.GPRvirtual <- function(x, xlim, ylim, zlim, ...){
   x[x@z >= zlim[1] & x@z <= zlim[2], x@x >= xlim[1] & x@x <= xlim[2]]
 }

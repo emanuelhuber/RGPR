@@ -34,7 +34,7 @@ setMethod("NMO", "GPR", function(x, v = NULL){
     # }else{
     #   if(is.null(v)){
     #     if(is.null(x@vel[["v"]])){
-    #       x <- interpVel(x, type = "vrms", method = "pchip")
+    #       x <- velInterp(x, type = "vrms", method = "pchip")
     #     }
     #     v <- x@vel[["v"]]
     #   } 

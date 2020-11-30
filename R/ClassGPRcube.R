@@ -2,7 +2,7 @@
 #' Class GPRcube
 #' 
 #' An S4 class to represent 3D ground-penetrating radar (GPR) data. 
-#' Array of dimension \eqn{n \times m \time p}  (\eqn{n} samples, 
+#' Array of dimension \eqn{n \times m \times p}  (\eqn{n} samples, 
 #' \eqn{m} traces or A-scans along \eqn{x}, 
 #' and \eqn{p} traces or A-scans along \eqn{y}), with grid cell sizes 
 #' \eqn{dx}, \eqn{dy}, and \eqn{dz}.

@@ -2,7 +2,7 @@
 #' Class GPRset
 #' 
 #' A S4 class to represent GPR data sets. 
-#' Array of dimension \eqn{n \times m \time p} (\eqn{n} samples, 
+#' Array of dimension \eqn{n \times m \times p} (\eqn{n} samples, 
 #' \eqn{m} traces or A-scans, and \eqn{p} set elements).
 #' A GPR set is, for example, the 
 #' multi-dimensional output of a transform function. Examples:

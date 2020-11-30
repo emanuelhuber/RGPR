@@ -12,14 +12,14 @@
 #'             from CMP data) or internal velocities \code{"vint"} (layer 
 #'             velocities).
 #' @return [\code{GPR}]
-#' @name setVel
-#' @rdname setVel
-setGeneric("setVel", function(x, v, twt, type = c("vrms", "vint")) standardGeneric("setVel"))
+#' @name velSet
+#' @rdname velSet
+setGeneric("velSet", function(x, v, twt, type = c("vrms", "vint")) standardGeneric("velSet"))
 
 
-#' @rdname setVel
+#' @rdname velSet
 #' @export
-setMethod("setVel", "GPR", function(x, v, twt, type = c("vrms", "vint")){
+setMethod("velSet", "GPR", function(x, v, twt, type = c("vrms", "vint")){
   type <- match.arg(type, c("vrms", "vint"))
   if(length(v) != length(twt)){
     stop("'v' and 'twt' must have the same length!")
@@ -28,7 +28,7 @@ setMethod("setVel", "GPR", function(x, v, twt, type = c("vrms", "vint")){
   v <- v[i]
   twt <- twt[i]
   if(type == "vrms"){
-    v_dix <- dixVel(twt = twt, 
+    v_dix <- velDix(twt = twt, 
                     v = v)
     v <- list("vrms" = list("t"    = twt,
                             "v"    = v,

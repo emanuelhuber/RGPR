@@ -46,15 +46,15 @@
 #'         correction: a technique and test results. Geophysical Prospecting,
 #'         473-488}
 #' }
-#' @name correctNMO
-setGeneric("correctNMO", function(x, thrs = NULL, v = NULL, 
+#' @name NMOcorrect
+setGeneric("NMOcorrect", function(x, thrs = NULL, v = NULL, 
                               method = c("linear", "nearest", 
                                                       "pchip", "cubic", "spline")) 
-  standardGeneric("correctNMO"))
+  standardGeneric("NMOcorrect"))
 
-#' @rdname correctNMO
+#' @rdname NMOcorrect
 #' @export
-setMethod("correctNMO", "GPR", function(x, thrs = NULL, v = NULL, 
+setMethod("NMOcorrect", "GPR", function(x, thrs = NULL, v = NULL, 
                                     method = c("linear", "nearest", "pchip",   
                                                "cubic", "spline")){
   method <- match.arg(method[1], c("spline", "linear", "nearest", "pchip", 

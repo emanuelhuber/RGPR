@@ -39,16 +39,16 @@
 #'   \item{Textbook: Sacchi (2002) Statistical and Transform Methods
 #'         in Geophysical Signal Processing}
 #' }
-#' @name velocitySpectrum
-setGeneric("velocitySpectrum", 
+#' @name velSpec
+setGeneric("velSpec", 
            function(x, method = c("semblance", "winsemblance", "minsemblance",
                                   "wincoherence", "wincoherence2"), 
-                    v = NULL, w = NULL) standardGeneric("velocitySpectrum"))
+                    v = NULL, w = NULL) standardGeneric("velSpec"))
 
 
-#' @rdname velocitySpectrum
+#' @rdname velSpec
 #' @export
-setMethod("velocitySpectrum", "GPR", 
+setMethod("velSpec", "GPR", 
           function(x, method = c("semblance","winsemblance", "minsemblance",  
                                  "wincoherence", "wincoherence2"), 
                    v = NULL, w = NULL){
@@ -129,7 +129,7 @@ setMethod("velocitySpectrum", "GPR",
             }
             x_tv@data[is.na(x_tv@data)] <- 0
             x_tv@data[is.infinite(x_tv@data)] <- 0
-            x_tv@mode <- "velocitySpectrum"
+            x_tv@mode <- "velSpec"
             x_tv@antsep <- 0
             x_tv@vel <- list()
             x_tv@x <- v

@@ -179,7 +179,7 @@ plot.GPR <- function(x,
     
     if(!isFALSE(xclip)){ # if xclip == FALSE, no clip at all
       if(is.null(xclip)){
-        if(x@mode == "velocitySpectrum"){
+        if(x@mode == "velSpec"){
           # print("before")
           xclip <- range(as.vector(x@data), finite = TRUE) #, na.rm = TRUE)
           # print("after")

@@ -13,21 +13,21 @@
 #'               one of \code{pchip}, \code{linear}, \code{nearest}, 
 #'               \code{spline}, \code{cubic} 
 #'               (see also \code{\link[signal]{interp1}}). 
-#' @name stackNMO
-setGeneric("stackNMO", function(x, thrs = NULL, v = NULL, 
+#' @name NMOstack
+setGeneric("NMOstack", function(x, thrs = NULL, v = NULL, 
                                  method = c("linear", "nearest", "pchip",   
                                             "cubic", "spline"))
-  standardGeneric("stackNMO"))
+  standardGeneric("NMOstack"))
 
 
 
-#' @rdname stackNMO
+#' @rdname NMOstack
 #' @export
-setMethod("stackNMO", "GPR", function(x, thrs = NULL, v = NULL, 
+setMethod("NMOstack", "GPR", function(x, thrs = NULL, v = NULL, 
                                       method = c("linear", "nearest", "pchip",   
                                                  "cubic", "spline")){
-  # stackNMO <- function(x, thrs = NULL){
-  x_NMOcor <- correctNMO(x, thrs = thrs, v = v, method = method)
+  # NMOstack <- function(x, thrs = NULL){
+  x_NMOcor <- NMOcorrect(x, thrs = thrs, v = v, method = method)
   x <- rowMeans(x_NMOcor, na.rm = TRUE)    
   return(x)
 })

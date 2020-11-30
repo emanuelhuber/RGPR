@@ -13,16 +13,16 @@
 #'               \code{pchip}, \code{spline}, \code{cubic} 
 #'               (see also \code{\link[signal]{interp1}}). 
 #' @return [\code{GPR class}] An object of the class GPR.
-#' @name interpVel
-setGeneric("interpVel", function(x, 
+#' @name velInterp
+setGeneric("velInterp", function(x, 
                                  type = c("vrms", "vint"),
                                  method = c("stairs", "linear", "nearest", 
                                             "pchip", "cubic", "spline")) 
-  standardGeneric("interpVel"))
+  standardGeneric("velInterp"))
 
-#' @rdname interpVel
+#' @rdname velInterp
 #' @export
-setMethod("interpVel", "GPR", 
+setMethod("velInterp", "GPR", 
           function(x, 
                    type = c("vrms", "vint"),
                    method = c("stairs", "linear", "nearest",

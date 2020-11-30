@@ -12,14 +12,14 @@
 #'          standard deviation of the smoothing kernel. If \code{w = NULL},
 #'          no smoothing will be applied.
 #' @return [\code{GPR class}] An object of the class GPR.
-#' @name smoothVel
-setGeneric("smoothVel",  function(x, type = c("vrms", "vint"), w)
-  standardGeneric("smoothVel"))
+#' @name velSmooth
+setGeneric("velSmooth",  function(x, type = c("vrms", "vint"), w)
+  standardGeneric("velSmooth"))
            
            
-#' @rdname smoothVel
+#' @rdname velSmooth
 #' @export
-setMethod("smoothVel", "GPR", function(x, type = c("vrms", "vint"), w){
+setMethod("velSmooth", "GPR", function(x, type = c("vrms", "vint"), w){
   type <- match.arg(type, c("vrms", "vint"))
   x@vel[[type]][["smooth"]] <- w
   return(x)

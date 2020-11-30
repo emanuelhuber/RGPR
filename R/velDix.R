@@ -10,7 +10,7 @@
 #' @return [\code{list}] List with two elements: \code{t} (time) and
 #'         [\code{v}] (corresponding Dix velocities)
 #' @export
-dixVel <- function(twt, v){
+velDix <- function(twt, v){
   if(twt[1] != 0){
     twt <- c(0, twt)
   }

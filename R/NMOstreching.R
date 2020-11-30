@@ -37,7 +37,7 @@ setMethod("NMOstreching", "GPR", function(x, v = NULL){
     #   stop("You must assign a positiv velocity value!")
     # }else{
     #   if(is.null(x@vel[["v"]])){
-    #     x <- interpVel(x, type = "vrms", method = "pchip")
+    #     x <- velInterp(x, type = "vrms", method = "pchip")
     #   }
     #   v <- x@vel[["v"]]
     # }

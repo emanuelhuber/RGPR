@@ -135,7 +135,7 @@ setMethod("deconv", "GPR", function(x,
     }
     W <- which(depth(x) > W[1] & depth(x) < W[2])
     # W <- seq(W[1], W[2])
-    if(nf < length(W)){
+    if(nf > length(W)){
       message("'nf' is longer that the window length and therefore\n",
               "I set 'nf' as long as the window length")
       nf <- length(W)

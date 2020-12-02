@@ -1191,15 +1191,25 @@ setMethod("isLengthUnit", "GPR", function(x){
 #' Project the trace coordinates give a coordinate reference system.
 #' @param x Object of the class GPR
 #' @param CRSobj object of class \link{CRS}, or of class \code{character} in
-#'               which case it is converted to \link{CRS}.
+#'               which case it is converted to \link{CRS}. 
+#'               If \code{CRSobj = "UTM"}, then the function will try to infer
+#'               the correct UTM zone and project the coordinates to this
+#'               UTM zone.
 #' @name trProject
 #' @rdname trProject
 #' @export
 setMethod("trProject", "GPR", function(x, CRSobj){
-  xsp <- as(x, "SpatialLines")
-  xsptrsf <- sp::spTransform(xsp, CRSobj)
-  x@coord[, 1:2] <- sp::coordinates(xsptrsf)[[1]][[1]]
-  x@crs <- as.character(CRSobj)
+  if(CRSobj == "UTM"){
+    coordUTM <- llToUTM(lon = coord(x)[, 1],
+                        lat = coord(x)[, 2])
+    coord(x)[, 1:2] <- coordUTM$xy  # set coordinates
+    crs(x) <- coordUTM$crs          # set estimated CRS
+  }else{
+    xsp <- as(x, "SpatialLines")
+    xsptrsf <- sp::spTransform(xsp, CRSobj)
+    x@coord[, 1:2] <- sp::coordinates(xsptrsf)[[1]][[1]]
+    x@crs <- as.character(CRSobj)
+  }
   x@pos <- relTrPos(x)
   return(x)
 })

@@ -10,7 +10,10 @@
 \item{x}{Object of the class GPR}
 
 \item{CRSobj}{object of class \link{CRS}, or of class \code{character} in
-which case it is converted to \link{CRS}.}
+which case it is converted to \link{CRS}. 
+If \code{CRSobj = "UTM"}, then the function will try to infer
+the correct UTM zone and project the coordinates to this
+UTM zone.}
 }
 \description{
 Project the trace coordinates give a coordinate reference system.

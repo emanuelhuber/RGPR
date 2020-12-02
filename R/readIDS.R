@@ -35,7 +35,7 @@ readDT <- function(dsn){
     invisible(seek(dsn, where = pos + 4, origin = "start"))
     
     if(substr(u, 1, 2) == "FI"){
-      hd$sweep_marker_1 <- ascci2num(dsn, 6)
+      hd$sweep_marker_1 <- ascii2num(dsn, 6)
     }else if(substr(u, 1, 1) == "I"){
       hd$survey_info <- readBinChar(dsn, n = hd$len_rec - 4, size = 1)
     }else if(substr(u, 1, 1) == "C"){
@@ -87,7 +87,7 @@ readDT <- function(dsn){
       # dati.id_canale = fread(fid,1,'integer*4');
       hd$SOS_high <- readBin(dsn, what = interger(), n = 1, size = 4)
       # dati.SOS_high = fread(fid,1,'integer*4');
-      hd$sampling_max <- ascci2num(dsn, 16)
+      hd$sampling_max <- ascii2num(dsn, 16)
       # dati.max_sampling_AD =ascii2num(fid,16);
       hd$sw_version <- readBinChar(dsn, n = 10, size = 1)
       # temp = fread(fid,10,'char*1');

@@ -67,7 +67,7 @@ setMethod(
         # dots[["add"]] <- NULL
         invisible( do.call(plot, dots) )
       }    
-        print("OK")
+        # print("OK")
       invisible(do.call(apply, dotsLine))
     }
   }

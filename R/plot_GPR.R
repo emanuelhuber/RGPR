@@ -125,7 +125,7 @@ plot.GPR <- function(x,
   # plot(x[,1])
   # plot(x[,2])
   if(ncol(x) == 1){
-    print("1D")
+    # print("1D")
     x[is.infinite(x) | is.na(x)] <- 0
     if(is.null(type)) type <- "l"
     if(isTRUE(add)){

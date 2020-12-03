@@ -88,7 +88,7 @@ setMethod("velSpec", "GPR",
               wi <- round(w/mean(diff(x@z)))
               # FIXME: when wi = 0 -> not windowed!
               if(wi %% 2 == 0) wi <- wi + 1
-              print(wi)
+              # print(wi)
               if(wi > nrow(x) || wi < 0 ) stop("w too large or too small")
               vabove <- seq_len(ceiling(w/2)) + 1
 

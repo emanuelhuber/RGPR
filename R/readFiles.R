@@ -593,9 +593,34 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
       x@antsep <- sqrt(colSums((x@rec - x@trans)^2))
     }
   }
+  if(any(is.na(x@data))){
+    x@data <- apply(x@data, 2, fillNAprevious)
+  }
   return(x)
 }
 
+
+
+# http://www.cookbook-r.com/Manipulating_data/Filling_in_NAs_with_last_non-NA_value/
+
+# x <- c(NA, NA, 1, 2, 4, NA, 3, 2, NA, NA, 1, NA)
+
+fillNAprevious <- function(x){
+  z  <- !is.na(x)                  # indicates the positions of y whose values we do not want to overwrite
+  # z2  <- z | !cumsum(z)             # for leading NA's in y, z will be TRUE, otherwise it will be FALSE where y has a NA and TRUE where y does not have a NA
+  # tst <- xor(z, z2)
+  # y <- y[z2][cumsum(z2)]
+  # These are the non-NA values from x only
+  # Add a leading NA for later use when we index into this vector
+  x <- c(NA, x[z])
+  # Fill the indices of the output vector with the indices pulled from
+  # these offsets of goodVals. Add 1 to avoid indexing to zero.
+  z2 <- cumsum(z)+1
+  # The original vector with gaps filled
+  x <- x[z2]
+  x[is.na(x)] <- 0
+  return(x)
+}
 
 
 #' Extract frequency from string

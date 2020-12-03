@@ -200,14 +200,8 @@ plot.GPR <- function(x,
       x@data <- .clip(x@data, quantile(as.vector(x@data), 0.99, na.rm = TRUE),
                       quantile(as.vector(x@data), 0.01, na.rm = TRUE))
     }
-    if(addFid == FALSE){
-      x@fid <- character(length(x@fid))
-    }
+   
     if(is.null(note)) note <- x@filepath
-    
-    time_0 <- x@time0    
-    t0 <- median(x@time0)
-    z <- t( as.matrix(x@data) )
     
     xvalues <- x@pos
     yvalues <- x@depth
@@ -228,8 +222,18 @@ plot.GPR <- function(x,
       myxlab <- paste0("velocity (", x@posunit, "/", x@depthunit, ")")
     }else if( length(x@coord) > 0 ){
       # xvalues <- posLine(x@coord)
+      x <- spRmDuplicates(x, verbose = TRUE)
       xvalues <- relTrPos(x)
     }
+    
+    time_0 <- x@time0    
+    t0 <- median(x@time0)
+    z <- t( as.matrix(x@data) )
+    
+    if(addFid == FALSE){
+      x@fid <- character(length(x@fid))
+    }
+    
     if(grepl("[m]$", x@depthunit)){
       myylab <- paste0(y_lab, " (", x@depthunit, ")")
     }else if( grepl("[s]$", x@depthunit) ){

@@ -120,14 +120,14 @@
 
 
 
-readRD37 <- function(dsn, ntr, npt, nbytes = 2){
+readRD37 <- function(dsn, ntr, npt, nbytes = 2, endian = .Platform$endian){
   if(!inherits(dsn, "connection")){
     dsn <- file(dsn, 'rb')
   }
   
   dataRD7 <- matrix(NA, nrow = npt, ncol = ntr)
   for(i in seq_len(ntr)){
-    dataRD7[, i] <- readBin(dsn, what = integer(), n = npt, size = nbytes)
+    dataRD7[, i] <- readBin(dsn, what = integer(), n = npt, size = nbytes, endian = endian)
   }
   
   .closeFileIfNot(dsn)

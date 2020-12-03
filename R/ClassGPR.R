@@ -2769,6 +2769,34 @@ rmRowDuplicates <- function(x, v){
   }
 }
 
+spRmDuplicates <- function(x, tol = NULL, verbose = TRUE){
+  if(length(x@coord) == 0 ){
+    warning("No trace coordinates!")
+    return(x)
+  }
+  if(is.null(tol))  tol <- .Machine$double.eps
+  dist2D <- posLine(x@coord[, 1:2], last = FALSE)
+  tdbl <- which(abs(diff(dist2D)) < tol)
+  check <- 0L
+  while(length(tdbl) > 0){
+    rmTr <- c()
+    for(i in seq_along(tdbl)){
+      if(i > 1 && tdbl[i-1] == tdbl[i] - 1){
+        tdbl[i] <- -999
+      }else{
+        rmTr <- c(rmTr, tdbl[i])
+        check <- check + 1L
+      }
+    }
+    x <- x[, -rmTr]  # remove trace in x
+    dist2D <- posLine(x@coord[, 1:2], last = FALSE)
+    tdbl <- which(abs(diff(dist2D)) < tol)
+  }
+  if(verbose){
+    message(check, " duplicated trace(s) removed from 'x'!")
+  }
+  return(x)
+}
 
 # x = topo[, c("E", "N", "Z")] or C("x", "y", "z")
 # dist3D <- posLine(x, last = FALSE)

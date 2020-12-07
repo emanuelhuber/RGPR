@@ -142,26 +142,32 @@ https://riptutorial.com/r/example/5556/install-package-from-local-source
 The documentation is still incomplete (but check the tutorials, http://emanuelhuber.github.io/RGPR)
 
 ### Input/output functions
-* `readGPR()`, formats: Sensors & Software (.d11, .hd), MALA (.rd3, .rad), SEG-Y for RadSys Zond GPR device (.sgy),  R (rds)
-* `writeGPR()`: format DT1 (Sensors&Software), rds (R-format), ASCII, 'xyz'
-* `exportPDF()`: high quality pdf graphic
-* `exportDelineations()`
-* `exportFID()`: ASCII-file
-* `exportCoord()`: SpatialLines, SpatialPoints or ASCII-file
-* `exportProc()`: ASCII-file
+* `readGPR()`: reads various GPR file formats (Sensors & Software, MALA, SEG-Y, ImpulseRadar, GSSI, Utsi Electronic, IDS, Tansient technology, serialized Python object, ENVI band sequential file format, ASCII, etc.)
+* `writeGPR()`: writes various GPR file format (Sensors & Software, R-format, ASCII, 'xyz')
+* `exportPDF()`: exports high quality pdf graphic
+* `exportDelineations()`: exports delineations
+* `exportFID()`: exports fiducial markers as ASCII-file
+* `exportCoord()`: exports coordinates as SpatialLines, SpatialPoints or ASCII-file
+* `exportProc()`: exports the processing steps as ASCII-file
 
 ### Plot functions
-* 1D: 
-  * Plot a single trace: `plot()`
-  * Add a trace to a trace-plot: `lines()`
-  * Plot a superposition of traces: `trPlot()`
-  * Plot frequency spectrum: `spec()`
-* 2D:
-  * Plot a radargramm (raster or wiggles): `plot()` 
-  * Plot contour: `contour()`
-  * Frequency-wavenumber plot: `spec(x, type = "f-k")`
-* 3D:
-  * Plot in openGL: `plot3DRGL()`
+
+* GPR data
+  * 1D/2D: `plot()`, `contour()`, `lines()`, `points()`
+  * 3D (plot in openGL): `plot3DRGL()`
+  * superposition of all traces: `trPlot()`
+* Amplitude: `plotAmpl()`
+* Envelope: `plotEnvelope()`
+* Spectrum:
+  * 1D frequency spectrum: `spec()`
+  * 2D frequency spectrum (frequency-wavenumber): `spec(x, type = "f-k")`
+* Delineations
+  * 2D: `plotDelineations()`
+  * 3D: `plot3DDelineations()`
+* Velocity layers: `plotVelocityLayers()`
+* Structure tensor: `plotTensor()`
+* Color palette: `plotPal()`
+
 
 
 ### GPR data positioning and referencing

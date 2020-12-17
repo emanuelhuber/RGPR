@@ -139,7 +139,7 @@ https://riptutorial.com/r/example/5556/install-package-from-local-source
 
 **NOTE: this overview is not up to date!! More functions than those listed below are available!** 
 
-The documentation is still incomplete (but check the tutorials, http://emanuelhuber.github.io/RGPR)
+The documentation is still incomplete (but check the tutorials, http://emanuelhuber.github.io/RGPR and do not hesitate to contact me if you need addtional informations)
 
 ### Input/output functions
 * `readGPR()`: reads various GPR file formats (Sensors & Software, MALA, SEG-Y, ImpulseRadar, GSSI, Utsi Electronic, IDS, Tansient technology, serialized Python object, ENVI band sequential file format, ASCII, etc.)

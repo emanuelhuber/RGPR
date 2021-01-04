@@ -605,6 +605,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
 
 # x <- c(NA, NA, 1, 2, 4, NA, 3, 2, NA, NA, 1, NA)
 
+#' @export
 fillNAprevious <- function(x){
   z  <- !is.na(x)                  # indicates the positions of y whose values we do not want to overwrite
   # z2  <- z | !cumsum(z)             # for leading NA's in y, z will be TRUE, otherwise it will be FALSE where y has a NA and TRUE where y does not have a NA

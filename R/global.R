@@ -598,14 +598,29 @@ setGeneric("georef", function(x, alpha = NULL, cloc = NULL, creg = NULL,
 #'                See \code{\link[robfilter]{hybrid.filter}}.
 #' @param extrapolate	a logical indicating whether the level estimations 
 #'                    should be extrapolated to the edges of the time series.  
-#'                    See \code{\link[robfilter]{hybrid.filter}}.  
+#'                    See \code{\link[robfilter]{hybrid.filter}}. 
+#' @param  minNonNAs a positive integer defining the minimum number of 
+#'                   non-missing observationswithin each window (half) 
+#'                   which is required for a 'sensible' estimation.
+#'                   See \code{\link[robfilter]{hybrid.filter}}.
 #' @export            
-robustSmooth <- function(x, spar = NULL, width,  method = "PRMMH", extrapolate = TRUE){
+robustSmooth <- function(x, spar = NULL, width,  method = "PRMMH", 
+                         extrapolate = TRUE,
+                         minNonNAs = 3){
   if (missing(width)) {
     stop("argument 'width' is missing with no default")
   }
-  xf <- robfilter::hybrid.filter(x, width = width, method = method, extrapolate = extrapolate)
-  xfs <- smooth.spline(x = xf$level$PRMMH,  spar = spar)$y
+  xf <- robfilter::hybrid.filter(x, width = width, method = method, 
+                                 extrapolate = extrapolate,
+                                 minNonNAs = minNonNAs)
+  if(sum(is.na(xf$level$PRMMH)) > 1){
+    x_NA <- is.na(xf$level$PRMMH)
+    xfok <- signal::interp1(which(!x_NA), xf$level$PRMMH[!x_NA], seq_along(x_NA), method = "pchip", 
+            extrap = TRUE)
+  }else{
+    xfok <- xf$level$PRMMH
+  }
+  xfs <- smooth.spline(x = xfok,  spar = spar)$y
   return(xfs)
 }
 

@@ -44,6 +44,9 @@
 #'              colored.
 #' @param pdfName length-one character. Name/path of the PDF to export 
 #'                without extension
+#' @param NAcol lengthe-one vector: color to be used.
+#' @param fast logical: if \code{TRUE} plots only a subset of the data (max. 
+#'            1000 traces) to speed up plotting.               
 #' @param ... additional arguments passed to the plotting methods 
 #'            \code{\link[graphics]{plot}} for 1D plot and 
 #'            \code{\link[plot3D]{Image}} for 2D plot. See also  \code{details}.
@@ -73,8 +76,13 @@ plot.GPR <- function(x,
                      wside = 1,   # wiggles
                      pdfName = NULL,
                      NAcol = "white",
+                     fast = FALSE,
                      ...){
   # print(list(...))
+  if(isTRUE(fast) && ncol(x) > 1000){
+    # FIXME: decimate vector to specified length without repetition
+    x <- x[, round(seq(from = 1, to = ncol(x), length.out = 1000))]
+  }
   if(length(x@vel)>0){  
     v <- x@vel[[1]]
   }else{
@@ -222,7 +230,7 @@ plot.GPR <- function(x,
       myxlab <- paste0("velocity (", x@posunit, "/", x@depthunit, ")")
     }else if( length(x@coord) > 0 ){
       # xvalues <- posLine(x@coord)
-      x <- spRmDuplicates(x, verbose = TRUE)
+      x <- spRmDuplicates(x, verbose = FALSE)
       xvalues <- relTrPos(x)
     }
     

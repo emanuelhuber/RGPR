@@ -2792,7 +2792,7 @@ spRmDuplicates <- function(x, tol = NULL, verbose = TRUE){
     dist2D <- posLine(x@coord[, 1:2], last = FALSE)
     tdbl <- which(abs(diff(dist2D)) < tol)
   }
-  if(verbose){
+  if(isTRUE(verbose)){
     message(check, " duplicated trace(s) removed from 'x'!")
   }
   return(x)

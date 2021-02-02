@@ -211,13 +211,21 @@ setReplaceMethod(
   f = "coord",
   signature = "GPR",
   definition = function(x,value){
-    value <- as.matrix(value)
-    if(ncol(x@data) == nrow(value) && ncol(value) == 3){
-      x@coord <- as.matrix(value)
-      x <- trRmDuplicates(x, verbose = FALSE)
-      x@proc <- c(x@proc, "coord<-//")
+    if(is.null(value)){
+      x@coord <- matrix(nrow = 0, ncol = 3)
+      x@proc <- c(x@proc, "coord<-//NULL")
     }else{
-      stop("Dimension should be ", nrow(value), "x", ncol(value), "!!")
+      value <- as.matrix(value)
+      if(ncol(x@data) == nrow(value) && ncol(value) == 3){
+        x@coord <- as.matrix(value)
+        x <- trRmDuplicates(x, verbose = FALSE)
+        x@proc <- c(x@proc, "coord<-//")
+      }else if(length(value) == 0){
+        x@coord <- matrix(nrow = 0, ncol = 3)
+        x@proc <- c(x@proc, "coord<-//NULL")
+      }else{
+        stop("Dimension should be ", nrow(value), "x", ncol(value), "!!")
+      }
     }
     return(x)
   }

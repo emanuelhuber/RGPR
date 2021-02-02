@@ -242,10 +242,10 @@ plot.GPR <- function(x,
       x@fid <- character(length(x@fid))
     }
     
-    if(grepl("[m]$", x@depthunit)){
-      myylab <- paste0(y_lab, " (", x@depthunit, ")")
-    }else if( grepl("[s]$", x@depthunit) ){
+    if( grepl("[s]$", x@depthunit) ){
       myylab <- paste0("two-way travel time (", x@depthunit, ")")
+    }else if(grepl("[m]$", x@depthunit)){
+      myylab <- paste0(y_lab, " (", x@depthunit, ")")
     }else{
       myylab <- x@depthunit
     }

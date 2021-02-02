@@ -596,6 +596,9 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
   if(any(is.na(x@data))){
     x@data <- apply(x@data, 2, fillNAprevious)
   }
+  if(grepl("meter", posunit(x)) || grepl("metre", posunit(x))){
+    posunit(x) <- "m" 
+  }
   return(x)
 }
 

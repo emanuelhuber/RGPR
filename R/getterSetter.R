@@ -210,7 +210,7 @@ setMethod("coord", "GPR", function(x, i, ...){
 setReplaceMethod(
   f = "coord",
   signature = "GPR",
-  definition = function(x,value){
+  definition = function(x, value){
     if(is.null(value)){
       x@coord <- matrix(nrow = 0, ncol = 3)
       x@proc <- c(x@proc, "coord<-//NULL")

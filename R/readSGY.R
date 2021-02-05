@@ -136,7 +136,8 @@ readSGY <- function(dsn, ENDIAN = "big"){
   DTR <- readSGY_data_trace(dsn, ENDIAN, 
                             nbytes = BHD$DATA_BYTES, 
                             NB_3200_BYTES = BHD$NB_3200_BYTES, 
-                            NB_DATA_TRAILER = BHD$NB_DATA_TRAILER)
+                            NB_DATA_TRAILER = BHD$NB_DATA_TRAILER,
+                            DATA_FORMAT = BHD$DATA_FORMAT)
   close(dsn)
   return(list(THD = THD, BHD = BHD, DTR = DTR))
 }
@@ -324,7 +325,7 @@ readSGY_binary_file_header <- function(con, ENDIAN){
   return(hd)
 }
 
-readSGY_data_trace <- function(con, ENDIAN, nbytes, NB_3200_BYTES = 0, NB_DATA_TRAILER = 0){
+readSGY_data_trace <- function(con, ENDIAN, nbytes, NB_3200_BYTES = 0, NB_DATA_TRAILER = 0, DATA_FORMAT){
   start_data_trace <- 3600 + NB_3200_BYTES * 3200
   length_data_trailer <- NB_DATA_TRAILER * 3200
   seek(con, where = start_data_trace + 114, origin = "start")
@@ -455,8 +456,20 @@ readSGY_data_trace <- function(con, ENDIAN, nbytes, NB_3200_BYTES = 0, NB_DATA_T
     
     invisible(seek(con, where = 3600 + 240 * i + nspls * nbytes * (i-1), origin = "start"))
     
-    dataSGY[,i] <- readBin(con, what = integer(), n = nspls, 
-                           size = nbytes, endian = ENDIAN)
+    # if(DATA_FORMAT == "4-byte IEEE floating-point"){
+    #   # print("lkjölkjölkjölkjlj")
+    #   # dataSGY[,i] <- readBin(con, what = integer(), n = nspls, 
+    #   #                        size = nbytes, endian = ENDIAN)
+    #   u <- readBin(con, what = integer(), n = nspls, 
+    #                          size = nbytes, endian = ENDIAN)
+    #   signs <- sign(u)
+    #   u[signs <0] <-  u[signs < 0] + 2^32
+    #   dataSGY[,i] <- u 
+    #   
+    # }else{
+      dataSGY[,i] <- readBin(con, what = integer(), n = nspls, 
+                             size = nbytes, endian = ENDIAN)
+    # }
   }
   return(list(data = dataSGY, trHD = trhd))
 }

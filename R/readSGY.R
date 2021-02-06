@@ -456,20 +456,13 @@ readSGY_data_trace <- function(con, ENDIAN, nbytes, NB_3200_BYTES = 0, NB_DATA_T
     
     invisible(seek(con, where = 3600 + 240 * i + nspls * nbytes * (i-1), origin = "start"))
     
-    # if(DATA_FORMAT == "4-byte IEEE floating-point"){
-    #   # print("lkjölkjölkjölkjlj")
-    #   # dataSGY[,i] <- readBin(con, what = integer(), n = nspls, 
-    #   #                        size = nbytes, endian = ENDIAN)
-    #   u <- readBin(con, what = integer(), n = nspls, 
-    #                          size = nbytes, endian = ENDIAN)
-    #   signs <- sign(u)
-    #   u[signs <0] <-  u[signs < 0] + 2^32
-    #   dataSGY[,i] <- u 
-    #   
-    # }else{
+    if(DATA_FORMAT == "4-byte IEEE floating-point"){
+      dataSGY[,i] <- readBin(con, what = double(), n = nspls, 
+                              size = nbytes, endian = ENDIAN, signed = TRUE)
+    }else{
       dataSGY[,i] <- readBin(con, what = integer(), n = nspls, 
                              size = nbytes, endian = ENDIAN)
-    # }
+    }
   }
   return(list(data = dataSGY, trHD = trhd))
 }

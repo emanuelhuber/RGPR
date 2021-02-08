@@ -128,11 +128,10 @@ displayPalGPR <- function(){
 #' Return color from palette
 #'
 #' @export
-colFromPal <- function(A , col = palGPR(n=101)){
-  CCY = (A-min(A,na.rm=TRUE))/(max(A,na.rm=TRUE)-min(A,na.rm=TRUE))
-  ClimY <- range(CCY,na.rm=TRUE)
-  ClenY <- ClimY[2] - ClimY[1] + 1
-  return(col[ (CCY)*(length(col)-1)+1 ] )
+colFromPal <- function(x , col = palGPR(n=101)){
+  CCY <- (length(col) - 1 )  * (x - min(x, na.rm = TRUE))/(diff(range(x, na.rm = TRUE))) + 1
+  x[] <- col[CCY]
+  return(x)
 }
 #--------------------------------#
 

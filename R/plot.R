@@ -339,17 +339,19 @@ plot.GPR <- function(x,
     if(dots$type %in% c("raster", "contour")){
       dots$NAcol <- NAcol
       if(is.null(dots$clab)) dots$clab <- myclab
-      if(!is.null(dots$rasterImage) && isTRUE(rasterImage)){
+      if( (!is.null(dots$rasterImage) && isTRUE(rasterImage)) || is.null(dots$rasterImage)){
         dy <- diff(yvalues)
         dx <- diff(yvalues)
         test1 <- abs(max(dx) - min(dx)) > sqrt(.Machine$double.eps)
         test2 <- abs(max(dy) - min(dy)) > sqrt(.Machine$double.eps)
         # all not equal
-        if(test1 && test2){
+        if(test1 || test2){
           dots$rasterImage <- FALSE
+        }else{
+          dots$rasterImage <- TRUE
         }
       }
-      
+      print(dots$rasterImage)
       if(!all(is.na(z)) && is.null(dots$zlim)){
         if( min(z, na.rm = TRUE) >= 0 ){
           # to plot amplitudes for example...

@@ -95,16 +95,12 @@ Do you miss your preferred file format? Send me the file format description with
 - [X] ASCII (**\*.txt**): 
 - [ ] [SEG-Y](https://en.wikipedia.org/wiki/SEG-Y) file format (**\*.sgy**) -> **we are working on it**
 
-### Current limitations
-
-[RGPR](http://emanuelhuber.github.io/RGPR) only support reflection data such as surface-based GPR data (no support for cross-borehole GPR data)
-
 
 ### Yes, you can contribute
 
 **This is an ongoing project.**
 
-To report bugs, contribute to the development of [RGPR](http://emanuelhuber.github.io/RGPR), see [how to contribute](https://github.com/emanuelhuber/RGPR/blob/master/CONTRIBUTING.md).
+To report bugs and contribute to the development of [RGPR](http://emanuelhuber.github.io/RGPR), see [how to contribute](https://github.com/emanuelhuber/RGPR/blob/master/CONTRIBUTING.md).
 
 If you have any questions, comments or suggestions, feel free to contact me (in english, french or german):
 

@@ -120,9 +120,6 @@ See tutorial [Import GPR data](http://emanuelhuber.github.io/RGPR/00_RGPR_import
 - [ ] [SEG-Y](https://en.wikipedia.org/wiki/SEG-Y) file format (**\*.sgy**) -> **we are working on it**
 
 
-### Current limitations
-
-RGPR only support reflection data such as surface-based GPR data (no support for cross-borehole GPR data)
 
 ## Coming soon
 

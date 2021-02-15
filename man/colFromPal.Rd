@@ -4,7 +4,7 @@
 \alias{colFromPal}
 \title{Return color from palette}
 \usage{
-colFromPal(A, col = palGPR(n = 101))
+colFromPal(x, col = palGPR(n = 101))
 }
 \description{
 Return color from palette

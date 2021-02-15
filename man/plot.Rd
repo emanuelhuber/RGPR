@@ -77,6 +77,7 @@
   wside = 1,
   pdfName = NULL,
   NAcol = "white",
+  fast = FALSE,
   ...
 )
 
@@ -154,6 +155,11 @@ without extension}
 \item{elev}{logical. If \code{TRUE} the elevation instead of depth is
 displayed on y-axis (and therefore, time-to-depth
 conversion is applied).}
+
+\item{NAcol}{lengthe-one vector: color to be used.}
+
+\item{fast}{logical: if \code{TRUE} plots only a subset of the data (max. 
+1000 traces) to speed up plotting.}
 }
 \description{
 Plot GPR data cube.

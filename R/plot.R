@@ -351,7 +351,7 @@ plot.GPR <- function(x,
           dots$rasterImage <- TRUE
         }
       }
-      print(dots$rasterImage)
+      # print(dots$rasterImage)
       if(!all(is.na(z)) && is.null(dots$zlim)){
         if( min(z, na.rm = TRUE) >= 0 ){
           # to plot amplitudes for example...

@@ -44,6 +44,7 @@ Collate:
   'readZondGPR.R'
   'readDZT.R'
   'readVOL.R'
+  'readSEG2.R'
   'readUTSI.R'
   'readTXT.R'
   'readIDS.R'

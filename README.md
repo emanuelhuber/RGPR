@@ -70,7 +70,9 @@ Switzerland
 - [x] [Radar Systems, Inc.](http://www.radsys.lv) Zond file format (**\*.sgy**). **WARNING: it is not a version of the SEG-Y file format**.
 - [X] [IDS](https://idsgeoradar.com/) file format (**\*.dt**, **\*.gec**).
 - [X] [Transient Technologies](https://viy.ua/) file format (**\*.sgpr**).
+- [X] [US Radar](https://usradar.com/) file format (**\*.RA1**, **\*.RA2** or **\*.RAD**)
 - [X] [SEG-Y](https://en.wikipedia.org/wiki/SEG-Y) file format developed by the Society of Exploration Geophysicists (SEG) for storing geophysical data (**\*.sgy**), also used by [Easy Radar USA](https://easyradusa.com)
+- [X] [SEG-2](https://seg.org/Portals/0/SEG/News%20and%20Resources/Technical%20Standards/seg_2.pdf) Pullan, S.E., 1990, Recommended standard for seismic (/radar) files in the personal computer environment: Geophysics, 55, no. 9, 1260–1271(**\*.sg2**). Also used by US Radar with extensions \*.RA1, \*.RA2, \*. RAD. 
 - [X] [3dradar](http://3d-radar.com/): the manufacturer does not want to reveal the binary file format **\*.3dra**. **Workaround**: export the GPR data in binary VOL format (**\*.vol**)  with the examiner software -> **still experimental**
 - [X] **R** internal format (**\*.rds**).
 - [X] serialized **Python** object (**\*.pkl**).

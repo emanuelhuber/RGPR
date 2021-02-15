@@ -4,7 +4,14 @@
 \alias{robustSmooth}
 \title{Robust smoothing}
 \usage{
-robustSmooth(x, spar = NULL, width, method = "PRMMH", extrapolate = TRUE)
+robustSmooth(
+  x,
+  spar = NULL,
+  width,
+  method = "PRMMH",
+  extrapolate = TRUE,
+  minNonNAs = 3
+)
 }
 \arguments{
 \item{x}{a numeric vector or (univariate) time series object.}
@@ -25,6 +32,11 @@ See \code{\link[robfilter]{hybrid.filter}}.}
 
 \item{extrapolate}{a logical indicating whether the level estimations 
 should be extrapolated to the edges of the time series.  
+See \code{\link[robfilter]{hybrid.filter}}.}
+
+\item{minNonNAs}{a positive integer defining the minimum number of 
+non-missing observationswithin each window (half) 
+which is required for a 'sensible' estimation.
 See \code{\link[robfilter]{hybrid.filter}}.}
 }
 \description{

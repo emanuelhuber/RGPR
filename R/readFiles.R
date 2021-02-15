@@ -18,10 +18,14 @@
 #'   \item IDS (*.dt, *.gec).
 #'         \code{readGPR(dsn = 'xline.dt')}
 #'   \item SEG-Y file format (*.sgy/*.segy).
-#'         \code{readGPR(dsn = 'xline.sgy')}  
+#'         \code{readGPR(dsn = 'xline.sgy')} 
+#'   \item SEG-2 file format (*.sg2/*.seg2).
+#'         \code{readGPR(dsn = 'xline.sg2')}  
 #'   \item RadSys Zond GPR device (*.sgy). 
 #'         \strong{Note: it is not the SEG-Y file format)}.
-#'         \code{readGPR(dsn = 'xline.sgy')}  
+#'         \code{readGPR(dsn = 'xline.sgy')}
+#'   \item US Radar (*.RA1*, *RA2*, *RAD*). 
+#'         \code{readGPR(dsn = 'xline.RA1')}  
 #'   \item ASCII file format (*.txt): either 4-column format 
 #'         (x,t,amplitude) or matrix-format (without header/rownames).
 #'         \code{readGPR(dsn = 'xline.txt')}  
@@ -117,8 +121,9 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
   names(fPath) <- toupper(ext)
   
   
-  #--------------------------- SENSORS & SOFTWARE -----------------------------#
-  #--------------------------- DT1 + HD (+ GPS) -------------------------------#
+  #----------------------------------------------------------------------------#
+  # Sensors & Software ----------
+  # DT1 + HD (+ GPS)
   if("DT1" %in% toupper(ext)){
     if(length(dsn) == 1){
       if(inherits(dsn, "connection")){
@@ -159,30 +164,49 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
                       "nor interpolate the trace position.")
               # Choose a return value in case of error
               return(x)
-            }#,
-            # warning = function(cond) {
-            #   message(paste("URL caused a warning:", url))
-            #   message("Here's the original warning message:")
-            #   message(cond)
-            #   # Choose a return value in case of warning
-            #   return(NULL)
-            # },
-            # finally={
-            #   # NOTE:
-            #   # Here goes everything that should be executed at the end,
-            #   # regardless of success or error.
-            #   # If you want more than one expression to be executed, then you 
-            #   # need to wrap them in curly brackets ({...}); otherwise you could
-            #   # just have written 'finally=<expression>' 
-            #   message(paste("Processed URL:", url))
-            #   message("Some other message at the end")
-            # }
-            )    
+            })    
     }
-    # plot(x)
-    
-  #----------------------------------- MALA -----------------------------------#
-  #-------------------------- RD3 + RAD (+ COR) -------------------------------#
+  
+  #----------------------------------------------------------------------------#
+  # SEG-2 ----------
+  # SEG2/SG2
+  }else if( any( c("SEG2", "SG2") %in% toupper(ext) ) ){
+    i <- which(grepl("SEG2|SG2", toupper(ext)))[1]
+    dsn <- list(SG2  = dsn[[i]], 
+                GPS = getFName(fPath[1], ext = ".GPS", throwError = FALSE)$gps)
+    if(!is.null(dsn[["GPR"]])){
+      warning("Reading of GPS data for SEG2 files not yet implemented.\n",
+              "Please contact me: emanuel.huber@pm.me")
+    }
+    # print(dsn)
+    A <- verboseF( readSEG2(dsn = dsn[["SG2"]]))
+    x <- verboseF( .readSEG2(A))
+  #----------------------------------------------------------------------------#
+  # US Radar ----------
+  # RA1, RA2, RAD
+  }else if( any( c("RA1", "RA2", "RAD") %in% toupper(ext) ) ){
+    USRExt <-  c("RA1", "RA2", "RAD")
+    tst <- USRExt %in% toupper(ext)
+    dsn <- list(USRADAR  = dsn[USRExt[tst]], 
+                GPS = getFName(fPath[1], ext = ".GPS", throwError = FALSE)$gps)
+   ext_missing <- c("RA1", "RA2", "RAD")[!tst]
+    if(length(ext_missing) > 0){
+      for(k in seq_along(ext_missing)){
+        dsn$USRADAR[[ext_missing[k]]] = getFName(fPath[1], 
+                                                   ext = paste0(".", ext_missing[k]), 
+                                                   throwError = FALSE)[[tolower(ext_missing[k])]]
+      }
+    }
+    if(!is.null(dsn[["GPR"]])){
+      warning("Reading of GPS data for SEG2 files not yet implemented.\n",
+              "Please contact me: emanuel.huber@pm.me")
+    }
+    # print(dsn)
+    A <- verboseF( readSEG2(dsn = dsn[["USRADAR"]]))
+    x <- verboseF( .readSEG2(A))
+  #----------------------------------------------------------------------------#
+  # Mala ----------
+  # RD3 + RAD (+ COR)
   }else if( any( c("RD3", "RD7") %in% toupper(ext) ) ){
     if(length(dsn) == 1){
       if(inherits(dsn, "connection")){
@@ -583,7 +607,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
   }else{
     stop(paste0("File extension not recognised!\n",
                 "Must be '.dt1', '.dzt', '.rd3', '.sgy', '.segy', '.rds'\n",
-                "'.iprb', '.iprh', '.dat', '.sgpr', '.dt' or '.vol', ."))
+                "'.iprb', '.iprh', '.dat', '.sgpr', '.dt', '.vol', '.seg2', '.sg2'."))
   }
   if(grepl("CMP", x@surveymode)){
     x@surveymode <- "CMP"
@@ -786,4 +810,11 @@ readBinChar <- function(con, n = 1L, size = NA_integer_, signed = TRUE,
                         endian = .Platform$endian){
   intToUtf8(readBin(con, what = integer(), n = n, size = size, 
                     signed = signed, endian = endian))
+}
+
+#' Fix a 32 bit unsigned integer that has been read as signed
+int32touint32 <- function(x, nbits = 32){
+  signs <- sign(x)
+  x[signs < 0] <- x[signs < 0] + 2^nbits
+  return(x)
 }

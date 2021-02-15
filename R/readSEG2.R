@@ -1,7 +1,7 @@
 
 
 .readSEG2 <- function(x, fName = character(0), desc = character(0),
-                      fPath = character(0), Vmax = NULL){
+                      fPath = character(0), Vmax = NULL, ext = ""){
   if(is.null(Vmax)) Vmax <- 50
   
   ntr <- dim(x$data)[2]
@@ -106,6 +106,11 @@
   }else{
     message("I return a GPR set = a 3D object with all antenna data.\n",
             "To extract for example the 2nd data set, do 'x[,,2].")
+    if(length(ext) ==  nset){
+      set_names <- paste0(fName, ".", ext)
+    }else{
+      set_names <-  paste("antenna", seq_len(nset))
+    }
     y <- new("GPRset",   
              version      = "0.2",
              data        = bits2volt(Vmax = Vmax, nbits = nbits) * x$data,
@@ -133,9 +138,9 @@
              date        = data_date,
              crs         =  character(0),
              hd          = c(x$HD, x$THD),
-             setnames = paste("antenna", seq_len(nset)),
-             sets = seq_len(nset),
-             setunit = rep("", nset)
+             setnames    = set_names,
+             sets        = seq_len(nset),
+             setunit     = rep("", nset)
     )
   }
   return(y)

@@ -203,7 +203,8 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
     }
     # print(dsn)
     A <- verboseF( readSEG2(dsn = dsn[["USRADAR"]]))
-    x <- verboseF( .readSEG2(A))
+    x <- verboseF( .readSEG2(A, fName = fName[[1]], fPath = fPath[[1]],  
+                             desc = desc, Vmax = Vmax, ext = names(dsn$USRADAR)))
   #----------------------------------------------------------------------------#
   # Mala ----------
   # RD3 + RAD (+ COR)

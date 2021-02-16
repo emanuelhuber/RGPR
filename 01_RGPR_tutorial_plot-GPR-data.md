@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Plot GPR data
-date: 2020-05-20
+date: 2021-02-16
 ---
 
 <!--
@@ -26,6 +26,8 @@ Table of Contents
     -   [Two-dimensional plot: radargramm](#two-dimensional-plot-radargramm)
         -   [Raster plot](#raster-plot)
         -   [Wiggle plot](#wiggle-plot)
+        -   [Multi-plots](#multi-plots)
+        -   [Annotate plots](#annotate-plots)
     -   [One-dimensional plot](#one-dimensional-plot)
         -   [Single trace plot](#single-trace-plot)
         -   [Multiple trace plot](#multiple-trace-plot)
@@ -45,7 +47,50 @@ Install/load `RGPR`
 ``` r
 # install "devtools" if not already done
 if(!require("devtools")) install.packages("devtools")
+```
+
+    ## Error in get(genname, envir = envir): object 'testthat_print' not found
+
+``` r
 devtools::install_github("emanuelhuber/RGPR")
+```
+
+    ## dotCall64 (1.0-0    -> 1.0-1) [CRAN]
+    ## lifecycle (0.2.0    -> 1.0.0) [CRAN]
+    ## cachem    (1.0.3    -> 1.0.4) [CRAN]
+    ## promises  (1.1.1    -> 1.2.0.1) [CRAN]
+    ## mime      (0.9      -> 0.10) [CRAN]
+    ## xfun      (0.20     -> 0.21) [CRAN]
+    ## rgl       (0.104.16 -> 0.105.13) [CRAN]
+    ##
+       checking for file ‘/tmp/RtmpkWGtim/remotes487b4c994bd4/emanuelhuber-RGPR-0e71d9a/DESCRIPTION’...
+
+    ✔  checking for file ‘/tmp/RtmpkWGtim/remotes487b4c994bd4/emanuelhuber-RGPR-0e71d9a/DESCRIPTION’
+    ##
+
+    ─  preparing ‘RGPR’:
+    ##
+
+       checking DESCRIPTION meta-information...
+
+    ✔  checking DESCRIPTION meta-information
+    ##
+
+    ─  checking for LF line-endings in source and make files and shell scripts
+    ##
+
+    ─  checking for empty or unneeded directories
+    ##
+
+
+
+    ─  building ‘RGPR_0.0.7.tar.gz’
+    ##
+
+
+    ##
+
+``` r
 library(RGPR)       # load RGPR in the current R session
 ```
 
@@ -210,6 +255,60 @@ plot(x, note = "", main = "", ylab = "", xlab = "", clab = "")
 
 ![](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/withoutlabels-1.png)
 
+### Multi-plots
+
+Use `par(mfrow = c(nr, nc))`, where `ncr` is the number of rows and `nc` is the number of column. Example:
+
+``` r
+x <- frenkeLine00
+
+par(mfrow = c(2,2), oma = c(0, 0, 0, 0))
+plot(x)
+plot(x, col = palGPR("nice"))
+plot(x, col = palGPR("sunny"))
+plot(x, col = palGPR("hcl_0"))
+```
+
+![](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/mutliplotGPR-1.png)
+
+### Annotate plots
+
+Here an example on how to annotate plots:
+
+``` r
+x <- frenkeLine00
+
+plot(x)
+rect(xleft = 35,
+     ybottom = 120,
+     xright = 45,
+     ytop = 50,
+     border = "firebrick",
+     lty = 3,   # line style: 1 = continuous line
+     lwd = 2)   # width
+# text annotation
+text(45, 50, "A20-21Z", adj = c(0, 0))
+#grid
+grid(col = "red")
+# point
+points(50, 300, pch = 21, col = "red", lwd = 2)
+# horizontal and vertical linges
+abline(h = 300, v = 30, col = "black", lty = 2, lwd = 3)
+
+# For circles, squares and stars the units of the x axis are used
+# circles
+symbols(30, 300, circles = 10,
+        add = TRUE, lwd = 2, fg = "dodgerblue", inches = FALSE, lty = 1)
+# rectangles
+symbols(5, 200, rectangles = matrix(c(5, 200), nrow = 1, ncol = 2),
+        add = TRUE, lwd = 3, fg = "dodgerblue", inches = FALSE, lty = 3)
+# stars
+symbols(20, 150, stars = matrix(c(0.35, 1, 0.35, 1,  0.35, 1,  0.35, 1, 0.35, 1), nrow = 1),
+        add = TRUE, lwd = 1, bg = "goldenrod1", fg = "black", inches = FALSE, lty = 1)
+```
+
+![](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/annotation2D-1.png)
+
 One-dimensional plot
 --------------------
 
@@ -273,8 +372,6 @@ Let's have a look at the amplitude-frequency and phase-frequency plot (the spect
 spec(x)
 ```
 
-    ## Soon deprecated. Use 'spec1D()' or 'spec2D()' instead
-
 ![plot spectrum](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/fFilter_spectrum-1.png)
 
 Frequency-wavenumber filter (f-k-filter)
@@ -285,8 +382,6 @@ The function `spec()` with the argument `type = "f-k` returns a list containing 
 ``` r
 spec(x, type = "f-k")
 ```
-
-    ## Soon deprecated. Use 'spec1D()' or 'spec2D()' instead
 
 ![plot fk-filter](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/fkspec-1.png)
 

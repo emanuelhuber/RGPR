@@ -26,6 +26,7 @@ Table of Contents
     -   [Two-dimensional plot: radargramm](#two-dimensional-plot-radargramm)
         -   [Raster plot](#raster-plot)
         -   [Wiggle plot](#wiggle-plot)
+        -   [Interactive plots](#interactive-plots)
         -   [Multi-plots](#multi-plots)
         -   [Annotate plots](#annotate-plots)
     -   [One-dimensional plot](#one-dimensional-plot)
@@ -55,17 +56,11 @@ if(!require("devtools")) install.packages("devtools")
 devtools::install_github("emanuelhuber/RGPR")
 ```
 
-    ## dotCall64 (1.0-0    -> 1.0-1) [CRAN]
-    ## lifecycle (0.2.0    -> 1.0.0) [CRAN]
-    ## cachem    (1.0.3    -> 1.0.4) [CRAN]
-    ## promises  (1.1.1    -> 1.2.0.1) [CRAN]
-    ## mime      (0.9      -> 0.10) [CRAN]
-    ## xfun      (0.20     -> 0.21) [CRAN]
-    ## rgl       (0.104.16 -> 0.105.13) [CRAN]
     ##
-       checking for file ‘/tmp/RtmpkWGtim/remotes487b4c994bd4/emanuelhuber-RGPR-0e71d9a/DESCRIPTION’...
+    ##
+       checking for file ‘/tmp/Rtmpr1nNIl/remotes11bc4b4e3084/emanuelhuber-RGPR-0e71d9a/DESCRIPTION’...
 
-    ✔  checking for file ‘/tmp/RtmpkWGtim/remotes487b4c994bd4/emanuelhuber-RGPR-0e71d9a/DESCRIPTION’
+    ✔  checking for file ‘/tmp/Rtmpr1nNIl/remotes11bc4b4e3084/emanuelhuber-RGPR-0e71d9a/DESCRIPTION’
     ##
 
     ─  preparing ‘RGPR’:
@@ -81,8 +76,6 @@ devtools::install_github("emanuelhuber/RGPR")
 
     ─  checking for empty or unneeded directories
     ##
-
-
 
     ─  building ‘RGPR_0.0.7.tar.gz’
     ##
@@ -254,6 +247,18 @@ plot(x, note = "", main = "", ylab = "", xlab = "", clab = "")
 ```
 
 ![](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/withoutlabels-1.png)
+
+### Interactive plots
+
+Use the function `plotly()` to produce interactive plots powered powered by the JavaScript library plotly.js. The function `plotly()` works only with 2D data.
+
+``` r
+x <- frenkeLine00
+
+plotly(x)
+```
+
+![Interactive plots with plotly()](img/plotly_interactive.png)
 
 ### Multi-plots
 

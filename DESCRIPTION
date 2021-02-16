@@ -60,6 +60,7 @@ Collate:
   'clippedValues.R'
   'declip.R'
   'plot.R'
+  'plotly.R'
   'plot3DRGL.R'
   'color.R'
   'delineation.R'
@@ -135,7 +136,8 @@ Imports:
     XML,
     checkmate,
     RConics,
-    robfilter
+    robfilter,
+    plotly
 RoxygenNote: 7.1.1
 Suggests: 
     testthat

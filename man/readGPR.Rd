@@ -89,10 +89,14 @@ Supported file format
   \item IDS (*.dt, *.gec).
         \code{readGPR(dsn = 'xline.dt')}
   \item SEG-Y file format (*.sgy/*.segy).
-        \code{readGPR(dsn = 'xline.sgy')}  
+        \code{readGPR(dsn = 'xline.sgy')} 
+  \item SEG-2 file format (*.sg2/*.seg2).
+        \code{readGPR(dsn = 'xline.sg2')}  
   \item RadSys Zond GPR device (*.sgy). 
         \strong{Note: it is not the SEG-Y file format)}.
-        \code{readGPR(dsn = 'xline.sgy')}  
+        \code{readGPR(dsn = 'xline.sgy')}
+  \item US Radar (*.RA1*, *RA2*, *RAD*). 
+        \code{readGPR(dsn = 'xline.RA1')}  
   \item ASCII file format (*.txt): either 4-column format 
         (x,t,amplitude) or matrix-format (without header/rownames).
         \code{readGPR(dsn = 'xline.txt')}  

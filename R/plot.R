@@ -26,6 +26,7 @@
 #' @param addTopo logical. For 2D plot, add topography (if the data are sampled
 #'                         in time unit, the data are migrated with a static
 #'                         migration)
+#' @param add2ndYAxis logical. Should be a second (i.e., right) y-axis added?
 #' @param elev logical. If \code{TRUE} the elevation instead of depth is
 #'                      displayed on y-axis (and therefore, time-to-depth
 #'                      conversion is applied).
@@ -68,6 +69,7 @@ plot.GPR <- function(x,
                      addDepth0 = TRUE,
                      addAmpl0 = TRUE,
                      addTopo = FALSE,
+                     add2ndYAxis = TRUE,
                      elev    = FALSE,
                      clip = NULL,
                      ratio = 1,
@@ -102,6 +104,7 @@ plot.GPR <- function(x,
     y_lab <- "depth"
   }
   #------------------------ trace plot (1D) -----------------------------------#
+  # Plot 1D ------------------------
   if(any(dim(x) == 1)){
     if(isTRUE(add)){
       lines(x, ...)
@@ -192,8 +195,10 @@ plot.GPR <- function(x,
       if(isTRUE(addAmpl0))  abline(h = 0, lty = 3, col = "grey")
       if(isTRUE(addTime0))  abline(v = t0, col = "red")
     }
-    #------------------------ radargram plot (2D) -------------------------------#
+  #------------------------ radargram plot (2D) -------------------------------#
+  # Plot 2D ------  
   }else{
+    ##    Pre-processing   ----------------
     if(grepl("[s]$", x@depthunit) && isTRUE(addTopo)){
       x <- migrate(x)
     }
@@ -209,8 +214,8 @@ plot.GPR <- function(x,
                       quantile(as.vector(x@data), 0.01, na.rm = TRUE))
     }
    
-    if(is.null(note)) note <- x@filepath
     
+    if(is.null(note)) note <- x@filepath
     xvalues <- x@pos
     yvalues <- x@depth
     myxlab <- paste0("length (", x@posunit, ")")
@@ -336,6 +341,9 @@ plot.GPR <- function(x,
                       title = pdfName)
     }
     #------------------------------ RASTER ------------------------------------#
+    
+    # Plot raster ======
+    
     if(dots$type %in% c("raster", "contour")){
       dots$NAcol <- NAcol
       if(is.null(dots$clab)) dots$clab <- myclab
@@ -421,7 +429,8 @@ plot.GPR <- function(x,
         dots$type <- NULL
         do.call(plot3D::image2D, c(list(x = xvalues, y = yvalues, z = z), dots))
       }
-      #------------------------------ WIGGLES -----------------------------------#
+    #------------------------------ WIGGLES -----------------------------------#
+    # Plot wiggles ================
     }else if(dots$type == "wiggles"){
       dots$type <- NULL
       barscale <- FALSE
@@ -488,39 +497,41 @@ plot.GPR <- function(x,
     if(is.null(dots$ann) || dots$ann != FALSE){
       yat <- axis(side = 2)
       #xat <- axis(side = 1,  tck = +0.02)
-      if(grepl("[m]$", x@depthunit) || grepl("CMP", toupper(x@surveymode))){
-        axis(side = 4)
-        #FIXME: use fx .depthAxis()
-      }else if(grepl("[s]$", x@depthunit)){
-        if(length(x@antsep) > 0 && is.null(dim(x@vel[[1]])) ){
-          if(x@antsep > 0){
-            depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
-            depth2  <- seq(0.1, by = 0.1, 0.9)
-            depthat0 <- depthToTime(0, 0, v, antsep = x@antsep)
-            if(max(yvalues) * v / 2 > 1.3){
-              # depth <- pretty(seq(1.1, by = 0.1, max(z)*v/2), 10)
+      if(isTRUE(add2ndYAxis)){
+        if(grepl("[m]$", x@depthunit) || grepl("CMP", toupper(x@surveymode))){
+          axis(side = 4)
+          #FIXME: use fx .depthAxis()
+        }else if(grepl("[s]$", x@depthunit)){
+          if(length(x@antsep) > 0 && is.null(dim(x@vel[[1]])) ){
+            if(x@antsep > 0){
+              depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
+              depth2  <- seq(0.1, by = 0.1, 0.9)
+              depthat0 <- depthToTime(0, 0, v, antsep = x@antsep)
+              if(max(yvalues) * v / 2 > 1.3){
+                # depth <- pretty(seq(1.1, by = 0.1, max(z)*v/2), 10)
+                depth <- pretty(yat * v / 2, 10)
+                depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
+                axis(side = 4, at = t0 + depthat, labels = depth, tck = -0.02)
+              }
+              depthat2 <- depthToTime(depth2, 0, v, antsep = x@antsep)
+              axis(side = 4, at = t0 + depthat2, labels = FALSE, tck = -0.01)
+              axis(side = 4, at = depth_0, labels = "0", tick = FALSE)
+              if(isTRUE(addDepth0)) abline(h = depth_0, col = "grey", lty = 3)
+              # mtext(paste0("depth (m),   v=", v, "m/ns"), side = 4, line = 2)
+              mtext(paste0("depth (", x@posunit, "),   v = ", round(v, 3), " ", x@posunit, 
+                           "/",  x@depthunit), side = 4, line = 2.5)
+            }else{
+              depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
               depth <- pretty(yat * v / 2, 10)
               depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
               axis(side = 4, at = t0 + depthat, labels = depth, tck = -0.02)
+              if(isTRUE(addDepth0)) abline(h = depth_0, col = "grey", lty = 3)
+              mtext(paste0("depth (", x@posunit, "),   v = ", round(v, 3), " ", x@posunit, 
+                           "/",  x@depthunit), side = 4, line = 2.5)
             }
-            depthat2 <- depthToTime(depth2, 0, v, antsep = x@antsep)
-            axis(side = 4, at = t0 + depthat2, labels = FALSE, tck = -0.01)
-            axis(side = 4, at = depth_0, labels = "0", tick = FALSE)
-            if(isTRUE(addDepth0)) abline(h = depth_0, col = "grey", lty = 3)
-            # mtext(paste0("depth (m),   v=", v, "m/ns"), side = 4, line = 2)
-            mtext(paste0("depth (", x@posunit, "),   v = ", round(v, 3), " ", x@posunit, 
-                         "/",  x@depthunit), side = 4, line = 2.5)
           }else{
-            depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
-            depth <- pretty(yat * v / 2, 10)
-            depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
-            axis(side = 4, at = t0 + depthat, labels = depth, tck = -0.02)
-            if(isTRUE(addDepth0)) abline(h = depth_0, col = "grey", lty = 3)
-            mtext(paste0("depth (", x@posunit, "),   v = ", round(v, 3), " ", x@posunit, 
-                         "/",  x@depthunit), side = 4, line = 2.5)
+            axis(side = 4)
           }
-        }else{
-          axis(side = 4)
         }
       }
     }

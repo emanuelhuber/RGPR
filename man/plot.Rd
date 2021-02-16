@@ -69,6 +69,7 @@
   addDepth0 = TRUE,
   addAmpl0 = TRUE,
   addTopo = FALSE,
+  add2ndYAxis = TRUE,
   elev = FALSE,
   clip = NULL,
   ratio = 1,
@@ -151,6 +152,8 @@ without extension}
 \code{\link[plot3D]{Image}} for 2D plot. See also  \code{details}.}
 
 \item{main}{character. Plot title.}
+
+\item{add2ndYAxis}{logical. Should be a second (i.e., right) y-axis added?}
 
 \item{elev}{logical. If \code{TRUE} the elevation instead of depth is
 displayed on y-axis (and therefore, time-to-depth

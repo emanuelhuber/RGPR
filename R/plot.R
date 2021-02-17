@@ -352,8 +352,8 @@ plot.GPR <- function(x,
         # dx <- diff(yvalues)
         # test1 <- abs(max(dx) - min(dx)) > sqrt(.Machine$double.eps)
         # test2 <- abs(max(dy) - min(dy)) > sqrt(.Machine$double.eps)
-        testx <- abs(range(diff(xvalue))) > sqrt(.Machine$double.eps)
-        testy <- abs(range(diff(yvalue))) > sqrt(.Machine$double.eps)
+        testx <- abs(range(diff(xvalues))) > sqrt(.Machine$double.eps)
+        testy <- abs(range(diff(yvalues))) > sqrt(.Machine$double.eps)
         # all not equal
         if(testx || testy){
           dots$rasterImage <- FALSE

@@ -187,16 +187,17 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
   }else if( any( c("RA1", "RA2", "RAD") %in% toupper(ext) ) ){
     USRExt <-  c("RA1", "RA2", "RAD")
     tst <- USRExt %in% toupper(ext)
-    dsn <- list(USRADAR  = dsn[USRExt[tst]], 
+    # dsn <- list(USRADAR  = dsn[USRExt[tst]], 
+    dsn <- list(USRADAR  = dsn[USRExt[tst][1]], 
                 GPS = getFName(fPath[1], ext = ".GPS", throwError = FALSE)$gps)
-   ext_missing <- c("RA1", "RA2", "RAD")[!tst]
-    if(length(ext_missing) > 0){
-      for(k in seq_along(ext_missing)){
-        dsn$USRADAR[[ext_missing[k]]] = getFName(fPath[1], 
-                                                   ext = paste0(".", ext_missing[k]), 
-                                                   throwError = FALSE)[[tolower(ext_missing[k])]]
-      }
-    }
+   # ext_missing <- c("RA1", "RA2", "RAD")[!tst]
+   #  if(length(ext_missing) > 0){
+   #    for(k in seq_along(ext_missing)){
+   #      dsn$USRADAR[[ext_missing[k]]] = getFName(fPath[1], 
+   #                                                 ext = paste0(".", ext_missing[k]), 
+   #                                                 throwError = FALSE)[[tolower(ext_missing[k])]]
+   #    }
+   #  }
     if(!is.null(dsn[["GPR"]])){
       warning("Reading of GPS data for SEG2 files not yet implemented.\n",
               "Please contact me: emanuel.huber@pm.me")

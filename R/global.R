@@ -1249,13 +1249,13 @@ flattenlist <- function(x){
 #'
 #' Relative position on a multiline
 #' @export
-posLine <- function(loc, last = FALSE){
-  loc <- as.matrix(loc)
-  all_dist <- cumsum(c(0, sqrt(apply(diff(loc)^2, 1, sum))))
+posLine <- function(x, last = FALSE){
+  x <- as.matrix(x)
+  xCumDist <- c(0, cumsum(sqrt(rowSums(diff(x)^2))))
   if(last){
-    return(tail(all_dist, 1))
+    return(tail(xCumDist, 1))
   }else{
-    return(as.numeric(all_dist))
+    return(as.numeric(xCumDist))
   }
 }
 

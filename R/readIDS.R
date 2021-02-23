@@ -20,7 +20,7 @@ readDT <- function(dsn){
   
   invisible(seek(dsn, where = pos, origin = "start"))
   # seek(dsn, where = NA)
-  while((u <- readBin(dsn, what = character(), n = 1L, size = 1)) != "R"){
+  while(substr((u <- readBin(dsn, what = character(), n = 1L, size = 1)),1 ,1) != "R"){
     
     # pos <- pos + hd$len_rec
     # invisible(seek(dsn, where = pos, origin = "start"))

@@ -48,6 +48,6 @@ test_that("test 'crs()",{
   expect_silent(.checkCRS(""))
   expect_silent(.checkCRS(NA))
   expect_silent(.checkCRS(st_crs("+init=epsg:3857 +units=m")[[1]]))
-  expect_warning(.checkCRS(st_crs("+init=epsg:3857 +units=m")[1]))
+  expect_silent(.checkCRS(st_crs("+init=epsg:3857 +units=m")[1]))
 })
 

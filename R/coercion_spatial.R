@@ -74,7 +74,7 @@ setMethod("as.sf", signature(x = "GPRsurvey"), function(x){
 
 #------------------------------ SPATIAL LINES ---------------------------------#
 
-# FIXM: change coercion to sp -> via sf!!!
+# FIXME: change coercion to sp -> via sf!!!
 #' @export
 setAs(from = "GPRsurvey", to = "SpatialLines",
       def = function (from) as.SpatialLines(from))

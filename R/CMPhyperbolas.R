@@ -27,7 +27,7 @@ setMethod("CMPhyperbolas", "GPR", function(x){
     stop("This function only works on CMP data.")
   }
   if(is.null(x@vel[["vrms"]])){
-    stop("You must first set v_rms velocities with 'velSet()'")
+    stop("You must first set v_rms velocities with 'setVel()'")
   }
   y <- mapply(hyperbolicTWT, x@vel[["vrms"]]$t, x@vel[["vrms"]]$v, 
               MoreArgs = list(antsep = x@x))

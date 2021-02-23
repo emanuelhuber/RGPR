@@ -3,19 +3,40 @@
 \name{vel}
 \alias{vel}
 \alias{vel,GPR-method}
-\title{Velocity}
+\alias{vel<-}
+\alias{vel<-,GPR-method}
+\title{Set and get velocity}
 \usage{
 vel(x)
 
 \S4method{vel}{GPR}(x)
+
+vel(x) <- value
+
+\S4method{vel}{GPR}(x) <- value
 }
 \arguments{
 \item{x}{[\code{GPR class}] An object of the class \code{GPR}}
+
+\item{value}{[numeric(1)|numeric(m)|matrix(m,n)|list] The velocity model, see section 
+Details}
 }
 \value{
 [\code{list}|\code{numeric}|\code{matrix}] The velocities as they
         are stored in \code{x}.
 }
 \description{
-Returns (raw) velocity data.
+Set and get velocity model
+}
+\details{
+The argument \code{value} can be
+\itemize{
+  \item a scalar (length-one vector) for uniform velocity
+  \item a vector of length equal to the sample number (row number) of x (\code{m}).
+  \item a matrix of dimension equal to the sample and trace numner 
+         (row and column number) of x (\code{m} \eqn{\times} \code{n}).
+  \item a list with elements \code{t} and \code{v} having the same length.
+        \code{t} defines the lower time boundaries of the velocities
+        \code{v}. FIXME: "intp", "smooth"
+}
 }

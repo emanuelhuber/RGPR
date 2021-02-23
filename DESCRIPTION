@@ -110,7 +110,7 @@ Collate:
 	'velSpec.R'
 	'vel.R'
 	'velDix.R'
-	'velSet.R'
+	'setVel.R'
 	'velInterp.R'
 	'velSmooth.R'
 	'simWavelet.R'
@@ -146,14 +146,12 @@ Imports:
     Cairo,
     rgl,
     mmand,
-    e1071,
     plot3D,
     fields,
     magrittr,
     MBA,
     XML,
     checkmate,
-    RConics,
     units,
     adimpro
 RoxygenNote: 7.1.1

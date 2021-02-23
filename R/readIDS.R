@@ -75,17 +75,17 @@ readDT <- function(dsn){
     }else if(substr(u, 1, 1) == "S"){
       hd$S <- readBinChar(dsn, n = hd$len_rec - 4, size = 1)
     }else if(substr(u, 1, 2) == "FW"){
-      hd$da_buttare <- readBin(dsn, what = interger(), n = 1, size = 4)
+      hd$da_buttare <- readBin(dsn, what = integer(), n = 1, size = 4)
       #= fread(fid,1,'integer*4');
-      hd$channel_n <- readBin(dsn, what = interger(), n = 1, size = 4)
+      hd$channel_n <- readBin(dsn, what = integer(), n = 1, size = 4)
       # dati.n_canali = fread(fid,1,'integer*4');
-      hd$stacking <- readBin(dsn, what = interger(), n = 1, size = 4)
+      hd$stacking <- readBin(dsn, what = integer(), n = 1, size = 4)
       # dati.stacking = fread(fid,1,'integer*4');
-      hd$interleaving <- readBin(dsn, what = interger(), n = 1, size = 4)
+      hd$interleaving <- readBin(dsn, what = integer(), n = 1, size = 4)
       # dati.interleaving = fread(fid,1,'integer*4');
-      hd$channel_id <- readBin(dsn, what = interger(), n = 1, size = 4)
+      hd$channel_id <- readBin(dsn, what = integer(), n = 1, size = 4)
       # dati.id_canale = fread(fid,1,'integer*4');
-      hd$SOS_high <- readBin(dsn, what = interger(), n = 1, size = 4)
+      hd$SOS_high <- readBin(dsn, what = integer(), n = 1, size = 4)
       # dati.SOS_high = fread(fid,1,'integer*4');
       hd$sampling_max <- ascii2num(dsn, 16)
       # dati.max_sampling_AD =ascii2num(fid,16);

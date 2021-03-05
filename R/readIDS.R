@@ -229,8 +229,12 @@ readDT <- function(dsn){
   }else if(!is.null(x$HD$tx_freq)){
     antfreq <- as.integer(x$HD$tx_freq)
   }else{
-    antfreq <- integer(0)
+    antfreq <- 0
+    message("Antenna frequency set to 0 MHz. Set it with 'antfreq(x) <- ... '")
   }
+  
+  message("Antenna separation set to 0 ", x_posunit, 
+          ". Set it with 'antsep(x) <- ... '")
   
   # plot3D::image2D(z = t(DD2), x = xpos, y = ypos)
   new("GPR",   
@@ -256,7 +260,7 @@ readDT <- function(dsn){
       depthunit   = "ns",
       posunit     = "m",
       freq        = antfreq[1], 
-      antsep      = integer(0), 
+      antsep      = 0, 
       surveymode  = "reflection",
       date        = format(Sys.time(), "%Y-%m-%d"),
       crs         = character(0),

@@ -233,7 +233,7 @@ readDT <- function(dsn){
     message("Antenna frequency set to 0 MHz. Set it with 'antfreq(x) <- ... '")
   }
   
-  message("Antenna separation set to 0 ", x_posunit, 
+  message("Antenna separation set to 0 ", "m", 
           ". Set it with 'antsep(x) <- ... '")
   
   # plot3D::image2D(z = t(DD2), x = xpos, y = ypos)

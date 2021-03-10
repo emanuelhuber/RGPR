@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Add coordinates
-date: 2020-08-14
+date: 2021-03-11
 ---
 
 <!--
@@ -33,11 +33,12 @@ Table of Contents
     -   [Setting the coordinate reference system](#setting-the-coordinate-reference-system)
     -   [Export the coordinates](#export-the-coordinates)
     -   [Remark](#remark)
+-   [Export coodinates](#export-coodinates)
 -   [Plot functions](#plot-functions)
     -   [Plot the survey](#plot-the-survey)
     -   [Plot the GPR data](#plot-the-gpr-data)
     -   [Three-dimensional plot of the GPR data](#three-dimensional-plot-of-the-gpr-data)
-    -   [a name="pookie"&gt;</a>Processing, save and PDF export](#a-namepookieaprocessing-save-and-pdf-export)
+    -   [Processing, save and PDF export](#processing-save-and-pdf-export)
     -   [Alternative: sequentially apply the processing steps on an object of the class GPRsurvey](#alternative-sequentially-apply-the-processing-steps-on-an-object-of-the-class-gprsurvey)
 
 Objectives of this tutorial
@@ -415,6 +416,25 @@ Remark
 
 Note that the coordinates are added to the object `mySurvey` but not to the GPR file. Unless you save the GPR data you will lose the coordinates when you will quit R. To save the GPR data, see\[Save, export\]\[\].
 
+Export coodinates
+=================
+
+You may also want to export the coordinates as shapefiles or geodata, as lines
+
+``` r
+exportCoord(mySurvey, type = c("SpatialLines"), fPath = "myshapefile.shp",
+            driver = "ESRI Shapefile")
+```
+
+... or as points
+
+``` r
+exportCoord(mySurvey, type = c("SpatialPoints"), fPath = "myshapefile.shp",
+            driver = "ESRI Shapefile")
+```
+
+Adapt the driver and the filename extension to your need (for that, check the help on the `rgdal::writeOGR()` function).
+
 Plot functions
 ==============
 
@@ -427,7 +447,7 @@ Use the `plot()` function
 plot(mySurvey)
 ```
 
-![plot survey](04_RGPR_tutorial_GPR-data-survey_tp_files/figure-markdown_github/unnamed-chunk-26-1.png) The red arrows indicate the direction of the survey, the red dots the fiducial markers and the circles the GPR profile intersections.
+![plot survey](04_RGPR_tutorial_GPR-data-survey_tp_files/figure-markdown_github/unnamed-chunk-28-1.png) The red arrows indicate the direction of the survey, the red dots the fiducial markers and the circles the GPR profile intersections.
 
 Highlight a GPR line:
 
@@ -436,7 +456,7 @@ plot(mySurvey)
 lines(mySurvey[2], col = "darkred", lwd = 3)
 ```
 
-![plot survey single line](04_RGPR_tutorial_GPR-data-survey_tp_files/figure-markdown_github/unnamed-chunk-27-1.png)
+![plot survey single line](04_RGPR_tutorial_GPR-data-survey_tp_files/figure-markdown_github/unnamed-chunk-29-1.png)
 
 Plot the GPR data
 -----------------
@@ -447,11 +467,9 @@ To plot the first GPR record, enter:
 plot(mySurvey[[1]], addTopo=TRUE)
 ```
 
-    ## Soon deprecated. Use 'migrate()' instead of 'migration()'.
-
     ## time to depth conversion with constant velocity (0.1 m/ns)
 
-![plot GPR data](04_RGPR_tutorial_GPR-data-survey_tp_files/figure-markdown_github/unnamed-chunk-28-1.png)
+![plot GPR data](04_RGPR_tutorial_GPR-data-survey_tp_files/figure-markdown_github/unnamed-chunk-30-1.png)
 
 Three-dimensional plot of the GPR data
 --------------------------------------
@@ -464,8 +482,8 @@ plot3DRGL(mySurvey, addTopo = TRUE)
 
 Enlarge the window, use the mouse to move the view and zoom in.
 
-<a name="pookie"></a>Processing, save and PDF export
-----------------------------------------------------
+Processing, save and PDF export
+-------------------------------
 
 Once you found a satisfactory combination of processing steps, you can apply them all the GPR data. Here is an example
 

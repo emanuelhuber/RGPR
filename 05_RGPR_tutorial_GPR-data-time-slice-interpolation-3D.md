@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Time/depth slice interpolation
-date: 2021-03-10
+date: 2021-03-11
 ---
 
 ------------------------------------------------------------------------
@@ -226,15 +226,12 @@ plot(SU, asp = TRUE, parFid = NULL)
 
 We set `parFid = NULL` because we do not want to plot all the fiducial markers
 
-If you want to shift the coordinates by 1 m along x-direction, 0.5 m along the y-direction for your 3rd GPR data line, use `tpShift()` as follows
-
-``` r
-SU2 <- tpShift(SU, 3, dx = 0.1, dy = 0.5)
-plot(SU2)
-```
-
-![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-12-1.png)
-
+<!-- If you want to shift the coordinates by 1 m along x-direction, 0.5 m along  -->
+<!-- the y-direction for your 3rd GPR data line, use `tpShift()` as follows -->
+<!-- ```{r, echo = TRUE, results='hide', message=FALSE} -->
+<!-- SU2 <- tpShift(SU, 3, dx = 0.1, dy = 0.5) -->
+<!-- plot(SU2, asp = TRUE, parFid = NULL) -->
+<!-- ``` -->
 Basic processing
 ================
 
@@ -246,7 +243,7 @@ plot(SU[[1]])
 
     ## Antenna separation set to 0 m. Set it with 'antsep(x) <-... '
 
-![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-13-1.png)
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-12-1.png)
 
 You see that some processing is needed.
 
@@ -270,7 +267,7 @@ Does it look better now?
 plot(SU[[1]])
 ```
 
-![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-15-1.png)
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-14-1.png)
 
 Time/depth slice interpolation
 ==============================
@@ -297,7 +294,7 @@ Plot an horizontal slice of the data cube:
 plot(SXY[,,10])
 ```
 
-![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-17-1.png)
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-16-1.png)
 
 Plot a vertical slice along x-direction
 
@@ -305,7 +302,7 @@ Plot a vertical slice along x-direction
 plot(SXY[,10,])
 ```
 
-![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-18-1.png)
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-17-1.png)
 
 Plot a vertical slice along y-direction
 
@@ -313,7 +310,7 @@ Plot a vertical slice along y-direction
 plot(SXY[10,,])
 ```
 
-![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-19-1.png)
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-18-1.png)
 
 You can define the same color range for each plot:
 
@@ -323,7 +320,7 @@ clim <- range(SXY)
 plot(SXY[,,50], clim = clim)
 ```
 
-![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-20-1.png)
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-19-1.png)
 
 You can change the color palette? `displayPalGPR()` shows all the palette available in RGPR
 
@@ -331,7 +328,7 @@ You can change the color palette? `displayPalGPR()` shows all the palette availa
 displayPalGPR()
 ```
 
-![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-21-1.png)
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-20-1.png)
 
 Try these two palettes: `"sunny"` and `"slice"`:
 
@@ -339,13 +336,13 @@ Try these two palettes: `"sunny"` and `"slice"`:
 plot(SXY[,,50], clim = clim, col = palGPR("sunny"), asp = 1)
 ```
 
-![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-22-1.png)
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-21-1.png)
 
 ``` r
 plot(SXY[,,50], clim = clim, col = palGPR("slice"), asp = 1)
 ```
 
-![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-22-2.png)
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-21-2.png)
 
 Export slices as raster
 =======================

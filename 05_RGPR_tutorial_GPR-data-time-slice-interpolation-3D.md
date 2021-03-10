@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Time/depth slice interpolation
-date: 2020-08-14
+date: 2021-03-10
 ---
 
 ------------------------------------------------------------------------
@@ -26,6 +26,7 @@ Table of Contents
     -   [Set grid coordinaes](#set-grid-coordinaes)
 -   [Basic processing](#basic-processing)
 -   [Time/depth slice interpolation](#timedepth-slice-interpolation)
+-   [Export slices as raster](#export-slices-as-raster)
 
 Objectives of this tutorial
 ===========================
@@ -60,7 +61,7 @@ Set the working directory
 The working directory must be correctly set to use relative filepaths. The working directory can be set either in your R-software or in R directly with (of course you need to adapt the filepath shown below to your system):
 
 ``` r
-myDir <- file.path("your_dir_path/GPRdata-master/exampleDataCube"))
+myDir <- file.path("your_dir_path/GPRdata-master/exampleDataCube")
 setwd(myDir)    # set the working directory
 getwd()         # Return the current working directory (just to check)
 ```
@@ -180,43 +181,50 @@ Set grid coordinaes
 
 To set the grid coordinates, use the function `setGridCoord()` and assign the grid specifications in the form of a list. This list takes for arguments:
 
--   `xlines`: integer values corresponding to the x-lines in the `GPRsurvey` object (if there is no x-lines, set `xlines = NULL`).
--   `xpos`: the position of the x-lines along the x-axis (if there is no x-lines, set `xpos = NULL`).
--   `ylines`: integer values corresponding to the x-lines in the `GPRsurvey` object (if there is no y-lines, set `ylines = NULL`).
--   `ypos`: the position of the x-lines along the x-axis.
+-   `xlines`: integer values corresponding to the x-lines in the `GPRsurvey` object (if there are no x-lines, no need to specify `xlines`).
+-   `xpos`: the position of the x-lines along the x-axis, same length as `xlines` (if there are no x-lines, no need to specify `xpos`).
+-   `xstart`: shift to apply along the y-position, useful if the lines do not start at the same position; same length as `xlines`
+-   `ylines`: integer values corresponding to the x-lines in the `GPRsurvey` object (if there are no y-lines, no need to specify `ylines`).
+-   `ypos`: the position of the x-lines along the x-axis, same length as `ylines` (if there are no &lt;-lines, no need to specify `ypos`).
+-   `ystart`: shift to apply along the x-position, useful if the lines do not start at the same position; same length as `ylines`
 
 For example, if your data were collected as follows:
 
--   10 x-lines with line spacing = 2 m
--   5 ylines at positions 0 m, 1 m, 2 m, 4 m, and 6 m
+-   10 x-lines with line spacing = 2 m; the 3rd and 5th lines start 1 m after the other lines.
+-   5 ylines at positions 0 m, 1 m, 2 m, 4 m, and 6 m; the 1st line start 2 m before the other lines.
 
 ``` r
 setGridCoord(SU) <- list(xlines = 1:10,
-                         xpos   = seq(0,
-                                      by = 2,
-                                      length.out = 10),
+                         xpos   = seq(0, by = 2, length.out = 10),
+                         xstart = c(0, 0, 1, 0, 1, 0, 0, 0, 0, 0)
                          ylines = 15 + (1:10),
-                         ypos   = c(0, 1, 2, 4, 6))
+                         ypos   = c(0, 1, 2, 4, 6),
+                         ystart = c(-2, 0, 0, 0, 0))
 ```
 
-In our case we have only x-lines, so we set `ylines` and `ypos` equal to `NULL`:
+In our case we have only x-lines, so we don't specify `ylines`, `ypos`, and `ystart`. The 5th, 8th, 22th lines starts 1 m after the others; the 1st, 28th, 33rd, 38th, and 44th lines start 0.4 m after the others:
 
 ``` r
+# define xstart
+xstart <- rep(0, length(SU))
+xstart[c(5, 8, 22)] <- 1
+xstart[c(1, 28, 33, 38, 44)] <- 0.4
 setGridCoord(SU) <- list(xlines = seq_along(SU),
-                         xpos   = seq(0,
-                                      by = 0.2,
-                                      length.out = length(SU)),
-                         ylines = NULL,
-                         ypos   = NULL)
+                         xpos   = seq(0, by = 0.2, length.out = length(SU)),
+                         xstart = xstart)
 ```
 
 Now you can plot your survey data (because you have coordinates)
 
 ``` r
-plot(SU, asp = TRUE)
+plot(SU, asp = TRUE, parFid = NULL)
 ```
 
 ![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-11-1.png)
+
+    ## [1] "ASP TRUE"
+
+We set `parFid = NULL` because we do not want to plot all the fiducial markers
 
 If you want to shift the coordinates by 1 m along x-direction, 0.5 m along the y-direction for your 3rd GPR data line, use `tpShift()` as follows
 
@@ -275,9 +283,9 @@ SXY
 ```
 
     ## *** Class GPRcube ***
-    ## dim:    180 x 180 x 901
-    ## res:    0.0502793296089385 m x 0.0502793296089385 m x 0.05 ns
-    ## extent: 9 m x 9 m x 45 ns
+    ## dim:    180 x 200 x 901
+    ## res:    0.0502793296089385 m x 0.050251256281407 m x 0.05 ns
+    ## extent: 9 m x 10 m x 45 ns
     ## crs:
     ## *********************
 
@@ -338,3 +346,34 @@ plot(SXY[,,50], clim = clim, col = palGPR("slice"), asp = 1)
 ```
 
 ![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-22-2.png)
+
+Export slices as raster
+=======================
+
+You first need to convert the slice you want to export into a raster object in R (defined in the `raster` package):
+
+``` r
+r <- as.raster(SXY[,,10])
+```
+
+Then, use the `writeRaster()` function of the `raster` package to export the slice in the raster format you like (check the help on this function, `?raster::writeRaster`):
+
+``` r
+raster::writeRaster(r, filename = "slice10.tif")
+```
+
+You may also want to export the coordinates as shapefiles or geodata, as lines
+
+``` r
+exportCoord(SU, type = c("SpatialLines"), fPath = "myshapefile.shp",
+            driver = "ESRI Shapefile")
+```
+
+... or as points
+
+``` r
+exportCoord(SU, type = c("SpatialPoints"), fPath = "myshapefile.shp",
+            driver = "ESRI Shapefile")
+```
+
+Adapt the driver and the filename extension to your need (for that, check the help on the `rgdal::writeOGR()` function).

@@ -794,6 +794,12 @@ setMethod("reverse", "GPRsurvey", function(x, id = NULL, tol = 0.3){
 #'              \code{xpos} (position of the y-GPR data on the y-axis)
 #' @rdname setGridCoord-methods
 #' @export
+# setGridCoord(SU) <- list(xlines = 1:10,
+# xpos   = seq(0,
+#              by = 2,
+#              length.out = 10),
+# ylines = 15 + (1:10),
+# ypos   = c(0, 1, 2, 4, 6))
 setReplaceMethod(
   f = "setGridCoord",
   signature = "GPRsurvey",
@@ -803,61 +809,88 @@ setReplaceMethod(
     if( any(value$xlines %in% value$ylines) ){
       stop("No duplicates between 'x' and 'y' allowed!")
     }
-    
-    if(length(value$xlines) != length(value$xpos)){
-      stop("length(x) must be equal to length(dx)")
-    }
-    if(length(value$ylines) != length(value$ypos)){
-      stop("length(y) must be equal to length(dy)")
-    }
     if(!is.null(value$xlines)){
-      if(is.numeric(value$xlines)){
-        if(max(value$xlines) > length(x) || 
-           min(value$xlines) < 1){
-          stop("Length of 'xlines' must be between 1 and ", length(x))
-        }
-        xNames <- x@names[value$xlines]
-      }else if(is.character(value$xlines)){
-        if(!all(value$xlines %in% x@names) ){
-          stop("These names do not exist in the GPRsurvey object:\n",
-               value$xlines[! (value$xlines %in% x@names) ])
-        }
-        xNames <- value$xlines
+      if(length(value$xlines) != length(value$xpos)){
+        stop("length(xlines) must be equal to length(xpos)")
       }
+      if(is.null(value$xstart)){
+        value$xstart <- rep(0, length(value$xlines))
+      }else if(length(value$xlines) != length(value$xstart)){
+        stop("length(xlines) must be equal to length(xstart)")
+      }
+      # if(is.numeric(value$xlines)){
+      #   if(max(value$xlines) > length(x) || 
+      #      min(value$xlines) < 1){
+      #     stop("Length of 'xlines' must be between 1 and ", length(x))
+      #   }
+      #   xNames <- x@names[value$xlines]
+      # }else if(is.character(value$xlines)){
+      #   if(!all(value$xlines %in% x@names) ){
+      #     stop("These names do not exist in the GPRsurvey object:\n",
+      #          value$xlines[! (value$xlines %in% x@names) ])
+      #   }
+      #   xNames <- value$xlines
+      # }
+      xNames <- .getSurveyXYNames(value$xlines, x)
       for(i in seq_along(xNames)){
         y <- verboseF( getGPR(x, xNames[i]), verbose = FALSE )
         ntr <- ncol(y)
         x@coords[[xNames[i]]] <- matrix(0, nrow = ntr, ncol = 3)
         x@coords[[xNames[i]]][,1] <- value$xpos[i]
-        x@coords[[xNames[i]]][,2] <- y@pos
+        x@coords[[xNames[i]]][,2] <- y@pos + value$xstart[i]
       }
     }
     if(!is.null(value$ylines)){
-      if(is.numeric(value$ylines)){
-        if(max(value$ylines) > length(x) || 
-           min(value$ylines) < 1){
-          stop("Length of 'ylines' must be between 1 and ", length(x))
-        }
-        yNames <- x@names[value$ylines]
-      }else if(is.character(value$ylines)){
-        if(!all(value$ylines %in% x@names) ){
-          stop("These names do not exist in the GPRsurvey object:\n",
-               value$ylines[! (value$ylines %in% x@names) ])
-        }
-        xyNames <- value$ylines
+      if(length(value$ylines) != length(value$ypos)){
+        stop("length(ylines) must be equal to length(ypos)")
       }
+      if(is.null(value$ystart)){
+        value$ystart <- rep(0, length(value$ylines))
+      }else if(length(value$ylines) != length(value$ystart)){
+        stop("length(ylines) must be equal to length(ystart)")
+      }
+      # if(is.numeric(value$ylines)){
+      #   if(max(value$ylines) > length(x) || 
+      #      min(value$ylines) < 1){
+      #     stop("Length of 'ylines' must be between 1 and ", length(x))
+      #   }
+      #   yNames <- x@names[value$ylines]
+      # }else if(is.character(value$ylines)){
+      #   if(!all(value$ylines %in% x@names) ){
+      #     stop("These names do not exist in the GPRsurvey object:\n",
+      #          value$ylines[! (value$ylines %in% x@names) ])
+      #   }
+      #   yNames <- value$ylines
+      # }
+      yNames <- .getSurveyXYNames(value$ylines, x)
       for(i in seq_along(yNames)){
-        y <- verboseF( getGPR(x, xNames[i]), verbose = FALSE)
+        y <- verboseF( getGPR(x, yNames[i]), verbose = FALSE)
         ntr <- ncol(y)
         x@coords[[yNames[i]]] <- matrix(0, nrow = ntr, ncol = 3)
-        x@coords[[yNames[i]]][,1] <- y@pos
-        x@coords[[yNames[i]]][,2] <- value$ypos[i]
+        x@coords[[yNames[i]]][,1] <- y@pos + value$ystart[i]
+        x@coords[[yNames[i]]][,2] <- value$ypos[i] 
       }
     }
     return(x)
   }
 )
 
+.getSurveyXYNames <- function(xylines, x){
+  if(is.numeric(xylines)){
+    if(max(xylines) > length(x) || 
+       min(xylines) < 1){
+      stop("Length of 'xlines' must be between 1 and ", length(x))
+    }
+    xNames <- x@names[xylines]
+  }else if(is.character(xylines)){
+    if(!all(xylines %in% x@names) ){
+      stop("These names do not exist in the GPRsurvey object:\n",
+           xylines[! (xylines %in% x@names) ])
+    }
+    xNames <- xylines
+  }
+  return(xNames)
+}
 
 #' Return coordinates
 #'

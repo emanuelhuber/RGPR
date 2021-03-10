@@ -735,6 +735,7 @@ plot.GPRsurvey <- function(x, y, ...){
       #do.call("plot", c(list((do.call(rbind, x@coords))[,1:2]), dots))
       plot(0,0, type = "n", xlim = xlim, ylim = ylim, xlab = xlab,
            ylab = ylab, main = main, asp = asp)
+      print(paste("ASP", asp))
     }
     if(add_shp_files){
       if(length(shp_files) > 0){

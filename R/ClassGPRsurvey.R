@@ -41,6 +41,7 @@ setClass(
 # LINES = list of datapath
 GPRsurvey <- function(LINES, verbose = TRUE){
   n <- length(LINES)
+  line_filepaths <- character(n)
   line_names <- character(n)
   line_descriptions <- character(n)
   line_surveymodes <- character(n)
@@ -56,60 +57,84 @@ GPRsurvey <- function(LINES, verbose = TRUE){
   line_nz <- integer(n)
   line_dz <- integer(n)
   line_depthunits <- character(n)
+  it <- 0
   for(i in seq_along(LINES)){
+    if(isFALSE(file.exists(LINES[[i]]))){
+      warning(paste0('The file "', LINES[[i]], '" does not exist!\n',
+                     'I skip it!'))
+      next
+    }
+    it <- it + 1
     gpr <- readGPR(LINES[[i]], verbose = verbose)
     # FIX ME!
     #  > check if name(gpr) is unique
-    line_traces[i]       <- ncol(gpr)
-    line_nz[i]           <- nrow(gpr)
-    line_dz[i]           <- mean(diff(gpr@depth))
-    line_names[i]        <- name(gpr)[1]
-    if(line_names[i] == ""){
-      line_names[i] <- "default_name"
+    line_filepaths[it]     <- LINES[[i]]
+    line_traces[it]       <- ncol(gpr)
+    line_nz[it]           <- nrow(gpr)
+    line_dz[it]           <- mean(diff(gpr@depth))
+    line_names[it]        <- name(gpr)[1]
+    if(line_names[it] == ""){
+      line_names[it] <- "default_name"
     }
-    if(i > 1){
-      line_names[i] <- safeName(x = line_names[i], 
-                                y = line_names[1:(i - 1)])
+    if(it > 1){
+      line_names[it] <- safeName(x = line_names[it], 
+                                y = line_names[1:(it - 1)])
     }
-    line_descriptions[i] <- description(gpr)
-    line_surveymodes[i]  <- gpr@surveymode
+    line_descriptions[it] <- description(gpr)
+    line_surveymodes[it]  <- gpr@surveymode
     if(length(gpr@date) == 0){
-      line_dates[i]        <- NA
+      line_dates[it]        <- NA
     }else{
-      line_dates[i]        <- gpr@date
+      line_dates[it]        <- gpr@date
     }
     if(length(gpr@freq) == 0){
-      line_freq[i]        <- NA
+      line_freq[it]        <- NA
     }else{
-      line_freq[i]        <- gpr@freq
+      line_freq[it]        <- gpr@freq
     }
     if(length(gpr@antsep) == 0){
-      line_antsep[i]        <- NA
+      line_antsep[it]        <- NA
     }else{
-      line_antsep[i]        <- gpr@antsep
+      line_antsep[it]        <- gpr@antsep
     }
-    line_posunits[i]        <- gpr@posunit
-    line_depthunits[i]      <- gpr@depthunit  
-    line_crs[i] <- ifelse(length(gpr@crs) > 0, gpr@crs[1], character(1))
+    line_posunits[it]        <- gpr@posunit
+    line_depthunits[it]      <- gpr@depthunit  
+    line_crs[it] <- ifelse(length(gpr@crs) > 0, gpr@crs[1], character(1))
     if(length(gpr@coord) > 0){
       # if(is.null(colnames(gpr@coord))){
-      #   xyzCoords[[line_names[i] ]] <- gpr@coord
+      #   xyzCoords[[line_names[it] ]] <- gpr@coord
       # }else if(all(toupper(colnames(gpr@coord)) %in% c("E","N","Z"))){
-      #   xyzCoords[[line_names[i] ]] <- gpr@coord[,c("E","N","Z")]
+      #   xyzCoords[[line_names[it] ]] <- gpr@coord[,c("E","N","Z")]
       # }else if(all(toupper(colnames(gpr@coord)) %in% c("X","Y","Z"))){
-      #   xyzCoords[[line_names[i] ]] <- gpr@coord[,c("X","Y","Z")]
+      #   xyzCoords[[line_names[it] ]] <- gpr@coord[,c("X","Y","Z")]
       # }else{
-      #   xyzCoords[[line_names[i] ]] <- gpr@coord
+      #   xyzCoords[[line_names[it] ]] <- gpr@coord
       # }
-      # xyzCoords[[line_names[i]]] <- as.matrix(value[[i]])
-      xyzCoords[[line_names[i]]] <- gpr@coord
-      colnames(xyzCoords[[line_names[i]]]) <- c("x", "y", "z")
-      line_lengths[i] <- posLine(gpr@coord[, 1:2], last = TRUE)
+      # xyzCoords[[line_names[it]]] <- as.matrix(value[[it]])
+      xyzCoords[[line_names[it]]] <- gpr@coord
+      colnames(xyzCoords[[line_names[it]]]) <- c("x", "y", "z")
+      line_lengths[it] <- posLine(gpr@coord[, 1:2], last = TRUE)
     }else{
-      line_lengths[i] <- gpr@dx * ncol(gpr@data)
+      line_lengths[it] <- gpr@dx * ncol(gpr@data)
     }
-    line_fids[[line_names[i] ]] <- trimStr(gpr@fid)
+    line_fids[[line_names[it] ]] <- trimStr(gpr@fid)
   }
+  # shorten
+  line_filepaths     <- line_filepaths[1:it]
+  line_names        <- line_names[1:it]
+  line_descriptions <- line_descriptions[1:it]
+  line_surveymodes  <- line_surveymodes[1:it]
+  line_dates        <- line_dates[1:it]
+  line_freq         <- line_freq[1:it]
+  line_antsep       <- line_antsep[1:it]
+  line_lengths      <- line_lengths[1:it]
+  line_posunits     <- line_posunits[1:it]
+  line_crs          <- line_crs[1:it]
+  line_traces       <- line_traces[1:it]
+  line_nz           <- line_nz[1:it]
+  line_dz           <- line_dz[1:it]
+  line_depthunits   <- line_depthunits[1:it]
+  
   if( length(unique(line_posunits)) > 1 ){
     warning("Position units are not identical: \n",
             paste0(unique(line_posunits), collaspe = ", "), "!")
@@ -124,7 +149,7 @@ GPRsurvey <- function(LINES, verbose = TRUE){
   }
   x <- new("GPRsurvey",
         version       = "0.1",
-        filepaths     = LINES,       # vector of [n] file names
+        filepaths     = line_filepaths,       # vector of [n] file names
         names         = line_names,      # length = [n]
         descriptions  = line_descriptions,  # length = [n]
         freqs         = line_freq,       # length = [n]

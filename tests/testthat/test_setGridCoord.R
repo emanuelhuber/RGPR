@@ -1,9 +1,33 @@
 DIR <- "/mnt/data/RGPR/CODE/RGPR-gh-pages/GPRdata-master/exampleDataCube/Grid-dir1-Rawdata"
 
 LINES <- file.path(DIR,  paste0("FILE____", sprintf("%03d", 1:46), ".DZT"))
+LINES <- file.path(DIR,  paste0("FILE____", sprintf("%03d", 0:46), ".DZT"))
 
 
 SU <- GPRsurvey(LINES, verbose = FALSE)
+
+x <- SU
+
+length(x@names)
+length(x@lengths)
+length(x@posunits)
+length(x@dates)
+length(x@freqs)
+length(x@filepaths)
+
+
+data.frame("name"    = x@names,
+           # "length"   = round(x@lengths,2),
+           "length"   = formatC(signif(x@lengths, digits = 4), digits = 2, format = "fg", flag = "#"),
+           "units"    = x@posunits,
+           "date"     = x@dates,
+           "freq"     = x@freqs,
+           "coord"    = is_test[testCoords],
+           "int"      = is_test[testIntersecs],
+           "filename" = basename(x@filepaths))
+
+
+SU
 
 setGridCoord(SU) <- list(xlines = seq_along(SU),
                          xpos   = seq(0, 

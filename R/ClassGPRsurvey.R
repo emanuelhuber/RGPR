@@ -843,26 +843,27 @@ setReplaceMethod(
       }else if(length(value$xlines) != length(value$xstart)){
         stop("length(xlines) must be equal to length(xstart)")
       }
-      # if(is.numeric(value$xlines)){
-      #   if(max(value$xlines) > length(x) || 
-      #      min(value$xlines) < 1){
-      #     stop("Length of 'xlines' must be between 1 and ", length(x))
-      #   }
-      #   xNames <- x@names[value$xlines]
-      # }else if(is.character(value$xlines)){
-      #   if(!all(value$xlines %in% x@names) ){
-      #     stop("These names do not exist in the GPRsurvey object:\n",
-      #          value$xlines[! (value$xlines %in% x@names) ])
-      #   }
-      #   xNames <- value$xlines
-      # }
       xNames <- .getSurveyXYNames(value$xlines, x)
-      for(i in seq_along(xNames)){
-        y <- verboseF( getGPR(x, xNames[i]), verbose = FALSE )
-        ntr <- ncol(y)
-        x@coords[[xNames[i]]] <- matrix(0, nrow = ntr, ncol = 3)
-        x@coords[[xNames[i]]][,1] <- value$xpos[i]
-        x@coords[[xNames[i]]][,2] <- y@pos + value$xstart[i]
+      if(!is.null(value$xlength)){
+        if(length(value$xlines) != length(value$xlength)){
+          stop("length(xlines) must be equal to length(xlength)")
+        }
+        for(i in seq_along(xNames)){
+          ntr <- x@ntraces[xNames[i] == x@names]
+          x@coords[[xNames[i]]] <- matrix(0, nrow = ntr, ncol = 3)
+          x@coords[[xNames[i]]][,1] <- value$xpos[i]
+          x@coords[[xNames[i]]][,2] <- seq(from       = value$xstart[i], 
+                                           to         = value$xlength[i], 
+                                           length.out = ntr)
+        }
+      }else{
+        for(i in seq_along(xNames)){
+          y <- verboseF( getGPR(x, xNames[i]), verbose = FALSE )
+          ntr <- ncol(y)
+          x@coords[[xNames[i]]] <- matrix(0, nrow = ntr, ncol = 3)
+          x@coords[[xNames[i]]][,1] <- value$xpos[i]
+          x@coords[[xNames[i]]][,2] <- y@pos + value$xstart[i]
+        }
       }
     }
     if(!is.null(value$ylines)){
@@ -874,26 +875,28 @@ setReplaceMethod(
       }else if(length(value$ylines) != length(value$ystart)){
         stop("length(ylines) must be equal to length(ystart)")
       }
-      # if(is.numeric(value$ylines)){
-      #   if(max(value$ylines) > length(x) || 
-      #      min(value$ylines) < 1){
-      #     stop("Length of 'ylines' must be between 1 and ", length(x))
-      #   }
-      #   yNames <- x@names[value$ylines]
-      # }else if(is.character(value$ylines)){
-      #   if(!all(value$ylines %in% x@names) ){
-      #     stop("These names do not exist in the GPRsurvey object:\n",
-      #          value$ylines[! (value$ylines %in% x@names) ])
-      #   }
-      #   yNames <- value$ylines
-      # }
+      
       yNames <- .getSurveyXYNames(value$ylines, x)
-      for(i in seq_along(yNames)){
-        y <- verboseF( getGPR(x, yNames[i]), verbose = FALSE)
-        ntr <- ncol(y)
-        x@coords[[yNames[i]]] <- matrix(0, nrow = ntr, ncol = 3)
-        x@coords[[yNames[i]]][,1] <- y@pos + value$ystart[i]
-        x@coords[[yNames[i]]][,2] <- value$ypos[i] 
+      if(!is.null(value$ylength)){
+        if(length(value$ylines) != length(value$ylength)){
+          stop("length(ylines) must be equal to length(ylength)")
+        }
+        for(i in seq_along(yNames)){
+          ntr <- x@ntraces[yNames[i] == x@names]
+          x@coords[[yNames[i]]] <- matrix(0, nrow = ntr, ncol = 3)
+          x@coords[[yNames[i]]][,1] <- seq(from       = value$ystart[i], 
+                                           to         = value$ylength[i], 
+                                           length.out = ntr)
+          x@coords[[yNames[i]]][,2] <- value$ypos[i]
+        }
+      }else{
+        for(i in seq_along(yNames)){
+          y <- verboseF( getGPR(x, yNames[i]), verbose = FALSE)
+          ntr <- ncol(y)
+          x@coords[[yNames[i]]] <- matrix(0, nrow = ntr, ncol = 3)
+          x@coords[[yNames[i]]][,1] <- y@pos + value$ystart[i]
+          x@coords[[yNames[i]]][,2] <- value$ypos[i] 
+        }
       }
     }
     return(x)

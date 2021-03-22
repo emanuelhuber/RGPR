@@ -1225,6 +1225,8 @@ flattenlist <- function(x){
     creg <- as.double(creg)
     ploc <- as.matrix(ploc)
     preg <- as.matrix(preg)
+    if(is.null(dim(ploc))) dim(ploc) <- c(1, length(ploc))
+    if(is.null(dim(preg))) dim(preg) <- c(1, length(preg))
     alphaloc <- atan2(ploc[,1] - cloc[1], ploc[,2] - cloc[2])
     alphareg <- atan2(preg[,1] - creg[1], preg[,2] - creg[2])
     alpha <- alphareg - alphaloc

@@ -153,12 +153,12 @@ readSGY_textual_file_header <- function(con, ENDIAN){
   # readBin(con, what = "raw", n = 3200, size = 1, endian = ENDIAN)
   uu <- readBin(con, what = character(), n = 1, size = 1, endian = ENDIAN)
   uu <- trimStr(uu)
-  uu1 <- verboseF(strsplit(uu, "(C\\s*[0-9]+)")[[1]], verbose = FALSE)
+  uu1 <- verboseF(strsplit(uu, "(C\\s*[0-9]+)", useBytes = TRUE)[[1]], verbose = FALSE)
   if(length(uu1) > 1 && !is.na(uu1)){
     uu1 <- sapply(uu1, trimStr, USE.NAMES = FALSE)
     uu1 <- uu1[uu1!=""]
   }else{
-    uu1 <- verboseF(strsplit(uu, "\r\n")[[1]], verbose = FALSE)
+    uu1 <- verboseF(strsplit(uu, "\r\n", useBytes = TRUE)[[1]], verbose = FALSE)
     if(length(uu1) > 0 && !is.na(uu1)){
       uu1 <- sapply(uu1, trimStr, USE.NAMES = FALSE)
       uu1 <- uu1[uu1!=""]

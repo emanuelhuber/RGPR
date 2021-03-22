@@ -456,7 +456,7 @@ readSGY_data_trace <- function(con, ENDIAN, nbytes, NB_3200_BYTES = 0, NB_DATA_T
     
     invisible(seek(con, where = 3600 + 240 * i + nspls * nbytes * (i-1), origin = "start"))
     
-    if(DATA_FORMAT == "4-byte IEEE floating-point"){
+    if(grepl("float", DATA_FORMAT)){  #  == "4-byte IEEE floating-point"){
       dataSGY[,i] <- readBin(con, what = double(), n = nspls, 
                               size = nbytes, endian = ENDIAN, signed = TRUE)
     }else{

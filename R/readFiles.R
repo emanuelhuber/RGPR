@@ -314,7 +314,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
                    verbose = FALSE))
     # read RadSys Zond System
     if( test ){
-      message("This is a classical SEG-Y file... I try to read it!")
+      message("This is not a classical SEG-Y file... I try to read it!")
       ndn <- c("little", "big")
       A <- tryCatch({verboseF( readSEGY_RadSys_Zond_GPR(dsn, ENDIAN = endian), 
                                verbose = verbose)},
@@ -338,7 +338,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
                               desc = desc, Vmax = Vmax), verbose = verbose)
       # read classical SEG-Y file
     }else{
-      message("This is not a classical SEG-Y file... I try to read it!")
+      message("This is a classical SEG-Y file... I try to read it!")
       ndn <- c("little", "big")
       A <- tryCatch({verboseF(readSGY(dsn, ENDIAN = endian), 
                               verbose = verbose)},

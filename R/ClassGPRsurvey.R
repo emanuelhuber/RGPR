@@ -998,6 +998,7 @@ setMethod("georef", "GPRsurvey",
             }
             # here I cannot write FUN = FUN because FUN is an argument of
             # lapply...
+            print(ploc)
             xyz  <- lapply(x@coords, georef, alpha = alpha, cloc = cloc,
                            creg = creg, ploc = ploc, preg = preg, FUN)
             x@coords <- xyz

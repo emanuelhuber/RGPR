@@ -146,7 +146,7 @@
   endpos <- .getHD(x$hd, "FINAL POSITION", position=TRUE)
   if(!is.null(endpos)){
     pos_used[endpos[2]] <- 1L
-    sup_hd[["startpos"]] <- as.numeric(endpos[1])
+    sup_hd[["endpos"]] <- as.numeric(endpos[1])
   }else{
     endpos <- dx[1]*ncol(x$data)
   }

@@ -200,12 +200,14 @@
   }
   writeLines(paste0("STARTING POSITION  ", " = ", as.character(startpos)), 
              con = hd_file, sep = "\r\n")
+  
   endpos <- (ncol(x@data)-1)*x@dx
   if(!is.null(x@hd$endpos)){
     endpos <- x@hd$endpos
   }
   writeLines(paste0("FINAL POSITION     "," = ", as.character(endpos)), 
              con = hd_file, sep = "\r\n")
+  
   writeLines(paste0("STEP SIZE USED     "," = ",as.character(x@dx)),
              con = hd_file, sep = "\r\n")
   writeLines(paste0("POSITION UNITS     ", " = ", "m"), 

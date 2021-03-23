@@ -37,7 +37,7 @@
   binMod[23] <- "character"
   
   # DT1 FILE: header
-  # indexDT1Header=c("traces", "position", "samples","topo", "NA0", "bytes","dz", 
+  # indexDT1Header=c("traces", "position", "samples","topo", "NA0", "bytes","win", 
   #                  "stacks","NA1","NA2", "NA3", "NA4", "NA5", "NA6", "recx","recy",
   #                  "recz","transx","transy","transz","time0","zeroflag", "NA7", "time",
   #                  "x8", "com","com1","com2","com3","com4","com5","com6")
@@ -57,9 +57,10 @@
   # 6. bytes/points (always 2 for Rev 3 firmware)
   traces_hd$bytes <- rep.int(2L, ncol(x@data))
   # 7. Time Window
-  traces_hd$win <- rep(x@dz * (nrow(x@data) - 1), ncol(x@data))
+  # traces_hd$win <- rep(x@dz * (nrow(x@data) - 1), ncol(x@data))
+  traces_hd$win <- rep(x@dz * nrow(x@data) , ncol(x@data))
   # 8. # of stacks
-  traces_hd$stacks <- rep(as.numeric(x@hd$NUMBER_OF_STACKS), ncol(x@data))
+  traces_hd$stacks <- rep(as.integer(x@hd$NUMBER_OF_STACKS), ncol(x@data))
   # 9.-10. GPS X-position (double*8 number)
   # 11.-12. GPS Y-position (double*8 number)
   # 13.-14. GPS Z-position (double*8 number)
@@ -78,9 +79,9 @@
     traces_hd$recy <- x@rec[,2]
     traces_hd$recz <- x@rec[,3]
   }else{
-    traces_hd$recx <- rep.int(0L,ncol(x@data))
-    traces_hd$recy <- rep.int(0L,ncol(x@data))
-    traces_hd$recz <- rep.int(0L,ncol(x@data))
+    traces_hd$recx <- rep.int(0L, ncol(x@data))
+    traces_hd$recy <- rep.int(0L, ncol(x@data))
+    traces_hd$recz <- rep.int(0L, ncol(x@data))
   }
   # 18.-20. transmitter x-, y- and z-position
   if(length(x@trans) > 0 && sum(is.na(x@trans)) == 0){
@@ -177,62 +178,62 @@
   #-------------------------
   # HD FILE: traces
   hd_file <- file(paste0(fPath, ".HD") , "w+")
-  writeLines("1234", con = hd_file, sep = "\r\n")
+  writeLines("1234", con = hd_file, sep = "\r\r\n")
   if(!is.null(x@hd$gprdevice)){
-    writeLines(as.character(x@hd$gprdevice), con = hd_file, sep = "\r\n")
+    writeLines(as.character(x@hd$gprdevice), con = hd_file, sep = "\r\r\n")
   }else{
-    writeLines("Data from RGPR", con = hd_file, sep = "\r\n")
+    writeLines("Data from RGPR", con = hd_file, sep = "\r\r\n")
   }
-  writeLines(as.character(x@date), con = hd_file, sep = "\r\n")
+  writeLines(as.character(x@date), con = hd_file, sep = "\r\r\n")
   writeLines(paste0("NUMBER OF TRACES   "," = ", as.character(ncol(x@data))), 
-             con = hd_file, sep = "\r\n")
+             con = hd_file, sep = "\r\r\n")
   writeLines(paste0("NUMBER OF PTS/TRC  "," = ", as.character(nrow(x@data))), 
-             con = hd_file, sep = "\r\n")
+             con = hd_file, sep = "\r\r\n")
   writeLines(paste0("TIMEZERO AT POINT  ", " = ",
                     as.character(1+round(mean(x@time0)/x@dz,2))), 
-             con = hd_file, sep = "\r\n")
+             con = hd_file, sep = "\r\r\n")
   writeLines(paste0("TOTAL TIME WINDOW  ", " = ", 
                     as.character(x@dz*(nrow(x@data)))), 
-             con = hd_file, sep = "\r\n")
+             con = hd_file, sep = "\r\r\n")
   startpos <- 0
   if(!is.null(x@hd$startpos)){
     startpos <- x@hd$startpos
   }
   writeLines(paste0("STARTING POSITION  ", " = ", as.character(startpos)), 
-             con = hd_file, sep = "\r\n")
+             con = hd_file, sep = "\r\r\n")
   
   endpos <- (ncol(x@data)-1)*x@dx
   if(!is.null(x@hd$endpos)){
     endpos <- x@hd$endpos
   }
   writeLines(paste0("FINAL POSITION     "," = ", as.character(endpos)), 
-             con = hd_file, sep = "\r\n")
+             con = hd_file, sep = "\r\r\n")
   
   writeLines(paste0("STEP SIZE USED     "," = ",as.character(x@dx)),
-             con = hd_file, sep = "\r\n")
+             con = hd_file, sep = "\r\r\n")
   writeLines(paste0("POSITION UNITS     ", " = ", "m"), 
-             con = hd_file, sep = "\r\n")
+             con = hd_file, sep = "\r\r\n")
   if(x@posunit != "m"){
     warning('Position units were defined as "metres"!\n')
   }
   writeLines(paste0("NOMINAL FREQUENCY  "," = ", as.character(x@freq)), 
-             con = hd_file, sep = "\r\n")
+             con = hd_file, sep = "\r\r\n")
   writeLines(paste0("ANTENNA SEPARATION "," = ", as.character(x@antsep)), 
-             con = hd_file, sep = "\r\n")
+             con = hd_file, sep = "\r\r\n")
   pulservoltage <- 0
   if(!is.null(x@hd$PULSER_VOLTAGE_V)){
     pulservoltage <- x@hd$PULSER_VOLTAGE_V
   }
   writeLines(paste0("PULSER VOLTAGE (V) ", " = ", as.character(pulservoltage)), 
-             con = hd_file, sep = "\r\n")
+             con = hd_file, sep = "\r\r\n")
   nstacks <- 1
   if(!is.null(x@hd$NUMBER_OF_STACKS)){
     nstacks <- x@hd$NUMBER_OF_STACKS
   }
   writeLines(paste0("NUMBER OF STACKS   ", " = ", as.character(nstacks)), 
-             con = hd_file, sep = "\r\n")
+             con = hd_file, sep = "\r\r\n")
   writeLines(paste0("SURVEY MODE        ", " = ", as.character(x@surveymode)), 
-             con = hd_file, sep = "\r\n")
+             con = hd_file, sep = "\r\r\n")
   
   # NIC SERIAL#        = 0044-5029-0015
   # TX SERIAL#         = 0034-3741-0010

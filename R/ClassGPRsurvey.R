@@ -279,13 +279,13 @@ setMethod("coordref", "GPRsurvey", function(x){
   if(length(x@coords) > 0 && all(sapply(x@coords, length) > 0 )){
     xcoords <- Filter(Negate(is.null), x@coords)
       A <- do.call("rbind", x@coords)
-      A <- apply(round(A),2,range)
+      A <- apply(round(A), 2, range)
       Evalue <- .minCommon10(A[1,1],A[2,1])
       Nvalue <- .minCommon10(A[1,2],A[2,2])
       Zvalue <- 0
       x@coordref <- c(Evalue, Nvalue,Zvalue)
       cat("Coordinates of the local system:", x@coordref,"\n")
-      x <- surveyIntersect(x)
+      # x <- surveyIntersect(x)
     }
     return(x)
   }
@@ -806,6 +806,8 @@ setMethod("reverse", "GPRsurvey", function(x, id = NULL, tol = 0.3){
 })
 
 
+
+
 # value = x, y, dx, dy
 
 #' Set grid coordinates the trace position.
@@ -843,6 +845,11 @@ setReplaceMethod(
       }else if(length(value$xlines) != length(value$xstart)){
         stop("length(xlines) must be equal to length(xstart)")
       }
+      if(is.null(value$xreverse)){
+        value$xreverse <- rep(FALSE, length(value$xlines))
+      }else if(length(value$xlines) != length(value$xreverse)){
+        stop("length(xlines) must be equal to length(xreverse)")
+      }
       xNames <- .getSurveyXYNames(value$xlines, x)
       if(!is.null(value$xlength)){
         if(length(value$xlines) != length(value$xlength)){
@@ -852,9 +859,15 @@ setReplaceMethod(
           ntr <- x@ntraces[xNames[i] == x@names]
           x@coords[[xNames[i]]] <- matrix(0, nrow = ntr, ncol = 3)
           x@coords[[xNames[i]]][,1] <- value$xpos[i]
-          x@coords[[xNames[i]]][,2] <- seq(from       = value$xstart[i], 
-                                           to         = value$xlength[i], 
-                                           length.out = ntr)
+          if(isTRUE(value$xreverse[i])){
+            x@coords[[xNames[i]]][,2] <- seq(to       = value$xstart[i], 
+                                             from         = value$xlength[i], 
+                                             length.out = ntr)
+          }else{
+            x@coords[[xNames[i]]][,2] <- seq(from       = value$xstart[i], 
+                                             to         = value$xlength[i], 
+                                             length.out = ntr)
+          }
         }
       }else{
         for(i in seq_along(xNames)){
@@ -862,7 +875,11 @@ setReplaceMethod(
           ntr <- ncol(y)
           x@coords[[xNames[i]]] <- matrix(0, nrow = ntr, ncol = 3)
           x@coords[[xNames[i]]][,1] <- value$xpos[i]
-          x@coords[[xNames[i]]][,2] <- y@pos + value$xstart[i]
+          if(isTRUE(value$xreverse[i])){
+            x@coords[[xNames[i]]][,2] <- rev(y@pos) + value$xstart[i]
+          }else{
+            x@coords[[xNames[i]]][,2] <- y@pos + value$xstart[i]
+          }
         }
       }
     }
@@ -875,7 +892,11 @@ setReplaceMethod(
       }else if(length(value$ylines) != length(value$ystart)){
         stop("length(ylines) must be equal to length(ystart)")
       }
-      
+      if(is.null(value$yreverse)){
+        value$yreverse <- rep(FALSE, length(value$ylines))
+      }else if(length(value$ylines) != length(value$yreverse)){
+        stop("length(ylines) must be equal to length(xreverse)")
+      }
       yNames <- .getSurveyXYNames(value$ylines, x)
       if(!is.null(value$ylength)){
         if(length(value$ylines) != length(value$ylength)){
@@ -884,9 +905,15 @@ setReplaceMethod(
         for(i in seq_along(yNames)){
           ntr <- x@ntraces[yNames[i] == x@names]
           x@coords[[yNames[i]]] <- matrix(0, nrow = ntr, ncol = 3)
-          x@coords[[yNames[i]]][,1] <- seq(from       = value$ystart[i], 
+          if(isTRUE(value$yreverse[i])){
+            x@coords[[yNames[i]]][,1] <- seq(to         = value$ystart[i], 
+                                             from       = value$ylength[i], 
+                                             length.out = ntr)
+          }else{
+            x@coords[[yNames[i]]][,1] <- seq(from       = value$ystart[i], 
                                            to         = value$ylength[i], 
                                            length.out = ntr)
+          }
           x@coords[[yNames[i]]][,2] <- value$ypos[i]
         }
       }else{
@@ -894,7 +921,11 @@ setReplaceMethod(
           y <- verboseF( getGPR(x, yNames[i]), verbose = FALSE)
           ntr <- ncol(y)
           x@coords[[yNames[i]]] <- matrix(0, nrow = ntr, ncol = 3)
-          x@coords[[yNames[i]]][,1] <- y@pos + value$ystart[i]
+          if(isTRUE(value$yreverse[i])){
+            x@coords[[yNames[i]]][,1] <- rev(y@pos) + value$ystart[i]
+          }else{
+            x@coords[[yNames[i]]][,1] <- y@pos + value$ystart[i]
+          }
           x@coords[[yNames[i]]][,2] <- value$ypos[i] 
         }
       }

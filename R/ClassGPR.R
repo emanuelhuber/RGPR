@@ -3063,10 +3063,21 @@ setMethod("reverse", "GPR", function(x, id = NULL,  tol = 0.3){
   if(length(x@trans)>0){
     xnew@trans <- x@trans[nrow(x@trans):1,]
   }
+  if(length(x@delineations) > 0){
+    
+    xnew@delineations <- rapply(x@delineations, .revMat, 
+                                how = "replace", n = ncol(x))
+  }
   proc(xnew) <- getArgs()
   return(xnew)
 }
 )
+
+.revMat <- function(x, n){
+  x[, 1] <- n - x[, 1] + 1
+  x <- apply(x, 2, rev)
+  return(x)
+}
 
 # Oriented Bounding Box
 #' @name tpOBB2D

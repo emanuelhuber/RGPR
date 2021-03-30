@@ -17,24 +17,23 @@
 .writeDT1 <- function(x, fPath){
   #-------------------- DT1 FILE: traces
   # should ranges between -32768 and 32767
-  if(max(x@data)/max(abs(x@data))*32768 <= 32767){
-    x@data <- round(x@data/max(abs(x@data))*32768)
-  }else{
-    x@data <- round(x@data/max(abs(x@data))*32767)
-  }
-  #   cat(range(traceData),"\n")
-  if(min(x@data)< -32768 || max(x@data) > 32768){
+  x@data[!is.finite(x@data)] <- 0
+  # x@data <-  round( (x@data - min(x@data))/(diff(range(x@data))) * 
+  #                   (32767 + 32768) - 32768 )
+  
+  #   cat(ra  nge(traceData),"\n")
+  if(min(x@data) < -32768 || max(x@data) > 32768){
     stop("problem real > integer conversion")
   }
   #   A
   #   traceData <- A$data
-  storage.mode(x@data) <- "integer"
+  #  storage.mode(x@data) <- "integer" -> see function writeBinary
   
   binSize <- rep(4, 23)
   binSize[9:11] <- 8
   binSize[23] <- 28
   binMod <- rep("numeric", 23)
-  binMod[23] <- "character"
+  binMod[23] <- "raw"
   
   # DT1 FILE: header
   # indexDT1Header=c("traces", "position", "samples","topo", "NA0", "bytes","win", 
@@ -95,7 +94,8 @@
   }
   # 21. time-zero adjustment | where: point(x) = point(x + adjustment)
   # traces_hd$time0 <- 1L + round(x@time0/x@dz, 2)
-  traces_hd$time0 <- 1L + round(x@time0/x@dz, 2) # ????
+  # traces_hd$time0 <- rep(0L, ncol(x@data)) # 1L + as.integer(round(x@time0/x@dz))
+  traces_hd$time0 <- 1L + as.integer(round(x@time0/x@dz))
   # 22. zero flag: 0 = data okay, 1=zero data
   traces_hd$zeroflag <- rep.int(0L, ncol(x@data)) 
   # 23. not used
@@ -109,15 +109,15 @@
   traces_hd$x8 <- rep.int(0L, ncol(x@data)) 
   traces_hd$x8[trimStr(x@fid) != ""] <- 1L
   # 26.-32. Comment string of 28 characters
-  traces_hd$com <-  sapply(trimStr(x@fid), function(x){
+  traces_hd$com <-  lapply(trimStr(x@fid), function(x){
     if(nchar(x) > 28){
-      x <- substr(x, 1, 28)
+      x <- charToRaw(substr(x, 1, 28))
     }else{
       # x <- paste0(c(rep(" ", 28 - nchar(x))), x, collapse = "")
-      x <- paste0(c(x,rep(" ", 28-nchar(x))), collapse = "")
+      x <- c(charToRaw(x) , raw(28 - nchar(x)))
     }
     return(x)
-  }, USE.NAMES = FALSE)
+  })
   
   # FILE NAMES
   fPath <- file.path(dirname(fPath), .fNameWExt(fPath))
@@ -126,10 +126,8 @@
   dt1_file <- file(paste0(fPath, ".DT1") , "wb")
   for(i in 1:ncol(x@data)){
     for(j in seq_along(traces_hd)){
-      # realData4 <- traces_hd[[j]][i]
-      # storage.mode(realData4) <- "double"
-      # thd <- traces_hd[[j]][i]
-      writeBinary(traces_hd[[j]][i], dt1_file, what = binMod[j], 
+      # real*4, storage.mode = double
+      writeBinary(traces_hd[[j]][[i]], dt1_file, what = binMod[j], 
                   size = binSize[j], eos = NULL)
     }
     # comment28 <- as.character(traces_hd$com[i])
@@ -185,54 +183,54 @@
     writeLines("Data from RGPR", con = hd_file, sep = "\r\r\n")
   }
   writeLines(as.character(x@date), con = hd_file, sep = "\r\r\n")
-  writeLines(paste0("NUMBER OF TRACES   "," = ", as.character(ncol(x@data))), 
+  writeLines(paste0("NUMBER OF TRACES   ","= ", as.character(ncol(x@data))), 
              con = hd_file, sep = "\r\r\n")
-  writeLines(paste0("NUMBER OF PTS/TRC  "," = ", as.character(nrow(x@data))), 
+  writeLines(paste0("NUMBER OF PTS/TRC  ","= ", as.character(nrow(x@data))), 
              con = hd_file, sep = "\r\r\n")
-  writeLines(paste0("TIMEZERO AT POINT  ", " = ",
+  writeLines(paste0("TIMEZERO AT POINT  ", "= ",
                     as.character(1+round(mean(x@time0)/x@dz,2))), 
              con = hd_file, sep = "\r\r\n")
-  writeLines(paste0("TOTAL TIME WINDOW  ", " = ", 
+  writeLines(paste0("TOTAL TIME WINDOW  ", "= ", 
                     as.character(x@dz*(nrow(x@data)))), 
              con = hd_file, sep = "\r\r\n")
   startpos <- 0
   if(!is.null(x@hd$startpos)){
     startpos <- x@hd$startpos
   }
-  writeLines(paste0("STARTING POSITION  ", " = ", as.character(startpos)), 
+  writeLines(paste0("STARTING POSITION  ", "= ", as.character(startpos)), 
              con = hd_file, sep = "\r\r\n")
   
   endpos <- (ncol(x@data)-1)*x@dx
   if(!is.null(x@hd$endpos)){
     endpos <- x@hd$endpos
   }
-  writeLines(paste0("FINAL POSITION     "," = ", as.character(endpos)), 
+  writeLines(paste0("FINAL POSITION     ","= ", as.character(endpos)), 
              con = hd_file, sep = "\r\r\n")
   
-  writeLines(paste0("STEP SIZE USED     "," = ",as.character(x@dx)),
+  writeLines(paste0("STEP SIZE USED     ","= ",as.character(x@dx)),
              con = hd_file, sep = "\r\r\n")
-  writeLines(paste0("POSITION UNITS     ", " = ", "m"), 
+  writeLines(paste0("POSITION UNITS     ", "= ", "m"), 
              con = hd_file, sep = "\r\r\n")
   if(x@posunit != "m"){
     warning('Position units were defined as "metres"!\n')
   }
-  writeLines(paste0("NOMINAL FREQUENCY  "," = ", as.character(x@freq)), 
+  writeLines(paste0("NOMINAL FREQUENCY  ","= ", as.character(x@freq)), 
              con = hd_file, sep = "\r\r\n")
-  writeLines(paste0("ANTENNA SEPARATION "," = ", as.character(x@antsep)), 
+  writeLines(paste0("ANTENNA SEPARATION ","= ", as.character(x@antsep)), 
              con = hd_file, sep = "\r\r\n")
   pulservoltage <- 0
   if(!is.null(x@hd$PULSER_VOLTAGE_V)){
     pulservoltage <- x@hd$PULSER_VOLTAGE_V
   }
-  writeLines(paste0("PULSER VOLTAGE (V) ", " = ", as.character(pulservoltage)), 
+  writeLines(paste0("PULSER VOLTAGE (V) ", "= ", as.character(pulservoltage)), 
              con = hd_file, sep = "\r\r\n")
   nstacks <- 1
   if(!is.null(x@hd$NUMBER_OF_STACKS)){
     nstacks <- x@hd$NUMBER_OF_STACKS
   }
-  writeLines(paste0("NUMBER OF STACKS   ", " = ", as.character(nstacks)), 
+  writeLines(paste0("NUMBER OF STACKS   ", "= ", as.character(nstacks)), 
              con = hd_file, sep = "\r\r\n")
-  writeLines(paste0("SURVEY MODE        ", " = ", as.character(x@surveymode)), 
+  writeLines(paste0("SURVEY MODE        ", "= ", as.character(x@surveymode)), 
              con = hd_file, sep = "\r\r\n")
   
   # NIC SERIAL#        = 0044-5029-0015
@@ -260,6 +258,9 @@ writeBinary <- function(object, con, what = "numeric", size = NA_integer_,
   }else if(what == "integer"){
     storage.mode(object) <- "integer"
     writeBin(object, con, size = size, endian = endian, useBytes = useBytes)
+  }else if(what == "raw"){
+    storage.mode(object) <- "raw"
+    writeBin(object, con, size = 1, endian = endian, useBytes = useBytes)
   }
   
 }

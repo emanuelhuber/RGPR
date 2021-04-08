@@ -4,7 +4,7 @@
 \alias{posLine}
 \title{Relative position on a multiline}
 \usage{
-posLine(loc, last = FALSE)
+posLine(x, last = FALSE)
 }
 \description{
 Relative position on a multiline

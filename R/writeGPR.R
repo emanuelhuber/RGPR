@@ -55,30 +55,39 @@ setMethod("writeGPR", "GPR", function(x, fPath = NULL,
   switch(type,
          "dt1" = {.writeDT1(x, fPath)},
          "rds" = {namesSlot <- slotNames(x)
-         xList <- list()
-         # xList[["version"]] <- "0.1"
-         for(i in seq_along(namesSlot)){
-           xList[[namesSlot[i]]] <- slot(x, namesSlot[i])
-         }
-         saveRDS(xList, fPath)},
+                  xList <- list()
+                  # xList[["version"]] <- "0.1"
+                  for(i in seq_along(namesSlot)){
+                    xList[[namesSlot[i]]] <- slot(x, namesSlot[i])
+                  }
+                  saveRDS(xList, fPath)},
          # idea: add header data
          "ascii" = {write.table(as.matrix(x), file = fPath, 
                                 quote = FALSE, col.names = x@pos, 
                                 row.names = x@depth,
                                 ...)},
          "xyza" = {if(length(x@coord) == 0){
-           stop("This data has no coordinates!")
-         }
-           xyzv <- matrix(nrow=prod(dim(x)), ncol = 4)
-           colnames(xyzv) <- c("x", "y", "z", "a")
-           xyzv[, 4]  <- as.vector(as.matrix(x))
-           xyzv[,1:3] <-  kronecker(x@coord, matrix(1,nrow(x),1))
-           xyzv[,3]   <- rep(max(xyzv[,3]), ncol(x)) - 
-             rep(x@depth, times = ncol(x))
-           write.table(xyzv, file = fPath, quote = FALSE, 
-                       col.names = TRUE, row.names = FALSE, ...)}
+                     stop("This data has no coordinates!")
+                   }
+                   xyzv <- matrix(nrow=prod(dim(x)), ncol = 4)
+                   colnames(xyzv) <- c("x", "y", "z", "a")
+                   xyzv[, 4]  <- as.vector(as.matrix(x))
+                   xyzv[,1:3] <-  kronecker(x@coord, matrix(1, nrow(x) , 1))
+                   xyzv[,3]   <- rep(max(xyzv[,3]), ncol(x)) - 
+                     rep(x@depth, times = ncol(x))
+                   write.table(xyzv, file = fPath, quote = FALSE, 
+                               col.names = TRUE, row.names = FALSE, ...)},
+         "xta" = {xta <- matrix(nrow=prod(dim(x)), ncol = 3)
+                  colnames(xta) <- c("x", "t", "a")
+                  xta[,1] <-  rep(pos(x), times = nrow(x))
+                  xta[,2] <-  rep(depth(x), each = ncol(x))
+                  xta[, 3]  <- as.vector(as.matrix(x))
+                  write.table(xta, file = fPath, quote = FALSE, 
+                              col.names = TRUE, row.names = FALSE, ...)
+         
+                 }
   )
-  invisible(return(x))
+  #invisible(return(x))
 } 
 )
 

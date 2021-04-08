@@ -1035,6 +1035,13 @@ trimStr <- function (x) gsub("^\\s+|\\s+$", "", x)
 }
 
 
+#' @export
+scaleTo01 <- function(x){
+  xmat <- as.matrix(x)
+  xmat_s <- (xmat - min(xmat, na.rm = TRUE))/diff(range(xmat, na.rm = TRUE))
+  return(xmat_s)
+}
+
 
 # Compute the orientation angle of GPR profile
 # TODO: compute all the angles (maybe not a good idea...)

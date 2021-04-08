@@ -31,17 +31,15 @@
     trans_coord <- matrix(nrow = 0, ncol = 3)
   }  
   
-  if(sum(abs(c(x$dt1$GPSx, x$dt1$GPSy, x$dt1$GPSz))) > 0){
-    coord <- matrix(nrow = ntr, ncol = 3)
-    coord[, 1] <- x$dt1$GPSx
-    coord[, 2] <- x$dt1$GPSy
-    coord[, 3] <- x$dt1$GPSz
-  }else if(sum(abs(x$dt1$topo), na.rm = TRUE) > 0){
-    coord <- matrix(0, nrow = ntr, ncol = 3)
-    coord[,3] <- x$dt1$topo
-  }else{
-    coord <- matrix(nrow = 0, ncol = 3)
-  }
+  
+  # }else if(sum(abs(x$dt1$topo), na.rm = TRUE) > 0){
+  #   topo <- x$dt1$topo
+  # }else{
+  # }
+  
+  coord <- matrix(nrow = 0, ncol = 3)
+  
+  
   
   # rec_coord[, 1] <- cbind(x$dt1$recx, x$dt1$recy, x$dt1$recz)
   # trans_coord <- cbind(x$dt1$transx, x$dt1$transy, x$dt1$transz)
@@ -200,6 +198,19 @@
   }
   traceTime <- as.double(as.POSIXct(x$dt1$time, origin = as.Date(dorigin)))
   sup_hd[["clip"]] <- getClippedBits(x$data, nbits = 16)
+  
+  if(sum(abs(x$dt1$topo), na.rm = TRUE) > 0){
+    sup_hd[["topo"]] <- x$dt1$topo
+  }
+  
+  if(sum(abs(c(x$dt1$GPSx, x$dt1$GPSy, x$dt1$GPSz))) > 0){
+    GPS <- matrix(nrow = ntr, ncol = 3)
+    GPS[, 1] <- x$dt1$GPSx
+    GPS[, 2] <- x$dt1$GPSy
+    GPS[, 3] <- x$dt1$GPSz
+    sup_hd[["GPS"]] <- GPS
+  }
+  
   new("GPR",   
       version     = "0.2",
       data        = bits2volt(Vmax = Vmax)*x$data,

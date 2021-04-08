@@ -1042,16 +1042,19 @@ setMethod(
         if(length(x@coord)>0)  x@coord <- x@coord[j,,drop=FALSE]
         if(length(x@rec)>0) x@rec <- x@rec[j,,drop=FALSE]
         if(length(x@trans)>0) x@trans <- x@trans[j,,drop=FALSE]
-        if(!is.null(x@hd$startpos) && !is.null(x@hd$endpos)){
-          if( !is.na(x@hd$startpos) && !is.na(x@hd$endpos) ){
-            trpos <- seq(x@hd$startpos, x@hd$endpos,by=x@dx)
-            x@hd$endpos <- trpos[j[length(j)]]
-            x@hd$startpos <- trpos[j[1]]
-          }else{
-            x@hd$startpos <- NULL
-            x@hd$endpos <- NULL
-          }
-        }
+        # if(!is.null(x@hd$startpos) && !is.null(x@hd$endpos)){
+        #   print(j[length(j)])
+        #   print("--------")
+        #   print(x@hd$endpos)
+        #   if( !is.na(x@hd$startpos) && !is.na(x@hd$endpos) ){
+        #     trpos <- seq(x@hd$startpos, x@hd$endpos, by=x@dx)
+        #     x@hd$endpos <- trpos[j[length(j)]]
+        #     x@hd$startpos <- trpos[j[1]]
+        #   }else{
+        #     x@hd$startpos <- NULL
+        #     x@hd$endpos <- NULL
+        #   }
+        # }
         if(!is.null(x@hd[["clip"]])){
           if(!is.null(x@hd[["clip"]][["clipmin"]])){
             x@hd[["clip"]][["clipmin"]] <- x@hd[["clip"]][["clipmin"]][j]

@@ -25,7 +25,8 @@
   startpos <- .getHD(x$hd, "START POSITION", position=TRUE)
   if(!is.null(startpos)){
     pos_used[startpos[2]] <- 1L
-    sup_hd[["startpos"]] <- as.numeric(startpos[1])
+    startpos <- as.numeric(startpos[1])
+    sup_hd[["startpos"]] <- startpos
   }else{
     startpos <- 0
   }
@@ -33,7 +34,8 @@
   endpos <- .getHD(x$hd, "STOP POSITION", position=TRUE)
   if(!is.null(endpos)){
     pos_used[endpos[2]] <- 1L
-    sup_hd[["startpos"]] <- as.numeric(endpos[1])
+    endpos <- as.numeric(endpos[1])
+    sup_hd[["endpos"]]  <- endpos
   }else{
     endpos <- dx[1]*ncol(x$data)
   }

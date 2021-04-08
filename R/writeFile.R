@@ -59,7 +59,18 @@
   # traces_hd$win <- rep(x@dz * (nrow(x@data) - 1), ncol(x@data))
   traces_hd$win <- rep(x@dz * nrow(x@data) , ncol(x@data))
   # 8. # of stacks
-  traces_hd$stacks <- rep(as.integer(x@hd$NUMBER_OF_STACKS), ncol(x@data))
+  # traces_hd$stacks <- rep(as.integer(x@hd$NUMBER_OF_STACKS), ncol(x@data))
+  # DT1
+  if(length(x@hd) > 0 && !is.null(x@hd$NUMBER_OF_STACKS) 
+     && is.numeric(as.integer(x@hd$NUMBER_OF_STACKS))){
+    traces_hd$stacks <- rep(as.integer(x@hd$NUMBER_OF_STACKS), ncol(x@data))
+    # rd3 / rd7
+  }else if(length(x@hd) > 0 && !is.null(x@hd$STACKS) 
+           && is.numeric(as.integer(x@hd$STACKS))){
+    traces_hd$stacks <- rep(as.integer(x@hd$STACKS), ncol(x@data))
+  }else{
+    traces_hd$stacks <- rep(1L, ncol(x@data))
+  }
   # 9.-10. GPS X-position (double*8 number)
   # 11.-12. GPS Y-position (double*8 number)
   # 13.-14. GPS Z-position (double*8 number)
@@ -101,10 +112,14 @@
   # 23. not used
   traces_hd$NA7 <- rep.int(0L, ncol(x@data))
   # 24. Time of day data collected in seconds past midnight.
-  aa <-as.POSIXct(x@time[1], origin = "1970-01-01")
-  bb <- format(aa, format = "%Y-%m-%d")
-  myDay <- as.double(as.POSIXct(as.Date(bb), origin="1970-01-01"))
-  traces_hd$time <- x@time - myDay
+  if(length(x@time) > 0 ){
+    aa <- as.POSIXct(x@time[1], origin = "1970-01-01")
+    bb <- format(aa, format = "%Y-%m-%d")
+    myDay <- as.double(as.POSIXct(as.Date(bb), origin="1970-01-01"))
+    traces_hd$time <- x@time - myDay
+  }else{
+    traces_hd$time <- rep(0, ncol(x@data))
+  }
   # 25. Comment flag: 1 = comment attached.
   traces_hd$x8 <- rep.int(0L, ncol(x@data)) 
   traces_hd$x8[trimStr(x@fid) != ""] <- 1L

@@ -58,9 +58,7 @@
     #   x_dx <- x$dzx$unitsPerScan
     # }
     # fids/markers
-    if(all(x_fid == "") &&
-       !is.null(x$dzx$markers) && 
-       length(x$dzx$markers) == ncol(x$data)){
+    if(!is.null(x$dzx$markers) &&  length(x$dzx$markers) == ncol(x$data)){
       x_fid <- x$dzx$markers
     }
     # else if(all(x_fid == "") && !is.null(x$dzx$unitsPerMark)){
@@ -424,26 +422,25 @@ readDZX <- function(dsn){
       #--- select the sibling tags "scan" and "mark"
       # here I assume that all tags "distance" have a sibling tag "mark" and "scan"
       if(length(dst) > 0){
-        f <- function(x){
-          papa <- XML::xmlParent(x)
-          i1 <- as.numeric(XML::xmlValue(XML::xmlElementsByTagName(papa, "scan")))
-          i2 <- XML::xmlValue(XML::xmlElementsByTagName(papa, "mark"))
-          if(length(i2) == 0) i2 <- ""
-          i3 <- as.numeric(XML::xmlValue(x))  # distance
-          return(unname(c(i1, i2, i3)))
-        }
-        uu <- sapply(dst, f, USE.NAMES = FALSE)
+        uu <- sapply(dst, getXMLSibling, what = "scan", USE.NAMES = FALSE)
         if(inherits(uu, "matrix")){
-          id <- as.integer(uu[1, ]) + 1L
-          pos <- as.numeric(uu[3,])
-          lst$dx <- mean(diff(pos)/ (diff(id) - 1))
-          lst$pos <- approx(id, pos, seq_len(nscans))$y
-          lst$markers <- character(length = nscans)
-          lst$markers[id] <- uu[2,]
+          scan_nb <- as.integer(uu[2, ]) + 1L
+          pos <- as.numeric(uu[1,])
+          lst$dx <- mean(diff(pos)/ (diff(scan_nb) - 1))
+          lst$pos <- approx(scan_nb, pos, seq_len(nscans))$y
+          # lst$markers[id] <- uu[2,]
         }else{
           message("I was unable to read the markers in the file *.dzx")
         }
         
+      }
+      mrk <- XML::xmlElementsByTagName(fl, "mark", recursive = TRUE)
+      if(length(mrk) > 0 ){
+        uu <- sapply(mrk, getXMLSibling, what = "scan", USE.NAMES = FALSE)
+        if(inherits(uu, "matrix")){
+          lst$markers <- character(length = nscans)
+          lst$markers[as.integer(uu[2, ])] <- uu[1, ]
+        }
       }
     }
     .closeFileIfNot(dsn)
@@ -536,9 +533,19 @@ readDZX <- function(dsn){
 #   }
 # }
 
-.xmlValueSibling <- function(x, after = FALSE){
-  XML::xmlValue(XML::getSibling(x, after = after))
+# NOT ENOUGH FLEXIBLE -> you don't know if the sibling is after or not...
+# .xmlValueSibling <- function(x, after = FALSE){
+#   XML::xmlValue(XML::getSibling(x, after = after))
+# }
+
+
+getXMLSibling <- function(x, what){
+  i0 <- (XML::xmlValue(x))  # distance
+  papa <- XML::xmlParent(x)
+  i1 <- (XML::xmlValue(XML::xmlElementsByTagName(papa, what)))
+  return(unname(c(i0, i1)))
 }
+
 
 .readRFDate <- function(con, where = 31){
   seek(con, where = where, origin = "start")

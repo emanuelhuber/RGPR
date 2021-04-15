@@ -262,6 +262,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
     }    
   #----------------------------------- IDS -----------------------------------#
   #-------------------------- DT  (+ GEC) -------------------------------#
+  # IDS -------
   }else if( "DT" %in% toupper(ext)  ){
     if(length(dsn) == 1){
       dsn <- list(DT  = dsn[["DT"]], 
@@ -294,6 +295,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
     }
   #----------------------- TRANSIENT TECHNOLOGIES -----------------------------#
   #---------------------------------- SGPR ------------------------------------#
+  # TRANSIENT TECHNOLOGIES ----
   }else if( "SGPR" %in% toupper(ext)  ){
     y <- verboseF( readSGPR(dsn[["SGPR"]]), verbose = verbose)
     x <- verboseF( .gprSGPR(y, 
@@ -301,6 +303,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
                            desc = desc, Vmax = Vmax), verbose = verbose)
   #---------------------------SEG-Y +  EASY RADAR -----------------------------#
   #------------------------------- SEG/SEG-Y ----------------------------------#
+  # SEGY ----
   }else if(any(c("SGY", "SEGY") %in% toupper(ext))){
     i <- which(grepl("SGY|SEGY", toupper(ext)))[1]
     if( !inherits(dsn[[i]], "connection") ){
@@ -379,6 +382,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
     # }
   #---------------------------- IMPULSE RADAR ---------------------------------#
   #---------------------- IPRB + IPRH (+ COR + TIME + MRK) --------------------#
+  # IPRB -----
   }else if("IPRB" %in% toupper(ext)){
     
     # fName <- getFName(dsn, ext = c(".iprh", ".iprb"))
@@ -443,6 +447,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
     }
   #--------------------------------- GSSI -------------------------------------#
   #------------------------------ DZT (+ DZX, DZG) ----------------------------#
+  # DZT -----
   }else if("DZT" %in% toupper(ext)){
     if(length(dsn) == 1){
       dsn <- list(DZT = dsn[["DZT"]], 

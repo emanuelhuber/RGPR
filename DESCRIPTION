@@ -110,6 +110,7 @@ Collate:
   'GroupSummary_GPRslice.R'
   'GroupSummary_GPRcube.R'
   'GPRsim.R'
+  'exportPNG.R'
 Imports:
     methods,
     graphics,
@@ -137,7 +138,8 @@ Imports:
     checkmate,
     RConics,
     robfilter,
-    plotly
+    plotly,
+    png
 RoxygenNote: 7.1.1
 Suggests: 
     testthat

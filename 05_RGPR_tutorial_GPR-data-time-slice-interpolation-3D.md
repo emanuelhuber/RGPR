@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Time/depth slice interpolation
-date: 2021-03-11
+date: 2021-04-16
 ---
 
 ------------------------------------------------------------------------
@@ -24,6 +24,10 @@ Table of Contents
 -   [Add coordinates](#add-coordinates)
     -   [Reverse GPR line direction (if necessary)](#reverse-gpr-line-direction-if-necessary)
     -   [Set grid coordinaes](#set-grid-coordinaes)
+        -   [Specifications](#specifications)
+        -   [Example 1](#example-1)
+        -   [Example 2](#example-2)
+        -   [Case study](#case-study)
 -   [Basic processing](#basic-processing)
 -   [Time/depth slice interpolation](#timedepth-slice-interpolation)
 -   [Export slices as raster](#export-slices-as-raster)
@@ -61,8 +65,8 @@ Set the working directory
 The working directory must be correctly set to use relative filepaths. The working directory can be set either in your R-software or in R directly with (of course you need to adapt the filepath shown below to your system):
 
 ``` r
-myDir <- file.path("your_dir_path/GPRdata-master/exampleDataCube")
-setwd(myDir)    # set the working directory
+DIR <- file.path("your_dir_path/GPRdata-master/exampleDataCube")
+setwd(DIR)    # set the working directory
 getwd()         # Return the current working directory (just to check)
 ```
 
@@ -163,7 +167,7 @@ Here, we assume that the data were collected on a grid: all the GPR data are par
 Reverse GPR line direction (if necessary)
 -----------------------------------------
 
-For this approach, all the data must be oriented in the same direction (the x-lines must have the same direction, the y-lines must have the same direction). If this is not the case for your data, you can use the function `reverse()` to reverse the GPR line. You can specifiy which lines must be reversed:
+For this approach, all the data must be oriented in the same direction (the x-lines must have the same direction, the y-lines must have the same direction). If this is not the case for your data, you can use the function `reverse()` to reverse the GPR line. You can specify which lines must be reversed:
 
 ``` r
 SU <- reverse(SU, id = seq(from = 2, to = 11, by = 2))
@@ -179,28 +183,67 @@ SU <- reverse(SU, id = "zigzag")
 Set grid coordinaes
 -------------------
 
-To set the grid coordinates, use the function `setGridCoord()` and assign the grid specifications in the form of a list. This list takes for arguments:
+### Specifications
+
+To set the grid coordinates, use the function `setGridCoord()` and assign the grid specifications in the form of a list. This list takes for arguments (see also:
 
 -   `xlines`: integer values corresponding to the x-lines in the `GPRsurvey` object (if there are no x-lines, no need to specify `xlines`).
 -   `xpos`: the position of the x-lines along the x-axis, same length as `xlines` (if there are no x-lines, no need to specify `xpos`).
--   `xstart`: shift to apply along the y-position, useful if the lines do not start at the same position; same length as `xlines`
+-\[optional\] `xstart`: shift to apply along the y-position, useful if the lines do not start at the same position; same length as `xlines` (if there are no x-lines, no need to specify `xstart`).
+-\[optional\] `xlength`: the length of the lines. Note that normally RGPR reads the line length from the data (if there are no x-lines, no need to specify `xlength`).
 -   `ylines`: integer values corresponding to the x-lines in the `GPRsurvey` object (if there are no y-lines, no need to specify `ylines`).
--   `ypos`: the position of the x-lines along the x-axis, same length as `ylines` (if there are no &lt;-lines, no need to specify `ypos`).
--   `ystart`: shift to apply along the x-position, useful if the lines do not start at the same position; same length as `ylines`
+-   `ypos`: the position of the x-lines along the x-axis, same length as `ylines` (if there are no y-lines, no need to specify `ypos`).
+-\[optional\] `ystart`: shift to apply along the x-position, useful if the lines do not start at the same position; same length as `ylines` (if there are no y-lines, no need to specify `ystart`).
+-\[optional\] `ylength`: the length of the lines. Note that normally RGPR reads the line length from the data (if there are no y-lines, no need to specify `ylength`).
 
-For example, if your data were collected as follows:
+Note that:
 
--   10 x-lines with line spacing = 2 m; the 3rd and 5th lines start 1 m after the other lines.
--   5 ylines at positions 0 m, 1 m, 2 m, 4 m, and 6 m; the 1st line start 2 m before the other lines.
+-   the length of `xlines`, `xpos`, `xstart` and `xlength` must be equal (except if you omit `xstart` and/or `xlength`)
+-   -   the length of `ylines`, `ypos`, `ystart` and `ylength` must be equal (except if you omit `ystart` and/or `ylength`)
+
+![Visualisation of the grid specification arguments](img/setGridCoord.png)
+
+### Example 1
+
+Imagine your data were collected as follows:
+
+-   40 x-lines with line spacing = 2 m; the 3rd and 5th lines start 1 m after the other lines.
+-   6 y-lines at positions 0 m, 1 m, 2 m, 4 m, 6 m, and 7.6 m; the 1st line start 2 m before the other lines.
 
 ``` r
-setGridCoord(SU) <- list(xlines = 1:10,
-                         xpos   = seq(0, by = 2, length.out = 10),
-                         xstart = c(0, 0, 1, 0, 1, 0, 0, 0, 0, 0)
-                         ylines = 15 + (1:10),
-                         ypos   = c(0, 1, 2, 4, 6),
-                         ystart = c(-2, 0, 0, 0, 0))
+xstart <- rep(0, 40)
+xstart[c(3, 5)] <- 1
+setGridCoord(SU) <- list(xlines = 1:40,
+                         xpos   = seq(0, by = 2, length.out = 40),
+                         xstart = xstart,
+                         ylines = 40 + (1:6),
+                         ypos   = c(0, 1, 2, 4, 6, 7.6),
+                         ystart = c(-2, 0, 0, 0, 0, 0))
+plot(SU, asp = TRUE, parFid = NULL)
 ```
+
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-9-1.png)
+
+### Example 2
+
+Imagine your data were collected on a 19 m x 25m grid: - 20 x-lines and 26 y-lines - 1 m line spacing (in both x- and y-directions) - x-length is 25 m and y-length is 19 m (assuming that RGPR did not read the correct GPR line length) - all the lines start either at x = 0 m or at y = 0 m
+
+``` r
+setGridCoord(SU) <- list(xlines = 1:20,
+                         xpos = seq(0, by = 1, length.out = 20),
+                         xstart = rep(0, 20),  # could be omitted
+                         xlength = rep(15, 20),
+                         ylines =  21:46,
+                         ypos = seq(0, by = 1, length.out = 26),
+                         ystart = rep(0, 26),  # could be omitted
+                         ylength = rep(19, 26))
+
+plot(SU, asp = TRUE, parFid = NULL)
+```
+
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-10-1.png)
+
+### Case study
 
 In our case we have only x-lines, so we don't specify `ylines`, `ypos`, and `ystart`. The 5th, 8th, 22th lines starts 1 m after the others; the 1st, 28th, 33rd, 38th, and 44th lines start 0.4 m after the others:
 
@@ -220,9 +263,7 @@ Now you can plot your survey data (because you have coordinates)
 plot(SU, asp = TRUE, parFid = NULL)
 ```
 
-![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-11-1.png)
-
-    ## [1] "ASP TRUE"
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-12-1.png)
 
 We set `parFid = NULL` because we do not want to plot all the fiducial markers
 
@@ -243,7 +284,7 @@ plot(SU[[1]])
 
     ## Antenna separation set to 0 m. Set it with 'antsep(x) <-... '
 
-![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-12-1.png)
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-13-1.png)
 
 You see that some processing is needed.
 
@@ -267,7 +308,7 @@ Does it look better now?
 plot(SU[[1]])
 ```
 
-![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-14-1.png)
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-15-1.png)
 
 Time/depth slice interpolation
 ==============================
@@ -280,9 +321,9 @@ SXY
 ```
 
     ## *** Class GPRcube ***
-    ## dim:    180 x 200 x 901
-    ## res:    0.0502793296089385 m x 0.050251256281407 m x 0.05 ns
-    ## extent: 9 m x 10 m x 45 ns
+    ## dim:    180 x 400 x 901
+    ## res:    0.0502793296089385 m x 0.050125313283208 m x 0.05 ns
+    ## extent: 9 m x 20 m x 45 ns
     ## crs:
     ## *********************
 
@@ -294,7 +335,7 @@ Plot an horizontal slice of the data cube:
 plot(SXY[,,10])
 ```
 
-![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-16-1.png)
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-17-1.png)
 
 Plot a vertical slice along x-direction
 
@@ -302,7 +343,7 @@ Plot a vertical slice along x-direction
 plot(SXY[,10,])
 ```
 
-![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-17-1.png)
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-18-1.png)
 
 Plot a vertical slice along y-direction
 
@@ -310,7 +351,7 @@ Plot a vertical slice along y-direction
 plot(SXY[10,,])
 ```
 
-![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-18-1.png)
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-19-1.png)
 
 You can define the same color range for each plot:
 
@@ -320,7 +361,7 @@ clim <- range(SXY)
 plot(SXY[,,50], clim = clim)
 ```
 
-![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-19-1.png)
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-20-1.png)
 
 You can change the color palette? `displayPalGPR()` shows all the palette available in RGPR
 
@@ -328,7 +369,7 @@ You can change the color palette? `displayPalGPR()` shows all the palette availa
 displayPalGPR()
 ```
 
-![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-20-1.png)
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-21-1.png)
 
 Try these two palettes: `"sunny"` and `"slice"`:
 
@@ -336,13 +377,13 @@ Try these two palettes: `"sunny"` and `"slice"`:
 plot(SXY[,,50], clim = clim, col = palGPR("sunny"), asp = 1)
 ```
 
-![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-21-1.png)
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-22-1.png)
 
 ``` r
 plot(SXY[,,50], clim = clim, col = palGPR("slice"), asp = 1)
 ```
 
-![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-21-2.png)
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-22-2.png)
 
 Export slices as raster
 =======================

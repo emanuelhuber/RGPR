@@ -10,7 +10,7 @@
 \item{x}{[\code{GPR}]}
 
 \item{target}{Either name of the file to write, a binary connection or a 
-raw vector (see \link{\code{[png]{writePNG}}})}
+raw vector (see \code{\link[png]{writePNG}})}
 
 \item{markers}{[\code{integer(n)}] Pixel index set to white at marker
 position (e.g., \code{markers = 1:5} to
@@ -18,7 +18,7 @@ set the first 5 pixels white at marker
 position).}
 
 \item{...}{See additional arguments to be passed to
-\link{\code{[png]{writePNG}}})}
+\code{\link[png]{writePNG}})}
 }
 \description{
 Export GPR data as black-and-white PNG file with pixel dimension equal to 

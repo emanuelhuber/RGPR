@@ -13,13 +13,13 @@ setGeneric("exportPNG", function(x, target = raw(), markers = NULL, ...)
 #' 
 #' @param x [\code{GPR}]
 #' @param target Either name of the file to write, a binary connection or a 
-#'               raw vector (see \link{\code{[png]{writePNG}}})
+#'               raw vector (see \code{\link[png]{writePNG}})
 #' @param markers [\code{integer(n)}] Pixel index set to white at marker
 #'                                    position (e.g., \code{markers = 1:5} to
 #'                                    set the first 5 pixels white at marker
 #'                                    position).
 #' @param ... See additional arguments to be passed to
-#'             \link{\code{[png]{writePNG}}})
+#'             \code{\link[png]{writePNG}})
 #' @export
 setMethod("exportPNG", "GPR", function(x, target = raw(), markers = NULL, ...){
   # scale data to [0, 1]

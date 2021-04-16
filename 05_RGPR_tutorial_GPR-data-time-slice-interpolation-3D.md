@@ -211,15 +211,16 @@ Imagine your data were collected as follows:
 -   6 y-lines at positions 0 m, 1 m, 2 m, 4 m, 6 m, and 7.6 m; the 1st line start 2 m before the other lines.
 
 ``` r
+SU_img <- SU
 xstart <- rep(0, 40)
 xstart[c(3, 5)] <- 1
-setGridCoord(SU) <- list(xlines = 1:40,
+setGridCoord(SU_img) <- list(xlines = 1:40,
                          xpos   = seq(0, by = 2, length.out = 40),
                          xstart = xstart,
                          ylines = 40 + (1:6),
                          ypos   = c(0, 1, 2, 4, 6, 7.6),
                          ystart = c(-2, 0, 0, 0, 0, 0))
-plot(SU, asp = TRUE, parFid = NULL)
+plot(SU_img, asp = TRUE, parFid = NULL)
 ```
 
 ![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-9-1.png)
@@ -234,7 +235,8 @@ Imagine your data were collected on a 19 m x 25m grid:
 -   all the lines start either at x = 0 m or at y = 0 m
 
 ``` r
-setGridCoord(SU) <- list(xlines = 1:20,
+SU_img <- SU
+setGridCoord(SU_img) <- list(xlines = 1:20,
                          xpos = seq(0, by = 1, length.out = 20),
                          xstart = rep(0, 20),  # could be omitted
                          xlength = rep(25, 20),
@@ -243,7 +245,7 @@ setGridCoord(SU) <- list(xlines = 1:20,
                          ystart = rep(0, 26),  # could be omitted
                          ylength = rep(19, 26))
 
-plot(SU, asp = TRUE, parFid = NULL)
+plot(SU_img, asp = TRUE, parFid = NULL)
 ```
 
 ![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-10-1.png)
@@ -258,7 +260,8 @@ xstart <- rep(0, length(SU))
 xstart[c(5, 8, 22)] <- 1
 xstart[c(1, 28, 33, 38, 44)] <- 0.4
 setGridCoord(SU) <- list(xlines = seq_along(SU),
-                         xpos   = seq(0, by = 0.2, length.out = length(SU)),
+                         xpos   = seq(0, by = 0.2,
+                                      length.out = length(SU)),
                          xstart = xstart)
 ```
 
@@ -326,9 +329,9 @@ SXY
 ```
 
     ## *** Class GPRcube ***
-    ## dim:    180 x 520 x 901
-    ## res:    0.0502793296089385 m x 0.0500963391136802 m x 0.05 ns
-    ## extent: 9 m x 26 m x 45 ns
+    ## dim:    180 x 200 x 901
+    ## res:    0.0502793296089385 m x 0.050251256281407 m x 0.05 ns
+    ## extent: 9 m x 10 m x 45 ns
     ## crs:
     ## *********************
 

@@ -189,17 +189,17 @@ To set the grid coordinates, use the function `setGridCoord()` and assign the gr
 
 -   `xlines`: integer values corresponding to the x-lines in the `GPRsurvey` object (if there are no x-lines, no need to specify `xlines`).
 -   `xpos`: the position of the x-lines along the x-axis, same length as `xlines` (if there are no x-lines, no need to specify `xpos`).
--\[optional\] `xstart`: shift to apply along the y-position, useful if the lines do not start at the same position; same length as `xlines` (if there are no x-lines, no need to specify `xstart`).
--\[optional\] `xlength`: the length of the lines. Note that normally RGPR reads the line length from the data (if there are no x-lines, no need to specify `xlength`).
+-   `xstart`\[optional\]: shift to apply along the y-position, useful if the lines do not start at the same position; same length as `xlines` (if there are no x-lines, no need to specify `xstart`).
+-   `xlength`\[optional\]: the length of the lines. Note that normally RGPR reads the line length from the data (if there are no x-lines, no need to specify `xlength`).
 -   `ylines`: integer values corresponding to the x-lines in the `GPRsurvey` object (if there are no y-lines, no need to specify `ylines`).
 -   `ypos`: the position of the x-lines along the x-axis, same length as `ylines` (if there are no y-lines, no need to specify `ypos`).
--\[optional\] `ystart`: shift to apply along the x-position, useful if the lines do not start at the same position; same length as `ylines` (if there are no y-lines, no need to specify `ystart`).
--\[optional\] `ylength`: the length of the lines. Note that normally RGPR reads the line length from the data (if there are no y-lines, no need to specify `ylength`).
+-   `ystart`\[optional\]: shift to apply along the x-position, useful if the lines do not start at the same position; same length as `ylines` (if there are no y-lines, no need to specify `ystart`).
+-   `ylength`\[optional\]: the length of the lines. Note that normally RGPR reads the line length from the data (if there are no y-lines, no need to specify `ylength`).
 
 Note that:
 
 -   the length of `xlines`, `xpos`, `xstart` and `xlength` must be equal (except if you omit `xstart` and/or `xlength`)
--   -   the length of `ylines`, `ypos`, `ystart` and `ylength` must be equal (except if you omit `ystart` and/or `ylength`)
+-   the length of `ylines`, `ypos`, `ystart` and `ylength` must be equal (except if you omit `ystart` and/or `ylength`)
 
 ![Visualisation of the grid specification arguments](img/setGridCoord.png)
 
@@ -226,13 +226,18 @@ plot(SU, asp = TRUE, parFid = NULL)
 
 ### Example 2
 
-Imagine your data were collected on a 19 m x 25m grid: - 20 x-lines and 26 y-lines - 1 m line spacing (in both x- and y-directions) - x-length is 25 m and y-length is 19 m (assuming that RGPR did not read the correct GPR line length) - all the lines start either at x = 0 m or at y = 0 m
+Imagine your data were collected on a 19 m x 25m grid:
+
+-   20 x-lines and 26 y-lines
+-   1 m line spacing (in both x- and y-directions)
+-   x-length is 25 m and y-length is 19 m (assuming that RGPR did not read the correct GPR line length)
+-   all the lines start either at x = 0 m or at y = 0 m
 
 ``` r
 setGridCoord(SU) <- list(xlines = 1:20,
                          xpos = seq(0, by = 1, length.out = 20),
                          xstart = rep(0, 20),  # could be omitted
-                         xlength = rep(15, 20),
+                         xlength = rep(25, 20),
                          ylines =  21:46,
                          ypos = seq(0, by = 1, length.out = 26),
                          ystart = rep(0, 26),  # could be omitted
@@ -321,9 +326,9 @@ SXY
 ```
 
     ## *** Class GPRcube ***
-    ## dim:    180 x 400 x 901
-    ## res:    0.0502793296089385 m x 0.050125313283208 m x 0.05 ns
-    ## extent: 9 m x 20 m x 45 ns
+    ## dim:    180 x 520 x 901
+    ## res:    0.0502793296089385 m x 0.0500963391136802 m x 0.05 ns
+    ## extent: 9 m x 26 m x 45 ns
     ## crs:
     ## *********************
 

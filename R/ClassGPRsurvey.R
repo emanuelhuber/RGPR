@@ -850,7 +850,7 @@ setReplaceMethod(
       }else if(length(value$xlines) != length(value$xreverse)){
         stop("length(xlines) must be equal to length(xreverse)")
       }
-      xNames <- .getSurveyXYNames(value$xlines, x)
+      xNames <- .getSurveyXYNames(value$xlines, x, "xlines")
       if(!is.null(value$xlength)){
         if(length(value$xlines) != length(value$xlength)){
           stop("length(xlines) must be equal to length(xlength)")
@@ -897,7 +897,7 @@ setReplaceMethod(
       }else if(length(value$ylines) != length(value$yreverse)){
         stop("length(ylines) must be equal to length(xreverse)")
       }
-      yNames <- .getSurveyXYNames(value$ylines, x)
+      yNames <- .getSurveyXYNames(value$ylines, x, "ylines")
       if(!is.null(value$ylength)){
         if(length(value$ylines) != length(value$ylength)){
           stop("length(ylines) must be equal to length(ylength)")
@@ -934,11 +934,11 @@ setReplaceMethod(
   }
 )
 
-.getSurveyXYNames <- function(xylines, x){
+.getSurveyXYNames <- function(xylines, x, tag){
   if(is.numeric(xylines)){
     if(max(xylines) > length(x) || 
        min(xylines) < 1){
-      stop("Length of 'xlines' must be between 1 and ", length(x))
+      stop("Length of '", tag, "' must be between 1 and ", length(x))
     }
     xNames <- x@names[xylines]
   }else if(is.character(xylines)){

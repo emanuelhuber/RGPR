@@ -231,6 +231,9 @@ setReplaceMethod(
   }
 )
 
+
+
+
 #------------------------------------------------------------------------------#
 
 #' Survey date
@@ -679,3 +682,18 @@ setReplaceMethod(
     return(x)
   }
 )
+
+
+
+
+
+#------------------------------------------------------------------------------#
+#' Number of traces
+#' 
+#' Return the number of traces per data
+#' @name ntraces
+#' @rdname ntraces
+#' @export
+setMethod("ntraces", "GPRsurvey", function(x){
+  return(x@ntraces)
+})

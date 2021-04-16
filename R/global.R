@@ -93,6 +93,11 @@ setGenericVerif("coord", function(x, i, ...) standardGeneric("coord"))
 setGenericVerif("coord<-",function(x,value){standardGeneric("coord<-")})
 
 
+#' @name ntraces
+#' @rdname ntraces
+#' @export
+setGeneric("ntraces", function(x, i, ...) standardGeneric("ntraces"))
+
 #' @name svDate
 #' @rdname svDate
 #' @export

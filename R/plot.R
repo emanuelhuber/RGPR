@@ -759,8 +759,45 @@ plot.GPRsurvey <- function(x, y, ...){
         dots$y <- xyz[,2]
         do.call(graphics::lines, dots)
         if(!is.null(parArrows)){
-          do.call(arrows, c(xyz[nrow(xyz)-1,1], xyz[nrow(xyz)-1,2], 
-                            x1 = xyz[nrow(xyz),1],   y1 = xyz[nrow(xyz),2], 
+          # https://www.javaer101.com/en/article/24422200.html
+          # Warning messages:
+          # 1: In (function (x0, y0, x1 = x0, y1 = y0, length = 0.25, angle = 30,  :
+          #                    zero-length arrow is of indeterminate angle and so skipped
+          # get each arrow's length by converting x and y coords to inches
+          units <- par(c('usr', 'pin'))
+          x_to_inches <- with(units, pin[1L]/diff(usr[1:2]))
+          y_to_inches <- with(units, pin[2L]/diff(usr[3:4]))
+          
+          it <- 1
+          x0 = xyz[nrow(xyz)-it,1]
+          y0 = xyz[nrow(xyz)-it,2] 
+          x1 = xyz[nrow(xyz),1]
+          y1 = xyz[nrow(xyz),2]
+          dists <- sqrt((x_to_inches * (x0 - x1))**2 + 
+                          (y_to_inches * (y0 - y1))**2)
+          distsmax <- sqrt((x_to_inches * diff(range(xyz[,1])))^2 + 
+                             (y_to_inches *  diff(range(xyz[,2])))^2)
+          while(dists < 0.001 && distsmax > 0.001){
+            it <- it + 1
+            x0 = xyz[nrow(xyz)-it,1]
+            y0 = xyz[nrow(xyz)-it,2] 
+            x1 = xyz[nrow(xyz),1]
+            y1 = xyz[nrow(xyz),2]
+            
+            dists <- sqrt((x_to_inches * (x0 - x1))^2 + 
+                            (y_to_inches * (y0 - y1))^2)
+            
+          }
+          
+          # do.call(arrows, c(x0 = xyz[nrow(xyz)-1,1], 
+          #                   y0 = xyz[nrow(xyz)-1,2], 
+          #                   x1 = xyz[nrow(xyz),1],
+          #                   y1 = xyz[nrow(xyz),2], 
+          #                   parArrows))
+          do.call(arrows, c(x0 = x0, 
+                            y0 = y0, 
+                            x1 = x1,
+                            y1 = y1, 
                             parArrows))
         }
         if(!is.null(parFid) && length(x@fids) > 0){

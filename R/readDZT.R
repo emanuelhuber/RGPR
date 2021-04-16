@@ -28,7 +28,11 @@
   x_depthunit <- "ns"
   x_pos       <- x$pos[1:ncol(x$data)]
   x_depth     <- x$depth[1:nrow(x$data)]
-  x_dx        <- 1 / x$hd$SPM
+  if(x$hd$SPM > 0){
+    x_dx        <- 1 / x$hd$SPM
+  }else{
+    x_dx <- mean(diff(x_pos))
+  }
   
   # Fiducial markers > each class has a different name (letter)
   x_fid       <- rep("", ncol(x$data))

@@ -1894,12 +1894,15 @@ rmsScaling <- function(...){
       if(L %% 2 == 0){
         L <- L + 1  
       }
-    }else if(length(f)==1){
+    }else if(length(f) == 1){
       fc <- f[1]
     }
     h <- winSincKernel(L, fc/Fs, type)
   }else if(grepl("bandpass", type)){
     if(length(f)==2 ) {
+      if(L %% 2 == 0){
+        L <- L + 1
+      }
       h1 <- winSincKernel(L, f[1]/Fs, "low")
       h2 <- winSincKernel(L, f[2]/Fs, "high")
     }else if(length(f) == 4 ){
@@ -1918,12 +1921,16 @@ rmsScaling <- function(...){
       }
       h2 <- winSincKernel(L, fc/Fs, "high")
     }
-    L = max(length(h1),length(h2))
+    L = max(length(h1), length(h2))
     if(length(h2) < L ){
-      h2 = c(rep(0,(L-length(h2))/2),h2,rep(0,(L-length(h2))/2))
+      h2 = c(rep(0, (L-length(h2))/2), 
+             h2, 
+             rep(0, (L-length(h2))/2))
     }
     if(length(h1) < L ){
-      h1 = c(rep(0,(L-length(h1))/2),h1,rep(0,(L-length(h1))/2))
+      h1 = c(rep(0, (L-length(h1))/2),
+             h1,
+             rep(0,(L-length(h1))/2))
     }
     if(type == "bandpass"){
     # change the band-reject filter kernel into a band-pass 
@@ -1988,11 +1995,11 @@ rmsScaling <- function(...){
 }
 
 winSincKernel <- function(L, f, type = c("low", "high")){
-  type = match.arg(type)  
+  type <- match.arg(type)  
   # if L is even (because L - filter length - must be odd)
   x = (-(L-1)/2):((L-1)/2)
   # low-pass
-  h = hammingWindow(L) * sincMod(x,2*pi*f)  # h is our filter
+  h = hammingWindow(L) * sincMod(x, 2 * pi * f)  # h is our filter
   h = h/sum(h)
   # high-pass
   if(type == "high"){
@@ -2002,11 +2009,11 @@ winSincKernel <- function(L, f, type = c("low", "high")){
   return(h)
 }
 
-sincMod <- function(x,ff){
+sincMod <- function(x, ff){
   r = length(x)
   n0 = which(x == 0)
   v = rep(0,r)
-  ww <- c(1:(n0-1),(n0+1):r)
+  ww <- c(1:(n0 - 1), (n0 + 1):r)
   #x = x[c(1:(n0-1),(n0+1):r)]
   v[ww] = sin(ff*x[ww])/(x[ww])
   v[n0] = ff

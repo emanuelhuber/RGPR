@@ -7,7 +7,7 @@
 \S4method{fFilter}{GPR}(
   x,
   f = 100,
-  type = c("low", "high", "bandpass"),
+  type = c("low", "high", "bandpass", "bandpass-reject"),
   L = 257,
   plotSpec = FALSE,
   track = TRUE
@@ -34,6 +34,7 @@ The frequency filter alters the signal amplitude with respect to frequency.
   \item{Low-pass filter}{low frequencies are passed, high frequencies are attenuated.}
   \item{High-pass filter}{high frequencies are passed, low frequencies are attenuated.}
   \item{Band-pass filter}{only frequencies in a frequency band are passed.}
+  \item{Band-pass-reject filter}{a normally narrow band of frequencies is attenuated.}
 }
 }
 \details{
@@ -45,7 +46,8 @@ the value of \code{L} will be ignored.
 Example for low-pass filter: \code{f = c(150, 200)}.
 Example for high-pass filter: \code{f = c(10, 20)}
 
-For the band-pass filter, only two cut-off frequency can be defined
+For the band-pass filter and the band-pass-reject filter, 
+only two cut-off frequency can be defined
 while the argument \code{L} will define the filter length of the Hamming
 window (necessary to reduce ringing artifacts from the Gibbs phenomenon). 
 If four values (the two first corner frequencies followed by the two last
@@ -53,6 +55,6 @@ corner frequencies ) are passed to the cut-off frequency argument \code{f},
 the value of \code{L} will be ignored. 
 Example: \code{f = c(10, 20, 150, 200)}
 
-See this free book: The Scientist and Engineer's Guide to Digital Signal 
+Check this free book: The Scientist and Engineer's Guide to Digital Signal 
 Processing By Steven W. Smith, Ph.D.
 }

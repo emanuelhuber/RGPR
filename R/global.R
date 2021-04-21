@@ -468,7 +468,7 @@ setGenericVerif("traceScaling",
 
 
 setGenericVerif("fFilter", function(x, f = 100, 
-                                    type = c('low', 'high', 'bandpass'),
+                                    type = c('low', 'high', 'bandpass', 'bandpass-reject'),
                                     L = 257, plotSpec = FALSE, track = TRUE) 
   standardGeneric("fFilter"))
 
@@ -1870,7 +1870,8 @@ rmsScaling <- function(...){
 # @return power spectrum (frequency, power, phase)
 # -------------------------------------------
 
-.fFilter1D <- function(A, f = c(100), type = c('low', 'high', 'bandpass'), 
+.fFilter1D <- function(A, f = c(100), type = c('low', 'high', 'bandpass',
+                                               'bandpass-reject'), 
                        L = 257, dT = 0.8, plotSpec = FALSE, fac = 1000000){
   type <- match.arg(type)
   # A <- as.matrix(A)
@@ -1897,7 +1898,7 @@ rmsScaling <- function(...){
       fc <- f[1]
     }
     h <- winSincKernel(L, fc/Fs, type)
-  }else if(type == "bandpass"){
+  }else if(grepl("bandpass", type)){
     if(length(f)==2 ) {
       h1 <- winSincKernel(L, f[1]/Fs, "low")
       h2 <- winSincKernel(L, f[2]/Fs, "high")
@@ -1924,8 +1925,12 @@ rmsScaling <- function(...){
     if(length(h1) < L ){
       h1 = c(rep(0,(L-length(h1))/2),h1,rep(0,(L-length(h1))/2))
     }
+    if(type == "bandpass"){
     # change the band-reject filter kernel into a band-pass 
-    h = -h1 - h2
+      h = -h1 - h2
+    }else{
+      h = h1 + h2
+    }
     h[(L+1)/2] = h[(L+1)/2] + 1
   }
   

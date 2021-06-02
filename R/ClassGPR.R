@@ -1006,82 +1006,58 @@ setMethod(
       return(as.vector(x@data))
     }
     if(missing(i) || length(i) == 0) i <- seq_len(nrow(rval))
+    #--- case 2D data
     if(length(dim(rval)) == 2) {
       # drop. <- ifelse(length(i) == 1, FALSE, drop)
       drop <- FALSE
       if(missing(j)){
-        # rval <- rval[i, , drop = drop.]
         rval <- rval[i, , drop = drop]
         x@depth <- x@depth[i]
         if(!is.null(x@hd[["clip"]])){
           test <- .clipMat(x@hd[["clip"]], n = nrow(x))
-          x@hd[["clip"]][["clipmin"]] <- apply(test[i, ], 2, function(x) which(x == -1))
-          x@hd[["clip"]][["clipmax"]] <- apply(test[i, ], 2, function(x) which(x == 1))
-          # if(!is.null(x@hd[["clip"]][["clipmin"]])){
-          #   x@hd[["clip"]][["clipmin"]] <- lapply(x@hd[["clip"]][["clipmin"]], function(x, i){
-          #     x[which(x %in% i)]
-          #   }, i)
-          # }
-          # if(!is.null(x@hd[["clip"]][["clipmax"]])){
-          #   x@hd[["clip"]][["clipmax"]] <- lapply(x@hd[["clip"]][["clipmax"]], function(x, i){
-          #     x[which(x %in% i)]
-          #   }, i)
-          # }
+          if(length(dim(test)) == 0){  # if not a matrix, there are no clipped values
+            x@hd[["clip"]] <- NULL
+          }else{
+            x@hd[["clip"]][["clipmin"]] <- apply(test[i, , drop = FALSE], 2, function(x) which(x == -1))
+            x@hd[["clip"]][["clipmax"]] <- apply(test[i, , drop = FALSE], 2, function(x) which(x == 1))
+          }
         }
       }else { 
         if(length(j) == 0) j <- seq_len(ncol(rval))
-        # rval <- rval[i, j, drop = drop.]
-        rval <- rval[i, j, drop = drop]
-        x@depth <- x@depth[i]
+        rval     <- rval[i, j, drop = drop]
+        x@depth  <- x@depth[i]
         x@traces <- x@traces[j]
-        x@pos <- x@pos[j]
-        x@time0 <- x@time0[j]
-        x@time <- x@time[j]
-        x@fid <- x@fid[j]
+        x@pos    <- x@pos[j]
+        x@time0  <- x@time0[j]
+        x@time   <- x@time[j]
+        x@fid    <- x@fid[j]
         if(length(x@antsep) > 1) x@antsep <- x@antsep[j]
-        if(length(x@coord)>0)  x@coord <- x@coord[j,,drop=FALSE]
-        if(length(x@rec)>0) x@rec <- x@rec[j,,drop=FALSE]
-        if(length(x@trans)>0) x@trans <- x@trans[j,,drop=FALSE]
-        # if(!is.null(x@hd$startpos) && !is.null(x@hd$endpos)){
-        #   print(j[length(j)])
-        #   print("--------")
-        #   print(x@hd$endpos)
-        #   if( !is.na(x@hd$startpos) && !is.na(x@hd$endpos) ){
-        #     trpos <- seq(x@hd$startpos, x@hd$endpos, by=x@dx)
-        #     x@hd$endpos <- trpos[j[length(j)]]
-        #     x@hd$startpos <- trpos[j[1]]
-        #   }else{
-        #     x@hd$startpos <- NULL
-        #     x@hd$endpos <- NULL
-        #   }
-        # }
+        if(length(x@coord)  > 0) x@coord  <- x@coord[j, , drop = FALSE]
+        if(length(x@rec)    > 0) x@rec    <- x@rec[j,   , drop = FALSE]
+        if(length(x@trans)  > 0) x@trans  <- x@trans[j, , drop = FALSE]
         if(!is.null(x@hd[["clip"]])){
-          if(!is.null(x@hd[["clip"]][["clipmin"]])){
+          if(!is.null(x@hd[["clip"]][["clipmin"]]) && length(x@hd[["clip"]][["clipmin"]]) >= j){
             x@hd[["clip"]][["clipmin"]] <- x@hd[["clip"]][["clipmin"]][j]
+          }else{
+            x@hd[["clip"]][["clipmin"]] <- NULL
           }
-          if(!is.null(x@hd[["clip"]][["clipmax"]])){
+          if(!is.null(x@hd[["clip"]][["clipmax"]]) && length(x@hd[["clip"]][["clipmax"]]) >= j){
             x@hd[["clip"]][["clipmax"]] <- x@hd[["clip"]][["clipmax"]][j]
+          }else{
+            x@hd[["clip"]][["clipmax"]] <- NULL
           }
         }
       }
       if(drop && length(rval) == 1){ rval <- c(rval)}
+    
+    #--- case 1D data
     }else if(length(i) > 0){
       rval <- rval[i]
       x@depth <- x@depth[i]
       if(!is.null(x@hd[["clip"]])){
         test <- .clipMat(x@hd[["clip"]], n = nrow(x))
-        x@hd[["clip"]][["clipmin"]] <- apply(test[i, ], 2, function(x) which(x == -1))
-        x@hd[["clip"]][["clipmax"]] <- apply(test[i, ], 2, function(x) which(x == 1))
-        # if(!is.null(x@hd[["clipmin"]])){
-        #   x@hd[["clip"]][["clipmin"]] <- lapply(x@hd[["clip"]][["clipmin"]], function(x, i){
-        #     x[which(x %in% i)]
-        #   }, i)
-        # }
-        # if(!is.null(x@hd[["clip"]][["clipmax"]])){
-        #   x@hd[["clip"]][["clipmax"]] <- lapply(x@hd[["clip"]][["clipmax"]], function(x, i){
-        #     x[which(x %in% i)]
-        #   }, i)
-        # }
+        x@hd[["clip"]][["clipmin"]] <- apply(test[i, , drop = FALSE], 2, function(x) which(x == -1))
+        x@hd[["clip"]][["clipmax"]] <- apply(test[i, , drop = FALSE], 2, function(x) which(x == 1))
       }
     }
     x@dz <- abs(mean(diff(x@depth)))
@@ -1102,6 +1078,8 @@ setReplaceMethod(
     n <- nrow(rval)
     if(missing(i)) i <- 1:n
     if(missing(j)){
+      # if the indices object is a matrix, e.g., x[SEL], where SEL is a matric
+      # containing TRUE/FALSE values
       if(length(dim(i)) == 2 ){
         i <- as.matrix(i)
         if(!is.matrix(i)){

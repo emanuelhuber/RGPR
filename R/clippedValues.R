@@ -58,7 +58,11 @@ setMethod("clippedValues", "GPR", function(x, nbits = NULL, xlim = NULL){
 getClippedBits <- function(x, nbits){
   xclipmin <- apply(x, 2, .getClipped, xclip = -2^nbits/2 )
   xclipmax <- apply(x, 2, .getClipped, xclip = 2^nbits/2 -1 )
-  return(list(clipmin = xclipmin, clipmax = xclipmax))
+  if(length(xclipmax) == 0 && length(xclipmin) == 0){
+    return(NULL)
+  }else{
+    return(list(clipmin = xclipmin, clipmax = xclipmax))
+  }
 }
 
 .clipTrace <- function(x, n){

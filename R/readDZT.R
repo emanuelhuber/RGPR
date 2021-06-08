@@ -436,14 +436,26 @@ readDZX <- function(dsn){
         }else{
           message("I was unable to read the markers in the file *.dzx")
         }
-        
+      }else{
+        # use the local coords (only x and y, not z) and compute dx and pos....
+        lc <- XML::xmlElementsByTagName(fl, "localCoords", recursive = TRUE)
+        if(length(lc) > 0 ){
+          uu <- sapply(lc, getXMLSibling, what = "scan", USE.NAMES = FALSE)
+          pt0 <- as.numeric(unlist(strsplit(XML::xmlValue(lc[1]), ",")))
+          ptn <- as.numeric(unlist(strsplit(XML::xmlValue(lc[2]), ",")))
+          dst <- sqrt(sum((pt0[1:2] - ptn[1:2])^2))
+          # lst$dx <- dst/(nscans - 1)
+          lst$dx <- dst/ diff(as.integer(uu[2,]))
+          lst$pos <- seq(from = 0, by = lst$dx, length.out = nscans)
+        }
       }
+      
       mrk <- XML::xmlElementsByTagName(fl, "mark", recursive = TRUE)
       if(length(mrk) > 0 ){
         uu <- sapply(mrk, getXMLSibling, what = "scan", USE.NAMES = FALSE)
         if(inherits(uu, "matrix")){
           lst$markers <- character(length = nscans)
-          lst$markers[as.integer(uu[2, ])] <- uu[1, ]
+          lst$markers[as.integer(uu[2, ]) + 1] <- uu[1, ]
         }
       }
     }

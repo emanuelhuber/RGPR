@@ -213,7 +213,7 @@ readDT <- function(dsn){
   
   xpos <- seq(0, by = 1, length.out = x$HD$n_sampler_x) * x$HD$x_cell + x$HD$offset_x
   #zpos <- seq(0, by = 1, length.out = x$HD$n_sampler_y) * x$HD$y_cell
-  zpos <- seq(0, by = (x$HD$scan_time_acq / 10^-9)/x$HD$n_sampler_y, length.out = x$HD$n_sampler_y) #* x$HD$y_cell
+  zpos <- seq(0, by = (x$HD$scan_time_acq / 10^-9)/(x$HD$n_sampler_y - 1), length.out = x$HD$n_sampler_y) #* x$HD$y_cell
   
   dx <- mean(abs(diff(xpos)))
   dz <- mean(abs(diff(zpos)))

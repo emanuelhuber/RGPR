@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Import GPR data
-date: 2020-05-20
+date: 2021-06-08
 ---
 
 <!--
@@ -65,17 +65,24 @@ plot(x)
 Overview
 --------
 
-| Manufacturer                | Mandatory    | optional: GPS          | optional: others                         |
-|-----------------------------|--------------|------------------------|------------------------------------------|
-| Sensors & software          |.DT1,.HD    |.GPS                   |                                          |
-| MALA 16 bits                |.rd3,.rad   |.cor                   |                                          |
-| MALA 32 bits                |.rd7,.rad   |.cor                   |                                          |
-| ImpulseRadar                |.iprb,.iprh |.cor                   |.time<sup>1</sup> (,.mrk<sup>2</sup>\*) |
-| GSSI                        |.dzt         |.dzg                   |                                          |
-| Geomatrix Earth Science Ltd |.dat,.hdr   |.gps,.gpt<sup>3</sup> |                                          |
-| Radar Systems, Inc.         |.sgy/.segy   |                        |                                          |
-| SEG-Y                       |.sgy/.segy   |                        |                                          |
-| R internal file format      |.rds         |                        |                                          |
+| Manufacturer                | Mandatory      | optional: GPS          | optional: others                         |
+|-----------------------------|----------------|------------------------|------------------------------------------|
+| Sensors & software          |.DT1,.HD      |.GPS                   |                                          |
+| MALA 16 bits                |.rd3,.rad     |.cor                   |                                          |
+| MALA 32 bits                |.rd7,.rad     |.cor                   |                                          |
+| ImpulseRadar                |.iprb,.iprh   |.cor                   |.time<sup>1</sup> (,.mrk<sup>2</sup>\*) |
+| GSSI                        |.dzt           |.dzg                   |                                          |
+| IDS                         |.dt            |.gec                   |                                          |
+| Geomatrix Earth Science Ltd |.dat,.hdr     |.gps,.gpt<sup>3</sup> |                                          |
+| Transient Technologies      |.sgpr          |                        |                                          |
+| US Radar                    |.RA1/.RA2/.RAD |                        |                                          |
+| Radar Systems, Inc.         |.sgy/.segy     |                        |                                          |
+| SEG-Y                       |.sgy/.segy     |                        |                                          |
+| SEG-2                       |.sg2           |                        |                                          |
+| R internal file format      |.rds           |                        |                                          |
+| serialized Python object    |.pkl           |                        |                                          |
+| ENVI band sequential        |.dat,.hdr     |                        |                                          |
+| ASCII / text-file           |.txt           |                        |                                          |
 
 \* not yet implemented<br/> <sup>1</sup> date and time recording for each traces<br/> <sup>2</sup> markers<br/> <sup>3</sup> markers associated to the GPS data (.gps)<br/>
 

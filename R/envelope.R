@@ -78,7 +78,7 @@ localMax <- function(x, threshold = 2, addEnds = TRUE){
   #  a <- cbind(x, up)
   a    <- cbind(x, up, down)
   id <- which(apply(a, 1, max) == a[,1])
-  if(addEnds){
+  if(addEnds && length(id) > 0){
     if(id[1] != 1) id <- c(1, id)
     if(tail(id, 1) != length(x)) id <- c(id, length(x))
   }
@@ -104,8 +104,12 @@ localMax <- function(x, threshold = 2, addEnds = TRUE){
 
 .intpLocalMaxAmpl <- function(y, x, threshold = 2){
   test <- localMax(as.numeric(y), threshold = threshold)
-  signal::interp1(x = x[test],
-                  y = y[test],
-                  xi = x,
-                  method = "pchip")
+  if(length(test) > 0){
+    signal::interp1(x = x[test],
+                    y = y[test],
+                    xi = x,
+                    method = "pchip")
+  }else{
+    return(rep(0, length(x)))
+  }
 }

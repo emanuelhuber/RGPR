@@ -11,10 +11,10 @@ setGeneric("envelope", function(x, method = c("peak", "hilbert"),
 #' @param npad [\code{integer(1)}] Only for \code{method = "hilbert"}. Positive 
 #'             value defining the number of values to
 #'             pad \code{x} (the padding help to minimize the Gibbs effect at 
-#'             the begining and end of the data caused by the Hilbert 
+#'             the beginning and end of the data caused by the Hilbert 
 #'             transform).
-#' @param threshold [\code{integer(1)}] Threshold value for peak detection. The
-#'             larger the value the more time consuming is the algorithm.
+#' @param threshold [\code{numeric(1)}] Threshold value for peak detection. The
+#'        larger the value, the longer the computation time.
 #' @details Two methods:
 #' \itemize{
 #'  \item \code{hilbert} Envelope based on the Hilbert transform

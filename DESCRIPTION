@@ -111,6 +111,7 @@ Collate:
   'GroupSummary_GPRcube.R'
   'GPRsim.R'
   'exportPNG.R'
+  'crop.R'
 Imports:
     methods,
     graphics,

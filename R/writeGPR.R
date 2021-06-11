@@ -7,7 +7,23 @@ setGeneric("writeGPR", function(x, fPath = NULL,
 
 
 #----------------------- SAVE/EXPORT ------------------------#
-#' Write the GPR object in a file.
+#' Write GPR data
+#' 
+#' Write GPR data to a specified file format (see Details).
+#'
+#' Modified slots
+#' \itemize{
+#'   \item \code{rds}: Internal R format (useful if you aim to save your data
+#'          for later processing in R).
+#'   \item \code{DT1}: Sensors & Software file format
+#'   \item \code{ASCII}: ".txt" format; write the GPR data as matrix like format with 
+#'         column names equal to trace position and row name equal to depth/time
+#'   \item \code{xta}: write the GPR data as a 3-column ".txt" file. The columns
+#'         correspond to 1) trace position, 2) time/depth, and 3) amplitude.
+#'   \item \code{xyza}: write the GPR data as a 4-column ".txt" file.
+#'         The columns correspond to 1) trace x-position, 2) trace y-position, 
+#'         3) time/depth, and 4) amplitude.
+#' }
 #'
 #' @param x Object of the class \code{GPR} or \code{GPRsurvey}
 #' @param fPath Filepath (Length-one character vector). If \code{fPath = NULL},

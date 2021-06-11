@@ -23,7 +23,7 @@
 \item{npad}{[\code{integer(1)}] Only for \code{method = "hilbert"}. Positive 
 value defining the number of values to
 pad \code{x} (the padding help to minimize the Gibbs effect at 
-the begining and end of the data caused by the Hilbert 
+the beginning and end of the data caused by the Hilbert 
 transform).}
 
 \item{FUN}{DEPRECATED. A function to be applied on each row of the GPR data 
@@ -41,8 +41,8 @@ Default is FALSE.}
 
 \item{method}{[\code{character}] Method to use. See details.}
 
-\item{threshold}{[\code{integer(1)}] Threshold value for peak detection. The
-larger the value the more time consuming is the algorithm.}
+\item{threshold}{[\code{numeric(1)}] Threshold value for peak detection. The
+larger the value, the longer the computation time.}
 }
 \description{
 Plot the amplitude envelope of each trace. See \code{envelope}.

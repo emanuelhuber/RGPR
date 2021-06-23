@@ -105,8 +105,8 @@
   }
   # 21. time-zero adjustment | where: point(x) = point(x + adjustment)
   # traces_hd$time0 <- 1L + round(x@time0/x@dz, 2)
-  # traces_hd$time0 <- rep(0L, ncol(x@data)) # 1L + as.integer(round(x@time0/x@dz))
-  traces_hd$time0 <- 1L + as.integer(round(x@time0/x@dz))
+  traces_hd$time0 <- rep(0L, ncol(x@data)) # 1L + as.integer(round(x@time0/x@dz))
+  # traces_hd$time0 <- 1L + as.integer(round(x@time0/x@dz))
   # 22. zero flag: 0 = data okay, 1=zero data
   traces_hd$zeroflag <- rep.int(0L, ncol(x@data)) 
   # 23. not used

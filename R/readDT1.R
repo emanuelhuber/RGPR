@@ -242,14 +242,7 @@
 }
 
 
-readBinary <- function(con, what, n = 1L, size = NA_integer_, signed = TRUE,
-                       endian = .Platform$endian, useBytes = FALSE){
-  if(what == "character"){
-    readChar(con, nchars = size, useBytes = useBytes)
-  }else{
-    readBin(con, what = what, n = n, size = size, signed = signed, endian = endian)
-  }
-}
+
 
 #------------------------------------------------------------------------------#
 #' @export
@@ -288,6 +281,7 @@ readDT1 <- function(dsn, ntr, npt){
 }
 #------------------------------------------------------------------------------#
 
+#' @export
 readHD <- function(dsn){
   # scan header file
   headHD <- scan(dsn, what = character(), strip.white = TRUE,

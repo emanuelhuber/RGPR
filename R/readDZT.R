@@ -37,6 +37,16 @@
   # Fiducial markers > each class has a different name (letter)
   x_fid       <- rep("", ncol(x$data))
   test <- which(x$hd$MRKS < 0)
+  if(length(test) == ncol(x$data)){
+    # all the marks are identical -> no need to mark every trace!
+    if(length(unique(x$hd$MRKS[test])) == 1){
+      test <- c()
+    }else{
+      MRKS_tbl <- table(x$hd$MRKS)
+      MRKS_i <- as.integer(names(MRKS_tbl)[which.max(MRKS_tbl)])
+      test <- which(x$hd$MRKS < 0 & x$hd$MRKS != MRKS_i)
+    }
+  }
   fidval <- LETTERS[as.numeric(as.factor(x$hd$MRKS[test]))]
   ufidval <- unique(fidval)
   for( i in seq_along(ufidval)){
@@ -171,13 +181,14 @@
 #' @export
 readDZT <- function(dsn){
   
-  if(!inherits(dsn, "connection")){
-    dsn <- file(dsn, 'rb')
-  }
+  dsn <- .openFileIfNot(dsn)
+  # if(!inherits(dsn, "connection")){
+  #   dsn <- file(dsn, 'rb')
+  # }
+  
   
   hd <- c()
   MINHEADSIZE <- 1024  # absolute minimum total header size
-  nScans <- 0
   #--------------------------------- READ HEADER ------------------------------#  
   # 0x00ff ('\xff\a') if header, 0xfnff for old file
   #rh_tag <- readChar(dsn, nchars = 1, useBytes = TRUE)
@@ -253,9 +264,7 @@ readDZT <- function(dsn){
     hd$OFFSETDATA <- MINHEADSIZE * hd$NCHAN
   }
   
-  if(nScans == 0){ # read all the scans
-    nNumScans <- (nB - hd$OFFSETDATA)/(hd$NCHAN * hd$NSAMP * hd$BITS/8);
-  }
+  nNumScans <- (nB - hd$OFFSETDATA)/(hd$NCHAN * hd$NSAMP * hd$BITS/8)
   
   seek(dsn, where = hd$OFFSETDATA, origin = "start")
   

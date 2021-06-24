@@ -123,10 +123,31 @@
 
 
 readRD37 <- function(dsn, ntr, npt, nbytes = 2, endian = .Platform$endian){
-  if(!inherits(dsn, "connection")){
-    dsn <- file(dsn, 'rb')
+  dsn <- .openFileIfNot(dsn)
+  # if(!inherits(dsn, "connection")){
+  #   dsn <- file(dsn, 'rb')
+  # }
+  fileLength <- .flen(dsn)/nbytes
+  if(ntr * npt != fileLength){
+    tst_ntr <- fileLength %% ntr
+    tst_npt <- fileLength %% npt
+    if(tst_npt == 0L){
+      ntr <- fileLength / npt
+    }else if(tst_ntr == 0L){
+      npt <- fileLength / ntr
+    }else if(ntr * npt > fileLength){
+      ii <- fileLength %% npt
+      ntrnew <- (fileLength - ii)/npt
+      warning("The number of traces and samples per traces does not correspond\n",
+              "to the total number of samples in the file.\n",
+              "I changed for you the number of traces: ",
+              ntrnew, " instead of ", ntr, ".")
+      ntr <- ntrnew
+    }else{
+      warning("The number of traces and samples per traces does not correspond\n",
+              "to the total number of samples in the file.")
+    }
   }
-  
   dataRD7 <- matrix(NA, nrow = npt, ncol = ntr)
   for(i in seq_len(ntr)){
     dataRD7[, i] <- readBin(dsn, what = integer(), n = npt, size = nbytes, endian = endian)

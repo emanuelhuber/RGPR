@@ -246,10 +246,17 @@
 
 #------------------------------------------------------------------------------#
 #' @export
-readDT1 <- function(dsn, ntr, npt){
+readDT1 <- function(dsn){
   if(!inherits(dsn, "connection")){
     dsn <- file(dsn, 'rb')
   }
+  fileLength <- .flen(dsn)
+  
+  invisible(seek(dsn, where = 2*4, origin = "start"))
+  npt <- readBinary(dsn, what = "numeric", n = 1L, size = 4)
+  invisible(seek(dsn, where = 0, origin = "start"))
+  
+  
   tags <- c("traces", "position", "samples", "topo", "NA1", "bytes",
             "window", "stacks", 
             "GPSx", "GPSy", "GPSz", 
@@ -261,6 +268,10 @@ readDT1 <- function(dsn, ntr, npt){
   binSize[23] <- 28
   binMod <- rep("numeric", 23)
   binMod[23] <- "character"
+  
+  
+  trLen <- sum(binSize) + 2 * npt
+  ntr <- fileLength/trLen
   
   
   hDT1 <- list()

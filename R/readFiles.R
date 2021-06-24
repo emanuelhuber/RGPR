@@ -34,6 +34,20 @@
 #'         \code{writeGPR(x, fPath = 'xline.rds', type = "rds")}.
 #'         \code{readGPR(dsn = 'xline.txt')}  
 #' }
+#' 
+#' @section GSSI files (*.dzt):
+#' The first trace sample is constant and does not belong to the signal 
+#' (no idea what is does mean). 
+#' That is why RGPR removes the first sample of each trace.
+#' The second sample of each trace is used to indicate if there is a fiducial 
+#' marker. RGPR extracts this information (maybe not always correctly) and 
+#' removes the second sample of each trace. That is the reason why the *.dzt 
+#' files exported by RGPR have two samples/trace less.
+#' 
+#' @section Mala files (*.rd3/rd7, *.rad):
+#' RGPR check the dimension of the data against the number of traces and 
+#' samples specified in the *.rad file and try to find the correct setup.
+#' 
 #' @param dsn data source name: either the filepath to the GPR data (character),
 #'            or an open file connection (can be a list of filepahts or
 #'            open file connections)
@@ -142,7 +156,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
                   GPS = getFName(fPath[1], ext = ".GPS", throwError = FALSE)$gps)
     }
     hd  <- verboseF( readHD(dsn[["HD"]]), verbose = verbose)
-    dt1 <-  verboseF( readDT1(dsn[["DT1"]], ntr = hd$ntr, npt = hd$npt), 
+    dt1 <-  verboseF( readDT1(dsn[["DT1"]]), 
                       verbose = verbose)
     x <- verboseF(.gprDT1(list(hd = hd$HD, dt1 = dt1$dt1hd, data = dt1$data ), 
                           fName = fName[["DT1"]], fPath = fPath[["DT1"]], 

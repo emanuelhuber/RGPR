@@ -36,7 +36,8 @@
   
   # Fiducial markers > each class has a different name (letter)
   x_fid       <- rep("", ncol(x$data))
-  test <- which(x$hd$MRKS < 0)
+  tst <- x$hd$MRKS < 0
+  test <- which(tst)
   if(length(test) == ncol(x$data)){
     # all the marks are identical -> no need to mark every trace!
     if(length(unique(x$hd$MRKS[test])) == 1){
@@ -45,6 +46,10 @@
       MRKS_tbl <- table(x$hd$MRKS)
       MRKS_i <- as.integer(names(MRKS_tbl)[which.max(MRKS_tbl)])
       test <- which(x$hd$MRKS < 0 & x$hd$MRKS != MRKS_i)
+    }
+  }else{
+    if(sum(tst == FALSE) < sum(tst == TRUE)){
+      test <- which(!tst)
     }
   }
   fidval <- LETTERS[as.numeric(as.factor(x$hd$MRKS[test]))]

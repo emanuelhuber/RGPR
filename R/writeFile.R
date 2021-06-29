@@ -19,7 +19,7 @@
   # should ranges between -32768 and 32767
   x@data[!is.finite(x@data)] <- 0
   # x@data <-  round( (x@data - min(x@data))/(diff(range(x@data))) * 
-  #                   (32767 + 32768) - 32768 )
+  #                    (32767 + 32768) - 32768 )
   
   #   cat(ra  nge(traceData),"\n")
   if(min(x@data) < -32768 || max(x@data) > 32768){
@@ -143,7 +143,7 @@
     for(j in seq_along(traces_hd)){
       # real*4, storage.mode = double
       writeBinary(traces_hd[[j]][[i]], dt1_file, what = binMod[j], 
-                  size = binSize[j], eos = NULL)
+                  size = binSize[j], eos = NULL, endian = "little")
     }
     # comment28 <- as.character(traces_hd$com[i])
     # if(nchar(comment28) > 28) comment28 <- substr(comment28, 0, 28)
@@ -245,7 +245,7 @@
   }
   writeLines(paste0("NUMBER OF STACKS   ", "= ", as.character(nstacks)), 
              con = hd_file, sep = "\r\r\n")
-  writeLines(paste0("SURVEY MODE        ", "= ", as.character(x@surveymode)), 
+  writeLines(paste0("SURVEY MODE        ", "= ", capFirstLetter(x@surveymode)), 
              con = hd_file, sep = "\r\r\n")
   
   # NIC SERIAL#        = 0044-5029-0015

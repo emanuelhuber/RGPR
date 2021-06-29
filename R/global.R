@@ -1145,6 +1145,14 @@ perpPoints <- function(xy, d){
   return(list(x = xlat, y = ylat))
 }
 
+#' Capitalize the first letter in a word string in R
+#' 
+#' @param x [character(1)] A character string
+#' @return The character string with first letter capitalised
+capFirstLetter <- function(x){
+  paste(toupper(substring(x, 1,1)), substring(x, 2), sep = "")
+}
+
 
 # NOT USED!
 # .fidpos <- function(xyz,fid){

@@ -57,7 +57,9 @@
   traces_hd$bytes <- rep.int(2L, ncol(x@data))
   # 7. Time Window
   # traces_hd$win <- rep(x@dz * (nrow(x@data) - 1), ncol(x@data))
-  traces_hd$win <- rep(x@dz * nrow(x@data) , ncol(x@data))
+  # traces_hd$win <- rep(x@dz * nrow(x@data) , ncol(x@data))
+  wwin <- round(diff(range(x@depth))/(nrow(x@data)-1)* (nrow(x@data) ), 5)
+  traces_hd$win <- rep(wwin , ncol(x@data))
   # 8. # of stacks
   # traces_hd$stacks <- rep(as.integer(x@hd$NUMBER_OF_STACKS), ncol(x@data))
   # DT1
@@ -206,7 +208,8 @@
                     as.character(1+round(mean(x@time0)/x@dz,2))), 
              con = hd_file, sep = "\r\r\n")
   writeLines(paste0("TOTAL TIME WINDOW  ", "= ", 
-                    as.character(x@dz*(nrow(x@data)))), 
+                    # as.character(x@dz*(nrow(x@data)))), 
+                    as.character(wwin)), 
              con = hd_file, sep = "\r\r\n")
   startpos <- 0
   if(!is.null(x@hd$startpos)){

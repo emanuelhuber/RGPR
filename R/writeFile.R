@@ -211,21 +211,23 @@
                     # as.character(x@dz*(nrow(x@data)))), 
                     as.character(wwin)), 
              con = hd_file, sep = "\r\r\n")
-  startpos <- 0
-  if(!is.null(x@hd$startpos)){
-    startpos <- x@hd$startpos
-  }
-  writeLines(paste0("STARTING POSITION  ", "= ", as.character(startpos)), 
+  # startpos <- 0
+  # if(!is.null(x@hd$startpos)){
+  #   startpos <- x@hd$startpos
+  # }
+  writeLines(paste0("STARTING POSITION  ", "= ", as.character(x@pos[1])), 
              con = hd_file, sep = "\r\r\n")
   
-  endpos <- (ncol(x@data)-1)*x@dx
-  if(!is.null(x@hd$endpos)){
-    endpos <- x@hd$endpos
-  }
-  writeLines(paste0("FINAL POSITION     ","= ", as.character(endpos)), 
+  # endpos <- (ncol(x@data)-1)*x@dx
+  # if(!is.null(x@hd$endpos)){
+  #   endpos <- x@hd$endpos
+  # }
+  # writeLines(paste0("FINAL POSITION     ", "= ", as.character(endpos)), 
+  writeLines(paste0("FINAL POSITION     ", "= ", as.character(tail(x@pos, 1))), 
              con = hd_file, sep = "\r\r\n")
   
-  writeLines(paste0("STEP SIZE USED     ","= ",as.character(x@dx)),
+  # writeLines(paste0("STEP SIZE USED     ", "= ", as.character(x@dx)),
+  writeLines(paste0("STEP SIZE USED     ", "= ", as.character(abs(diff(range(x@pos)))/(ncol(x@data) - 1))),
              con = hd_file, sep = "\r\r\n")
   writeLines(paste0("POSITION UNITS     ", "= ", "m"), 
              con = hd_file, sep = "\r\r\n")

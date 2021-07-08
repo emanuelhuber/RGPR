@@ -112,6 +112,7 @@ Collate:
   'GPRsim.R'
   'exportPNG.R'
   'crop.R'
+  'convUnit.R'
 Imports:
     methods,
     graphics,
@@ -140,7 +141,8 @@ Imports:
     RConics,
     robfilter,
     plotly,
-    png
+    png,
+    units
 RoxygenNote: 7.1.1
 Suggests: 
     testthat

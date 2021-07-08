@@ -196,6 +196,7 @@
   if(length(dorigin) == 0){
     dorigin <- "1970-01-01"
   }
+  if(any(!is.finite(x$dt1$time))) x$dt1$time <- seq_len(ntr)
   traceTime <- as.double(as.POSIXct(x$dt1$time, origin = as.Date(dorigin)))
   sup_hd[["clip"]] <- getClippedBits(x$data, nbits = 16)
   

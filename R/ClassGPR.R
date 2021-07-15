@@ -2971,6 +2971,68 @@ interpPosFromGeoJSON <- function(x, geojson, tol = NULL, backproject = TRUE){
   return(tr_xyz)
 }
 
+#' Interpolate GPR coordinates from xyz coordinates
+#'
+#' This function interpolate the trace positions from a series of coordinates
+#' assuming no link between the traces and the points (e.g., it is not know
+#' which trace belong to which point). Therefore, it is assumed, that the
+#' trace spacing is constant over the GPR line. 
+#'
+#' @param x Object of the class GPR
+#' @param xyz [\code{matrix(n, 2|3)}] A two-columns (or three-column matrix) 
+#'            containing the x and y (or x, y, and z) coordinates.
+#' @param tol [\numeric(1)] A tolerance value used to remove duplicated
+#'            coordinates in \code{xyz}. When left equal to \code{NULL}
+#'            \code{tol} is internally set equal to 
+#'            \code{sqrt(.Machine$double.eps)}.
+#' @return [\code{GPR}] object.       
+#' @export
+interpPosFromXYZ <- function(x, xyz,  tol = NULL){
+  
+  #---- 3. create "topo" file
+  mrk <- as.matrix(xyz)
+  if(ncol(mrk) == 2){
+    mrk <- cbind(mrk, 0)
+  }
+  colnames(mrk) <- c("x", "y", "z")
+  
+  #---- 4. remove duplicates
+  dist2D <- posLine(mrk[, c("x", "y")], last = FALSE)
+  # in 'x' and 'mrk'
+  if(is.null(tol))  tol <- sqrt(.Machine$double.eps)
+  tdbl <- which(abs(diff(dist2D)) < tol)
+  while(length(tdbl) > 0){
+    mrk <- mrk[ -(tdbl + 1), ]
+    dist2D <- posLine(mrk[, c("x", "y", "z")], last = FALSE) # mod
+    tdbl <- which(abs(diff(dist2D)) < tol)
+  }
+  
+  #---- 5. trace interpolation
+  # a) interpolate shape points to traces
+  trFIDPos <- approx(x = c(0, tail(dist2D, 1)),
+                     y = c(1, length(x)),
+                     xout = dist2D)
+  
+  # b) interpolate coordinates
+  tr_xyz <- matrix(0, nrow = ncol(x), ncol = 3)
+  tx_x <- approx(x = trFIDPos$y,
+                 y = mrk[,"x"],
+                 xout = seq_along(x))
+  tx_y <- approx(x = trFIDPos$y,
+                 y = mrk[,"y"],
+                 xout = seq_along(x))
+  tx_z <- approx(x = trFIDPos$y,
+                 y = mrk[,"z"],
+                 xout = seq_along(x))
+  tr_xyz[,1] <- tx_x$y
+  tr_xyz[,2] <- tx_y$y
+  tr_xyz[,3] <- tx_z$y
+  
+  coord(x) <- tr_xyz
+  x@pos <- posLine(tr_xyz[, 1:2])
+  return(x)
+}
+
 
 #' Relative trace position on the GPR profile.
 #'

@@ -12,7 +12,7 @@
 \item{xyz}{[\code{matrix(n, 2|3)}] A two-columns (or three-column matrix) 
 containing the x and y (or x, y, and z) coordinates.}
 
-\item{tol}{[\numeric(1)] A tolerance value used to remove duplicated
+\item{tol}{[\code{numeric(1)}] A tolerance value used to remove duplicated
 coordinates in \code{xyz}. When left equal to \code{NULL}
 \code{tol} is internally set equal to 
 \code{sqrt(.Machine$double.eps)}.}

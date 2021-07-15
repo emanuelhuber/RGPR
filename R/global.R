@@ -348,6 +348,12 @@ setGenericVerif("interpPos", function(x, topo, plot = FALSE, r = NULL, tol = NUL
                                       method = c("linear", "linear", "linear"), crs = NULL, ...) 
   standardGeneric("interpPos"))
 
+#' @name interpPosFromXYZ
+#' @rdname interpPosFromXYZ
+#' @export
+setGenericVerif("interpPosFromXYZ", function(x, xyz, tol = NULL) 
+  standardGeneric("interpPosFromXYZ"))
+
 setGeneric("interpPosArray", function(x, d, GPGGA = NULL, geojson = NULL, 
                    tol = NULL, backproject = FALSE)
   standardGeneric("interpPosArray"))

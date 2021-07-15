@@ -2981,13 +2981,16 @@ interpPosFromGeoJSON <- function(x, geojson, tol = NULL, backproject = TRUE){
 #' @param x Object of the class GPR
 #' @param xyz [\code{matrix(n, 2|3)}] A two-columns (or three-column matrix) 
 #'            containing the x and y (or x, y, and z) coordinates.
-#' @param tol [\numeric(1)] A tolerance value used to remove duplicated
+#' @param tol [\code{numeric(1)}] A tolerance value used to remove duplicated
 #'            coordinates in \code{xyz}. When left equal to \code{NULL}
 #'            \code{tol} is internally set equal to 
 #'            \code{sqrt(.Machine$double.eps)}.
-#' @return [\code{GPR}] object.       
+#' @return [\code{GPR}] object.    
+#' @name interpPosFromXYZ 
+#' @rdname interpPosFromXYZ   
 #' @export
-interpPosFromXYZ <- function(x, xyz,  tol = NULL){
+setMethod("interpPosFromXYZ", "GPR", 
+          function(x, xyz,  tol = NULL){
   
   #---- 3. create "topo" file
   mrk <- as.matrix(xyz)
@@ -3031,7 +3034,7 @@ interpPosFromXYZ <- function(x, xyz,  tol = NULL){
   coord(x) <- tr_xyz
   x@pos <- posLine(tr_xyz[, 1:2])
   return(x)
-}
+})
 
 
 #' Relative trace position on the GPR profile.

@@ -72,11 +72,11 @@
   add2ndYAxis = TRUE,
   elev = FALSE,
   clip = NULL,
-  ratio = 1,
   barscale = TRUE,
   wsize = 1,
   wside = 1,
   pdfName = NULL,
+  pngName = NULL,
   NAcol = "white",
   fast = FALSE,
   ...
@@ -94,7 +94,7 @@
   addAmpl0 = TRUE,
   addTopo = FALSE,
   clip = NULL,
-  ratio = 1,
+  asp = 1,
   barscale = TRUE,
   pdfName = NULL,
   ...
@@ -158,6 +158,9 @@ without extension}
 \item{elev}{logical. If \code{TRUE} the elevation instead of depth is
 displayed on y-axis (and therefore, time-to-depth
 conversion is applied).}
+
+\item{pngName}{length-one character. Name/path of the PDF to export 
+without extension}
 
 \item{NAcol}{lengthe-one vector: color to be used.}
 

@@ -1,13 +1,13 @@
-setGenericVerif("exportPDF", function(x, fPath = NULL, addTopo = FALSE, 
+setGenericVerif("plot2PNG", function(x, fPath = NULL, addTopo = FALSE, 
                                       clip = NULL, normalize = NULL, nupspl = NULL, ...) 
-  standardGeneric("exportPDF"))
+  standardGeneric("plot2PNG"))
 
-#' Export a PDF showing the GPR profile.
+#' Export a PNG showing the GPR profile.
 #'
-#' @name exportPDF
-#' @rdname exportPDF
+#' @name plot2PNG
+#' @rdname plot2PNG
 #' @export
-setMethod("exportPDF", "GPR", 
+setMethod("plot2PNG", "GPR", 
           function(x, fPath = NULL, addTopo = FALSE, clip = NULL, normalize = NULL, 
                    nupspl = NULL,  type = "raster",...){
             if(is.null(fPath)){
@@ -17,6 +17,6 @@ setMethod("exportPDF", "GPR",
               stop("no export because dim = 1\n")
             }
             plot(x, clip = clip, addTopo = addTopo, type = type, 
-                 pdfName = fPath, normalize = normalize, nupspl = nupspl, ...)
+                 pngName = fPath, normalize = normalize, nupspl = nupspl, ...)
           }
 )

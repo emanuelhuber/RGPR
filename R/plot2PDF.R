@@ -1,13 +1,13 @@
-setGenericVerif("exportPDF", function(x, fPath = NULL, addTopo = FALSE, 
+setGenericVerif("plot2PDF", function(x, fPath = NULL, addTopo = FALSE, 
                                       clip = NULL, normalize = NULL, nupspl = NULL, ...) 
-  standardGeneric("exportPDF"))
+  standardGeneric("plot2PDF"))
 
 #' Export a PDF showing the GPR profile.
 #'
-#' @name exportPDF
-#' @rdname exportPDF
+#' @name plot2PDF
+#' @rdname plot2PDF
 #' @export
-setMethod("exportPDF", "GPR", 
+setMethod("plot2PDF", "GPR", 
           function(x, fPath = NULL, addTopo = FALSE, clip = NULL, normalize = NULL, 
                    nupspl = NULL,  type = "raster",...){
             if(is.null(fPath)){

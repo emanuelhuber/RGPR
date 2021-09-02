@@ -45,6 +45,8 @@
 #'              colored.
 #' @param pdfName length-one character. Name/path of the PDF to export 
 #'                without extension
+#' @param pngName length-one character. Name/path of the PDF to export 
+#'                without extension
 #' @param NAcol lengthe-one vector: color to be used.
 #' @param fast logical: if \code{TRUE} plots only a subset of the data (max. 
 #'            1000 traces) to speed up plotting.               
@@ -72,11 +74,12 @@ plot.GPR <- function(x,
                      add2ndYAxis = TRUE,
                      elev    = FALSE,
                      clip = NULL,
-                     ratio = 1,
+                     # ratio = 1,
                      barscale = TRUE, 
                      wsize = 1,   # wiggles
                      wside = 1,   # wiggles
                      pdfName = NULL,
+                     pngName = NULL,
                      NAcol = "white",
                      fast = FALSE,
                      ...){
@@ -254,6 +257,7 @@ plot.GPR <- function(x,
     }else{
       myylab <- x@depthunit
     }
+    
     if(is.null(dots$xlab)) dots$xlab <- myxlab
     if(is.null(dots$ylab)) dots$ylab <- myylab
     if(!is.null(dots$main)) mymain <- dots$main
@@ -323,14 +327,19 @@ plot.GPR <- function(x,
       # if the depthunit are "meters"
       xlim <- dots$xlim
       ylim <- dots$ylim
+      if(is.null(dots$asp)){
+        asp <- 1
+      }else{
+        asp <- dots$asp
+      }
       if(grepl("[m]$", x@depthunit)){
-        heightPDF <- fac * abs(diff(ylim)) + sum(omi[c(1,3)] + mai[c(1,3)])
-        widthPDF <- fac * abs(diff(xlim)) * ratio +  
+        heightPDF <- fac * abs(diff(ylim)) * asp + sum(omi[c(1,3)] + mai[c(1,3)])
+        widthPDF <- fac * abs(diff(xlim)) +  
           sum(omi[c(2,4)] + mai[c(2,4)])
       }else{
-        heightPDF <- fac * abs(diff(ylim)) * v/2 + 
+        heightPDF <- fac * abs(diff(ylim)) * asp * v/2 + 
           sum(omi[c(1,3)] + mai[c(1,3)])
-        widthPDF <- fac * abs(diff(xlim)) * ratio + 
+        widthPDF <- fac * abs(diff(xlim))  + 
           sum(omi[c(2,4)] + mai[c(2,4)])
       }
       Cairo::CairoPDF(file = paste0(pdfName, ".pdf"),
@@ -339,6 +348,36 @@ plot.GPR <- function(x,
                       bg = "white",
                       pointsize=10,
                       title = pdfName)
+    }
+    if(!is.null(pngName)){
+      # if the depthunit are "meters"
+      xlim <- dots$xlim
+      ylim <- dots$ylim
+      if(is.null(dots$asp)){
+        asp <- 1
+      }else{
+        asp <- dots$asp
+      }
+      fac <- 50
+      if(grepl("[m]$", x@depthunit)){
+        heightPDF <- fac * abs(diff(ylim)) * asp + sum(omi[c(1,3)] + mai[c(1,3)])
+        widthPDF <- fac * abs(diff(xlim)) +  
+          sum(omi[c(2,4)] + mai[c(2,4)])
+      }else{
+        heightPDF <- fac * abs(diff(ylim)) * asp * v/2 + 
+          sum(omi[c(1,3)] + mai[c(1,3)])
+        widthPDF <- fac * abs(diff(xlim))  + 
+          sum(omi[c(2,4)] + mai[c(2,4)])
+      }
+      widthPDF <- round(widthPDF)
+      heightPDF <- round(heightPDF)
+      print(paste(widthPDF, "x", heightPDF))
+      Cairo::CairoPNG(file = paste0(pngName, ".png"),
+                      width = widthPDF,
+                      height = heightPDF,
+                      bg = "white",
+                      pointsize=10,
+                      title = pngName)
     }
     #------------------------------ RASTER ------------------------------------#
     
@@ -594,6 +633,9 @@ plot.GPR <- function(x,
     if(!is.null(pdfName)){
       dev.off()
     }
+    if(!is.null(pngName)){
+      dev.off()
+    }
   }
 }
 
@@ -614,7 +656,7 @@ contour.GPR <- function(x,
                         addAmpl0 = TRUE,
                         addTopo = FALSE,
                         clip = NULL,
-                        ratio = 1,
+                        asp = 1,
                         barscale = TRUE, 
                         pdfName = NULL,
                         ...){

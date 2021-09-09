@@ -89,6 +89,7 @@ Collate:
   'migrate.R'
   'upsample.R'
   'writeGPR.R'
+  'writeSGY.R'
   'exportPDF.R'
   'exportPNG.R'
   'exportFID.R'

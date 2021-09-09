@@ -7,16 +7,18 @@
 writeGPR(
   x,
   fPath = NULL,
-  type = c("rds", "DT1", "ASCII", "xta", "xyza"),
+  type = c("rds", "DT1", "SGY", "ASCII", "xta", "xyza"),
   overwrite = FALSE,
+  endian = .Platform$endian,
   ...
 )
 
 \S4method{writeGPR}{GPR}(
   x,
   fPath = NULL,
-  type = c("rds", "DT1", "ASCII", "xta", "xyza"),
+  type = c("rds", "DT1", "SGY", "ASCII", "xta", "xyza"),
   overwrite = FALSE,
+  endian = .Platform$endian,
   ...
 )
 }
@@ -35,7 +37,8 @@ if \code{FALSE} an error will be thrown if the file(s)
 already exist(s).}
 }
 \description{
-Write GPR data to a specified file format (see Details).
+Write GPR data to a specified file format (see Details). Add automatically
+the file extension if missing.
 }
 \details{
 Modified slots

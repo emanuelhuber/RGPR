@@ -8,7 +8,7 @@ readSGY(dsn, ENDIAN = "big")
 }
 \arguments{
 \item{dsn}{data source name: either the filepath to the GPR data (character),
-or an open file connection.}
+or an open file dsnnection.}
 
 \item{ENDIAN}{The endian-ness ("big" or "little") of the target system for 
 the file. Using "swap" will force swapping endian-ness.}

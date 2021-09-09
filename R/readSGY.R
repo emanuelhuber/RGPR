@@ -6,7 +6,7 @@
   
   
   n <- ncol( x$DTR$data)
-  data_xyz <- matrix( c(x$DTR$trHD[16,], x$DTR$trHD[17,], x$DTR$trHD[12,]),
+  data_xyz <- matrix( c(x$DTR$trHD[16+2,], x$DTR$trHD[17+2,], x$DTR$trHD[12,]),
                       nrow = n, ncol = 3, byrow = FALSE)
   data_pos <- posLine(data_xyz)
   
@@ -21,18 +21,18 @@
   
   # check date
   # 22 = year, 23 = day of the year
-  if(all(c(x$DTR$trHD[22, 1], x$DTR$trHD[23, 1]) == 0)){
+  if(all(c(x$DTR$trHD[22+2, 1], x$DTR$trHD[23+2, 1]) == 0)){
     data_date <- format(Sys.time(), "%Y-%m-%d")
   }else{
-    data_date <- as.character(format(as.Date(x$DTR$trHD[23, 1] - 1, 
-                                             origin = paste0(x$DTR$trHD[22, 1], "-01-01")),
+    data_date <- as.character(format(as.Date(x$DTR$trHD[23+2, 1] - 1, 
+                                             origin = paste0(x$DTR$trHD[22+2, 1], "-01-01")),
                                      "%Y-%m-%d"))
   }
   
   # check time
   data_time <- seq_len(n)
   
-  data_dt <- x$DTR$trHD[21,1]*10^3
+  data_dt <- x$DTR$trHD[21+2, 1]*10^3
   
   antfreq <- 0
   message("Antenna frequency set to 0 MHz. Set it with 'antfreq(x) <- ... '")
@@ -62,6 +62,10 @@
       i2 <- i1 + attr(scale_fact, "capture.length") -1
       scl <- as.numeric(substr(x$THD[k], i1, i2))
     }
+  }else{
+    data_xyz[, 1] <- data_xyz[, 1] / x$DTR$trHD[17, ]
+    data_xyz[, 2] <- data_xyz[, 2] / x$DTR$trHD[17, ]
+    data_xyz[, 3] <- data_xyz[, 3] / x$DTR$trHD[16, ]
   }
   
   y <- new("GPR",   
@@ -106,7 +110,7 @@
         # Y[[i]] <- y[, trc_seq %in% trc_seq_unique[i]]
         Ys[[i]] <- y[, trc_seq %in% trc_seq_unique[i]]
       }
-      message("I return an object of the class 'GPRsurvey' (contains many ",
+      message("I return an object of the class 'GPRsurvey' (dsntains many ",
               "GPR lines). ",
               "'plot(x)' will display the position of the traces. ",
               "To plot a single line, use 'plot(x[[1]])'")
@@ -122,7 +126,7 @@
 #' Read SEG-Y file
 #' 
 #' @param dsn data source name: either the filepath to the GPR data (character),
-#'            or an open file connection.
+#'            or an open file dsnnection.
 #' @param ENDIAN The endian-ness ("big" or "little") of the target system for 
 #'               the file. Using "swap" will force swapping endian-ness.
 #' 
@@ -144,14 +148,14 @@ readSGY <- function(dsn, ENDIAN = "big"){
 
 #------------------------------ SEG-Y FORMAT ----------------------------------#
 #---------------------------- TEXTUAL FILE HEADER -----------------------------#
-# A reel identification header consisting of 3600 bytes in 2 parts:
+# A reel identification header dsnsisting of 3600 bytes in 2 parts:
 # 1. - 3200 (0xC80) bytes of EBCDIC characters representing 40 80-byte
 # "card images"
-readSGY_textual_file_header <- function(con, ENDIAN){
-  invisible(seek(con, where = 0, origin = "start"))
-  # readChar(con, nchars = 3200, useBytes = TRUE)
-  # readBin(con, what = "raw", n = 3200, size = 1, endian = ENDIAN)
-  uu <- readBin(con, what = character(), n = 1, size = 1, endian = ENDIAN)
+readSGY_textual_file_header <- function(dsn, ENDIAN){
+  invisible(seek(dsn, where = 0, origin = "start"))
+  # readChar(dsn, nchars = 3200, useBytes = TRUE)
+  # readBin(dsn, what = "raw", n = 3200, size = 1, endian = ENDIAN)
+  uu <- readBin(dsn, what = character(), n = 1, size = 1, endian = ENDIAN)
   uu <- trimStr(uu)
   uu1 <- verboseF(strsplit(uu, "(C\\s*[0-9]+)", useBytes = TRUE)[[1]], verbose = FALSE)
   if(length(uu1) > 1 && !is.na(uu1)){
@@ -173,30 +177,30 @@ readSGY_textual_file_header <- function(con, ENDIAN){
 #------------------------------ BINARY FILE HEADER ----------------------------#
 # 400 (0x190) bytes of binary fixed-point integers, the first 60 bytes
 # are assigned, the remaining 340 bytes are unassigned for optional use;
-readSGY_binary_file_header <- function(con, ENDIAN){
+readSGY_binary_file_header <- function(dsn, ENDIAN){
   hd <- c()
-  invisible(seek(con, where = 3200, origin = "start"))
+  invisible(seek(dsn, where = 3200, origin = "start"))
   # 3201-3204 - Job identification number
-  hd$JOB_ID <- readBin(con, what = integer(), n = 1, size = 4, endian = ENDIAN)
+  hd$JOB_ID <- readBin(dsn, what = integer(), n = 1, size = 4, endian = ENDIAN)
   # 3205-3208 - Line number
-  hd$LINE_NUMBER <-  readBin(con, what = integer(), n = 1, size = 4, endian = ENDIAN)
+  hd$LINE_NUMBER <-  readBin(dsn, what = integer(), n = 1, size = 4, endian = ENDIAN)
   # 3209-3212 - Reel number
-  hd$REEL_NUMBER <-  readBin(con, what = integer(), n = 1, size = 4, endian = ENDIAN)
+  hd$REEL_NUMBER <-  readBin(dsn, what = integer(), n = 1, size = 4, endian = ENDIAN)
   # 3213-3214 - Number of data traces per ensemble
-  hd$NB_DATA_TRACES <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
+  hd$NB_DATA_TRACES <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
   # 3215-3216 - Number of auxiliary traces per ensemble
-  hd$NB_AUX_TRACES <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-  # 3217-3218 - Sample interval. Microseconds (micro-s) for time data, Hertz (Hz) 
+  hd$NB_AUX_TRACES <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
+  # 3217-3218 - Sample interval. Microsedsnds (micro-s) for time data, Hertz (Hz) 
   # for frequency data, meters (m) or feet (ft) for depth data.
-  hd$TIME_SAMPLING <-  readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-  # 3219-3220 Sample interval of original field recording. Microseconds (micro-s) for 
+  hd$TIME_SAMPLING <-  readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
+  # 3219-3220 Sample interval of original field recording. Microsedsnds (micro-s) for 
   # time data, Hertz (Hz) for frequency data, meters (m) or 
   #  feet (ft) for depth data.
-  hd$TIME_SAMPLING_FIELD <-  readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
+  hd$TIME_SAMPLING_FIELD <-  readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
   # 3221-3222 - Number of samples per data trace
-  hd$NB_SAMPLES <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
+  hd$NB_SAMPLES <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
   # 3223-3224 - Number of samples per data trace for original field recording.
-  hd$NB_SAMPLES_FIELD <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
+  hd$NB_SAMPLES_FIELD <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
   
   # 3225-3226 - data sample format code
   # 1 = 4-byte IBM floating-point
@@ -213,8 +217,8 @@ readSGY_binary_file_header <- function(con, ENDIAN){
   # 12 = 8-byte, unsigned integer
   # 15 = 3-byte, unsigned integer
   # 16 = 1-byte, unsigned integer
-  invisible(seek(con, where = 3224, origin = "start"))
-  hd$DATA_FORMAT_CODE <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
+  invisible(seek(dsn, where = 3224, origin = "start"))
+  hd$DATA_FORMAT_CODE <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
   hd$DATA_FORMAT <- switch(hd$DATA_FORMAT_CODE,
                            "1" = "32-bit IBM floating point",
                            "2" = "32-bit fixed-point",
@@ -246,49 +250,49 @@ readSGY_binary_file_header <- function(con, ENDIAN){
                           "16" = 1)
   
   # 3227-3228 - CDP fold expected per CDP ensemble
-  hd$ENSEMBLE_FOLD <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
+  hd$ENSEMBLE_FOLD <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
   # 3229-3230 - Trace sorting code (i.e. type of ensemble) :
   # -1 = Other (should be explained in a user Extended Textual File Header
   #               stanza)
   # 0 = Unknown
   # 1 = As recorded (no sorting)
   # 2 = CDP ensemble
-  # 3 = Single fold continuous profile
+  # 3 = Single fold dsntinuous profile
   # 4 = Horizontally stacked
   # 5 = Common source point
   # 6 = Common receiver point
   # 7 = Common offset point
   # 8 = Common mid-point
-  # 9 = Common conversion point
-  hd$TRACE_SORTING_CODE <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
+  # 9 = Common dsnversion point
+  hd$TRACE_SORTING_CODE <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
   # 3231-3232 - Vertical sum code:
   # 1 = no sum,
   # 2 = two sum,
   # ...,
   # N = M-1 sum (M = 2 to 32,767)
-  hd$VERTICAL_SUM_CODE <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
+  hd$VERTICAL_SUM_CODE <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
   hd$VERTICAL_SUM <- switch(hd$VERTICAL_SUM_CODE ,
                             "1" = "meter",
                             "2" = "feet")
   # 3233-3234 - Sweep frequency at start (Hz).
-  hd$SWEEP_FREQ_START <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
+  hd$SWEEP_FREQ_START <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
   # 3235-3236 - Sweep frequency at end (Hz).
-  hd$SWEEP_FREQ_END <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
+  hd$SWEEP_FREQ_END <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
   # 3237-3238 Sweep length (ms).
-  hd$SWEEP_LENGTH <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
+  hd$SWEEP_LENGTH <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
   
   
-  seek(con, where = 3500, origin = "start")
+  seek(dsn, where = 3500, origin = "start")
   # 3501 Major SEG-Y Format Revision Number. This is an 8-bit unsigned value. Thus
   # for SEG-Y Revision 2.0, as defined in this document, this will be recorded as
   # 02 16 . This field is mandatory for all versions of SEG-Y, although a value of
-  # zero indicates "traditional" SEG-Y conforming to the 1975 standard.
-  hd$FORMAT_REV_NB <- readBin(con, what = integer(), n = 1, size = 1, endian = ENDIAN, signed = FALSE)
+  # zero indicates "traditional" SEG-Y dsnforming to the 1975 standard.
+  hd$FORMAT_REV_NB <- readBin(dsn, what = integer(), n = 1, size = 1, endian = ENDIAN, signed = FALSE)
   # 3502 Minor SEG-Y Format Revision Number. This is an 8-bit unsigned value with a
-  # radix point between the first and second bytes. Thus for SEG-Y Revision 2.0,
+  # radix point between the first and sedsnd bytes. Thus for SEG-Y Revision 2.0,
   # as defined in this document, this will be recorded as 00 16 . This field is
   # mandatory for all versions of SEG-Y.
-  hd$FORMAT_REV_NB_MINOR <- readBin(con, what = integer(), n = 1, size = 1, endian = ENDIAN)
+  hd$FORMAT_REV_NB_MINOR <- readBin(dsn, what = integer(), n = 1, size = 1, endian = ENDIAN)
   # 3503-3504 - Fixed length trace flag. A value of one indicates that all traces in this SEG-Y
   # file are guaranteed to have the same sample interval, number of trace header
   # blocks and trace samples, as specified in Binary File Header bytes 3217-3218
@@ -298,15 +302,15 @@ readSGY_binary_file_header <- function(con, ENDIAN){
   # present, bytes 137-140 of SEG-Y Trace Header Extension 1 must be
   # examined to determine the actual length of each trace. This field is mandatory
   # for all versions of SEG-Y, although a value of zero indicates "traditional" SEGY
-  # conforming to the 1975 standard. Irrespective of this flag, it is strongly
+  # dsnforming to the 1975 standard. Irrespective of this flag, it is strongly
   # recommended that corect values for the number of samples per trace and
   # sample interval appear in the appropriate trace Trace Header locations.
-  hd$FIXED_LENGTH_FLAG <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
+  hd$FIXED_LENGTH_FLAG <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
   # 3505-3506 - Number of 3200-byte, Extended Textual File Header 
   # records following the Binary Header.
-  hd$NB_3200_BYTES <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
+  hd$NB_3200_BYTES <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
   # 3507-3510 - Maximum number of additional 240 byte trace headers.
-  hd$MAX_NB_240_HEADER <- readBin(con, what = integer(), n = 1, size = 4, endian = ENDIAN)
+  hd$MAX_NB_240_HEADER <- readBin(dsn, what = integer(), n = 1, size = 4, endian = ENDIAN)
   # 3511-3512 - Time basis code:
   # 1 = Local
   # 2 = GMT (Greenwich Mean Time)
@@ -314,50 +318,50 @@ readSGY_binary_file_header <- function(con, ENDIAN){
   # Extended Textual File Header
   # 4 = UTC (Coordinated Universal Time)
   # 5 = GPS (Global Positioning System Time)
-  hd$TIME_BASIS_CODE <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
+  hd$TIME_BASIS_CODE <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
   # 3513-3520Number of traces in this file or stream
   # If zero, all bytes in the file or stream are part of this SEG-Y dataset.
-  hd$TRACE_NUMBER <- readBin(con, what = integer(), n = 1, size = 8, endian = ENDIAN)
+  hd$TRACE_NUMBER <- readBin(dsn, what = integer(), n = 1, size = 8, endian = ENDIAN)
   # Byte offset of first trace relative to start of file or stream if known
-  hd$BYTE_OFFSET <- readBin(con, what = integer(), n = 1, size = 8, endian = ENDIAN)
+  hd$BYTE_OFFSET <- readBin(dsn, what = integer(), n = 1, size = 8, endian = ENDIAN)
   # Number of 3200-byte data trailer stanza records
-  hd$NB_DATA_TRAILER <- readBin(con, what = integer(), n = 1, size = 4, endian = ENDIAN)
+  hd$NB_DATA_TRAILER <- readBin(dsn, what = integer(), n = 1, size = 4, endian = ENDIAN)
   return(hd)
 }
 
-readSGY_data_trace <- function(con, ENDIAN, nbytes, NB_3200_BYTES = 0, NB_DATA_TRAILER = 0, DATA_FORMAT){
+readSGY_data_trace <- function(dsn, ENDIAN, nbytes, NB_3200_BYTES = 0, NB_DATA_TRAILER = 0, DATA_FORMAT){
   start_data_trace <- 3600 + NB_3200_BYTES * 3200
   length_data_trailer <- NB_DATA_TRAILER * 3200
-  seek(con, where = start_data_trace + 114, origin = "start")
+  seek(dsn, where = start_data_trace + 114, origin = "start")
   # number of samples 
-  nspls <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
+  nspls <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
   # sample interval
-  trdt <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)  / (1000 * 1000)
+  # trdt <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)  / (1000 * 1000)
   
   trclen = 240 + nspls * nbytes
-  ntrc = (.flen(con) - start_data_trace) / trclen
+  ntrc = (.flen(dsn) - start_data_trace) / trclen
   
   dataSGY <- matrix(nrow = nspls, ncol = ntrc)
-  trhd <- matrix(0L, nrow = 27, ncol = ntrc)
-  seek(con, where = start_data_trace, origin = "start")
+  trhd <- matrix(0L, nrow = 29, ncol = ntrc)
+  seek(dsn, where = start_data_trace, origin = "start")
   for(i in seq_len(ntrc)){
     # trace sequence number within line
-    trhd[1, i] <- readBin(con, what = integer(), n = 1, size = 4, endian = ENDIAN)
+    trhd[1, i] <- readBin(dsn, what = integer(), n = 1, size = 4, endian = ENDIAN)
     # trace sequence number within SEG-Y file 
-    trhd[2, i] <- readBin(con, what = integer(), n = 1, size = 4, endian = ENDIAN)
+    trhd[2, i] <- readBin(dsn, what = integer(), n = 1, size = 4, endian = ENDIAN)
     # Original field record number
-    trhd[3, i] <- readBin(con, what = integer(), n = 1, size = 4, endian = ENDIAN)
+    trhd[3, i] <- readBin(dsn, what = integer(), n = 1, size = 4, endian = ENDIAN)
     # Trace number within original field record
-    trhd[4, i] <- readBin(con, what = integer(), n = 1, size = 4,
+    trhd[4, i] <- readBin(dsn, what = integer(), n = 1, size = 4,
                           endian = ENDIAN)
     # Energy source point number
-    trhd[5, i] <- readBin(con, what = integer(), n = 1, size = 4,
+    trhd[5, i] <- readBin(dsn, what = integer(), n = 1, size = 4,
                           endian = ENDIAN)
     # CDP ensemble number || CDP = CMP
-    trhd[6, i] <- readBin(con, what = integer(), n = 1, size = 4,
+    trhd[6, i] <- readBin(dsn, what = integer(), n = 1, size = 4,
                           endian = ENDIAN)
     # Trace  number within the ensemble
-    trhd[7, i] <- readBin(con, what = integer(), n = 1, size = 4,
+    trhd[7, i] <- readBin(dsn, what = integer(), n = 1, size = 4,
                           endian = ENDIAN)
     # Trace identification code:
     # 1 = seismic data;
@@ -369,81 +373,81 @@ readSGY_data_trace <- function(con, ENDIAN, nbytes, NB_3200_BYTES = 0, NB_DATA_T
     # 7 = timing;
     # 8 = water break;
     # 9 = optional use
-    trhd[8, i] <- readBin(con, what = integer(), n = 1, size = 2,
+    trhd[8, i] <- readBin(dsn, what = integer(), n = 1, size = 2,
                           endian = ENDIAN)
     # Stacking: Number of vertically summed traces yielding this trace
-    trhd[9, i] <- readBin(con, what = integer(), n = 1, size = 2,
+    trhd[9, i] <- readBin(dsn, what = integer(), n = 1, size = 2,
                           endian = ENDIAN)
     # Number of horizontally summed traces yielding this trace
-    invisible(readBin(con, what = integer(), n = 1, size = 2,
+    invisible(readBin(dsn, what = integer(), n = 1, size = 2,
                       endian = ENDIAN))
     # data use:
     # 1 = production;
     # 2 = test.
-    invisible(readBin(con, what = integer(), n = 1L, size = 2,
+    invisible(readBin(dsn, what = integer(), n = 1L, size = 2,
                       endian = ENDIAN))
     # Distance from center of the source point to the center of the receiver group
     # (negative if opposite to direction in which line is shot).
-    trhd[10, i] <-  readBin(con, what = integer(), n = 1L, size = 4,
+    trhd[10, i] <-  readBin(dsn, what = integer(), n = 1L, size = 4,
                             endian = ENDIAN)
     # Elevation of receiver group
-    trhd[11, i] <- readBin(con, what = integer(), n = 1L, size = 4,
+    trhd[11, i] <- readBin(dsn, what = integer(), n = 1L, size = 4,
                            endian = ENDIAN)
     # Surface elevation at source location.
-    trhd[12, i] <- readBin(con, what = integer(), n = 1L, size = 4,
+    trhd[12, i] <- readBin(dsn, what = integer(), n = 1L, size = 4,
                            endian = ENDIAN)
     # Source depth below surface
-    trhd[13, i] <- readBin(con, what = integer(), n = 1L, size = 4,
+    trhd[13, i] <- readBin(dsn, what = integer(), n = 1L, size = 4,
                            endian = ENDIAN)
     # Seismic Datum elevation at receiver group
-    trhd[14, i] <- readBin(con, what = integer(), n = 1L, size = 4,
+    trhd[14, i] <- readBin(dsn, what = integer(), n = 1L, size = 4,
                            endian = ENDIAN)
     # Seismic Datum elevation at source.
-    trhd[15, i] <- readBin(con, what = integer(), n = 1L, size = 4,
+    trhd[15, i] <- readBin(dsn, what = integer(), n = 1L, size = 4,
                            endian = ENDIAN)
     # Water column height at source location
-    invisible(readBin(con, what = integer(), n = 1L, size = 4,
+    invisible(readBin(dsn, what = integer(), n = 1L, size = 4,
                       endian = ENDIAN))
     # Water column height at receiver group location
-    invisible(readBin(con, what = integer(), n = 1L, size = 4,
+    invisible(readBin(dsn, what = integer(), n = 1L, size = 4,
                       endian = ENDIAN))
     # Scalar to be applied to all elevations and depths
-    invisible(readBin(con, what = integer(), n = 1L, size = 2,
-                      endian = ENDIAN))
+    trhd[16, i] <- readBin(dsn, what = integer(), n = 1L, size = 2,
+                      endian = ENDIAN)
     # Scalar to be applied to all coordinates
-    invisible(readBin(con, what = integer(), n = 1L, size = 2,
-                      endian = ENDIAN))
+    trhd[17, i] <- readBin(dsn, what = integer(), n = 1L, size = 2,
+                      endian = ENDIAN)
     # Source coordinate - X.
-    trhd[16, i] <- readBin(con, what = integer(), n = 1L, size = 4,
+    trhd[18, i] <- readBin(dsn, what = integer(), n = 1L, size = 4,
                            endian = ENDIAN)
     # Source coordinate - Y.
-    trhd[17, i] <- readBin(con, what = integer(), n = 1L, size = 4,
+    trhd[19, i] <- readBin(dsn, what = integer(), n = 1L, size = 4,
                            endian = ENDIAN)
     # Group coordinate - X.
-    trhd[18, i] <- readBin(con, what = integer(), n = 1L, size = 4,
+    trhd[20, i] <- readBin(dsn, what = integer(), n = 1L, size = 4,
                            endian = ENDIAN)
     # Group coordinate - Y.
-    trhd[19, i] <- readBin(con, what = integer(), n = 1L, size = 4,
+    trhd[21, i] <- readBin(dsn, what = integer(), n = 1L, size = 4,
                            endian = ENDIAN)
-    invisible(seek(con, where = 114 - 88, origin = "current"))
+    invisible(seek(dsn, where = 114 - 88, origin = "current"))
     
     # Number of samples in this trace.
-    trhd[20, i] <-readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
+    trhd[22, i] <-readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
     # Sample interval for this trace.
-    trhd[21, i] <-readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)  / (1000 * 1000)
+    trhd[23, i] <-readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)  / (1000 * 1000)
     
-    invisible(seek(con, where = 156 - 118, origin = "current"))
+    invisible(seek(dsn, where = 156 - 118, origin = "current"))
     
     # Year data recorded
-    trhd[22, i] <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
+    trhd[24, i] <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
     # Day of year
-    trhd[23, i] <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
+    trhd[25, i] <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
     # Hour of day
-    trhd[24, i] <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
+    trhd[26, i] <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
     # Minute of hour.
-    trhd[25, i] <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
-    # Second of minute.
-    trhd[26, i] <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
+    trhd[27, i] <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
+    # Sedsnd of minute.
+    trhd[28, i] <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
     
     # Time basis code. If nonzero, overrides Binary File Header bytes 3511-3512.
     # 1 = Local
@@ -452,15 +456,15 @@ readSGY_data_trace <- function(con, ENDIAN, nbytes, NB_3200_BYTES = 0, NB_DATA_T
     # Textual File Header
     # 4 = UTC (Coordinated Universal Time)
     # 5 = GPS (Global Positioning System Time)
-    trhd[27, i] <- readBin(con, what = integer(), n = 1, size = 2, endian = ENDIAN)
+    trhd[29, i] <- readBin(dsn, what = integer(), n = 1, size = 2, endian = ENDIAN)
     
-    invisible(seek(con, where = 3600 + 240 * i + nspls * nbytes * (i-1), origin = "start"))
+    invisible(seek(dsn, where = 3600 + 240 * i + nspls * nbytes * (i-1), origin = "start"))
     
     if(grepl("float", DATA_FORMAT)){  #  == "4-byte IEEE floating-point"){
-      dataSGY[,i] <- readBin(con, what = double(), n = nspls, 
+      dataSGY[,i] <- readBin(dsn, what = double(), n = nspls, 
                               size = nbytes, endian = ENDIAN, signed = TRUE)
     }else{
-      dataSGY[,i] <- readBin(con, what = integer(), n = nspls, 
+      dataSGY[,i] <- readBin(dsn, what = integer(), n = nspls, 
                              size = nbytes, endian = ENDIAN)
     }
   }

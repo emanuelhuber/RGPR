@@ -821,6 +821,7 @@ as.GPR.matrix <- function (x, ...){
       version = "0.2",
       data = x,
       traces = 1:ncol(x),           # x$dt1$traces
+      fid = rep("", ncol(x)),
       pos = (1:ncol(x) -1)*0.25,    # x$dt1$position  of the traces
       depth = (1:nrow(x) -1)*0.8,
       time0 = rep(0,ncol(x)),       # x$dt1$time0
@@ -891,6 +892,7 @@ as.GPR.list <- function (x, ...){
              version     = "0.2",
              data        = as.matrix(x[["data"]]),
              traces      = 1:ncol(x[["data"]]),       # trace numbering
+             fid          = rep("", ncol(x[["data"]])),
              pos         = x[["pos"]],                # trace position
              depth       = x[["depth"]],
              time0       = rep(0, ncol(x[["data"]])),  

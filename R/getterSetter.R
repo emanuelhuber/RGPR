@@ -582,11 +582,11 @@ setReplaceMethod(
   definition=function(x, value){
     value <- as.character(value)[1]
     # define a function surveymodeValues() that return a character vector
-    if(toupper(value) %in% c("CMP", "REFLEXION", "WARR", "CMPANALYSIS", 
+    if(toupper(value) %in% c("CMP", "REFLECTION", "WARR", "CMPANALYSIS", 
                              "CMP/WARR")){
       x@surveymode <- value
     }else{
-      stop("value must be either 'CMP', 'reflexion', 'WARR', 'CMPanalysis',
+      stop("value must be either 'CMP', 'reflection', 'WARR', 'CMPanalysis',
            or 'CMP/WARR'")
     }
     x@proc <- c(x@proc, "surveymode<-")

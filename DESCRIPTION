@@ -49,7 +49,7 @@ Collate:
   'readTXT.R'
   'readIDS.R'
   'readSGPR.R'
-  'writeFile.R'
+  'readOUT.R'
   'data.R'
   'ampl.R'
   'adjustGamma.R'
@@ -89,6 +89,8 @@ Collate:
   'migrate.R'
   'upsample.R'
   'writeGPR.R'
+  'writeBinary.R'
+  'writeDT1.R'
   'writeSGY.R'
   'exportPDF.R'
   'exportPNG.R'
@@ -145,7 +147,8 @@ Imports:
     robfilter,
     plotly,
     png,
-    units
+    units,
+    hdf5r
 RoxygenNote: 7.1.1
 Suggests: 
     testthat

@@ -100,6 +100,7 @@ Supported file format
   \item ASCII file format (*.txt): either 4-column format 
         (x,t,amplitude) or matrix-format (without header/rownames).
         \code{readGPR(dsn = 'xline.txt')}  
+  \item GPRmax file format (*.out): hdf5
   \item R object file format (*rds). These files are created by saving the
         \code{GPR} object with 
         \code{writeGPR(x, fPath = 'xline.rds', type = "rds")}.

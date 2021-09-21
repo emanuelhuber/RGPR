@@ -29,6 +29,7 @@
 #'   \item ASCII file format (*.txt): either 4-column format 
 #'         (x,t,amplitude) or matrix-format (without header/rownames).
 #'         \code{readGPR(dsn = 'xline.txt')}  
+#'   \item GPRmax file format (*.out): hdf5
 #'   \item R object file format (*rds). These files are created by saving the
 #'         \code{GPR} object with 
 #'         \code{writeGPR(x, fPath = 'xline.rds', type = "rds")}.
@@ -570,6 +571,8 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
               return(x)
             })
     }
+  }else if("OUT" %in% toupper(ext)){
+    x <- verboseF(readOUT(dsn[["OUT"]]), verbose = verbose)
   }else if("TXT" %in% toupper(ext)){
     # fName <- .fNameWExt(fPath)
     A <- verboseF( readTXT(dsn[["TXT"]]), verbose = verbose)
@@ -628,7 +631,8 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
   }else{
     stop(paste0("File extension not recognised!\n",
                 "Must be '.dt1', '.dzt', '.rd3', '.sgy', '.segy', '.rds'\n",
-                "'.iprb', '.iprh', '.dat', '.sgpr', '.dt', '.vol', '.seg2', '.sg2'."))
+                "'.iprb', '.iprh', '.dat', '.sgpr', '.dt', '.vol', '.seg2'\n", 
+                "'.sg2', '.out'."))
   }
   if(grepl("CMP", x@surveymode)){
     x@surveymode <- "CMP"

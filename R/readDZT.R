@@ -89,6 +89,7 @@
       x_posunit <-x$dzx$hUnit
       if(grepl("in", x_posunit)){
         x_pos <- x_pos * 0.0254
+        x_dx <- x_dx * 0.0254
         x_posunit <- "m"
       }
     }
@@ -304,7 +305,7 @@ readDZT <- function(dsn){
   # plot3D::image2D(x = tt, y = yy, z = A)
   
   if(hd$SPM  > 0){
-    yy <- 1/hd$SPM * (seq_len(ncol(A) / hd$NCHAN) - 1)
+    yy <-  (seq_len(ncol(A) / hd$NCHAN) - 1) /hd$SPM
   }else{
     yy <- seq_len(ncol(A))
   }

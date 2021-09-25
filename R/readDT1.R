@@ -327,7 +327,11 @@ readHD <- function(dsn){
 #' @export
 readGPS <- function(dsn){
   X <- .readGPS(dsn)
-  xyzt <- .getLonLatFromGPGGA(X$gpgga)
+  if(X$type == "GNGGA"){
+    xyzt <- .getLatLonFromGNGGA(X$gpgga)
+  }else if(X$type == "GPGGA"){
+    xyzt <- .getLatLonFromGPGGA(X$gpgga)
+  }
   mrk <- cbind(xyzt[ ,1:3], X$tr_id, X$tr_pos, xyzt[ ,4])
   # mrk <- as.matrix(mrk)
   names(mrk) <- c("x", "y", "z", "id", "pos", "time")
@@ -339,6 +343,20 @@ readGPS <- function(dsn){
   
   x <- scan(dsn, what = character(), sep = "\n", quiet = TRUE)
   
+  # fac <- 1
+  test1 <- grepl("(\\$GPGGA)", x)
+  if(any(test1)){
+    type <- "GPGGA"
+  }else{
+    test2 <- grepl("(\\$GNGGA)", x)
+    if(any(test2)){
+      type <- "GNGGA"
+    }else{
+      stop("Problem - no GPGGA or GNGGA string. Please contact me\n",
+           "emanuel.huber@pm.me")
+    }
+  }
+  
   xtr <- which(grepl("Trace \\#[0-9]+", x, 
                      ignore.case = TRUE, useBytes = TRUE ))
   #if(length(xtr) != length(xgpgga)){}
@@ -347,7 +365,8 @@ readGPS <- function(dsn){
   todelete <- c()
   for(i in seq_along(xtr[-1])){
     for(j in (xtr[i] + 1):(xtr[i+1] - 1)){
-      test <- grepl("(\\$GPGGA)", x[j], ignore.case = TRUE, useBytes = TRUE )
+      
+      test <- grepl(paste0("(\\$", type, ")"), x[j], ignore.case = TRUE, useBytes = TRUE )
       if(isTRUE(test)){
         xgpgga[i] <- j
         # message(xtr[i], " - ", j)
@@ -386,7 +405,7 @@ readGPS <- function(dsn){
                                       pat = "(position [0-9]*\\.?[0-9]*)", 
                                       shift1 = 9, shift2 = 0))
   
-  pat_gpgga <- paste0("\\$(?<ID>GPGGA),(?<UTC>[0-9.]+),(?<lat>[0-9.]+),",
+  pat_gpgga <- paste0("\\$(?<ID>[A-Z]+GGA),(?<UTC>[0-9.]+),(?<lat>[0-9.]+),",
                       "(?<NS>[NS]),(?<lon>[0-9.]+),(?<EW>[EW]),(?<fix>[0-9]),",
                       "(?<NbSat>[0-9.]+),(?<HDOP>[0-9.]+),(?<H>[0-9.]+),",
                       "(?<mf>[MmFf]+)") 
@@ -405,6 +424,8 @@ readGPS <- function(dsn){
   gpgga <- as.data.frame(gpgga, stringsAsFactors = FALSE)
   colnames(gpgga) <- c("ID", "UTC", "lat", "NS", "lon", "EW", 
                        "fix", "NbSat", "HDOP", "H", "mf")
+  # gpgga$lat <- as.numeric(gpgga$lat) * fac
+  # gpgga$lon <- as.numeric(gpgga$lon) * fac
   
   sel <- which(gpgga[,1] != "")
   
@@ -417,8 +438,9 @@ readGPS <- function(dsn){
          "emanuel.huber@pm.me")
   }
   .closeFileIfNot(dsn)
-  return(list(tr_id = tr_id, tr_pos = tr_pos, gpgga = gpgga))
+  return(list(tr_id = tr_id, tr_pos = tr_pos, gpgga = gpgga, type = type))
 }
+
 
 
 

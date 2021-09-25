@@ -14,9 +14,16 @@
     data_pos <- seq_len(n)
     x$BHD$xyz <- data_xyz
     data_xyz <- matrix(nrow = 0, ncol = 0)
-    message("No increasing inter-trace distances, ",
-            "I ignore the trace coordinates. ",
-            "Check the coordinates in 'gethd(x)$xyz'")
+    message("No increasing inter-trace distances,\n",
+            "I ignore the trace coordinates.\n",
+            "Check the coordinates with 'gethd(x)$xyz'")
+  }else if(sum(diff(data_pos) == 0)/n > 0.50){
+    data_pos <- seq_len(n)
+    x$BHD$xyz <- data_xyz
+    data_xyz <- matrix(nrow = 0, ncol = 0)
+    message("More than 50% of the traces with identical coordinates... strange.\n",
+            "I ignore the trace coordinates.\n",
+            "Check the coordinates with 'gethd(x)$xyz'")
   }
   
   # check date
@@ -41,7 +48,7 @@
           ". Set it with 'antsep(x) <- ... '")
   
   # extract information from textual header data (only if valid encoding)
-  scl <- 1
+
   data_crs <- character(0)
   # if(all(validEnc(x$THD))){
   k <- verboseF(grepl("epsg:", x$THD, ignore.case = TRUE), verbose = FALSE)
@@ -61,11 +68,14 @@
       i1 <- attr(scale_fact, "capture.start")
       i2 <- i1 + attr(scale_fact, "capture.length") -1
       scl <- as.numeric(substr(x$THD[k], i1, i2))
+      data_xyz <- data_xyz * scl
     }
-  }else{
-    data_xyz[, 1] <- data_xyz[, 1] / x$DTR$trHD[17, ]
-    data_xyz[, 2] <- data_xyz[, 2] / x$DTR$trHD[17, ]
-    data_xyz[, 3] <- data_xyz[, 3] / x$DTR$trHD[16, ]
+  }else if(length(data_xyz) > 0){
+    if(all(x$DTR$trHD[17, ] > 0)){
+      data_xyz[, 1] <- data_xyz[, 1] / x$DTR$trHD[17, ]
+      data_xyz[, 2] <- data_xyz[, 2] / x$DTR$trHD[17, ]
+    }    
+    if(all(x$DTR$trHD[16, ] > 0))  data_xyz[, 3] <- data_xyz[, 3] / x$DTR$trHD[16, ]
   }
   
   y <- new("GPR",   
@@ -73,7 +83,7 @@
            data        = bits2volt(Vmax = Vmax, nbits = x$BHD$DATA_BYTES) * x$DTR$data,
            traces      = x$DTR$trHD[1,],
            fid         = rep("", n),
-           coord       = data_xyz * scl,
+           coord       = data_xyz,
            pos         = data_pos,
            depth       = seq(0, by = data_dt, length.out = nrow(x$DTR$data)),
            rec         = matrix(nrow = 0, ncol = 0),

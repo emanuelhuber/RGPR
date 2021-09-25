@@ -109,6 +109,7 @@
 #' @export
 readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
                     fPath, ch = 1, verbose = TRUE, interp_pos = TRUE, 
+                    toUTM = TRUE,
                     method = c("linear", "linear", "linear"), 
                     endian =  .Platform$endian){
   
@@ -167,7 +168,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
               gps <-  verboseF(readGPS(dsn[["GPS"]]), verbose = verbose)
               if(!is.null(gps)){
                 x <- interpPos(x, gps, tol = sqrt(.Machine$double.eps), 
-                               method = method)
+                               method = method, toUTM = toUTM)
                 crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
                 x
               }else{
@@ -261,7 +262,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
               x_cor <-  verboseF(readCOR(dsn[["COR"]]), verbose = verbose)
               if(!is.null(x_cor) && isTRUE(interp_pos)){
                 x <- interpPos(x, x_cor, tol = sqrt(.Machine$double.eps), 
-                               method = method)
+                               method = method, toUTM = toUTM)
                 crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
                 x
               }else{
@@ -295,7 +296,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
       x <- tryCatch({
         x_mrk <-  verboseF(readGEC(dsn[["GEC"]]), verbose = verbose)
         x <- interpPos(x, x_mrk, tol = sqrt(.Machine$double.eps), 
-                       method = method)
+                       method = method, toUTM = toUTM)
         crs(x) <- paste0("+init=epsg:32635 +proj=utm +zone=", 
                          x_mrk[1,"crs"], 
                          " +datum=WGS84 +units=m +no_defs## +ellps=WGS84 +towgs84=0,0,0")
@@ -449,7 +450,8 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
     if( !is.null(dsn[["COR"]]) && isTRUE(interp_pos)){
       x <- tryCatch({
               x_cor <-  verboseF(readIPRCOR(dsn[["COR"]]), verbose = verbose)
-              x <- interpPos(x, x_cor, tol = sqrt(.Machine$double.eps), method = method)
+              x <- interpPos(x, x_cor, tol = sqrt(.Machine$double.eps), 
+                             method = method, toUTM = toUTM)
               crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
               x
             },
@@ -489,7 +491,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
       x <- tryCatch({
               x_mrk <-  verboseF(readDZG(dsn[["DZG"]]), verbose = verbose)
               x <- interpPos(x, x_mrk, tol = sqrt(.Machine$double.eps), 
-                             method = method)
+                             method = method, toUTM = toUTM)
               crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
               x
             },
@@ -557,7 +559,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
                 x_cor <-  verboseF(readUtsiGPS(dsn[["GPS"]], gpt), 
                                    verbose = verbose)
                 x <- interpPos(x, x_cor, tol = sqrt(.Machine$double.eps), 
-                               method = method)
+                               method = method, toUTM = toUTM)
                 crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
                 x
               }else{

@@ -10,6 +10,8 @@
 # an outward-pointing normal direction (i.e., "up") is used for the third 
 # coordinate on the sphere.
 
+
+
 #' @export
 readGPGGA <- function(dsn, sep = ","){
   if(!inherits(dsn, "connection")){
@@ -23,11 +25,6 @@ readGPGGA <- function(dsn, sep = ","){
   a <- read.table(textConnection(content), 
                   header = FALSE, colClasses = "character",
                   stringsAsFactors = FALSE, sep = ",")
-  # a <- read.table(textConnection(gsub(sep, ";", content)), 
-  #                 header = FALSE, colClasses = "character",
-  #                 stringsAsFactors = FALSE, sep = ";")
-  # a <- read.table(x, header = FALSE, colClasses = "character",
-                  # sep = ",", stringsAsFactors = FALSE)
   llz <- getLonLatFromGPGGA(a)
   sp::coordinates(llz) <- cbind(x = llz$lon, y = llz$lat)
   sp::proj4string(llz) <- sp::CRS("+proj=longlat +datum=WGS84")
@@ -44,20 +41,39 @@ getLonLatFromGPGGA <- function(a){
                 "NbSat", "HDOP", "H", "mf", "HGeoid", "mf2", 
                 "TDGPS", "DGPSID", "Checks")[1:ncol(a)]
   
-  return(.getLonLatFromGPGGA(a))
+  return(.getLatLonFromGPGGA(a))
 }
 
 
-.getLonLatFromGPGGA <- function(a){
+.getLatLonFromGNGGA <- function(a){
   trctime <- strptime(paste(Sys.Date(), a$UTC), '%Y-%m-%d %H%M%OS', tz='UTC')
   
   # 3 latitude 
   #  The format for NMEA coordinates is (d)ddmm.mmmm
-  lat <- sapply(a$lat, stringToLat, NW = a$NS, USE.NAMES = FALSE)
+  lat <- as.numeric(a$lat) / 100
   
   # 5 longitude
   #  The format for NMEA coordinates is (d)ddmm.mmmm
-  lon <- sapply(a$lon, stringToLat, NW = a$EW,USE.NAMES = FALSE)
+  lon <- as.numeric(a$lon) / 100
+  
+  # 10 elevation
+  z <- as.numeric(a$H)
+  
+  llz <- data.frame(lon = lon, lat = lat, z = z, time = trctime)
+  colnames(llz) <- c("lon", "lat", "z", "time")
+  return(llz)
+}
+
+.getLatLonFromGPGGA <- function(a){
+  trctime <- strptime(paste(Sys.Date(), a$UTC), '%Y-%m-%d %H%M%OS', tz='UTC')
+  
+  # 3 latitude 
+  #  The format for NMEA coordinates is (d)ddmm.mmmm
+  lat <- sapply(a$lat, stringToLatLonGPGGA, NW = a$NS, USE.NAMES = FALSE, nn = 2)
+  
+  # 5 longitude
+  #  The format for NMEA coordinates is (d)ddmm.mmmm
+  lon <- sapply(a$lon, stringToLatLonGPGGA, NW = a$EW, USE.NAMES = FALSE, nn = 3)
   
   # 10 elevation
   z <- as.numeric(a$H)
@@ -68,10 +84,10 @@ getLonLatFromGPGGA <- function(a){
 }
 
 
-stringToLat <- function(x, NW = "N"){
+stringToLatLonGPGGA <- function(x, NW = "N", nn = 2){
   ddmm_mmmm <- strsplit(x, "\\.")[[1]]
   n <- nchar(ddmm_mmmm[1])
-  if(n > 2){
+  if(n > nn){
     dd <- as.numeric(substring(ddmm_mmmm[1],1, n-2))
   }else{
     dd <- 0

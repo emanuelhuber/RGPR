@@ -39,7 +39,7 @@ setClass(
 #' @name GPRsurvey
 #' @export
 # LINES = list of datapath
-GPRsurvey <- function(LINES, verbose = TRUE){
+GPRsurvey <- function(LINES, verbose = TRUE, ...){
   n <- length(LINES)
   line_filepaths <- character(n)
   line_names <- character(n)
@@ -65,7 +65,7 @@ GPRsurvey <- function(LINES, verbose = TRUE){
       next
     }
     it <- it + 1
-    gpr <- readGPR(LINES[[i]], verbose = verbose)
+    gpr <- readGPR(LINES[[i]], verbose = verbose, ...)
     # FIX ME!
     #  > check if name(gpr) is unique
     line_filepaths[it]     <- LINES[[i]]

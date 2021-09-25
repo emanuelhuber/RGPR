@@ -368,7 +368,7 @@ readDZG <- function(dsn){
   gssis <- as.data.frame(gssis, stringsAsFactors = FALSE)
   colnames(gssis) <- c("ID", "trace", "time")
   
-  xyzt <- .getLonLatFromGPGGA(gpgga)
+  xyzt <- .getLatLonFromGPGGA(gpgga)
   
   # trace number start at 0!!
   mrk <- cbind(xyzt[ ,1:3], as.integer(gssis$trace) + 1,  xyzt[ ,4])

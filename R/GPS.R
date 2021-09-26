@@ -103,11 +103,14 @@ stringToLatLonGPGGA <- function(x, NW = "N", nn = 2){
 #' see https://stackoverflow.com/a/30225804
 #' https://stackoverflow.com/questions/18639967/converting-latitude-and-longitude-points-to-utm
 #' @export
-llToUTM <- function(lon, lat, zone = NULL, south = NULL){
+llToUTM <- function(lon, lat, zone = NULL, south = NULL, west = FALSE){
   # todo: check if lat/long in hh:mm:ss and convert them into
   #       decimal with the function 'll2dc()' (see below)
   lat_mean <- median(lat)
   lon_mean <- median(lon)
+  if(west == TRUE){
+    lon_mean <- -lon_mean
+  }
   if(is.null(zone)){
     zone <- getUTMzone(lat = lat_mean, lon = lon_mean)
   }

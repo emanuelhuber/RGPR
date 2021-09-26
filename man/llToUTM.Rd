@@ -4,7 +4,7 @@
 \alias{llToUTM}
 \title{longitude, latitude to UTM}
 \usage{
-llToUTM(lon, lat, zone = NULL, south = NULL)
+llToUTM(lon, lat, zone = NULL, south = NULL, west = FALSE)
 }
 \description{
 see https://stackoverflow.com/a/30225804

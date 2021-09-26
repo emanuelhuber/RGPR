@@ -14,6 +14,7 @@ readGPR(
   ch = 1,
   verbose = TRUE,
   interp_pos = TRUE,
+  toUTM = TRUE,
   method = c("linear", "linear", "linear"),
   endian = .Platform$endian
 )

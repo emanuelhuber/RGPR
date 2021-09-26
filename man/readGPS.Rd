@@ -4,7 +4,7 @@
 \alias{readGPS}
 \title{Read .GPS files (Sensors and Software)}
 \usage{
-readGPS(dsn)
+readGPS(dsn, toUTM = FALSE)
 }
 \arguments{
 \item{dsn}{[\code{character(1)|connection object}]data source name: 

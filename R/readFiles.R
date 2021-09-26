@@ -165,11 +165,17 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
                           desc = desc, Vmax = Vmax),  verbose = verbose)
     if( !is.null(dsn[["GPS"]]) && isTRUE(interp_pos)){
       x <- tryCatch({
-              gps <-  verboseF(readGPS(dsn[["GPS"]]), verbose = verbose)
+              gps <-  verboseF(readGPS(dsn[["GPS"]], toUTM = toUTM), verbose = verbose)
               if(!is.null(gps)){
-                x <- interpPos(x, gps, tol = sqrt(.Machine$double.eps), 
-                               method = method, toUTM = toUTM)
-                crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+                ## HERE: convert GPR to UTM
+                # FIXME
+                x <- interpPos(x, gps$mrk, tol = sqrt(.Machine$double.eps), 
+                               method = method)
+                if(toUTM == TRUE){
+                  crs(x) <- gps$crs
+                }else{
+                  crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+                }
                 x
               }else{
                 x
@@ -262,8 +268,10 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
               x_cor <-  verboseF(readCOR(dsn[["COR"]]), verbose = verbose)
               if(!is.null(x_cor) && isTRUE(interp_pos)){
                 x <- interpPos(x, x_cor, tol = sqrt(.Machine$double.eps), 
-                               method = method, toUTM = toUTM)
-                crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+                               method = method)
+                if(toUTM == TRUE){
+                  warning("Option 'toUTM' not yet implemented!")
+                }
                 x
               }else{
                 x
@@ -296,7 +304,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
       x <- tryCatch({
         x_mrk <-  verboseF(readGEC(dsn[["GEC"]]), verbose = verbose)
         x <- interpPos(x, x_mrk, tol = sqrt(.Machine$double.eps), 
-                       method = method, toUTM = toUTM)
+                       method = method)
         crs(x) <- paste0("+init=epsg:32635 +proj=utm +zone=", 
                          x_mrk[1,"crs"], 
                          " +datum=WGS84 +units=m +no_defs## +ellps=WGS84 +towgs84=0,0,0")
@@ -451,8 +459,10 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
       x <- tryCatch({
               x_cor <-  verboseF(readIPRCOR(dsn[["COR"]]), verbose = verbose)
               x <- interpPos(x, x_cor, tol = sqrt(.Machine$double.eps), 
-                             method = method, toUTM = toUTM)
-              crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+                             method = method)
+              if(toUTM == TRUE){
+                warning("Option 'toUTM' not yet implemented!")
+              }
               x
             },
             error = function(cond) {
@@ -491,8 +501,10 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
       x <- tryCatch({
               x_mrk <-  verboseF(readDZG(dsn[["DZG"]]), verbose = verbose)
               x <- interpPos(x, x_mrk, tol = sqrt(.Machine$double.eps), 
-                             method = method, toUTM = toUTM)
-              crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+                             method = method)
+              if(toUTM == TRUE){
+                warning("Option 'toUTM' not yet implemented!")
+              }
               x
             },
             error = function(cond) {
@@ -559,8 +571,10 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
                 x_cor <-  verboseF(readUtsiGPS(dsn[["GPS"]], gpt), 
                                    verbose = verbose)
                 x <- interpPos(x, x_cor, tol = sqrt(.Machine$double.eps), 
-                               method = method, toUTM = toUTM)
-                crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+                               method = method)
+                if(toUTM == TRUE){
+                  warning("Option 'toUTM' not yet implemented!")
+                }
                 x
               }else{
                 x

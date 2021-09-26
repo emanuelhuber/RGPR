@@ -325,18 +325,29 @@ readHD <- function(dsn){
 #'            or an open file connection.
 #' 
 #' @export
-readGPS <- function(dsn){
+readGPS <- function(dsn, toUTM = FALSE){
   X <- .readGPS(dsn)
   if(X$type == "GNGGA"){
     xyzt <- .getLatLonFromGNGGA(X$gpgga)
   }else if(X$type == "GPGGA"){
     xyzt <- .getLatLonFromGPGGA(X$gpgga)
   }
+  xyzt_crs <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+  if(toUTM == TRUE){
+    topoUTM <-  llToUTM(lat = xyzt[,2], 
+                        lon = xyzt[,1], 
+                        zone = NULL, 
+                        south = (X$gpgga$NS[1] == "S"),
+                        west  = (X$gpgga$EW[1] == "W"))
+    xyzt[, 1:2] <- topoUTM$xy
+    xyzt_crs <- topoUTM$crs
+  }
+  
   mrk <- cbind(xyzt[ ,1:3], X$tr_id, X$tr_pos, xyzt[ ,4])
   # mrk <- as.matrix(mrk)
   names(mrk) <- c("x", "y", "z", "id", "pos", "time")
   .closeFileIfNot(dsn)
-  return(mrk)
+  return(list(mrk = mrk, crs = xyzt_crs))
 }
 
 .readGPS <- function(dsn){

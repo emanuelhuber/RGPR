@@ -2607,8 +2607,8 @@ setMethod("trRmDuplicates", "GPR", function(x, tol = NULL, verbose = TRUE){
 ### handle crs -> if geogrphic -> projection
 setMethod("interpPos", "GPR", 
           function(x, topo, plot = FALSE, r = NULL, tol = NULL,
-                   method = c("linear", "linear", "linear"), crs = NULL, 
-                   toUTM = FALSE, ...){
+                   method = c("linear", "linear", "linear"), crs = NULL
+                   ,...){
     if(is.list(topo) && !is.data.frame(topo)) topo <- topo[[1]]
     if(all(is.na(topo[,4]))){
       stop(x@name, ": no link between the measured points",
@@ -2625,12 +2625,12 @@ setMethod("interpPos", "GPR",
     # keep only the markers corresponding to existing traces
     topo <- topo[topo[, 4] > 0 & topo[, 4] <= ncol(x), ]
     # convert to UTM (useful for GPS data)
-    if(toUTM == TRUE){
-      topoUTM <-  llToUTM(lat = topo[,2], 
-                          lon = topo[,1], 
-                          zone = NULL, south = NULL)
-      topo[, 1:2] <- topoUTM$xy
-    }
+    # if(toUTM == TRUE){
+    #   topoUTM <-  llToUTM(lat = topo[,2], 
+    #                       lon = topo[,1], 
+    #                       zone = NULL, south = NULL)
+    #   topo[, 1:2] <- topoUTM$xy
+    # }
     #--- 3D topo Distance ---#
     if(!is.null(r)){
       topo[,3] <- raster::extract(r, topo[, 1:2], method = "bilinear")
@@ -2742,9 +2742,9 @@ setMethod("interpPos", "GPR",
       Sys.sleep(1)
       par(op)
     }
-    if(toUTM == TRUE){
-      crs(x) <- topoUTM$crs
-    }
+    # if(toUTM == TRUE){
+    #   crs(x) <- topoUTM$crs
+    # }
     x@coord <- A
     x@proc <- c(x@proc, "interpPos")
     return(x)
@@ -2852,6 +2852,7 @@ interpPosFromGPGGA <- function(ntr, GPGGA, tol = NULL, backproject = TRUE){
   mrk0 <- GPGGA
   
   #--- Convert to UTM
+  # fixme: consider S (South) and W (West)
   tr_crs <-  llToUTM(lat = median(sp::coordinates(mrk0)[,2]), 
                       lon = median(sp::coordinates(mrk0)[,1]), 
                       zone = NULL, south = NULL)$crs

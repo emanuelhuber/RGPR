@@ -1863,9 +1863,13 @@ scaleCol <- function(A, type = c("stat", "min-max", "95",
                     scale = apply(A, 2, mad))
     }
   }
-  test <- (!is.na(Ascl[1,] ) & abs(Ascl[1,]) > .Machine$double.eps^0.75) 
-  A[,test] <- Ascl[,test]
-  A[, !test] <- 0
+  # FIXME: why did I write these 3 commented lines below?
+  # test <- (!is.na(Ascl[1,] ) & abs(Ascl[1,]) > .Machine$double.eps^0.75) 
+  # A[,test] <- Ascl[,test]
+  # A[, !test] <- 0test <- (!is.na(Ascl[1,] ) & abs(Ascl[1,]) > .Machine$double.eps^0.75) 
+  tst <- is.na(Ascl)
+  A[!tst] <- Ascl[!tst]
+  A[test] <- 0
   return(A)
 }
 

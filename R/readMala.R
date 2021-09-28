@@ -177,7 +177,7 @@ readRAD <- function(dsn){
 }
 
 #' @export
-readCOR <- function(dsn){
+readCOR <- function(dsn, toUTM = FALSE){
   if(!inherits(dsn, "connection")){
     dsn <- file(dsn, 'rb')
   }
@@ -216,9 +216,21 @@ readCOR <- function(dsn){
     z <- sapply((strsplit(hCOR[["y"]], ":")), as.numeric)
     hCOR[["y"]] <- z[1, ] + z[2, ]/60 + z[3, ]/3600
   }
-  if(any(grepl("S", hCOR[["lat"]]))) hCOR[["y"]] <- -hCOR[["y"]]
-  if(any(grepl("W", hCOR[["long"]]))) hCOR[["x"]] <- -hCOR[["x"]]
+  hCOR_crs <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+  if(toUTM == TRUE){
+    topoUTM <-  llToUTM(lat = hCOR[["y"]], 
+                        lon = hCOR[["x"]], 
+                        zone = NULL, 
+                        south = any(grepl("S", hCOR[["lat"]])),
+                        west  = any(grepl("W", hCOR[["long"]])))
+    hCOR[["x"]] <- topoUTM$xy[1]
+    hCOR[["y"]] <- topoUTM$xy[2]
+    hCOR_crs <- topoUTM$crs
+  } # else{
+  #   if(any(grepl("S", hCOR[["lat"]]))) hCOR[["y"]] <- -hCOR[["y"]]
+  #   if(any(grepl("W", hCOR[["long"]]))) hCOR[["x"]] <- -hCOR[["x"]]
+  # }
   
   .closeFileIfNot(dsn)
-  return(hCOR[c("x", "y", "z", "id", "date", "time")])
+  return(list(mrk = hCOR[c("x", "y", "z", "id", "date", "time")], crs = hCOR_crs))
 }

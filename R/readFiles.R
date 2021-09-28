@@ -171,15 +171,9 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
                 # FIXME
                 x <- interpPos(x, gps$mrk, tol = sqrt(.Machine$double.eps), 
                                method = method)
-                if(toUTM == TRUE){
-                  crs(x) <- gps$crs
-                }else{
-                  crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
-                }
-                x
-              }else{
-                x
+               crs(x) <- gps$crs
               }
+               return(x)
             },
             error = function(cond) {
               message("I could neither read your GPS data ",
@@ -265,17 +259,13 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
                    verbose = verbose)
     if( !is.null(dsn[["COR"]]) ){
       x <- tryCatch({
-              x_cor <-  verboseF(readCOR(dsn[["COR"]]), verbose = verbose)
-              if(!is.null(x_cor) && isTRUE(interp_pos)){
-                x <- interpPos(x, x_cor, tol = sqrt(.Machine$double.eps), 
+              gps <-  verboseF(readCOR(dsn[["COR"]], toUTM = toUTM), verbose = verbose)
+              if(!is.null(gps) && isTRUE(interp_pos)){
+                x <- interpPos(x, gps$mrk, tol = sqrt(.Machine$double.eps), 
                                method = method)
-                if(toUTM == TRUE){
-                  warning("Option 'toUTM' not yet implemented!")
-                }
-                x
-              }else{
-                x
+                crs(x) <- gps$crs
               }
+              return(x)
             },
             error = function(cond) {
               message("I could neither read your GPS data ",

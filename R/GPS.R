@@ -102,25 +102,31 @@ stringToLatLonGPGGA <- function(x, NW = "N", nn = 2){
 #' 
 #' see https://stackoverflow.com/a/30225804
 #' https://stackoverflow.com/questions/18639967/converting-latitude-and-longitude-points-to-utm
+#' 
+#' check also https://stackoverflow.com/questions/176137/java-convert-lat-lon-to-utm
 #' @export
 llToUTM <- function(lon, lat, zone = NULL, south = NULL, west = FALSE){
   # todo: check if lat/long in hh:mm:ss and convert them into
   #       decimal with the function 'll2dc()' (see below)
   lat_mean <- median(lat)
   lon_mean <- median(lon)
-  if(west == TRUE){
+  if(isTRUE(west)){
     lon_mean <- -lon_mean
   }
   if(is.null(zone)){
     zone <- getUTMzone(lat = lat_mean, lon = lon_mean)
   }
-  if(is.null(south)){
-    south <- ifelse(lat_mean > 0, "", "+south")
+
+  if(is.null(south) && lat_mean < 0){
+    south <- "+south "
+    lat <- -lat
+    print("SOUTH")
   }else if(isTRUE(south)){
     south <- "+south "
   }else{
     south <- ""
   }
+  
   ll <- data.frame(ID = 1:length(lat), X = lon, Y = lat)
   sp::coordinates(ll) <- c("X", "Y")
   sp::proj4string(ll) <- sp::CRS("+proj=longlat +datum=WGS84")

@@ -1,3 +1,36 @@
+#' @name coordref
+#' @rdname coordref
+#' @export
+setGenericVerif("coordref", function(x) standardGeneric("coordref"))
+
+#' Coordref of the GPR data
+#' 
+#' @name coordref
+#' @rdname coordref
+#' @export
+setMethod("coordref", "GPRsurvey", function(x){
+  return(x@coordref)
+} 
+)
+
+
+#' @name coordref<-
+#' @rdname coordref
+#' @export
+setGenericVerif("coordref<-",function(x,value){standardGeneric("coordref<-")})
+
+#' @name coordref<-
+#' @rdname coordref
+#' @export
+setReplaceMethod(
+  f="coordref",
+  signature="GPRsurvey",
+  definition=function(x,value){
+    x@coordref <- value
+    return(x)
+  }
+)
+
 
 #' @name name
 #' @rdname name

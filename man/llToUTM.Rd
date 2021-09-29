@@ -10,3 +10,6 @@ llToUTM(lon, lat, zone = NULL, south = NULL, west = FALSE)
 see https://stackoverflow.com/a/30225804
 https://stackoverflow.com/questions/18639967/converting-latitude-and-longitude-points-to-utm
 }
+\details{
+check also https://stackoverflow.com/questions/176137/java-convert-lat-lon-to-utm
+}

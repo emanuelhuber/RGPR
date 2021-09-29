@@ -167,7 +167,7 @@ GPRsurvey <- function(LINES, verbose = TRUE, ...){
         dz            = line_dz,     # depth/time window (vertical)
         zunits        = line_depthunits   # time/depth unit
   )
-  x <- coordref(x)
+  x <- setCoordref(x)
   return(x)
 }
 
@@ -273,9 +273,9 @@ setMethod("as.SpatialPoints", signature(x = "GPRsurvey"), function(x){
 
 #' Define a local reference coordinate
 #' 
-#' @rdname coordref-methods
-#' @aliases coordref,GPRsurvey-method
-setMethod("coordref", "GPRsurvey", function(x){
+#' @rdname setCoordref-methods
+#' @aliases setCoordref,GPRsurvey-method
+setMethod("setCoordref", "GPRsurvey", function(x){
   if(length(x@coords) > 0 && all(sapply(x@coords, length) > 0 )){
     xcoords <- Filter(Negate(is.null), x@coords)
       A <- do.call("rbind", x@coords)
@@ -291,14 +291,7 @@ setMethod("coordref", "GPRsurvey", function(x){
   }
 )
 
-setReplaceMethod(
-  f="coordref",
-  signature="GPRsurvey",
-  definition=function(x,value){
-    x@coordref <- value
-    return(x)
-  }
-)
+
 
 #' @name crs
 #' @rdname crs
@@ -484,7 +477,7 @@ setReplaceMethod(
     x@dz[i]             <- mean(diff(value@depth))
     x@zunits[i]         <- value@depthunit
     x@posunits[i]       <- value@posunit
-    x <- coordref(x)
+    x <- setCoordref(x)
     return (x)
   }
 )
@@ -694,7 +687,7 @@ setMethod("trRmDuplicates", "GPRsurvey", function(x, tol = NULL){
     }
   }
   x@intersections <- list()
-  x <- coordref(x)
+  x <- setCoordref(x)
   return(x) 
 })
 
@@ -713,7 +706,7 @@ setMethod("interpPos", "GPRsurvey",
       x@lengths[i] <- posLine(gpr@coord[ ,1:2], last = TRUE)
     }
     x@intersections <- list()
-    x <- coordref(x)
+    x <- setCoordref(x)
     return(x)
   }
 )
@@ -773,7 +766,7 @@ setMethod("reverse", "GPRsurvey", function(x, id = NULL, tol = 0.3){
       }
     }
     x@intersections <- list()
-    x <- coordref(x)
+    x <- setCoordref(x)
     return(x)
   }
   if (is.null(id) || (is.character(id) && id == "zigzag")){
@@ -796,7 +789,7 @@ setMethod("reverse", "GPRsurvey", function(x, id = NULL, tol = 0.3){
         x@fids[[id[i]]]      <- y@fid
       }
       x@intersections <- list()
-      x <- coordref(x)
+      x <- setCoordref(x)
       return(x) 
     }else{
       stop("id must be between 1 and ", length(x),"!")
@@ -1034,7 +1027,7 @@ setMethod("georef", "GPRsurvey",
                            creg = creg, ploc = ploc, preg = preg, FUN)
             x@coords <- xyz
             x@intersections <- list()
-            x <- coordref(x)
+            x <- setCoordref(x)
             return(x)
           })
 
@@ -1294,7 +1287,7 @@ setMethod("papply", "GPRsurvey", function(x, prc = NULL){
     message(' done!', appendLF = TRUE)
   }
   x@intersections <- list()
-  x <- coordref(x)
+  x <- setCoordref(x)
   return(x)
   } 
 )

@@ -46,16 +46,13 @@ setGeneric("trPlot", function(x, ...)
 
 
 #------------------------------
-#' @name coordref
-#' @rdname coordref-methods
-#' @exportMethod coordref
-setGenericVerif("coordref", function(x) standardGeneric("coordref"))
+#' @name setCoordref
+#' @rdname setCoordref-methods
+#' @exportMethod setCoordref
+setGenericVerif("setCoordref", function(x) standardGeneric("setCoordref"))
 
 
-#' @name coordref<-
-#' @rdname coordref-methods
-#' @exportMethod coordref
-setGenericVerif("coordref<-", function(x, value) standardGeneric("coordref<-"))
+
 
 #' @name intersections
 #' @rdname intersections-methods

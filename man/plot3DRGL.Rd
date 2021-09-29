@@ -10,7 +10,7 @@
   clip = NULL,
   normalize = NULL,
   nupspl = NULL,
-  add = TRUE,
+  add = FALSE,
   xlim = NULL,
   ylim = NULL,
   zlim = NULL,

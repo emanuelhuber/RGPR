@@ -2,7 +2,7 @@
 
 setGenericVerif("plot3DRGL", 
                 function(x, addTopo = FALSE, clip = NULL, normalize = NULL, 
-                         nupspl = NULL, add = TRUE, xlim = NULL, ylim = NULL, 
+                         nupspl = NULL, add = FALSE, xlim = NULL, ylim = NULL, 
                          zlim = NULL,...) 
                   standardGeneric("plot3DRGL"))
 
@@ -14,7 +14,7 @@ setGenericVerif("plot3DRGL",
 #' @export
 setMethod("plot3DRGL", "GPR", 
           function(x, addTopo = FALSE, clip = NULL, normalize = NULL, 
-                   nupspl = NULL, add = TRUE, xlim = NULL, ylim = NULL, 
+                   nupspl = NULL, add = FALSE, xlim = NULL, ylim = NULL, 
                    zlim = NULL, ...){
             if(length(x@vel) > 0){  
               velo <- x@vel[[1]]

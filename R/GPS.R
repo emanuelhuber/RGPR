@@ -48,13 +48,21 @@ getLonLatFromGPGGA <- function(a){
 .getLatLonFromGNGGA <- function(a){
   trctime <- strptime(paste(Sys.Date(), a$UTC), '%Y-%m-%d %H%M%OS', tz='UTC')
   
+  # # 3 latitude 
+  # #  The format for NMEA coordinates is (d)ddmm.mmmm
+  # lat <- as.numeric(a$lat) / 100
+  # 
+  # # 5 longitude
+  # #  The format for NMEA coordinates is (d)ddmm.mmmm
+  # lon <- as.numeric(a$lon) / 100
+  
   # 3 latitude 
   #  The format for NMEA coordinates is (d)ddmm.mmmm
-  lat <- as.numeric(a$lat) / 100
+  lat <- sapply(a$lat, stringToLatLonGPGGA, NW = a$NS, USE.NAMES = FALSE, nn = 2)
   
   # 5 longitude
   #  The format for NMEA coordinates is (d)ddmm.mmmm
-  lon <- as.numeric(a$lon) / 100
+  lon <- sapply(a$lon, stringToLatLonGPGGA, NW = a$EW, USE.NAMES = FALSE, nn = 3)
   
   # 10 elevation
   z <- as.numeric(a$H)
@@ -111,7 +119,8 @@ llToUTM <- function(lon, lat, zone = NULL, south = NULL, west = FALSE){
   lat_mean <- median(lat)
   lon_mean <- median(lon)
   if(isTRUE(west)){
-    lon_mean <- -lon_mean
+    if(lon_mean > 0 ) lon_mean <- -lon_mean
+    if(lon_mean > 0 ) lon <- -lon
   }
   if(is.null(zone)){
     zone <- getUTMzone(lat = lat_mean, lon = lon_mean)
@@ -126,6 +135,7 @@ llToUTM <- function(lon, lat, zone = NULL, south = NULL, west = FALSE){
   }else{
     south <- ""
   }
+  if(lat_mean < 0) lat <- -lat
   
   ll <- data.frame(ID = 1:length(lat), X = lon, Y = lat)
   sp::coordinates(ll) <- c("X", "Y")

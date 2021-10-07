@@ -3274,63 +3274,7 @@ interpFid <- function(xposold, xposnew, fidOld){
 }
 
 
-#---------------------- STRUCTURE TENSOR ---------------------#
-setMethod("strTensor", "GPR", function(x,  blksze = c(2, 4),
-                                       kBlur   = list(n = 1, m = 1, sd = 1), 
-                                       kEdge   = list(n = 5, m = 5, sd = 1), 
-                                       kTensor = list(n = 5, m = 5, sd = 1),
-                                       thresh = 0.02, what = c("tensor", "mask", "orientation"), ...){
-  O <- .strucTensor(P = x@data, dxy = c(x@dx, x@dz), 
-                    blksze = blksze,
-                    kBlur   = kBlur, 
-                    kEdge   = kEdge, 
-                    kTensor = kTensor,
-                    thresh = thresh)  
-  output <- list()
-  whatref <- c("tensor", "mask", "orientation")
-  what <- what[what %in% whatref]
-  if(length(what) == 0){
-    stop(paste0("argument 'what' only accepts a character vector composed of",
-                " at least one of the following words:\n",
-                "'tensor', 'mask', 'orientation'"))
-  }
-  if( "orientation" %in% what){ 
-    xOrient <- x
-    xAni    <- x
-    xEnergy <- x
-    xOrient@data       <- O$polar$orientation
-    xOrient@surveymode <- "orientation"
-    xEnergy@data       <- O$polar$energy
-    xEnergy@surveymode <- "energy"
-    xAni@data          <- O$polar$anisotropy
-    xAni@surveymode    <- "anisotropy"
-    output[["orientation"]] <- list("energy"      = xEnergy,
-                                    "anisotropy"  = xAni,
-                                    "orientation" = xOrient)
-  }
-  if( "tensor" %in% what){
-    xJxx <- x
-    xJyy <- x
-    xJxy <- x
-    xJxx@data <- O$tensor$xx
-    xJyy@data <- O$tensor$yy
-    xJxy@data <- O$tensor$xy
-    xJxx@surveymode <- "tensorxx"
-    xJyy@surveymode <- "tensoryy"
-    xJxy@surveymode <- "tensorxy"
-    output[["tensor"]] <- list("xx" = xJxx,
-                               "yy" = xJyy,
-                               "xy" = xJxy)
-  }
-  if( "mask" %in% what){
-    mask <- x
-    mask@data <- O$mask
-    mask@surveymode <- "mask"
-    output[["mask"]] <- mask
-  }
-  return(output)
-}
-)
+
 
 
 

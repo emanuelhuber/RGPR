@@ -2,10 +2,29 @@
 % Please edit documentation in R/localExtrema.R
 \name{localExtrema,GPR-method}
 \alias{localExtrema,GPR-method}
-\title{Returns the local extrema}
+\title{Local extrema}
 \usage{
-\S4method{localExtrema}{GPR}(x, delta)
+\S4method{localExtrema}{GPR}(x, threshold, values = TRUE)
+}
+\arguments{
+\item{x}{An object of the class GPR.}
+
+\item{threshold}{[\code{numeric(1)}] Threshold value for local extremum 
+detection. The larger the value, the longer the computation time.}
+
+\item{If}{\code{values = TRUE},  a GPR data with the local extrema 
+(maxima and minima) is returned. If \code{values = FALSE}, 
+a binary GPR data with 1 for local extremum (else 0) is returned.}
+}
+\value{
+GPR data of extremum values
 }
 \description{
-Local extrema
+Returns the local extrema (either values or binary)
+}
+\examples{
+x <- frenkeLine00
+z <- localExtrema(x)
+plot(z)
+
 }

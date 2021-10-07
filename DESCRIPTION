@@ -118,6 +118,7 @@ Collate:
   'GPRsim.R'
   'crop.R'
   'convUnit.R'
+  'strTensor.R'
 Imports:
     methods,
     graphics,

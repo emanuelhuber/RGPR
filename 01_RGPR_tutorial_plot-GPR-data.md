@@ -17,11 +17,9 @@ date: 2021-11-19
 -   This R-package is still in development, and therefore some of the
     functions may change in a near future.
 -   If you have any questions, comments or suggestions, feel free to
-    contact me (in english, french or german):
-    <a href="mailto:emanuel.huber@pm.me" class="email">emanuel.huber@pm.me</a>.
+    contact me (in english, french or german): <emanuel.huber@pm.me>.
 
-Table of Contents
-=================
+# Table of Contents
 
 -   [Objectives of this tutorial](#objectives-of-this-tutorial)
     -   [Install/load `RGPR`](#installload-rgpr)
@@ -46,13 +44,11 @@ Table of Contents
         (f-k-filter)](#frequency-wavenumber-filter-f-k-filter)
     -   [More infos](#more-infos)
 
-Objectives of this tutorial
-===========================
+# Objectives of this tutorial
 
 -   Learn how to plot GPR data.
 
-Install/load `RGPR`
--------------------
+## Install/load `RGPR`
 
 ``` r
 # install "devtools" if not already done
@@ -61,8 +57,7 @@ devtools::install_github("emanuelhuber/RGPR")
 library(RGPR)       # load RGPR in the current R session
 ```
 
-The GPR data
-------------
+## The GPR data
 
 `RPGR` comes along with a GPR data called `frenkeLine00`. Because this
 name is long, we set `A` equal to `frenkeLine00`:
@@ -82,11 +77,9 @@ x
     ##  223 traces, 55.5 m
     ##  ****************
 
-Plot the GPR data
-=================
+# Plot the GPR data
 
-Two-dimensional plot: radargramm
---------------------------------
+## Two-dimensional plot: radargramm
 
 ### Raster plot
 
@@ -130,8 +123,7 @@ Choose the color palette you want and plot the GPR data with it:
 plot(x, col = palGPR("nice"))
 ```
 
-![plot GPR data with color palette
-nice](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_GPR_with_color_palette-1.png)
+![plotGPRdatawithcolorpalettenice](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_GPR_with_color_palette-1.png)
 
 You can reduce the number of colors with:
 
@@ -324,8 +316,7 @@ symbols(20, 150, stars = matrix(c(0.35, 1, 0.35, 1,  0.35, 1,  0.35, 1, 0.35, 1)
 
 ![](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/annotation2D-1.png)
 
-One-dimensional plot
---------------------
+## One-dimensional plot
 
 ### Single trace plot
 
@@ -383,8 +374,7 @@ lines(traceStat(x), lwd = "2", col = "red")
 ![plot multiple traces with average
 trace](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_multi_1D_average-1.png)
 
-Frequency plots
----------------
+## Frequency plots
 
 ### Frequency/Phase-Amplitude (1D)
 
@@ -398,8 +388,7 @@ spec(x)
 ![plot
 spectrum](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/fFilter_spectrum-1.png)
 
-Frequency-wavenumber filter (f-k-filter)
-----------------------------------------
+## Frequency-wavenumber filter (f-k-filter)
 
 The function `spec()` with the argument `type = "f-k` returns a list
 containing the frequencies (f), the wavenumbers (k), the amplitude of
@@ -412,8 +401,7 @@ spec(x, type = "f-k")
 ![plot
 fk-filter](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/fkspec-1.png)
 
-More infos
-----------
+## More infos
 
 Check the help for more details on the `plot()` function:
 

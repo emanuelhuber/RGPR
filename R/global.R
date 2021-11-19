@@ -291,10 +291,6 @@ setGenericVerif("description<-", function(x, value)
   standardGeneric("description<-"))
 
 
-#####
-setGenericVerif("papply", function(x, prc = NULL) standardGeneric("papply"))
-##########
-
 
 #' @name trProject
 #' @rdname trProject

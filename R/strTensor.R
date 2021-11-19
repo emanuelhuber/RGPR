@@ -9,7 +9,9 @@ setGenericVerif("strTensor", function(x,  blksze = c(2, 4),
                                       kBlur   = list(n = 1, m = 1, sd = 1), 
                                       kEdge   = list(n = 5, m = 5, sd = 1), 
                                       kTensor = list(n = 5, m = 5, sd = 1),
-                                      thresh = 0.02, what = c("tensor", "mask", "orientation"), ...)
+                                      thresh = 0.02, 
+                                      what = c("tensor", "mask", 
+                                               "orientation", "values"), ...)
   standardGeneric("strTensor"))
 
 
@@ -18,7 +20,9 @@ setMethod("strTensor", "GPR", function(x,  blksze = c(2, 4),
                                        kBlur   = list(n = 1, m = 1, sd = 1), 
                                        kEdge   = list(n = 5, m = 5, sd = 1), 
                                        kTensor = list(n = 5, m = 5, sd = 1),
-                                       thresh = 0.02, what = c("tensor", "mask", "orientation"), ...){
+                                       thresh = 0.02, 
+                                       what = c("tensor", "mask", 
+                                                "orientation", "values"), ...){
   O <- .strucTensor(P = x@data, dxy = c(x@dx, x@dz), 
                     blksze = blksze,
                     kBlur   = kBlur, 

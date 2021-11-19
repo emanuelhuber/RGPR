@@ -99,6 +99,7 @@ Collate:
   'exportProc.R'
   'plot2PNG.R'
   'plot2PDF.R'
+  'ggplotGPR.R'
   'spInterpToRaster.R'
   'spExtractFromRaster.R'
   'rmBackground.R'
@@ -119,6 +120,7 @@ Collate:
   'crop.R'
   'convUnit.R'
   'strTensor.R'
+  'papply.R'
 Imports:
     methods,
     graphics,

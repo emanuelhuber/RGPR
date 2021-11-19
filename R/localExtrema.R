@@ -32,7 +32,7 @@ setMethod("localExtrema", "GPR", function(x, threshold, values = TRUE){
       xdata[Xext[[i]]$max,i] <- x@data[Xext[[i]]$max, i]
     }
   }else{
-    xdata <- apply( abs(x1@data), 2, .extVal, threshold = 0.1)
+    xdata <- apply( abs(x@data), 2, .extVal, threshold = 0.1)
   }
   x@data <- xdata
   proc(x) <- getArgs()

@@ -78,6 +78,7 @@ x0 <- readLines(mdtempfile)
 x <- paste(x0, collapse = "!@#:")
 
 x1 <- gsub("<pre>\\${2}", "$$", x)
+x1 <- gsub("-- -", "---", x1)
 x2 <- gsub("\\${2}</pre>", "$$!@#:", x1)
 
 x3 <- gsub("(!@#:[[:space:]]*)<pre>\\${1}", " $", x2)

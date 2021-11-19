@@ -1,9 +1,9 @@
----
+-- -
 
-layout: page
-title: Plot GPR data
-date: 2021-11-19
----
+layout: page  
+title: Plot GPR data  
+date: 2021-11-19  
+-- -
 
 <!--
 "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
@@ -17,11 +17,9 @@ date: 2021-11-19
 -   This R-package is still in development, and therefore some of the
     functions may change in a near future.
 -   If you have any questions, comments or suggestions, feel free to
-    contact me (in english, french or german):
-    <a href="mailto:emanuel.huber@pm.me" class="email">emanuel.huber@pm.me</a>.
+    contact me (in english, french or german): <emanuel.huber@pm.me>.
 
-Table of Contents
-=================
+# Table of Contents
 
 -   [Objectives of this tutorial](#objectives-of-this-tutorial)
     -   [Install/load `RGPR`](#installload-rgpr)
@@ -46,13 +44,11 @@ Table of Contents
         (f-k-filter)](#frequency-wavenumber-filter-f-k-filter)
     -   [More infos](#more-infos)
 
-Objectives of this tutorial
-===========================
+# Objectives of this tutorial
 
 -   Learn how to plot GPR data.
 
-Install/load `RGPR`
--------------------
+## Install/load `RGPR`
 
 ``` r
 # install "devtools" if not already done
@@ -61,8 +57,7 @@ devtools::install_github("emanuelhuber/RGPR")
 library(RGPR)       # load RGPR in the current R session
 ```
 
-The GPR data
-------------
+## The GPR data
 
 `RPGR` comes along with a GPR data called `frenkeLine00`. Because this
 name is long, we set `A` equal to `frenkeLine00`:
@@ -76,27 +71,25 @@ x
     ##  name        = LINE00
     ##  filepath    = data-raw/LINE00.DT1
     ##  1 fiducial(s)
-    ##  description =
+    ##  description = 
     ##  survey date = 2014-04-25
     ##  Reflection, 100 MHz, Window length = 399.6 ns, dz = 0.4 ns
     ##  223 traces, 55.5 m
     ##  ****************
 
-Plot the GPR data
-=================
+# Plot the GPR data
 
-Two-dimensional plot: radargramm
---------------------------------
+## Two-dimensional plot: radargramm
 
 ### Raster plot
 
 To plot the GPR record as a raster image (default mode), enter
 
 ``` r
-plot(x)
+plot(x)                                 
 ```
 
-<img src="01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot-1.png" title="plot(A)" alt="plot(A)"  />
+<img src="01_RGPR_tutorial_plot-GPR-data_deleteme_files/figure-markdown_github/plot-1.png" title="plot(A)" alt="plot(A)"  />
 
 The green line indicates the position of time-zero. The yellow triangle
 indicates the position of a fiducial marker that was set during the
@@ -110,44 +103,44 @@ Do you want another color palette? RGPR comes with predefined color
 palettes. Check them with:
 
 ``` r
-displayPalGPR()
+displayPalGPR()                                
 ```
 
-<img src="01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/displayPalGPR-1.png" title="displayPalGPR()" alt="displayPalGPR()"  />
+<img src="01_RGPR_tutorial_plot-GPR-data_deleteme_files/figure-markdown_github/displayPalGPR-1.png" title="displayPalGPR()" alt="displayPalGPR()"  />
 
 Plot a single palette:
 
 ``` r
-plotPal(palGPR("nice"))
+plotPal(palGPR("nice"))                              
 ```
 
-<img src="01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_single_color_palette-1.png" title="plot color palette nice" alt="plot color palette nice"  />
+<img src="01_RGPR_tutorial_plot-GPR-data_deleteme_files/figure-markdown_github/plot_single_color_palette-1.png" title="plot color palette nice" alt="plot color palette nice"  />
 
 Choose the color palette you want and plot the GPR data with it:
 
 ``` r
-plot(x, col = palGPR("nice"))
+plot(x, col = palGPR("nice"))                              
 ```
 
-<img src="01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_GPR_with_color_palette-1.png" title="plot GPR data with color palette nice" alt="plot GPR data with color palette nice"  />
+<img src="01_RGPR_tutorial_plot-GPR-data_deleteme_files/figure-markdown_github/plot_GPR_with_color_palette-1.png" title="plotGPRdatawithcolorpalettenice" alt="plotGPRdatawithcolorpalettenice"  />
 
 You can reduce the number of colors with:
 
 ``` r
-plot(x, col = palGPR("nice", n = 5))
+plot(x, col = palGPR("nice", n = 5))                              
 ```
 
-<img src="01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_GPR_with_color_palette_n-1.png" title="displayPalGPR()" alt="displayPalGPR()"  />
+<img src="01_RGPR_tutorial_plot-GPR-data_deleteme_files/figure-markdown_github/plot_GPR_with_color_palette_n-1.png" title="displayPalGPR()" alt="displayPalGPR()"  />
 
 ### Wiggle plot
 
 Plot wiggles
 
 ``` r
-plot(x, type = "wiggles")
+plot(x, type = "wiggles")          
 ```
 
-<img src="01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_wiggles-1.png" title="plot(A) with wiggles" alt="plot(A) with wiggles"  />
+<img src="01_RGPR_tutorial_plot-GPR-data_deleteme_files/figure-markdown_github/plot_wiggles-1.png" title="plot(A) with wiggles" alt="plot(A) with wiggles"  />
 
 ### Plot settings
 
@@ -159,22 +152,26 @@ To plot only a part of the GPR data, use `xlim` and `ylim`.
 plot(x, ylim = c(50, 100), xlim = c(30, 40))
 ```
 
-<img src="01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_xlim_ylim-1.png" title="plot(A) with xlim and ylim" alt="plot(A) with xlim and ylim"  />
+<img src="01_RGPR_tutorial_plot-GPR-data_deleteme_files/figure-markdown_github/plot_xlim_ylim-1.png" title="plot(A) with xlim and ylim" alt="plot(A) with xlim and ylim"  />
 
 Another way to plot only a part of the GPR data is to extract a part of
 the GPR data. The object `A` can be manipulated in the same way as a
 matrix without losing the meta-data (e.g., trace coordinates, antenna
 separation).
 
-To plot only the samples 100 to 300 of the $15^{th}$ to $150^{th}$
+To plot only the samples 100 to 300 of the
+<pre>$15^{th}$</pre>
+to
+<pre>$150^{th}$</pre>
+
 :
 
 ``` r
 # plot the 100 to 300 samples of the traces 15 to 150
-plot(x[100:300, 15:150])
+plot(x[100:300, 15:150])        
 ```
 
-<img src="01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_subset-1.png" title="plot(A) subset" alt="plot(A) subset"  />
+<img src="01_RGPR_tutorial_plot-GPR-data_deleteme_files/figure-markdown_github/plot_subset-1.png" title="plot(A)-subset" alt="plot(A)-subset"  />
 
 #### Change the scale of the colorbar
 
@@ -184,7 +181,7 @@ To change the span of the colorbar from -10 to 25 do
 plot(x, zlim = c(-10, 25))
 ```
 
-<img src="01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/zlim-1.png" title="Change the scale of the colorbar" alt="Change the scale of the colorbar"  />
+<img src="01_RGPR_tutorial_plot-GPR-data_deleteme_files/figure-markdown_github/zlim-1.png" title="Change-the-scale-of-the-colorbar" alt="Change-the-scale-of-the-colorbar"  />
 
 #### Display GPR data relative to time-zero
 
@@ -195,7 +192,7 @@ To set the origin of the vertical axis at time-zero, set the argument
 plot(x, relTime0 = TRUE, ylim = c(0, 200), xlim = c(30, 50))
 ```
 
-<img src="01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/relTime0-1.png" title="plot(A) relative to time0" alt="plot(A) relative to time0"  />
+<img src="01_RGPR_tutorial_plot-GPR-data_deleteme_files/figure-markdown_github/relTime0-1.png" title="plot(A) relative to time0" alt="plot(A) relative to time0"  />
 
 #### Markers, annotations, note…
 
@@ -208,7 +205,7 @@ the colorbar (barscale), set `addFid`, `addAnn`, `addTime0` and
 plot(x, addFid = FALSE, addAnn = FALSE, addTime0 = FALSE, barscale = FALSE)
 ```
 
-![](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/withoutannotations-1.png)
+![](01_RGPR_tutorial_plot-GPR-data_deleteme_files/figure-markdown_github/withoutannotations-1.png)
 
 To not display the note below the x-label, the plot title (file name),
 the x and y lables, the colorbar label, set `note`, `main`, `ylab`,
@@ -218,7 +215,7 @@ the x and y lables, the colorbar label, set `note`, `main`, `ylab`,
 plot(x, note = "", main = "", ylab = "", xlab = "", clab = "")
 ```
 
-![](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/withoutlabels-1.png)
+![](01_RGPR_tutorial_plot-GPR-data_deleteme_files/figure-markdown_github/withoutlabels-1.png)
 
 ### `ggplot2` plots
 
@@ -230,7 +227,7 @@ x <-frenkeLine00
 ggplotGPR(x)
 ```
 
-![](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/ggplot-1.png)
+![](01_RGPR_tutorial_plot-GPR-data_deleteme_files/figure-markdown_github/ggplot-1.png)
 
 The `ggplotGPR()` function is a wrapper for:
 
@@ -277,7 +274,7 @@ plot(x, col = palGPR("sunny"))
 plot(x, col = palGPR("hcl_0"))
 ```
 
-![](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/mutliplotGPR-1.png)
+![](01_RGPR_tutorial_plot-GPR-data_deleteme_files/figure-markdown_github/mutliplotGPR-1.png)
 
 ### Annotate plots
 
@@ -305,7 +302,7 @@ abline(h = 300, v = 30, col = "black", lty = 2, lwd = 3)
 
 # For circles, squares and stars the units of the x axis are used
 # circles
-symbols(30, 300, circles = 10,
+symbols(30, 300, circles = 10, 
         add = TRUE, lwd = 2, fg = "dodgerblue", inches = FALSE, lty = 1)
 # rectangles
 symbols(5, 200, rectangles = matrix(c(5, 200), nrow = 1, ncol = 2),
@@ -315,21 +312,26 @@ symbols(20, 150, stars = matrix(c(0.35, 1, 0.35, 1,  0.35, 1,  0.35, 1, 0.35, 1)
         add = TRUE, lwd = 1, bg = "goldenrod1", fg = "black", inches = FALSE, lty = 1)
 ```
 
-![](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/annotation2D-1.png)
+![](01_RGPR_tutorial_plot-GPR-data_deleteme_files/figure-markdown_github/annotation2D-1.png)
 
-One-dimensional plot
---------------------
+## One-dimensional plot
 
 ### Single trace plot
 
-Plot a signal trace, notice that the signal is clipped to $\pm50\,mV$ (between $0$ and $20\,ns$
+Plot a signal trace, notice that the signal is clipped to
+<pre>$\pm50\,mV$</pre>
+(between
+<pre>$0$</pre>
+and
+<pre>$20\,ns$</pre>
+
 ):
 
 ``` r
-plot(x[, 15])      # plot the 15th trace of the GPR-line
+plot(x[, 15])      # plot the 15th trace of the GPR-line   
 ```
 
-<img src="01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot1D-1.png" title="plot single trace" alt="plot single trace"  />
+<img src="01_RGPR_tutorial_plot-GPR-data_deleteme_files/figure-markdown_github/plot1D-1.png" title="plot single trace" alt="plot single trace"  />
 
 Note: the `@3.5m` in the plot title indicate the relative position of
 the trace on the GPR profile.
@@ -337,42 +339,41 @@ the trace on the GPR profile.
 To add another trace, use the function `lines()`
 
 ``` r
-plot(x[, 15])      # plot the 15th trace of the GPR-line
+plot(x[, 15])      # plot the 15th trace of the GPR-line   
 lines(x[, 16], col = "red", lwd = 2)
 ```
 
-<img src="01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot1D_lines-1.png" title="plot single trace" alt="plot single trace"  />
+<img src="01_RGPR_tutorial_plot-GPR-data_deleteme_files/figure-markdown_github/plot1D_lines-1.png" title="plot single trace" alt="plot single trace"  />
 
 Plot the first 40 trace samples:
 
 ``` r
 # plot the first 40 samples of the 15th trace of the GPR profile
-plot(x[1:40, 15])
+plot(x[1:40, 15])  
 ```
 
-<img src="01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot1D_subset-1.png" title="plot single trace, fist 40 samples" alt="plot single trace, fist 40 samples"  />
+<img src="01_RGPR_tutorial_plot-GPR-data_deleteme_files/figure-markdown_github/plot1D_subset-1.png" title="plot single trace, fist 40 samples" alt="plot single trace, fist 40 samples"  />
 
 ### Multiple trace plot
 
 Plot all the traces within a single plot:
 
 ``` r
-trPlot(x, col = rgb(0.2, 0.2, 0.2, 7/100))     # plot all the traces
+trPlot(x, col = rgb(0.2, 0.2, 0.2, 7/100))     # plot all the traces  
 ```
 
-<img src="01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_multi_1D-1.png" title="plot multiple traces" alt="plot multiple traces"  />
+<img src="01_RGPR_tutorial_plot-GPR-data_deleteme_files/figure-markdown_github/plot_multi_1D-1.png" title="plot multiple traces" alt="plot multiple traces"  />
 
 Add the average trace
 
 ``` r
-trPlot(x, col = rgb(0.2, 0.2, 0.2, 7/100))     # plot all the traces
+trPlot(x, col = rgb(0.2, 0.2, 0.2, 7/100))     # plot all the traces  
 lines(traceStat(x), lwd = "2", col = "red")
 ```
 
-<img src="01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_multi_1D_average-1.png" title="plot multiple traces with average trace" alt="plot multiple traces with average trace"  />
+<img src="01_RGPR_tutorial_plot-GPR-data_deleteme_files/figure-markdown_github/plot_multi_1D_average-1.png" title="plot multiple traces with average trace" alt="plot multiple traces with average trace"  />
 
-Frequency plots
----------------
+## Frequency plots
 
 ### Frequency/Phase-Amplitude (1D)
 
@@ -383,10 +384,9 @@ Let’s have a look at the amplitude-frequency and phase-frequency plot
 spec(x)
 ```
 
-<img src="01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/fFilter_spectrum-1.png" title="plot spectrum" alt="plot spectrum"  />
+<img src="01_RGPR_tutorial_plot-GPR-data_deleteme_files/figure-markdown_github/fFilter_spectrum-1.png" title="plot spectrum" alt="plot spectrum"  />
 
-Frequency-wavenumber filter (f-k-filter)
-----------------------------------------
+## Frequency-wavenumber filter (f-k-filter)
 
 The function `spec()` with the argument `type = "f-k` returns a list
 containing the frequencies (f), the wavenumbers (k), the amplitude of
@@ -396,10 +396,9 @@ the GPR data.
 spec(x, type = "f-k")
 ```
 
-<img src="01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/fkspec-1.png" title="plot fk-filter" alt="plot fk-filter"  />
+<img src="01_RGPR_tutorial_plot-GPR-data_deleteme_files/figure-markdown_github/fkspec-1.png" title="plot fk-filter" alt="plot fk-filter"  />
 
-More infos
-----------
+## More infos
 
 Check the help for more details on the `plot()` function:
 

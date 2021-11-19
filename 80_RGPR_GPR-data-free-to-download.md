@@ -43,6 +43,14 @@ date: 2021-11-19
     USGS Field Activity 13BIM01: Dauphin Island, Alabama, April
     2013](https://pubs.usgs.gov/ds/0982/ds982_data_downloads.html)
 
+-   [Howard, F.J.F. 2016. Ground Penetrating Radar (GPR) Data - Old Bar
+    Beach Survey. Geoscience Australia,
+    Canberra.](http://pid.geoscience.gov.au/dataset/ga/100224)
+
+-   [Howard, F.J.F. 2016. Ground Penetrating Radar (GPR) Data - Adelaide
+    Metropolitan Beaches Survey. Geoscience Australia,
+    Canberra.](http://pid.geoscience.gov.au/dataset/ga/100226)
+
 -   TU1208 Open Database of Radargrams: The Dataset of the IFSTTAR
     Geophysical Test Site:
     [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1211173.svg)](https://doi.org/10.5281/zenodo.1211173)

@@ -87,6 +87,7 @@ I am developing this package on my free time as a gift to the GPR community. Any
 
 ### Supported file formats (read only):
 
+
 - [X] [Sensors & Software](https://www.sensoft.ca) file format (**\*.dt1**, **\*.hd**, **\*.gps**).
 - [X] [MALA](https://www.malagpr.com.au) file format (**\*.rd3**, **\*.rd7**, **\*.rad**, **\*.cor**).
 - [X] [ImpulseRadar](https://www.impulseradar.se) file format (**\*.iprb**, **\*.iprh**, **\*.cor**, **\*.time**, **\*.mrk**).
@@ -98,6 +99,7 @@ I am developing this package on my free time as a gift to the GPR community. Any
 - [X] [US Radar](https://usradar.com/) file format (**\*.RA1**, **\*.RA2** or **\*.RAD**)
 - [X] [SEG-Y](https://en.wikipedia.org/wiki/SEG-Y) file format developed by the Society of Exploration Geophysicists (SEG) for storing geophysical data (**\*.sgy**), also used by [Easy Radar USA](https://easyradusa.com)
 - [X] [SEG-2](https://seg.org/Portals/0/SEG/News%20and%20Resources/Technical%20Standards/seg_2.pdf) Pullan, S.E., 1990, Recommended standard for seismic (/radar) files in the personal computer environment: Geophysics, 55, no. 9, 1260–1271(**\*.sg2**). Also used by US Radar with extensions \*.RA1, \*.RA2, \*. RAD. 
+- [X] [GPRmax](https://www.gprmax.com/): hdf5 file format with extension \*.out (not well tested)
 - [X] [3dradar](http://3d-radar.com/): the manufacturer does not want to reveal the binary file format **\*.3dra**. **Workaround**: export the GPR data in binary VOL format (**\*.vol**)  with the examiner software -> **still experimental**
 - [X] **R** internal format (**\*.rds**).
 - [X] serialized **Python** object (**\*.pkl**).
@@ -107,23 +109,27 @@ I am developing this package on my free time as a gift to the GPR community. Any
     - or matrix-format (without header/rownames)
 - [ ] [Terra Zond](http://terrazond.ru/) binary file format (**\*.trz**) -> **we are working on it**
     
-    
 See tutorial [Import GPR data](http://emanuelhuber.github.io/RGPR/00_RGPR_import_data/).
 
-<p>Do you miss your preferred file format? Send me the file format description with a test file and I will adapt the RGPR-package to support this file format:<br/><a href="mailto:emanuel.huber@pm.me">emanuel.huber@pm.me</a></p>
+    
+Do you miss your preferred file format? Send me the file format description with a test file and I will adapt the RGPR-package to support this file format. 
+
 
 ### Supported export file formats
 
 - [X] [Sensors & Software](https://www.sensoft.ca) file format (**\*.dt1**, **\*.hd**).
 - [X] R internal format (**\*.rds**).
 - [X] ASCII (**\*.txt**): 
-- [ ] [SEG-Y](https://en.wikipedia.org/wiki/SEG-Y) file format (**\*.sgy**) -> **we are working on it**
+- [X] [SEG-Y](https://en.wikipedia.org/wiki/SEG-Y) file format (**\*.sgy**)
+
 
 
 
 ## Coming soon
 
 We are developing a <a href="https://github.com/emanuelhuber/RGPR/tree/develop">new version of RGPR</a> that will handle three-dimensional GPR data as well as multi-dimensional transformations, see <a href="2018_huber-and-hans_RGPR-new-R-package_notes.pdf">our objectives</a>.
+
+Note that you can already interpolate GPR data (2D) into a 3D cube with the current RGPR version! Do not hesitate to contact me if you need more informations...
 
 <!--
 $$\forall x \in R$$

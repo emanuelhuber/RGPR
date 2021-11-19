@@ -9,14 +9,6 @@ date: 2021-11-19
 "G:/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
 -->
 
-------------------------------------------------------------------------
-
-GPR data I collected
-====================
-
-I plan to make freely available the GPR data I collected during my PhD
-thesis (that was financed by public funding).
-
 -   GPR data from Schmelzbach and Huber (2015): [GPR data recorded with
     Pulse Ekko Pro from Sensors & Software on the river bed of the
     Tagliamento River (NE

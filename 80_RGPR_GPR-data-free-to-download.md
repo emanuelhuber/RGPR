@@ -47,8 +47,12 @@ thesis (that was financed by public funding).
     Wildlife Refuge, New Jersey,
     2014-15](https://www.sciencebase.gov/catalog/item/5a0c59bce4b09af898cd15ce)
 
--   Supplementary Files: TU1208 Open Database of Radargrams: The Dataset
-    of the IFSTTAR Geophysical Test Site:
+-   [USGS: Archive of Ground Penetrating Radar Data Collected During
+    USGS Field Activity 13BIM01: Dauphin Island, Alabama, April
+    2013](https://pubs.usgs.gov/ds/0982/ds982_data_downloads.html)
+
+-   TU1208 Open Database of Radargrams: The Dataset of the IFSTTAR
+    Geophysical Test Site:
     [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1211173.svg)](https://doi.org/10.5281/zenodo.1211173)
 
 -   Mauna Kea permafrost survey, Geophysical Data:
@@ -83,6 +87,14 @@ thesis (that was financed by public funding).
     Supplementary Materials to download the
     data](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4866399) [Direct
     link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4866399/bin/mmc1.zip)
+
+------------------------------------------------------------------------
+
+**[gprMax](https://www.gprmax.com/) data:**
+
+-   [A synthetic 3D ground-penetrating radar (GPR) data set across a
+    realistic sedimentary
+    model](https://data.mendeley.com/datasets/by3yh79hx4/1)
 
 <!--
 * Geophysics Forum: [GPR data with aircraft buried in the ice in Greenland](http://forum.detectation.com/viewtopic.php?f=2&t=4228); [direct link to google drive](https://drive.google.com/open?id=1PI660GXAGMtwoamq-lYB6ZX3hE2RXBeW)

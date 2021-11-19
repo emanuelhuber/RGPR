@@ -1,15 +1,18 @@
----
+-–
 layout: page
 title: Class GPR
-date: 2020-08-14
----
+date: 2021-11-19
+-–
 
 ------------------------------------------------------------------------
 
 **Note**:
 
--   This R-package is still in development, and therefore some of the functions may change in a near future.
--   If you have any questions, comments or suggestions, feel free to contact me (in english, french or german): <emanuel.huber@pm.me>.
+-   This R-package is still in development, and therefore some of the
+    functions may change in a near future.
+-   If you have any questions, comments or suggestions, feel free to
+    contact me (in english, french or german):
+    <a href="mailto:emanuel.huber@pm.me" class="email">emanuel.huber@pm.me</a>.
 
 Table of Contents
 =================
@@ -35,7 +38,8 @@ Preliminary
     library(RGPR)       # load RGPR in the current R session
     ```
 
--   Load the GPR data `frenkeLine00` that is included in the package `RGPR`:
+-   Load the GPR data `frenkeLine00` that is included in the package
+    `RGPR`:
 
     ``` r
     data("frenkeLine00")
@@ -46,7 +50,8 @@ Preliminary
 An object of the class `RGPR`
 =============================
 
-If you just enter the newly created object `A` in R (or enter `print(A)`), R will show you some information on the object A:
+If you just enter the newly created object `A` in R (or enter
+`print(A)`), R will show you some information on the object A:
 
 ``` r
 A                 # let's have a look at the object A
@@ -62,7 +67,8 @@ A                 # let's have a look at the object A
     ##  223 traces, 55.5 m
     ##  ****************
 
-`A` is an object of the class `GPR` with a complex structure that can be visualised with the `str()` function:
+`A` is an object of the class `GPR` with a complex structure that can be
+visualised with the `str()` function:
 
 ``` r
 str(A)            # let's have a look at the structure of A
@@ -114,7 +120,8 @@ str(A)            # let's have a look at the structure of A
     ##....$ Start_Rx_Battery: chr "12.71V"
     ##....$ Start_Tx_Battery: chr "12.78V 12.78V"
 
-The strings after the `@` are the names of the elements that form `A`. These elements are called `slots`. To get the `slots` names enter:
+The strings after the `@` are the names of the elements that form `A`.
+These elements are called `slots`. To get the `slots` names enter:
 
 ``` r
 slotNames(A)      # return the slot names
@@ -127,9 +134,15 @@ slotNames(A)      # return the slot names
     ## [21] "depthunit"    "posunit"      "surveymode"   "date"         "crs"
     ## [26] "proc"         "vel"          "delineations" "hd"
 
-A `RGPR` object consist of: 1. the GPR data (i.e. the measured amplitudes as a function of time for each GPR traces). The data are stored in the slot `data`. 2. meta-data (e.g. position of the traces on the survey line, time of the trace recording, time/depth of each trace sample, time step, etc.)
+A `RGPR` object consist of: 1. the GPR data (i.e. the measured
+amplitudes as a function of time for each GPR traces). The data are
+stored in the slot `data`. 2. meta-data (e.g. position of the traces on
+the survey line, time of the trace recording, time/depth of each trace
+sample, time step, etc.)
 
-To access the content of a slot, enter `@` followed by the name of the slot. For example, the `slot` `vel` (the estimated radar wave velocity associated with `A`) is accessed by:
+To access the content of a slot, enter `@` followed by the name of the
+slot. For example, the `slot` `vel` (the estimated radar wave velocity
+associated with `A`) is accessed by:
 
 ``` r
 A@vel              # the slot 'vel' (for velocity)
@@ -138,7 +151,11 @@ A@vel              # the slot 'vel' (for velocity)
     ## [[1]]
     ## [1] 0.1
 
-Normally you don't need to access the slots directly because the R-package `RGPR` provides enough functions to manipulate the `GPR` object (i.e. to extract the necessary information and to modify the object). For example, the estimated radar wave velocity can be obtained with the function `vel()`:
+Normally you don’t need to access the slots directly because the
+R-package `RGPR` provides enough functions to manipulate the `GPR`
+object (i.e. to extract the necessary information and to modify the
+object). For example, the estimated radar wave velocity can be obtained
+with the function `vel()`:
 
 ``` r
 vel(A)              # access the slot 'vel'
@@ -196,7 +213,9 @@ paste0(A@posunit,"/",A@depthunit)           # the slot 'vel' ('vel' for velocity
 <!---
 The GPR data are in the slot `@data`. If you enter `A@data` you will notice that `A@data` is a matrix whose columns correspond to the recorded traces and the lines to the time of record. It is not a good practice that the user change the slot contents itself, because some of the slots are related and should not be changed alone. The R-package `RGPR` provides enough function to manipulate the `GPR` object.
 -->
-Note that an object of the class `RGPR` (e.g. `A`) can be manipulated as a matrix:
+
+Note that an object of the class `RGPR` (e.g. `A`) can be manipulated as
+a matrix:
 
 ``` r
 dim(A)            # dimension of the data: col x row
@@ -211,7 +230,8 @@ Asum <- A + Aexp  # Addition
     ## [1] 1000
     ## [1] 223
 
-Furthermore, it is possible to extract a portion of the GPR data without losing the meta-data contained in the object:
+Furthermore, it is possible to extract a portion of the GPR data without
+losing the meta-data contained in the object:
 
 ``` r
 # Extract a portion of A that only contains
@@ -219,7 +239,8 @@ Furthermore, it is possible to extract a portion of the GPR data without losing 
 B <- A[90:200, 5:10]
 ```
 
-Note that `B` is also an object of the class `RGPR` consisting of 6 traces with each 111 time samples:
+Note that `B` is also an object of the class `RGPR` consisting of 6
+traces with each 111 time samples:
 
 ``` r
 B

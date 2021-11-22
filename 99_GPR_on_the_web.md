@@ -46,6 +46,7 @@ date: 2019-11-23
 * [Erik Schytt Holmlund (2020) Rapid temperature rise may have triggered glacier surges all over Svalbard](https://munin.uit.no/handle/10037/21145): Master thesis, UiT Norges arktiske universitet.
 
 * [Tatiane Assunção Nicchetti, 2018. Avaliação de Pavimentação Rodoviária com o GPR utilizando o Módulo RGPR. Orient.: Mariana L.N.O. Souza](http://www.cpgg.ufba.br/gr-geof/geo213/trabalhos-graducao/Tatiane-Nicchetti.pdf)
+
 * [Project seminar (Philipps Universität Marburg): Processing, analysing and interpreting ground radar images. ](https://geomoer.github.io/moer-bsc-project-seminar-ground-radar/)
 
 ## Misc

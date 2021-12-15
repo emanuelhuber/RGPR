@@ -107,18 +107,19 @@ readTXT <- function(dsn){
     if(length(Xamp) > 1){
       cat("Error")
     }
-    
-    XnTemp <- Xn
-    XnTemp[[Xamp]] <- NULL
     pos <- pos[-Xamp]
-    Xpos <- pos[which.max((XnTemp))]
-    Xt <- pos[-Xpos]
     
-    nr <- Xn[[Xpos]]
-    nc <- length(unique(X[, Xpos]))
-    if( nc != nrow(X)/nr){
-      cat("Error")
-    }
+    # XnTemp <- Xn
+    # XnTemp[[Xamp]] <- NULL
+    # pos <- pos[-Xamp]
+    # Xpos <- pos[which.max((XnTemp))]
+    # Xt <- pos[-Xpos]
+    
+    # hypothesis: 
+    # pos[1] = first column of the remaining columns is position
+    # pos[2] = second column of the remaining columns is twt
+    nc <- length(unique(X[, pos[1]]))
+    nr <- length(unique(X[, pos[2]]))
     
     A <- matrix(data  = X[, Xamp][seq_len(nc * nr)], 
                 nrow  = nr, 
@@ -126,9 +127,8 @@ readTXT <- function(dsn){
                 byrow = FALSE)
     .closeFileIfNot(dsn)
     return(list(data  = A, 
-                pos   = unique(X[, Xpos]), 
-                depth = unique(X[, Xt])))
-    
+                pos   = unique(X[, pos[1]]), 
+                depth = unique(X[, pos[2]])))
     # }else if(ncol(X) == 4){
     #   # case xyza!!!
     #   Xn <- list()

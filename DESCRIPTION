@@ -151,7 +151,8 @@ Imports:
     plotly,
     png,
     units,
-    hdf5r
+    hdf5r,
+    ggplot2
 RoxygenNote: 7.1.1
 Suggests: 
     testthat

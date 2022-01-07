@@ -708,9 +708,11 @@ freqFromString <- function(s){
 
 #' @export
 antSepFromAntFreq <- function(antfreq, verbose = TRUE){
-  ant <- list(f = c(12.5, 25, 50, 100, 110, 200, 225, 450,   900, 1200),
-              s = c( 8,    4,  2,   1,   1, 0.5, 0.5, 0.25, 0.17, 0.075))
-  antsep <- approx(ant$f, ant$s, xout = antfreq)$y
+  ant <- list(f = c(12.5, 25, 50, 100,  200, 450,   900, 1200, 5000),
+             s = c( 8,    4,  2,   1,  0.5, 0.25, 0.17, 0.075, 0))
+  # antsep <- approx(ant$f, ant$s, xout = antfreq)$y
+  antsep <- signal::interp1(x = ant$f, y = ant$s, xi = antfreq, 
+                            method = "linear", extrap = TRUE)
   antsep <- round(antsep, 3)
   if(verbose){
     message("Antenna separation (", antsep, " m) estimated from antenna", 

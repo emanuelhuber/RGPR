@@ -79,6 +79,10 @@ I am developing this package on my free time as a gift to the GPR community. Any
     following these instructions:
 
     [https://riptutorial.com/r/example/5556/install-package-from-local-source](https://riptutorial.com/r/example/5556/install-package-from-local-source)
+    
+    or these:
+    
+    https://stackoverflow.com/questions/30989027/how-to-install-a-package-from-a-download-zip-file/30989367#30989367
 
 
 **New to R?** Try this *free* interactive course from DataCamp: [Introduction to R](https://www.datacamp.com/courses/free-introduction-to-r)

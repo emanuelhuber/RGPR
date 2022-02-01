@@ -289,9 +289,9 @@ setMethod("plot3DDelineations", "GPR",
     if(length(col)<=n_d)  col <- rep(col, n_d)
     if(add==FALSE)        rgl::open3d()
     for(i in seq_along(xyzrel)){
-      rgl::lines3d(xyzrel[[i]][,2] - x@coordref[2], 
+      rgl::lines3d(xyzrel[[i]][,1] - x@coordref[1], 
+                   xyzrel[[i]][,2] - x@coordref[2], 
                    xyzrel[[i]][,3] - x@coordref[3], 
-                   xyzrel[[i]][,1] - x@coordref[1], 
                    col = col[i], ...)
     }
   }else{

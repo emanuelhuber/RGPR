@@ -441,6 +441,26 @@ deconvolveSpikes <- function(y, nf = 32, mu = 0.1, shft = 1){
 
 
 
+.deconvolvePredictiveInvFilter <- function(x, n = 35, i = 1, mu = 0.001, taperType = "hamming"){ #, returnDelay = FALSE){
+  x_acf <- as.numeric(acf(x, lag.max = length(x), plot= FALSE)[[1]])
+  n_x_acf <- length(x_acf)
+  x_acf <- x_acf * taper(n_x_acf, type = taperType, half = TRUE, reverse = TRUE, a = 0.1) # tapering
+  x_acf <- x_acf/x_acf[1]
+  # can be computed before...
+  if(i + n - 1 > n_x_acf){
+    n <- n_x_acf - i + 1
+  }
+  v <- x_acf[i + 0:(n-1)]
+  
+  n <- min(n, n_x_acf)  # because length(x_acf) can be < lag.max
+  # print(x_acf)
+  x_acf[1] <- x_acf[1] + mu^2
+  XtX <- toeplitz(x_acf[1:n])
+  fmin <- chol2inv(chol(XtX)) %*% v 
+
+  return(list("fmin" = fmin, "delay" = i))
+}
+
 #--- l1 constrained
 # sparse deeoncolution
 # %  Reference: Penalty and Threshold Functions for Sparse Signal Processing

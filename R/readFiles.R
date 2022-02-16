@@ -158,7 +158,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
                   GPS = getFName(fPath[1], ext = ".GPS", throwError = FALSE)$gps)
     }
     hd  <- verboseF( readHD(dsn[["HD"]]), verbose = verbose)
-    dt1 <-  verboseF( readDT1(dsn[["DT1"]]), 
+    dt1 <-  verboseF( readDT1(dsn[["DT1"]], npt = hd$npt, ntr = hd$ntr), 
                       verbose = verbose)
     x <- verboseF(.gprDT1(list(hd = hd$HD, dt1 = dt1$dt1hd, data = dt1$data ), 
                           fName = fName[["DT1"]], fPath = fPath[["DT1"]], 

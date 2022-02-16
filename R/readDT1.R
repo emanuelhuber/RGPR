@@ -251,13 +251,8 @@ readDT1 <- function(dsn){
   if(!inherits(dsn, "connection")){
     dsn <- file(dsn, 'rb')
   }
-  fileLength <- .flen(dsn)
   
-  invisible(seek(dsn, where = 2*4, origin = "start"))
-  npt <- readBinary(dsn, what = "numeric", n = 1L, size = 4)
-  invisible(seek(dsn, where = 0, origin = "start"))
-  
-  
+  #----- 1. Define the tag names, byte size and type
   tags <- c("traces", "position", "samples", "topo", "NA1", "bytes",
             "window", "stacks", 
             "GPSx", "GPSy", "GPSz", 
@@ -270,14 +265,44 @@ readDT1 <- function(dsn){
   binMod <- rep("numeric", 23)
   binMod[23] <- "character"
   
-  
+  #----- 2.  try to estimate the number of traces from the DT1 file only
+  # file length
+  fileLength <- .flen(dsn)
+  # number of points 
+  invisible(seek(dsn, where = 2*4, origin = "start"))
+  npt <- readBinary(dsn, what = "numeric", n = 1L, size = 4)
+  invisible(seek(dsn, where = 0, origin = "start"))
+  # number of traces
   trLen <- sum(binSize) + 2 * npt
   ntr <- fileLength/trLen
-  
+  # check the values
+  if(ntr %% 1 != 0){
+    # something went wrong
+    tst <- fileLength / (sum(binSize) + 2 * (1:50000))
+    i <- which(tst %% 1 == 0)
+    # tst[i]
+    # plot(i, tst[i])
+    for(k in seq_along(tst[i])){
+      nb <- (sum(binSize) + 2 * i[k])
+      invisible(seek(dsn, where = nb + 8, origin = "start"))
+      nptk <- readBinary(dsn, what = "numeric", n = 1L, size = 4)
+      if(!is.na(nptk) && nptk == npt){
+        ntr <- tst[i][k]
+        npt <- i[k]
+        break
+      }
+    }
+    if(k == length(i)){
+      warning("Maybe something went wrong with you file...\n",
+              "Do not hestiate to contact me, if you cannot read you file!")
+    }
+  }
+ 
   
   hDT1 <- list()
   dataDT1 <- matrix(NA, nrow = npt, ncol = ntr)
   
+  invisible(seek(dsn, where = 0, origin = "start"))
   for(i in 1:ntr){
     for(j in 1:23){
       hDT1[[tags[j]]][i] <- verboseF(readBinary(dsn, what = binMod[j], n = 1L, 

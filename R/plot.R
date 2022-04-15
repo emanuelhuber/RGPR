@@ -334,17 +334,15 @@ plot.GPR <- function(x,
         asp <- 1
       }else{
         asp <- dots$asp
+        dots$asp <- 1
       }
       
       if(grepl("[m]$", x@depthunit)){
         heightPDF <- pdfFac * abs(diff(ylim)) * asp + sum(omi[c(1,3)] + mai[c(1,3)])
-        widthPDF <- pdfFac * abs(diff(xlim)) +  
-          sum(omi[c(2,4)] + mai[c(2,4)])
+        widthPDF <- pdfFac * abs(diff(xlim)) +  sum(omi[c(2,4)] + mai[c(2,4)])
       }else{
-        heightPDF <- pdfFac * abs(diff(ylim)) * asp * v/2 + 
-          sum(omi[c(1,3)] + mai[c(1,3)])
-        widthPDF <- pdfFac * abs(diff(xlim))  + 
-          sum(omi[c(2,4)] + mai[c(2,4)])
+        heightPDF <- pdfFac * abs(diff(ylim)) * asp * v/2 + sum(omi[c(1,3)] + mai[c(1,3)])
+        widthPDF <- pdfFac * abs(diff(xlim))  +   sum(omi[c(2,4)] + mai[c(2,4)])
       }
       Cairo::CairoPDF(file = paste0(pdfName, ".pdf"),
                       width = widthPDF,
@@ -361,17 +359,16 @@ plot.GPR <- function(x,
         asp <- 1
       }else{
         asp <- dots$asp
+        dots$asp <- 1
       }
       # fac <- 50
       if(grepl("[m]$", x@depthunit)){
         heightPDF <- pngFac * abs(diff(ylim)) * asp + sum(omi[c(1,3)] + mai[c(1,3)])
-        widthPDF <- pngFac * abs(diff(xlim)) +  
-          sum(omi[c(2,4)] + mai[c(2,4)])
+        widthPDF <- pngFac * abs(diff(xlim)) +  sum(omi[c(2,4)] + mai[c(2,4)])
       }else{
         heightPDF <- pngFac * abs(diff(ylim)) * asp * v/2 + 
           sum(omi[c(1,3)] + mai[c(1,3)])
-        widthPDF <- pngFac * abs(diff(xlim))  + 
-          sum(omi[c(2,4)] + mai[c(2,4)])
+        widthPDF <- pngFac * abs(diff(xlim))  + sum(omi[c(2,4)] + mai[c(2,4)])
       }
       widthPDF <- round(widthPDF)
       heightPDF <- round(heightPDF)

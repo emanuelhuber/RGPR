@@ -45,8 +45,10 @@
 #'              colored.
 #' @param pdfName length-one character. Name/path of the PDF to export 
 #'                without extension
-#' @param pngName length-one character. Name/path of the PDF to export 
+#' @param pdfFac length-one vector: factor to scale the exported PNG
+#' @param pngName length-one character. Name/path of the PNG to export 
 #'                without extension
+#' @param pngFac length-one vector: factor to scale the exported PNG
 #' @param NAcol lengthe-one vector: color to be used.
 #' @param fast logical: if \code{TRUE} plots only a subset of the data (max. 
 #'            1000 traces) to speed up plotting.               
@@ -79,7 +81,9 @@ plot.GPR <- function(x,
                      wsize = 1,   # wiggles
                      wside = 1,   # wiggles
                      pdfName = NULL,
+                     pdfFac = 0.2,
                      pngName = NULL,
+                     pngFac = 20,
                      NAcol = "white",
                      fast = FALSE,
                      ...){
@@ -320,7 +324,6 @@ plot.GPR <- function(x,
     # omi <- c(0, 0, 0.6, 0)
     mai <- mai + c(0, 0, 0, 0)
     mgp <- c(2.5, 0.75, 0)
-    fac <- 0.2
     omi <- par()$omi
     
     if(!is.null(pdfName)){
@@ -332,14 +335,15 @@ plot.GPR <- function(x,
       }else{
         asp <- dots$asp
       }
+      
       if(grepl("[m]$", x@depthunit)){
-        heightPDF <- fac * abs(diff(ylim)) * asp + sum(omi[c(1,3)] + mai[c(1,3)])
-        widthPDF <- fac * abs(diff(xlim)) +  
+        heightPDF <- pdfFac * abs(diff(ylim)) * asp + sum(omi[c(1,3)] + mai[c(1,3)])
+        widthPDF <- pdfFac * abs(diff(xlim)) +  
           sum(omi[c(2,4)] + mai[c(2,4)])
       }else{
-        heightPDF <- fac * abs(diff(ylim)) * asp * v/2 + 
+        heightPDF <- pdfFac * abs(diff(ylim)) * asp * v/2 + 
           sum(omi[c(1,3)] + mai[c(1,3)])
-        widthPDF <- fac * abs(diff(xlim))  + 
+        widthPDF <- pdfFac * abs(diff(xlim))  + 
           sum(omi[c(2,4)] + mai[c(2,4)])
       }
       Cairo::CairoPDF(file = paste0(pdfName, ".pdf"),
@@ -358,15 +362,15 @@ plot.GPR <- function(x,
       }else{
         asp <- dots$asp
       }
-      fac <- 50
+      # fac <- 50
       if(grepl("[m]$", x@depthunit)){
-        heightPDF <- fac * abs(diff(ylim)) * asp + sum(omi[c(1,3)] + mai[c(1,3)])
-        widthPDF <- fac * abs(diff(xlim)) +  
+        heightPDF <- pngFac * abs(diff(ylim)) * asp + sum(omi[c(1,3)] + mai[c(1,3)])
+        widthPDF <- pngFac * abs(diff(xlim)) +  
           sum(omi[c(2,4)] + mai[c(2,4)])
       }else{
-        heightPDF <- fac * abs(diff(ylim)) * asp * v/2 + 
+        heightPDF <- pngFac * abs(diff(ylim)) * asp * v/2 + 
           sum(omi[c(1,3)] + mai[c(1,3)])
-        widthPDF <- fac * abs(diff(xlim))  + 
+        widthPDF <- pngFac * abs(diff(xlim))  + 
           sum(omi[c(2,4)] + mai[c(2,4)])
       }
       widthPDF <- round(widthPDF)

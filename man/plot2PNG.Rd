@@ -7,6 +7,7 @@
 \S4method{plot2PNG}{GPR}(
   x,
   fPath = NULL,
+  pngFac = 20,
   addTopo = FALSE,
   clip = NULL,
   normalize = NULL,

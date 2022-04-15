@@ -76,7 +76,9 @@
   wsize = 1,
   wside = 1,
   pdfName = NULL,
+  pdfFac = 0.2,
   pngName = NULL,
+  pngFac = 20,
   NAcol = "white",
   fast = FALSE,
   ...
@@ -159,8 +161,12 @@ without extension}
 displayed on y-axis (and therefore, time-to-depth
 conversion is applied).}
 
-\item{pngName}{length-one character. Name/path of the PDF to export 
+\item{pdfFac}{length-one vector: factor to scale the exported PNG}
+
+\item{pngName}{length-one character. Name/path of the PNG to export 
 without extension}
+
+\item{pngFac}{length-one vector: factor to scale the exported PNG}
 
 \item{NAcol}{lengthe-one vector: color to be used.}
 

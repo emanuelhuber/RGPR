@@ -32,6 +32,7 @@
   wsize = 1,
   wside = 1,
   pdfName = NULL,
+  horiz = TRUE,
   ...
 )
 

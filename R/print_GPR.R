@@ -12,14 +12,7 @@
   x_mode <- x@mode
   if(x_mode == "CO") x_mode <- "common-offset"
   toprint[6] <- paste0("survey mode:    ", x@mode)
-  # x_xunit <- x@xunit
-  # if(isCRSLonLat(x)){
-  #   # because line length will be computed in m and not in degree
-  #   x_xunit <- "m"  
-  # }
-  # toprint[7] <- paste0("line length:    ", diff(range(spPathRel(x))), " ", x_xunit)
   toprint[7] <- paste0("line length:    ", diff(range(x@x)), " ", x@xunit)
-  #}
   toprint[8] <- paste0("window length:  ", diff(range(x@z)), " ", x@zunit)
   if(length(x@freq) == 1){
     x_freq <- ifelse(is.na(x@freq), "-", paste0(x@freq, " MHz"))
@@ -33,10 +26,15 @@
     toprint[11] <- paste0("coordinates:    YES")
   }else{
     toprint[11] <- paste0("coordinates:    -")
-    
   } 
+  if(length(x@md[["clip"]]) > 0){
+    toprint[12] <- paste0("clipped values: YES (", sum(unlist(x@md[["clip"]])), ")")
+  }else{
+    toprint[12] <- paste0("clipped values: -")
+    
+  }
   x_crs <- ifelse(is.na(x@crs), "-", x@crs)
-  toprint[12] <- paste0("CRS:            ", x_crs)
+  toprint[13] <- paste0("CRS:            ", x_crs)
   # if(length(x@path) > 0) toprint[3] <- paste0("filepath:     ", x@path)
   #                                               "name:           "
   # if(nbfid > 0)          toprint[5] <- paste0(nbfid, " markers(s)")
@@ -46,9 +44,9 @@
   #                      "frequency: ", x@freq, " MHz;")
   i <- 0
   if(length(x@proc)>0){
-    toprint[13] <- "> PROCESSING"
+    toprint[14] <- "> PROCESSING"
     for(i in seq_along(x@proc)){
-      toprint[13 + i] <- paste0("  ", i, ". ", x@proc[i])
+      toprint[14 + i] <- paste0("  ", i, ". ", x@proc[i])
     }      
   }
   # toprint[9 + i + 1] <- "***********************"

@@ -100,10 +100,10 @@ readGPR <- function(dsn, desc = "", Vmax = NULL,
     msg <- c(msg, paste0("arg 'dsn': Must be a character or a ",
              "connection of length one or more\n"))
   } 
-  msg <- checkArg(desc,     msg, "STRING")
-  msg <- checkArg(Vmax,     msg, "NUMERIC1_NULL", Inf)
-  msg <- checkArg(verbose,   msg, "LOGICAL_LEN", 1)
-  msg <- checkArg(interpGPS,   msg, "LOGICAL_LEN", 1)
+  msg <- checkArg(desc,      msg, "STRING")
+  msg <- checkArg(Vmax,      msg, "NUMERIC1_NULL", Inf)
+  msg <- checkArg(verbose,   msg, "LOGICAL_LEN",   1)
+  msg <- checkArg(interpGPS, msg, "LOGICAL_LEN",   1)
   checkArgStop(msg)
   #------------------- end check
   

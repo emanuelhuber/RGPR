@@ -4,12 +4,12 @@
 \alias{apply,GPRvirtual-method}
 \title{Apply a function along the rows (samples per trace) or columns (traces)}
 \usage{
-\S4method{apply}{GPRvirtual}(X, MARGIN, FUN, ...)
+\S4method{apply}{GPRvirtual}(X, MARGIN, FUN, ..., simplify = TRUE)
 }
 \arguments{
 \item{X}{[\code{GPR}]}
 
-\item{MARGIN}{[\code{integer}] A vector giving the subscripts which the 
+\item{MARGIN}{[\code{integer(1|2)}] A vector giving the subscripts which the 
 function will be applied over
 (see \code{\link{apply}}).}
 
@@ -17,6 +17,8 @@ function will be applied over
 (see \code{\link{apply}}).}
 
 \item{...}{Additional parameters to be passed (see \code{\link{apply}}).}
+
+\item{simplify}{[\code{logical(1)}] If \code{TRUE} the results should be simplified if possible.}
 }
 \description{
 Apply a function along the rows (samples per trace) or columns (traces)

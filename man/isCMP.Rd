@@ -3,11 +3,29 @@
 \name{isCMP}
 \alias{isCMP}
 \alias{isCMP,GPR-method}
+\alias{isCommonOffset}
+\alias{isCommonOffset,GPR-method}
+\alias{isVelSpectrum}
+\alias{isVelSpectrum,GPR-method}
+\alias{isVelModel}
+\alias{isVelModel,GPR-method}
 \title{Return TRUE if survey mode is CMP}
 \usage{
 isCMP(x)
 
 \S4method{isCMP}{GPR}(x)
+
+isCommonOffset(x)
+
+\S4method{isCommonOffset}{GPR}(x)
+
+isVelSpectrum(x)
+
+\S4method{isVelSpectrum}{GPR}(x)
+
+isVelModel(x)
+
+\S4method{isVelModel}{GPR}(x)
 }
 \arguments{
 \item{x}{[\code{GPR}] An object of the class GPR.}

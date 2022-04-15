@@ -45,15 +45,16 @@ setMethod("median", "GPRvirtual", function(x, na.rm = FALSE)
 
 #' Apply a function along the rows (samples per trace) or columns (traces)
 #' @param X [\code{GPR}]
-#' @param MARGIN [\code{integer}] A vector giving the subscripts which the 
+#' @param MARGIN [\code{integer(1|2)}] A vector giving the subscripts which the 
 #'                                function will be applied over
 #'                                (see \code{\link{apply}}).
 #' @param FUN [\code{function}] The function to be applied
 #'                                (see \code{\link{apply}}).
 #' @param ... Additional parameters to be passed (see \code{\link{apply}}).
+#' @param simplify [\code{logical(1)}] If \code{TRUE} the results should be simplified if possible.
 #' @aliases apply,GPRvirtual-method
 #' @export
-setMethod("apply", "GPRvirtual", definition = function(X, MARGIN, FUN, ...){
+setMethod("apply", "GPRvirtual", definition = function(X, MARGIN, FUN, ..., simplify = TRUE){
     x_apply <- apply(X@data, MARGIN, FUN,...)
     if(MARGIN == 1 && is.null(dim(x_apply)) && length(x_apply) == nrow(X)){
       X[, 1:ncol(x_apply)] <- x_apply

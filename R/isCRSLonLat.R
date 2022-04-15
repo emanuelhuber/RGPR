@@ -35,10 +35,11 @@ setMethod("isCRSLonLat", "GPR", function(x){
 })
 
 .isCRSLonLat <- function(x){
-  x <- .checkCRS(x)
-  if(is.na(x)){
-    # warning("Invalid CRS.")
-    return(FALSE)
+  y <- .checkCRS(x)
+  if(anyNA(y)){
+    warning("Invalid CRS:\n",
+            paste(c(x[is.na[y]], ""), collapse = "\n"))
+    #return(FALSE)
   } 
-  grepl("+proj=longlat", x)
+  grepl("+proj=longlat", y)
 }

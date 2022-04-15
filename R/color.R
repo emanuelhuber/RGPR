@@ -60,20 +60,6 @@ palGPR <- function(pal = "default", n = 101, power = 1, returnNames = FALSE){
                                          "#F46D43",  "#D53E4F",  "#770132"), space="Lab")(n),
     sunny = grDevices::colorRampPalette(c("#2b3d7b", "#83B8D7", "#EAEBCC", 
                                           "#FA9958", "#7c001d"), space="Lab")(n),
-    # default = grDevices::colorRampPalette(c("#1C007C", "#1B0086", "#1A0091", 
-    #                                         "#18009C",
-    #                                         "#1600A7", "#1400B2", "#1100C3", "#0E00CF", "#0A00E0",
-    #                                         "#0300F5", "#0001FF", "#080FFF", "#1521FF", "#2232FF",
-    #                                         "#2E42FF", "#3B52FF", "#4862FF", "#5470FF", "#617FFF",
-    #                                         "#6E8CFF", "#7F9EFF", "#8CAAFF", "#98B5FF", "#A5C1FF",
-    #                                         "#B2CBFF", "#BFD5FF", "#CBDFFF", "#D8E7FF", "#E5F0FF",
-    #                                         "#F2F7FF", "#FFFCFB", "#FFF4F0", "#FFECE5", "#FFE3DA",
-    #                                         "#FFDACE", "#FFCEC0", "#FFC4B5", "#FFB9AA", "#FFAE9E",
-    #                                         "#FF9F90", "#FF9485", "#FF877A", "#FF766B", "#FF6960",
-    #                                         "#FF5B55", "#FF4946", "#FF3B4E", "#FF3045", "#FF253D",
-    #                                         "#FF1632", "#FF0B2A", "#FF0022", "#F70023", "#EE0023",
-    #                                         "#E50023", "#DC0024", "#D30024", "#CA0024", "#C20024",
-    #                                         "#B70023", "#AF0023", "#A70023", "#9C0022"))(n)
     default = grDevices::colorRampPalette(c("#1C007C", "#1B0086", "#1A0091", "#18009C",
                                             "#1600A7", "#1400B2", "#1100C3", "#0E00CF", "#0A00E0",
                                             "#0300F5", "#0001FF", "#080FFF", "#1521FF", "#2232FF",
@@ -142,10 +128,17 @@ palDisplay <- function(){
 #' @param col [\code{character}] Colors to be used.
 #' @export
 palCol <- function(x , col = palGPR(n=101)){
+  # test 1 - slower
+  # CCY = (x - min(x, na.rm = TRUE))/(max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+  # x[] <- col[ CCY * (length(col) - 1) + 1 ]
+  # return(x)
+  
+  # test 2 - faster
   CCY = (x - min(x, na.rm = TRUE))/(max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
-  # ClimY <- range(CCY, na.rm = TRUE)
-  # ClenY <- ClimY[2] - ClimY[1] + 1
-  return(col[ CCY*(length(col) - 1) + 1 ] )
+  idx <- findInterval(CCY, seq(0, 1, length.out = length(A_col) ))
+  A <- matrix(nrow = nrow(x), ncol = ncol(x))
+  A[] <- col[idx]
+  return(A)
 }
 #--------------------------------#
 

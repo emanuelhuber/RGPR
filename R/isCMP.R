@@ -12,6 +12,39 @@ setGeneric("isCMP", function(x) standardGeneric("isCMP"))
 #' @export
 setMethod("isCMP", "GPR", function(x){
   (grepl("CMP", toupper(x@mode)) || 
-     grepl("WARR", toupper(x@mode))) && 
-    !grepl("CMPANALYSIS", toupper(x@mode))
+     grepl("WARR", toupper(x@mode)))
 })
+
+
+#' @rdname isCMP
+#' @export
+setGeneric("isCommonOffset", function(x) standardGeneric("isCommonOffset"))
+
+#' @rdname isCMP
+#' @export
+setMethod("isCommonOffset", "GPR", function(x){
+  (grepl("CO", toupper(x@mode)) )
+})
+
+
+#' @rdname isCMP
+#' @export
+setGeneric("isVelSpectrum", function(x) standardGeneric("isVelSpectrum"))
+
+#' @rdname isCMP
+#' @export
+setMethod("isVelSpectrum", "GPR", function(x){
+  toupper("isVelSpectrum") == toupper(x@mode)
+})
+
+
+#' @rdname isCMP
+#' @export
+setGeneric("isVelModel", function(x) standardGeneric("isVelModel"))
+
+#' @rdname isCMP
+#' @export
+setMethod("isVelModel", "GPR", function(x){
+  toupper("velModel") == toupper(x@mode)
+})
+

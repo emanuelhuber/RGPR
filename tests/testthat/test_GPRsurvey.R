@@ -4,11 +4,11 @@
 # library(RGPR)
 
 
-LINES <- file.path("/mnt/data/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2011_10_10_flagogna",
+LINES <- file.path("/mnt/data/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2011_10_10_flagogna",
                    paste0("XLINE", sprintf("%03d", 0:5), ".DT1"))
-LINES_GPS <- file.path("/mnt/data/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2011_10_10_flagogna",
+LINES_GPS <- file.path("/mnt/data/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2011_10_10_flagogna",
                        paste0("XLINE", sprintf("%03d", 0:5), ".GPS"))
-LINES_rds <- file.path("/mnt/data/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2011_10_10_flagogna/test",
+LINES_rds <- file.path("/mnt/data/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2011_10_10_flagogna/test",
                        paste0("XLINE", sprintf("%03d", 0:5), ".rds"))
 
 test_that("'GPRsurvey()'",{

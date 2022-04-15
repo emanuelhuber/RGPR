@@ -107,6 +107,9 @@ setReplaceMethod("crs", signature="GPRsurvey", function(x, value){
 # x = character, integer or CRSobj (length 1 or more)
 .checkCRS <- function(x){
   if(is.list(x)) x <- unlist(x, use.names = FALSE)[1]
+  if(length(x) > 1){
+    return( sapply(x, .checkCRS , USE.NAMES = FALSE) )
+  } 
   if(is.na(x) || (is.character(x) && x == "")){
     return(NA_character_)
   }else if(inherits(x, "CRS")){

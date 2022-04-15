@@ -107,12 +107,14 @@ Collate:
 	'NMOstreching.R'
 	'NMOstack.R'
 	'hyperbolicTWT.R'
-	'velSpec.R'
+	'velSpectrum.R'
 	'vel.R'
 	'velDix.R'
 	'setVel.R'
 	'velInterp.R'
 	'velSmooth.R'
+	'velPick.R'
+	'getVel.R'
 	'simWavelet.R'
 	'smooth2D.R'
 	'color.R'
@@ -122,11 +124,12 @@ Collate:
 	'z_con.R'
 	'z_files.R'
 	'z_checkArgs.R'
-	'z_functions.R'
+	'wapply.R'
 	'z_path.R'
 	'z_spatial.R'
 	'z_units.R'
 	'z_messages.R'
+	'getArgs.R'
 Imports:
     methods,
     graphics,
@@ -148,7 +151,6 @@ Imports:
     mmand,
     plot3D,
     fields,
-    magrittr,
     MBA,
     XML,
     checkmate,

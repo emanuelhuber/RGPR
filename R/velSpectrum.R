@@ -39,16 +39,16 @@
 #'   \item{Textbook: Sacchi (2002) Statistical and Transform Methods
 #'         in Geophysical Signal Processing}
 #' }
-#' @name velSpec
-setGeneric("velSpec", 
+#' @name velSpectrum
+setGeneric("velSpectrum", 
            function(x, method = c("semblance", "winsemblance", "minsemblance",
                                   "wincoherence", "wincoherence2"), 
-                    v = NULL, w = NULL) standardGeneric("velSpec"))
+                    v = NULL, w = NULL) standardGeneric("velSpectrum"))
 
 
-#' @rdname velSpec
+#' @rdname velSpectrum
 #' @export
-setMethod("velSpec", "GPR", 
+setMethod("velSpectrum", "GPR", 
           function(x, method = c("semblance","winsemblance", "minsemblance",  
                                  "wincoherence", "wincoherence2"), 
                    v = NULL, w = NULL){
@@ -129,12 +129,24 @@ setMethod("velSpec", "GPR",
             }
             x_tv@data[is.na(x_tv@data)] <- 0
             x_tv@data[is.infinite(x_tv@data)] <- 0
-            x_tv@mode <- "velSpec"
+            x_tv@mode <- "velSpectrum"
             x_tv@antsep <- 0
             x_tv@vel <- list()
             x_tv@x <- v
             x_tv@xunit <- paste0(x_tv@xunit, "/", x_tv@zunit)
-            x_tv@xlab <- "velocity"
+            x_tv@xlab <- "NMO velocity"
+            x_tv@z0 <- numeric()
+            if(method == "semblance"){
+              x_tv@name <- "Semblance analysis"
+            }else if(method == "winsemblance"){
+              x_tv@name <- "Windowed semblance analysis"
+            }else if(method == "minsemblance"){
+              x_tv@name <- "Minimum semblance analysis"
+            }else if(method == "wincoherence"){
+              x_tv@name <- "Windowed coherence analysis"
+            }else if(method == "wincoherence2"){
+              x_tv@name <- "Windowed coherence analysis 2"
+            }
             # x_tv@time0 <- 0
             proc(x_tv) <- getArgs()
             return(x_tv)

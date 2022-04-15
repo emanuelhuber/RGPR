@@ -105,6 +105,7 @@ plot.GPR <- function(x,
                      wsize = 1,   # wiggles
                      wside = 1,   # wiggles
                      pdfName = NULL,
+                     horiz = TRUE,
                      ...){
   # print(list(...))
   if(length(x@vel) > 0){  
@@ -131,7 +132,7 @@ plot.GPR <- function(x,
     if(isTRUE(add)){
       lines(x, ...)
     }else{
-      .plotGPR1D(x, type, add, col, dots, v, relTime0, addDepth0, addAmpl0, addTime0)
+      .plotGPR1D(x, type, add, col, dots, v, relTime0, addDepth0, addAmpl0, addTime0, horiz)
     }
   }else if(nrow(x) == 1){
     x[is.infinite(x) | is.na(x)] <- 0
@@ -161,9 +162,9 @@ plot.GPR <- function(x,
     }else{
       do.call(plot, c(list(x = x@x, y = x@data), dots))
       title(myMain, outer = FALSE)
-      axis(side = 1,  tck = +0.02)
+      axis(side = 1,  tck = +0.02, mgp = c(1,0.5,0))
       axis(side = 3,  tck = +0.02, labels = FALSE)
-      axis(4)
+      axis(side = 4, tck = +0.02, mgp = c(1,0.5,0))
     }
     
     # plot(x@x, x@data[], ..., type = "l")
@@ -179,7 +180,8 @@ plot.GPR <- function(x,
     
     if(!isFALSE(xclip)){ # if xclip == FALSE, no clip at all
       if(is.null(xclip)){
-        if(x@mode == "velSpec"){
+        #if(x@mode == "velSpec"){
+        if( isVelSpectrum(x)){
           # print("before")
           xclip <- range(as.vector(x@data), finite = TRUE) #, na.rm = TRUE)
           # print("after")
@@ -433,7 +435,8 @@ plot.GPR <- function(x,
       }
     }
     
-    if(isTRUE(addTime0) && !grepl("CMPANALYSIS", toupper(x@mode))){
+    # if(isTRUE(addTime0) && !grepl("VELSPEC", toupper(x@mode))){
+    if(isTRUE(addTime0) && !isVelSpectrum(x) && length(x@z0) > 0){
       dx <- diff(xvalues)/2
       xt0 <- c(xvalues[1] - dx[1],  xvalues + c(dx,  tail(dx, 1)))
       lines(xt0, c(x@z0, tail(x@z0, 1)), type = "s", col = "chartreuse",
@@ -512,8 +515,14 @@ lines.GPR <- function(x, relTime0 = FALSE, ...){
       dots[["log"]] <- NULL
       x@data <- log(x@data)
     }
-    dots[["x"]] <- z
-    dots[["y"]] <- x@data
+    if(isTRUE(dots$horiz)){
+      dots[["y"]] <- x@data
+      dots[["x"]] <- z
+    }else{
+      dots[["y"]] <- z
+      dots[["x"]] <- x@data
+    }
+    dots$horiz <- NULL
     invisible( do.call(lines, dots) )
     #lines(z, x@data,...)
   }else{
@@ -614,7 +623,7 @@ contour.GPR <- function(x,
 
 
 
-.plotGPR1D <- function(x, type, add, col, dots, v, relTime0, addDepth0, addAmpl0, addTime0){
+.plotGPR1D <- function(x, type, add, col, dots, v, relTime0, addDepth0, addAmpl0, addTime0, horiz){
   # par(mar = c(5, 4, 3, 2) + 0.1)
   par(mai = c(1.1, 1.02, 1.02, 1.02))
   z <- x@z
@@ -625,16 +634,18 @@ contour.GPR <- function(x,
   }
   if(is.null(col)) col <- "black"
   
-  if(is.null(dots$xlab)) dots$xlab <- .zlab(x)
   if(is.null(dots$type)) dots$type <- type
   if(is.null(dots$col))  dots$col <- col
-  if(is.null(dots$ylab)) dots$ylab <- .dlab(x)
   dotsxaxt <- dots$xaxt 
+  dotsyaxt <- dots$yaxt 
   if(is.null(dots$xaxt)) dots$xaxt <- "n"
-  if(is.null(dots$xaxs)) dots$xaxs <- "i"
+  if(is.null(dots$yaxt)) dots$yaxt <- "n"
   if(is.null(dots$main)){
-    myMain <- paste0(x@name, ": trace #", colnames(x@data)," @ ", round(x@x, 2), 
-                     " ", x@xunit)
+      if(length(x@x) > 0){
+        myMain <- paste0(x@name, " @ ", round(x@x, 4), " ", x@xunit)
+      }else{
+        myMain <- x@name
+      }
   }else{
     myMain <- dots$main
     dots$main <- NULL
@@ -643,32 +654,71 @@ contour.GPR <- function(x,
     dots[["log"]] <- ""
     x@data <- log(x@data)
   }
-  if(isTRUE(add)){
-    do.call(lines, c(list(x = z, y = x@data), dots))
+  if(isTRUE(horiz)){
+    y = x@data
+    if(is.null(dots$ylab)) dots$ylab <- .dlab(x)
+    if(is.null(dots$xlab)) dots$xlab <- .zlab(x)
+    if(is.null(dots$xaxs)) dots$xaxs <- "i"
+    axis_1 <- 1
+    axis_2 <- 2
+    axis_3 <- 3
   }else{
-    do.call(plot, c(list(x = z, y = x@data), dots))
+    if(is.null(dots$xaxs)) dots$yaxs <- "i"
+    y = z
+    z = x@data
+    if(is.null(dots$xlab)) dots$xlab <- .dlab(x)
+    if(is.null(dots$ylab)) dots$ylab <- .zlab(x)
+    if(is.null(dots$ylim)) dots$ylim <- rev(range(y))
+    axis_1 <- 2
+    axis_2 <- 1
+    axis_3 <- 4
   }
   
+  if(is.null(dots$mgp)) dots$mgp = c(2,0.5,0)
+  
+  if(isTRUE(add)){
+    do.call(lines, c(list(x = z, y = y), dots))
+  }else{
+    do.call(plot, c(list(x = z, y = y), dots))
+  }
+    
+    
   if(is.null(dots$ann) || dots$ann != FALSE){
+    if(is.null(dotsyaxt) || dotsyaxt != "n"){
+      yat <- axis(side = 2,  tck = +0.02, mgp = c(1,0.5,0))
+    }
     if(is.null(dotsxaxt) || dotsxaxt != "n"){
       x_axis <- pretty(z, 10)
-      xat <- axis(side = 1,  tck = +0.02)
-      if(grepl("[m]$", x@zunit) || !grepl("CO", toupper(x@mode)) || anyNA(x@antsep) ){
-        axis(side = 3, tck = +0.02)
+      xat <- axis(side = 1,  tck = +0.02, mgp = c(1,0.5,0))
+      # if(grepl("[m]$", x@zunit) || !grepl("CO", toupper(x@mode)) || anyNA(x@antsep) ){
+      if(grepl("[m]$", x@zunit) || !isCommonOffset(x) || anyNA(x@antsep) ){
+        axis(side = 3, tck = +0.02, mgp = c(1,0.5,0))
       }else if(grepl("[s]$", x@zunit)){
-        .depthAxis(x, z, v, t0, xat, side = 3 )
+        if(isTRUE(horiz)){
+          .depthAxis(x, z, v, t0, xat, side = 3 )
+        }else{
+          .depthAxis(x, y, v, t0, yat, side = 4 )
+        }
         if(isTRUE(addDepth0)){
           depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
-          abline(v = depth_0, col = "grey", lty = 3)
-          
-          axis(side = 4, at = depth_0, labels = "0", tick = FALSE) # necessary?
+          if(isTRUE(horiz)){
+            abline(v = depth_0, col = "grey", lty = 3)
+          }else{
+            abline(h = depth_0, col = "grey", lty = 3)
+          }
+          #axis(side = 4, at = depth_0, labels = "0", tick = FALSE) # necessary?
         }
       }
     }
   }
   title(myMain, outer = FALSE, line = 3)
-  if(isTRUE(addAmpl0))  abline(h = 0, lty = 3, col = "grey")
-  if(isTRUE(addTime0))  abline(v = t0, col = "red")
+  if(isTRUE(horiz)){
+    if(isTRUE(addAmpl0))  abline(h = 0, lty = 3, col = "grey")
+    if(isTRUE(addTime0))  abline(v = t0, col = "red")
+  }else{
+    if(isTRUE(addAmpl0))  abline(v = 0, lty = 3, col = "grey")
+    if(isTRUE(addTime0))  abline(h = t0, col = "red")
+  }
 }
 
 
@@ -683,14 +733,14 @@ contour.GPR <- function(x,
   if(max(z)*v/2 > 1.3){
     depth <- pretty(xat * v / 2, 10)
     depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
-    axis(side = side, at = t0 + depthat, labels = depth, tck = +0.02)
+    axis(side = side, at = t0 + depthat, labels = depth, tck = +0.02, mgp = c(1,0.5,0))
     labels_0To1 <- FALSE
   }else{
     labels_0To1 <- d
   }
   axis(side = side, at = t0 + depthat2, labels = labels_0To1, tck = +0.01)
   mtext(paste0("depth (", x@xunit, "),  v = ", round(v, 4), " ", 
-               x@xunit, "/", x@zunit), side = side, line = 2)
+               x@xunit, "/", x@zunit), side = side, line = 1.5)
 }
 
 

@@ -39,37 +39,43 @@ setGeneric("vel<-", function(x, value) standardGeneric("vel<-"))
 setReplaceMethod("vel", "GPR", function(x, value){
   if(is.list(value)){
     # FIXME
-    # print(names(value))
-    # print("===========================")
-    sel <- names(value) %in% c("vrms", "vint", "v")
-    if(!all(sel)){
-      warning("velocity type/s '", names(value)[!sel], "' is/are not supported.\n",
-              "Please use one of the following: 'vrms', 'vint', 'v'")
+    print(names(value))
+    if(all(names(value) %in% c("t", "v"))){
+      x@vel <- list("v" = checkVelIntegrity(x, value))
+    }else{
+      # print("===========================")
+      sel <- names(value) %in% c("vrms", "vint", "v")
+      print(sel)
+      if(!all(sel)){
+        print(!all(sel))
+        warning("velocity type/s '", names(value)[!sel], "' is/are not supported.\n",
+                "Please use one of the following: 'vrms', 'vint', 'v'")
+      }
+      value <- value[sel]
+      for(i in seq_along(value)){
+        # print("- - - - - - - -")
+        # print(paste0("name = ", names(value)[i]))
+        # val <- value[[i]]
+        # vector or matrix
+        # if(is.list(val)){
+        #   print("list")
+        #   print(val)
+        #   # print(val[[1]])
+        #   
+        # # list
+        # }else{
+        #   print("vector/matrix")
+        #   print(val)
+        #   
+        #   # print(val[[1]])
+        # }
+        value[[i]] <- checkVelIntegrity(x, value[[i]])
+        # x@vel[["vrms"]]
+      }
+      # print("******************")
+      # print(value)
+      x@vel <- value
     }
-    value <- value[sel]
-    for(i in seq_along(value)){
-      # print("- - - - - - - -")
-      # print(paste0("name = ", names(value)[i]))
-      val <- value[[i]]
-      # vector or matrix
-      # if(is.list(val)){
-      #   print("list")
-      #   print(val)
-      #   # print(val[[1]])
-      #   
-      # # list
-      # }else{
-      #   print("vector/matrix")
-      #   print(val)
-      #   
-      #   # print(val[[1]])
-      # }
-      value[[i]] <- checkVelIntegrity(x, value[[i]])
-      # x@vel[["vrms"]]
-    }
-    # print("******************")
-    # print(value)
-    x@vel <- value
   }else{
     x@vel <- list("v" = checkVelIntegrity(x, value))
   }
@@ -150,7 +156,7 @@ checkVelIntegrity <- function(x, value){
         stop("You must first set this type of velocity: ", type)
       }else{
         if(is.null(x@vel[["v"]])){
-          stop("You must first set at least on of this type of velocity: ", 
+          stop("You must first set at least one of these types of velocity: ", 
                type, ", v!")
         }else{
           v <- .intpSmoothVel(x@vel[["v"]], x_z = x@z)

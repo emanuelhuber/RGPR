@@ -99,6 +99,7 @@ Collate:
   'exportProc.R'
   'plot2PNG.R'
   'plot2PDF.R'
+  'plotFast.R'
   'ggplotGPR.R'
   'spInterpToRaster.R'
   'spExtractFromRaster.R'

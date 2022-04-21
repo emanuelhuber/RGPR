@@ -118,7 +118,9 @@ plotFast <- function(x, col = palGPR(), colorbar = TRUE, interpolate = TRUE){
               interpolate = interpolate)
   
   title(x@name)
-  mtext(x@filepath, side = 1, line = 3.5, adj = 0.5, cex = 0.65)
+  if(length(x@filepath) > 0){
+    mtext(x@filepath, side = 1, line = 3.5, adj = 0.5, cex = 0.65)
+  }
   grid()
   axis(1, tck = 0.01, mgp = c(2, 0.5, 0))
   axis(2, tck = 0.01, mgp = c(2, 0.5, 0))

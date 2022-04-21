@@ -75,6 +75,14 @@ colorbar <- function(col, clim, zlim,
   par(xpd=FALSE)
 }
 
+#' Faster plot
+#' 
+#' Function to plot faster GPR data
+#' @param x [GPR]
+#' @param col Color palette
+#' @param colorbar [logical]
+#' @param interpolate [logical]
+#' @export
 plotFast <- function(x, col = palGPR(), colorbar = TRUE, interpolate = TRUE){
   
   ## TODO

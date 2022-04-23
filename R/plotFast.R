@@ -127,7 +127,7 @@ plotFast <- function(x, col = palGPR(), colorbar = TRUE, interpolate = TRUE){
   box()
   if(isTRUE(colorbar)){
     dim(col) <- c(length(col), 1)
-    colorbar(col = col, clim = range(x), zlim = ylim, clab = "mV", clabpar = list(top = 0.05, adj = 0.5))
+    colorbar(col = col, clim = range(x, na.rm = TRUE), zlim = ylim, clab = "mV", clabpar = list(top = 0.05, adj = 0.5))
   }
 }
 

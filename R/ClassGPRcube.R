@@ -715,7 +715,6 @@ trInterp <- function(x, z, zi){
   bbox[1] < min(xpos)
   
   j <- 1
-  h = 6
   
   n <- 1
   m <- 1

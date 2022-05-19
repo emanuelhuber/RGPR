@@ -1350,6 +1350,8 @@ setMethod("traceShift",
   checkArgStop(msg)
   #-----------------------------------
   
+  # FIXME: check that ts not too large is!!!!
+  
   if(any(ts != 0)){
     x <- .traceShift(x, ts = ts, method = method, crop = crop)
     if(isTRUE(track)) proc(x) <- getArgs()

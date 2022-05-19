@@ -345,7 +345,7 @@ readDZG <- function(dsn){
   pat_gssis <- paste0("\\$(?<ID>GSSIS),(?<tr>[0-9]+),(?<time>[-]?[0-9.]+)") 
   pat_gpgga <- paste0("\\$(?<ID>GPGGA),(?<UTC>[0-9.]+),(?<lat>[0-9.]+),",
                       "(?<NS>[NS]),(?<lon>[0-9.]+),(?<EW>[EW]),(?<fix>[0-9]),",
-                      "(?<NbSat>[0-9.]+),(?<HDOP>[0-9.]+),(?<H>[0-9.]+),",
+                      "(?<NbSat>[0-9.]+),(?<HDOP>[0-9.]+),(?<H>[-]?[0-9.]+),",
                       "(?<mf>[MmFf]+)") 
   #,(?<HGeoid>[0-9.]+),(?<mf2>[mMfF+),",
   # "(?<TDGPS>[0-9.]+),(?<DGPSID> [A-z0-9.]+)"

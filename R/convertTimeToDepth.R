@@ -41,6 +41,8 @@ setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, zmax = NULL,
   if(is.null(x@vel) || length(x@vel)==0){
     stop("You must first define the EM wave velocity ",
          "with 'vel(x) <- 0.1' for example!")
+  }else{
+    x_vel <- .getVel2(x, type = "vint", strict = FALSE)
   }
   if(length(x@coord) != 0 && ncol(x@coord) == 3){
     topo <- x@coord[1:ncol(x@data), 3]
@@ -58,21 +60,27 @@ setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, zmax = NULL,
   }
     
   # dots <- list(...)
-  if( is.null(dz)){
-    dz <- min(x@vel[[1]]) * min(diff(depth(x)))/2
-  }
+  # if( is.null(dz)){
+  #   dz <- min(x@vel[[1]]) * min(diff(depth(x)))/2
+  # }
   # print(zmax)
   method <- match.arg(method, c("pchip", "linear", "nearest", "cubic", "spline"))
     
   # single velocity value
-  if(length(x@vel[[1]]) == 1){
-    message("time to depth conversion with constant velocity (", x@vel[[1]],
+  if(length(x_vel) == 1){
+    message("time to depth conversion with constant velocity (", x_vel,
             " ", x@posunit, "/", x@depthunit, ")")
-    x_depth <- timeToDepth(x@depth, time_0 = 0, v = vel(x), 
+    x_depth <- timeToDepth(x@depth, time_0 = 0, v = x_vel, 
                      antsep = antsep(x))
     test <- !is.na(x_depth)
     x <- x[test,]
     x_depth <- x_depth[test]
+    
+    if(is.null(dz)){
+      x@dz <-  x@dz * x_vel/ 2
+    }else{
+      x@dz <- dz
+    }
     
     if( is.null(zmax)){
       zmax <- max(x_depth, na.rm = TRUE)
@@ -90,13 +98,15 @@ setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, zmax = NULL,
                     x_depth_int = d, 
                     method = method)
   # vector velocity
-  }else if( is.null(dim(x@vel[[1]])) && length(x@vel[[1]]) == nrow(x) ){
-    x_depth <- timeToDepth(x@depth, 0, v = x@vel[[1]], 
+  }else if( is.null(dim(x_vel)) && length(x_vel) == nrow(x) ){
+    x_depth <- timeToDepth(x@depth, 0, v = x_vel, 
                            antsep = x@antsep) # here difference to matrix case
     test <- !is.na(x_depth)
     x <- x[test,]
     x_depth <- x_depth[test]
-    
+    if(is.null(dz)){
+      dz <- min(x_vel) * min(diff(x@depth))/2
+    } 
     if( is.null(zmax)){
       zmax <- max(x_depth, na.rm = TRUE)
     }
@@ -124,15 +134,17 @@ setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, zmax = NULL,
       
     # print("lkj")
   # matrix velocity
-  }else if(is.matrix(x@vel[[1]])){
-    x_depth <- apply(c(0, diff(depth(x))) * x@vel[[1]]/2, 2, cumsum)
+  }else if(is.matrix(x_vel)){
+    x_depth <- apply(c(0, diff(depth(x))) * x_vel/2, 2, cumsum)
     # FIXME account for antenna separation -> and remove pixels with NA... not so easy..
     # x_depth <- apply(c(0, diff(depth(x))) * x@vel[[1]]/2, 2, cumsum)
     # x_detph <- x_depth^2 - antsep^2
     # test <- (x_detph >= 0)
     # x_detph[!test] <- NA
     # x_detph[test] <- sqrt(x_detph[test])/2
-    
+    if(is.null(dz)){
+      dz <- min(x_vel) * min(diff(x@depth))/2
+    }
     if( is.null(zmax)){
       zmax <- max(x_depth, na.rm = TRUE)
     }

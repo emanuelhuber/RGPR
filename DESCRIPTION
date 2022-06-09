@@ -122,6 +122,23 @@ Collate:
   'convUnit.R'
   'strTensor.R'
   'papply.R'
+  'hyperbolicTWT.R'
+  'NMOcorrect.R'
+  'z_message.R'
+  'isDepthUnit.R'
+  'vel.R'
+  'velSmooth.R'
+  'velInterp.R'
+  'velDix.R'
+  'velPick.R'
+  'NMO.R'
+  'NMOstreching.R'
+  'velSpectrum.R'
+  'setVel2.R'
+  'plotVel.R'
+  'getVel2.R'
+  'CMPhyperbolas.R'
+  'NMOstack.R'
 Imports:
     methods,
     graphics,

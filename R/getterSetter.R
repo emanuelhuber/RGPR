@@ -339,51 +339,51 @@ setReplaceMethod(
 #' @export
 setGenericVerif("vel", function(x) standardGeneric("vel"))
 
-#' Velocity model of the GPR data
+#' #' Velocity model of the GPR data
+#' #' 
+#' #' @name vel
+#' #' @rdname vel
+#' #' @export
+#' setMethod("vel", "GPR", function(x){
+#'   if(length(x@vel) == 1){
+#'     return(x@vel[[1]])
+#'   }else{
+#'     return(x@vel)
+#'   }
+#' })
 #' 
-#' @name vel
-#' @rdname vel
-#' @export
-setMethod("vel", "GPR", function(x){
-  if(length(x@vel) == 1){
-    return(x@vel[[1]])
-  }else{
-    return(x@vel)
-  }
-})
+#' #' @name vel<-
+#' #' @rdname vel
+#' #' @export
+#' setGenericVerif("vel<-",function(x,value){standardGeneric("vel<-")})
+#' 
+#' #' @name vel<-
+#' #' @rdname vel
+#' #' @export
+#' setReplaceMethod(
+#'   f="vel",
+#'   signature="GPR",
+#'   definition=function(x, value){
+#'     if(typeof(value) != "list"){
+#'       value <- list(as.numeric(value))
+#'     }
+#'     x@vel <- value
+#'     x@proc <- c(x@proc, "vel<-")
+#'     return(x)
+#' })
 
-#' @name vel<-
-#' @rdname vel
-#' @export
-setGenericVerif("vel<-",function(x,value){standardGeneric("vel<-")})
-
-#' @name vel<-
-#' @rdname vel
-#' @export
-setReplaceMethod(
-  f="vel",
-  signature="GPR",
-  definition=function(x, value){
-    if(typeof(value) != "list"){
-      value <- list(as.numeric(value))
-    }
-    x@vel <- value
-    x@proc <- c(x@proc, "vel<-")
-    return(x)
-})
-
-#' @name setVel
-#' @rdname vel
-#' @export
-setGenericVerif("setVel", function(x, v) standardGeneric("setVel"))
-
-#' @name setVel
-#' @rdname vel
-#' @export
-setMethod("setVel", "GPR", function(x, v){
- vel(x) <- v 
- return(x)
-})
+#' #' @name setVel
+#' #' @rdname vel
+#' #' @export
+#' setGenericVerif("setVel", function(x, v) standardGeneric("setVel"))
+#' 
+#' #' @name setVel
+#' #' @rdname vel
+#' #' @export
+#' setMethod("setVel", "GPR", function(x, v){
+#'  vel(x) <- v 
+#'  return(x)
+#' })
 
 #------------------------------------------------------------------------------#
 

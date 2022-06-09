@@ -164,7 +164,7 @@
       # time = x$hdt[1,] * 3600 + x$hdt[2,] * 60 + x$hdt[3,],
       time        = traceTime,
       proc        = character(0),
-      vel         = list(v),
+      vel         = list(v = v),
       name        = x_name,
       description = desc,
       filepath    = fPath,

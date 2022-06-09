@@ -253,7 +253,7 @@ readDT <- function(dsn){
       time0       = rep(0, ncol(x$data)),
       time        = numeric(0),
       proc        = character(0),
-      vel         = list(0.1),
+      vel         = list(v = 0.1),
       name        = fName,
       description = desc,
       filepath    = fPath,

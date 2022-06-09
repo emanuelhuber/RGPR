@@ -87,7 +87,7 @@
       # time = x$hdt[1,] * 3600 + x$hdt[2,] * 60 + x$hdt[3,],
       time = traceTime,
       proc = character(0),
-      vel = list(0.1),
+      vel = list(v = 0.1),
       name = x_name,
       description = desc,
       filepath = fPath,

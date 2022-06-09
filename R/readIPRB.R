@@ -92,7 +92,7 @@
       time0 = rep((nT0[1] - 1) * dz, nTr),            # time-zero
       time = traceTime,                            # sampling time
       proc = character(0),                         # processing steps
-      vel = list(0.1),                             # m/ns
+      vel = list(v = 0.1),                             # m/ns
       name = fName,
       description = desc,
       filepath = fPath,

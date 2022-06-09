@@ -13,7 +13,7 @@
            time0       = rep(0, ncol(x[["data"]])),  
            time        = rep(0, ncol(x[["data"]])), # time of trace records
            proc        =  character(0),       
-           vel         = list(0.1),                 # m/ns
+           vel         = list(v = 0.1),                 # m/ns
            name        = fName,
            description = desc,
            filepath    = fPath,

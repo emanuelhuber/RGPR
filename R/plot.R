@@ -92,10 +92,11 @@ plot.GPR <- function(x,
     # FIXME: decimate vector to specified length without repetition
     x <- x[, round(seq(from = 1, to = ncol(x), length.out = 1000))]
   }
+  v <- 0
   if(length(x@vel)>0){  
-    v <- x@vel[[1]]
-  }else{
-    v <- 0
+    if(length(x@vel[[1]]) > 0){
+      v <- x@vel[[1]]
+    }
   }
   dots <- list(...)
   if(length(x@coord) == 0 ){
@@ -158,6 +159,7 @@ plot.GPR <- function(x,
       }
       
       
+      
       do.call(plot, c(list(x = z, y = x@data), dots))
       
       if(is.null(dots$ann) || dots$ann != FALSE){
@@ -169,7 +171,8 @@ plot.GPR <- function(x,
             axis(side = 3, tck = +0.02)
             #FIXME: use fx .depthAxis()
           }else if(grepl("[s]$", x@depthunit)){
-            if( length(x@antsep) > 0 && is.null(dim(x@vel[[1]])) && length(v) == 1 && v > 0){
+            # if( length(x@antsep) > 0 && is.null(dim(x@vel[[1]])) && length(v) == 1 && v > 0){
+            if( length(x@antsep) > 0 && is.null(dim(v)) && length(v) == 1 && v > 0){
               if( x@antsep > 0){
                 depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
                 depth2  <- seq(0.1, by = 0.1, 0.9)
@@ -237,7 +240,7 @@ plot.GPR <- function(x,
         stop("length(antsep(x)) != ncol(x). You must correctly define ",
              "the antenna separation distance with 'antsep(x) <- ...'")
       }
-    }else if(toupper(x@surveymode) == "CMPANALYSIS"){
+    }else if(toupper(x@surveymode) == "CMPANALYSIS" || tolower(x@surveymode) == "velspectrum"){
       myclab <- ""
       myxlab <- paste0("velocity (", x@posunit, "/", x@depthunit, ")")
     }else if( length(x@coord) > 0 ){
@@ -313,7 +316,7 @@ plot.GPR <- function(x,
     }else{
       mai <- c(1.1, 1.02, 1.02, 1.4)
       if(grepl("[s]$", x@depthunit) && !isCMP(x) && 
-         toupper(x@surveymode) != "CMPANALYSIS"){
+         toupper(x@surveymode) != "CMPANALYSIS" && tolower(x@surveymode) != "velspectrum"){
         if(length(x@antsep) > 0 ){
           mai <- c(1.1, 1.02, 1.02, 2)
           colkeyDist <- 0.05  # 0.09
@@ -546,7 +549,8 @@ plot.GPR <- function(x,
         }else if(grepl("[s]$", x@depthunit)){
           if(length(x@antsep) == 0) x@antsep <- 0
           # if(length(x@antsep) > 0 && is.null(dim(x@vel[[1]])) ){
-          if(is.null(dim(x@vel[[1]])) && length(v) == 1 && v > 0 ){
+          # if(is.null(dim(x@vel[[1]])) && length(v) == 1 && v > 0 ){
+          if(is.null(dim(v)) && length(v) == 1 && v > 0 ){
             if(x@antsep > 0){
               depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
               depth2  <- seq(0.1, by = 0.1, 0.9)
@@ -580,7 +584,8 @@ plot.GPR <- function(x,
       }
     }
     
-    if(isTRUE(addTime0) && !grepl("CMPANALYSIS", toupper(x@surveymode))){
+    if(isTRUE(addTime0) && !grepl("CMPANALYSIS", toupper(x@surveymode)) &&
+       !grepl("velspectrum", tolower(x@surveymode))){
       dx <- diff(xvalues)/2
       xt0 <- c(xvalues[1] - dx[1],  xvalues + c(dx,  tail(dx, 1)))
       lines(xt0, c(time_0, tail(time_0, 1)), type = "s", col = "chartreuse",
@@ -673,7 +678,7 @@ contour.GPR <- function(x,
            addAmpl0 = addAmpl0,
            addTopo = addTopo,
            clip = clip,
-           ratio = ratio,
+           #ratio = ratio,
            barscale = barscale, 
            pdfName = pdfName,
            type = "contour",

@@ -827,7 +827,7 @@ as.GPR.matrix <- function (x, ...){
       time0 = rep(0,ncol(x)),       # x$dt1$time0
       time = rep(0,ncol(x)),        # x$dt1$time
       proc = character(0),          # processing steps
-      vel = list(0.1),              # m/ns
+      vel = list(v = 0.1),              # m/ns
       name = character(0),
       description = character(0),
       filepath = character(0),
@@ -881,7 +881,7 @@ as.GPR.list <- function (x, ...){
       x[["dz"]] <- mean(diff(x[["depth"]]))
     }
     if(!is.null(x[["vel"]]) && !is.list(x[["vel"]])){
-      x[["vel"]] <- list(x[["vel"]])
+      x[["vel"]] <- list(v = x[["vel"]])
     }
     myArg <- as.list(match.call(definition = sys.function(-2),
                                 call = sys.call(-2),
@@ -898,7 +898,7 @@ as.GPR.list <- function (x, ...){
              time0       = rep(0, ncol(x[["data"]])),  
              time        = rep(0, ncol(x[["data"]])), # time of trace records
              proc        =  character(0),       
-             vel         = list(0.1),                 # m/ns
+             vel         = list(v = 0.1),                 # m/ns
              name        = as.character(d_name),
              description = paste0("coercion of ", as.character(d_name), 
                                   " (",typeof(x), ") into GPR"),
@@ -956,6 +956,52 @@ setMethod(
     return(x_apply)
   }
 )
+
+
+#' Form Row and Column Sums and Means
+#' 
+#' Form row and column sums and means 
+#' @param x [\code{GPR}]
+#' @param na.rm	[\code{logical(1)}]. Should missing values (including 
+#' \code{NaN}) be omitted from the calculations?
+#' @param dims [\code{integer(1)}]  Which dimensions are regarded as ‘rows’ or 
+#'             ‘columns’ to sum over.(see \code{\link{colSums}}).
+#' @aliases colSums,GPR-method
+#' @rdname colSums
+#' @export
+setMethod("colSums", "GPR", function(x, na.rm = FALSE, dims = 1){
+  x@data[1, ] <- colSums(x@data, na.rm = na.rm, dims = dims)
+  x <- x[1,]
+  return(x)
+})
+
+#' @aliases rowSums,GPR-method
+#' @rdname colSums
+#' @export
+setMethod("rowSums", "GPR", function(x, na.rm = FALSE, dims = 1){
+  x@data[, 1] <- rowSums(x@data, na.rm = na.rm, dims = dims)
+  x <- x[,1]
+  return(x)
+})
+
+#' @aliases colMeans,GPR-method
+#' @rdname colSums
+#' @export
+setMethod("colMeans", "GPR", function(x, na.rm = FALSE, dims = 1){
+  x@data[1, ] <-colMeans(x@data, na.rm = na.rm, dims = dims)
+  x <- x[1,]
+  return(x)
+})
+
+#' @aliases rowMeans,GPR-method
+#' @rdname colSums
+#' @export
+setMethod("rowMeans", "GPR", function(x, na.rm = FALSE, dims = 1){
+  x@data[, 1] <- rowMeans(x@data, na.rm = na.rm, dims = dims)
+  x <- x[,1]
+  return(x)
+})
+
 
 #' @export
 setMethod(

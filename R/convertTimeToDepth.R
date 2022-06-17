@@ -41,9 +41,11 @@ setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, zmax = NULL,
   if(is.null(x@vel) || length(x@vel)==0){
     stop("You must first define the EM wave velocity ",
          "with 'vel(x) <- 0.1' for example!")
-  }else{
-    x_vel <- .getVel2(x, type = "vint", strict = FALSE)
   }
+  if( !isTimeUnit(x) ){
+    stop("Vertical unit (", x@depthunit , ") is not a time unit...")
+  }
+  
   if(length(x@coord) != 0 && ncol(x@coord) == 3){
     topo <- x@coord[1:ncol(x@data), 3]
   }else{
@@ -55,9 +57,7 @@ setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, zmax = NULL,
     x <- time0Cor(x, method = c("pchip"))
   }
   
-  if( !isTimeUnit(x) ){
-    stop("Vertical unit (", x@depthunit , ") is not a time unit...")
-  }
+  x_vel <- .getVel2(x, type = "vint", strict = FALSE)
     
   # dots <- list(...)
   # if( is.null(dz)){

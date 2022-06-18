@@ -626,6 +626,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
                date = x[['date']],
                crs = x[['crs']],
                proc = x[['proc']],               # processing steps
+               vel =  x[['vel']],                 # m/ns
                vel = list(v = x[['vel']]),                 # m/ns
                delineations = x[['delineations']],
                hd =  x[['hd']]                   # header

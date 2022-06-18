@@ -1,28 +1,35 @@
----
+-–
 layout: page
 title: Time/depth slice interpolation
-date: 2021-04-16
----
+date: 2022-06-19
+-–
 
 ------------------------------------------------------------------------
 
 **Note**:
 
--   This R-package is still in development, and therefore some of the functions may change in a near future.
--   If you have any questions, comments or suggestions, feel free to contact me (in english, french or german): <emanuel.huber@pm.me>.
+-   This R-package is still in development, and therefore some of the
+    functions may change in a near future.
+-   If you have any questions, comments or suggestions, feel free to
+    contact me (in english, french or german):
+    <a href="mailto:emanuel.huber@pm.me" class="email">emanuel.huber@pm.me</a>.
 
 Table of Contents
 =================
 
 -   [Objectives of this tutorial](#objectives-of-this-tutorial)
 -   [Preliminary](#preliminary)
-    -   [Install/load the necessary packages](#installload-the-necessary-packages)
+    -   [Install/load the necessary
+        packages](#installload-the-necessary-packages)
     -   [Set the working directory](#set-the-working-directory)
--   [Read all the GPR data in a object of the class `GPRsurvey`](#read-all-the-gpr-data-in-a-object-of-the-class-gprsurvey)
+-   [Read all the GPR data in a object of the class
+    `GPRsurvey`](#read-all-the-gpr-data-in-a-object-of-the-class-gprsurvey)
     -   [Set the filepaths](#set-the-filepaths)
-    -   [Create an object of the class `GPRsurvey`](#create-an-object-of-the-class-gprsurvey)
+    -   [Create an object of the class
+        `GPRsurvey`](#create-an-object-of-the-class-gprsurvey)
 -   [Add coordinates](#add-coordinates)
-    -   [Reverse GPR line direction (if necessary)](#reverse-gpr-line-direction-if-necessary)
+    -   [Reverse GPR line direction (if
+        necessary)](#reverse-gpr-line-direction-if-necessary)
     -   [Set grid coordinaes](#set-grid-coordinaes)
         -   [Specifications](#specifications)
         -   [Example 1](#example-1)
@@ -30,23 +37,33 @@ Table of Contents
         -   [Case study](#case-study)
 -   [Basic processing](#basic-processing)
 -   [Time/depth slice interpolation](#timedepth-slice-interpolation)
+    -   [How to manipulate a `GPRcube`
+        object](#how-to-manipulate-a-gprcube-object)
+    -   [Color palette](#color-palette)
+    -   [Specify the interpolation
+        extend](#specify-the-interpolation-extend)
 -   [Export slices as raster](#export-slices-as-raster)
 
 Objectives of this tutorial
 ===========================
 
--   Learn how to assign coordinates to GPR data from a grid survey setup.
+-   Learn how to assign coordinates to GPR data from a grid survey
+    setup.
 -   Learn how to interpolate time/depth slices.
 
-However, this tutorial will not explain you the math/algorithms behind the different processing methods.
+However, this tutorial will not explain you the math/algorithms behind
+the different processing methods.
 
 Preliminary
 ===========
 
--   Download the repository [GPRdata](https://github.com/NSGeophysics/GPRdata) containing the data we will use along this tutorial
+-   Download the repository
+    [GPRdata](https://github.com/NSGeophysics/GPRdata) containing the
+    data we will use along this tutorial
 -   Unzip the data
 
-We will work with the data contained in the directory `/exampleDataCube/Grid-dir1-Rawdata/`.
+We will work with the data contained in the directory
+`/exampleDataCube/Grid-dir1-Rawdata/`.
 
 Install/load the necessary packages
 -----------------------------------
@@ -57,12 +74,16 @@ devtools::install_github("emanuelhuber/RGPR")
 library(RGPR)   # load RGPR in the current R session
 ```
 
-\[optionally\] If `RGPR` is not installed, follow the instructions of the tutorial "Getting started" to install it.
+\[optionally\] If `RGPR` is not installed, follow the instructions of
+the tutorial “Getting started” to install it.
 
 Set the working directory
 -------------------------
 
-The working directory must be correctly set to use relative filepaths. The working directory can be set either in your R-software or in R directly with (of course you need to adapt the filepath shown below to your system):
+The working directory must be correctly set to use relative filepaths.
+The working directory can be set either in your R-software or in R
+directly with (of course you need to adapt the filepath shown below to
+your system):
 
 ``` r
 DIR <- file.path("your_dir_path/GPRdata-master/exampleDataCube")
@@ -73,18 +94,27 @@ getwd()         # Return the current working directory (just to check)
 Read all the GPR data in a object of the class `GPRsurvey`
 ==========================================================
 
-An object of the class `GPRsurvey` is like an index that contains some of the meta-data of several GPR data recorded during one survey. With the class `GPRsurvey` you have an overview of all your data, you can compute the positions of the profile intersections, plot a top view of the survey and plot the data in 3D with open-GL (implemented in the R-package `RGL`).
+An object of the class `GPRsurvey` is like an index that contains some
+of the meta-data of several GPR data recorded during one survey. With
+the class `GPRsurvey` you have an overview of all your data, you can
+compute the positions of the profile intersections, plot a top view of
+the survey and plot the data in 3D with open-GL (implemented in the
+R-package `RGL`).
 
 Set the filepaths
 -----------------
 
-Read all the GPR records (".DZT") located in the directory `/exampleDataCube/Grid-dir1-Rawdata/`
+Read all the GPR records (“.DZT”) located in the directory
+`/exampleDataCube/Grid-dir1-Rawdata/`
 
 ``` r
 LINES <- file.path( paste0("FILE____", sprintf("%03d", 1:46), ".DZT"))
 ```
 
-`sprintf` format the integer values ranging from 1 to 46 such that they match the file names (e.g., 1 becomes `"001"`, 2 becomes `"002"`,..., 46 becomes `"046"`). The `0` in `"%03d"` means pad with zeros to the field, `3` means that the field length is `3`, `d` that the values are integer.
+`sprintf` format the integer values ranging from 1 to 46 such that they
+match the file names (e.g., 1 becomes `"001"`, 2 becomes `"002"`, …, 46
+becomes `"046"`). The `0` in `"%03d"` means pad with zeros to the field,
+`3` means that the field length is `3`, `d` that the values are integer.
 
 Create an object of the class `GPRsurvey`
 -----------------------------------------
@@ -151,7 +181,8 @@ SU
     ## 46 FILE____046    9.0     m 2013-10-29  400    NO  NO FILE____046.DZT
     ## ****************
 
-You can see that no coordinates (x,y,z) are associated with the GPR data. Therefore, if you try to plot the survey you will get:
+You can see that no coordinates (x,y,z) are associated with the GPR
+data. Therefore, if you try to plot the survey you will get:
 
 ``` r
 plot(SU, asp = 1) # throw an error
@@ -160,20 +191,34 @@ plot(SU, asp = 1) # throw an error
 Add coordinates
 ===============
 
-The data come without coordinates. To add coordinate to GPR data, check the tutorial [Adding coordinates to GPR data](https://emanuelhuber.github.io/RGPR/04_RGPR_tutorial_GPR-data-survey/). Note that RPGR automatically reads GPS files associated with the GPR data and interpolate the trace positions.
+The data come without coordinates. To add coordinate to GPR data, check
+the tutorial [Adding coordinates to GPR
+data](https://emanuelhuber.github.io/RGPR/04_RGPR_tutorial_GPR-data-survey/).
+Note that RPGR automatically reads GPS files associated with the GPR
+data and interpolate the trace positions.
 
-Here, we assume that the data were collected on a grid: all the GPR data are parallel, oriented in the same direction and spaced by 0.20 m. For grid settings, a new approach is here introduced (here only with data recorded along the y-direction, but it works also for data recorded along the x-direction and along both direction). If your data already have coordinates, skip the section below.
+Here, we assume that the data were collected on a grid: all the GPR data
+are parallel, oriented in the same direction and spaced by 0.20 m. For
+grid settings, a new approach is here introduced (here only with data
+recorded along the y-direction, but it works also for data recorded
+along the x-direction and along both direction). If your data already
+have coordinates, skip the section below.
 
 Reverse GPR line direction (if necessary)
 -----------------------------------------
 
-For this approach, all the data must be oriented in the same direction (the x-lines must have the same direction, the y-lines must have the same direction). If this is not the case for your data, you can use the function `reverse()` to reverse the GPR line. You can specify which lines must be reversed:
+For this approach, all the data must be oriented in the same direction
+(the x-lines must have the same direction, the y-lines must have the
+same direction). If this is not the case for your data, you can use the
+function `reverse()` to reverse the GPR line. You can specify which
+lines must be reversed:
 
 ``` r
 SU <- reverse(SU, id = seq(from = 2, to = 11, by = 2))
 ```
 
-or if your data were collected in zig-zag (two adjacent GPR lines have opposite direction), you can use the argument `"zigzag"`:
+or if your data were collected in zig-zag (two adjacent GPR lines have
+opposite direction), you can use the argument `"zigzag"`:
 
 ``` r
 #all the even GPR lines are reversed
@@ -185,30 +230,51 @@ Set grid coordinaes
 
 ### Specifications
 
-To set the grid coordinates, use the function `setGridCoord()` and assign the grid specifications in the form of a list. This list takes for arguments (see also:
+To set the grid coordinates, use the function `setGridCoord()` and
+assign the grid specifications in the form of a list. This list takes
+for arguments (see also:
 
--   `xlines`: integer values corresponding to the x-lines in the `GPRsurvey` object (if there are no x-lines, no need to specify `xlines`).
--   `xpos`: the position of the x-lines along the x-axis, same length as `xlines` (if there are no x-lines, no need to specify `xpos`).
--   `xstart`\[optional\]: shift to apply along the y-position, useful if the lines do not start at the same position; same length as `xlines` (if there are no x-lines, no need to specify `xstart`).
--   `xlength`\[optional\]: the length of the lines. Note that normally RGPR reads the line length from the data (if there are no x-lines, no need to specify `xlength`).
--   `ylines`: integer values corresponding to the x-lines in the `GPRsurvey` object (if there are no y-lines, no need to specify `ylines`).
--   `ypos`: the position of the x-lines along the x-axis, same length as `ylines` (if there are no y-lines, no need to specify `ypos`).
--   `ystart`\[optional\]: shift to apply along the x-position, useful if the lines do not start at the same position; same length as `ylines` (if there are no y-lines, no need to specify `ystart`).
--   `ylength`\[optional\]: the length of the lines. Note that normally RGPR reads the line length from the data (if there are no y-lines, no need to specify `ylength`).
+-   `xlines`: integer values corresponding to the x-lines in the
+    `GPRsurvey` object (if there are no x-lines, no need to specify
+    `xlines`).
+-   `xpos`: the position of the x-lines along the x-axis, same length as
+    `xlines` (if there are no x-lines, no need to specify `xpos`).
+-   `xstart`\[optional\]: shift to apply along the y-position, useful
+    if the lines do not start at the same position; same length as
+    `xlines` (if there are no x-lines, no need to specify `xstart`).
+-   `xlength`\[optional\]: the length of the lines. Note that normally
+    RGPR reads the line length from the data (if there are no x-lines,
+    no need to specify `xlength`).
+-   `ylines`: integer values corresponding to the x-lines in the
+    `GPRsurvey` object (if there are no y-lines, no need to specify
+    `ylines`).
+-   `ypos`: the position of the x-lines along the x-axis, same length as
+    `ylines` (if there are no y-lines, no need to specify `ypos`).
+-   `ystart`\[optional\]: shift to apply along the x-position, useful
+    if the lines do not start at the same position; same length as
+    `ylines` (if there are no y-lines, no need to specify `ystart`).
+-   `ylength`\[optional\]: the length of the lines. Note that normally
+    RGPR reads the line length from the data (if there are no y-lines,
+    no need to specify `ylength`).
 
 Note that:
 
--   the length of `xlines`, `xpos`, `xstart` and `xlength` must be equal (except if you omit `xstart` and/or `xlength`)
--   the length of `ylines`, `ypos`, `ystart` and `ylength` must be equal (except if you omit `ystart` and/or `ylength`)
+-   the length of `xlines`, `xpos`, `xstart` and `xlength` must be equal
+    (except if you omit `xstart` and/or `xlength`)
+-   the length of `ylines`, `ypos`, `ystart` and `ylength` must be equal
+    (except if you omit `ystart` and/or `ylength`)
 
-![Visualisation of the grid specification arguments](img/setGridCoord.png)
+![Visualisation of the grid specification
+arguments](img/setGridCoord.png)
 
 ### Example 1
 
 Imagine your data were collected as follows:
 
--   40 x-lines with line spacing = 2 m; the 3rd and 5th lines start 1 m after the other lines.
--   6 y-lines at positions 0 m, 1 m, 2 m, 4 m, 6 m, and 7.6 m; the 1st line start 2 m before the other lines.
+-   40 x-lines with line spacing = 2 m; the 3rd and 5th lines start 1 m
+    after the other lines.
+-   6 y-lines at positions 0 m, 1 m, 2 m, 4 m, 6 m, and 7.6 m; the 1st
+    line start 2 m before the other lines.
 
 ``` r
 SU_img <- SU
@@ -231,7 +297,8 @@ Imagine your data were collected on a 19 m x 25m grid:
 
 -   20 x-lines and 26 y-lines
 -   1 m line spacing (in both x- and y-directions)
--   x-length is 25 m and y-length is 19 m (assuming that RGPR did not read the correct GPR line length)
+-   x-length is 25 m and y-length is 19 m (assuming that RGPR did not
+    read the correct GPR line length)
 -   all the lines start either at x = 0 m or at y = 0 m
 
 ``` r
@@ -252,7 +319,9 @@ plot(SU_img, asp = TRUE, parFid = NULL)
 
 ### Case study
 
-In our case we have only x-lines, so we don't specify `ylines`, `ypos`, and `ystart`. The 5th, 8th, 22th lines starts 1 m after the others; the 1st, 28th, 33rd, 38th, and 44th lines start 0.4 m after the others:
+In our case we have only x-lines, so we don’t specify `ylines`, `ypos`,
+and `ystart`. The 5th, 8th, 22th lines starts 1 m after the others; the
+1st, 28th, 33rd, 38th, and 44th lines start 0.4 m after the others:
 
 ``` r
 # define xstart
@@ -273,7 +342,8 @@ plot(SU, asp = TRUE, parFid = NULL)
 
 ![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-12-1.png)
 
-We set `parFid = NULL` because we do not want to plot all the fiducial markers
+We set `parFid = NULL` because we do not want to plot all the fiducial
+markers
 
 <!-- If you want to shift the coordinates by 1 m along x-direction, 0.5 m along  -->
 <!-- the y-direction for your 3rd GPR data line, use `tpShift()` as follows -->
@@ -281,6 +351,7 @@ We set `parFid = NULL` because we do not want to plot all the fiducial markers
 <!-- SU2 <- tpShift(SU, 3, dx = 0.1, dy = 0.5) -->
 <!-- plot(SU2, asp = TRUE, parFid = NULL) -->
 <!-- ``` -->
+
 Basic processing
 ================
 
@@ -296,7 +367,13 @@ plot(SU[[1]])
 
 You see that some processing is needed.
 
-We apply some basic processing steps sequentially (estimate time-zero and shift all the traces to time-zero, dewow, AGC-gain). Maybe you want to horizontally smooth the data (un-comment the line starting `traceStat`) or to interpolate the signal envelope (un-comment the line starting `envelope`). For more info on GPR data processing check the tutorial [Basic GPR data processing](https://emanuelhuber.github.io/RGPR/02_RGPR_tutorial_basic-GPR-data-processing/)
+We apply some basic processing steps sequentially (estimate time-zero
+and shift all the traces to time-zero, dewow, AGC-gain). Maybe you want
+to horizontally smooth the data (un-comment the line starting
+`traceStat`) or to interpolate the signal envelope (un-comment the line
+starting `envelope`). For more info on GPR data processing check the
+tutorial [Basic GPR data
+processing](https://emanuelhuber.github.io/RGPR/02_RGPR_tutorial_basic-GPR-data-processing/)
 
 ``` r
 SU <- papply(SU,
@@ -321,7 +398,12 @@ plot(SU[[1]])
 Time/depth slice interpolation
 ==============================
 
-Now that the data are well prepared, the interpolation is a simple task. We define the grid resolution in all three direction: dx = 0.05 m, dy = 0.05 m, dz = 0.05 ns as well as an additional parameter `h` (&gt;0) that controls the smoothness of the interpolation (the interpolation used is the Multilevel B-spline Approximation as implemented in the function `mba.surf()` of the package `MBA`).
+Now that the data are well prepared, the interpolation is a simple task.
+We define the grid resolution in all three direction: dx = 0.05 m, dy =
+0.05 m, dz = 0.05 ns as well as an additional parameter `h` (&gt;0) that
+controls the smoothness of the interpolation (the interpolation used is
+the Multilevel B-spline Approximation as implemented in the function
+`mba.surf()` of the package `MBA`).
 
 ``` r
 SXY <- interpSlices(SU, dx = 0.05, dy = 0.05, dz = 0.05, h = 6)
@@ -329,11 +411,14 @@ SXY
 ```
 
     ## *** Class GPRcube ***
-    ## dim:    180 x 200 x 901
-    ## res:    0.0502793296089385 m x 0.050251256281407 m x 0.05 ns
-    ## extent: 9 m x 10 m x 45 ns
+    ## dim:    199 x 219 x 901
+    ## res:    0.05 m x 0.05 m x 0.05 ns
+    ## extent: 9.9 m x 10.9 m x 45 ns
     ## crs:
     ## *********************
+
+How to manipulate a `GPRcube` object
+------------------------------------
 
 `SXY` can be manipulated like an array with x, y and z dimensions.
 
@@ -361,17 +446,21 @@ plot(SXY[10,,])
 
 ![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-19-1.png)
 
+Color palette
+-------------
+
 You can define the same color range for each plot:
 
 ``` r
 # color range (over all possible slice values)
-clim <- range(SXY)
+clim <- range(SXY, na.rm = TRUE)
 plot(SXY[,,50], clim = clim)
 ```
 
 ![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-20-1.png)
 
-You can change the color palette? `displayPalGPR()` shows all the palette available in RGPR
+You can change the color palette? `displayPalGPR()` shows all the
+palette available in RGPR
 
 ``` r
 displayPalGPR()
@@ -393,33 +482,119 @@ plot(SXY[,,50], clim = clim, col = palGPR("slice"), asp = 1)
 
 ![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-22-2.png)
 
+Specify the interpolation extend
+--------------------------------
+
+By defaut the slices are interpolated whithin the convex hull of the GPR
+lines that is extended by 5 percents.
+
+It is possible to specify the type of interpolation extend with the
+argument `extend` that can take the following values:
+
+-   `chull`: the convex-hull
+-   `bbox`: the axis-aligned bounding box
+-   `obbox`: the oriented bounding box
+-   `buffer`: an area around the GPR lines (like a buffer). In this case
+    a buffer value &gt; 0 must be defined.
+
+Below are some examples (the case `extend = "obbox"` makes here no sense
+because the oriented bounding-box is the same as the axis-aligned
+bounding box).
+
+``` r
+SXY <- interpSlices(SU, dx = 0.05, dy = 0.05, dz = 0.05, h = 6, extend = "chull", buffer = 0)
+plot(SXY[,,10])
+lines(SU, col = "green", lwd = 2)
+```
+
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-23-1.png)
+
+``` r
+SXY <- interpSlices(SU, dx = 0.05, dy = 0.05, dz = 0.05, h = 6, extend = "chull", buffer = 2)
+plot(SXY[,,10])
+lines(SU, col = "green", lwd = 2)
+```
+
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-23-2.png)
+
+``` r
+SXY <- interpSlices(SU, dx = 0.05, dy = 0.05, dz = 0.05, h = 6, extend = "bbox")
+plot(SXY[,,3])
+lines(SU, col = "green", lwd = 2)
+```
+
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-23-3.png)
+
+``` r
+SXY <- interpSlices(SU, dx = 0.05, dy = 0.05, dz = 0.05, h = 6, extend = "bbox", buffer = 3)
+plot(SXY[,,10])
+lines(SU, col = "green", lwd = 2)
+```
+
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-23-4.png)
+
+``` r
+SXY <- interpSlices(SU, dx = 0.05, dy = 0.05, dz = 0.05, h = 6, extend = "obbox")
+plot(SXY[,,10])
+lines(SU, col = "green", lwd = 2)
+```
+
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-23-5.png)
+
+``` r
+SXY <- interpSlices(SU, dx = 0.05, dy = 0.05, dz = 0.05, h = 6, extend = "obbox", buffer = 3)
+plot(SXY[,,10])
+lines(SU, col = "green", lwd = 2)
+```
+
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-23-6.png)
+
+``` r
+SXY <- interpSlices(SU, dx = 0.05, dy = 0.05, dz = 0.05, h = 6, extend = "buffer", buffer = 0.2)
+```
+
+    ## Warning in as.sf(x[sel]): Your data have different CRS (check with 'crs()'!
+    ##   I take the first CRS for the coercion to sf...
+
+``` r
+plot(SXY[,,10])
+lines(SU, col = "green", lwd = 2)
+```
+
+![](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D_tp_files/figure-markdown_github/unnamed-chunk-23-7.png)
+
 Export slices as raster
 =======================
 
-You first need to convert the slice you want to export into a raster object in R (defined in the `raster` package):
+You first need to convert the slice you want to export into a raster
+object in R (defined in the `raster` package):
 
 ``` r
 r <- as.raster(SXY[,,10])
 ```
 
-Then, use the `writeRaster()` function of the `raster` package to export the slice in the raster format you like (check the help on this function, `?raster::writeRaster`):
+Then, use the `writeRaster()` function of the `raster` package to export
+the slice in the raster format you like (check the help on this
+function, `?raster::writeRaster`):
 
 ``` r
 raster::writeRaster(r, filename = "slice10.tif")
 ```
 
-You may also want to export the coordinates as shapefiles or geodata, as lines
+You may also want to export the coordinates as shapefiles or geodata, as
+lines
 
 ``` r
 exportCoord(SU, type = c("SpatialLines"), fPath = "myshapefile.shp",
             driver = "ESRI Shapefile")
 ```
 
-... or as points
+… or as points
 
 ``` r
 exportCoord(SU, type = c("SpatialPoints"), fPath = "myshapefile.shp",
             driver = "ESRI Shapefile")
 ```
 
-Adapt the driver and the filename extension to your need (for that, check the help on the `rgdal::writeOGR()` function).
+Adapt the driver and the filename extension to your need (for that,
+check the help on the `rgdal::writeOGR()` function).

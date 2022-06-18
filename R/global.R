@@ -537,7 +537,8 @@ setGenericVerif("writeSurvey", function(x, fPath, overwrite=FALSE){
 #' @rdname interpSlices
 #' @export
 setGenericVerif("interpSlices", function(x, dx = NULL, dy = NULL, dz = NULL, 
-                                         h = 6, extend = TRUE){ 
+                                         h = 6, extend = c("chull", "bbox", "obbox", "buffer"),
+                                         buffer = NULL, shp = NULL){ 
   standardGeneric("interpSlices")})
 
 #' @name tpShift

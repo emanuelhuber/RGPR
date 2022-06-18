@@ -643,7 +643,7 @@ trInterp <- function(x, z, zi){
 
 
 .sliceInterp <- function(x, dx = NULL, dy = NULL, dz = NULL, h = 6,
-                         extend = extend){
+                         extend = "bbox+", buffer = NULL, shp =  NULL){
   if(!all(sapply(x@coords, length) > 0) ){
     stop("Some of the data have no coordinates. Please set first coordinates to all data.")
   }
@@ -692,33 +692,77 @@ trInterp <- function(x, z, zi){
   xpos <- unlist(lapply(X@coords, function(x) x[,1]))
   ypos <- unlist(lapply(X@coords, function(x) x[,2]))
   
-  # define bounding box + number of points for interpolation
-  obb <- tpOBB2D(x)
-  bbox <- c(min(obb[,1]), max(obb[,1]), min(obb[,2]), max(obb[,2]))
+  x_shp <- x
+  if(!is.null(shp)){
+    if(inherits(shp, "sf") || inherits(shp, "sfc") || inherits(shp, "sfg")){
+      x_shp <- sf::st_coordinates(shp)[,1:2]
+    }else if(is.list(shp)){
+      x_shp <- cbind(shp[[1]], shp[[2]])
+    }else{
+      x_shp <- shp
+    }
+  }
   
+  xy_clip <- NULL
+  if(extend == "chull"){
+    xsf_chull <- spConvexHull(x_shp)
+    if(is.null(buffer)){
+      if(is.null(shp)){
+        xsf_chull_xy <- sf::st_coordinates(xsf_chull)
+        buffer <- min(diff(range(xsf_chull_xy[, 1])) * 0.05,  
+                      diff(range(xsf_chull_xy[, 2])) * 0.05)
+      }else{
+        buffer <- 0
+      }
+    }
+    if(buffer > 0){
+      xsf_chull <- sf::st_buffer(xsf_chull, buffer)
+    }
+    xy_clip <- sf::st_coordinates(xsf_chull)
+    para <- getbbox_nx_ny(xy_clip[,1], xy_clip[,2], dx, dy, buffer = 0)
+  }else if(extend == "bbox"){
+    if(!is.null(shp)){
+      if(is.null(buffer)) buffer <- 0
+      para <- getbbox_nx_ny(x_shp[,1], x_shp[,2], dx, dy, buffer)
+    }else{
+      para <- getbbox_nx_ny(xpos, ypos, dx, dy, buffer)
+    }
+  }else if(extend == "obbox"){
+    sf_obb <- spOBB(x_shp)
+    if(is.null(buffer)){
+      if(is.null(shp)){
+        xsf_chull_xy <- sf::st_coordinates(sf_obb)
+        buffer <- min(diff(range(xsf_chull_xy[, 1])) * 0.05,  
+                      diff(range(xsf_chull_xy[, 2])) * 0.05)
+      }else{
+        buffer <- 0
+      }
+    }
+    if(buffer > 0){
+      sf_obb <- sf::st_buffer(sf_obb, buffer)
+      sf_obb <- spOBB(sf_obb)
+    }
+    xy_clip <- sf::st_coordinates(sf_obb)
+    
+    para <- getbbox_nx_ny(xy_clip[,1], xy_clip[,2], dx, dy, buffer = 0)
+  }else if(extend == "buffer"){
+    if(is.null(buffer) || !(buffer > 0)){
+      stop("When 'extend = buffer', 'buffer' must be larger than 0!")
+    }else{
+      x_shp <- spBuffer(x, buffer)
+      xy_clip <- sf::st_coordinates(x_shp)
+      para <- getbbox_nx_ny(xy_clip[,1], xy_clip[,2], dx, dy, buffer = 0)
+    }
+  }
   
-  bbox_dx <- bbox[2] - bbox[1]
-  bbox_dy <- bbox[4] - bbox[3]
-  nx <- ceiling(bbox_dx / dx )
-  ny <- ceiling(bbox_dy / dy )
+  fk <- NULL
   
-  # correct bbox (such that dx, dy are correct)
-  Dx <- (nx * dx - bbox_dx)/2
-  Dy <- (ny * dy - bbox_dy)/2
-  bbox[1:2] <- bbox[1:2] + c(-1, 1) * Dx
-  bbox[3:4] <- bbox[3:4] + c(-1, 1) * Dy 
-  bbox_dx <- bbox[2] - bbox[1]
-  bbox_dy <- bbox[4] - bbox[3]
-  SL <- array(dim = c(nx, ny, length(x_zi)))
-  
-  
-  bbox[1] < min(xpos)
-  
-  j <- 1
+  SL <- array(dim = c(para$nx, para$ny, length(x_zi)))
   
   n <- 1
   m <- 1
-  ratio_x_y <- bbox_dy / bbox_dx
+  # ratio_x_y <- bbox_dy / bbox_dx
+  ratio_x_y <- (para$bbox[4] - para$bbox[3]) / (para$bbox[2] - para$bbox[1])
   if(ratio_x_y < 1){
     m <- round(1/ratio_x_y)
   }else{
@@ -727,11 +771,20 @@ trInterp <- function(x, z, zi){
   if(m < 1) m <- 1L
   if(n < 1) n <- 1L
   for(j in  seq_along(x_zi)){
-    # j <- vj[u]
-    #z <- rep(sapply(Z, function(x, i = j) x[i]), sapply(V, ncol))
     val[[j]] <- unlist(lapply(V, function(v, k = j) v[k,]))
-    S <- MBA::mba.surf(cbind(xpos, ypos, val[[j]]), nx, ny, n = n, m = m, 
-                       extend = extend, h = h)$xyz.est
+    # MBA::mba.surf echoes a warning when 
+    # all(c(range(xpos), range(ypos)) == para$bbox) == TRUE!!
+    S <- suppressWarnings(MBA::mba.surf(cbind(xpos, ypos, val[[j]]), para$nx , para$ny, n = n, m = m, 
+                       extend = TRUE, h = h, b.box = para$bbox)$xyz.est)
+    if(!is.null(xy_clip)){
+      if(is.null(fk)){
+        fk <- outer(S$x, S$y, inPoly,
+                    vertx = xy_clip[,1],
+                    verty = xy_clip[,2])
+        fk <- !as.logical(fk)
+      }
+      S$z[fk] <- NA
+    }
     SL[,,j] <- S$z
   }
   return(list(x = S$x, y = S$y, z = SL, vz = x_zi, x0 = xpos, y0 = ypos, z0 = val))
@@ -744,7 +797,7 @@ trInterp <- function(x, z, zi){
 # dz = resolution along z-axis (e.g., 2 [ns])
 # h = Number of levels in the hierarchical construction 
 #     See the function 'mba.surf' of the MBA package
-.sliceInterpOLD <- function(x, dx = NULL, dy = NULL, dz = NULL, h = 6){
+.sliceInterpOLDOLD <- function(x, dx = NULL, dy = NULL, dz = NULL, h = 6){
   if(!all(sapply(x@coords, length) > 0) ){
     stop("Some of the data have no coordinates. Please set first coordinates to all data.")
   }
@@ -807,7 +860,7 @@ trInterp <- function(x, z, zi){
   return(list(x = S$x, y = S$y, z = SL, vz = x_zi, x0 = xpos, y0 = ypos, z0 = val))
 }
   
-.sliceInterp_old <- function(x, dx = NULL, dy = NULL, dz = NULL, h = 6){
+.sliceInterp_old_old <- function(x, dx = NULL, dy = NULL, dz = NULL, h = 6){
   if(!all(sapply(x@coords, length) > 0) ){
     stop("Some of the data have no coordinates. Please set first coordinates to all data.")
   }
@@ -866,18 +919,50 @@ trInterp <- function(x, z, zi){
   return(list(x = S$x, y = S$y, z = SL, vz = vz, x0 = xpos, y0 = ypos, z0 = val))
 }
 
+matrix2polygon <- function(x){
+  x <- sf::st_as_sf(as.data.frame(x), coords = 1:2 )
+  x <- sf::st_combine(x)
+  return(sf::st_cast(x, 'POLYGON'))
+}
 
 #' Interpolate horizontal slices
 #'
+#' @param x GPRsurvey object
+#' @param dx Spatial sampling in the x-direction
+#' @param dy Spatial sampling in the y-direction
+#' @param dz Spatial sampling in the z-direction
+#' @param h Number of levels in the hierarchical construction of the multilevel 
+#'          B-spline interpolation. See \code{\link{MBA}{mba.surf}}.
+#' @param extend [\code{character(1)}] See Details.
+#' @param buffer [\code{numeric(1)}] apply a buffer around the chosen extend.
+#'               If \code{buffer = NULL}, the interpolation extend defined by 
+#'               \code{extend} will by extended by 5\%.
+#' @param shp [\code{sf class}] Spatial object to define the extend. If defined,
+#'            \code{extend} is ignored.
+#' 
+#' The parameter \code{extend} defines the extend of the interpretation:
+#' \describe{
+#'   \item{\code{chull}}{ the convex-hull}
+#'   \item{\code{bbox}}{the bounding box}
+#'   \item{\code{obbox}}{ the oriented bounding box}
+#'   \item{\code{buffer}}{ an area around the GPR lines (like a buffer). 
+#'                        In this case a buffer value > 0 must be defined.}
+#' }  
+#'    
+#' @seealso \code{\link{MBA}{mba.surf}} multilevel 
+#'          B-spline interpolation
 #' @name interpSlices 
 #' @rdname interpSlices
 #' @export
-setMethod("interpSlices", "GPRsurvey", function(x, 
-                                                dx = NULL, 
-                                                dy = NULL, 
-                                                dz = NULL, 
-                                                h = 6,
-                                                extend = TRUE){
+setMethod("interpSlices", "GPRsurvey", 
+          function(x, 
+                  dx = NULL, 
+                  dy = NULL, 
+                  dz = NULL, 
+                  h = 6,
+                  extend = c("chull", "bbox", "obbox", "buffer"),
+                  buffer = NULL,
+                  shp = NULL){
   
   if(is.null(dx) || is.null(dy) || is.null(dz)){
     stop("'dx', 'dy' and 'dz' must all be defined!")
@@ -886,8 +971,9 @@ setMethod("interpSlices", "GPRsurvey", function(x,
     stop("'dx', 'dy' and 'dz' must all be strickly positive!")
   }
   
+  extend <- match.arg(extend)
   SXY <- .sliceInterp(x = x, dx = dx, dy = dy, dz = dz, h = h,
-                      extend = extend)
+                      extend = extend, buffer = buffer)
   
   xyref <- c(min(SXY$x), min(SXY$y))
   xpos <- SXY$x - min(SXY$x)

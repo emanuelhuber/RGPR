@@ -4,8 +4,51 @@
 \alias{interpSlices}
 \title{Interpolate horizontal slices}
 \usage{
-\S4method{interpSlices}{GPRsurvey}(x, dx = NULL, dy = NULL, dz = NULL, h = 6, extend = TRUE)
+\S4method{interpSlices}{GPRsurvey}(
+  x,
+  dx = NULL,
+  dy = NULL,
+  dz = NULL,
+  h = 6,
+  extend = c("chull", "bbox", "obbox", "buffer"),
+  buffer = NULL,
+  shp = NULL
+)
+}
+\arguments{
+\item{x}{GPRsurvey object}
+
+\item{dx}{Spatial sampling in the x-direction}
+
+\item{dy}{Spatial sampling in the y-direction}
+
+\item{dz}{Spatial sampling in the z-direction}
+
+\item{h}{Number of levels in the hierarchical construction of the multilevel 
+B-spline interpolation. See \code{\link{MBA}{mba.surf}}.}
+
+\item{extend}{[\code{character(1)}] See Details.}
+
+\item{buffer}{[\code{numeric(1)}] apply a buffer around the chosen extend.
+If \code{buffer = NULL}, the interpolation extend defined by 
+\code{extend} will by extended by 5\%.}
+
+\item{shp}{[\code{sf class}] Spatial object to define the extend. If defined,
+           \code{extend} is ignored.
+
+The parameter \code{extend} defines the extend of the interpretation:
+\describe{
+  \item{\code{chull}}{ the convex-hull}
+  \item{\code{bbox}}{the bounding box}
+  \item{\code{obbox}}{ the oriented bounding box}
+  \item{\code{buffer}}{ an area around the GPR lines (like a buffer). 
+                       In this case a buffer value > 0 must be defined.}
+}}
 }
 \description{
 Interpolate horizontal slices
+}
+\seealso{
+\code{\link{MBA}{mba.surf}} multilevel 
+         B-spline interpolation
 }

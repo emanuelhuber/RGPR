@@ -139,6 +139,10 @@ Collate:
   'getVel2.R'
   'CMPhyperbolas.R'
   'NMOstack.R'
+  'spConvexHull.R'
+  'as_sf.R'
+  'spOBB.R'
+  'spBuffer.R'
 Imports:
     methods,
     graphics,

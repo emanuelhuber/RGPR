@@ -98,7 +98,12 @@
   if(!is.null(posunit)){
     pos_used[as.numeric(posunit[2])] <- 1L
   }else{
-    posunit <- "m"
+    # posunit <- "m"
+    if( tolower(posunit) %in% c("metre", "metres", "meter", "meters")){
+      posunit <- "m"
+    }else if(tolower(posunit) %in% c("feet", "feets")){
+      posunit <- "ft"
+    }
   }
   # antfreq <- freqFromString(.getHD(x$hd, "NOMINAL FREQUENCY", position=TRUE))
   antfreq <- .getHD(x$hd, "NOMINAL FREQUENCY", position=TRUE)

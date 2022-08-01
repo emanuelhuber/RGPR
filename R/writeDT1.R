@@ -230,10 +230,17 @@
   # writeLines(paste0("STEP SIZE USED     ", "= ", as.character(abs(diff(range(x@pos)))/(ncol(x@data) - 1))),
   writeLines(paste0("STEP SIZE USED     ", "= ", as.character(abs(mean(diff(x@pos))))),
              con = hd_file, sep = "\r\r\n")
-  writeLines(paste0("POSITION UNITS     ", "= ", "m"), 
-             con = hd_file, sep = "\r\r\n")
-  if(x@posunit != "m"){
-    warning('Position units were defined as "metres"!\n')
+  if( tolower(x@posunit) %in% c("metre", "metres", "meter", "meters")){
+    x@posunit <- "m"
+  }else if(tolower(x@posunit) %in% c("feet", "feets")){
+    x@posunit <- "ft"
+  }
+  if(!x@posunit %in% c("m", "ft")){
+    stop('Position units must be defined in metres ("m") oder feet ("ft")!',
+          'Use "posunit(x) <- "!','\n')
+  }else{
+    writeLines(paste0("POSITION UNITS     ", "= ", tolower(x@posunit)), 
+               con = hd_file, sep = "\r\r\n")
   }
   writeLines(paste0("NOMINAL FREQUENCY  ","= ", as.character(x@freq)), 
              con = hd_file, sep = "\r\r\n")

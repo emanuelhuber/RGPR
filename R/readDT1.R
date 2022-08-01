@@ -101,8 +101,10 @@
     # posunit <- "m"
     if( tolower(posunit) %in% c("metre", "metres", "meter", "meters")){
       posunit <- "m"
+      velocity <- 0.1             # m/ns
     }else if(tolower(posunit) %in% c("feet", "feets")){
-      posunit <- "ft"
+      posunit <- "ft" 
+      velocity <- 0.1 * 3.28084   # ft/ns
     }
   }
   # antfreq <- freqFromString(.getHD(x$hd, "NOMINAL FREQUENCY", position=TRUE))
@@ -230,7 +232,7 @@
       time0       = time_0,
       time        = traceTime,
       proc        = character(0),
-      vel         = list(v = 0.1),                  # m/ns
+      vel         = list(v = velocity),                  # m/ns
       name        = fName,
       description = desc,
       filepath    = fPath,

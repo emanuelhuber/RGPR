@@ -176,7 +176,7 @@ setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, zmax = NULL,
   }
   x@depth     <- d
   x@dz        <- dz
-  x@depthunit <- "m"
+  x@depthunit <- x@posunit
   
   zShift <- (max(topo) - topo)
   if( all(zShift != 0) ){

@@ -143,6 +143,7 @@ Collate:
   'as_sf.R'
   'spOBB.R'
   'spBuffer.R'
+  'interpolateTimeToDepth.R'
 Imports:
     methods,
     graphics,

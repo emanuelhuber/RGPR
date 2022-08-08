@@ -94,6 +94,7 @@
   }else{
     dx <- mean(diff(x$dt1hd$position))
   }
+  velocity <- 0.1 
   posunit <- .getHD(x$hd, "POSITION UNITS",number=FALSE, position=TRUE)
   if(!is.null(posunit)){
     pos_used[as.numeric(posunit[2])] <- 1L
@@ -101,10 +102,10 @@
     # posunit <- "m"
     if( tolower(posunit) %in% c("metre", "metres", "meter", "meters")){
       posunit <- "m"
-      velocity <- 0.1             # m/ns
+      # velocity <- 0.1             # m/ns
     }else if(tolower(posunit) %in% c("feet", "feets")){
       posunit <- "ft" 
-      velocity <- 0.1 * 3.28084   # ft/ns
+      velocity <- velocity * 3.28084   # ft/ns
     }
   }
   # antfreq <- freqFromString(.getHD(x$hd, "NOMINAL FREQUENCY", position=TRUE))

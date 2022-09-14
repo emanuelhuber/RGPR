@@ -35,7 +35,10 @@ setMethod("velInterp", "GPR",
 
 
 .intpSmoothVel <- function(x_vel_i, x_z){
-  if(is.list(x_vel_i) && !is.null(x_vel_i$intp)){
+  if(is.list(x_vel_i)){
+    if(is.null(x_vel_i$intp)){
+      x_vel_i$intp <- "stairs"
+    }
     if(x_vel_i$intp == "stairs"){
       v_stairs <- approxfun(x_vel_i[["t"]], x_vel_i[["v"]], 
                             rule = 2, method = "constant", f = 1)
@@ -53,7 +56,14 @@ setMethod("velInterp", "GPR",
     if(!is.null(x_vel_i$smooth) && x_vel_i$smooth > 0){
       x_vel_i[["v"]]  <- mmand::gaussianSmooth(x_vel_i[["v"]], sigma = x_vel_i$smooth)
     }
+  }else if(is.numeric(x_vel_i) && length(x_vel_i) == 1){
+    new_vel <- x_z
+    new_vel[] <- x_vel_i
+    x_vel_i  <- new_vel
+  }else if(is.numeric(x_vel_i) && length(x_vel_i) == length(x_z)){
+    x_vel_i  <- x_vel_i
   }
+  
   return(x_vel_i)
 }
 

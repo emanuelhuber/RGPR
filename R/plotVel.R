@@ -23,8 +23,15 @@ setMethod("plotVel", "GPR", function(x){
     if(!is.null(x@vel[["vint"]])){
       lines(x@vel[["vint"]][["v"]], x@vel[["vint"]][["t"]], type = "s", lty = 3)
     }
-    if(!is.null(x@vel[["v"]]) && is.numeric(x@vel[["v"]])){
-      lines(x@vel[["v"]], x@depth, type = "s", lty = 2, col = "red")
+    if(!is.null(x@vel[["v"]])){ 
+      if(is.numeric(x@vel[["v"]])){
+        lines(x@vel[["v"]], x@depth, type = "s", lty = 2, col = "red")
+      }else{
+        lines(x@vel[["v"]][["v"]], x@vel[["v"]][["t"]], type = "s", lty = 1)
+      }
+    }
+    if(length(x@vel) == 1 && is.null(names(x@vel)) && !is.null(x@vel[[1]]) && is.numeric(x@vel[[1]])){
+      lines(x@vel[[1]], x@depth, type = "s", lty = 1, col = "black")
     }
   }else{
     if(isDepthDepth(x)){

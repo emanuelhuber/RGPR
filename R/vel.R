@@ -147,8 +147,8 @@ checkVelIntegrity <- function(x, value){
 # @param strict [logical(1)] If TRUE, .getVel2 raises an error if the velocity
 #               type does not exist. If FALSE, it will check if a velocity "v"
 #               exists and return it
-.getVel2 <- function(x, type = c("vrms", "vint"), strict = TRUE){
-  type <- match.arg(type, c("vrms", "vint"))
+.getVel2 <- function(x, type = c("vrms", "vint", "v"), strict = TRUE){
+  type <- match.arg(type, c("vrms", "vint", "v"))
   if(length(x@vel) == 0){
     stop("You must first assign a positiv velocity value!")
   }else{
@@ -156,9 +156,11 @@ checkVelIntegrity <- function(x, value){
       if(strict){
         stop("You must first set this type of velocity: ", type)
       }else{
-        if(is.null(x@vel[["v"]])){
+        if(is.null(x@vel[["v"]]) && strict){
           stop("You must first set at least one of these types of velocity: ", 
                type, ", v!")
+        }else if(length(x@vel) == 1){
+          v <- .intpSmoothVel(x@vel[[1]], x_z = x@depth)
         }else{
           v <- .intpSmoothVel(x@vel[["v"]], x_z = x@depth)
         }

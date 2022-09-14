@@ -1,4 +1,4 @@
-get
+
 #' Get velocity model
 #' 
 #' Return the velocity model (either the root-mean square or internal velocity).
@@ -8,19 +8,19 @@ get
 #' @return [\code{GPR class}] An object of the class \code{GPR} containing the velocity model.
 #' @name getVel2
 #' @rdname getVel2
-setGeneric("getVel2", function(x, type = c("vrms", "vint")) standardGeneric("getVel2"))
+setGeneric("getVel2", function(x, type = c("vrms", "vint", "v"), strict = FALSE) standardGeneric("getVel2"))
 
 #' @rdname getVel2
 #' @export
-setMethod("getVel2", "GPR", function(x, type = c("vrms", "vint")){
-  velAsGPR(x, type = type)
+setMethod("getVel2", "GPR", function(x, type = c("vrms", "vint", "v"), strict = FALSE){
+  velAsGPR(x, type = type, strict = strict)
 })
 
 
 
-velAsGPR <- function(x, type = c("vrms", "vint")){
-  type <- match.arg(type, c("vrms", "vint"))
-  x_vel <- .getVel2(x, type = type, strict = FALSE)
+velAsGPR <- function(x, type = c("vrms", "vint", "v"), strict = FALSE){
+  type <- match.arg(type, c("vrms", "vint", "v"))
+  x_vel <- .getVel2(x, type = type, strict = strict)
   if(is.null(dim(x_vel))){
     x <- x[,1]
   }else{

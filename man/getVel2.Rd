@@ -5,9 +5,9 @@
 \alias{getVel2,GPR-method}
 \title{Get velocity model}
 \usage{
-getVel2(x, type = c("vrms", "vint"))
+getVel2(x, type = c("vrms", "vint", "v"), strict = FALSE)
 
-\S4method{getVel2}{GPR}(x, type = c("vrms", "vint"))
+\S4method{getVel2}{GPR}(x, type = c("vrms", "vint", "v"), strict = FALSE)
 }
 \arguments{
 \item{x}{[\code{GPR class}] An object of the class \code{GPR}}

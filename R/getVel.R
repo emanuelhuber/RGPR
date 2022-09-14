@@ -14,13 +14,15 @@ setGeneric("getVel", function(x)
 #' @rdname getVel
 #' @export
 setMethod("getVel", "GPR", function(x){
-  if(is.null(dim(x@vel[[1]]))){
-    x <- x[, 1]
-    x@pos <- 0
-    x@data[] <- x@vel[[1]]
-  }else{
-    x@data <- x@vel[[1]]  
-  }
+  # if(is.null(dim(x@vel[[1]]))){
+  #   x <- x[, 1]
+  #   x@pos <- 0
+  #   x@data[] <- x@vel[[1]]
+  # }else{
+  #   # x@data <- x@vel[[1]]  
+  #   x <- getVel2(x)
+  # }
+  x <- getVel2(x)
   return(x)
 })
 

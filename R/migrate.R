@@ -94,7 +94,7 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
       if(length(x@vel[[1]]) == 1){
         message("time to depth conversion with constant velocity (", x@vel[[1]],
                 " ", x@posunit, "/", x@depthunit, ")")
-        z <- timeToDepth(x@depth, time_0 = 0, v = vel(x), 
+        z <- timeToDepth(x@depth, time_0 = 0, v = x@vel[[1]], 
                          antsep = antsep(x))
         x <- x[!is.na(z),]
         x@dz <-  x@dz * x@vel[[1]]/ 2

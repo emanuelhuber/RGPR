@@ -27,6 +27,11 @@
 # 
 # x <- frenkeLine00
 
+#' Time-to-depth conversion based on depth information
+#' 
+#' 1D and 2D interpolation
+#' @rdname interpolateTimeToDepth
+#' @export
 interpolateTimeToDepth <- function(x, z = NULL , twt = NULL, pos = NULL, method = "linear", h = 2){
   if(length(z) != length(twt)){
     stop("'z' and 'twt' must have the same length!")

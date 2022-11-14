@@ -44,6 +44,8 @@ date: 2019-11-23
 
 ### Others
 
+* [Brian Robert Shiro (2021) Geological and Geophysical Investigations on KĪLAUEA and MAUNA LOA Volcanoes, HAWAI‘I. PhD thesis, University of Hawai'i](https://scholarspace.manoa.hawaii.edu/server/api/core/bitstreams/975bc8b7-11ce-4f02-a2c5-1ff9c9554939/content)
+
 * [Krista Hannesdóttir (2021) Estimating snow accumulation on Mýrdalsjökull and Öraefajökull with snow radar using Discrete Gabor Transform for image analysis. Implications to the mass balance of ice cauldrons](http://hdl.handle.net/1946/37563): Master thesis, University of Iceland.
 
 * [Erik Schytt Holmlund (2020) Rapid temperature rise may have triggered glacier surges all over Svalbard](https://munin.uit.no/handle/10037/21145): Master thesis, UiT Norges arktiske universitet.

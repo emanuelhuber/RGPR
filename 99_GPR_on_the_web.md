@@ -31,6 +31,8 @@ date: 2019-11-23
 
 * [A. Tolooiyan, A.P. Dyson, M. Karami, T. Shaghaghi, and M. Ghadrdan (2018) Application of ground penetrating radar (GPR) to detect joints in organic soft rock](https://doi.org/10.1520/GTJ20170279)
 
+* [Paulo Guilherme Tabarro, Jacynthe Pouliot, Louis-Martin Losier and Richard Fortier (2018) Detection and Location of Buried Infrastructures Using Ground Penetrating Radar: A New Approach Based on GIS and Data Integration. International Journal of 3-D Information Modeling 7(2):3. DOI: 10.4018/IJ3DIM.2018040103](https://doi.org/10.4018/IJ3DIM.2018040103)
+
 * [E. Huber, G. Hans (2018) RGPR - An open-source package to process and visualize GPR data. Conference proceeding: 17th International Conference on Ground Penetrating Radar, June 18–21, 2018 in Rapperswil, Switzerland](https://emanuelhuber.github.io/publications/2018_huber-and-hans_RGPR-new-R-package_notes.pdf)
 
 ### Presentation/poster

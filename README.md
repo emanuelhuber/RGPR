@@ -83,7 +83,7 @@ Switzerland
     - or matrix-format (without header/rownames)
 - [ ] [Terra Zond](http://terrazond.ru/) binary file format (**\*.trz**) -> **we are working on it**
     
-See tutorial [Import GPR data](http://emanuelhuber.github.io/RGPR/00_RGPR_import_data/).
+See tutorial [Import GPR data](https://emanuelhuber.github.io/RGPR/00_RGPR_tutorial_import-GPR-data/).
 
     
 Do you miss your preferred file format? Send me the file format description with a test file and I will adapt the RGPR-package to support this file format. 

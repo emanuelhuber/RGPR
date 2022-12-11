@@ -204,29 +204,31 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
     tst <- USRExt %in% toupper(ext)
     dsn <- list(USRADAR  = dsn[USRExt[tst][1]], 
                 GPS = getFName(fPath[1], ext = ".GPS", throwError = FALSE)$gps)
-    if(!is.null(dsn[["GPS"]])){
-      warning("Reading of GPS data for SEG2 files not yet implemented.\n",
-              "Please contact me: emanuel.huber@pm.me")
-    }
+    # if(!is.null(dsn[["GPS"]])){
+    #   warning("Reading of GPS data for SEG2 files not yet implemented.\n",
+    #           "Please contact me: emanuel.huber@pm.me")
+    # }
     # print(dsn)
     A <- verboseF( readSEG2(dsn = dsn[["USRADAR"]]))
     x <- verboseF( .readSEG2(A, fName = fName[[1]], fPath = fPath[[1]],  
                              desc = desc, Vmax = Vmax, ext = names(dsn$USRADAR)))
-    x <- tryCatch({
-      gps <-  verboseF(readGPSUSRADAR(dsn[["GPS"]], toUTM = toUTM), verbose = verbose)
-      if(!is.null(gps) && isTRUE(interp_pos)){
-        x <- interpPos(x, gps$mrk, tol = sqrt(.Machine$double.eps), 
-                       method = method)
-        crs(x) <- gps$crs
-      }
-      return(x)
-    },
-    error = function(cond) {
-      message("I could neither read your GPS data ",
-              "nor interpolate the trace position.")
-      # Choose a return value in case of error
-      return(x)
-    })
+    if(!is.null(dsn[["GPS"]])){
+      x <- tryCatch({
+        gps <-  verboseF(readGPSUSRADAR(dsn[["GPS"]], toUTM = toUTM), verbose = verbose)
+        if(!is.null(gps) && isTRUE(interp_pos)){
+          x <- interpPos(x, gps$mrk, tol = sqrt(.Machine$double.eps), 
+                         method = method)
+          crs(x) <- gps$crs
+        }
+        return(x)
+      },
+      error = function(cond) {
+        message("I could neither read your GPS data ",
+                "nor interpolate the trace position.")
+        # Choose a return value in case of error
+        return(x)
+      })
+    }
   #----------------------------------------------------------------------------#
   # Mala ----------
   # RD3 + RAD (+ COR)

@@ -41,9 +41,11 @@
     }
   }
   
-  
+  #--- dx spacing
+  # 1. search for the triger mode -> key word
   sel <- grepl("TRIGGER(.+)MODE", x$HD$strings)
   spmode <- extractPattern(x$HD$strings[sel], pat = "MODE(?<ID>.+)")
+  # 2. use the key word to find the dx spacing
   sel <- grepl(paste0(trimStr(spmode), "(.+)INTERVAL"), x$HD$strings)
   dx <- as.numeric(strsplit(x$HD$strings[sel], " ")[[1]][2])
   
@@ -81,8 +83,8 @@
              traces      = seq_len(ntr),
              fid         = rep("", ntr),
              coord       = matrix(nrow = 0, ncol = 3),
-             pos         = seq(0, dx, length.out = ntr),
-             depth       = seq(0, by = data_dt, length.out = nspl),
+             pos         = seq(from = 0, by = dx, length.out = ntr),
+             depth       = seq(from = 0, by = data_dt, length.out = nspl),
              rec         = matrix(nrow = 0, ncol = 3),
              trans       = matrix(nrow = 0, ncol = 3),
              time0       = rep(0, ntr),

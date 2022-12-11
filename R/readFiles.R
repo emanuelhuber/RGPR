@@ -202,7 +202,6 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
   }else if( any( c("RA1", "RA2", "RAD") %in% toupper(ext) ) ){
     USRExt <-  c("RA1", "RA2", "RAD")
     tst <- USRExt %in% toupper(ext)
-    # dsn <- list(USRADAR  = dsn[USRExt[tst]], 
     dsn <- list(USRADAR  = dsn[USRExt[tst][1]], 
                 GPS = getFName(fPath[1], ext = ".GPS", throwError = FALSE)$gps)
    # ext_missing <- c("RA1", "RA2", "RAD")[!tst]
@@ -213,7 +212,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
    #                                                 throwError = FALSE)[[tolower(ext_missing[k])]]
    #    }
    #  }
-    if(!is.null(dsn[["GPR"]])){
+    if(!is.null(dsn[["GPS"]])){
       warning("Reading of GPS data for SEG2 files not yet implemented.\n",
               "Please contact me: emanuel.huber@pm.me")
     }

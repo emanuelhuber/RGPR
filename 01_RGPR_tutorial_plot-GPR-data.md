@@ -139,6 +139,12 @@ plot(x, col = palGPR("nice", n = 5))
 
 ![](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_GPR_with_color_palette_n-1.png)
 
+
+### Faster plot function
+
+Instead of `plot(x)` use `plotFast(x)`!
+
+
 ### Wiggle plot
 
 Plot wiggles

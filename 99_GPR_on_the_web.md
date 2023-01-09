@@ -52,6 +52,8 @@ date: 2019-11-23
 
 * [Erik Schytt Holmlund (2020) Rapid temperature rise may have triggered glacier surges all over Svalbard](https://munin.uit.no/handle/10037/21145): Master thesis, UiT Norges arktiske universitet.
 
+*  [Delft, M. van (2019) Towards feature-based underground void detection with ground penetrating radar from within sewers using image processing.](https://essay.utwente.nl/79979/): Master thesis, University of Twente.
+
 * [Tatiane Assunção Nicchetti (2018) Avaliação de Pavimentação Rodoviária com o GPR utilizando o Módulo RGPR. Orient.: Mariana L.N.O. Souza](http://www.cpgg.ufba.br/gr-geof/geo213/trabalhos-graducao/Tatiane-Nicchetti.pdf)
 
 * [Paulo Guilherme Tabarro (2018) A new WebGIS approach to support ground penetrating radar deployment. Mémoire](https://corpus.ulaval.ca/jspui/bitstream/20.500.11794/33487/1/34965.pdf)

@@ -172,7 +172,11 @@ readSGY_textual_file_header <- function(dsn, ENDIAN){
     uu1 <- sapply(uu1, trimStr, USE.NAMES = FALSE)
     uu1 <- uu1[uu1!=""]
   }else{
-    uu1 <- verboseF(strsplit(uu, "\r\n", useBytes = TRUE)[[1]], verbose = FALSE)
+    if(grepl("\\r\\n", uu1)){
+      uu1 <- verboseF(strsplit(uu, "\r\n", useBytes = TRUE)[[1]], verbose = FALSE)
+    }else if(grepl("\\n", uu1)){
+      uu1 <- verboseF(strsplit(uu, "\n", useBytes = TRUE)[[1]], verbose = FALSE)
+    }
     if(length(uu1) > 0 && !is.na(uu1)){
       uu1 <- sapply(uu1, trimStr, USE.NAMES = FALSE)
       uu1 <- uu1[uu1!=""]

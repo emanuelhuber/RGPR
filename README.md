@@ -59,6 +59,10 @@ Switzerland
 
 ## Notes
 
+### Faster plot function
+
+Instead of `plot(x)` use `plotFast(x)`!
+
 
 ### Supported file formats (read only):
 

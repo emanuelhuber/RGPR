@@ -327,65 +327,89 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
   # SEGY ----
   }else if(any(c("SGY", "SEGY") %in% toupper(ext))){
     i <- which(grepl("SGY|SEGY", toupper(ext)))[1]
-    if( !inherits(dsn[[i]], "connection") ){
-      dsn <- file(dsn[[i]], "rb")
-    }
+    dsn <- dsn[[i]]
+    # if( !inherits(dsn[[i]], "connection") ){
+    #   dsn <- file(dsn[[i]], "rb")
+    # }
     # if(is.null(endian)) endian <- .Platform$endian
     # ENDIAN <- "big"
-    THD <- readSGY_textual_file_header(dsn, ENDIAN = endian)
-    test <- any(verboseF(grepl("Prism", THD), verbose = FALSE)) & 
-      any(verboseF(grepl("Radar Systems, Inc.", THD), 
-                   verbose = FALSE))
-    # read RadSys Zond System
-    if( test ){
-      if(verbose) message("This is not a classical SEG-Y file... I try to read it!")
-      ndn <- c("little", "big")
-      A <- tryCatch({verboseF( readSEGY_RadSys_Zond_GPR(dsn, ENDIAN = endian), 
-                               verbose = verbose)},
-                    error = function(cond){
-                      message("failed attempt... ",
-                              "I try the other endianness, namely '",
-                              ndn[ndn != endian], "'!")
-                      return(NULL)})
-      if(is.null(A)){
-        A <- tryCatch({verboseF(readSEGY_RadSys_Zond_GPR(dsn, 
-                                                         ENDIAN = ndn[ndn != endian]), 
-                        verbose = verbose)},
-                        error = function(cond){
-                          message("failed attempt, again... ",
-                                  "please contact me\n",
-                                  "emanuel.huber@pm.me")
-                          return(NULL)})
-      }
-      if(is.null(A)){ stop() }
-      x <- verboseF( .gprSEGY(A, fName = fName, fPath = fPath, 
-                              desc = desc, Vmax = Vmax), verbose = verbose)
+    # THD <- readSGY_textual_file_header(dsn, ENDIAN = endian)
+    # test <- any(verboseF(grepl("Prism", THD), verbose = FALSE)) & 
+    #   any(verboseF(grepl("Radar Systems, Inc.", THD), 
+    #                verbose = FALSE))
+    # # read RadSys Zond System
+    # if( test ){
+    #   # if(verbose) message("This is not a classical SEG-Y file... I try to read it!")
+    #   ndn <- c("little", "big")
+    #   A <- tryCatch({verboseF( readSEGY_RadSys_Zond_GPR(dsn, ENDIAN = endian), 
+    #                            verbose = verbose)},
+    #                 error = function(cond){
+    #                   message("failed attempt... ",
+    #                           "I try the other endianness, namely '",
+    #                           ndn[ndn != endian], "'!")
+    #                   return(NULL)})
+    #   if(is.null(A)){
+    #     A <- tryCatch({verboseF(readSEGY_RadSys_Zond_GPR(dsn, 
+    #                                                      ENDIAN = ndn[ndn != endian]), 
+    #                     verbose = verbose)},
+    #                     error = function(cond){
+    #                       message("failed attempt, again... ",
+    #                               "please contact me\n",
+    #                               "emanuel.huber@pm.me")
+    #                       return(NULL)})
+    #   }
+    #   if(is.null(A)){ stop() }
+    #   x <- verboseF( .gprSEGY(A, fName = fName, fPath = fPath, 
+    #                           desc = desc, Vmax = Vmax), verbose = verbose)
       # read classical SEG-Y file
-    }else{
-      if(verbose) message("This is a classical SEG-Y file... I try to read it!")
+    # }else{
+      # if(verbose) message("This is a classical SEG-Y file... I try to read it!")
       ndn <- c("little", "big")
+      # message(endian)
+      # message(dsn)
       A <- tryCatch({verboseF(readSGY(dsn, ENDIAN = endian), 
                               verbose = verbose)},
                     error = function(cond){
-                      message("failed attempt... ",
-                               "I try the other endianness, namely '",
-                              ndn[ndn != endian], "'!")
+                      # message("failed attempt... ",
+                      #         "I try the other endianness, namely '",
+                      #        ndn[ndn != endian], "'!")
                       return(NULL)})
       if(is.null(A)){
+        # message(ndn[ndn != endian])
+        # message(dsn)
+        # readSGY(dsn, ENDIAN = ndn[ndn != endian])
         A <- tryCatch({verboseF(readSGY(dsn, ENDIAN = ndn[ndn != endian]), 
                                 verbose = verbose)},
                       error = function(cond){
-                        message("failed attempt, again... ",
-                                "please contact me\n",
-                                "emanuel.huber@pm.me")
+                        # message("failed attempt! ",
+                        #         "please contact me\n",
+                        #         "emanuel.huber@pm.me")
                         return(NULL)})
       }
       if(is.null(A)){ stop() }
+      # print(names(A))
       # A <- verboseF(readSGY(dsn, ENDIAN = endian), verbose = verbose)
       x <- verboseF( .gprSGY(A, fName = fName, fPath = fPath, 
                              desc = desc, Vmax = Vmax), verbose = verbose)
+      
+      if(isTRUE(interp_pos)){
+        if(inherits(x, "GPR") && !is.null(x@hd$xyz)){
+          if(nrow(x@hd$xyz) == ncol(x)){
+            test <- !duplicated(x@hd$xyz[, 1:2])
+            if(sum(test) > 0){
+              x <- x[, test]
+              x@coord <- x@hd$xyz[test,]
+              x@pos <- posLine(x@hd$xyz[test, 1:2])
+              x@dx <- mean(diff(x@pos))
+            }
+          }else{
+            message("I found some coordinates!\n",
+                    "Check them with 'gethd(x)$xyz'...")
+          }
+        }
+      }
       return(x)
-    }
+    # }
     # plot(x)
     # A <- tryCatch({verboseF(readSGY(dsn), 
     #                         verbose = verbose)},
@@ -695,11 +719,25 @@ fillNAprevious <- function(x){
 #' Extract with regex the antenna frequency in a string
 #' @export
 freqFromString <- function(s){
+  s <- iconv(s, "UTF-8", "UTF-8",sub='') ## replace any non UTF-8 by '
   if(grepl("MHz", s, ignore.case = TRUE)){
     a <- regexpr("[0-9]+.MHZ",  s, ignore.case = TRUE, perl = TRUE)
   }else{
     a <- regexpr("[0-9]+",  s, ignore.case = TRUE, perl = TRUE)
   }
+  b <- regmatches(s,  a)
+  b <- as.numeric(gsub("[^0-9]", "", b))
+  if(length(b) == 0){
+    return(NULL)
+  }else{
+    return(b)
+  }
+}
+
+#' @export
+freqFromStringMHzGHz <- function(s){
+  s <- iconv(s, "UTF-8", "UTF-8",sub='') ## replace any non UTF-8 by '
+  a <- regexpr("[0-9]+.(MHZ|GHZ)",  s, ignore.case = TRUE, perl = FALSE)
   b <- regmatches(s,  a)
   b <- as.numeric(gsub("[^0-9]", "", b))
   if(length(b) == 0){

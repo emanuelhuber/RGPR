@@ -41,7 +41,6 @@ Collate:
   'readMala.R'
   'readIPRB.R'
   'readSGY.R'
-  'readZondGPR.R'
   'readDZT.R'
   'readVOL.R'
   'readSEG2.R'

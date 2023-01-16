@@ -1228,6 +1228,11 @@ setMethod("isLengthUnit", "GPR", function(x){
 #' @rdname trProject
 #' @export
 setMethod("trProject", "GPR", function(x, CRSobj){
+  if(length(x@crs) == 0){
+    stop("The data has no coordinate reference system (CRS).\n",
+         "Therefore, I cannot project the coordinates in the new CRS.",
+         "please add CRS with for example 'crs(x) <- \"+init=epsg:4326\".")
+  }
   if(CRSobj == "UTM"){
     coordUTM <- llToUTM(lon = coord(x)[, 1],
                         lat = coord(x)[, 2])

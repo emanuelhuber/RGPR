@@ -23,6 +23,9 @@ date: 2019-11-23
 
 * [Samantha N. Cook, Marissa J. Torres, Nathan J. Lamie, Lee J. Perren, Scott M. Slone, and Bonnie J. Jones (2022) Automated Ground-Penetrating-Radar Post-Processing Software in R Programming. Subterranean Detection and Monitoring. ERDC/CRREL TR-22-18. September 2022.](http://dx.doi.org/10.21079/11681/45621) [PDF](https://apps.dtic.mil/sti/pdfs/AD1181444.pdf)
 
+* [Galih Prasetya Dinanta; Doni Fernando; Nugraheni Setyaningrum; Fanny Meliani; Joko Widodo; Andie Setiyoko; Rahmat Arief (2022) Deep learning for Ground Penetration Radar Reflection Images in Civil Structures Investigation, 2022 IEEE International Conference on Aerospace Electronics and Remote Sensing Technology (ICARES), Yogyakarta, Indonesia, 2022, pp. 1-7, doi: 10.1109/ICARES56907.2022.9993511.](http://dx.doi.org/10.1109/ICARES56907.2022.9993511) 
+
+
 * [Gustavo M. Vasques, Hugo M. Rodrigues, Emanuel Huber, Sílvio R.L. Tavares, Flávio A. Marques, Maria Sônia L. Silva (2022) Ground penetrating radar (GPR) models of the regolith and water reservoir of an underground dam in the Brazilian semiarid region. Journal of Applied Geophysics: 206.](https://doi.org/10.1016/j.jappgeo.2022.104797)
 
 * [Emanuel Huber, Birte Anders, and Peter Huggenberger (2019) Imaging scours in straightened and braided gravel‐bed rivers with ground‐penetrating radar. Near Surface Geophysics, 17(3):263-276](https://doi.org/10.1002/nsg.12042)

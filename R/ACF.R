@@ -11,6 +11,8 @@ standardGeneric("ACF"))
 
 #' Auto-correlation function 
 #' 
+#' This function computes the auto-correlation.
+#'
 #' @name ACF
 #' @rdname ACF
 #' @export

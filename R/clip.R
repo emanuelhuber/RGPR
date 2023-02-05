@@ -5,6 +5,8 @@ setGenericVerif("clip", function(x, Amax = NULL, Amin = NULL, track = TRUE)
 
 #' Clip the amplitude
 #' 
+#' This function clip the amplitude.
+#'
 #' @name clip
 #' @rdname trClip
 #' @export

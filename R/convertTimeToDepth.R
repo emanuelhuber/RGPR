@@ -1,40 +1,46 @@
+## FIXME: clean the code!
+
+
 #' Time to depth conversion
 #' 
-#' Convert two-way travel time to depth. This is a non-linear operation
+#' Convert the two-way travel time of the recorded waves into depth. It does
+#' not account for the topography. To add the topography, 
+#' use \code{\link{migrate}} instead. This is a non-linear operation
 #' @param x      [\code{GPR* object}] An object of the class \code{GPR}
-#' @param dz     [\code{numeric(1)}] Depth resolution for the time to depth 
-#'               conversion. If \code{dz = NULL}, then \code{dz} is set equal 
-#'               to the smallest depth resolution computed from time.
-#' @param dmax   [\code{numeric(1)}] Maximum depth for the time to depth 
-#'               conversion. If \code{dmax = NULL}, then \code{dmax} is set 
-#'               equal to the largest possible depth.
-#' @param method [\code{character(1)}]Interpolation method to be applied:
+#' @param dz     [\code{numeric(1)}] Desired depth resolution. 
+#'               If \code{dz = NULL}, then \code{dz} is set equal 
+#'               to the smallest depth resolution inferred from the data.
+#' @param zmax   [\code{numeric(1)}] Maximum Desired depth.
+#'               If \code{zmax = NULL}, then \code{zmax} is set 
+#'               equal to the largest depth inferred from the data.
+#' @param method [\code{character(1)}] Interpolation method to be applied:
 #'               one of \code{pchip}, \code{linear}, \code{nearest}, 
 #'               \code{spline}, or \code{cubic}
 #'               (see also \code{\link[signal]{interp1}}). 
 #' @return [\code{GPR* object}] with signal as a function of depth.
 #' @name convertTimeToDepth
-setGeneric("convertTimeToDepth", function(x, dz = NULL, dmax = NULL, 
-                                          method = c("pchip", "linear", 
-                                                     "nearest", "spline", 
-                                                     "cubic")) 
+setGeneric("convertTimeToDepth", 
+           function(x, dz = NULL, zmax = NULL,
+                    method = c("pchip", "linear","nearest", "spline", "cubic")) 
   standardGeneric("convertTimeToDepth"))
 
 
 #' @rdname convertTimeToDepth
 #' @export
-setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, dmax = NULL, 
+setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, zmax = NULL, 
                                                 method = c("pchip", "linear", 
                                                            "nearest", "spline", 
                                                            "cubic")){
   method <- match.arg(method[1], c("pchip", "linear", "nearest", 
                                    "spline", "cubic"))
-  if(is.null(x@vel) || length(x@vel)==0 ){ # || is.null(x_vel)){
+  if(is.null(x@vel) || length(x@vel)==0 ){ 
     stop("You must first define the EM wave velocity ",
          "with 'vel(x) <- 0.1' for example!")
-  }else{
-    x_vel <- .getVel(x, type = "vint", strict = FALSE)
   }
+  if( !isZTime(x) ){
+    stop("Vertical unit (", x@zunit , ") is not a time unit...")
+  }
+  
   if(length(x@coord) != 0 && ncol(x@coord) == 3){
     topo <- x@coord[1:ncol(x@data), 3]
   }else{
@@ -46,12 +52,9 @@ setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, dmax = NULL,
     x <- shiftToTime0(x, method = c("pchip"))
   }
   
-  if( !isZTime(x) ){
-    stop("Vertical unit (", x@zunit , ") is not a time unit...")
-  }
+  x_vel <- .getVel(x, type = "vint", strict = FALSE)
   
   x[is.infinite(x) | is.na(x)] <- 0
-
   
   # single velocity value
   if(length(x_vel) == 1){
@@ -59,22 +62,23 @@ setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, dmax = NULL,
             " ", x@xunit, "/", x@zunit, ")")
     z <- timeToDepth(twt = x@z, t0 = 0, v = x_vel, 
                      antsep = antsep(x))
-    x <- x[!is.na(z),]
+    test <- !is.na(z)
+    x <- x[test,]
     if(is.null(dz)){
       x@dz <-  x@dz * x_vel/ 2
     }else{
       x@dz <- dz
     }
-    if(is.null(dmax)){
-      dmax <- tail(z, 1)
+    if(is.null(zmax)){
+      zmax <- max(z, 1, na.rm = TRUE)
     }
-    x@z <- seq(from = 0, to = dmax, by = x@dz)
+    x@z <- seq(from = 0, to = zmax, by = x@dz)
     funInterp321 <- function(x, z, zreg, method){
       signal::interp1(x = z, y = x, xi = zreg, 
                       method = method, extrap = TRUE)
     }
     x@data <- apply(x@data, 2, funInterp321, 
-                    z = z[!is.na(z)], zreg = x@z, method = method)
+                    z = z[test], zreg = x@z, method = method)
     # vector velocity
   }else if( is.null(dim(x_vel)) && length(x_vel) == nrow(x) ){
     x_depth <- timeToDepth(twt = x@z, t0 = 0, v = x_vel, 
@@ -85,11 +89,11 @@ setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, dmax = NULL,
     if(is.null(dz)){
       dz <- min(x_vel) * min(diff(x@z))/2
     }
-    if( is.null(dmax)){
-      dmax <- max(x_depth, na.rm = TRUE)
+    if( is.null(zmax)){
+      zmax <- max(x_depth, na.rm = TRUE)
     }
-    # print(dmax)
-    d <- seq(from = 0, by = dz, to = dmax)
+    # print(zmax)
+    d <- seq(from = 0, by = dz, to = zmax)
     funInterp123 <- function(A, x_depth, x_depth_int, method){
       signal::interp1(x = x_depth, y = A, xi = x_depth_int, 
                       method = method)
@@ -126,10 +130,10 @@ setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, dmax = NULL,
     if(is.null(dz)){
       dz <- min(x_vel) * min(diff(x@z))/2
     }
-    if(is.null(dmax)){
-      dmax <- max(x_depth)
+    if(is.null(zmax)){
+      zmax <- max(x_depth)
     }
-    d <- seq(from = 0, by = dz, to = dmax)
+    d <- seq(from = 0, by = dz, to = zmax)
     x_new <- matrix(nrow = length(d), ncol = ncol(x))
     for(i in seq_along(x)){
       x_new[, i] <- signal::interp1(x  = as.numeric(x_depth[,i]),
@@ -150,7 +154,7 @@ setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, dmax = NULL,
   #   x@coord[, 3] <- max(x@coord[,3])
   # }
   
-  x@vel <- list() 
+  # x@vel <- list()  # keep velocity model
   x@zunit <- x@xunit # FIXME: check that
   x@zlab <- "depth"
   proc(x) <- getArgs()

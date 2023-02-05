@@ -13,14 +13,14 @@ setGeneric("spPathRel", function(x)
 #' @export
 setMethod("spPathRel", "GPR", function(x){
   if(length(x@coord) > 0){
-    # if(isCRSLonLat(x)){ 
+    # if(isCRSGeographic(x)){ 
     #   dx <- verboseF(geodist::geodist(x@coord[,1:2], paired = FALSE, 
     #                                   sequential = TRUE, pad = FALSE, 
     #                                   measure = "geodesic"),
     #                  verbose = FALSE)
     #   x@x <- c(0, cumsum(dx))
     # }else{
-      return(pathRelPos(x@coord[,1:2], lonlat = isCRSLonLat(x)))
+      return(pathRelPos(x@coord[,1:2], lonlat = isCRSGeographic(x)))
     # }
     # return(x)
   }else{

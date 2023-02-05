@@ -3,11 +3,11 @@
 \name{getVel}
 \alias{getVel}
 \alias{getVel,GPR-method}
-\title{Get velocity model}
+\title{Get velocity model as GPR object}
 \usage{
-getVel(x, type = c("vrm", "vint"))
+getVel(x, type = c("vrms", "vint"))
 
-\S4method{getVel}{GPR}(x, type = c("vrm", "vint"))
+\S4method{getVel}{GPR}(x, type = c("vrms", "vint"))
 }
 \arguments{
 \item{x}{[\code{GPR class}] An object of the class \code{GPR}}

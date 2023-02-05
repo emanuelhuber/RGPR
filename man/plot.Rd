@@ -152,6 +152,8 @@ colored.}
 \item{pdfName}{length-one character. Name/path of the PDF to export 
 without extension}
 
+\item{horiz}{[\code{logical(1)}] If TRUE 1D is horizontal (else vertical).}
+
 \item{...}{additional arguments passed to the plotting methods 
 \code{\link[graphics]{plot}} for 1D plot and 
 \code{\link[plot3D]{Image}} for 2D plot. See also  \code{details}.}

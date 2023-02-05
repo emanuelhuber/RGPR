@@ -1,3 +1,6 @@
+## FIXME: change parameter name "topo"
+
+
 #' Interpolate trace positions from measurement (e.g., GPS).
 #'
 #' @param x      [\code{GPR|GRPsurvey}]
@@ -98,13 +101,13 @@ setMethod("spInterp", "GPR",
      }
    }
    if(isTRUE(lonlat)){
-     if(is.na(x@crs) || trimStr(sf::st_crs(x@crs)$proj4string) == "+proj=longlat +datum=WGS84 +no_defs" ){
-        crs(x) <- 4326
+     if(is.na(x@crs)){ #|| trimStr(sf::st_crs(x@crs)$proj4string) == "+proj=longlat +datum=WGS84 +no_defs" ){
+        crs(x) <- "EPSG:4326"
         topo_utm <- lonlatToUTM(lon = topo[, 1], lat = topo[, 2])
         tryCatch({crs(x) <- topo_utm$crs
                   topo[, 1:2] <- topo_utm$xy
                   if(isFALSE(projToUTM) && is.null(CRSout)){
-                    CRSout <- 4326
+                    CRSout <- "EPSG:4326"
                   }}
         )
      }else{
@@ -360,6 +363,8 @@ setMethod("spInterp", "GPR",
 }
 
 # dim(topo) n x 4
+# check that: https://stackoverflow.com/a/34924247
+# round the coordinates to the tol value and apply duplicated?
 .rmTraceIDDuplicates <- function(x, topo, tol = NULL,
                                  verbose = TRUE){
   if(is.null(tol)) tol <- .Machine$double.eps

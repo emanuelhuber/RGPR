@@ -19,6 +19,8 @@ LINES <- file.path("/mnt/data/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELO
 # #-------------------------------- spBuffer ------------------------------------#
 
 
+ 
+ 
 test_that("test 'spBuffer()",{
   expect_warning(xb <-spBuffer(x, d = 5))
   expect_silent(xb <-spBuffer(x[2:6], d = 5))

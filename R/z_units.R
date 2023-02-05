@@ -1,10 +1,14 @@
 
+#' Check if the unit is valid
+#' @param x [\code{character(n)|units}]
+#' @return [\code{character(n)}] 
+#' @noRd
 .checkUnit <- function(x){
   if(length(x) > 1){
     sapply(x, .checkUnit, USE.NAMES = FALSE)
   }else{
-    if(length(x) == 0) return("")
-    if(x == "" | is.na(x)) return("")
+    if(length(x) == 0) return(NA_character_)
+    if( is.na(x)) return(NA_character_)
     x <- tryCatch({units::as_units(x)},
               error = function(cond){ 
                 stop(paste0("'", x, "'", 

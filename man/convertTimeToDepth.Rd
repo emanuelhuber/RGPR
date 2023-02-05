@@ -8,29 +8,29 @@
 convertTimeToDepth(
   x,
   dz = NULL,
-  dmax = NULL,
+  zmax = NULL,
   method = c("pchip", "linear", "nearest", "spline", "cubic")
 )
 
 \S4method{convertTimeToDepth}{GPR}(
   x,
   dz = NULL,
-  dmax = NULL,
+  zmax = NULL,
   method = c("pchip", "linear", "nearest", "spline", "cubic")
 )
 }
 \arguments{
 \item{x}{[\code{GPR* object}] An object of the class \code{GPR}}
 
-\item{dz}{[\code{numeric(1)}] Depth resolution for the time to depth 
-conversion. If \code{dz = NULL}, then \code{dz} is set equal 
-to the smallest depth resolution computed from time.}
+\item{dz}{[\code{numeric(1)}] Desired depth resolution. 
+If \code{dz = NULL}, then \code{dz} is set equal 
+to the smallest depth resolution inferred from the data.}
 
-\item{dmax}{[\code{numeric(1)}] Maximum depth for the time to depth 
-conversion. If \code{dmax = NULL}, then \code{dmax} is set 
-equal to the largest possible depth.}
+\item{zmax}{[\code{numeric(1)}] Maximum Desired depth.
+If \code{zmax = NULL}, then \code{zmax} is set 
+equal to the largest depth inferred from the data.}
 
-\item{method}{[\code{character(1)}]Interpolation method to be applied:
+\item{method}{[\code{character(1)}] Interpolation method to be applied:
 one of \code{pchip}, \code{linear}, \code{nearest}, 
 \code{spline}, or \code{cubic}
 (see also \code{\link[signal]{interp1}}).}
@@ -39,5 +39,7 @@ one of \code{pchip}, \code{linear}, \code{nearest},
 [\code{GPR* object}] with signal as a function of depth.
 }
 \description{
-Convert two-way travel time to depth. This is a non-linear operation
+Convert the two-way travel time of the recorded waves into depth. It does
+not account for the topography. To add the topography, 
+use \code{\link{migrate}} instead. This is a non-linear operation
 }

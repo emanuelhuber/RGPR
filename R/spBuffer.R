@@ -22,7 +22,9 @@ setGeneric(name = "spBuffer",
 setMethod("spBuffer", "GPR", function(x, d){
   if(length(x@coord) > 0){
     xsf <- as.sf(x)
-    return(sf::st_buffer(xsf, d))
+    # use 'verboseF' to  suppress the following message from sf package
+    #    "st_as_s2(): dropping Z and/or M coordinate"
+    return( verboseF(sf::st_buffer(xsf, d), FALSE) )  
   }else{
     stop("x has no coordinates.")
   }
@@ -47,7 +49,9 @@ setMethod("spBuffer", "GPRsurvey", function(x, d, combine = TRUE){
             paste0("  #", which(!sel), ": ", x@names[!sel], collapse ="\n"), 
             ".")
   }
-  return(sf::st_buffer(xsf, d))
+  # use 'verboseF' to  suppress the following message from sf package
+  #    "st_as_s2(): dropping Z and/or M coordinate"
+  return(verboseF(sf::st_buffer(xsf, d), FALSE))
 
 })
 
@@ -57,7 +61,9 @@ setMethod("spBuffer", "sfc", function(x, d, combine = TRUE){
   if(isTRUE(combine)){
     x <- sf::st_combine(x)
   }
-  return(sf::st_buffer(x, d))
+  # use 'verboseF' to  suppress the following message from sf package
+  #    "st_as_s2(): dropping Z and/or M coordinate"
+  return(verboseF(sf::st_buffer(x, d), FALSE))
 })
 
 #' @rdname spBuffer   
@@ -66,7 +72,9 @@ setMethod("spBuffer", "sf", function(x, d, combine = TRUE){
   if(isTRUE(combine)){
     x <- sf::st_combine(x)
   }
-  return(sf::st_buffer(x, d))
+  # use 'verboseF' to  suppress the following message from sf package
+  #    "st_as_s2(): dropping Z and/or M coordinate"
+  return(verboseF(sf::st_buffer(x, d), FALSE))
 })
 
 

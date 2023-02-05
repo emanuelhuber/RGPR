@@ -126,16 +126,22 @@ palDisplay <- function(){
 #' Return color from palette
 #' @param x Values
 #' @param col [\code{character}] Colors to be used.
+#' @param sym [\code{logical(1)}] Should the color palette be symmetric?
 #' @export
-palCol <- function(x , col = palGPR(n=101)){
+palCol <- function(x , col = palGPR(n=101), sym = TRUE){
   # test 1 - slower
   # CCY = (x - min(x, na.rm = TRUE))/(max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
   # x[] <- col[ CCY * (length(col) - 1) + 1 ]
   # return(x)
   
   # test 2 - faster
-  CCY = (x - min(x, na.rm = TRUE))/(max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
-  idx <- findInterval(CCY, seq(0, 1, length.out = length(A_col) ))
+  if(isTRUE(sym) && min(x, na.rm = TRUE) < 0){
+    absmax <- max(-min(x, na.rm = TRUE), max(x, na.rm = TRUE))
+    CCY = (x + absmax)/2/absmax
+  }else{
+    CCY = (x - min(x, na.rm = TRUE))/(max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+  }
+  idx <- findInterval(CCY, seq(0, 1, length.out = length(col) ))
   A <- matrix(nrow = nrow(x), ncol = ncol(x))
   A[] <- col[idx]
   return(A)

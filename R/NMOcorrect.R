@@ -1,8 +1,13 @@
 #' Normal Move-Out correction
 #' 
-#' Remove the Normal Move-Out (NMO) from the trace given a velocity: 
-#' this is a non-linear 
-#' correction of the time axis that requires interpolation. Note that
+#' Remove the Normal Move-Out (NMO) from the trace given a velocity. 
+#' The NMO correction is a non-linear transformation of the time axis to 
+#' compensate for the offset between transmitter and receiver antennae 
+#' (antenna separation distance): the time of data acquired with a bi-static 
+#' antenna system is converted into the time of data virtually acquired with 
+#' a mono-static system under the assumption of the multi-layer model with 
+#' constant velocities. 
+#' Note that
 #' only the conventional NMO correction is currently implemented. The 
 #' conventional NMO introduces a streching effect. A nonstretch NMO will
 #' be implemented in a near future. The Normal Move-out is defined as the
@@ -27,6 +32,8 @@
 #' Therefore, the NMO-correction \eqn{\Delta_{NMO}} is
 #' \deqn{\Delta_{NMO} = t_{TWT}(x) - t_0}  
 #' \deqn{\Delta_{NMO} = t_0 (\sqrt{1 + \frac{x^2}{v^2 t_0^2}} - 1)}
+#' 
+#' 
 #' @param x An object of the class \code{GPR}
 #' @param thrs [\code{numeric(1)|NULL}] Definite the threshold for muting
 #'             (i.e., suppressing) the values where the NMO-stretching is
@@ -38,6 +45,8 @@
 #'               one of \code{pchip}, \code{linear}, \code{nearest}, 
 #'               \code{spline}, \code{cubic} 
 #'               (see also \code{\link[signal]{interp1}}). 
+#' @return An object of the class \code{GPR} with NMO removed and with antenna 
+#'          separation set equal to zero.
 #' @references
 #' \itemize{
 #'   \item{Tillard and Dubois (1995) Analysis of GPR data: wave propagation
@@ -91,6 +100,7 @@ setMethod("NMOcorrect", "GPR", function(x, thrs = NULL, v = NULL,
   }
   
   x <- .NMOCor(x, v = v, asep = asep, method = method)
+  x@antsep <- 0 
   proc(x) <- getArgs()
   return(x)
 })

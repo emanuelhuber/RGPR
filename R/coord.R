@@ -118,7 +118,7 @@ setReplaceMethod("coord", signature="GPRsurvey", function(x, value){
 # # x = GPR
 # .updateXpos <- function(x){
 #   if(length(x@coord) > 0){
-#     if(isCRSLonLat(x)){ 
+#     if(isCRSGeographic(x)){ 
 #       dx <- verboseF(geodist::geodist(x@coord[,1:2], paired = FALSE, 
 #                              sequential = TRUE, pad = FALSE, 
 #                              measure = "geodesic"),

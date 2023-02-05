@@ -4,12 +4,14 @@
 \alias{palCol}
 \title{Return color from palette}
 \usage{
-palCol(x, col = palGPR(n = 101))
+palCol(x, col = palGPR(n = 101), sym = TRUE)
 }
 \arguments{
 \item{x}{Values}
 
 \item{col}{[\code{character}] Colors to be used.}
+
+\item{sym}{[\code{logical(1)}] Should the color palette be symmetric?}
 }
 \description{
 Return color from palette

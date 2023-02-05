@@ -28,11 +28,13 @@ setMethod("plotVel", "GPR", function(x){
       lines(x@vel[["v"]], x@z, type = "s", lty = 2, col = "red")
     }
   }else{
-    if(isZDepth(x)){
-      stop(msg_set_zunitToDepth)
-    }else{
-      stop("")
-    }
+    message(msg_no_vel)
+    return(NULL)
+    # if(isZDepth(x)){
+    #   stop(msg_set_zunitToDepth)
+    # }else{
+    #   stop("")
+    # }
   }
 })
 

@@ -27,7 +27,8 @@ velSpectrum(
 \item{method}{A length-one character vector}
 
 \item{v}{A numeric vector defining at which velocities the analysis is
-performed}
+performed. If \code{v = NULL}, then 
+\code{v = exp(seq(log(0.02), log(0.3), length = 100))}.}
 
 \item{w}{A length-one numeric vector defining the window length for the
 methods 'wincoherence' and 'wincoherence2'.}
@@ -42,7 +43,7 @@ different functions: "semblance", "winsemblance", "wincoherence", "wincoherence2
 \details{
 either use 'rec' and 'trans' to compute the distance between the antennas
 or give the distance between the antennas (asep)
-or seq(x@antsep, by = x@dx, length.out = length(x))
+or \code{seq(x@antsep, by = x@dx, length.out = length(x))}
 
 \describe{
   \item{semblance}{also described as the ratio of input to output

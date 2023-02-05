@@ -104,30 +104,38 @@ setReplaceMethod("crs", signature="GPRsurvey", function(x, value){
 }
 
 
-# x = character, integer or CRSobj (length 1 or more)
+#' Check if the CRS is valid
+#' @param x wkt code, crs class of sf package, integer or EPSG:#### (length 1)
+#' @return [\code{character}] WKT code.
+#' @noRd
 .checkCRS <- function(x){
-  if(is.list(x)) x <- unlist(x, use.names = FALSE)[1]
-  if(length(x) > 1){
-    return( sapply(x, .checkCRS , USE.NAMES = FALSE) )
-  } 
-  if(is.na(x) || (is.character(x) && x == "")){
-    return(NA_character_)
-  }else if(inherits(x, "CRS")){
-    return(unname(x@projargs))
-  }else if(inherits(x, "crs")){
-    # .checkCRS(x[[1]])
-    .checkCRS(x$proj4string)
-  }else{
-    test_num <- verboseF(as.numeric(x), verbose = FALSE)
-    if(!is.na(test_num) && test_num %% 1 == 0 && test_num > 0){
-      x <- paste0("+init=epsg:", as.integer(x))
-      return(sf::st_crs(x)$proj4string)
-      # return(sf::st_crs(x)[[2]])
-    }else if(is.character(x)){
-      return(sf::st_crs(x)$proj4string)
-    }else{
-      warning("I could not understand the CRS...")
-      return(NA_character_)
-    }
-  }
+  tryCatch(sf::st_crs(x)$wkt,
+           error = function(e){
+             message("Invalid CRS! Try something like 'EPSG:3857'!")
+             return(NA_character_)
+           })
 }
+  # if(is.list(x)) x <- unlist(x, use.names = FALSE)[1]
+  # if(length(x) > 1){
+  #   return( sapply(x, .checkCRS , USE.NAMES = FALSE) )
+  # } 
+  # if(is.na(x) || (is.character(x) && x == "")){
+  #   return(NA_character_)
+  # }else if(inherits(x, "CRS")){
+  #   return(unname(x@projargs))
+  # }else if(inherits(x, "crs")){
+  #   # .checkCRS(x[[1]])
+  #   .checkCRS(x$proj4string)
+  # }else{
+  #   test_num <- verboseF(as.numeric(x), verbose = FALSE)
+  #   if(!is.na(test_num) && test_num %% 1 == 0 && test_num > 0){
+  #     x <- paste0("+init=epsg:", as.integer(x))
+  #     return(sf::st_crs(x)$proj4string)
+  #     # return(sf::st_crs(x)[[2]])
+  #   }else if(is.character(x)){
+  #     return(sf::st_crs(x)$proj4string)
+  #   }else{
+  #     warning("I could not understand the CRS...")
+  #     return(NA_character_)
+  #   }
+  # }

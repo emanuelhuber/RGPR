@@ -1,4 +1,4 @@
-#' Get velocity model
+#' Get velocity model as GPR object
 #' 
 #' Return the velocity model (either the root-mean square or internal velocity).
 #' 

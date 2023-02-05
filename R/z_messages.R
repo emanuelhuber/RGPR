@@ -14,6 +14,7 @@ dstr_version     <- "0.3"
 dstr_dlab        <- "amplitude"
 dstr_dunit       <- "mV"
 
+msg_no_vel <- c("There is no velocity data!")
 msg_set_antsep <- c("You must first set the antenna separation distances with\n",
                     "'antsep(x) <- ...")
 msg_do_shiftToTime0  <- c("You must first shift the traces to time-zero with\n",

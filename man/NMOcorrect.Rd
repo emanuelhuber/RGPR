@@ -35,10 +35,19 @@ one of \code{pchip}, \code{linear}, \code{nearest},
 \code{spline}, \code{cubic} 
 (see also \code{\link[signal]{interp1}}).}
 }
+\value{
+An object of the class \code{GPR} with NMO removed and with antenna 
+         separation set equal to zero.
+}
 \description{
-Remove the Normal Move-Out (NMO) from the trace given a velocity: 
-this is a non-linear 
-correction of the time axis that requires interpolation. Note that
+Remove the Normal Move-Out (NMO) from the trace given a velocity. 
+The NMO correction is a non-linear transformation of the time axis to 
+compensate for the offset between transmitter and receiver antennae 
+(antenna separation distance): the time of data acquired with a bi-static 
+antenna system is converted into the time of data virtually acquired with 
+a mono-static system under the assumption of the multi-layer model with 
+constant velocities. 
+Note that
 only the conventional NMO correction is currently implemented. The 
 conventional NMO introduces a streching effect. A nonstretch NMO will
 be implemented in a near future. The Normal Move-out is defined as the

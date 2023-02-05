@@ -79,7 +79,7 @@ Collate:
 	'GPRsurvey.R'
 	'interpSlices.R'
 	'GPS.R'
-	'isCRSLonLat.R'
+	'isCRSGeographic.R'
 	'isZTime.R'
 	'isCMP.R'
 	'coord.R'
@@ -156,6 +156,6 @@ Imports:
     checkmate,
     units,
     adimpro
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Suggests: 
     testthat (>= 2.1.0)

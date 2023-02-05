@@ -56,6 +56,7 @@
 #'              colored.
 #' @param pdfName length-one character. Name/path of the PDF to export 
 #'                without extension
+#' @param horiz [\code{logical(1)}] If TRUE 1D is horizontal (else vertical).
 #' @param col [\code{character}] FIXME Color palette.
 #' @param xlab [\code{character(1)}] A title for the x axis.
 #' @param ylab [\code{character(1)}] A title for the y axis.

@@ -76,7 +76,8 @@ stringToLat <- function(x, NW = "N"){
 #'         \code{crs} the UTM coordinate reference system (proj4string).
 #' @export
 lonlatToUTM <- function(lon, lat, zone = NULL, south = NULL){
-  #FIXME
+  # FIXME
+  # - convert UTM to EPSG: https://gis.stackexchange.com/questions/365584/convert-utm-zone-into-epsg-code
   # todo: check if lat/long in hh:mm:ss and convert them into
   #       decimal with the function 'lonlatToDeci()' (see below)
   lat_mean <- median(lat)
@@ -110,18 +111,20 @@ getUTMzone <- function(lat, lon){
   # see https://stackoverflow.com/a/9188972
   # The formula is to simple: it does not work for the both 
   # UTM Zone Exceptions in Norway and Svalbard
-  # Special zones for Svalbard and Norway
+  # Special zones for Svalbard
   lat <- median(lat)
   lon <- median(lon)
-  if (lat >= 72.0 && lat < 84.0 ) 
-    if (lon >= 0.0  && lon <  9.0) 
-      return(31)
-  if (lon >= 9.0  && lon < 21.0)
-    return(33)
-  if (lon >= 21.0 && lon < 33.0)
-    return(35)
-  if (lon >= 33.0 && lon < 42.0) 
-    return(37)
+  if (lat >= 72.0 && lat < 84.0 ){
+    if (lon >= 0.0  && lon <  9.0)  return(31) # 31X
+    if (lon >= 9.0  && lon < 21.0)  return(33) # 33X
+    if (lon >= 21.0 && lon < 33.0)  return(35) # 35X
+    if (lon >= 33.0 && lon < 42.0)  return(37) # 37X
+  }
+  # Special zones for Norway
+  if (lat >= 56.0 && lat < 64.0 ) {
+    if (lon >= 0.0  && lon <  3.0) return(31) # 31V
+    if (lon >= 3.0  && lon < 12.0) return(32) # 32V
+  }
   zone <- (floor((lon + 180)/6) %% 60) + 1
   return(unique(zone)[1])
 }

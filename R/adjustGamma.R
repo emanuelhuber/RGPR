@@ -25,6 +25,8 @@ setGenericVerif("adjustGamma", function(x, a = 1, b = 1, track = TRUE)
 
 #' Gamma correction of the amplitude
 #' 
+#' This function compute the gamma correction.
+#'
 #' @name adjustGamma
 #' @rdname adjustGamma
 #' @export

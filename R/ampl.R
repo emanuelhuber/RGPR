@@ -3,6 +3,8 @@ setGenericVerif("ampl", function(x, npad = 100, FUN = mean, ...)
 
 #' Amplitude (deprecated)
 #'
+#' Do not use this function!!!
+#'
 #' @name ampl
 #' @rdname ampl
 #' @export

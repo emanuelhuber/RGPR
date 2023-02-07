@@ -339,7 +339,22 @@ readDZG <- function(dsn){
   test_gpgga <- grepl("(\\$GPGGA)", x, ignore.case = TRUE, useBytes = TRUE )
   
   if(sum(test_gssis) != sum(test_gpgga)){
-    stop("File '.dzg' is corrupted! I cannot read it... sorry.")
+    u <- which(test_gssis)
+    v <- which(test_gpgga)
+    if(length(u) > 0 && length(v) > 0){
+      i <- (u + 1) %in% v
+      j <- v %in% (u + 1)
+      if(length(i) > 0 && length(j) > 0 && sum(i) == sum(j)){
+        sel <- as.vector(rbind(u[i], v[j]))
+        x <- x[sel]
+        test_gssis <- grepl("(\\$GSSIS)", x, ignore.case = TRUE, useBytes = TRUE )
+        test_gpgga <- grepl("(\\$GPGGA)", x, ignore.case = TRUE, useBytes = TRUE )
+      }else{
+        stop("File '.dzg' is corrupted! I cannot read it... sorry.")
+      }
+    }else{
+      stop("File '.dzg' is corrupted! I cannot read it... sorry.")
+    }
   }
   
   pat_gssis <- paste0("\\$(?<ID>GSSIS),(?<tr>[0-9]+),(?<time>[-]?[0-9.]+)") 

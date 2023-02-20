@@ -4,16 +4,25 @@
 \alias{plotFast}
 \title{Faster plot}
 \usage{
-plotFast(x, col = palGPR(), colorbar = TRUE, interpolate = TRUE)
+plotFast(
+  x,
+  col = palGPR(),
+  colorbar = TRUE,
+  interpolate = TRUE,
+  xlab = NULL,
+  ylab = NULL
+)
 }
 \arguments{
 \item{x}{[GPR]}
 
 \item{col}{Color palette}
 
-\item{colorbar}{[logical]}
+\item{colorbar}{[logical()]}
 
-\item{interpolate}{[logical]}
+\item{interpolate}{[logical(1)]}
+
+\item{xlab}{[charachter(1)]}
 }
 \description{
 Function to plot faster GPR data

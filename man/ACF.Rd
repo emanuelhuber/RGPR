@@ -25,7 +25,5 @@
 )
 }
 \description{
-Auto-correlation function
-
-Auto-correlation function
+This function computes the auto-correlation function.
 }

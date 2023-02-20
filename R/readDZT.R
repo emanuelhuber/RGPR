@@ -251,8 +251,10 @@ readDZT <- function(dsn){
   # antenna name
   ant_name <- character(hd$NCHAN)
   for(i in seq_len(hd$NCHAN)){
+    ant_name[i] <- ""
     seek(dsn, where = 98 + MINHEADSIZE * (i - 1), origin = "start")
-    ant_name[i] <- suppressWarnings(readChar(dsn, nchars = 14, useBytes = FALSE))
+    tst <- suppressWarnings(readChar(dsn, nchars = 14, useBytes = FALSE))
+    if(length(tst) > 0 ) ant_name[i] <- tst
   }
   # hd$ANT <- readChar(dsn, nchars = 14, useBytes = TRUE)
   hd$ANT <- ant_name
@@ -332,7 +334,7 @@ readDZT <- function(dsn){
 # mrk <- readDZG(dsn)
 
 #' @export
-readDZG <- function(dsn){
+readDZG <- function(dsn, toUTM = FALSE){
   x <- scan(dsn, what = character(), sep = "\n", quiet = TRUE)
   
   test_gssis <- grepl("(\\$GSSIS)", x, ignore.case = TRUE, useBytes = TRUE )
@@ -385,13 +387,24 @@ readDZG <- function(dsn){
   
   xyzt <- .getLatLonFromGPGGA(gpgga)
   
+  xyzt_crs <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+  if(toUTM == TRUE){
+    topoUTM <-  llToUTM(lat = xyzt[,2], 
+                        lon = xyzt[,1], 
+                        zone = NULL, 
+                        south = (gpgga$NS[1] == "S"),
+                        west  = (gpgga$EW[1] == "W"))
+    xyzt[, 1:2] <- topoUTM$xy
+    xyzt_crs <- topoUTM$crs
+  }
+
   # trace number start at 0!!
   mrk <- cbind(xyzt[ ,1:3], as.integer(gssis$trace) + 1,  xyzt[ ,4])
   # mrk <- as.matrix(mrk)
   names(mrk) <- c("x", "y", "z", "id", "time")
   
   .closeFileIfNot(dsn)
-  return(mrk)
+  return(list(mrk = mrk, crs = xyzt_crs))
 }
 
 #' Read GSSI's .dzx file

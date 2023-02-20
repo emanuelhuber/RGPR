@@ -7,5 +7,5 @@
 \S4method{clip}{GPR}(x, Amax = NULL, Amin = NULL, track = TRUE)
 }
 \description{
-Clip the amplitude
+This function clip the amplitude.
 }

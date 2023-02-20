@@ -398,7 +398,7 @@ plot.GPR <- function(x,
         testx <- abs(range(diff(xvalues))) > sqrt(.Machine$double.eps)
         testy <- abs(range(diff(yvalues))) > sqrt(.Machine$double.eps)
         # all not equal
-        if(testx || testy){
+        if(any(testx) || any(testy)){
           dots$rasterImage <- FALSE
         }else{
           dots$rasterImage <- TRUE

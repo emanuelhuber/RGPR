@@ -80,15 +80,27 @@ colorbar <- function(col, clim, zlim,
 #' Function to plot faster GPR data
 #' @param x [GPR]
 #' @param col Color palette
-#' @param colorbar [logical]
-#' @param interpolate [logical]
+#' @param colorbar [logical()]
+#' @param interpolate [logical(1)]
+#' @param xlab [charachter(1)]
 #' @export
-plotFast <- function(x, col = palGPR(), colorbar = TRUE, interpolate = TRUE){
+plotFast <- function(x, col = palGPR(), colorbar = TRUE, interpolate = TRUE,
+                     xlab = NULL, ylab = NULL){
   
   ## TODO
   ## give space on the right without using mar/mai!!!
-  xlab <- "position (m)"
-  ylab <- "depth (m)"
+  # xlab <- "position (m)"
+  # ylab <- "depth (m)"
+  if(is.null(ylab)){
+    if(grepl("[m]$", x@depthunit)){
+      ylab <- paste0("depth (",x@depthunit,")")
+    }else if(grepl("[s]$", x@depthunit)){
+      ylab <- paste0("two-way travel time (",x@depthunit,")")
+    }
+  }
+ if(is.null(xlab)){
+    xlab <- paste0("position (", x@depthunit, ")")
+  }
   xlim <- range(x@pos)
   ylim <- range(x@depth)
   cw_inch <- 4.1 # in

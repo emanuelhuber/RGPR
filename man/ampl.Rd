@@ -7,5 +7,5 @@
 \S4method{ampl}{GPR}(x, npad = 100, FUN = NULL, ...)
 }
 \description{
-Amplitude (deprecated)
+Do not use this function!!!
 }

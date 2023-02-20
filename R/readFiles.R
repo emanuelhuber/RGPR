@@ -70,6 +70,8 @@
 #' @param verbose (boolean). If \code{FALSE}, all messages and warnings are
 #'                suppressed (use with care).
 #' @param interp_pos logical: should the trace position be interpolated if possible? TRUE or FALSE
+#' @param toUTM logical: if \code{TRUE} project GPS coordinates (WGS84) to
+#'               the corresponding UTM coordinate reference system. 
 #' @param method A length-three character vector defining the interpolation
 #'               methods (same methods as in \code{signal::interp1}:
 #'               "linear", "nearest", "pchip", "cubic", and "spline"). 
@@ -520,12 +522,13 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
                            desc = desc, Vmax = Vmax, ch = ch), verbose = verbose)
     if( !is.null(dsn[["DZG"]]) && isTRUE(interp_pos)){
       x <- tryCatch({
-              x_mrk <-  verboseF(readDZG(dsn[["DZG"]]), verbose = verbose)
-              x <- interpPos(x, x_mrk, tol = sqrt(.Machine$double.eps), 
+              gps <-  verboseF(readDZG(dsn[["DZG"]], toUTM = toUTM), verbose = verbose)
+              x <- interpPos(x, gps$mrk, tol = sqrt(.Machine$double.eps), 
                              method = method)
-              if(toUTM == TRUE){
-                warning("Option 'toUTM' not yet implemented!")
-              }
+              crs(x) <- gps$crs
+              # if(toUTM == TRUE){
+              #   warning("Option 'toUTM' not yet implemented!")
+              # }
               x
             },
             error = function(cond) {

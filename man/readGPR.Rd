@@ -50,6 +50,9 @@ suppressed (use with care).}
 
 \item{interp_pos}{logical: should the trace position be interpolated if possible? TRUE or FALSE}
 
+\item{toUTM}{logical: if \code{TRUE} project GPS coordinates (WGS84) to
+the corresponding UTM coordinate reference system.}
+
 \item{method}{A length-three character vector defining the interpolation
 methods (same methods as in \code{signal::interp1}:
 "linear", "nearest", "pchip", "cubic", and "spline"). 

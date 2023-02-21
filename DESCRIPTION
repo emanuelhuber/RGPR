@@ -79,6 +79,7 @@ Collate:
   'gain.R'
   'gainSEC.R'
   'gainAGC.R'
+  'gainEnv.R'
   'filter2D.R'
   'conv.R'
   'deconv.R'

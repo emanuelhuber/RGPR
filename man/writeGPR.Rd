@@ -42,6 +42,7 @@ the file extension if missing.
 }
 \details{
 Modified slots
+
 \itemize{
   \item \code{rds}: Internal R format (useful if you aim to save your data
          for later processing in R).

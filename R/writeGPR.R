@@ -1,4 +1,4 @@
-`#' @name writeGPR
+#' @name writeGPR
 #' @rdname writeGPR
 #' @export
 setGeneric("writeGPR", function(x, fPath = NULL, 
@@ -166,4 +166,4 @@ setMethod("writeGPR", "GPRsurvey",
             } 
             invisible(return(x))
           }
-)`
+)

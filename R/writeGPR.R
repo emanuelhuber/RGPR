@@ -7,12 +7,14 @@ setGeneric("writeGPR", function(x, fPath = NULL,
 
 
 #----------------------- SAVE/EXPORT ------------------------#
+
 #' Write GPR data
 #' 
 #' Write GPR data to a specified file format (see Details). Add automatically
 #' the file extension if missing.
 #'
 #' Modified slots
+#' 
 #' \itemize{
 #'   \item \code{rds}: Internal R format (useful if you aim to save your data
 #'          for later processing in R).

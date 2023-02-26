@@ -75,7 +75,7 @@ setMethod("writeGPR", "GPR", function(x, fPath = NULL,
   if(isTRUE(overwrite)){
     if(testFile) message("File overwritten\n")
   }else if(testFile){
-    stop("File already exists. Cannot overwrite!\n")
+    stop("File already exists. Set 'overwrite = TRUE'\n")
   }
   x@filepath <- fPath
   x@data[is.na(x@data) | is.infinite(x@data)] <- 0

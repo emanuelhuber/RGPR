@@ -1,4 +1,4 @@
-#' @name writeGPR
+`#' @name writeGPR
 #' @rdname writeGPR
 #' @export
 setGeneric("writeGPR", function(x, fPath = NULL, 
@@ -51,7 +51,7 @@ setMethod("writeGPR", "GPR", function(x, fPath = NULL,
            "'type' must be one of the following: 'DT1', 'SGY', 'rds', 'ASCII', 'xta', 'xyzv'. ")
     }
   }
-  type <- match.arg(tolower(type), c("dt1", "sgy", "rds", "ascii", "xta", "xyza"))
+  type <- match.arg(tolower(type[1]), c("rds", "dt1", "sgy", "ascii", "xta", "xyza"))
   fPath <- ifelse(is.null(fPath), x@name, 
                   file.path(dirname(fPath), .fNameWExt(fPath)))
   ext <- switch(type,
@@ -113,6 +113,7 @@ setMethod("writeGPR", "GPR", function(x, fPath = NULL,
          
                  }
   )
+  message(paste0("File saved: ", fPath))
   #invisible(return(x))
 } 
 )
@@ -130,8 +131,9 @@ setMethod("writeGPR", "GPRsurvey",
               if(tolower(lst$format) %in% c("dt1", "rds", "ascii", "xta", "xyza")){
                 type <- lst$format
               }else{
-                stop("use 'type' in instead of format.\n",
-                     "'type' must be one of the following: 'DT1', 'rds', 'ASCII', 'xta', 'xyzv'. ")
+                type <- "rds"
+                # stop("use 'type' in instead of format.\n",
+                     # "'type' must be one of the following: 'DT1', 'rds', 'ASCII', 'xta', 'xyzv'. ")
               }
             }
             #    function(x,fPath, format=c("DT1","rds"), overwrite=FALSE){
@@ -162,4 +164,4 @@ setMethod("writeGPR", "GPRsurvey",
             } 
             invisible(return(x))
           }
-)
+)`

@@ -667,7 +667,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
                hd =  x[['hd']]                   # header
       )
       y@filepath <- fPath
-      x <- y
+      return(y)
     }
   }else{
     stop(paste0("File extension not recognised!\n",
@@ -677,10 +677,12 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
   }
   if(grepl("CMP", x@surveymode)){
     x@surveymode <- "CMP"
-    if(length(x@rec) == 0 || length(x@trans) == 0){
-      x@antsep <- seq(x@antsep, by = x@dx, length.out = length(x))
-    }else{
-      x@antsep <- sqrt(colSums((x@rec - x@trans)^2))
+    if(length(x@antsep) == 1){
+      if(length(x@rec) == 0 || length(x@trans) == 0){
+        x@antsep <- seq(x@antsep, by = x@dx, length.out = length(x))
+      }else{
+        x@antsep <- sqrt(colSums((x@rec - x@trans)^2))
+      }
     }
   }
   if(any(is.na(x@data))){

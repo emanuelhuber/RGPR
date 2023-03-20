@@ -82,10 +82,11 @@ colorbar <- function(col, clim, zlim,
 #' @param col Color palette
 #' @param colorbar [logical()]
 #' @param interpolate [logical(1)]
-#' @param xlab [charachter(1)]
+#' @param xlab [charahter(1)]
+#' @param sym [logical(1)] if \code{TRUE} the colorbar is symmetric
 #' @export
 plotFast <- function(x, col = palGPR(), colorbar = TRUE, interpolate = TRUE,
-                     xlab = NULL, ylab = NULL){
+                     xlab = NULL, ylab = NULL, sym = TRUE){
   
   ## TODO
   ## give space on the right without using mar/mai!!!
@@ -122,7 +123,7 @@ plotFast <- function(x, col = palGPR(), colorbar = TRUE, interpolate = TRUE,
        xaxt = "n", yaxt = "n", xlim = xlim, ylim = ylim, 
        xlab = xlab, ylab = ylab, bty = "n",
        mgp = c(2, 0.5, 0))
-  rasterImage(palCol(x@data, col = col), 
+  rasterImage(palCol(x@data, col = col, sym = sym), 
               xleft = min(x@pos), 
               xright = max(x@pos), 
               ytop = max(x@depth),
@@ -138,8 +139,13 @@ plotFast <- function(x, col = palGPR(), colorbar = TRUE, interpolate = TRUE,
   axis(2, tck = 0.01, mgp = c(2, 0.5, 0))
   box()
   if(isTRUE(colorbar)){
+    if(isTRUE(sym)){
+      clim <- max(abs(x), na.rm = TRUE) * c(-1, 1)
+    }else{
+      clim <- range(x, na.rm = TRUE)
+    }
     dim(col) <- c(length(col), 1)
-    colorbar(col = col, clim = range(x, na.rm = TRUE), zlim = ylim, clab = "mV", clabpar = list(top = 0.05, adj = 0.5))
+    colorbar(col = col, clim = clim, zlim = ylim, clab = "mV", clabpar = list(top = 0.05, adj = 0.5))
   }
 }
 

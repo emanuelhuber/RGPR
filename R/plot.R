@@ -337,7 +337,7 @@ plot.GPR <- function(x,
         asp <- 1
       }else{
         asp <- dots$asp
-        dots$asp <- 1
+        # dots$asp <- 1
       }
       
       if(grepl("[m]$", x@depthunit)){

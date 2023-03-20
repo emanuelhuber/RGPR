@@ -10,7 +10,8 @@ plotFast(
   colorbar = TRUE,
   interpolate = TRUE,
   xlab = NULL,
-  ylab = NULL
+  ylab = NULL,
+  sym = TRUE
 )
 }
 \arguments{
@@ -22,7 +23,9 @@ plotFast(
 
 \item{interpolate}{[logical(1)]}
 
-\item{xlab}{[charachter(1)]}
+\item{xlab}{[charahter(1)]}
+
+\item{sym}{[logical(1)] if \code{TRUE} the colorbar is symmetric}
 }
 \description{
 Function to plot faster GPR data

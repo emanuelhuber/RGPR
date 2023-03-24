@@ -99,7 +99,7 @@ checkVelIntegrity <- function(x, value){
         }
       }
       if(!is.null(value[["smooth"]])){
-        if(!is.logical(value[["smooth"]]) || length(value[["smooth"]]) != 1 ){
+        if(!is.numeric(value[["smooth"]]) || length(value[["smooth"]]) != 1 ){
           stop("'smooth' must be a logical and have length one")
         }
       }

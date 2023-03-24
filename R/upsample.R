@@ -77,6 +77,8 @@ setMethod("upsample", "GPR", function(x,n){
     newAnn[newAnnPos*n[2]] <- x@ann[newAnnPos]
     x@ann <- newAnn[1:ntr]
   }
+  x@time0 <- .doubleVector(x@time0, n = n[2])
+  x@time <- .doubleVector(x@time, n = n[2])
   # trace positions
   x@pos <- xvalues
   # depth/time

@@ -10,7 +10,6 @@
   addTopo = FALSE,
   clip = NULL,
   normalize = NULL,
-  nupspl = NULL,
   type = "raster",
   ...
 )

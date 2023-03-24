@@ -144,6 +144,7 @@ Collate:
   'spOBB.R'
   'spBuffer.R'
   'interpolateTimeToDepth.R'
+  'inspect.R'
 Imports:
     methods,
     graphics,

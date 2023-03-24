@@ -28,14 +28,14 @@ velAsGPR <- function(x, type = c("vrms", "vint")){
   x@mode <- "velModel"
   x@antsep <- 0
   x@vel <- list()
-  x@x <- numeric()
+  x@x <- 0
   x@data[] <- x_vel
   
   x@dunit <- paste0(x@xunit, "/", x@zunit)
   x@xlab <- "position" 
   x@dlab <- "velocity"
   x@name <- "Velocity"
-  x@z0 <- numeric()
+  x@z0 <- x@z0
   # x_tv@time0 <- 0
   #proc(x) <- getArgs()
   return(x)

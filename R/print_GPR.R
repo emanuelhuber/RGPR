@@ -35,13 +35,7 @@
   }
   x_crs <- ifelse(is.na(x@crs), "-", x@crs)
   toprint[13] <- paste0("CRS:            ", x_crs)
-  # if(length(x@path) > 0) toprint[3] <- paste0("filepath:     ", x@path)
-  #                                               "name:           "
-  # if(nbfid > 0)          toprint[5] <- paste0(nbfid, " markers(s)")
-  # toprint[8] <- paste0("survey mode: ", x@mode, "; ",
-  #                      "line length: ", diff(range(x@x)), " ", x@xunit, "; ",
-  #                      "window length = ", diff(range(x@z)), " ", x@zunit, "; ",
-  #                      "frequency: ", x@freq, " MHz;")
+
   i <- 0
   if(length(x@proc)>0){
     toprint[14] <- "> PROCESSING"

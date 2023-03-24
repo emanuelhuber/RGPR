@@ -288,7 +288,8 @@ antSepFromAntFreq <- function(antfreq, verbose = TRUE){
   return(antsep)
 }
 
-
+# return values of x and y that lies in the polygon defined by the
+# vertices 'vertx' and 'verty'
 inPoly <- function(x, y, vertx, verty){
   inPo <- rep(0L, length(x))
   nvert <- length(vertx)
@@ -302,3 +303,29 @@ inPoly <- function(x, y, vertx, verty){
   return(inPo)
 }
 
+
+
+
+
+#' set default values to the element list.
+#' @export
+setDefaultListValues <- function(x, xdefault){
+  if(is.null(x) || isFALSE(x)){
+    x <- NULL
+  }else if(isTRUE(x)){
+    x <- xdefault
+  }else{
+    x <- setDots(x, xdefault)
+  }
+  return(x)
+}
+
+#' set default values
+#' @export
+setDots <- function(dots, defaults){
+  sapply(names(defaults), .setDots, dots, defaults, simplify = FALSE)
+}
+.setDots <- function(n, dot, def){
+  if(!is.null(dot[[n]])) def[[n]] <- dot[[n]]
+  return(def[[n]])
+}

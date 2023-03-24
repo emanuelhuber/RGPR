@@ -71,7 +71,7 @@ setMethod("shiftToTime0", "GPR", function(x,
   
   # ts <- -x@z0 
   if(any(x@z0 != 0)){
-    x <- .traceShift(x, ts = x@z0, method = method, crop = crop)
+    x <- .traceShift(x, z = x@z0, method = method, crop = crop)
     x@z0 <- rep(0, ncol(x@data))
     if(isTRUE(track)) proc(x) <- getArgs()
     return(x)

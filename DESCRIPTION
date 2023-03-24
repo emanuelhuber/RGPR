@@ -130,6 +130,7 @@ Collate:
 	'z_units.R'
 	'z_messages.R'
 	'getArgs.R'
+	'z_graphics.R'
 Imports:
     methods,
     graphics,
@@ -156,6 +157,6 @@ Imports:
     checkmate,
     units,
     adimpro
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Suggests: 
     testthat (>= 2.1.0)

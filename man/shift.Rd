@@ -7,27 +7,27 @@
 \usage{
 shift(
   x,
-  ts,
+  z,
   method = c("pchip", "linear", "nearest", "spline", "cubic", "none"),
-  crop = TRUE,
+  crop = FALSE,
   track = TRUE
 )
 
 \S4method{shift}{GPR}(
   x,
-  ts,
+  z,
   method = c("pchip", "linear", "nearest", "spline", "cubic", "none"),
-  crop = TRUE,
+  crop = FALSE,
   track = TRUE
 )
 }
 \arguments{
 \item{x}{[\code{GPR class}] An object of the class \code{GPR}}
 
-\item{ts}{[\code{numeric}] Amount of time (or depth, depending on the
+\item{z}{[\code{numeric}] Amount of time (or depth, depending on the
 trace unit) to shift the traces. 
-\code{ts} is eiter a single value (all the traces are shifted by 
-the same amount \code{ts}) or a vector with \eqn{m} elements 
+\code{z} is eiter a single value (all the traces are shifted by 
+the same amount \code{z}) or a vector with \eqn{m} elements 
 (\eqn{m} is equal to the number of traces).}
 
 \item{method}{[\code{character(1)}] Interpolation method to be applied:
@@ -35,7 +35,7 @@ one of \code{pchip}, \code{linear}, \code{nearest},
 \code{spline}, \code{cubic}, \code{none} 
 (see also \code{\link[signal]{interp1}}). 
  \code{"none"} means that the trace is shifted by the
-amount of trace samples the closest to \code{ts} without
+amount of trace samples the closest to \code{z} without
 interpolation.}
 
 \item{crop}{[\code{logical(1)}] 

@@ -65,14 +65,12 @@ setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, zmax = NULL,
     test <- !is.na(z)
     x <- x[test,]
     if(is.null(dz)){
-      x@dz <-  x@dz * x_vel/ 2
-    }else{
-      x@dz <- dz
+      dz <- min(x_vel) * min(diff(x@z))/2
     }
     if(is.null(zmax)){
       zmax <- max(z, 1, na.rm = TRUE)
     }
-    x@z <- seq(from = 0, to = zmax, by = x@dz)
+    x@z <- seq(from = 0, to = zmax, by = dz)
     funInterp321 <- function(x, z, zreg, method){
       signal::interp1(x = z, y = x, xi = zreg, 
                       method = method, extrap = TRUE)

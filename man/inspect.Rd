@@ -2,11 +2,22 @@
 % Please edit documentation in R/inspect.R
 \name{inspect}
 \alias{inspect}
+\alias{getAmplFromCoords}
 \title{Inspect GPR data plot}
 \usage{
 \S4method{inspect}{GPR}(x, ...)
+
+getAmplFromCoords(x, coords)
+}
+\arguments{
+\item{x}{[\code{class GPR}]}
+
+\item{coords}{[\code{matrix(n,2)}] \code{n} rows containing the plot coordinates
+(x and two-way travel time or depth)}
 }
 \description{
 Reads the position of the graphics cursor when the (first) mouse button is 
 pressed and return position as well as amplitude.
+
+Return the amplitude of the points defined by plot coordinates
 }

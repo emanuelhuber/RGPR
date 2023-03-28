@@ -6,6 +6,7 @@
 \alias{isCRSGeographic,integer-method}
 \alias{isCRSGeographic,character-method}
 \alias{isCRSGeographic,GPR-method}
+\alias{isCRSGeographic,GPRsurvey-method}
 \title{Check wether the Coordinate Reference Systems is lon/lat}
 \usage{
 isCRSGeographic(x)
@@ -17,6 +18,8 @@ isCRSGeographic(x)
 \S4method{isCRSGeographic}{character}(x)
 
 \S4method{isCRSGeographic}{GPR}(x)
+
+\S4method{isCRSGeographic}{GPRsurvey}(x)
 }
 \arguments{
 \item{x}{[\code{character}] CRS (one or more)}

@@ -52,7 +52,10 @@ setMethod("spunit", "GPRsurvey", function(x){
 #' @export
 setReplaceMethod("spunit", signature="GPRsurvey", function(x, value){
   if(is.na(x@crs)){
-    x@spunit <- .checkUnit(value)
+    if(length(value) > 1) warning("You set more than one 'spunit' value! ",
+                                  "I can only accept one!\n",
+                                  "I take the first one!")
+    x@spunit <- .checkUnit(value[1])
   }else{
     warning("Cannot change the spatial unit because it depends on the CRS. ",
             "Either update the CRS with 'crs(x) <- ...' or ",
@@ -61,14 +64,14 @@ setReplaceMethod("spunit", signature="GPRsurvey", function(x, value){
   return(x)
 })
 
-# used in GPRsurvey.R
-.checkSpunitsurvey <- function(x){
-  sp_unit  <- unique(x[x != ""])
-  if(length(sp_unit) == 1){
-    return( .checkUnit(rep(sp_unit, length(x))) )
-  }else if(length(sp_unit) == 0){
-    return(x)
-  }else{
-    return( .checkUnit(x) )
-  }
-}
+# # used in GPRsurvey.R
+# .checkSpunitsurvey <- function(x){
+#   sp_unit  <- unique(x[x != ""])
+#   if(length(sp_unit) == 1){
+#     return( .checkUnit(rep(sp_unit, length(x))) )
+#   }else if(length(sp_unit) == 0){
+#     return(x)
+#   }else{
+#     return( .checkUnit(x) )
+#   }
+# }

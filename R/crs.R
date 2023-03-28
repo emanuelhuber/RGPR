@@ -36,13 +36,18 @@ setGeneric("crs<-",function(x,value){standardGeneric("crs<-")})
 #' @rdname crs   
 #' @export
 setMethod("crs", "GPR", function(x){
-  return(x@crs)
+  if(!is.null(a <- sf::st_crs(x@crs)$epsg)){
+    u <- paste0("EPSG:", a)
+    names(u) <- sf::st_crs(x@crs)$Name
+    return(u)
+  }else{
+    return(sf::st_crs(x@crs))
+  }
 })
 
 #' @rdname crs
 #' @export
 setReplaceMethod("crs", signature="GPR", function(x, value){
-    # value <- as.character(value)[1]
     x@crs    <- .checkCRS(value)
     x@spunit <- crsUnit(x@crs)
     x@proc   <- c(x@proc, "crs<-")
@@ -54,7 +59,13 @@ setReplaceMethod("crs", signature="GPR", function(x, value){
 #' @rdname crs   
 #' @export
 setMethod("crs", "GPRsurvey", function(x){
-  return(x@crs)
+  if(!is.null(a <- sf::st_crs(x@crs)$epsg)){
+    u <- paste0("EPSG:", a)
+    names(u) <- sf::st_crs(x@crs)$Name
+    return(u)
+  }else{
+    return(sf::st_crs(x@crs))
+  }
 })
 
 
@@ -65,12 +76,13 @@ setReplaceMethod("crs", signature="GPRsurvey", function(x, value){
   
   #------------------- check arguments
   msg <- checkArgInit()
-  msg <- checkArg(value,  msg, "LENGTH", c(1, length(x@names)))
+  # msg <- checkArg(value,  msg, "LENGTH", c(1, length(x@names)))
+  msg <- checkArg(value,  msg, "LENGTH", 1)
   checkArgStop(msg)
   #------------------- end check
   
   # x@crs <- sapply(value, .checkCRS, USE.NAMES = FALSE)
-  x@crs <- .checkCRSsurvey(value)
+  x@crs <- .checkCRS(value)
   x@spunit <- crsUnit(x@crs)
   return(x)
 })
@@ -91,17 +103,17 @@ setReplaceMethod("crs", signature="GPRsurvey", function(x, value){
   return( sp::CRS(x@crs[1]) )
 }
 
-.checkCRSsurvey <- function(x){
-  x_crs <- sapply(x, .checkCRS, USE.NAMES = FALSE)
-  ucrs <- unique(x_crs[!is.na(x_crs)])
-  if(length(ucrs) == 1){
-    return( ucrs )
-  }else if(length(ucrs) == 0){
-    return(NA_character_)
-  }else{
-    return( x_crs )
-  }
-}
+# .checkCRSsurvey <- function(x){
+#   x_crs <- sapply(x, .checkCRS, USE.NAMES = FALSE)
+#   ucrs <- unique(x_crs[!is.na(x_crs)])
+#   if(length(ucrs) == 1){
+#     return( ucrs )
+#   }else if(length(ucrs) == 0){
+#     return(NA_character_)
+#   }else{
+#     return( x_crs )
+#   }
+# }
 
 
 #' Check if the CRS is valid

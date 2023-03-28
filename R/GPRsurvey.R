@@ -21,7 +21,7 @@ GPRsurvey <- function(x, verbose = TRUE, ...){
   line_freq     <- numeric(n)
   line_antsep   <- numeric(n)
   line_lengths  <- numeric(n)
-  line_spunits  <- character(n)
+  line_spunit  <- character(n)
   line_crs      <- character(n)
   line_nz       <- integer(n)
   line_zlengths <- numeric(n)
@@ -75,7 +75,7 @@ GPRsurvey <- function(x, verbose = TRUE, ...){
     }else{
       line_antsep[i]       <- gpr@antsep
     }
-    line_spunits[i]        <- gpr@spunit
+    line_spunit[i]        <- gpr@spunit
     line_zunits[i]         <- gpr@zunit  
     line_crs[i]            <- ifelse(length(gpr@crs) > 0, 
                                      gpr@crs[1], 
@@ -94,24 +94,29 @@ GPRsurvey <- function(x, verbose = TRUE, ...){
     # line_markers[[line_names[i] ]] <- trimStr(gpr@markers)
     line_markers[[i]]      <- trimStr(gpr@markers)
   }
-  line_spunits <- .checkSpunitsurvey(line_spunits)
-  line_crs <- .checkCRSsurvey(line_crs)
-  if(isTRUE(verbose)){
-    if( length(unique(line_spunits)) > 1 ){
-      warning("Position units are not identical: \n",
-              "check 'spunit(x)")
-    }
-    if(length(unique(line_zunits)) > 1){
-      warning("Depth units are not identical: \n",
-              "check 'zunit(x)'")
-    }
-    # ucrs <- unique(line_crs[!is.na(line_crs)])
-    # print(line_crs)
-    if(length(line_crs) > 1){
-      warning("Not all the coordinate reference systems are identical:\n",
-              "check 'crs(x)'")
-    }
-  }
+  # line_crs <- .checkCRSsurvey(line_crs)
+  
+
+  line_crs <- .checkCRS(line_crs[!is.na(line_crs)][1])
+  # line_spunit <- .checkUnit(line_spunit[line_spunit != ""][1])
+  line_spunit <- crsUnit(line_crs)
+  
+  # if(isTRUE(verbose)){
+  #   # if( length(unique(line_spunit)) > 1 ){
+  #   #   warning("Position units are not identical: \n",
+  #   #           "check 'spunit(x)")
+  #   # }
+  #   if(length(unique(line_zunits)) > 1){
+  #     warning("Depth units are not identical: \n",
+  #             "check 'zunit(x)'")
+  #   }
+  #   # ucrs <- unique(line_crs[!is.na(line_crs)])
+  #   # print(line_crs)
+  #   if(length(line_crs) > 1){
+  #     warning("Not all the coordinate reference systems are identical:\n",
+  #             "check 'crs(x)'")
+  #   }
+  # }
   x <- new("GPRsurvey",
            version       = "0.3",        # version of the class
            # paths         = LINES,        # filepath of the GPR data
@@ -125,7 +130,7 @@ GPRsurvey <- function(x, verbose = TRUE, ...){
            freqs         = line_freq,    # frequencies of the GPR profiles
            antseps       = line_antsep,    # antenna separation of the GPR profiles
            
-           spunit        = line_spunits,  # position units  !!!length = 1!!!
+           spunit        = line_spunit,  # position units  !!!length = 1!!!
            crs           = line_crs,  # coordinates reference system
            #coordref      = "numeric",   # reference position
            coords        = xyzCoords,       # (x,y,z) coordinates for each profiles
@@ -147,7 +152,7 @@ GPRsurvey <- function(x, verbose = TRUE, ...){
            # surveymodes   = line_surveymodes,    # length = [n]
            # dates         = line_dates,      # length = [n]
            # antseps       = line_antsep,      # length = [n]
-           # posunits      = line_spunits,    # length = 1
+           # posunits      = line_spunit,    # length = 1
            # crs           = line_crs,      # length = 1
            # coords        = xyzCoords,    # header
            # fids          = line_markers,

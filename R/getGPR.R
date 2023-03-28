@@ -92,6 +92,11 @@ setMethod("getGPR", "GPRsurvey", function(x, id, verbose = FALSE){
   }else{
     gpr@crs <- x@crs[id]
   }
+  
+  gpr@spunit <- x@spunit
+  gpr@zunit <- x@zunits[x@zunits != ""][1]
+  gpr@xunit <- x@spunit
+  # what about gpr@xunit ??
   # if(length(x@coordref)>0){
   #   gpr@coordref <- x@coordref
   # }

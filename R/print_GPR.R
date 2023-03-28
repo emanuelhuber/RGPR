@@ -33,7 +33,16 @@
     toprint[12] <- paste0("clipped values: -")
     
   }
-  x_crs <- ifelse(is.na(x@crs), "-", x@crs)
+  if(is.na(x@crs)){
+    x_crs <- "-"
+  }else{
+    if(!is.null(a <- sf::st_crs(x@crs)$epsg)){
+      x_crs <- paste0(sf::st_crs(x@crs)$Name, " (EPSG:", a, ")")
+    }else{
+      x_crs <- x@crs
+    }
+  }
+  # x_crs <- ifelse(is.na(x@crs), "-", x@crs)
   toprint[13] <- paste0("CRS:            ", x_crs)
 
   i <- 0

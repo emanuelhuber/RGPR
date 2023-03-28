@@ -37,7 +37,16 @@ print.GPRsurvey <- function(x, ...){
     cat("- - - - - - - - - - - - - - -\n")
     if(length(x@crs) > 0 ){
       if(length(unique(x@crs)) == 1){
-        cat("Coordinate system: ", x@crs, "\n")
+        if(is.na(x@crs)){
+          x_crs <- "-"
+        }else{
+          if(!is.null(a <- sf::st_crs(x@crs)$epsg)){
+            x_crs <- paste0(sf::st_crs(x@crs)$Name, " (EPSG:", a, ")")
+          }else{
+            x_crs <- x@crs
+          }
+        }
+        cat("Coordinate system: ", x_crs, "\n")
       }else{
         cat("Coordinate systems: ", paste0(x@crs, collapse = " "), "\n")
       }

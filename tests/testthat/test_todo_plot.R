@@ -1,8 +1,67 @@
 # 
 # 
+library(RGPR)
+dsn0 <- c("/mnt/data/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/daniel2/LINE06.HD",
+          "/mnt/data/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/daniel2/LINE06.DT1",
+          "/mnt/data/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/daniel2/LINE06.GPS")
+
+
+zgps <- readGPS(dsn0[3])
+
+x <- readGPR(dsn0)
+
+
+
+plot(x)
+plot(x)
+plot(x[, 1])
+plot(x[1,])
+plot(x[, 1])
+
+plot(x, xlab = "lkj")
+plot(x, ylim = c(0, 150))
+plot(x, xlab = "lkj", ylim = c(0, 150))
+plot(x, xlab = "lkj", xlim = c(0, 50))
+plot(x, xlab = "lkj", ylim = c(0, 150))
+plot(x, xlab = "lkj", ylim = c(0, 150))
+plot(x, xlab = "lkj", xlim = c(100, 156))
+plot(x, xlab = "lkj", add = TRUE)
+plot(x, xlab = "lkj", xlim = c(70, 156))
+
+plot(x, xlab = "lkj", ylim = c(20, 356), cbar = NULL)
+plot(x, xlab = "lkj", ylim = c(20, 356), cbar = FALSE)
+plot(x, xlab = "lkj", ylim = c(20, 356), cbar = TRUE)
+plot(x, xlab = "lkj", ylim = c(20, 356), asp = 1)
+plot(x, xlab = "lkj", ylim = c(10, 56), asp = 2)
+plot(x, xlab = "lkj", ylim = c(10, 56), asp = 0.5)
+plot(x, xlab = "lkj", asp = NA)
+plot(x, xlab = "lkj", asp = 0.5)
+plot(x, xlab = "lkj", asp = 2)
+plot(x, xlab = "lkj", asp = 1)
+plot(x, xlab = "lkj", secaxis = FALSE)
+plot(x, xlab = "lkj", secaxis = TRUE)
+plot(x, xlab = "lkj", secaxis = TRUE, ylim = c(30, 150))
+plot(x, xlab = "lkj", secaxis = TRUE, ylim = c(30, 100))
+plot(x, xlab = "lkj", ylim = c(-120, 256))
+plot(x, xlab = "lkj", ylim = c(0, 256), z0 = FALSE)
+plot(x, xlab = "lkj", ylim = c(0, 256), z0 = TRUE)
+plot(x, xlab = "lkj", ylim = c(0, 256), z0 = list(lwd = 4, col = "firebrick"))
+plot(x, xlab = "lkj", ylim = c(-120, 256), markers = FALSE)
+plot(x, xlab = "lkj", ylim = c(-120, 256), markers = list(bgSymbols = "blue"))
+
+plot(x, type = "wiggles", xlim = c(0, 26))
+
+z <- convertTimeToDepth(x)
+
+plot(z)
+plot(z, secaxis = FALSE)
+plot(z, secaxis = TRUE, elev = TRUE)
+
+
 # LINES <- file.path("/mnt/data/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2011_10_10_flagogna",
-#                    paste0("XLINE", sprintf("%03d", 0:5), ".DT1"))
+#                     paste0("XLINE", sprintf("%03d", 0:5), ".DT1"))
 # 
+
 # z <- GPRsurvey(LINES, verbose = FALSE)
 # 
 # 

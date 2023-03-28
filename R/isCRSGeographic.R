@@ -34,6 +34,12 @@ setMethod("isCRSGeographic", "GPR", function(x){
   .isCRSGeographic(x@crs)
 })
 
+#' @rdname isCRSGeographic   
+#' @export
+setMethod("isCRSGeographic", "GPRsurvey", function(x){
+  .isCRSGeographic(x@crs)
+})
+
 .isCRSGeographic <- function(CRSobj){
   if(length(CRSobj) == 1){
     CRSobj <- tryCatch(sf::st_crs(CRSobj),

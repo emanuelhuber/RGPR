@@ -62,7 +62,7 @@ pasteArgs <- function(eval_arg, arg){
   arg <- deparse((arg))
   # print(deparse(eval_arg))
   # print(class(eval_arg))
-  if(class(eval_arg) == "function" || class(eval_arg) == "standardGeneric"){
+  if(inherits(eval_arg, "function") || inherits(eval_arg, "standardGeneric")){
     return(arg)
   }else if(is.list(eval_arg)){
     return( paste0(names(eval_arg), "<-", (eval_arg), collapse = "," ) )
@@ -92,7 +92,7 @@ addArg <- function(proc, arg){
 
 # return a character vector containing the name of the FUN function
 getFunName <- function(FUN){
-  if(class(FUN) == "function"){
+  if(inherits(FUN, "function")){
     funName <- "FUN"
   }else{
     #  if(isGeneric("FUN")){

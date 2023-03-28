@@ -308,6 +308,11 @@ inPoly <- function(x, y, vertx, verty){
 
 
 #' set default values to the element list.
+#' 
+#' Set default values to elements of a list.
+#' 
+#' @param x [\code{list}] A list.
+#' @param xdefault [\code{list}] The list with default values.
 #' @export
 setDefaultListValues <- function(x, xdefault){
   if(is.null(x) || isFALSE(x)){
@@ -321,6 +326,10 @@ setDefaultListValues <- function(x, xdefault){
 }
 
 #' set default values
+#' 
+#' Set default values to missing elements of a list.
+#' @param dots [\code{list}] A list.
+#' @param defaults [\code{list}] The list with default values.
 #' @export
 setDots <- function(dots, defaults){
   sapply(names(defaults), .setDots, dots, defaults, simplify = FALSE)

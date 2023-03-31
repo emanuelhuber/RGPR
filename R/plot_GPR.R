@@ -145,7 +145,7 @@ plot.GPR <- function(x,
                                    bgSymbols = "yellow", 
                                    cexSymbols = 1,
                                    lineText = 0.9, cexText = 0.6, colText = "red"),
-                    ann = list(lineText = 1.7, colLine = "red", colText = "red", cexText = 0.9, lwd = 1),
+                    ann = list(lineText = 1., colLine = "red", colText = "red", cexText = 0.75, lwd = 1),
                     z0 = list(lwd = 1, col = "green", lty = 1),
                     cbar = list(w = 1,
                                 pos = 1,
@@ -212,6 +212,7 @@ plot.GPR <- function(x,
            fac = fac,
            wiggles = wiggles,
            markers = markers,
+           ann = ann,
            z0 = z0,
            cbar = cbar,
            ...)
@@ -382,6 +383,7 @@ plot.GPR <- function(x,
                                   bgSymbols = "yellow", 
                                   cexSymbols = 1,
                                   lineText = 0.9, cexText = 0.6),
+                   ann = list(lineText = 1.7, colLine = "red", colText = "red", cexText = 0.9, lwd = 1),
                    z0 = list(lwd = 1, col = "green", lty = 1),
                    cbar = list(w = 1,
                                pos = 1,
@@ -408,7 +410,8 @@ plot.GPR <- function(x,
                    xlim = range(x@x),
                    ylim = range(x@z),
                    main = x@name,
-                   note = x@path
+                   note = x@path,
+                   mpg = c(2, 1, 0)  #c(2, 0.5, 0)
   )
   cbardefaults <- list(w = 1, pos = 1, hst = 0.5, fticks = 0.5, vclab = 0.5, clab = NULL)
   z0defaults <- list(lwd = 1, col = "green", lty = 1)
@@ -487,7 +490,7 @@ plot.GPR <- function(x,
          xaxt = "n", yaxt = "n", xlim = defaults$xlim, 
          ylim = ifelse(c(elev, elev), defaults$ylim, rev(defaults$ylim)), 
          xlab = defaults$xlab, ylab = defaults$ylab, bty = "n",
-         mgp = c(2, 0.5, 0), asp = asp)
+         mgp = defaults$mpg, asp = asp)
   }
   if(type == "raster"){
     rasterImage(palCol(x@data, col = col, sym = sym), 
@@ -504,7 +507,7 @@ plot.GPR <- function(x,
                  lwd = wiggles[["lwd"]], ylim = defaults$ylim)
   }
   
-  title(x@name)
+  title(x@name,  line = 2)
   if(length(x@path) > 0){
     mtext(x@path, side = 1, line = 3.5, adj = 0.5, cex = 0.65)
   }

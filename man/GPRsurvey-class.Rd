@@ -65,8 +65,7 @@ e.g., \code{Sys.Date()}).}
 
 \item{\code{spunit}}{[\code{character(1)}] Spatial units.}
 
-\item{\code{crs}}{[\code{character(1)}] Coordinate reference system following the 
-R notation of proj4string from the PROJ.4 library.}
+\item{\code{crs}}{[\code{character(1)}] Coordinate reference system in wkt format (sf package)}
 
 \item{\code{coords}}{[\code{list(k)}] GPR data coordinates}
 

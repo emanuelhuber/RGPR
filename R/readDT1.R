@@ -309,9 +309,8 @@ readHD <- function(dsn){
 #' @param dsn [\code{character(1)|connection object}] data source name: 
 #'             either the filepath to the GPR data (character),
 #'            or an open file connection.
-#' @param returnSf [\code{logical(1)}] If \code{TRUE} returns an object of class
-#'              \code{sf} (see \code{\link{sf}{sf}}). If \code{FALSE} returns
-#'              a \code{data.frame}.
+#' @param toUTM [\code{logical(1)}] If \code{TRUE} project coordinates to 
+#'              the corresponding UTM zone. 
 #' @return [\code{sf|data.frame|NULL}] Either an object of class
 #'         \code{sf} or a \code{data.frame} or \code{NULL} if no
 #'         coordinates could be extracted.
@@ -319,35 +318,68 @@ readHD <- function(dsn){
 #' @name readGPS
 #' @rdname readGPS
 #' @export
-readGPS <- function(dsn, returnSf = TRUE){
+readGPS <- function(dsn, toUTM = TRUE){
   X <- .readGPS(dsn)
   if(length(X$tr_id) == 0) return(NULL)
-  xyzt <- .getLonLatFromGPGGA(X$gpgga)
+  if(X$type == "GNGGA"){
+    xyzt <- .getLonLatFromGNGGA(X$gpgga)
+  }else if(X$type == "GPGGA"){
+    xyzt <- .getLonLatFromGPGGA(X$gpgga)
+  }
+  xyzt_crs <- 4326
+  if(isTRUE(toUTM)){
+    topoUTM <-  lonlatToUTM(lat = xyzt[,2], 
+                        lon = xyzt[,1], 
+                        zone = NULL, 
+                        south = (X[[tolower(X$type)]]$NS[1] == "S"),
+                        west  = (X[[tolower(X$type)]]$EW[1] == "W"))
+    xyzt[, 1:2] <- topoUTM$xy
+    xyzt_crs <- topoUTM$crs
+  }
+  # xyzt <- .getLonLatFromGPGGA(X$gpgga)
   mrk <- cbind(xyzt[ ,1:3], X$tr_id, X$tr_pos, xyzt[ ,4])
   names(mrk) <- c("x", "y", "z", "id", "pos", "time")
-  if(isTRUE(returnSf)){
+  # if(isTRUE(sf)){
     mrk <- sf::st_as_sf(x      = mrk,
                         coords = c("x", "y", "z"),
-                        crs    = 4326)
-  }
+                        crs    = xyzt_crs)
+  # }else{
+  #   mrk <- list(mrk = mrk, crs = xyzt_crs)
+  # }
   .closeFileIfNot(dsn)
   return(mrk)
 }
 
 .readGPS <- function(dsn){
-  # read file
   x <- scan(dsn, what = character(), sep = "\n", quiet = TRUE)
-  # find positions corresponding to trace markers
-  xtr <- which(grepl("Trace \\#[0-9]+", x,            # index of the marker rows
+  
+  # fac <- 1
+  test1 <- grepl("(\\$GPGGA)", x)
+  if(any(test1)){
+    type <- "GPGGA"
+  }else{
+    test2 <- grepl("(\\$GNGGA)", x)
+    if(any(test2)){
+      type <- "GNGGA"
+    }else{
+      stop("Problem - no GPGGA or GNGGA string. Please contact me\n",
+           "emanuel.huber@pm.me")
+    }
+  }
+  
+  xtr <- which(grepl("Trace \\#[0-9]+", x, 
                      ignore.case = TRUE, useBytes = TRUE ))
+  #if(length(xtr) != length(xgpgga)){}
   xgpgga <- integer(length(xtr) - 1)
   xtr <- c(xtr, nrow(x))
   todelete <- c()
   for(i in seq_along(xtr[-1])){
     for(j in (xtr[i] + 1):(xtr[i+1] - 1)){
-      test <- grepl("(\\$GPGGA)", x[j], ignore.case = TRUE, useBytes = TRUE )
+      
+      test <- grepl(paste0("(\\$", type, ")"), x[j], ignore.case = TRUE, useBytes = TRUE )
       if(isTRUE(test)){
         xgpgga[i] <- j
+        # message(xtr[i], " - ", j)
         break
       }
     }
@@ -355,40 +387,122 @@ readGPS <- function(dsn, returnSf = TRUE){
       todelete <- c(todelete, i)
     }
   }
+  
   if(length(todelete) > 0){
     xtr <- xtr[-todelete]
     xgpgga <- xgpgga[-todelete]
   }
+  
+  
   # trace number
+  # pat_tr <- "(\\#[0-9]+)"
+  # matches <- regexpr(pat_tr, x[xtr], perl=TRUE)
+  # first <- attr(matches, "capture.start") + 1
+  # last <- first + attr(matches, "capture.length") - 1
+  # tr_id <- as.integer(mapply(substring, x[xtr], first, last, 
+  #                            USE.NAMES = FALSE))
   tr_id <- as.integer(extractPattern(x[xtr], pattern = "(\\#[0-9]+)", 
                                      start = 1, stop = -1))
+  
   # trace position
+  # pat_tr <- "(position [0-9]*\\.?[0-9]*)"
+  # matches <- regexpr(pat_tr, x[xtr], perl=TRUE)
+  # first <- attr(matches, "capture.start") + 9
+  # last <- first + attr(matches, "capture.length")
+  # tr_pos <- as.numeric(mapply(substring, x[xtr], first, last, 
+  #                             USE.NAMES = FALSE))
   tr_pos <- as.numeric(extractPattern(x[xtr], 
                                       pattern = "(position [0-9]*\\.?[0-9]*)", 
                                       start = 9, stop = 0))
-  pat_gpgga <- paste0("\\$(?<ID>GPGGA),(?<UTC>[0-9.]+),(?<lat>[0-9.]+),",
+  
+  pat_gpgga <- paste0("\\$(?<ID>[A-Z]+GGA),(?<UTC>[0-9.]+),(?<lat>[0-9.]+),",
                       "(?<NS>[NS]),(?<lon>[0-9.]+),(?<EW>[EW]),(?<fix>[0-9]),",
                       "(?<NbSat>[0-9.]+),(?<HDOP>[0-9.]+),(?<H>[0-9.]+),",
                       "(?<mf>[MmFf]+)") 
   #,(?<HGeoid>[0-9.]+),(?<mf2>[mMfF+),",
-  # "(?<TDGPS>[0-9.]+),(?<DGPSID> [A-z0-9.]+)"  )
+  # "(?<TDGPS>[0-9.]+),(?<DGPSID> [A-z0-9.]+)"
+  # )
   
+  # matches <- regexpr(pat_gpgga, x[xgpgga], perl=TRUE)
+  # first <- attr(matches, "capture.start")
+  # last <- first + attr(matches, "capture.length") -1
+  # gpgga <- mapply(substring, x[xgpgga], first, last, USE.NAMES = FALSE)
   gpgga <- extractPattern(x[xgpgga], pattern = pat_gpgga, 
                           start = 0, stop = -1)
+  
   dim(gpgga) <- c(length(xgpgga), 11)
   gpgga <- as.data.frame(gpgga, stringsAsFactors = FALSE)
   colnames(gpgga) <- c("ID", "UTC", "lat", "NS", "lon", "EW", 
                        "fix", "NbSat", "HDOP", "H", "mf")
+  # gpgga$lat <- as.numeric(gpgga$lat) * fac
+  # gpgga$lon <- as.numeric(gpgga$lon) * fac
+  
   sel <- which(gpgga[,1] != "")
+  
   tr_id <- tr_id[sel]
   tr_pos <- tr_pos[sel]
   gpgga <- gpgga[sel,]
+  
   if(any(c(nrow(gpgga), length(tr_id)) != length(tr_pos))){
     stop("Problem - code 'qoiwelk'. Please contact me\n",
          "emanuel.huber@pm.me")
   }
   # .closeFileIfNot(dsn)
-  return(list(tr_id = tr_id, tr_pos = tr_pos, gpgga = gpgga))
+  return(list(tr_id = tr_id, tr_pos = tr_pos, gpgga = gpgga, type = type))
+  # # read file
+  # x <- scan(dsn, what = character(), sep = "\n", quiet = TRUE)
+  # # find positions corresponding to trace markers
+  # xtr <- which(grepl("Trace \\#[0-9]+", x,            # index of the marker rows
+  #                    ignore.case = TRUE, useBytes = TRUE ))
+  # xgpgga <- integer(length(xtr) - 1)
+  # xtr <- c(xtr, nrow(x))
+  # todelete <- c()
+  # for(i in seq_along(xtr[-1])){
+  #   for(j in (xtr[i] + 1):(xtr[i+1] - 1)){
+  #     test <- grepl("(\\$GPGGA)", x[j], ignore.case = TRUE, useBytes = TRUE )
+  #     if(isTRUE(test)){
+  #       xgpgga[i] <- j
+  #       break
+  #     }
+  #   }
+  #   if(!isTRUE(test)){
+  #     todelete <- c(todelete, i)
+  #   }
+  # }
+  # if(length(todelete) > 0){
+  #   xtr <- xtr[-todelete]
+  #   xgpgga <- xgpgga[-todelete]
+  # }
+  # # trace number
+  # tr_id <- as.integer(extractPattern(x[xtr], pattern = "(\\#[0-9]+)", 
+  #                                    start = 1, stop = -1))
+  # # trace position
+  # tr_pos <- as.numeric(extractPattern(x[xtr], 
+  #                                     pattern = "(position [0-9]*\\.?[0-9]*)", 
+  #                                     start = 9, stop = 0))
+  # pat_gpgga <- paste0("\\$(?<ID>GPGGA),(?<UTC>[0-9.]+),(?<lat>[0-9.]+),",
+  #                     "(?<NS>[NS]),(?<lon>[0-9.]+),(?<EW>[EW]),(?<fix>[0-9]),",
+  #                     "(?<NbSat>[0-9.]+),(?<HDOP>[0-9.]+),(?<H>[0-9.]+),",
+  #                     "(?<mf>[MmFf]+)") 
+  # #,(?<HGeoid>[0-9.]+),(?<mf2>[mMfF+),",
+  # # "(?<TDGPS>[0-9.]+),(?<DGPSID> [A-z0-9.]+)"  )
+  # 
+  # gpgga <- extractPattern(x[xgpgga], pattern = pat_gpgga, 
+  #                         start = 0, stop = -1)
+  # dim(gpgga) <- c(length(xgpgga), 11)
+  # gpgga <- as.data.frame(gpgga, stringsAsFactors = FALSE)
+  # colnames(gpgga) <- c("ID", "UTC", "lat", "NS", "lon", "EW", 
+  #                      "fix", "NbSat", "HDOP", "H", "mf")
+  # sel <- which(gpgga[,1] != "")
+  # tr_id <- tr_id[sel]
+  # tr_pos <- tr_pos[sel]
+  # gpgga <- gpgga[sel,]
+  # if(any(c(nrow(gpgga), length(tr_id)) != length(tr_pos))){
+  #   stop("Problem - code 'qoiwelk'. Please contact me\n",
+  #        "emanuel.huber@pm.me")
+  # }
+  # # .closeFileIfNot(dsn)
+  # return(list(tr_id = tr_id, tr_pos = tr_pos, gpgga = gpgga))
 }
 
 

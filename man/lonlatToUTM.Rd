@@ -4,7 +4,7 @@
 \alias{lonlatToUTM}
 \title{Convert longitude, latitude to UTM}
 \usage{
-lonlatToUTM(lon, lat, zone = NULL, south = NULL)
+lonlatToUTM(lon, lat, zone = NULL, south = NULL, west = FALSE)
 }
 \arguments{
 \item{lon}{[\code{numeric}] Longitude.}
@@ -15,6 +15,10 @@ lonlatToUTM(lon, lat, zone = NULL, south = NULL)
 
 \item{south}{[\code{logical(1)}] \code{TRUE} if the coordinates are in the
 southern hemisphere, else \code{FALSE}.}
+
+\item{west}{[\code{logical(1)}] \code{TRUE} if the longitude measures the 
+angle west of the Prime Meridian; \code{FALSE} if the longitude measures the 
+angle east of the Prime Meridian.}
 }
 \value{
 [\code{list(2)}] \code{xy} the coordinates in UTM, 
@@ -23,4 +27,5 @@ southern hemisphere, else \code{FALSE}.}
 \description{
 see https://stackoverflow.com/a/30225804
 https://stackoverflow.com/questions/18639967/converting-latitude-and-longitude-points-to-utm
+check also https://stackoverflow.com/questions/176137/java-convert-lat-lon-to-utm
 }

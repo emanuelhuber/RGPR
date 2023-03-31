@@ -98,6 +98,7 @@ GPRsurvey <- function(x, verbose = TRUE, ...){
   
 
   line_crs <- .checkCRS(line_crs[!is.na(line_crs)][1])
+  message(line_crs)
   # line_spunit <- .checkUnit(line_spunit[line_spunit != ""][1])
   line_spunit <- crsUnit(line_crs)
   

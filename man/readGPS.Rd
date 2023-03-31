@@ -4,16 +4,15 @@
 \alias{readGPS}
 \title{Read Sensors and Software .GPS file}
 \usage{
-readGPS(dsn, returnSf = TRUE)
+readGPS(dsn, toUTM = TRUE)
 }
 \arguments{
 \item{dsn}{[\code{character(1)|connection object}] data source name: 
  either the filepath to the GPR data (character),
 or an open file connection.}
 
-\item{returnSf}{[\code{logical(1)}] If \code{TRUE} returns an object of class
-\code{sf} (see \code{\link{sf}{sf}}). If \code{FALSE} returns
-a \code{data.frame}.}
+\item{toUTM}{[\code{logical(1)}] If \code{TRUE} project coordinates to 
+the corresponding UTM zone.}
 }
 \value{
 [\code{sf|data.frame|NULL}] Either an object of class

@@ -48,6 +48,32 @@ getLonLatFromGPGGA <- function(a){
   return(llz)
 }
 
+.getLonLatFromGNGGA <- function(a){
+  trctime <- strptime(paste(Sys.Date(), a$UTC), '%Y-%m-%d %H%M%OS', tz='UTC')
+  
+  # # 3 latitude 
+  # #  The format for NMEA coordinates is (d)ddmm.mmmm
+  # lat <- as.numeric(a$lat) / 100
+  # 
+  # # 5 longitude
+  # #  The format for NMEA coordinates is (d)ddmm.mmmm
+  # lon <- as.numeric(a$lon) / 100
+  
+  # 3 latitude 
+  #  The format for NMEA coordinates is (d)ddmm.mmmm
+  lat <- sapply(a$lat, stringToLat, NW = a$NS, USE.NAMES = FALSE, nn = 2)
+  
+  # 5 longitude
+  #  The format for NMEA coordinates is (d)ddmm.mmmm
+  lon <- sapply(a$lon, stringToLat, NW = a$EW, USE.NAMES = FALSE, nn = 3)
+  
+  # 10 elevation
+  z <- as.numeric(a$H)
+  
+  llz <- data.frame(lon = lon, lat = lat, z = z, time = trctime)
+  colnames(llz) <- c("lon", "lat", "z", "time")
+  return(llz)
+}
 
 stringToLat <- function(x, NW = "N"){
   ddmm_mmmm <- strsplit(x, "\\.")[[1]]
@@ -67,38 +93,57 @@ stringToLat <- function(x, NW = "N"){
 #' 
 #' see https://stackoverflow.com/a/30225804
 #' https://stackoverflow.com/questions/18639967/converting-latitude-and-longitude-points-to-utm
+#' check also https://stackoverflow.com/questions/176137/java-convert-lat-lon-to-utm
 #' @param lon [\code{numeric}] Longitude.
 #' @param lat [\code{numeric}] Latitude
 #' @param zone [\code{integer(1)}] UMT zone (optional).
 #' @param south [\code{logical(1)}] \code{TRUE} if the coordinates are in the
 #'              southern hemisphere, else \code{FALSE}.
+#' @param west  [\code{logical(1)}] \code{TRUE} if the longitude measures the 
+#' angle west of the Prime Meridian; \code{FALSE} if the longitude measures the 
+#' angle east of the Prime Meridian.
 #' @return [\code{list(2)}] \code{xy} the coordinates in UTM, 
 #'         \code{crs} the UTM coordinate reference system (proj4string).
 #' @export
-lonlatToUTM <- function(lon, lat, zone = NULL, south = NULL){
+lonlatToUTM <- function(lon, lat, zone = NULL, south = NULL, west = FALSE){
   # FIXME
   # - convert UTM to EPSG: https://gis.stackexchange.com/questions/365584/convert-utm-zone-into-epsg-code
   # todo: check if lat/long in hh:mm:ss and convert them into
   #       decimal with the function 'lonlatToDeci()' (see below)
   lat_mean <- median(lat)
   lon_mean <- median(lon)
+  if(isTRUE(west)){
+    if(lon_mean > 0 ) lon_mean <- -lon_mean
+    if(lon_mean > 0 ) lon <- -lon
+  }
   if(is.null(zone)){
     zone <- getUTMzone(lat = lat_mean, lon = lon_mean)
   }
-  if(is.null(south)){
-    south <- ifelse(lat_mean > 0, "", "+south")
+  
+  if(is.null(south) && lat_mean < 0){
+    south <- TRUE
+    lat <- -lat
+    # print("SOUTH")
   }else if(isTRUE(south)){
-    south <- "+south "
+    south <- TRUE
   }else{
-    south <- ""
+    south <- FALSE
   }
-  ll <- data.frame(ID = 1:length(lat), X = lon, Y = lat)
-  sp::coordinates(ll) <- c("X", "Y")
-  sp::proj4string(ll) <- sp::CRS("+proj=longlat +datum=WGS84")
-  xy_crs <- paste0("+proj=utm ", south, "+zone=", zone, " +datum=WGS84",
-                   " +units=m +no_defs", " +ellps=WGS84 +towgs84=0,0,0")
-  xy <- sp::spTransform(ll, sp::CRS(xy_crs))
-  return(list(xy = as.matrix(as.data.frame(xy)[,2:3]), crs = xy_crs))
+  if(lat_mean < 0) lat <- -lat
+  
+  ll <- data.frame(ID = 1:length(lat), x = lon, y = lat)
+  
+  xy <- sf::st_as_sf(x      = ll,
+                      coords = c("x", "y"),
+                      crs    = 4326)
+  xy_crs <-  UTMToEPSG(zone, south)
+  xy <- sf::st_transform(xy, crs = xy_crs)
+  
+  # sp::coordinates(ll) <- c("X", "Y")
+  # sp::proj4string(ll) <- sp::CRS("+proj=longlat +datum=WGS84")
+  # xy_crs <- paste0("+proj=utm ", south, "+zone=", zone, " +datum=WGS84",
+  #                  " +units=m +no_defs", " +ellps=WGS84 +towgs84=0,0,0")
+  return(list(xy = sf::st_coordinates(xy)[,1:2], crs = xy_crs))
 }
 
 #' Get UTM zone from lattidue and longitude
@@ -159,4 +204,22 @@ lonlatToDeci <- function(x){
   dec <- (V[,1] + V[,2] / 60 + V[,3]/3600) * pm
   return(dec)
 }  
+
+#' EPGS code from UTM zone
+#'
+#' Returns the EPSG code from UTM zone. EPSG code is:
+#'   32600+zone for positive latitudes and  32700+zone for negatives latitudes.
+#' @param zone [\code{integer(1)}] the UTM zone.
+#' @param south [\code{integer(1)}] \code{TRUE} if the UTM is located in 
+#'              southern hemisphere.
+#' @return [\code{integer(1)}] The EPSG code.
+#' @export
+UTMToEPSG <- function(zone, south = FALSE){
+  if(isTRUE(south)){
+    return(32700 + as.integer(zone))
+  }else{
+    return(32600 + as.integer(zone))
+  }
+}
+
 

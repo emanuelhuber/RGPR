@@ -6,13 +6,17 @@
 #' @return [\code{character}] The unit abbreviation (except for degree)
 #' @export
 crsUnit <- function(CRSobj){
-  if(length(CRSobj) == 1){
+  if(length(CRSobj) == 1 || is.na(CRSobj)){
+    return(NA_character_)
+  }else if(length(CRSobj) == 1){
     CRSobj <- tryCatch(sf::st_crs(CRSobj),
                        error = function(e){
                          message("Invalid CRS! Try something like 'EPSG:3857'!")
                          return(NA_character_)
                        })
+    if(is.na(CRSobj)) return(NA_character_)
     # CRSobj <- as.character(CRSobj)
+    # print(CRSobj)
     if(CRSobj$IsGeographic){
       return("degree")
     }else{
@@ -21,15 +25,4 @@ crsUnit <- function(CRSobj){
   }else{
     sapply(CRSobj, crsUnit, USE.NAMES = FALSE)
   }
-  # sel <- isCRSGeographic(CRSobj)
-  # un <- rep("degree", length(CRSobj))
-  # if(all(sel)){
-  #   return(un)
-  # }else{
-  #   CRSobj <- CRSobj[!sel]
-  #   pattern <- "units=(?<unit>[a-z]+)"
-  #   CRSobj_pat <- extractPattern(CRSobj, pattern, start = 0, stop = 0)
-  #   un[!sel] <- trimStr(CRSobj_pat)
-  #   return(un)
-  # }
 }

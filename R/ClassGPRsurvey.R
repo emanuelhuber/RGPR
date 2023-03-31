@@ -33,8 +33,7 @@
 #'                 (in MHz).               
 #' @slot antseps   [\code{numeric(k)}] Antennae separation of the GPR data 
 #' @slot spunit    [\code{character(1)}] Spatial units.
-#' @slot crs       [\code{character(1)}] Coordinate reference system following the 
-#'                 R notation of proj4string from the PROJ.4 library. 
+#' @slot crs       [\code{character(1)}] Coordinate reference system in wkt format (sf package)
 #' @slot coords    [\code{list(k)}] GPR data coordinates
 #' @slot intersections [\code{list(k)}] Intersections coordinates of the GPR data
 #' @slot markers   [\code{list(k)}] Fiducial markers of the GPR data

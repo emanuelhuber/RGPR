@@ -35,7 +35,7 @@ setMethod("spProjectToCRS", "GPR", function(x, CRSobj){
   } 
   #------------------------ -
   
-  x_sf     <- sf::st_transform(as.sf(x), CRSobj)
+  x_sf     <- sf::st_transform(as.sf(x), .checkCRS(CRSobj))
   crs(x)   <- sf::st_crs(x_sf)
   coord(x) <- sf::st_coordinates(x_sf)
 

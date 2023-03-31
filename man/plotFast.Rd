@@ -11,21 +11,27 @@ plotFast(
   interpolate = TRUE,
   xlab = NULL,
   ylab = NULL,
-  sym = TRUE
+  sym = TRUE,
+  ylim = NULL,
+  xlim = NULL
 )
 }
 \arguments{
-\item{x}{[GPR]}
+\item{x}{[\code{class GPR}]}
 
 \item{col}{Color palette}
 
-\item{colorbar}{[logical()]}
+\item{colorbar}{[\code{color palette}]}
 
-\item{interpolate}{[logical(1)]}
+\item{interpolate}{[\code{logical(1)}]}
 
-\item{xlab}{[charahter(1)]}
+\item{xlab}{[\code{charachter(1)}]}
 
-\item{sym}{[logical(1)] if \code{TRUE} the colorbar is symmetric}
+\item{sym}{[\code{logical(1)}] if \code{TRUE} the colorbar is symmetric}
+
+\item{ylim}{[\code{numeric(2)}] the y limits (y1, y2) of the plot.}
+
+\item{xlim}{[\code{numeric(2)}] the x limits (x1, x2) of the plot.}
 }
 \description{
 Function to plot faster GPR data

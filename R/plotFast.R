@@ -1,4 +1,3 @@
-
 inch2xRight <- function(v){
   # dx <- diff(par("usr")[1L:2])
   # dx * v / par()$pin[1] + par("usr")[2L]
@@ -14,8 +13,8 @@ inch2yTop <- function(v){
 }
 
 # clabpar: list possible values = top + arg for text (adj = NULL, pos = NULL, 
-#                                       offset = 0.5, vfont = NULL, cex = 1, 
-#                                       col = NULL, font = NULL, ...)
+# offset = 0.5, vfont = NULL, cex = 1, 
+#  col = NULL, font = NULL, ...)
 colorbar <- function(col, clim, zlim,
                      clab = "", 
                      clabpar = NULL, 
@@ -36,8 +35,8 @@ colorbar <- function(col, clim, zlim,
   # cval <- cval[cval >= czlim[1] & cval <= czlim[2]]
   cval <- cval[cval >= clim[1] & cval <= clim[2]]
   ylim <- range(zlim)
-  # cpos <- (cval - czlim[1])  * diff(ylim)/diff(czlim)
-  cpos <- (cval - clim[1])  * diff(ylim)/diff(clim)
+  # cpos <- (cval - czlim[1]) * diff(ylim)/diff(czlim)
+  cpos <- (cval - clim[1]) * diff(ylim)/diff(clim) + ylim[1]
   
   text(x = inch2xRight( cb_left + cb_width + txt_left), 
        y = cpos, 
@@ -78,15 +77,17 @@ colorbar <- function(col, clim, zlim,
 #' Faster plot
 #' 
 #' Function to plot faster GPR data
-#' @param x [GPR]
+#' @param x [\code{class GPR}]
 #' @param col Color palette
-#' @param colorbar [logical()]
-#' @param interpolate [logical(1)]
-#' @param xlab [charahter(1)]
-#' @param sym [logical(1)] if \code{TRUE} the colorbar is symmetric
+#' @param colorbar [\code{color palette}]
+#' @param interpolate [\code{logical(1)}]
+#' @param xlab [\code{charachter(1)}]
+#' @param sym [\code{logical(1)}] if \code{TRUE} the colorbar is symmetric
+#' @param xlim [\code{numeric(2)}] the x limits (x1, x2) of the plot.
+#' @param ylim [\code{numeric(2)}] the y limits (y1, y2) of the plot.
 #' @export
 plotFast <- function(x, col = palGPR(), colorbar = TRUE, interpolate = TRUE,
-                     xlab = NULL, ylab = NULL, sym = TRUE){
+                     xlab = NULL, ylab = NULL, sym = TRUE, ylim = NULL, xlim = NULL){
   
   ## TODO
   ## give space on the right without using mar/mai!!!
@@ -99,11 +100,11 @@ plotFast <- function(x, col = palGPR(), colorbar = TRUE, interpolate = TRUE,
       ylab <- paste0("two-way travel time (",x@depthunit,")")
     }
   }
- if(is.null(xlab)){
+  if(is.null(xlab)){
     xlab <- paste0("position (", x@depthunit, ")")
   }
-  xlim <- range(x@pos)
-  ylim <- range(x@depth)
+  if(is.null(xlim)) xlim <- range(x@pos)
+  if(is.null(ylim)) ylim <- range(x@depth)
   cw_inch <- 4.1 # in
   cw_user <- diff(xlim) * cw_inch / par()$pin[1]
   
@@ -120,14 +121,14 @@ plotFast <- function(x, col = palGPR(), colorbar = TRUE, interpolate = TRUE,
   plt <- par()$plt
   
   plot(0, type = "n", xaxs = "i", yaxs = "i",
-       xaxt = "n", yaxt = "n", xlim = xlim, ylim = ylim, 
+       xaxt = "n", yaxt = "n", xlim = xlim, ylim = rev(ylim), 
        xlab = xlab, ylab = ylab, bty = "n",
        mgp = c(2, 0.5, 0))
   rasterImage(palCol(x@data, col = col, sym = sym), 
               xleft = min(x@pos), 
               xright = max(x@pos), 
-              ytop = max(x@depth),
-              ybottom = min(x@depth),
+              ytop = min(x@depth),
+              ybottom = max(x@depth),
               interpolate = interpolate)
   
   title(x@name)
@@ -145,7 +146,6 @@ plotFast <- function(x, col = palGPR(), colorbar = TRUE, interpolate = TRUE,
       clim <- range(x, na.rm = TRUE)
     }
     dim(col) <- c(length(col), 1)
-    colorbar(col = col, clim = clim, zlim = ylim, clab = "mV", clabpar = list(top = 0.05, adj = 0.5))
+    colorbar(col = col, clim = clim, zlim = rev(ylim), clab = "mV", clabpar = list(top = 0.05, adj = 0.5))
   }
 }
-

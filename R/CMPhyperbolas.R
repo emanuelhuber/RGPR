@@ -18,6 +18,7 @@
 #' }        
 #' @name CMPhyperbolas
 #' @rdname CMPhyperbolas
+#' @concept velocity model
 setGeneric("CMPhyperbolas", function(x) standardGeneric("CMPhyperbolas"))
 
 #' @rdname CMPhyperbolas

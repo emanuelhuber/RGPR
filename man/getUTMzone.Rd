@@ -17,3 +17,5 @@ getUTMzone(lat, lon)
 \description{
 Get UTM zone from lattidue and longitude
 }
+\concept{GPS}
+\concept{UTM}

@@ -8,6 +8,7 @@ setAs(from = "GPRvirtual", to = "matrix", def = function(from){ from@data } )
 #' @param mode Not used
 #' @name as.matrix
 #' @rdname GPRcoercion
+#' @concept coercion
 setGeneric("as.matrix", function(x) standardGeneric("as.matrix")) 
 
 #' @rdname GPRcoercion
@@ -20,6 +21,7 @@ setMethod("as.matrix", signature("GPRvirtual"), function(x){as(x, "matrix")})
 #' @name as.array
 #' @rdname GPRcoercion
 #' @export
+#' @concept coercion
 setMethod("as.array", "GPRvirtual",  function(x, ...) as.numeric(x@data))
 
 #------------------------------------------------------------------------------#
@@ -28,6 +30,7 @@ setAs(from = "GPRvirtual", to = "vector", def = function(from){ from@data})
 #' @aliases as.vector,GPRvirtual-method
 #' @rdname GPRcoercion
 #' @export
+#' @concept coercion
 setMethod("as.vector", signature("GPRvirtual"), 
           function(x, mode = "any"){as.vector(x@data)})
 
@@ -38,6 +41,7 @@ setMethod("as.vector", signature("GPRvirtual"),
 #' @name as.numeric
 #' @rdname GPRcoercion
 #' @export
+#' @concept coercion
 setMethod("as.numeric", "GPRvirtual",  function(x, ...) as.numeric(x@data))
 
 
@@ -45,6 +49,7 @@ setMethod("as.numeric", "GPRvirtual",  function(x, ...) as.numeric(x@data))
 #' @name as.integer
 #' @rdname GPRcoercion
 #' @export
+#' @concept coercion
 setMethod("as.integer", "GPRvirtual",  function(x, ...) as.integer(as.numeric(x@data)))
 
 
@@ -64,6 +69,7 @@ setAs(from = "data.frame", to = "GPR", def = function (from) as.GPR.data.frame(f
 #' @name as.GPR.data.frame
 #' @rdname GPRcoercion
 #' @export
+#' @concept coercion
 as.GPR.data.frame <- function(x, ...){
   as.GPR.matrix(as.matrix(x))
 }
@@ -74,6 +80,7 @@ as.GPR.data.frame <- function(x, ...){
 #' @name as.GPR.matrix
 #' @rdname GPRcoercion
 #' @export
+#' @concept coercion
 as.GPR.matrix <- function (x, ...){
   myArg <- as.list(match.call(definition = sys.function(-2),
                               call = sys.call(-2),
@@ -132,6 +139,7 @@ setAs(from = "list", to = "GPR", def = function (from) as.GPR.list(from))
 #' @name as.GPR.list
 #' @rdname GPRcoercion
 #' @export
+#' @concept coercion
 as.GPR.list <- function (x, ...){
   # prefix: "d_" for default
   if(all("data" != tolower(names(x)))){

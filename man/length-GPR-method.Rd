@@ -12,3 +12,4 @@
 \description{
 Return length of a GPR object (number of traces)
 }
+\concept{array}

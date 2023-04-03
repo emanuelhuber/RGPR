@@ -17,6 +17,7 @@
 #' @return [\code{data.frame}] Columns = latitude, longitude, elevation and
 #'         time
 #' @export
+#' @concept GPS
 getLonLatFromGPGGA <- function(a){  
   a <- as.data.frame(a, stringsAsFactors = FALSE)
   a <- a[a[,1]=="$GPGGA",]
@@ -105,7 +106,9 @@ stringToLat <- function(x, NW = "N"){
 #' @return [\code{list(2)}] \code{xy} the coordinates in UTM, 
 #'         \code{crs} the UTM coordinate reference system (proj4string).
 #' @export
-lonlatToUTM <- function(lon, lat, zone = NULL, south = NULL, west = FALSE){
+#' @concept GPS 
+#' @concept UTM
+lonLatToUTM <- function(lon, lat, zone = NULL, south = NULL, west = FALSE){
   # FIXME
   # - convert UTM to EPSG: https://gis.stackexchange.com/questions/365584/convert-utm-zone-into-epsg-code
   # todo: check if lat/long in hh:mm:ss and convert them into
@@ -152,6 +155,8 @@ lonlatToUTM <- function(lon, lat, zone = NULL, south = NULL, west = FALSE){
 #' @param lat [\code{numeric}] Latitude
 #' @return [\code{integer(1)}] The UTM zone.
 #' @export
+#' @concept GPS 
+#' @concept UTM
 getUTMzone <- function(lat, lon){
   # see https://stackoverflow.com/a/9188972
   # The formula is to simple: it does not work for the both 
@@ -181,6 +186,8 @@ getUTMzone <- function(lat, lon){
 #'               (proj4string)
 #' @return a 2-column-matrix (longitude (N), latitude (E))
 #' @export
+#' @concept GPS 
+#' @concept UTM
 UTMTolonlat <- function(xy, CRSobj = NULL){
   #if(max(xy[,1]) > 834000) stop("y-values (northing) are larger than 834000")
   #if(min(xy[,1]) < 166000) stop("x-values (easting) are smaller than 166000")
@@ -214,6 +221,8 @@ lonlatToDeci <- function(x){
 #'              southern hemisphere.
 #' @return [\code{integer(1)}] The EPSG code.
 #' @export
+#' @concept GPS 
+#' @concept UTM
 UTMToEPSG <- function(zone, south = FALSE){
   if(isTRUE(south)){
     return(32700 + as.integer(zone))

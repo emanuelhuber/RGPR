@@ -22,6 +22,7 @@ getFPath <- function(x){
 #'                   the values to the filepaths 
 #'                   (e.g., \code{$hd  -> xline01.hd}).
 #' @export  
+#' @concept files
 getFName <- function(fPath, ext = c(".hd", ".dt1"), throwError = TRUE){
   fp <- file.path(dirname(fPath), .fNameWExt(fPath))
   ext <- tolower(ext)
@@ -111,6 +112,7 @@ safeName <- function(x, y){
 #' @param verbose (boolean) If \code{TRUE} print messages allowed.
 #' @return 1) header, 2) skip, 3) 
 #' @export
+#' @concept files
 detectASCIIProp <- function(dsn, lns = 20, verbose = TRUE){
   
   #---------------------- read first 'lns' lines ------------------------------#

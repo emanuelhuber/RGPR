@@ -20,6 +20,7 @@
 #' @param value  [\code{matrix(n,3)|list}] coordinates (x, y, z)
 #' @return [\code{GPR class}] An object of the class \code{GPR}
 #' @name coord
+#' @concept getters/setters
 setGeneric("coord", function(x) 
   standardGeneric("coord"))
 

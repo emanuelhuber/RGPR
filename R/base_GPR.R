@@ -3,6 +3,7 @@
 #' @param x [\code{GPR}]
 #' @aliases length,GPR-method
 #' @export
+#' @concept array
 setMethod("length", "GPR", function(x) ncol(x@data))
 
 #' Return length of a GPRcube/GPRslice object (number of slices)
@@ -66,12 +67,14 @@ setMethod("apply", "GPRvirtual", definition = function(X, MARGIN, FUN, ..., simp
 #' @param x [\code{GPR}]
 #' @aliases nrow,GPRvirtual-method
 #' @export
+#' @concept array
 setMethod("nrow", "GPRvirtual", definition=function(x)  nrow(x@data))
 
 #' Number of columns (samples per trace)
 #' @param x [\code{GPR}]
 #' @aliases ncol,GPRvirtual-method
 #' @export
+#' @concept array
 setMethod("ncol", "GPRvirtual", function(x)  ncol(x@data))
 
 #' Dimensions of a GPR object 
@@ -80,6 +83,7 @@ setMethod("ncol", "GPRvirtual", function(x)  ncol(x@data))
 #' @param x [\code{GPR}]
 #' @aliases dim,GPRvirtual-method
 #' @export
+#' @concept array
 setMethod("dim", "GPRvirtual", function(x)   dim(x@data))
 
 

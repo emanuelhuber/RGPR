@@ -8,6 +8,7 @@
 #' @return [\code{GPR}] 
 #' @rdname atan2
 #' @name atan2
+#' @concept arith
 setGeneric("atan2", function(y, x) standardGeneric("atan2"))
 
 

@@ -49,3 +49,4 @@ Coercion from matrix to GPR
 
 Coercion from list to GPR
 }
+\concept{coercion}

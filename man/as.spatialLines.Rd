@@ -4,10 +4,7 @@
 \alias{as.spatialLines}
 \alias{as.spatialLines,GPRsurvey-method}
 \alias{as.spatialLines,GPR-method}
-\title{# FIXME: change coercion to sp -> via sf!!!
-#' @export
-setAs(from = "GPRsurvey", to = "SpatialLines",
-      def = function (from) as.spatialLines(from))}
+\title{Coerce object to an object of the class SpatialLines}
 \usage{
 as.spatialLines(x)
 
@@ -22,11 +19,6 @@ as.spatialLines(x)
 [\code{SpatialLines object}]
 }
 \description{
-#' @export
-setAs(from = "GPR", to = "SpatialLines",
-      def = function (from) as.spatialLines(from))
 Coerce object to an object of the class SpatialLines
 }
-\details{
-Coerce object to an object of the class SpatialLines
-}
+\concept{coercion}

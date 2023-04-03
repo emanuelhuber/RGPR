@@ -26,3 +26,4 @@ ann(x) <- value
 \description{
 Annotations are currently used to store the intersections of GPR lines.
 }
+\concept{getters/setters}

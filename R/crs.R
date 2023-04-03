@@ -24,6 +24,7 @@
 #' }
 #' @return [\code{GPR class}] An object of the class \code{GPR}
 #' @name crs
+#' @concept getters/setters
 setGeneric("crs", function(x) 
   standardGeneric("crs"))
 
@@ -88,20 +89,20 @@ setReplaceMethod("crs", signature="GPRsurvey", function(x, value){
 })
 
 
-# for class GPRsurvey!
-# FIXME -> delete! ONLY USED in coercion_spatial.R for sp.
-.getCheckedCRS <- function(x){
-  if(length(x@crs) == 0 || all(is.na(x@crs))){
-    warning("no CRS defined!\n")
-  }else{
-    if(length(unique(x@crs)) > 1){
-      warning( "Not all the coordinate reference systems are identical: \n",
-               "Check with 'crs(x)'!\n",
-               "I take the first one!") 
-    } 
-  }
-  return( sp::CRS(x@crs[1]) )
-}
+# # for class GPRsurvey!
+# # FIXME -> delete! ONLY USED in coercion_spatial.R for sp.
+# .getCheckedCRS <- function(x){
+#   if(length(x@crs) == 0 || all(is.na(x@crs))){
+#     warning("no CRS defined!\n")
+#   }else{
+#     if(length(unique(x@crs)) > 1){
+#       warning( "Not all the coordinate reference systems are identical: \n",
+#                "Check with 'crs(x)'!\n",
+#                "I take the first one!") 
+#     } 
+#   }
+#   return( sp::CRS(x@crs[1]) )
+# }
 
 # .checkCRSsurvey <- function(x){
 #   x_crs <- sapply(x, .checkCRS, USE.NAMES = FALSE)

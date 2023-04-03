@@ -51,3 +51,4 @@ crs(x) <- sf::st_crs("+init=epsg:3857 +units=m")
 crs(x) <- sp::st_crs(3857)
 }
 }
+\concept{getters/setters}

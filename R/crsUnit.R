@@ -5,6 +5,7 @@
 #' @param CRSobj [\code{sp::CRS|character}] CRS object (one or more)
 #' @return [\code{character}] The unit abbreviation (except for degree)
 #' @export
+#' @concept units
 crsUnit <- function(CRSobj){
   if(length(CRSobj) == 1 || is.na(CRSobj)){
     return(NA_character_)

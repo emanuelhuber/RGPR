@@ -31,3 +31,4 @@ Modified slots
                       coordinate reference system.
 }
 }
+\concept{spatial computation}

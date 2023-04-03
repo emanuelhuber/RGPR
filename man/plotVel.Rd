@@ -15,3 +15,4 @@ plotVel(x)
 \description{
 Plot Velocities (only 1D for now)
 }
+\concept{velocity model}

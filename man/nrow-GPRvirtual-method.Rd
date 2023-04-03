@@ -12,3 +12,4 @@
 \description{
 Number of rows (samples per trace)
 }
+\concept{array}

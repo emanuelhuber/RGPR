@@ -25,3 +25,4 @@ If FALSE, it returns NULL for the missing extension}
 Returns the filepaths with the correct extension and check for 
 upper and lower case extension (e.g., ".txt" or ".TXT")
 }
+\concept{files}

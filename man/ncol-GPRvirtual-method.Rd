@@ -12,3 +12,4 @@
 \description{
 Number of columns (samples per trace)
 }
+\concept{array}

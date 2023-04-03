@@ -43,3 +43,4 @@ Convert the two-way travel time of the recorded waves into depth. It does
 not account for the topography. To add the topography, 
 use \code{\link{migrate}} instead. This is a non-linear operation
 }
+\concept{signal processing}

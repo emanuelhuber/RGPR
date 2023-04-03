@@ -19,6 +19,7 @@
 #'               (see also \code{\link[signal]{interp1}}). 
 #' @return [\code{GPR* object}] with signal as a function of depth.
 #' @name convertTimeToDepth
+#' @concept signal processing
 setGeneric("convertTimeToDepth", 
            function(x, dz = NULL, zmax = NULL,
                     method = c("pchip", "linear","nearest", "spline", "cubic")) 

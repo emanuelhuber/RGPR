@@ -16,3 +16,4 @@ palCol(x, col = palGPR(n = 101), sym = TRUE)
 \description{
 Return color from palette
 }
+\concept{colors}

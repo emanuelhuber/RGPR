@@ -19,6 +19,7 @@ setGeneric("spProjectToCRS", function(x, CRSobj)
 
 #' @rdname spProjectToCRS
 #' @export
+#' @concept spatial computation
 setMethod("spProjectToCRS", "GPR", function(x, CRSobj){
   #---- check some stuff
   msg <- c()

@@ -25,3 +25,4 @@ Read Sensors and Software GPR data
 \seealso{
 \code{\link{readHD}}, \code{\link{readGPS}}
 }
+\concept{I/O}

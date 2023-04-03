@@ -16,3 +16,4 @@ Dimensions of a GPR object
 Return the number of rows (samples per trace) and 
 columns (samples per trace).
 }
+\concept{array}

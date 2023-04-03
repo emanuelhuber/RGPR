@@ -10,8 +10,7 @@ setAs(from = "GPR", to = "sf",
 #' @param x [\code{class GPR|GPRsurvey}]
 #' @return [\code{class sf}] Geometry type is \code{POINT}.
 #' @name as.sf
-# #' @seealso \code{\link{time0Cor}} to shift the traces such that they start
-# #'          at time-zero.
+#' @concept coercion
 setGeneric("as.sf", function(x) 
   standardGeneric("as.sf"))
 
@@ -24,12 +23,6 @@ setMethod("as.sf", signature(x = "GPR"), function(x){
          "  or with ' spInterp(x, ...)'.")
   }
   .as_LINESTRING(x@coord, x@crs)
-  # x_sf <- sf::st_as_sf(x      = as.data.frame(x@coord),
-  #                      coords = 1:3,
-  #                      crs    = x@crs)
-  # x_sf <- sf::st_combine(x_sf)
-  # x_sf <- sf::st_cast(x_sf, "LINESTRING")
-  # return(x_sf)
 })
 
 
@@ -74,14 +67,6 @@ setMethod("as.sf", signature(x = "GPRsurvey"), function(x){
 
 #------------------------------ SPATIAL LINES ---------------------------------#
 
-#' # FIXME: change coercion to sp -> via sf!!!
-#' #' @export
-#' setAs(from = "GPRsurvey", to = "SpatialLines",
-#'       def = function (from) as.spatialLines(from))
-#' 
-#' #' @export
-#' setAs(from = "GPR", to = "SpatialLines",
-#'       def = function (from) as.spatialLines(from))
 
 #' Coerce object to an object of the class SpatialLines
 #'
@@ -89,8 +74,7 @@ setMethod("as.sf", signature(x = "GPRsurvey"), function(x){
 #' @param x [\code{class GPR|GPRsurvey}]
 #' @return [\code{SpatialLines object}]
 #' @name as.spatialLines
-# #' @seealso \code{\link{time0Cor}} to shift the traces such that they start
-# #'          at time-zero.
+#' @concept coercion
 setGeneric("as.spatialLines", function(x) 
   standardGeneric("as.spatialLines"))
 
@@ -98,22 +82,6 @@ setGeneric("as.spatialLines", function(x)
 #' @export
 setMethod("as.spatialLines", signature(x = "GPRsurvey"), function(x){
   as.sf(x)
-  # # remove NULL from list
-  # # FIXME
-  # # Filter(Negate(is.null), x) = alternative
-  # isNotNull <- !sapply(x@coords, is.null)
-  # if(any(isNotNull)){
-  #   xyz <- x@coords[isNotNull]
-  #   lineList <- lapply(unname(xyz), .xyToLine)
-  #   linesList <- lapply(seq_along(lineList), .lineToLines, lineList, 
-  #                       x@names[isNotNull])
-  #   mySpatLines <- sp::SpatialLines(linesList)
-  #   sp::proj4string(mySpatLines) <- .getCheckedCRS(x)
-  #   return(mySpatLines)
-  # }else{
-  #   warning("no coordinates!")
-  #   return(NULL)   
-  # }
 })
 
 #' @rdname as.spatialLines
@@ -125,9 +93,6 @@ setMethod("as.spatialLines", signature(x = "GPR"), function(x){
 
 #------------------------------ SPATIAL POINTS --------------------------------#
 
-#' #' @export
-#' setAs(from = "GPRsurvey", to = "SpatialPoints",
-#'       def = function (from) as.spatialPoints(from))    
 
 #' Coerce object to an object of the class SpatialPoints
 #'
@@ -135,9 +100,7 @@ setMethod("as.spatialLines", signature(x = "GPR"), function(x){
 #' @param x [\code{class GPR|GPRsurvey}]
 #' @return [\code{SpatialPoints}]
 #' @name as.spatialPoints
-# #' @seealso \code{\link{time0Cor}} to shift the traces such that they start
-# #'          at time-zero.
-# \link{SpatialPoints-class} sp package
+#' @concept coercion
 setGeneric("as.spatialPoints", function(x) 
   standardGeneric("as.spatialPoints"))
 

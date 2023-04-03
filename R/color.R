@@ -9,6 +9,7 @@
 #' @name palGPR
 #' @rdname palGPR
 #' @export
+#' @concept colors
 palGPR <- function(pal = "default", n = 101, power = 1, returnNames = FALSE){
   pal <- gsub("gray", "grey", x= pal)
   tmp <- structure(list(
@@ -93,6 +94,7 @@ palGPR <- function(pal = "default", n = 101, power = 1, returnNames = FALSE){
 #' @name palPlot
 #' @rdname palGPR
 #' @export
+#' @concept colors
 palPlot <- function(col, border = NA){
   n <- length(col)
   plot(0, 0, type="n", xlim = c(0, 1), ylim = c(0, 1), axes = FALSE, 
@@ -107,6 +109,7 @@ palPlot <- function(col, border = NA){
 #' @name palDisplay
 #' @rdname palGPR
 #' @export
+#' @concept colors
 palDisplay <- function(){
   op <- par(no.readonly=TRUE)
   par(mai=c(1,1,1,0), oma = c(0,0,1,0))
@@ -128,6 +131,7 @@ palDisplay <- function(){
 #' @param col [\code{character}] Colors to be used.
 #' @param sym [\code{logical(1)}] Should the color palette be symmetric?
 #' @export
+#' @concept colors
 palCol <- function(x , col = palGPR(n=101), sym = TRUE){
   # test 1 - slower
   # CCY = (x - min(x, na.rm = TRUE))/(max(x, na.rm = TRUE) - min(x, na.rm = TRUE))

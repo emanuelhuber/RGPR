@@ -15,3 +15,4 @@ crsUnit(CRSobj)
 \description{
 Returns the unit of the CRS
 }
+\concept{units}

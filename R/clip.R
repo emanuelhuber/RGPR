@@ -21,6 +21,7 @@ setGeneric("clip", function(x, xclip = NULL, track = TRUE)
 #' @return [\code{GPR class}] Clipped GPR object.
 #' @rdname clip
 #' @export
+#' @concept signal processing
 setMethod("clip", "GPRvirtual", function(x, xclip = NULL, track = TRUE){
   
   #------------------- check arguments

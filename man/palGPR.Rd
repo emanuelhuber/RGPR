@@ -37,3 +37,4 @@ source: vignette of the R-package "colorspace" (Color Space Manipulation)
 palPlot(palGPR("hcl_5"))
 palDisplay()
 }
+\concept{colors}

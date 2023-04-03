@@ -33,3 +33,4 @@ Modified slots
   \item \code{x} the x-position only for CMP/WARR (plot twt as a function of antenna separation)
 }
 }
+\concept{getters/setters}

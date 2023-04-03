@@ -18,3 +18,5 @@ a 2-column-matrix (longitude (N), latitude (E))
 \description{
 UTM to latitude-longitude
 }
+\concept{GPS}
+\concept{UTM}

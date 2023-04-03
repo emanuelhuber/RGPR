@@ -12,6 +12,7 @@
 #' @return [\code{GPR}] 
 #' @name antsep
 #' @rdname antsep
+#' @concept getters/setters
 setGeneric("antsep", function(x) standardGeneric("antsep"))
 
 #' @name antsep<-

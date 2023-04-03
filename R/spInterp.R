@@ -103,7 +103,7 @@ setMethod("spInterp", "GPR",
    if(isTRUE(lonlat)){
      if(is.na(x@crs)){ #|| trimStr(sf::st_crs(x@crs)$proj4string) == "+proj=longlat +datum=WGS84 +no_defs" ){
         crs(x) <- "EPSG:4326"
-        topo_utm <- lonlatToUTM(lon = topo[, 1], lat = topo[, 2])
+        topo_utm <- lonLatToUTM(lon = topo[, 1], lat = topo[, 2])
         tryCatch({crs(x) <- topo_utm$crs
                   topo[, 1:2] <- topo_utm$xy
                   if(isFALSE(projToUTM) && is.null(CRSout)){

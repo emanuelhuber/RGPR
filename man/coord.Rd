@@ -46,3 +46,4 @@ Modified slots class GPRsurvey
   \item \code{intersections} the local trace position (along profile)
 }
 }
+\concept{getters/setters}

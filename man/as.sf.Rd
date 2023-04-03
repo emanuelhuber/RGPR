@@ -22,3 +22,4 @@ as.sf(x)
 Coerce object to a simple feature (sf) geometry POINT. 
 Only coordinates are coerced, no additional information.
 }
+\concept{coercion}

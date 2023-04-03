@@ -4,10 +4,7 @@
 \alias{as.spatialPoints}
 \alias{as.spatialPoints,GPR-method}
 \alias{as.spatialPoints,GPRsurvey-method}
-\title{#' @export
-setAs(from = "GPRsurvey", to = "SpatialPoints",
-      def = function (from) as.spatialPoints(from))    
-Coerce object to an object of the class SpatialPoints}
+\title{Coerce object to an object of the class SpatialPoints}
 \usage{
 as.spatialPoints(x)
 
@@ -24,3 +21,4 @@ as.spatialPoints(x)
 \description{
 Coerce object to an object of the class SpatialPoints
 }
+\concept{coercion}

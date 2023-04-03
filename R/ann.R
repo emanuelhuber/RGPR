@@ -6,6 +6,7 @@
 #' @return [\code{GPR}] 
 #' @name ann
 #' @rdname ann
+#' @concept getters/setters
 setGeneric("ann", function(x) standardGeneric("ann"))
 
 #' @name ann<-

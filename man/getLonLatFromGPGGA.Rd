@@ -16,3 +16,4 @@ getLonLatFromGPGGA(a)
 \description{
 Get longitude and latitude from GPGGA sentence information (NMEA)
 }
+\concept{GPS}

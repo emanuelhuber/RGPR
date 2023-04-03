@@ -11,6 +11,7 @@ setGeneric("plotVel", function(x) standardGeneric("plotVel"))
 
 #' @rdname plotVel
 #' @export
+#' @concept velocity model
 setMethod("plotVel", "GPR", function(x){
   if(length(x@vel) > 0){
     x@vel <- .intpSmoothAllVel(x@vel, x@z)

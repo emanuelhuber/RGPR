@@ -236,6 +236,7 @@
 #' @name readDT1
 #' @rdname readDT1
 #' @export
+#' @concept I/O
 readDT1 <- function(dsn, ntr, npt){
   dsn <- .openFileIfNot(dsn)
   tags <- c("traces", "position", "samples", "topo", "NA1", "bytes",
@@ -328,7 +329,7 @@ readGPS <- function(dsn, toUTM = TRUE){
   }
   xyzt_crs <- 4326
   if(isTRUE(toUTM)){
-    topoUTM <-  lonlatToUTM(lat = xyzt[,2], 
+    topoUTM <-  lonLatToUTM(lat = xyzt[,2], 
                         lon = xyzt[,1], 
                         zone = NULL, 
                         south = (X[[tolower(X$type)]]$NS[1] == "S"),

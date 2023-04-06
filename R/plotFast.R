@@ -101,7 +101,7 @@ plotFast <- function(x, col = palGPR(), colorbar = TRUE, interpolate = TRUE,
     }
   }
   if(is.null(xlab)){
-    xlab <- paste0("position (", x@depthunit, ")")
+    xlab <- paste0("position (", x@posunit, ")")
   }
   if(is.null(xlim)) xlim <- range(x@pos)
   if(is.null(ylim)) ylim <- range(x@depth)

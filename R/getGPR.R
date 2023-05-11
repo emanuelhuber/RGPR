@@ -73,18 +73,16 @@ setMethod("getGPR", "GPRsurvey", function(x, id, verbose = FALSE){
       stop("nrow(x@coords[[id]]) != ncol(gpr)")
     }
     gpr@coord <- unname(x@coords[[id]] )
-    gpr@x <- spPathRel(gpr)
+    gpr@x <- relPos(gpr)
   }
   if(length(x@intersections[[id]]) > 0 ){
     
     FUN <- function(y, x){
-      closestTr(x, y = y)
+      findClosestCoord(x, y = y)
     }
     x_tr <- apply(x@intersections[[id]], 1, FUN, gpr)
     ann(gpr) <- cbind(x_tr, as.character(x@intersections[[id]]$name))
     
-    # ann(gpr) <- cbind(x@intersections[[id]]$trace,
-    # x@intersections[[id]]$name)
   }
   # FIXME
   if(length(x@crs) == 1){
@@ -94,7 +92,12 @@ setMethod("getGPR", "GPRsurvey", function(x, id, verbose = FALSE){
   }
   
   gpr@spunit <- x@spunit
-  gpr@zunit <- x@zunits[x@zunits != ""][1]
+  if(any(x@zunits != "")){
+    gpr@zunit <- x@zunits[x@zunits != ""][1]
+  }else{
+    gpr@zunit <- ""
+    warning("No z-units!!")
+  }
   gpr@xunit <- x@spunit
   # what about gpr@xunit ??
   # if(length(x@coordref)>0){

@@ -1,4 +1,4 @@
-#' Trace projection
+#' Project trace coordinates
 #'
 #' Project the trace coordinates give a coordinate reference system.
 #' 
@@ -11,16 +11,16 @@
 #'                       coordinate reference system.
 #' }
 #' @param x Object of the class GPR
-#' @param CRSobj object of class \link{CRS}, or of class \code{character} in
-#'               which case it is converted to \link{CRS}.
-#' @name spProjectToCRS
-setGeneric("spProjectToCRS", function(x, CRSobj)
-    standardGeneric("spProjectToCRS"))
+#' @param CRSobj [\code{character(1)}] A string accepted by GDAL 
+#'               (e.g., \code{"EPSG:2056"}, WKT-string).
+#' @name project
+setGeneric("project", function(x, CRSobj)
+    standardGeneric("project"))
 
-#' @rdname spProjectToCRS
+#' @rdname project
 #' @export
 #' @concept spatial computation
-setMethod("spProjectToCRS", "GPR", function(x, CRSobj){
+setMethod("project", "GPR", function(x, CRSobj){
   #---- check some stuff
   msg <- c()
   if(length(x@coord) == 0){
@@ -44,9 +44,9 @@ setMethod("spProjectToCRS", "GPR", function(x, CRSobj){
 })
 
 
-#' @rdname spProjectToCRS
+#' @rdname project
 #' @export
-setMethod("spProjectToCRS", "GPRsurvey", function(x, CRSobj){
+setMethod("project", "GPRsurvey", function(x, CRSobj){
   x_crs <- x@crs
   if(length(x@crs) == 1) x_crs <- rep(x@crs, length(x))
   for(i in seq_along(x)){
@@ -63,7 +63,7 @@ setMethod("spProjectToCRS", "GPRsurvey", function(x, CRSobj){
     crs(x) <- CRSobj
     x@intersections <- list()
     # x <- coordref(x)
-    x <- spIntersection(x)
+    x <- intersect(x)
     # crs(x)   <- sf::st_crs(x_sf)
   }
   return(x)

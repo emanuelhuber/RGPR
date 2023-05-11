@@ -130,14 +130,19 @@ palDisplay <- function(){
 #' @param x Values
 #' @param col [\code{character}] Colors to be used.
 #' @param sym [\code{logical(1)}] Should the color palette be symmetric?
+#' @param clim [\code{numeric(2)}] The range of the color values, used in the 
+#'             color palette.
 #' @export
 #' @concept colors
-palCol <- function(x , col = palGPR(n=101), sym = TRUE){
+palCol <- function(x , col = palGPR(n=101), sym = TRUE, clim = NULL){
   # test 1 - slower
   # CCY = (x - min(x, na.rm = TRUE))/(max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
   # x[] <- col[ CCY * (length(col) - 1) + 1 ]
   # return(x)
-  
+  if(!is.null(clim)  ){
+    x[x <= clim[1]] <- clim[1]
+    x[x >= clim[2]] <- clim[2]
+  }
   # test 2 - faster
   if(isTRUE(sym) && min(x, na.rm = TRUE) < 0){
     absmax <- max(-min(x, na.rm = TRUE), max(x, na.rm = TRUE))

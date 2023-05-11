@@ -21,9 +21,8 @@
 #'              trace to trace.
 #'              Is "CMP" a special case of "WARR"?
 #'              Amplitude = f(depth, antsep)}
-#'   \item{CMPAnalysis}{No trace positions, \code{x@pos = numeric(0)},
-#'                      no antenna separation, \code{x@antsep = numeric(0)},
-#'                      coherence/semblance = f(depth, velocity)}
+#'   \item{ZOP}{Transillumination survey: Zero-offset profiling}
+#'   \item{MOG}{Transillumination survey: multi-offset profiling}
 #' }
 #' 
 #' @section \code{data}:

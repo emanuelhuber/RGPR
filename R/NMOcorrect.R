@@ -38,7 +38,7 @@
 #' @param thrs [\code{numeric(1)|NULL}] Definite the threshold for muting
 #'             (i.e., suppressing) the values where the NMO-stretching is
 #'             above the threshold. Setting \code{thrs = NULL}, the full data
-#'             will be used.
+#'             will be used. \code{thrs = NULL} ranges between 0 and 1.
 #' @param v A length-one numeric vector defining the radar wave velocity in 
 #'          the ground
 #' @param method [\code{character(1)}] Interpolation method to be applied:

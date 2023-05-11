@@ -85,20 +85,20 @@ Collate:
 	'coord.R'
 	'crs.R'
 	'crsUnit.R'
-	'spInterp.R'
-	'spRmDuplicates.R'
+	'interpCoords.R'
+	'dropDuplicatedCoords.R'
 	'spunit.R'
-	'spProjectToCRS.R'
-	'spIntersection.R'
-	'spClosest.R'
-	'spOBB.R'
-	'spAngle.R'
-	'spGeoref.R'
-	'spConvexHull.R'
-	'spBuffer.R'
-	'spPathRel.R'
+	'project.R'
+	'intersect.R'
+	'findClosestCoord.R'
+	'obbox.R'
+	'angle.R'
+	'georef.R'
+	'convexhull.R'
+	'buffer.R'
+	'relPos.R'
 	'clippedValues.R'
-	'clip.R'
+	'clipData.R'
 	'shift.R'
 	'shiftToTime0.R'
 	'convertTimeToDepth.R'
@@ -137,21 +137,13 @@ Imports:
     stats,
     grDevices,
     utils,
-    rgdal,
-    rgeos,
     geodist,
     raster,
-    sp,
     sf,
-    geojsonsf,
-    MASS,
     signal,
     colorspace,
     Cairo,
-    rgl,
     mmand,
-    plot3D,
-    fields,
     MBA,
     XML,
     checkmate,
@@ -159,4 +151,6 @@ Imports:
     adimpro
 RoxygenNote: 7.2.3
 Suggests: 
-    testthat (>= 2.1.0)
+    geojsonsf,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3

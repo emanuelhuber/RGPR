@@ -10,16 +10,16 @@
 #'                all the GPR lines together. Otherwise it returns the buffer
 #'                for each line.
 #' @return [\code{sfc}] Polygon as a simple feature geometry list-column.
-#' @name spBuffer
-setGeneric(name = "spBuffer", 
+#' @name buffer
+setGeneric(name = "buffer", 
            signature = c("x", "d"),
            def = function(x, d, combine = TRUE) 
-  standardGeneric("spBuffer"))
+  standardGeneric("buffer"))
 
 
-#' @rdname spBuffer   
+#' @rdname buffer   
 #' @export
-setMethod("spBuffer", "GPR", function(x, d){
+setMethod("buffer", "GPR", function(x, d){
   if(length(x@coord) > 0){
     xsf <- as.sf(x)
     # use 'verboseF' to  suppress the following message from sf package
@@ -30,9 +30,9 @@ setMethod("spBuffer", "GPR", function(x, d){
   }
 })
 
-#' @rdname spBuffer   
+#' @rdname buffer   
 #' @export
-setMethod("spBuffer", "GPRsurvey", function(x, d, combine = TRUE){
+setMethod("buffer", "GPRsurvey", function(x, d, combine = TRUE){
   sel <- sapply(x@coords, function(x) length(x) > 0)
   if(all(!sel)){
     stop("No coordinates. Set first coordinates either with 'coord(x) <-'\n",
@@ -55,9 +55,9 @@ setMethod("spBuffer", "GPRsurvey", function(x, d, combine = TRUE){
 
 })
 
-#' @rdname spBuffer   
+#' @rdname buffer   
 #' @export
-setMethod("spBuffer", "sfc", function(x, d, combine = TRUE){
+setMethod("buffer", "sfc", function(x, d, combine = TRUE){
   if(isTRUE(combine)){
     x <- sf::st_combine(x)
   }
@@ -66,9 +66,9 @@ setMethod("spBuffer", "sfc", function(x, d, combine = TRUE){
   return(verboseF(sf::st_buffer(x, d), FALSE))
 })
 
-#' @rdname spBuffer   
+#' @rdname buffer   
 #' @export
-setMethod("spBuffer", "sf", function(x, d, combine = TRUE){
+setMethod("buffer", "sf", function(x, d, combine = TRUE){
   if(isTRUE(combine)){
     x <- sf::st_combine(x)
   }

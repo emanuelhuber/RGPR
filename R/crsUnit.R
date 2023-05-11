@@ -2,28 +2,30 @@
 #' Unit of Coordinate Reference System (CRS)
 #' 
 #' Returns the unit of the CRS
-#' @param CRSobj [\code{sp::CRS|character}] CRS object (one or more)
+#' @param crs [\code{character(1)}] A string accepted by GDAL 
+#'               (e.g., \code{"EPSG:2056"}, WKT-string).
 #' @return [\code{character}] The unit abbreviation (except for degree)
 #' @export
 #' @concept units
-crsUnit <- function(CRSobj){
-  if(length(CRSobj) == 1 || is.na(CRSobj)){
+crsUnit <- function(crs){
+  if(!is.character(crs)) stop("'crs' must be a character!")
+  if(length(crs) == 0 || is.na(crs)){
     return(NA_character_)
-  }else if(length(CRSobj) == 1){
-    CRSobj <- tryCatch(sf::st_crs(CRSobj),
+  }else if(length(crs) == 1){
+    crs <- tryCatch(sf::st_crs(crs),
                        error = function(e){
                          message("Invalid CRS! Try something like 'EPSG:3857'!")
                          return(NA_character_)
                        })
-    if(is.na(CRSobj)) return(NA_character_)
-    # CRSobj <- as.character(CRSobj)
-    # print(CRSobj)
-    if(CRSobj$IsGeographic){
+    if(is.na(crs)) return(NA_character_)
+    # crs <- as.character(crs)
+    # print(crs)
+    if(crs$IsGeographic){
       return("degree")
     }else{
-      return(.checkUnit(CRSobj$ud_unit))
+      return(.checkUnit(crs$ud_unit))
     }
   }else{
-    sapply(CRSobj, crsUnit, USE.NAMES = FALSE)
+    sapply(crs, crsUnit, USE.NAMES = FALSE)
   }
 }

@@ -33,3 +33,4 @@ Modified slots
   \item \code{xpos} the antenna separation distance only for CMP/WARR (plot twt as a function of antenna separation)
 }
 }
+\concept{spatial computation}

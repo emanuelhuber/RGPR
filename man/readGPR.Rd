@@ -4,7 +4,15 @@
 \alias{readGPR}
 \title{Read a GPR data file}
 \usage{
-readGPR(dsn, desc = "", Vmax = NULL, verbose = TRUE, interpGPS = TRUE, ...)
+readGPR(
+  dsn,
+  desc = "",
+  Vmax = NULL,
+  verbose = TRUE,
+  interpGPS = TRUE,
+  UTM = TRUE,
+  ...
+)
 }
 \arguments{
 \item{dsn}{[\code{character|connection}] Data source name: either the 
@@ -25,7 +33,14 @@ suppressed (use with care).}
 \item{interpGPS}{[\code{logical(1)}] Should the trace position be interpolated 
 if possible (that means if a GPS file is available)?}
 
-\item{...}{additional parameters to be passed to \code{\link{spInterp}}}
+\item{UTM}{[\code{logical(1)|character(1)}] If \code{TRUE} it is assumed 
+that the coordinates are in the in geographic (longitude/latitude) 
+coordinate reference system (WGS84) and the coordinates are
+projected into the guessed UTM WGS84 coordinate reference 
+system (RGPR guesses the UTM zone based on the coordinates).
+Only used if `interpGPS = TRUE`.}
+
+\item{...}{additional parameters to be passed to \code{\link{interpCoords}}}
 }
 \value{
 [\code{GPR|GPRset}] If the data contains more than one frequency
@@ -77,10 +92,10 @@ txt files                    \tab \strong{.txt}           \tab                \t
   \item If an optional GPS data file (longitude, latitude) is red 
         (when \code{interpGPS = TRUE} and a GPS data file exists), the 
         coordinates will be per default projected into the corresponding 
-        UTM (WGS 84) projection (see \code{\link{spInterp}}).
-  \item When reading GPR data, the clipped signal values are directly
+        UTM (WGS 84) projection (see \code{\link{interpCoords}}).
+  \item When reading GPR data, the clipDataped signal values are directly
         estimated from the bit values and stored as metadata.
-        They can be retrieved with \code{metadata(x)$clip}.
+        They can be retrieved with \code{metadata(x)$clipData}.
 }
 }
 
@@ -100,5 +115,5 @@ y1 <- readGPR(con)
 }
 }
 \seealso{
-\code{\link{writeGPR}}, \code{\link{spInterp}}, and \code{\link{metadata}}
+\code{\link{writeGPR}}, \code{\link{interpCoords}}, and \code{\link{metadata}}
 }

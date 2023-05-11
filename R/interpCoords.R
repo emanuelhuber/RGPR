@@ -1,41 +1,51 @@
-## FIXME: change parameter name "topo"
+## FIXME: change parameter name "coords"
 
 
 #' Interpolate trace positions from measurement (e.g., GPS).
 #'
 #' @param x      [\code{GPR|GRPsurvey}]
-#' @param topo [\code{matrix|list}] A numeric matrix or a list of matrix 
-#'             (if \code{x} is a \code{GPRsurvey} object) with at least
+#' @param coords [\code{matrix|sf::sf|list}] A numeric matrix with at least
 #'             3 columns (the (x,y,z)-coordinates) and optionally a fourth
-#'             column containing the trace number (id).
+#'             column containing the trace number (id) or \code{NA} if
+#'             for some coordinates there is no link to the trace number;
+#'             or a simple feature from the \code{sf} package of \code{POINT}
+#'             geometry type (one point per coordinates). If there are some
+#'             attributes, it is assumed that the first one corresponds to the
+#'             trace number (id). 
+#'             Use \code{sf::st_cast(..., "POINT")} to convert a 
+#'             \code{LINESTRING} simple feature to a 
+#'             \code{point} simple feature.
+#'             If \code{x} is a \code{GPRsurvey} \code{coords} is a list of either
+#'             matrix or simple featue as previously defined.
 #' @param tt [\code{numeric|list}] A numeric vector or a list of vectors  
 #'           (if \code{x} is a \code{GPRsurvey} object) corresponding to the
 #'           trace recording time (e.g., output GPS device). If provided,
 #'           it will be assumed that the traces were recorded at regular
-#'           time interval (the 4th column of \code{topo} will be ignored).
-#' @param r [\code{raster::RasterLayer}]  A 'RasterLayer' 
+#'           time interval (the 4th column of \code{coords} will be ignored).
+#' @param r [\code{terra::SpatRaster}]  A \code{SpatRaster} 
 #'          object from the package 
-#'          'raster' from which trace elevation \code{z} will be extracted 
+#'          \code{terra} from which trace elevation \code{z} will be extracted 
 #'          based on the trace position \code{(x, y)} on the raster. 
 #'          The extracted trace elevation will overwrite the values from the 
-#'          third column of \code{topo}.
-#' @param lonlat [\code{logical(1)}] Are the coordinates in geographic WGS84 
-#'               lat/long coordinate reference system (e.g., GPS data)?
-#' @param projToUTM [\code{logical(1)}] Should the geographic coordinates be
-#'                  projected into the corresponding UTM WGS84 coordinate 
-#'                  reference system (only if \code{lonlat = TRUE}).
-#'                  RGPR will guess the correct UTM WGS84 project.
-#' @param CRSin [\code{character(1)|integer(1)}] CRS of \code{topo}, only used
-#'              if \code{lonlat = FALSE}. Either a valid proj4string character
-#'              or a valid EPSG integer value 
-#'              (see \code{\link[rgdal]{make_EPSG}}).
-#' @param CRSout [\code{character(1)|integer(1)}] CRS to which the trace 
-#'               coordinates must be projected. Either a valid proj4string 
-#'               character or a valid EPSG integer value 
-#'               (see \code{\link[rgdal]{make_EPSG}}).
-#' @param odometer [\code{logical(1)}] Was the data collection triggered by
-#'                                     an odometer? If yes, then 
-#'                                     \code{odometer = TRUE}.
+#'          third column of \code{coords}.
+#' @param UTM [\code{logical(1)|character(1)}] If \code{TRUE} it is assumed 
+#'            that the coordinates are in the in geographic (longitude/latitude) 
+#'            coordinate reference system (WGS84) and the coordinates are
+#'            projected into the guessed UTM WGS84 coordinate reference 
+#'            system (RGPR guesses the UTM zone based on the coordinates).
+#'            If \code{UTM} is a character string corresponding to a UTM zone
+#'            (for example \code{UTM = "32N"}), it is assumed 
+#'            that the coordinates are in the in geographic (longitude/latitude) 
+#'            coordinate reference system (WGS84) and the coordinates are
+#'            projected into the provided UTM zone. Note that only \code{N} 
+#'            and \code{S} are allowed after the zone number 
+#'            (for example, \code{"31X"} will be not recognized).
+#' @param odometer [\code{logical(1)}] If \code{odometer = TRUE} it is 
+#'                 assumed that data recording was triggered by an odometer.
+#'                 In this case, the coordinate interpolation is based on the
+#'                 3D distance between the coordinates (x,y,z). 
+#'                 If \code{odometer = FALSE} (e.g. GPS data) a 2D distance
+#'                 (x, y) is used.
 #' @param tol  [\code{numeric(1)}]     Length-one numeric vector: if the horizontal distance between 
 #'               two consecutive trace positions is smaller than \code{tol}, 
 #'               then the traces in between as well as the second trace
@@ -58,68 +68,45 @@
 #'               and \code{spline}
 #'                (same methods as in \code{\link{signal}{interp1}}.
 #' @return x with interpolated trace positions.
-#' @name spInterp
-setGeneric("spInterp", function(x, topo, tt = NULL, r = NULL, 
-                                lonlat = FALSE, projToUTM = FALSE, 
-                                CRSin = NULL, CRSout = NULL, odometer = FALSE,
-                                tol = NULL, verbose = TRUE, plot = TRUE,
-                                method = c("linear", "linear", "linear"))
-  standardGeneric("spInterp"))
+#' @name interpCoords
+setGeneric("interpCoords", function(x, coords, 
+                                    tt = NULL, r = NULL, 
+                                    UTM = FALSE, 
+                                    odometer = FALSE,
+                                    tol = NULL, verbose = TRUE, plot = TRUE,
+                                    method = c("linear", "linear", "linear"))
+  standardGeneric("interpCoords"))
 
 
-#' @rdname spInterp
+#' @rdname interpCoords
 #' @export
-setMethod("spInterp", "GPR", 
- function(x, topo, tt = NULL, r = NULL, 
-          lonlat = FALSE, projToUTM = FALSE, 
-          CRSin = NULL,
-          CRSout = NULL,
+setMethod("interpCoords", "GPR", 
+ function(x, coords, 
+          tt = NULL, r = NULL, 
+          UTM = FALSE, 
           odometer = FALSE,
           tol = NULL, verbose = TRUE, plot = TRUE,
           method = c("linear", "linear", "linear")){
   
-   # if lonlat = TRUE or geo = TRUE or projected = FALSE
-   # lonlatToUTM <- function(lon, lat, zone = NULL, south = NULL)
-   # topo_crs <- NULL
-   if(inherits(topo, "sf")){
-     crs(x) <- sf::st_crs(topo)
-     x_c <- sf::st_coordinates(topo)
-     # handle "LINESTRING" type (for geojson for example)
-     test <- grepl("L", colnames(x_c))
-     if(any(test)){
-       x_c <- x_c[x_c[, test] == x_c[1, test],]
-     }
-     id_c <- c(colnames(x_c) %in% c("X", "Y", "Z"))
-     id_c0 <- c(c("X", "Y", "Z") %in% colnames(x_c))
-     x_c0 <- matrix(0, nrow = nrow(x_c), ncol = 3)
-     x_c0[,id_c0] <- x_c[, id_c]
-     x_g <- sf::st_drop_geometry(topo)
-     if(length(x_g) > 0){
-      topo <- cbind(x_c0, x_g)
-     }else{
-       topo <- x_c0
-     }
+   # FIXME > do some checks on args
+
+   if(inherits(coords, "sf")){
+     crs(x) <- sf::st_crs(coords)
+     coordssf <- sf::st_coordinates(coords)
+     # if 2D coordinates
+     if(ncol(coordssf) == 2) coordssf <- cbind(coordssf, 0)
+     coords <- cbind(coordssf, 
+                   sf::st_drop_geometry(coords))
    }
-   if(isTRUE(lonlat)){
-     if(is.na(x@crs)){ #|| trimStr(sf::st_crs(x@crs)$proj4string) == "+proj=longlat +datum=WGS84 +no_defs" ){
-        crs(x) <- "EPSG:4326"
-        topo_utm <- lonLatToUTM(lon = topo[, 1], lat = topo[, 2])
-        tryCatch({crs(x) <- topo_utm$crs
-                  topo[, 1:2] <- topo_utm$xy
-                  if(isFALSE(projToUTM) && is.null(CRSout)){
-                    CRSout <- "EPSG:4326"
-                  }}
-        )
-     }else{
-       lonlat <- FALSE
+   if(isTRUE(UTM) ){
+     coords_utm <- lonLatToUTM(lon = coords[, 1], lat = coords[, 2])
+     if(any(is.na(coords_utm$xy))){
+       stop("The conversion to UTM did not work!\n",
+            "try setting 'UTM = FALSE'.")
      }
-     # topo_crs <- topo_utm$crs
-     # topo[, 1:2] <- topo_utm$xy
-   }else if(!is.null(CRSin)){
-     crs(x) <- CRSin
-     # topo_crs <- crs(x)
-   }
-   
+     crs(x) <- coords_utm$crs
+     coords[, 1:2] <- coords_utm$xy
+   } 
    
    # 3 Cases:
    #   - (x, y, z, tr) trace markers
@@ -128,48 +115,47 @@ setMethod("spInterp", "GPR",
    
    # Duplicated trace positions -> remove trace?
    
-   # What to do with geographic coordinates?
-   
-   if(ncol(topo) >= 4 && all(is.na(topo[,4]))){
+   if(ncol(coords) >= 4 && all(is.na(coords[,4]))){
      warning(x@name, ": no link between the measured points",
              " and the GPR traces!")
-     topo <- topo[, 1:4]
+     coords <- coords[, 1:3]
    }
-   if(ncol(topo) < 3){
-     stop("'topo' must have at least 3 columns (x, y, z)!")
+   if(ncol(coords) < 3){
+     stop("'coords' must have at least 3 columns (x, y, z)!")
    }
    if(is.null(tol)) tol <- .Machine$double.eps
+   
    #----- REMOVE UNUSABLE TRACE MARKERS ----------------------------------------#
-   if(ncol(topo) >=  4 && is.null(tt)){
+   if(ncol(coords) >=  4 && is.null(tt)){
      # if we have measured some points before the line start or 
      # after the end of the GPR Line, we delete them
-     test <- which(!is.na(topo[, 4]))
-     topo <- topo[min(test):max(test), ]
-     topo[, 4] <- as.integer(topo[,4])
+     test <- which(!is.na(coords[, 4]))
+     coords <- coords[min(test):max(test), ]
+     coords[, 4] <- as.integer(coords[,4])
      # keep only the markers corresponding to existing traces
-     topo <- topo[topo[, 4] > 0 & topo[, 4] <= ncol(x), ]
-     #----- REMOVE DUPLICATED TRACE ID IN TOPO ---------------------------------#
-     topo <- .rmRowDuplicates(topo, topo[, 4])
-     # order topo by increasing traceNb
-     topo <- topo[order(topo[, 4]), ]
+     coords <- coords[coords[, 4] > 0 & coords[, 4] <= ncol(x), ]
+     #----- REMOVE DUPLICATED TRACE ID IN coords ---------------------------------#
+     coords <- .rmRowDuplicates(coords, coords[, 4])
+     # order coords by increasing trace id
+     coords <- coords[order(coords[, 4]), ]
      #----- REMOVE DUPLICATED TRACES (TRACES WITH (ALMOST) SAME POSITIONS) -----#
-     xx <- .rmTraceIDDuplicates(x, topo, tol = tol, verbose = verbose)
+     xx <- .rmTraceIDDuplicates(x, coords, tol = tol, verbose = verbose)
      x <- xx$x
-     topo <- xx$topo
+     coords <- xx$coords
    }else{
-     dist2D <- pathRelPos(topo[, 1:2])
+     dist2D <- pathRelPos(coords[, 1:2])
      tbdltd <- which(abs(diff(dist2D)) < tol) # to be deleted
      while(length(tbdltd) > 0){
-       topo <- topo[ -(tbdltd + 1), ]
-       dist2D <- pathRelPos(topo[, 1:2]) # mod
+       coords <- coords[ -(tbdltd + 1), ]
+       dist2D <- pathRelPos(coords[, 1:2]) # mod
        tbdltd <- which(abs(diff(dist2D)) < tol)
      }
    }
    #----- IF RASTER -> EXTRACT POSITION ELEVATION FROM RASTER ------------------#
    if(!is.null(r)){
-     topo[,3] <- raster::extract(r, topo[, 1:2], method = "bilinear")
-     if(sum(is.na(topo[, 3])) > 0){
-       stop("'extract(r, topo[, c(\"E\",\"N\")], method = \"bilinear\")' ",
+     coords[,3] <- raster::extract(r, coords[, 1:2], method = "bilinear")
+     if(sum(is.na(coords[, 3])) > 0){
+       stop("'extract(r, coords[, c(\"E\",\"N\")], method = \"bilinear\")' ",
             "returns 'NA' values!\n", 
             "Not all GPR positions fall within raster extent or\n",
             "there are 'NA' values in raster 'r'!")
@@ -178,41 +164,41 @@ setMethod("spInterp", "GPR",
    ntr <- ncol(x@data)
    myWarning <- ""
    #----- INTERPOLATE MARKER POSITION THAT ARE NOT LINKED TO A TRACE -----------#
-   if(ncol(topo) >= 4 && is.null(tt)){
+   if(ncol(coords) >= 4 && is.null(tt)){
      # if there are points measured with the total station
      # that do not have an fiducial (FID) > interpolate them!
-     if(anyNA(topo[,4])){
-       # dist3D[topo$PNAME %in% FID$PNAME] > distance for the points 
+     if(anyNA(coords[,4])){
+       # dist3D[coords$PNAME %in% FID$PNAME] > distance for the points 
        # also recorded in FID
        myWarning <- "\npoints total station without fiducials"
-       dist3D <- pathRelPos(topo[, 1:3])
-       test <- !is.na(topo[,4])
+       dist3D <- pathRelPos(coords[, 1:3])
+       test <- !is.na(coords[,4])
        intMeth <- ifelse(sum(test) > 2, method[1], "linear")
        traceNb <- signal::interp1(x      = dist3D[test], 
-                                  y      = topo[test, 4], 
+                                  y      = coords[test, 4], 
                                   xi     = dist3D,
                                   method = intMeth,
                                   extrap = TRUE)
-       topo[, 4] <- as.integer(round(traceNb))
+       coords[, 4] <- as.integer(round(traceNb))
        # check for duplicates in TRACE ID and remove them!
-       topo <- .rmRowDuplicates(topo, topo[, 4])
+       coords <- .rmRowDuplicates(coords, coords[, 4])
      }
    }
    #----- IF THERE IS NOTHING TO INTERPOLATE (= 1 MARKER PER TRACE) ------------#
-   if( ncol(topo) >= 4 && all(seq_len(ntr) %in% topo[, 4]) ){
-     ENZ <- as.matrix(topo[topo[, 4] %in% seq_along(x@pos), 1:3])
+   if( ncol(coords) >= 4 && all(seq_len(ntr) %in% coords[, 4]) ){
+     ENZ <- as.matrix(coords[coords[, 4] %in% seq_along(x@pos), 1:3])
      message("No interpolation required because the trace positions\n",
-             "of all GPR traces is already available (in object 'topo')!")
+             "of all GPR traces is already available (in object 'coords')!")
    }else{
      #--- PRE-INTERPOLATION ---#
-     if(ncol(topo) >=  4 && is.null(tt)){
-       mrk <- topo[, 4]                    # pos
+     if(ncol(coords) >=  4 && is.null(tt)){
+       mrk <- coords[, 4]           # pos
        mrki <- seq_len(ntr)       # posi
        v <- 1:2
        if(isTRUE(odometer))    v <- 1:3
-       pos <- pathRelPos(topo[, v])   # dist3D
+       pos <- pathRelPos(coords[, v])   # dist3D
        # FIXME: 1:3 or 1:2 ?????
-       # pos <- pathRelPos(topo[, 1:3])   # dist3D
+       # pos <- pathRelPos(coords[, 1:3])   # dist3D
      }else if(!is.null(tt)){
        # mrk_time <- as.numeric(as.POSIXct(mrk$time))
        # mrk_pos <- pathRelPos(mrk[, c("x", "y")])
@@ -230,7 +216,7 @@ setMethod("spInterp", "GPR",
           mrk <- as.numeric(tt)
        }
        
-       pos <- pathRelPos(topo[, 1:2])
+       pos <- pathRelPos(coords[, 1:2])
        # tr_time <- seq(from = mrk_time[1], to = tail(mrk_time, 1), 
        #                length.out = ntr)
        mrki <- seq(from = mrk[1], to = tail(mrk, 1), length.out = ntr)
@@ -239,14 +225,14 @@ setMethod("spInterp", "GPR",
        #                          method = "spline", extrap = NA)
      }else{
        id <- c(1, length(x))
-       dstid <- c(0, pathLength(topo[, 1:2]))
-       dst <- pathRelPos(topo[,1:2])
-       pp <- approx(x    = c(0, pathLength(topo[, 1:2])),
+       dstid <- c(0, pathLength(coords[, 1:2]))
+       dst <- pathRelPos(coords[,1:2])
+       pp <- approx(x    = c(0, pathLength(coords[, 1:2])),
                     y    = c(1, length(x)),
-                    xout = pathRelPos(topo[,1:2]))$y
+                    xout = pathRelPos(coords[,1:2]))$y
        mrki <- seq_along(x)
        mrk <- pp
-       pos <- pathRelPos(topo[,1:2])
+       pos <- pathRelPos(coords[,1:2])
      }
      intMeth <- ifelse(length(pos) > 2, method[1], "linear")
      # dist3DInt
@@ -260,22 +246,22 @@ setMethod("spInterp", "GPR",
      #--- INTERPOLATION dist3D ---#
      
      #--- INTERPOLATION N,E,Z ---#
-     # A <- interp3DPath(x = topo[, 1:3], pos = topo[, 4], 
+     # A <- interp3DPath(x = coords[, 1:3], pos = coords[, 4], 
      #                   posi = seq_along(x@pos), r = r,
      #                   method = method)
      # colnames(A) <- c("x", "y", "z")
      ENZ <- matrix(nrow = length(posi), ncol = 3)
      intMeth <- ifelse(length(pos) > 2, method[2], "linear")
      for(i in 1:2){
-       ENZ[, i] <- signal::interp1(pos, topo[, i], posi, 
+       ENZ[, i] <- signal::interp1(pos, coords[, i], posi, 
                                    method = intMeth, extrap = NA)
        ENZ_NA <- is.na(ENZ[, i])
-       ENZ[ENZ_NA, i] <- signal::interp1(pos, topo[, i],  posi[ENZ_NA], 
+       ENZ[ENZ_NA, i] <- signal::interp1(pos, coords[, i],  posi[ENZ_NA], 
                                          method = "linear", extrap = TRUE)
      }
      if(is.null(r)){
        intMeth <- ifelse(length(pos) > 2, method[3], "linear")
-       ENZ[, 3] <- signal::interp1(pos, topo[, 3], posi, 
+       ENZ[, 3] <- signal::interp1(pos, coords[, 3], posi, 
                                    method = intMeth, extrap = NA)
      }else if(!is.null(r)){
        ENZ[, 3] <- raster::extract(r, cbind(ENZ[, 1], ENZ[, 2]), 
@@ -290,11 +276,7 @@ setMethod("spInterp", "GPR",
        ENZ[(lastNA + 1):length(ENZ[, 3]), 3]<- ENZ[lastNA, 3]
      }
      
-     # add fiducial to indicate which points/traces were used for interpolation
-     # x@fid[topo[,4]] <- paste0(x@fid[topo[,4]], " *")
-     # fid(x) <- trimStr(fid(x))
-     # diagnostic plots
-     # dist3Dint <- pathRelPos(ENZ[, 1:2]) == posi
+     # FIXME add fiducial to indicate which points/traces were used for interpolation
      if(verbose){
        message(x@name, ": mean dx = ", round( mean(diff(posi)), 3 ), 
                ", range dx = [", round( min(diff(posi)), 3 ),", ", 
@@ -313,40 +295,23 @@ setMethod("spInterp", "GPR",
             ylab = "interpolated elevation",
             main = paste0("range dx = [", round(min(diff(posi)), 2), 
                           ", ", round(max(diff(posi)), 2), "]"))
-       points(pos, topo[,3], pch = 20, col = "red")
-       plot(topo[, c(1,2)], col = 1, type = "l", lwd = 2, asp = 1,
+       points(pos, coords[,3], pch = 20, col = "red")
+       plot(coords[, c(1,2)], col = 1, type = "l", lwd = 2, asp = 1,
             ylim = range(ENZ[, 2]), xlim = range(ENZ[, 1]), 
             main = paste0("mean dx=", round(mean(diff(posi)),2)))
-       points(topo[, c(1,2)], col = 1, pch = 20, cex = 2)
+       points(coords[, c(1,2)], col = 1, pch = 20, cex = 2)
        lines(ENZ[, 1], ENZ[, 2], col = 2, lwd = 1)
        Sys.sleep(1)
        par(op)
      }
    }
-   # x@x <- posi - posi[1]
-   # x@coord <- ENZ
-   coord(x) <- ENZ
-   # if(isFALSE(projToUTM) && !is.null(topo_crs) && is.null(CRSout)){
-   #   #ENZ[,1:2] <- UTMTolonlat(ENZ[,1:2], CRSobj = topo_crs)
-   #   # topo_crs <- sp::CRS("+init=epsg:4326")
-   #   CRSout <- sp::CRS("+init=epsg:4326")
+   # coord(x) <- ENZ
+   x@coord <- ENZ
+
+   # if(!is.null(CRSout)){
+   #   x <- verboseF(project(x, CRSout), FALSE)
    # }
-   # if(!is.null(topo_crs)){
-   #   crs(x) <- topo_crs
-   #   # x@crs    <- .checkCRS(topo_crs)
-   #   # x@spunit <- crsUnit(x@crs)
-   #   # x@proc   <- c(x@proc, "crs<-")
-   #   # x@crs <- topo_crs
-   #   # x@spunit <- crsUnit(topo_crs)
-   # }
-   if(!is.null(CRSout)){
-     x <- spProjectToCRS(x, CRSout)
-   }
-   # else{
-   #   # FIXME -> update x@x
-   #   x@x <- pathRelPos(ENZ[,1:2])
-   # }
-   x@proc <- c(x@proc, "spInterp")
+   x@proc <- c(x@proc, "interpCoords")
   return(x)
 })
 
@@ -362,76 +327,72 @@ setMethod("spInterp", "GPR",
   }
 }
 
-# dim(topo) n x 4
+# dim(coords) n x 4
 # check that: https://stackoverflow.com/a/34924247
 # round the coordinates to the tol value and apply duplicated?
-.rmTraceIDDuplicates <- function(x, topo, tol = NULL,
+.rmTraceIDDuplicates <- function(x, coords, tol = NULL,
                                  verbose = TRUE){
   if(is.null(tol)) tol <- .Machine$double.eps
-  # topo <- mrk
-  dist2D <- pathRelPos(topo[, 1:2])
+  dist2D <- pathRelPos(coords[, 1:2])
   tbdltd <- which(abs(diff(dist2D)) < tol)   # to be deleted
   #if(length(tbdltd) > 0){
-  # nb_tr_topo <- 0
+  # nb_tr_coords <- 0
   nb_tr_x <- 0
   dtr_id <- c()  # deleted trace ID
   while(length(tbdltd) > 0){    # add
     for(i in seq_along(tbdltd)){
       # i <- 1
       # number of trace to remove
-      dtr <- topo[tbdltd[i] + 1 , 4] - topo[tbdltd[i], 4]
+      dtr <- coords[tbdltd[i] + 1 , 4] - coords[tbdltd[i], 4]
       # traces to remove (ID)
-      w <- topo[tbdltd[i], 4] + seq_len(dtr)
+      w <- coords[tbdltd[i], 4] + seq_len(dtr)
       # remove trace in x
       x <- x[, -w]
-      # remove traces in topo
-      topo <- topo[-(tbdltd[i] + 1), ]
+      # remove traces in coords
+      coords <- coords[-(tbdltd[i] + 1), ]
       # and actualise the trace numbers of the trace above the delete trace
-      if(tbdltd[i] + 1 <= nrow(topo)){
-        v <- (tbdltd[i] + 1):nrow(topo)
-        # if(any(is.na(topo[v,]))) stop( "lkjlkj")
-        topo[v, 4] <- topo[v, 4] -  dtr
+      if(tbdltd[i] + 1 <= nrow(coords)){
+        v <- (tbdltd[i] + 1):nrow(coords)
+        # if(any(is.na(coords[v,]))) stop( "lkjlkj")
+        coords[v, 4] <- coords[v, 4] -  dtr
       }
       tbdltd <- tbdltd - 1
       nb_tr_x <- nb_tr_x + dtr
-      # nb_tr_topo <- 1 + nb_tr_topo
+      # nb_tr_coords <- 1 + nb_tr_coords
     }
-    dist2D <- pathRelPos(topo[, 1:2])
+    dist2D <- pathRelPos(coords[, 1:2])
     tbdltd <- which(abs(diff(dist2D)) < tol)
   }
-  # if(nb_tr_topo > 0 && isTRUE(verbose)){
+  # if(nb_tr_coords > 0 && isTRUE(verbose)){
   if(nb_tr_x > 0 && isTRUE(verbose)){
     message(nb_tr_x, " trace(s) removed (duplicated trace position(s))" )
   }
-  return(list(x = x, topo = topo))
+  return(list(x = x, coords = coords))
 }
 
 
-#' @rdname spInterp
+#' @rdname interpCoords
 #' @export
-setMethod("spInterp", "GPRsurvey", 
-          function(x, topo, tt = NULL, r = NULL, 
-                   lonlat = FALSE, projToUTM = FALSE, 
-                   CRSin = NULL, CRSout = NULL,
+setMethod("interpCoords", "GPRsurvey", 
+          function(x, coords, tt = NULL, r = NULL, 
+                   UTM = FALSE, 
                    odometer = FALSE,
                    tol = NULL, verbose = TRUE, plot = TRUE,
                    method = c("linear", "linear", "linear")){
             
   #------------------- check arguments
   msg <- checkArgInit()
-  msg <- checkArg(topo,  msg, "LENGTH", length(x@names))
+  msg <- checkArg(coords,  msg, "LENGTH", length(x@names))
   checkArgStop(msg)
-  if( any(sapply(topo, nrow) != x@nx)) stop("Elements in list must have correct dim")
+  if( any(sapply(coords, nrow) != x@nx)) stop("Elements in list must have correct dim")
   #------------------- end check
   
   for(i in seq_along(x)){
     z <- readGPR(x@paths[[i]])
-    z <- spInterp(z, topo[[i]], 
+    z <- interpCoords(z, coords[[i]], 
                   tt        = tt[[i]], 
                   r         = r, 
-                  lonlat    = lonlat, 
-                  projToUTM = projToUTM, 
-                  CRSout    = CRSout,
+                  UTM = UTM, 
                   odometer  = odometer,
                   tol       = tol,
                   verbose   = verbose,
@@ -444,16 +405,16 @@ setMethod("spInterp", "GPRsurvey",
   }
   x@intersections <- list()
   # x <- coordref(x)
-  x <- spIntersection(x)
+  x <- intersect(x)
   return(x)
 })
 
 
 #   
-# # x = topo[, c("E", "N", "Z")] or C("x", "y", "z")
+# # x = coords[, c("E", "N", "Z")] or C("x", "y", "z")
 # # dist3D <- pathRelPos(x, last = FALSE)
 # # posi <- seq_along(x@pos)
-# # pos <- topo[, "TRACE"]
+# # pos <- coords[, "TRACE"]
 # # r
 # interp3DPath <- function(x, pos, posi, r = NULL,
 #                          method = c("linear", "spline", "pchip")){
@@ -591,7 +552,7 @@ setMethod("spInterp", "GPRsurvey",
 #   u <- llToUTM(lat = XY[,2], lon = XY[,1])
 #   #plot(u$xy, type = "l", asp = 1)
 #   
-#   #---- 3. create "topo" file
+#   #---- 3. create "coords" file
 #   mrk <- cbind(u$xy, 0, NA)
 #   colnames(mrk) <- c("x", "y", "z", "tn")
 #   

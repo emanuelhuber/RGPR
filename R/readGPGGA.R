@@ -28,9 +28,6 @@ readGPGGA <- function(dsn, sep = ",", returnSf = TRUE){
                         coords = c("lon", "lat"),
                         crs = 4326)
   }
-  
-  # sp::coordinates(llz) <- cbind(x = llz$lon, y = llz$lat)
-  # sp::proj4string(llz) <- sp::CRS("+proj=longlat +datum=WGS84")
   .closeFileIfNot(dsn)
   return(llz)
 }

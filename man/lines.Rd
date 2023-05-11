@@ -9,8 +9,6 @@
 \method{lines}{GPR}(x, relTime0 = FALSE, ...)
 
 \method{lines}{GPRsurvey}(x, ...)
-
-\method{lines}{GPRsurvey}(x, ...)
 }
 \arguments{
 \item{x}{[\code{GPR class}]}
@@ -21,5 +19,5 @@ zero.}
 \item{...}{Additional parameters to be passed to \code{\link{lines}}.}
 }
 \description{
-Plot the GPR survey as lines
+Add a GPR trace on a plot
 }

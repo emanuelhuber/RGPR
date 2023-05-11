@@ -7,7 +7,6 @@
 #' @import utils 
 #' @import grDevices 
 #' @import methods
-#' @import rgdal
 #' @import sf
 "_PACKAGE"
 

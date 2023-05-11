@@ -11,16 +11,12 @@
 #'                       coordinate reference system.
 #' }
 #' @param x      [\code{GPR class}] An object of the class \code{GPR}
-#' @param value  [\code{integer|character|sp::CRS|sf::CRS}] CRS object (one or more)
+#' @param value  [\code{character(1)}] A string accepted by GDAL 
+#'               (e.g., \code{"EPSG:2056"}, WKT-string).
 #' @examples 
 #' \dontrun{
 #' x <- readGPR("LINE.DT1")
-#' crs(x) <- 3857
-#' crs(x) <- "+init=epsg:3857 +units=m"
-#' crs(x) <- "+proj=merc +lon_0=0 +lat_ts=0 +x_0=0 +y_0=0 +a=6378137
-#'            +b=6378137 +nadgrids=@null +units=m +no_defs "
-#' crs(x) <- sf::st_crs("+init=epsg:3857 +units=m")
-#' crs(x) <- sp::st_crs(3857)
+#' crs(x) <- "EPSG:3857"
 #' }
 #' @return [\code{GPR class}] An object of the class \code{GPR}
 #' @name crs
@@ -37,7 +33,9 @@ setGeneric("crs<-",function(x,value){standardGeneric("crs<-")})
 #' @rdname crs   
 #' @export
 setMethod("crs", "GPR", function(x){
-  if(!is.null(a <- sf::st_crs(x@crs)$epsg)){
+  if(is.na(x@crs)){
+    return(x@crs)
+  }else if(!is.null(a <- sf::st_crs(x@crs)$epsg)){
     u <- paste0("EPSG:", a)
     names(u) <- sf::st_crs(x@crs)$Name
     return(u)
@@ -52,6 +50,8 @@ setReplaceMethod("crs", signature="GPR", function(x, value){
     x@crs    <- .checkCRS(value)
     x@spunit <- crsUnit(x@crs)
     x@proc   <- c(x@proc, "crs<-")
+    # message("Replacing CRS does not reproject the data.\n", 
+    #         "Use `projectCoords()` for that")
     return(x)
 })
 
@@ -60,7 +60,9 @@ setReplaceMethod("crs", signature="GPR", function(x, value){
 #' @rdname crs   
 #' @export
 setMethod("crs", "GPRsurvey", function(x){
-  if(!is.null(a <- sf::st_crs(x@crs)$epsg)){
+  if(is.na(x@crs)){
+    return(x@crs)
+  }else if(!is.null(a <- sf::st_crs(x@crs)$epsg)){
     u <- paste0("EPSG:", a)
     names(u) <- sf::st_crs(x@crs)$Name
     return(u)
@@ -85,6 +87,8 @@ setReplaceMethod("crs", signature="GPRsurvey", function(x, value){
   # x@crs <- sapply(value, .checkCRS, USE.NAMES = FALSE)
   x@crs <- .checkCRS(value)
   x@spunit <- crsUnit(x@crs)
+  message("Replacing CRS does not reproject the data.\n", 
+          "Use `projectCoords()` for that")
   return(x)
 })
 

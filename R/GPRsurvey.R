@@ -33,7 +33,7 @@ GPRsurvey <- function(x, verbose = TRUE, ...){
   
   for(i in seq_along(LINES)){
     verboseF(message("Read ", basename(LINES[i]), "..."), verbose = verbose)
-    gpr <- verboseF( readGPR(LINES[[i]], verbose = verbose, ...), verbose = verbose)
+    gpr <- verboseF( readGPR(LINES[[i]], verbose = verbose), verbose = verbose)
     if(inherits(gpr, "GPRset")){
       stop("HOW TO HANDLE GPRset OBJECT????")
     }
@@ -56,49 +56,49 @@ GPRsurvey <- function(x, verbose = TRUE, ...){
     line_modes[i]  <- gpr@mode
     if(length(gpr@date) == 0){
       # should never happen
-      warning(LINES[[i]], "\n", "date has length zero. Should never happen!")
+      if(isTRUE(verbose)){
+        warning(LINES[[i]], "\n", "date has length zero. Should never happen!")
+      }
       line_dates[i]        <- Sys.Date()
     }else{
       line_dates[i]        <- gpr@date
     }
     if(length(gpr@freq) == 0){
       # should never happen
-      warning(LINES[[i]], "\n", "frequency has length zero Should never happen!")
+      if(isTRUE(verbose)){
+        warning(LINES[[i]], "\n", "frequency has length zero Should never happen!")
+      }
       line_freq[i]         <- 0
     }else{
       line_freq[i]         <- gpr@freq
     }
     if(length(gpr@antsep) == 0){
       # should never happen
-      warning(LINES[[i]], "\n", "ant. sep. has length zero")
+      if(isTRUE(verbose)){
+        warning(LINES[[i]], "\n", "ant. sep. has length zero")
+      }
       line_antsep[i]       <- 0
     }else{
       line_antsep[i]       <- gpr@antsep
     }
     line_spunit[i]        <- gpr@spunit
     line_zunits[i]         <- gpr@zunit  
-    line_crs[i]            <- ifelse(length(gpr@crs) > 0, 
-                                     gpr@crs[1], 
-                                     NA_character_)
+    line_crs[i]            <- gpr@crs
     xyzCoords[[i]]         <- gpr@coord
     if(ncol(gpr@coord) == 3 )  colnames(xyzCoords[[i]]) <- c("x", "y", "z")
-    # print(gpr@coord)
-    # colnames(xyzCoords[[i]]) <- c("x", "y", "z")
-    # if(length(gpr@coord) > 0){
-    #   xyzCoords[[line_names[i]]] <- gpr@coord
-    #   colnames(xyzCoords[[line_names[i]]]) <- c("x", "y", "z")
-    #   # line_lengths[i] <- posLine(gpr@coord[, 1:2], last = TRUE)
-    # }else{
-    #   # line_lengths[i] <- gpr@dx * ncol(gpr@data)
-    # }
-    # line_markers[[line_names[i] ]] <- trimStr(gpr@markers)
+
     line_markers[[i]]      <- trimStr(gpr@markers)
   }
   # line_crs <- .checkCRSsurvey(line_crs)
   
-
+  if(length(unique(line_crs)) > 1){
+    if(isTRUE(verbose)){
+      warning("Not all the coordinate reference systems (CRS) are identical!\n",
+            "I take the first valid CRS!")
+    }
+  }
   line_crs <- .checkCRS(line_crs[!is.na(line_crs)][1])
-  message(line_crs)
+  # message(line_crs)
   # line_spunit <- .checkUnit(line_spunit[line_spunit != ""][1])
   line_spunit <- crsUnit(line_crs)
   
@@ -144,26 +144,8 @@ GPRsurvey <- function(x, verbose = TRUE, ...){
            zunits        = line_zunits,  # time/depth unit  !!!length = 1!!!
            nx            = line_nx,    # to control if nrow(@coord) == ncol(x[[i]])
            xlengths      = line_xlengths     # depth/time window (vertical)
-           # version       = "0.1",
-           # filepaths     = LINES,       # vector of [n] file names
-           # names         = line_names,      # length = [n]
-           # descriptions  = line_descriptions,  # length = [n]
-           # freqs         = line_freq,       # length = [n]
-           # lengths       = line_lengths,       # length = [n]
-           # surveymodes   = line_surveymodes,    # length = [n]
-           # dates         = line_dates,      # length = [n]
-           # antseps       = line_antsep,      # length = [n]
-           # posunits      = line_spunit,    # length = 1
-           # crs           = line_crs,      # length = 1
-           # coords        = xyzCoords,    # header
-           # fids          = line_markers,
-           # intersections = list(),
-           # ntraces       = line_traces,   # to control if nrow(@coord) == ncol(x[[i]])
-           # nz            = line_nz,
-           # dz            = line_dz,     # depth/time window (vertical)
-           # zunits        = line_depthunits   # time/depth unit
   )
-  x <- spIntersection(x)
+  x <- intersect(x)
   return(x)
 }
 

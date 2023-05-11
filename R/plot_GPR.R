@@ -95,6 +95,8 @@
 #' @param interpolate [\code{logical(1)}]
 #' @param sym [\code{logical(1)}] if \code{TRUE} the colorscale is symmetric
 #'             if the amplitudes vary around zero. # FIXME
+#' @param clim [\code{numeric(2)}] The range of the color values, used in the 
+#'             color palette.
 #' @param add [\code{logical(1)}] If \code{TRUE}, add to current plot.
 #' @param asp [\code{numeric(1)}] The y/x aspect ratio.
 #' @param secaxis [\code{logical(1)}] If \code{TRUE}, add a secondary axis
@@ -120,6 +122,9 @@
 #'           to time-zero. See details.
 #' @param cbar [\code{list|NULL}]  If not \code{NULL}, display a colorbar.
 #'             See details
+#' @param dirArrows [\code{list|NULL}] If not \code{NULL}, display an arrow
+#'                  indicating the survey direction (only for plot of GPRsurvey)
+#'                  data.
 #' @param ... additional arguments passed to the plotting methods 
 #'            \code{\link[graphics]{plot}} for 1D plot and 
 #'            \code{\link[plot3D]{Image}} for 2D plot. See also  \code{details}.
@@ -133,6 +138,7 @@ plot.GPR <- function(x,
                     horiz = TRUE,
                     interpolate = TRUE,
                     sym = TRUE,
+                    clim = NULL,
                     add = FALSE,
                     asp = NA,
                     secaxis = TRUE,
@@ -204,6 +210,7 @@ plot.GPR <- function(x,
             type = type,
            interpolate = interpolate,
            sym = sym,
+           clim = clim,
            add = add,
            asp = asp,
            secaxis = secaxis,
@@ -371,6 +378,7 @@ plot.GPR <- function(x,
                    col = palGPR(), 
                    interpolate = TRUE,
                    sym = TRUE,
+                   clim = NULL,
                    add = FALSE,
                    asp = NA,
                    secaxis = TRUE,
@@ -493,7 +501,7 @@ plot.GPR <- function(x,
          mgp = defaults$mpg, asp = asp)
   }
   if(type == "raster"){
-    rasterImage(palCol(x@data, col = col, sym = sym), 
+    rasterImage(palCol(x@data, col = col, sym = sym, clim = clim), 
                 xleft       = min(x@x), 
                 xright      = max(x@x), 
                 ytop        = ifelse(elev, max(x@z), min(x@z)),
@@ -540,9 +548,17 @@ plot.GPR <- function(x,
   
   if(!is.null(cbar)){
     if(isTRUE(sym)){
-      clim <- max(abs(x), na.rm = TRUE) * c(-1, 1)
+      if(!is.null(clim)){
+        clim <- max(abs(clim), na.rm = TRUE) * c(-1, 1)
+      }else{
+        clim <- max(abs(x), na.rm = TRUE) * c(-1, 1)
+      }
     }else{
-      clim <- range(x, na.rm = TRUE)
+      if(!is.null(clim)){
+        clim <- range(clim, na.rm = TRUE)
+      }else{
+        clim <- range(x, na.rm = TRUE)
+      }
     }
     # col <- defaults[["col"]]
     # dim(col) <- c(length(col), 1)
@@ -633,6 +649,7 @@ plot.GPR <- function(x,
   par(xpd=TRUE)
   
   cbarPos <- c(line2user(pos, 4), line2user(pos+w, 4), line2user(0, 3), line2user(0, 1))
+  col <- rev(col)
   dim(col) <- c(length(col), 1)
   rasterImage(col, 
               xleft = cbarPos[1], 
@@ -649,7 +666,7 @@ plot.GPR <- function(x,
   
   text(x = line2user(pos + w + hst, 4), 
        y = cpos, 
-       labels = cval , 
+       labels = rev(cval) , 
        adj = 0)
   segments(x0 = line2user(pos + w, 4),
            y0 = cpos,

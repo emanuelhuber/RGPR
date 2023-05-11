@@ -14,11 +14,11 @@
 #'              (see \code{\link{readGPR}}). If \code{interpGPS = FALSE}, 
 #'              the (formated) content of the GPS data file is then stored as 
 #'              meta-data and can be retrieved with \code{metadata(x)$GPS}.}
-#'   \item{clip}{When reading GPR data, the clipped signal values are directly
+#'   \item{clipData}{When reading GPR data, the clipDataped signal values are directly
 #'               estimated from the bit values and stored as metadata.
-#'               They can be retrieved with \code{metadata(x)$clip}.
-#'               These clipped values can be used directly
-#  FIXME             by \code{link{clippedValues}} and \code{\link{declip}}
+#'               They can be retrieved with \code{metadata(x)$clipData}.
+#'               These clipDataped values can be used directly
+#  FIXME             by \code{link{clipDatapedValues}} and \code{\link{declipData}}
 #'               .}
 #' }
 #' 
@@ -26,7 +26,7 @@
 # @param value [\code{character}]
 #' @return [\code{list}] 
 #' @seealso \code{\link{readGPR}} 
-#, FIXME \code{\link{clippedValues}}, and \code{\link{declip}}
+#, FIXME \code{\link{clipDatapedValues}}, and \code{\link{declipData}}
 #' @name metadata
 #' @rdname metadata
 setGeneric("metadata", function(x) standardGeneric("metadata"))

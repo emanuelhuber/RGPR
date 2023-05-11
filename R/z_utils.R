@@ -161,15 +161,15 @@ depth0 <- function(t0 = 0, v = 0.1, antsep = 1){#, c0 = 0.299){
   x[i]
 }
 
-.subsetClip <- function(x, i, j){
-  if(!is.null(x@md[["clip"]])){
-    test <- .clipMat(x@md[["clip"]], n = nrow(x@data))
-    md_clip <- list()
-    md_clip[["clipmin"]] <- apply(test[i, j, drop = FALSE], 2, 
+.subsetclipData <- function(x, i, j){
+  if(!is.null(x@md[["clipData"]])){
+    test <- .clipDataMat(x@md[["clipData"]], n = nrow(x@data))
+    md_clipData <- list()
+    md_clipData[["clipDatamin"]] <- apply(test[i, j, drop = FALSE], 2, 
                                   function(x) which(x == -1))
-    md_clip[["clipmax"]] <- apply(test[i, j, drop = FALSE], 2, 
+    md_clipData[["clipDatamax"]] <- apply(test[i, j, drop = FALSE], 2, 
                                   function(x) which(x ==  1))
-    return(md_clip)
+    return(md_clipData)
   }else{
     return(NULL)
   }

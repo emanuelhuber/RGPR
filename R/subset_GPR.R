@@ -68,20 +68,20 @@ setMethod("[", signature(x = "GPR", i = "ANY", j = "ANY"),
     x@rec          <- .subsetMat(x@rec, j)
     x@trans        <- .subsetMat(x@trans, j)
     
-    x@md[["clip"]] <- .subsetClip(x, i, j)
-    # if(!is.null(x@md[["clip"]])){
-    #   test <- .clipMat(x@md[["clip"]], n = nrow(x@data))
-    #   x@md[["clip"]][["clipmin"]] <- apply(test[i, j], 2, function(x) which(x == -1))
-    #   x@md[["clip"]][["clipmax"]] <- apply(test[i, j], 2, function(x) which(x == 1))
+    x@md[["clipData"]] <- .subsetclipData(x, i, j)
+    # if(!is.null(x@md[["clipData"]])){
+    #   test <- .clipDataMat(x@md[["clipData"]], n = nrow(x@data))
+    #   x@md[["clipData"]][["clipDatamin"]] <- apply(test[i, j], 2, function(x) which(x == -1))
+    #   x@md[["clipData"]][["clipDatamax"]] <- apply(test[i, j], 2, function(x) which(x == 1))
     # }
 
     # if(length(j) == 0) j <- seq_len(ncol(rval))
-    # if(!is.null(x@md[["clip"]])){
-    #   if(!is.null(x@md[["clip"]][["clipmin"]])){
-    #     x@md[["clip"]][["clipmin"]] <- x@md[["clip"]][["clipmin"]][j]
+    # if(!is.null(x@md[["clipData"]])){
+    #   if(!is.null(x@md[["clipData"]][["clipDatamin"]])){
+    #     x@md[["clipData"]][["clipDatamin"]] <- x@md[["clipData"]][["clipDatamin"]][j]
     #   }
-    #   if(!is.null(x@md[["clip"]][["clipmax"]])){
-    #     x@md[["clip"]][["clipmax"]] <- x@md[["clip"]][["clipmax"]][j]
+    #   if(!is.null(x@md[["clipData"]][["clipDatamax"]])){
+    #     x@md[["clipData"]][["clipDatamax"]] <- x@md[["clipData"]][["clipDatamax"]][j]
     #   }
     # }
     # 
@@ -93,10 +93,10 @@ setMethod("[", signature(x = "GPR", i = "ANY", j = "ANY"),
     #   if(missing(j)){
     #     rval <- rval[i, , drop = drop]
     #     x@z <- x@z[i]
-    #     if(!is.null(x@md[["clip"]])){
-    #       test <- .clipMat(x@md[["clip"]], n = nrow(x@data))
-    #       x@md[["clip"]][["clipmin"]] <- apply(test[i, ], 2, function(x) which(x == -1))
-    #       x@md[["clip"]][["clipmax"]] <- apply(test[i, ], 2, function(x) which(x == 1))
+    #     if(!is.null(x@md[["clipData"]])){
+    #       test <- .clipDataMat(x@md[["clipData"]], n = nrow(x@data))
+    #       x@md[["clipData"]][["clipDatamin"]] <- apply(test[i, ], 2, function(x) which(x == -1))
+    #       x@md[["clipData"]][["clipDatamax"]] <- apply(test[i, ], 2, function(x) which(x == 1))
     #     }
     #   }else { 
     #     if(length(j) == 0) j <- seq_len(ncol(rval))
@@ -115,12 +115,12 @@ setMethod("[", signature(x = "GPR", i = "ANY", j = "ANY"),
     #     x@coord        <- .subsetMat(x@coord, j)   
     #     x@rec          <- .subsetMat(x@rec, j)
     #     x@trans        <- .subsetMat(x@trans, j)
-    #     if(!is.null(x@md[["clip"]])){
-    #       if(!is.null(x@md[["clip"]][["clipmin"]])){
-    #         x@md[["clip"]][["clipmin"]] <- x@md[["clip"]][["clipmin"]][j]
+    #     if(!is.null(x@md[["clipData"]])){
+    #       if(!is.null(x@md[["clipData"]][["clipDatamin"]])){
+    #         x@md[["clipData"]][["clipDatamin"]] <- x@md[["clipData"]][["clipDatamin"]][j]
     #       }
-    #       if(!is.null(x@md[["clip"]][["clipmax"]])){
-    #         x@md[["clip"]][["clipmax"]] <- x@md[["clip"]][["clipmax"]][j]
+    #       if(!is.null(x@md[["clipData"]][["clipDatamax"]])){
+    #         x@md[["clipData"]][["clipDatamax"]] <- x@md[["clipData"]][["clipDatamax"]][j]
     #       }
     #     }
     #   }
@@ -129,10 +129,10 @@ setMethod("[", signature(x = "GPR", i = "ANY", j = "ANY"),
     #   stop("Problem: not a matrix. Please contact me: emanuel.huber@pm.me")
     #   # rval <- rval[i]
     #   # x@z <- x@z[i]
-    #   # if(!is.null(x@md[["clip"]])){
-    #   #   test <- .clipMat(x@md[["clip"]], n = nrow(x@data))
-    #   #   x@md[["clip"]][["clipmin"]] <- apply(test[i, ], 2, function(x) which(x == -1))
-    #   #   x@md[["clip"]][["clipmax"]] <- apply(test[i, ], 2, function(x) which(x == 1))
+    #   # if(!is.null(x@md[["clipData"]])){
+    #   #   test <- .clipDataMat(x@md[["clipData"]], n = nrow(x@data))
+    #   #   x@md[["clipData"]][["clipDatamin"]] <- apply(test[i, ], 2, function(x) which(x == -1))
+    #   #   x@md[["clipData"]][["clipDatamax"]] <- apply(test[i, ], 2, function(x) which(x == 1))
     #   # }
     # }
     x@data <- rval

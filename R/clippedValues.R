@@ -1,89 +1,89 @@
-# #' Return the clipped values of the GPR signal
+# #' Return the clipDataped values of the GPR signal
 # #'
 # #' Max and min values
 # #' 
 # #' @export
-# setGeneric("clippedValues", function(x, nbits = NULL, xlim = NULL) 
-#   standardGeneric("clippedValues"))
+# setGeneric("clipDatapedValues", function(x, nbits = NULL, xlim = NULL) 
+#   standardGeneric("clipDatapedValues"))
 # 
-# setMethod("clippedValues", "GPR", function(x, nbits = NULL, xlim = NULL){
+# setMethod("clipDatapedValues", "GPR", function(x, nbits = NULL, xlim = NULL){
 #   if(is.null(nbits) && !is.null(xlim)){
 #     # print("1")
-#     xclip <- list(clipmin = apply(x, 2, .getClipped, xclip = min(xlim)),
-#                   clipmax = apply(x, 2, .getClipped, xclip = max(xlim)) )
+#     xclipData <- list(clipDatamin = apply(x, 2, .getclipDataped, xclipData = min(xlim)),
+#                   clipDatamax = apply(x, 2, .getclipDataped, xclipData = max(xlim)) )
 #   }else if(!is.null(nbits) && is.null(xlim)){
 #     # print("2")
-#     # xclip <- apply(x, 2, .getClipped, xmin = -2^nbits/2, xmax = 2^nbits/2 -1 )
-#     xclip <- getClippedBits(x@data, nbits = nbits)
+#     # xclipData <- apply(x, 2, .getclipDataped, xmin = -2^nbits/2, xmax = 2^nbits/2 -1 )
+#     xclipData <- getclipDatapedBits(x@data, nbits = nbits)
 #   }else if (is.null(nbits) && is.null(xlim)){
 #     # print("3")
-#     if(!is.null(x@hd[["clip"]]) && any(sapply(x@hd[["clip"]], length) > 0)){
-#       message("I take the already estimated clipped values in x@hd[['clip']].")
-#       xclip <- x@hd[["clip"]]
+#     if(!is.null(x@hd[["clipData"]]) && any(sapply(x@hd[["clipData"]], length) > 0)){
+#       message("I take the already estimated clipDataped values in x@hd[['clipData']].")
+#       xclipData <- x@hd[["clipData"]]
 #     }else{
 #       # print("3.1")
-#       # estimate xclip from the data (plateau)
-#       message("I estimate the clipped values")
+#       # estimate xclipData from the data (plateau)
+#       message("I estimate the clipDataped values")
 #       xmax <- (x@data == max(x))
 #       xmin <- (x@data == min(x))
-#       xclipmin <- -Inf
-#       xclipmax <- Inf
+#       xclipDatamin <- -Inf
+#       xclipDatamax <- Inf
 #       testmin <- apply(xmin, 2, function(x) any(rle(diff(x))$lengths > 1 ) )
 #       testmax <- apply(xmax, 2, function(x) any(rle(diff(x))$lengths > 1 ) )
-#       xclip <- list()
+#       xclipData <- list()
 #       if(any(testmin)){
-#         xclip[["clipmin"]] <- apply(x, 2, .getClipped, xclip = min(x))
+#         xclipData[["clipDatamin"]] <- apply(x, 2, .getclipDataped, xclipData = min(x))
 #       }
 #       if(any(testmax)){
-#         xclip[["clipmax"]] <- apply(x, 2, .getClipped, xclip = max(x))
+#         xclipData[["clipDatamax"]] <- apply(x, 2, .getclipDataped, xclipData = max(x))
 #       }
-#       # xclip <- apply(x, 2, .getClipped, xmin = xclipmin, xmax = xclipmax)
+#       # xclipData <- apply(x, 2, .getclipDataped, xmin = xclipDatamin, xmax = xclipDatamax)
 #     }
 #   }else{
 #     stop("lkj")
 #   }
 #   x@data[] <- 0
-#   if(any(sapply(xclip, length) != 0)){
-#     x@data <- .clipMat(xclip, n = nrow(x))
+#   if(any(sapply(xclipData, length) != 0)){
+#     x@data <- .clipDataMat(xclipData, n = nrow(x))
 #   }
 #   proc(x) <- getArgs()
 #   return(x)
 # })
 
-.getClipped <- function(x, xclip){
-  which(x == xclip)
+.getclipDataped <- function(x, xclipData){
+  which(x == xclipData)
 }
 
-# return list of clipped values: min and max
+# return list of clipDataped values: min and max
 clippedBits <- function(x, nbits){
-  xclipmin <- apply(x, 2, .getClipped, xclip = -2^nbits/2 )
-  xclipmax <- apply(x, 2, .getClipped, xclip = 2^nbits/2 -1 )
-  if(length(xclipmin) == 0 && length(xclipmax) == 0){
+  xclipDatamin <- apply(x, 2, .getclipDataped, xclipData = -2^nbits/2 )
+  xclipDatamax <- apply(x, 2, .getclipDataped, xclipData = 2^nbits/2 -1 )
+  if(length(xclipDatamin) == 0 && length(xclipDatamax) == 0){
     return(NULL)
   }else{
-    return(list(clipmin = xclipmin, clipmax = xclipmax))
+    return(list(clipDatamin = xclipDatamin, clipDatamax = xclipDatamax))
   }
 }
 
-.clipTrace <- function(x, n){
+.clipDataTrace <- function(x, n){
   u <- rep(FALSE, n)
   u[x] <- TRUE
   return(u)
 }
 
 # n = number of rows
-.clipMat <- function(x, n){
-  # xclipmax - xclipmin
-  if(length(x[["clipmin"]]) > 0){
-    xclipmin <- sapply(x[["clipmin"]], .clipTrace, n = n)
+.clipDataMat <- function(x, n){
+  # xclipDatamax - xclipDatamin
+  if(length(x[["clipDatamin"]]) > 0){
+    xclipDatamin <- sapply(x[["clipDatamin"]], .clipDataTrace, n = n)
   }else{
-    xclipmin <- rep(0, n)
+    xclipDatamin <- rep(0, n)
   }
-  if(length(x[["clipmax"]]) > 0){
-    xclipmax <- sapply(x[["clipmax"]], .clipTrace, n = n)
+  if(length(x[["clipDatamax"]]) > 0){
+    xclipDatamax <- sapply(x[["clipDatamax"]], .clipDataTrace, n = n)
   }else{
-    xclipmax <- rep(0, n)
+    xclipDatamax <- rep(0, n)
   }
-  return(xclipmax - xclipmin)
+  return(xclipDatamax - xclipDatamin)
 }
 

@@ -4,10 +4,11 @@
 \alias{crsUnit}
 \title{Unit of Coordinate Reference System (CRS)}
 \usage{
-crsUnit(CRSobj)
+crsUnit(crs)
 }
 \arguments{
-\item{CRSobj}{[\code{sp::CRS|character}] CRS object (one or more)}
+\item{crs}{[\code{character(1)}] A string accepted by GDAL 
+(e.g., \code{"EPSG:2056"}, WKT-string).}
 }
 \value{
 [\code{character}] The unit abbreviation (except for degree)

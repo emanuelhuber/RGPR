@@ -5,7 +5,7 @@
 #' @param y Length-two numeric vector of the (x, y)-coordinates.
 #' @return Indice (integer) of the closest trace.
 #' @export
-closestTr <- function(x, y){
+findClosestCoord <- function(x, y){
   ymat <- matrix(as.numeric(y[1:2]), 
                  nrow = length(x),
                  ncol = 2,

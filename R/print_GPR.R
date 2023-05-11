@@ -27,10 +27,10 @@
   }else{
     toprint[11] <- paste0("coordinates:    -")
   } 
-  if(length(x@md[["clip"]]) > 0){
-    toprint[12] <- paste0("clipped values: YES (", sum(unlist(x@md[["clip"]])), ")")
+  if(length(x@md[["clipData"]]) > 0){
+    toprint[12] <- paste0("clipDataped values: YES (", sum(unlist(x@md[["clipData"]])), ")")
   }else{
-    toprint[12] <- paste0("clipped values: -")
+    toprint[12] <- paste0("clipDataped values: -")
     
   }
   if(is.na(x@crs)){

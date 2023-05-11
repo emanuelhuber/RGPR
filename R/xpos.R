@@ -12,6 +12,7 @@
 #' @return [\code{GPR}] 
 #' @name xpos
 #' @rdname xpos
+#' @concept spatial computation
 setGeneric("xpos", function(x) standardGeneric("xpos"))
 
 #' @name xpos<-

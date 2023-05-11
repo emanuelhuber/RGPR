@@ -48,13 +48,12 @@ setMethod("interpSlices", "GPRsurvey", function(x,
   
   extend = match.arg(extend, c("bbox", "obbox", "chull", "buffer"))
   if(isTRUE(rot)){
-    # x_rot <-  spAngle(x)
-    x <- spGeoref(x)
+    x <- georef(x)
     x_rot <- x@transf[5]
   }else if(!isFALSE(rot)){
     if(is.numeric(rot)){
       x_rot <- rot
-      x <- spGeoref(x, alpha = x_rot)
+      x <- georef(x, alpha = x_rot)
     }else{
       stop("'rot' must be either TRUE/FALSE or numeric")
     }
@@ -220,7 +219,7 @@ trInterp <- function(x, z, zi){
   ypos <- unlist(lapply(X@coords, function(x) x[,2]))
   
   # # define bounding box + number of points for interpolation
-  # obb <- spOBB(x)
+  # obb <- obbox(x)
   # bbox <- c(min(obb[,1]), max(obb[,1]), min(obb[,2]), max(obb[,2]))
   # 
   # 
@@ -250,9 +249,9 @@ trInterp <- function(x, z, zi){
     }
   }
 
-  xy_clip <- NULL
+  xy_clipData <- NULL
   if(extend == "chull"){
-    xsf_chull <- spConvexHull(x_shp)
+    xsf_chull <- convexhull(x_shp)
     if(is.null(buffer)){
       if(is.null(shp)){
         xsf_chull_xy <- sf::st_coordinates(xsf_chull)
@@ -265,8 +264,8 @@ trInterp <- function(x, z, zi){
     if(buffer > 0){
       xsf_chull <- sf::st_buffer(xsf_chull, buffer)
     }
-    xy_clip <- sf::st_coordinates(xsf_chull)
-    para <- getbbox_nx_ny(xy_clip[,1], xy_clip[,2], dx, dy, buffer = 0)
+    xy_clipData <- sf::st_coordinates(xsf_chull)
+    para <- getbbox_nx_ny(xy_clipData[,1], xy_clipData[,2], dx, dy, buffer = 0)
   }else if(extend == "bbox"){
     if(!is.null(shp)){
       if(is.null(buffer)) buffer <- 0
@@ -275,7 +274,7 @@ trInterp <- function(x, z, zi){
       para <- getbbox_nx_ny(xpos, ypos, dx, dy, buffer)
     }
   }else if(extend == "obbox"){
-    sf_obb <- spOBB(x_shp)
+    sf_obb <- obbox(x_shp)
     if(is.null(buffer)){
       if(is.null(shp)){
         xsf_chull_xy <- sf::st_coordinates(sf_obb)
@@ -287,18 +286,18 @@ trInterp <- function(x, z, zi){
     }
     if(buffer > 0){
       sf_obb <- sf::st_buffer(sf_obb, buffer)
-      sf_obb <- spOBB(sf_obb)
+      sf_obb <- obbox(sf_obb)
     }
-    xy_clip <- sf::st_coordinates(sf_obb)
+    xy_clipData <- sf::st_coordinates(sf_obb)
     
-    para <- getbbox_nx_ny(xy_clip[,1], xy_clip[,2], dx, dy, buffer = 0)
+    para <- getbbox_nx_ny(xy_clipData[,1], xy_clipData[,2], dx, dy, buffer = 0)
   }else if(extend == "buffer"){
     if(is.null(buffer) || !(buffer > 0)){
       stop("When 'extend = buffer', 'buffer' must be larger than 0!")
     }else{
-      x_shp <- spBuffer(x, buffer)
-      xy_clip <- sf::st_coordinates(x_shp)
-      para <- getbbox_nx_ny(xy_clip[,1], xy_clip[,2], dx, dy, buffer = 0)
+      x_shp <- buffer(x, buffer)
+      xy_clipData <- sf::st_coordinates(x_shp)
+      para <- getbbox_nx_ny(xy_clipData[,1], xy_clipData[,2], dx, dy, buffer = 0)
     }
   }
   
@@ -321,11 +320,11 @@ trInterp <- function(x, z, zi){
     val[[j]] <- unlist(lapply(V, function(v, k = j) v[k,]))
     S <- MBA::mba.surf(cbind(xpos, ypos, val[[j]]), para$nx , para$ny, n = n, m = m, 
                        extend = TRUE, h = h, b.box = para$bbox)$xyz.est
-    if(!is.null(xy_clip)){
+    if(!is.null(xy_clipData)){
       if(is.null(fk)){
         fk <- outer(S$x, S$y, inPoly,
-                    vertx = xy_clip[,1],
-                    verty = xy_clip[,2])
+                    vertx = xy_clipData[,1],
+                    verty = xy_clipData[,2])
         fk <- !as.logical(fk)
       }
       S$z[fk] <- NA

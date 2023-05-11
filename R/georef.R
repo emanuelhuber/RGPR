@@ -17,14 +17,14 @@
 #            to coordinates in the local reference system.
 #' @param preg [\code{numeric(2|3)}]
 #' @param FUN [\code{function}]
-#' @name spGeoref
-setGeneric("spGeoref", function(x, alpha = NULL, cloc = NULL, creg = NULL,
+#' @name georef
+setGeneric("georef", function(x, alpha = NULL, cloc = NULL, creg = NULL,
            ploc = NULL, preg = NULL, FUN = mean) 
-  standardGeneric("spGeoref"))
+  standardGeneric("georef"))
 
-#' @rdname spGeoref
+#' @rdname georef
 #' @export
-setMethod("spGeoref", "GPRsurvey", 
+setMethod("georef", "GPRsurvey", 
           function(x, alpha = NULL, cloc = NULL, creg = NULL,
                    ploc = NULL, preg = NULL, FUN = mean) {
             test <- sapply(x@coords, function(x) length(x) > 0)
@@ -32,7 +32,7 @@ setMethod("spGeoref", "GPRsurvey",
               cloc <- .centroid(x[test])[1:2]
             }
             if(is.null(alpha) && is.null(ploc) && is.null(preg)){
-              alpha <- spAngle(x[test])
+              alpha <- angle(x[test])
             }
             # here I cannot write FUN = FUN because FUN is an argument of
             # lapply...

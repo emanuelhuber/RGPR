@@ -3,15 +3,15 @@
 #' @param x [\code{GPR|GPRsurvey}] An object of the class \code{GPR} or
 #'          \code{GPRsurvey}
 #' @return [\code{numeric{m}}] Relative trace position along GPR line.
-#' @name spPathRel
-setGeneric("spPathRel", function(x) 
-  standardGeneric("spPathRel"))
+#' @name relPos
+setGeneric("relPos", function(x) 
+  standardGeneric("relPos"))
 
 
 
-#' @rdname spPathRel   
+#' @rdname relPos   
 #' @export
-setMethod("spPathRel", "GPR", function(x){
+setMethod("relPos", "GPR", function(x){
   if(length(x@coord) > 0){
     # if(isCRSGeographic(x)){ 
     #   dx <- verboseF(geodist::geodist(x@coord[,1:2], paired = FALSE, 
@@ -29,9 +29,9 @@ setMethod("spPathRel", "GPR", function(x){
   }
 })
 
-# #' @rdname spPathRel   
+# #' @rdname relPos   
 # #' @export
-# setMethod("spPathRel", "GPRsurvey", function(x){
+# setMethod("relPos", "GPRsurvey", function(x){
 #   if(length(x@coords) > 0){
 #     xyz <- x@coords
 #     # xyz <- Filter(Negate(is.null), xyz)

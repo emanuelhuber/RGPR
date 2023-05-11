@@ -12,7 +12,7 @@ plot.GPRslice <- function(x, ...){
 #                           col = NULL,
 #                           # clim = NULL,
 #                           asp = 1,
-#                           # xclip = NULL,
+#                           # xclipData = NULL,
 #                           clim = NULL,
 #                           add = FALSE,
 #                           ...){
@@ -30,11 +30,11 @@ plot.GPRslice <- function(x, ...){
 #   if(is.null(ylab)){
 #     ylab <- paste0( ifelse(x@ylab ==  "", "y", x@ylab), " (", x@xunit, ")")
 #   }
-#   # if(is.null(xclip)){
-#   #   xclip <- c(quantile(as.vector(x@data), 0.99, na.rm = TRUE),
+#   # if(is.null(xclipData)){
+#   #   xclipData <- c(quantile(as.vector(x@data), 0.99, na.rm = TRUE),
 #   #              quantile(as.vector(x@data), 0.01, na.rm = TRUE))
 #   # }
-#   # x <- clip(x, xclip = xclip, track = FALSE)
+#   # x <- clipData(x, xclipData = xclipData, track = FALSE)
 #   
 #   if( min(x@data, na.rm = TRUE) >= 0 ){
 #     # to plot amplitudes for example...

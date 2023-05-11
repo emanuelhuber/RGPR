@@ -4,7 +4,7 @@
 \alias{palCol}
 \title{Return color from palette}
 \usage{
-palCol(x, col = palGPR(n = 101), sym = TRUE)
+palCol(x, col = palGPR(n = 101), sym = TRUE, clim = NULL)
 }
 \arguments{
 \item{x}{Values}
@@ -12,6 +12,9 @@ palCol(x, col = palGPR(n = 101), sym = TRUE)
 \item{col}{[\code{character}] Colors to be used.}
 
 \item{sym}{[\code{logical(1)}] Should the color palette be symmetric?}
+
+\item{clim}{[\code{numeric(2)}] The range of the color values, used in the 
+color palette.}
 }
 \description{
 Return color from palette

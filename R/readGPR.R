@@ -41,10 +41,10 @@
 #'   \item If an optional GPS data file (longitude, latitude) is red 
 #'         (when \code{interpGPS = TRUE} and a GPS data file exists), the 
 #'         coordinates will be per default projected into the corresponding 
-#'         UTM (WGS 84) projection (see \code{\link{spInterp}}).
-#'   \item When reading GPR data, the clipped signal values are directly
+#'         UTM (WGS 84) projection (see \code{\link{interpCoords}}).
+#'   \item When reading GPR data, the clipDataped signal values are directly
 #'         estimated from the bit values and stored as metadata.
-#'         They can be retrieved with \code{metadata(x)$clip}.
+#'         They can be retrieved with \code{metadata(x)$clipData}.
 #' }
 #' 
 #' @param dsn [\code{character|connection}] Data source name: either the 
@@ -60,11 +60,17 @@
 #'                suppressed (use with care).
 #' @param interpGPS [\code{logical(1)}] Should the trace position be interpolated 
 #'                  if possible (that means if a GPS file is available)? 
-#' @param ... additional parameters to be passed to \code{\link{spInterp}}
+#' @param UTM [\code{logical(1)|character(1)}] If \code{TRUE} it is assumed 
+#'            that the coordinates are in the in geographic (longitude/latitude) 
+#'            coordinate reference system (WGS84) and the coordinates are
+#'            projected into the guessed UTM WGS84 coordinate reference 
+#'            system (RGPR guesses the UTM zone based on the coordinates).
+#'            Only used if `interpGPS = TRUE`.
+#' @param ... additional parameters to be passed to \code{\link{interpCoords}}
 #' @return [\code{GPR|GPRset}] If the data contains more than one frequency
 #'         data, it returns an object of the class \code{GPRset}. Else
 #'         an object of the class \code{GPR}.
-#' @seealso \code{\link{writeGPR}}, \code{\link{spInterp}}, and \code{\link{metadata}}
+#' @seealso \code{\link{writeGPR}}, \code{\link{interpCoords}}, and \code{\link{metadata}}
 #' @examples
 #' \dontrun{
 #' # argument dsn is a file path
@@ -84,6 +90,7 @@
 #' @export
 readGPR <- function(dsn, desc = "", Vmax = NULL,
                     verbose = TRUE, interpGPS = TRUE,
+                    UTM = TRUE,
                     ...){
   
   #------------------- check arguments
@@ -148,71 +155,8 @@ readGPR <- function(dsn, desc = "", Vmax = NULL,
                           fName = fName[["DT1"]], fPath = fPath[["DT1"]], 
                           desc = desc, Vmax = Vmax),  verbose = verbose)
     if( !is.null(dsn[["GPS"]])){
-      x_gps <-  verboseF(readGPS(dsn[["GPS"]]), verbose = verbose)
-      # if(is.null(x_gps)){
-      #   message("I couldn't find coordinates in GPS file.")
-      # }
+      x_gps <-  verboseF(readGPS(dsn[["GPS"]], UTM = UTM), verbose = verbose)
     }
-    # if(length(dsn) == 1){
-    #   if(inherits(dsn, "connection")){
-    #     stop("Please add an additional connection to 'dsn' for ",
-    #          "the header file '*.hd'")
-    #   }
-    #   # get HD (+ GPS) file(s)
-    #   dsn <- list(DT1 = getFName(fPath[1], ext = ".DT1")$dt1,  # dsn, 
-    #               HD  = getFName(fPath[1], ext = ".HD")$hd, 
-    #               GPS = getFName(fPath[1], ext = ".GPS", throwError = FALSE)$gps)
-    # }else if( !("HD" %in% toupper(ext))){
-    #   stop("Missing connection or filepath to '*.hd' file.") 
-    # }else if( !("GPS" %in% toupper(ext)) ){
-    #   dsn <- list(DT1 = dsn[["DT1"]], 
-    #               HD  = dsn[["HD"]],
-    #               GPS = getFName(fPath[1], ext = ".GPS", throwError = FALSE)$gps)
-    # }
-    # hd  <- verboseF( readHD(dsn[["HD"]]), verbose = verbose)
-    # dt1 <- verboseF( readDT1(dsn[["DT1"]], ntr = hd$ntr, npt = hd$npt), 
-    #                   verbose = verbose)
-    # x <- verboseF(.gprDT1(list(hd = hd$HD, dt1 = dt1$dt1hd, data = dt1$data ), 
-    #                       fName = fName[["DT1"]], fPath = fPath[["DT1"]], 
-    #                       desc = desc, Vmax = Vmax),  verbose = verbose)
-    # if( !is.null(dsn[["GPS"]]) && isTRUE(interp_pos)){
-    #   x <- tryCatch({
-    #           gps <-  verboseF(readGPS(dsn[["GPS"]]), verbose = verbose)
-    #           if(!is.null(gps)){
-    #             x <- interpPos(x, gps, tol = sqrt(.Machine$double.eps), 
-    #                            method = method)
-    #             crs(x) <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
-    #             x
-    #           }else{
-    #             x
-    #           }
-    #         },
-    #         error = function(cond) {
-    #           message("I could neither read your GPS data ",
-    #                   "nor interpolate the trace position.")
-    #           # Choose a return value in case of error
-    #           return(x)
-    #         }#,
-    #         # warning = function(cond) {
-    #         #   message(paste("URL caused a warning:", url))
-    #         #   message("Here's the original warning message:")
-    #         #   message(cond)
-    #         #   # Choose a return value in case of warning
-    #         #   return(NULL)
-    #         # },
-    #         # finally={
-    #         #   # NOTE:
-    #         #   # Here goes everything that should be executed at the end,
-    #         #   # regardless of success or error.
-    #         #   # If you want more than one expression to be executed, then you 
-    #         #   # need to wrap them in curly brackets ({...}); otherwise you could
-    #         #   # just have written 'finally=<expression>' 
-    #         #   message(paste("Processed URL:", url))
-    #         #   message("Some other message at the end")
-    #         # }
-    #         )    
-    # }
-    # # plot(x)
     
   #----------------------------------- MALA -----------------------------------#
   #-------------------------- RD3 + RAD (+ COR) -------------------------------#
@@ -525,53 +469,7 @@ readGPR <- function(dsn, desc = "", Vmax = NULL,
   # 
   }else if("RDS" %in% toupper(ext)){
      x <- verboseF( .read_RDS(dsn[["RDS"]]), verbose = verbose)
-  #   if(class(x) == "GPR"){
-  #     x@filepath <- fPath
-  #   }else if(class(x) == "list"){
-  #     versRGPR <- x[["version"]]
-  #     if(versRGPR == "0.1"){
-         # if(!is.null(x[['delineations']])){
-         #   if(ncol(x[['delineations']][[1]]) >= 5 ){
-         #     for(i in seq_along(x[['delineations']])){
-         #       x[['delineations']][[i]][, 5] <- -x[['delineations']][[i]][, 5]
-         #     }
-         #   }
-         # }
-  #     }
-  #     y <- new("GPR",
-  #              version = x[['version']],
-  #              data = x[['data']],
-  #              traces = x[['traces']],           # x$dt1$traces
-  #              depth = x[['depth']],
-  #              pos = x[['pos']],                 # x$dt1$position of the traces
-  #              time0 = x[['time0']],             # x$dt1$time0
-  #              time = x[['time']],               # x$dt1$time
-  #              fid = trimStr(x[['fid']]),        # x$dt1$fid <-> x$dt1$x8
-  #              ann = trimStr(x[['ann']]),        # x$dt1$fid <-> x$dt1$x8
-  #              coord = x[['coord']],             # x$dt1$topo  of the traces
-  #              rec = x[['rec']],                # x$dt1$recx,x$dt1$recy,x$dt1$recz
-  #              trans = x[['trans']],
-  #              coordref = x[['coordref']],       # x$dt1$topo of the traces
-  #              freq = x[['freq']],
-  #              dz = x[['dz']],
-  #              dx = x[['dx']],
-  #              antsep = x[['antsep']],
-  #              name = x[['name']],
-  #              description = x[['description']],
-  #              filepath =x[['filepath']],
-  #              depthunit = x[['depthunit']],
-  #              posunit = x[['posunit']],
-  #              surveymode = x[['surveymode']],
-  #              date = x[['date']],
-  #              crs = x[['crs']],
-  #              proc = x[['proc']],               # processing steps
-  #              vel = x[['vel']],                 # m/ns
-  #              delineations = x[['delineations']],
-  #              hd =  x[['hd']]                   # header
-  #     )
-  #     y@filepath <- fPath
-  #     x <- y
-  #   }
+  
   }else{
      stop("File extension not recognised!\n",
           "Must be '.DT1', '.dzt', '.rd3', '.sgy', '.segy', '.rds'\n",
@@ -582,25 +480,22 @@ readGPR <- function(dsn, desc = "", Vmax = NULL,
     if(interpGPS){
       if(verbose) message("Coordinates interpolation from GPS data")
       x <- tryCatch({
-        lst       <- list(...)
-        r         <- lst[["r"]]               # default = NULL
-        projToUTM <- ifelse(is.null(lst[["projToUTM"]]), TRUE, lst[["projToUTM"]])
-        CRSin     <- lst[["CRSin"]]          # default = NULL
-        CRSout    <- lst[["CRSout"]]          # default = NULL
-        odometer  <- lst[["odometer"]]        # default = NULL
-        tol       <- lst[["tol"]]             # default = NULL
-        plot      <- ifelse(is.null(lst[["plot"]]), FALSE, lst[["plot"]])
+        dots       <- list(...)
+        r         <- dots[["r"]]               # default = NULL
+        # UTM <- ifelse(is.null(dots[["UTM"]]), TRUE, dots[["UTM"]])
+        odometer  <- dots[["odometer"]]        # default = NULL
+        tol       <- dots[["tol"]]             # default = NULL
+        plot      <- ifelse(is.null(dots[["plot"]]), FALSE, dots[["plot"]])
         method    <- c("linear", "linear", "linear")
-        if(!is.null(lst[["method"]])){
-          if(length(lst[["method"]]) == 3){
-            method <- lst[["method"]]
+        if(!is.null(dots[["method"]])){
+          if(length(dots[["method"]]) == 3){
+            method <- dots[["method"]]
           }else{
             warning("'method' must have 3 elements. I take default values.")
           }
         }
-        x <- spInterp(x, x_gps, tt = NULL, r = r, 
-                 lonlat = TRUE, projToUTM = projToUTM, 
-                 CRSin = CRSin, CRSout = CRSout,
+        x <- interpCoords(x, x_gps, tt = NULL, r = r, 
+                 UTM = FALSE, 
                  odometer = odometer,
                  tol = tol, verbose = verbose, plot = plot,
                  method = method)

@@ -17,6 +17,7 @@
   horiz = TRUE,
   interpolate = TRUE,
   sym = TRUE,
+  clim = NULL,
   add = FALSE,
   asp = NA,
   secaxis = TRUE,
@@ -34,7 +35,15 @@
 
 \method{plot}{GPRset}(x, ...)
 
-\method{plot}{GPRsurvey}(x, ...)
+\method{plot}{GPRsurvey}(
+  x,
+  markers = list(pch = 21, col = "black", bg = "red", cex = 0.7),
+  ann = list(pch = 1, cex = 0.8, col = "black"),
+  dirArrows = list(col = "red", length = 0.1),
+  asp = 1,
+  add = FALSE,
+  ...
+)
 
 \method{plot}{GPRcube}(x, ...)
 
@@ -54,6 +63,9 @@ plot is horizontal (else vertical).}
 
 \item{sym}{[\code{logical(1)}] if \code{TRUE} the colorscale is symmetric
 if the amplitudes vary around zero. # FIXME}
+
+\item{clim}{[\code{numeric(2)}] The range of the color values, used in the 
+color palette.}
 
 \item{add}{[\code{logical(1)}] If \code{TRUE}, add to current plot.}
 
@@ -94,6 +106,10 @@ See details}
 \item{...}{additional arguments passed to the plotting methods 
 \code{\link[graphics]{plot}} for 1D plot and 
 \code{\link[plot3D]{Image}} for 2D plot. See also  \code{details}.}
+
+\item{dirArrows}{[\code{list|NULL}] If not \code{NULL}, display an arrow
+indicating the survey direction (only for plot of GPRsurvey)
+data.}
 }
 \description{
 \code{plot}: If the GPR object consists of a single trace, wiggle plot 

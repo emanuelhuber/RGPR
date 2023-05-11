@@ -7,7 +7,7 @@
 #' \eqn{m} traces or A-scans).
 #' 
 #' @slot z0      [\code{numeric(m)}]   Time-zero or depth-zero.
-#' @slot time    [\code{numeric(m)}]   Recording time of every trace.
+#' @slot time    [\code{numeric(m)}]   Recording time of every trace (UTC).
 #' @slot antsep  [\code{numeric(m)}]   Antenna separation.
 #' @slot markers [\code{character(m)}] Fiducial markers associated with the traces.
 #' @slot ann     [\code{character(m)}] Annotations associated with the traces.

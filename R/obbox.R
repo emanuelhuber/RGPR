@@ -20,15 +20,15 @@
 #' @return [\code{matrix(5,2)}] The coordinates of the corners of the oriented 
 #'          bounding box, whereby the last row is identical to the first row.
 #'          FIXME!!
-#' @name spOBB
-setGeneric("spOBB", function(x) 
-  standardGeneric("spOBB"))
+#' @name obbox
+setGeneric("obbox", function(x) 
+  standardGeneric("obbox"))
 
 
 
-#' @rdname spOBB   
+#' @rdname obbox   
 #' @export
-setMethod("spOBB", "GPR", function(x){
+setMethod("obbox", "GPR", function(x){
   if(length(x@coord) > 0){
     x_obb <- .OBB(x@coord[,1:2])
     return(matrix2polygon(x_obb))
@@ -37,9 +37,9 @@ setMethod("spOBB", "GPR", function(x){
   }
 })
 
-#' @rdname spOBB   
+#' @rdname obbox   
 #' @export
-setMethod("spOBB", "GPRsurvey", function(x){
+setMethod("obbox", "GPRsurvey", function(x){
   if(length(x@coords) > 0){
     xyz <- x@coords
     # xyz <- Filter(Negate(is.null), xyz)
@@ -53,24 +53,24 @@ setMethod("spOBB", "GPRsurvey", function(x){
   }
 })
 
-#' @rdname spOBB   
+#' @rdname obbox   
 #' @export
-setMethod("spOBB", "matrix", function(x){
+setMethod("obbox", "matrix", function(x){
   x_obb <- .OBB(x[,1:2])
   return(matrix2polygon(x_obb))
 })
 
 
-#' @rdname spOBB   
+#' @rdname obbox   
 #' @export
-setMethod("spOBB", "sfc", function(x){
+setMethod("obbox", "sfc", function(x){
   x_obb <- .OBB(sf::st_coordinates(x)[,1:2])
   return(matrix2polygon(x_obb))
 })
 
-#' @rdname spOBB   
+#' @rdname obbox   
 #' @export
-setMethod("spOBB", "sf", function(x){
+setMethod("obbox", "sf", function(x){
   x_obb <- .OBB(sf::st_coordinates(x)[,1:2])
   return(matrix2polygon(x_obb))
 })

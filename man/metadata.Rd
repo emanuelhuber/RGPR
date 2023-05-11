@@ -31,10 +31,10 @@ The element names of the list are given below
              (see \code{\link{readGPR}}). If \code{interpGPS = FALSE}, 
              the (formated) content of the GPS data file is then stored as 
              meta-data and can be retrieved with \code{metadata(x)$GPS}.}
-  \item{clip}{When reading GPR data, the clipped signal values are directly
+  \item{clipData}{When reading GPR data, the clipDataped signal values are directly
               estimated from the bit values and stored as metadata.
-              They can be retrieved with \code{metadata(x)$clip}.
-              These clipped values can be used directly
+              They can be retrieved with \code{metadata(x)$clipData}.
+              These clipDataped values can be used directly
               .}
 }
 }

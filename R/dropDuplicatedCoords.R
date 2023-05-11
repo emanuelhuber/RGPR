@@ -29,19 +29,19 @@
 #'            \code{sqrt(.Machine$double.eps)}.
 #' @param verbose Logical. \code{TRUE}: a message will be thrown, 
 #'                \code{FALSE}: no message will be thrown.
-#' @name spRmDuplicates
-setGeneric("spRmDuplicates", function(x, tol = NULL, verbose = TRUE)
-  standardGeneric("spRmDuplicates"))
+#' @name dropDuplicatedCoords
+setGeneric("dropDuplicatedCoords", function(x, tol = NULL, verbose = TRUE)
+  standardGeneric("dropDuplicatedCoords"))
  
-#' @rdname spRmDuplicates            
+#' @rdname dropDuplicatedCoords            
 #' @export
-setMethod("spRmDuplicates", "GPR", function(x, tol = NULL, verbose = TRUE){
+setMethod("dropDuplicatedCoords", "GPR", function(x, tol = NULL, verbose = TRUE){
   if(length(x@coord) == 0 ){
     warning("No trace coordinates!")
     return(x)
   }
   if(is.null(tol))  tol <- .Machine$double.eps
-  dist2D <- pathRelPos(x@coord[, 1:2])
+  dist2D <- pathRelPos(x@coord[, 1:2])  # FIXME this is only 2D... missing 3D option
   tdbl <- which(abs(diff(dist2D)) < tol)
   check <- 0L
   while(length(tdbl) > 0){
@@ -57,42 +57,11 @@ setMethod("spRmDuplicates", "GPR", function(x, tol = NULL, verbose = TRUE){
     x <- x[, -rmTr]  # remove trace in x
     dist2D <- pathRelPos(x@coord[, 1:2])
     tdbl <- which(abs(diff(dist2D)) < tol)
-  # dist2D <- relTrPos(x)
-  # # in 'x' and 'topo'
-  # if(is.null(tol))  tol <- sqrt(.Machine$double.eps)
   }
   if(verbose){
     message(check, " duplicated trace(s) removed from 'x'!")
   }
-  # while(length(tdbl) > 0){
-  #   topo <- topo[ -(tdbl + 1), ]
-  #   dist2D <- pathRelPos(topo[, 1:2]) # mod
-  #   tdbl <- which(abs(diff(dist2D)) < tol)
-  # }
-  # # x <- x[, -(tdbl + 1)]
-  # diff(tdbl)
-  # check <- 0L
-  # while(length(tdbl) > 0){
-  #   rmTr <- c()
-  #   skip <- FALSE
-  #   for(i in seq_along(tdbl)){
-  #     if(i > 1 && (tdbl[i] - 1 == tdbl[i - 1])){
-  #       tdbl[i] <- -999
-  #       next
-  #     }
-  #     rmTr <- c(rmTr, tdbl[i] + 1)
-  #     check <- check + 1L
-  #   }
-  #   x <- x[, -rmTr]  # remove trace in x
-  #   # dist2D <- pathRelPos(x@coord[, 1:2])
-  #   dist2D <- relTrPos(x)
-  #   tdbl <- which(abs(diff(dist2D)) < tol)
-  # }
-  # if(verbose){
-  #   message(check, " duplicated trace(s) removed from 'x'!")
-  # }
-  # xx <- .rmDuplicatedCoord(x, x@coord, tol = tol, verbose = verbose)
-  # x <- xx$x
+
   proc(x) <- getArgs()
   return(x)
 })

@@ -56,7 +56,7 @@ setReplaceMethod("coord", signature="GPR", function(x, value){
     
     x@coord  <- value
     
-    x <- spRmDuplicates(x, verbose = FALSE)
+    x <- dropDuplicatedCoords(x, verbose = FALSE)
     x <- .updateXpos(x)
     
     x@proc   <- c(x@proc, "coord<-")
@@ -91,25 +91,29 @@ setReplaceMethod("coord", signature="GPRsurvey", function(x, value){
   } 
   
   # check number of row
-  x_nrow <- x@nx 
-  tst2 <- sapply(value, nrow) != x_nrow & test_value_len 
+  tst2 <- sapply(value, nrow) != x@nx & test_value_len 
   if(any(tst2)){
     stop("The following elements must have the correct number of rows: ",
-         paste("elt.", paste(which(tst2), x_nrow[tst2], sep = "->"),
+         paste("elt.", paste(which(tst2), x@nx[tst2], sep = "->"),
                collapse = ",  "))
   }
   x@coords  <- value
   
-  x@xlengths[test_value_len] <- sapply(x@coords[test_value_len], pathLength, USE.NAMES = FALSE)
+  x_lengths <- sapply(x@coords[test_value_len], pathLength, USE.NAMES = FALSE)
+  if(length(x_lengths) > 0){
+    x@xlengths[test_value_len] <- x_lengths
+    
+  }
+  # print(x_lengths)
   
-  x <- spIntersection(x)
+  x <- intersect(x)
   
   return(x)
 })
 
 
 .updateXpos <- function(x){
-  xpos <- spPathRel(x)
+  xpos <- relPos(x)
   if(length(xpos) > 0){
     x@x <- xpos
   }

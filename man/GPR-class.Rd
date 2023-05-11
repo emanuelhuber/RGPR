@@ -16,7 +16,7 @@ Matrix of dimension \eqn{n \times m} (\eqn{n} samples,
 \describe{
 \item{\code{z0}}{[\code{numeric(m)}]   Time-zero or depth-zero.}
 
-\item{\code{time}}{[\code{numeric(m)}]   Recording time of every trace.}
+\item{\code{time}}{[\code{numeric(m)}]   Recording time of every trace (UTC).}
 
 \item{\code{antsep}}{[\code{numeric(m)}]   Antenna separation.}
 

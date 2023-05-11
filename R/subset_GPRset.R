@@ -139,7 +139,7 @@ setMethod("[", signature(x = "GPRset", i = "ANY", j = "ANY"),
                formula      = x@formula# set names, length = 1|p
       )
     }
-    x@md[["clip"]] <- .subsetClip(x, i, j)
+    x@md[["clipData"]] <- .subsetclipData(x, i, j)
     # x@data <- rval
     return(x)
   })

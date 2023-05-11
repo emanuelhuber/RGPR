@@ -20,7 +20,7 @@ setGeneric("as.sf", function(x)
 setMethod("as.sf", signature(x = "GPR"), function(x){
   if(length(x@coord) == 0){
     stop("No coordinates. Set first coordinates either with 'coord(x) <-'\n",
-         "  or with ' spInterp(x, ...)'.")
+         "  or with ' interpCoords(x, ...)'.")
   }
   .as_LINESTRING(x@coord, x@crs)
 })
@@ -32,7 +32,7 @@ setMethod("as.sf", signature(x = "GPRsurvey"), function(x){
   sel <- sapply(x@coords, function(x) length(x) > 0)
   if(all(!sel)){
     stop("No coordinates. Set first coordinates either with 'coord(x) <-'\n",
-         "  or with ' spInterp(x, ...)'.")
+         "  or with ' interpCoords(x, ...)'.")
     
   }
   if(length(x@crs) != 1){
@@ -54,11 +54,11 @@ setMethod("as.sf", signature(x = "GPRsurvey"), function(x){
   return(x_sf)
 })
 
-.as_LINESTRING <- function(x, CRSobj){
+.as_LINESTRING <- function(x, CRS){
   if(length(x) > 0){
     xi_sf <- sf::st_as_sf(x      = as.data.frame(x),
                           coords = 1:3,
-                          crs    = CRSobj)
+                          crs    = CRS)
     xi_sf <- sf::st_combine(xi_sf)
     xi_sf <- sf::st_cast(xi_sf, "LINESTRING")
     return(xi_sf)
@@ -131,7 +131,7 @@ setMethod("as.spatialPoints", signature(x = "GPRsurvey"), function(x){
   sel <- sapply(x@coords, function(x) length(x) > 0)
   if(all(!sel)){
     stop("No coordinates. Set first coordinates either with 'coord(x) <-'\n",
-         "  or with ' spInterp(x, ...)'.")
+         "  or with ' interpCoords(x, ...)'.")
     
   }
   if(length(x@crs) != 1){

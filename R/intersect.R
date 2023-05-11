@@ -1,4 +1,4 @@
-# spIntersection(x=GPR/GPRsurvey, y=NULL)
+# FIXME intersect(x=GPR/GPRsurvey, y=NULL)
 
 
 #' Compute GPR profile intersections
@@ -13,52 +13,60 @@
 #'
 #' @param x      [\code{object class GPRsurvey}] An object of the class \code{GPRsurvey}
 #' @return [\code{object GPRsurvey}] An object of the class GPRsurvey.
-#' @name spIntersection
-setGeneric("spIntersection", function(x) 
-  standardGeneric("spIntersection"))
+#' @name intersect
+setGeneric("intersect", function(x) 
+  standardGeneric("intersect"))
 
-#' @rdname spIntersection
+#' @rdname intersect
 #' @export
-setMethod("spIntersection", "GPRsurvey", function(x){
+setMethod("intersect", "GPRsurvey", function(x){
   sel <- sapply(x@coords, function(x) length(x) > 0)
   if(all(!sel)){
     return(x)
     stop("No coordinates: I cannot compute intersections...")
   }
+  
+  x@intersections <- vector(length = length(x), mode = "list")
+  
+  if(sum(sel) == 1) return(x)  # FIXME compute self-intersection
   if(length(unique(x@crs[!is.na(x@crs)])) != 1){
     warning("Your data have different 'crs'.\n",
             "  I recommend you to set an unique 'crs' to the data\n",
-            "  using either 'crs()<-' or 'spProjectToCRS()'")
+            "  using either 'crs()<-' or 'project()'")
   }
   x_sf <- verboseF(as.sf(x), verbose = FALSE)
   x_names <- x@names[sel]
   # currently does not support sefl-intersection....
-  n <- length(x_sf)
+  n <- nrow(x_sf)
   ntsct <- vector(mode = "list", length = n)
   for(i in 1:(n - 1) ){
     v <- (i + 1):n
     for(j in seq_along(v)){
-      pp <- verboseF(sf::st_intersection(x_sf[i], x_sf[v[j]]), verbose = FALSE)
-      if(length(pp) > 0 ){
-        pp0 <- sf::st_cast(pp, "POINT")
-        # plot(pp, add = TRUE, col = "red")
-        # print(paste0(i, " - ", v[j]))
-        pp <- data.frame(sf::st_coordinates(pp0), name = x_names[v[j]])
-        if(!is.null(ntsct[[i]])){
-          ntsct[[i]] <- rbind(pp, ntsct[[i]])
-        }else{
-          ntsct[[i]] <- pp
-        }
-        pp$name <- x_names[i]
-        if(!is.null(ntsct[[v[j]]])){
-          ntsct[[v[j]]] <- rbind(pp, ntsct[[v[j]]])
-        }else{
-          ntsct[[v[j]]] <- pp
+      pp <- verboseF(sf::st_intersection(x_sf[i, ], x_sf[v[j], ] ), verbose = FALSE)
+      if(nrow(pp) > 0 ){
+        # to avoid the case where two GPR lines perfectly overlapp...
+        tst <- sapply(sf::st_geometry(pp),  inherits, what = c("MULTIPOINT", "POINT"))
+        pp <- pp[tst,]
+        if(nrow(pp) > 0){
+          pp0 <- sf::st_cast(pp, "POINT",  warn = FALSE)
+          # plot(pp, add = TRUE, col = "red")
+          # print(paste0(i, " - ", v[j]))
+          pp <- data.frame(sf::st_coordinates(pp0), name = x_names[v[j]])
+          if(!is.null(ntsct[[i]])){
+            ntsct[[i]] <- rbind(pp, ntsct[[i]])
+          }else{
+            ntsct[[i]] <- pp
+          }
+          pp$name <- x_names[i]
+          if(!is.null(ntsct[[v[j]]])){
+            ntsct[[v[j]]] <- rbind(pp, ntsct[[v[j]]])
+          }else{
+            ntsct[[v[j]]] <- pp
+          }
         }
       }
     }
   }
-  x@intersections <- vector(length = length(x), mode = "list")
   x@intersections[sel] <- ntsct
   # for(i in seq_along(x@paths)){
   #   if(length(x@coords[[i]]) > 0){

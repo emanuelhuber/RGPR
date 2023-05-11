@@ -16,7 +16,7 @@ print.GPRsurvey <- function(x, ...){
   testCoords <- sapply(x@coords, function(x) length(x) > 0)
   testCoords <- as.integer(testCoords) + 1
   testInt    <- sapply(x@intersections, 
-                       function(x) ifelse(!is.null(x), nrow(x), 0))
+                       function(x) ifelse(length(x) > 0, nrow(x), 0))
   
   cat("- - - - - - - - - - - - - - -\n")
   is_test <- c("-","YES")

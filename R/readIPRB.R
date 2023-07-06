@@ -131,13 +131,11 @@ readIPRB <- function(dsn, npt, ntr, nbytes){
 }
 
 readIPRH <- function(dsn){
-  if(!inherits(dsn, "connection")){
-    dsn <- file(dsn, 'rb')
-  }
+  dsn <- .openFileIfNot(dsn)  # in case there is some binary stuff
   #--- read header file
   headHD <- scan( dsn, what = character(), strip.white = TRUE,
                   quiet = TRUE, fill = TRUE, blank.lines.skip = TRUE, 
-                  flush = TRUE, sep = "\n")
+                  flush = TRUE, sep = "\n", skipNul = TRUE)
   nHD <- length(headHD)
   hHD <- data.frame( tag = character(), val = character(), 
                      stringsAsFactors = FALSE)

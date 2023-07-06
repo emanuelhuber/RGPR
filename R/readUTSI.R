@@ -174,10 +174,8 @@ readUtsiDat <- function(dsn, splPerScan = 512, bits = 16){
 
 #' @export
 readUtsiGPT <- function(dsn){
-  if(!inherits(dsn, "connection")){
-    dsn <- file(dsn, 'rb')
-  }
-  gpt <- scan(dsn, quiet = TRUE)
+  dsn <- .openFileIfNot(dsn)  # in case there is some binary stuff
+  gpt <- scan(dsn, quiet = TRUE, skipNul = TRUE)
   .closeFileIfNot(dsn)
   return(gpt)
 }

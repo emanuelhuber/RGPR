@@ -329,6 +329,7 @@ readDT1 <- function(dsn){
 #' @export
 readHD <- function(dsn){
   # scan header file
+  dsn <- .openFileIfNot(dsn)  # in case there is some binary stuff
   headHD <- scan(dsn, what = character(), strip.white = TRUE,
                  quiet = TRUE, fill = TRUE, blank.lines.skip = TRUE, 
                  flush = TRUE, sep = "\n")
@@ -384,8 +385,8 @@ readGPS <- function(dsn, toUTM = FALSE){
 }
 
 .readGPS <- function(dsn){
-  
-  x <- scan(dsn, what = character(), sep = "\n", quiet = TRUE)
+  dsn <- .openFileIfNot(dsn)  # in case there is some binary stuff
+  x <- scan(dsn, what = character(), sep = "\n", quiet = TRUE, skipNul = TRUE)
   
   # fac <- 1
   test1 <- grepl("(\\$GPGGA)", x)

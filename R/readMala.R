@@ -159,9 +159,10 @@ readRD37 <- function(dsn, ntr, npt, nbytes = 2, endian = .Platform$endian){
 
 readRAD <- function(dsn){
   ##---- RAD file
+  dsn <- .openFileIfNot(dsn)  # in case there is some binary stuff
   headRAD <- scan(dsn, what = character(), strip.white = TRUE,
                   quiet = TRUE, fill = TRUE, blank.lines.skip = TRUE, 
-                  flush = TRUE, sep = "\n")
+                  flush = TRUE, sep = "\n", skipNul = TRUE)
   
   nRAD <- length(headRAD)
   hRAD <- data.frame( tag = character(), val = character(), 

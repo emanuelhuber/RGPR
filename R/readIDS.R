@@ -272,10 +272,11 @@ readDT <- function(dsn){
 
 #' @export
 readGEC <- function(dsn){
-  if(!inherits(dsn, "connection")){
-    dsn <- file(dsn, 'rt', raw = TRUE)
-  }
-  tags <- scan(dsn,  what = character(), n = 100)
+  # if(!inherits(dsn, "connection")){
+    # dsn <- file(dsn, 'rt', raw = TRUE)
+  # }
+  dsn <- .openFileIfNot(dsn)  # in case there is some binary stuff
+  tags <- scan(dsn,  what = character(), n = 100, skipNul = TRUE)
   # UTMzone <- strsplit(tags[which(tags == "<UTM_ZONE>")[1] + 1], ",")[[1]]
   # number of makers
   # nmrk <- as.integer(tags[which(tags == "<VALID_MARKERS_SWEEP>")[1] + 1])

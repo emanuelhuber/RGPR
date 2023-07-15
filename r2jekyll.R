@@ -72,7 +72,7 @@ message("run 'rmarkdown::render', tempfile = ",tempfile,
 
 rmarkdown::render(tempfile, output_format = 'all', output_file = mdtempfile)
 
-
+message("Clean files")
 
 x0 <- readLines(mdtempfile)
 
@@ -93,6 +93,7 @@ x6 <- strsplit(x5, split="!@#:", fixed = TRUE)
 writeLines(x6[[1]], mdfile)
 
 
+message("try to delete files")
 
 unlink(mdtempfile)
 unlink(tempfile)

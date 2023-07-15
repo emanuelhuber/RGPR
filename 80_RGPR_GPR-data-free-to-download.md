@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Free GPR data
-date: 2021-11-19
+date: 2023-07-15
 ---
 
 <!--
@@ -9,9 +9,9 @@ date: 2021-11-19
 "G:/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
 -->
 
--   GPR data from Schmelzbach and Huber (2015): [GPR data recorded with
-    Pulse Ekko Pro from Sensors & Software on the river bed of the
-    Tagliamento River (NE
+-   Ground-penetrating radar data from Schmelzbach and Huber (2015):
+    [GPR data recorded with Pulse Ekko Pro from Sensors & Software on
+    the river bed of the Tagliamento River (NE
     Italy)](https://doi.org/10.5281/zenodo.2586189). Avalaible on
     Zenodo:
     [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2586189.svg)](https://doi.org/10.5281/zenodo.2586189)
@@ -27,6 +27,10 @@ date: 2021-11-19
 -   The Frenke GPR data set: Five GPR lines plus a common mid-point
     (CMP) data:
     [2014\_04\_25\_frenke.zip](http://emanuelhuber.github.io/RGPR/2014_04_25_frenke.zip)
+
+-   [6 raw ground-penetrating radar (GPR) profiles collected at 4
+    locations in the Wahiba Sands dune field of Oman in May of
+    2014](https://ieee-dataport.org/documents/probing-shallow-aquifers-hyper-arid-dune-fields-using-vhf-sounding-radar-raw-ground)
 
 -   [NSGeophysics/GPRdata](https://github.com/NSGeophysics/GPRdata)
     (\*.dzt format,\*.dt1,)
@@ -87,6 +91,9 @@ date: 2021-11-19
     Supplementary Materials to download the
     data](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4866399) [Direct
     link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4866399/bin/mmc1.zip)
+
+-   [The Itapemirim River Delta GPR
+    Dataset](https://www.frontiersin.org/articles/10.3389/feart.2021.653275/full)
 
 ------------------------------------------------------------------------
 

@@ -21,6 +21,13 @@ date: 2019-11-23
 
 ### Publications
 
+
+* [Érdeson Soares Farias, Sandro Lemos Machado, Heraldo Luiz Giacheti, Alexsandro Guerra Cerqueira (2023) Integrated use of georadar, electrical resistivity, and SPT for site characterization and water content estimative. Soil and Rocks, 46:3. DOI: 10.28927/SR.2023.006422](http://dx.doi.org/10.28927/SR.2023.006422)
+
+*[Galih Prasetya Dinanta, Noviarso Wicaksono, Wahyu Hidayat, Rachmat Ramadhan, Muhammad Rifat Noor, Daniel Cassidy, Yanto Sudiyanto, Eddy Heraldy,  Afifuddin, Muhammad Razzaaq Al Ghiffary (2023) Case study of ground penetration radar (GPR) to assess lead migration. Results in Geophysical Sciences, 14. DOI: 10.1016/j.ringps.2023.100055](https://doi.org/10.1016/j.ringps.2023.100055)
+
+[Koki Oikawa, Hirotaka Saito, Seiichiro Kuroda, and Kazunori Takahashi (2022) Continuous Automatic Estimation of Volumetric Water Content Profile During Infiltration Using Sparse Multi-Offset GPR Data. Journal of Environmental and Engineering Geophysics 27: 219-231. DOI: 10.32389/JEEG22-016](https://doi.org/10.32389/JEEG22-016)
+
 * [Samantha N. Cook, Marissa J. Torres, Nathan J. Lamie, Lee J. Perren, Scott M. Slone, and Bonnie J. Jones (2022) Automated Ground-Penetrating-Radar Post-Processing Software in R Programming. Subterranean Detection and Monitoring. ERDC/CRREL TR-22-18. September 2022.](http://dx.doi.org/10.21079/11681/45621) [PDF](https://apps.dtic.mil/sti/pdfs/AD1181444.pdf)
 
 * [Galih Prasetya Dinanta; Doni Fernando; Nugraheni Setyaningrum; Fanny Meliani; Joko Widodo; Andie Setiyoko; Rahmat Arief (2022) Deep learning for Ground Penetration Radar Reflection Images in Civil Structures Investigation, 2022 IEEE International Conference on Aerospace Electronics and Remote Sensing Technology (ICARES), Yogyakarta, Indonesia, 2022, pp. 1-7, doi: 10.1109/ICARES56907.2022.9993511.](http://dx.doi.org/10.1109/ICARES56907.2022.9993511) 
@@ -48,6 +55,8 @@ date: 2019-11-23
 
 
 ### Others
+
+*  [Ask Olsson Uv and Lucas Rochard (2023) Real-time Snow Depth Measurement: Development and Construction of a System to Conduct Vehicle- Based Measurements of Snow Depth in Real-Time. Master thesis, CHALMERS UNIVERSITY OF TECHNOLOGY](http://hdl.handle.net/20.500.12380/306578)
 
 * [Brian Robert Shiro (2021) Geological and Geophysical Investigations on KĪLAUEA and MAUNA LOA Volcanoes, HAWAI‘I. PhD thesis, University of Hawai'i](https://scholarspace.manoa.hawaii.edu/server/api/core/bitstreams/975bc8b7-11ce-4f02-a2c5-1ff9c9554939/content)
 

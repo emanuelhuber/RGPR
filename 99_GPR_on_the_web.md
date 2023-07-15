@@ -24,9 +24,9 @@ date: 2019-11-23
 
 * [Érdeson Soares Farias, Sandro Lemos Machado, Heraldo Luiz Giacheti, Alexsandro Guerra Cerqueira (2023) Integrated use of georadar, electrical resistivity, and SPT for site characterization and water content estimative. Soil and Rocks, 46:3. DOI: 10.28927/SR.2023.006422](http://dx.doi.org/10.28927/SR.2023.006422)
 
-*[Galih Prasetya Dinanta, Noviarso Wicaksono, Wahyu Hidayat, Rachmat Ramadhan, Muhammad Rifat Noor, Daniel Cassidy, Yanto Sudiyanto, Eddy Heraldy,  Afifuddin, Muhammad Razzaaq Al Ghiffary (2023) Case study of ground penetration radar (GPR) to assess lead migration. Results in Geophysical Sciences, 14. DOI: 10.1016/j.ringps.2023.100055](https://doi.org/10.1016/j.ringps.2023.100055)
+* [Galih Prasetya Dinanta, Noviarso Wicaksono, Wahyu Hidayat, Rachmat Ramadhan, Muhammad Rifat Noor, Daniel Cassidy, Yanto Sudiyanto, Eddy Heraldy,  Afifuddin, Muhammad Razzaaq Al Ghiffary (2023) Case study of ground penetration radar (GPR) to assess lead migration. Results in Geophysical Sciences, 14. DOI: 10.1016/j.ringps.2023.100055](https://doi.org/10.1016/j.ringps.2023.100055)
 
-[Koki Oikawa, Hirotaka Saito, Seiichiro Kuroda, and Kazunori Takahashi (2022) Continuous Automatic Estimation of Volumetric Water Content Profile During Infiltration Using Sparse Multi-Offset GPR Data. Journal of Environmental and Engineering Geophysics 27: 219-231. DOI: 10.32389/JEEG22-016](https://doi.org/10.32389/JEEG22-016)
+* [Koki Oikawa, Hirotaka Saito, Seiichiro Kuroda, and Kazunori Takahashi (2022) Continuous Automatic Estimation of Volumetric Water Content Profile During Infiltration Using Sparse Multi-Offset GPR Data. Journal of Environmental and Engineering Geophysics 27: 219-231. DOI: 10.32389/JEEG22-016](https://doi.org/10.32389/JEEG22-016)
 
 * [Samantha N. Cook, Marissa J. Torres, Nathan J. Lamie, Lee J. Perren, Scott M. Slone, and Bonnie J. Jones (2022) Automated Ground-Penetrating-Radar Post-Processing Software in R Programming. Subterranean Detection and Monitoring. ERDC/CRREL TR-22-18. September 2022.](http://dx.doi.org/10.21079/11681/45621) [PDF](https://apps.dtic.mil/sti/pdfs/AD1181444.pdf)
 

@@ -4,15 +4,30 @@
 # library(RGPR)
 # 
 
-LINES <- file.path("media/huber/Extreme SSD/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2011_10_10_flagogna",
+LINES <- file.path("/home/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2011_10_10_flagogna",
                    paste0("XLINE", sprintf("%03d", 0:5), ".DT1"))
-LINES_GPS <- file.path("media/huber/Extreme SSD/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2011_10_10_flagogna",
+LINES_GPS <- file.path("/home/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2011_10_10_flagogna",
                    paste0("XLINE", sprintf("%03d", 0:5), ".GPS"))
 
 x <- GPRsurvey(LINES, verbose = FALSE)
 x_coords <- x@coords
-
-
+# 
+# x <-readGPR(LINES[2], interpGPS = FALSE)
+# x_gps <- readGPS(LINES_GPS[2])
+# x2 <- interpCoords(x, x_gps)
+# plot(x)
+# plot(x2)
+# plot(coordinates(x), asp = 1)
+# plot(sf::st_geometry(x_gps), add = TRUE, col = "red")
+# 
+# plot(sf::st_geometry(x_gps), col = "red", type = "o")
+# points(coordinates(x2), cex = 0.75, pch = 20, col = "green")
+# 
+# xc <- sf::st_coordinates(x_gps)
+# xcd <- dropDuplicatedCoords(xc)
+# 
+# plot(xc, type = "o", asp = 1)
+# points(xcd, pch = 20, col = "green")
 # # x <- readGPR(dsn0[1:2], interpGPS = FALSE)
 # # x_gps <- readGPS(dsn0[3])
 # x <- readGPR(LINES[2], verbose = TRUE)
@@ -28,21 +43,21 @@ x_coords <- x@coords
 # RGPR:::.updateXpos(x)
 
 test_that("'coord' for GPRsurvey",{
-  expect_identical(x_coords, coord(x))
+  expect_identical(x_coords, coordinates(x))
   
   # i.O.
-  expect_silent(coord(x)[2] <- list(matrix(nrow = 0, ncol =0) )  )
+  expect_silent(coordinates(x)[2] <- list(matrix(nrow = 0, ncol =0) )  )
   # i.O.
-  expect_silent(coord(x)[[3]] <- matrix(nrow = 0, ncol =0) )
+  expect_silent(coordinates(x)[[3]] <- matrix(nrow = 0, ncol =0) )
   # Error
-  expect_error(coord(x)[[4]] <- matrix(10, nrow = 10, ncol = 3) )
+  expect_error(coordinates(x)[[4]] <- matrix(10, nrow = 10, ncol = 3) )
   # i.O
-  expect_silent(coord(x)[[4]] <- matrix(10, nrow = 124, ncol = 3) )
+  expect_silent(coordinates(x)[[4]] <- matrix(10, nrow = 124, ncol = 3) )
   # error
-  expect_error(coord(x)[[5]] <- matrix(10, nrow = 10, ncol = 5) )
+  expect_error(coordinates(x)[[5]] <- matrix(10, nrow = 10, ncol = 5) )
 
   
-  expect_silent(coord(x) <- x_coords )
+  expect_silent(coordinates(x) <- x_coords )
   
 })
 

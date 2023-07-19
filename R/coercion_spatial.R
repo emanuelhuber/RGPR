@@ -19,7 +19,7 @@ setGeneric("as.sf", function(x)
 #' @export
 setMethod("as.sf", signature(x = "GPR"), function(x){
   if(length(x@coord) == 0){
-    stop("No coordinates. Set first coordinates either with 'coord(x) <-'\n",
+    stop("No coordinates. Set first coordinates either with 'coordinates(x) <-'\n",
          "  or with ' interpCoords(x, ...)'.")
   }
   .as_LINESTRING(x@coord, x@crs)
@@ -31,7 +31,7 @@ setMethod("as.sf", signature(x = "GPR"), function(x){
 setMethod("as.sf", signature(x = "GPRsurvey"), function(x){
   sel <- sapply(x@coords, function(x) length(x) > 0)
   if(all(!sel)){
-    stop("No coordinates. Set first coordinates either with 'coord(x) <-'\n",
+    stop("No coordinates. Set first coordinates either with 'coordinates(x) <-'\n",
          "  or with ' interpCoords(x, ...)'.")
     
   }
@@ -130,7 +130,7 @@ setMethod("as.spatialPoints", signature(x = "GPR"), function(x){
 setMethod("as.spatialPoints", signature(x = "GPRsurvey"), function(x){
   sel <- sapply(x@coords, function(x) length(x) > 0)
   if(all(!sel)){
-    stop("No coordinates. Set first coordinates either with 'coord(x) <-'\n",
+    stop("No coordinates. Set first coordinates either with 'coordinates(x) <-'\n",
          "  or with ' interpCoords(x, ...)'.")
     
   }

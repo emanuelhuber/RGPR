@@ -3,11 +3,14 @@
 \name{dropDuplicatedCoords}
 \alias{dropDuplicatedCoords}
 \alias{dropDuplicatedCoords,GPR-method}
+\alias{dropDuplicatedCoords,matrix-method}
 \title{Remove traces with duplicated trace positions}
 \usage{
-dropDuplicatedCoords(x, tol = NULL, verbose = TRUE)
+dropDuplicatedCoords(x, tol = NULL, z = FALSE, verbose = TRUE)
 
-\S4method{dropDuplicatedCoords}{GPR}(x, tol = NULL, verbose = TRUE)
+\S4method{dropDuplicatedCoords}{GPR}(x, tol = NULL, z = FALSE, verbose = TRUE)
+
+\S4method{dropDuplicatedCoords}{matrix}(x, tol = NULL, z = FALSE, verbose = TRUE)
 }
 \arguments{
 \item{x}{An object of the class GPR}
@@ -18,28 +21,13 @@ the second trace is removed.
 If \code{tol = NULL}, \code{tol} is set equal to
 \code{sqrt(.Machine$double.eps)}.}
 
+\item{z}{[\code{logical(1)}] If \code{TRUE}, the third dimension 
+(z-dimension) will also be accounted for.}
+
 \item{verbose}{Logical. \code{TRUE}: a message will be thrown, 
 \code{FALSE}: no message will be thrown.}
 }
 \description{
-checks for duplicates trace positions (up to precision defined by 'tol') 
-and remove them from 'x' (object of the class GPR or GPRsurvey). 
-If there is a series of consecutive traces with an inter-distance smaller
-than the tolerance threshold defined by the computer precision, 
-the function starts by removing traces every two traces and repeat 
-the procedure until the trace inter-distances are larger that the threshold.
-Example with 5 traces:
-\itemize{
-  \item distance between trace 1 and 2 < tol
-  \item distance between trace 2 and 3 < tol
-  \item distance between trace 3 and 4 < tol
-  \item distance between trace 4 and 5 < tol
-}
-The algorithm first remove trace 2 and 4 and recompute 
-the inter-trace distances:
-\itemize{
-  \item distance between trace 1 and 3 < tol
-  \item distance between trace 3 and 5 > tol
-}  
-The algorithm remove trace 3. END!
+Checks for duplicates trace positions (up to precision defined by 'tol') 
+and remove them from 'x' (object of the class GPR or GPRsurvey).
 }

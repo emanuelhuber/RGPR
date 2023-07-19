@@ -483,7 +483,7 @@ readGPR <- function(dsn, desc = "", Vmax = NULL,
         dots       <- list(...)
         r         <- dots[["r"]]               # default = NULL
         # UTM <- ifelse(is.null(dots[["UTM"]]), TRUE, dots[["UTM"]])
-        odometer  <- dots[["odometer"]]        # default = NULL
+        interp3D  <- ifelse(is.null(dots[["interp3D"]]) , FALSE, dots[["interp3D"]])       # default = NULL
         tol       <- dots[["tol"]]             # default = NULL
         plot      <- ifelse(is.null(dots[["plot"]]), FALSE, dots[["plot"]])
         method    <- c("linear", "linear", "linear")
@@ -496,7 +496,7 @@ readGPR <- function(dsn, desc = "", Vmax = NULL,
         }
         x <- interpCoords(x, x_gps, tt = NULL, r = r, 
                  UTM = FALSE, 
-                 odometer = odometer,
+                 interp3D = interp3D,
                  tol = tol, verbose = verbose, plot = plot,
                  method = method)
         # x <- interpPos(x, x_gps, tol = sqrt(.Machine$double.eps),

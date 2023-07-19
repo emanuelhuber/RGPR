@@ -38,7 +38,7 @@ setMethod("georef", "GPRsurvey",
             # lapply...
             xyz  <- lapply(x@coords[test], .georef, alpha = alpha, cloc = cloc,
                            creg = creg, ploc = ploc, preg = preg, FUN)
-            coord(x)[test] <- xyz
+            coordinates(x)[test] <- xyz
             if(is.null(creg)) creg <- cloc[1:2]
             x@transf <- c(cloc[1:2], creg[1:2], alpha)
             # x@intersections <- list()

@@ -12,7 +12,7 @@ interpCoords(
   tt = NULL,
   r = NULL,
   UTM = FALSE,
-  odometer = FALSE,
+  interp3D = FALSE,
   tol = NULL,
   verbose = TRUE,
   plot = TRUE,
@@ -25,7 +25,7 @@ interpCoords(
   tt = NULL,
   r = NULL,
   UTM = FALSE,
-  odometer = FALSE,
+  interp3D = FALSE,
   tol = NULL,
   verbose = TRUE,
   plot = TRUE,
@@ -38,7 +38,7 @@ interpCoords(
   tt = NULL,
   r = NULL,
   UTM = FALSE,
-  odometer = FALSE,
+  interp3D = FALSE,
   tol = NULL,
   verbose = TRUE,
   plot = TRUE,
@@ -88,11 +88,11 @@ projected into the provided UTM zone. Note that only \code{N}
 and \code{S} are allowed after the zone number 
 (for example, \code{"31X"} will be not recognized).}
 
-\item{odometer}{[\code{logical(1)}] If \code{odometer = TRUE} it is 
-assumed that data recording was triggered by an odometer.
+\item{interp3D}{[\code{logical(1)}] If \code{interp3D = TRUE} it is 
+assumed that data recording was triggered by an interp3D.
 In this case, the coordinate interpolation is based on the
 3D distance between the coordinates (x,y,z). 
-If \code{odometer = FALSE} (e.g. GPS data) a 2D distance
+If \code{interp3D = FALSE} (e.g. GPS data) a 2D distance
 (x, y) is used.}
 
 \item{tol}{[\code{numeric(1)}]     Length-one numeric vector: if the horizontal distance between 

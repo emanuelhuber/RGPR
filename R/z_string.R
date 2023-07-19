@@ -18,7 +18,7 @@
 #' @name GPRvirtual-class
 #' @rdname GPRvirtual-class
 #' @export
-extractPattern <- function(x, pattern, start = 0, stop = 0){
+extractPattern <- function(x, pattern, start = 0, stop = -1){
   # pat_tr <- "(\\#[0-9]+)"
   matches <- regexpr(pattern, x, perl = TRUE)
   first <- attr(matches, "capture.start") + start

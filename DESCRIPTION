@@ -2,7 +2,7 @@ Package: RGPR
 Type: Package
 Title: Ground-penetrating radar (GPR) data visualisation, processing and 
 	delineation
-Version: 0.1.0
+Version: 1.0.0
 Date: 2019-09-15
 Authors@R: c(
   person("Emanuel", "Huber", email = "emanuel.huber@pm.me",
@@ -82,7 +82,7 @@ Collate:
 	'isCRSGeographic.R'
 	'isZTime.R'
 	'isCMP.R'
-	'coord.R'
+	'coordinates.R'
 	'crs.R'
 	'crsUnit.R'
 	'interpCoords.R'
@@ -138,8 +138,8 @@ Imports:
     grDevices,
     utils,
     geodist,
-    raster,
     sf,
+    terra,
     signal,
     colorspace,
     Cairo,

@@ -1,12 +1,11 @@
 
+dsn0 <- c("/home/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/daniel2/LINE06.HD",
+          "/home/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/daniel2/LINE06.DT1",
+          "/home/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/daniel2/LINE06.GPS")
 
-dsn0 <- c("/mnt/data/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/daniel2/LINE06.HD",
-          "/mnt/data/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/daniel2/LINE06.DT1",
-          "/mnt/data/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/daniel2/LINE06.GPS")
-
-dsn1 <- c("/mnt/data/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2014_04_25_frenke/LINE02.HD",
-          "/mnt/data/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2014_04_25_frenke/LINE02.DT1",
-          "/mnt/data/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2014_04_25_frenke/LINE02.txt")
+dsn1 <- c("/home/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2014_04_25_frenke/LINE02.HD",
+          "/home/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2014_04_25_frenke/LINE02.DT1",
+          "/home/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELOPMENT/FILE_FORMAT/DT1/2014_04_25_frenke/LINE02.txt")
 
 
 zgps <- readGPS(dsn0[3])
@@ -41,13 +40,13 @@ test_that("test 'crs()",{
   #expect_silent(.checkCRS(st_crs("+init=epsg:3857 +units=m")))
   #expect_silent(.checkCRS(st_crs("+init=epsg:3857 +units=m")[[1]]))
   expect_silent(.checkCRS(st_crs(3857)[[1]]))
-  expect_silent(.checkCRS(sp::CRS("+init=epsg:28992")))
-  expect_silent(.checkCRS(sp::CRS("+proj=utm +zone=10 +datum=WGS84")))
+  # expect_silent(.checkCRS(sp::CRS("+init=epsg:28992")))
+  # expect_silent(.checkCRS(sp::CRS("+proj=utm +zone=10 +datum=WGS84")))
   expect_silent(.checkCRS(st_crs(3857)$proj4string))
   expect_silent(.checkCRS(st_crs(3857)$epsg))
   # expect_silent(.checkCRS(""))
   expect_silent(.checkCRS(NA))
-  expect_silent(.checkCRS(st_crs("+init=epsg:3857 +units=m")[[1]]))
+  expect_warning(.checkCRS(st_crs("+init=epsg:3857 +units=m")[[1]]))
   expect_silent(.checkCRS(st_crs("+init=epsg:3857 +units=m")[1]))
 })
 

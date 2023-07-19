@@ -35,7 +35,7 @@ setMethod("buffer", "GPR", function(x, d){
 setMethod("buffer", "GPRsurvey", function(x, d, combine = TRUE){
   sel <- sapply(x@coords, function(x) length(x) > 0)
   if(all(!sel)){
-    stop("No coordinates. Set first coordinates either with 'coord(x) <-'\n",
+    stop("No coordinates. Set first coordinates either with 'coordinates(x) <-'\n",
          "  or with ' spInterp(x, ...)'.")
     
   }

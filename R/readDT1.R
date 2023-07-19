@@ -310,7 +310,7 @@ readHD <- function(dsn){
 #' @param dsn [\code{character(1)|connection object}] data source name: 
 #'             either the filepath to the GPR data (character),
 #'            or an open file connection.
-#' @param toUTM [\code{logical(1)}] If \code{TRUE} project coordinates to 
+#' @param UTM [\code{logical(1)}] If \code{TRUE} project coordinates to 
 #'              the corresponding UTM zone. 
 #' @return [\code{sf|data.frame|NULL}] Either an object of class
 #'         \code{sf} or a \code{data.frame} or \code{NULL} if no
@@ -319,7 +319,7 @@ readHD <- function(dsn){
 #' @name readGPS
 #' @rdname readGPS
 #' @export
-readGPS <- function(dsn, toUTM = TRUE){
+readGPS <- function(dsn, UTM = TRUE){
   X <- .readGPS(dsn)
   if(length(X$tr_id) == 0) return(NULL)
   if(X$type == "GNGGA"){
@@ -328,7 +328,7 @@ readGPS <- function(dsn, toUTM = TRUE){
     xyzt <- .getLonLatFromGPGGA(X$gpgga)
   }
   xyzt_crs <- 4326
-  if(isTRUE(toUTM)){
+  if(isTRUE(UTM)){
     topoUTM <-  lonLatToUTM(lat = xyzt[,2], 
                         lon = xyzt[,1], 
                         zone = NULL, 
@@ -336,6 +336,12 @@ readGPS <- function(dsn, toUTM = TRUE){
                         west  = (X[[tolower(X$type)]]$EW[1] == "W"))
     xyzt[, 1:2] <- topoUTM$xy
     xyzt_crs <- topoUTM$crs
+  }else if(is.character(UTM)){
+    UTM_crs <- UMTStringToEPSG(UTM)
+    xyzt[, 1:2] <- sf::sf_project(from = "EPSG:4326", 
+                                to   = paste0("EPSG:", UTM_crs), 
+                                pts  = xyzt[, 1:2])
+    xyzt_crs <- paste0("EPSG:", UTM_crs)
   }
   # xyzt <- .getLonLatFromGPGGA(X$gpgga)
   mrk <- cbind(xyzt[ ,1:3], X$tr_id, X$tr_pos, xyzt[ ,4])

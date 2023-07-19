@@ -19,26 +19,26 @@
 #' @param x      [\code{GPR class}] An object of the class \code{GPR}
 #' @param value  [\code{matrix(n,3)|list}] coordinates (x, y, z)
 #' @return [\code{GPR class}] An object of the class \code{GPR}
-#' @name coord
+#' @name coordinates
 #' @concept getters/setters
-setGeneric("coord", function(x) 
-  standardGeneric("coord"))
+setGeneric("coordinates", function(x) 
+  standardGeneric("coordinates"))
 
 
-#' @rdname coord
-#' @aliases coord<-,GPR-method
-setGeneric("coord<-",function(x,value){standardGeneric("coord<-")})
+#' @rdname coordinates
+#' @aliases coordinates<-,GPR-method
+setGeneric("coordinates<-",function(x,value){standardGeneric("coordinates<-")})
 
  
-#' @rdname coord   
+#' @rdname coordinates   
 #' @export
-setMethod("coord", "GPR", function(x){
+setMethod("coordinates", "GPR", function(x){
   return(x@coord)
 })
 
-#' @rdname coord
+#' @rdname coordinates
 #' @export
-setReplaceMethod("coord", signature="GPR", function(x, value){
+setReplaceMethod("coordinates", signature="GPR", function(x, value){
     value <- as.matrix(value)
     
     #---- check some stuff
@@ -59,26 +59,26 @@ setReplaceMethod("coord", signature="GPR", function(x, value){
     x <- dropDuplicatedCoords(x, verbose = FALSE)
     x <- .updateXpos(x)
     
-    x@proc   <- c(x@proc, "coord<-")
+    x@proc   <- c(x@proc, "coordinates<-")
     return(x)
 })
 
 
 
-#' @rdname coord   
+#' @rdname coordinates   
 #' @export
-setMethod("coord", "GPRsurvey", function(x){
+setMethod("coordinates", "GPRsurvey", function(x){
   return(x@coords)
 })
 
 
-#' @rdname coord
+#' @rdname coordinates
 #' @export
-setReplaceMethod("coord", signature="GPRsurvey", function(x, value){
+setReplaceMethod("coordinates", signature="GPRsurvey", function(x, value){
   
   # check length
   if(length(value) != length(x@coords)){
-    stop("'value' must have the same length as 'coord(x)', ", 
+    stop("'value' must have the same length as 'coordinates(x)', ", 
          length(x@coords), ".")
   }
   

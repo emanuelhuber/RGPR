@@ -6,7 +6,7 @@
 \alias{extractPattern}
 \title{Class GPR}
 \usage{
-extractPattern(x, pattern, start = 0, stop = 0)
+extractPattern(x, pattern, start = 0, stop = -1)
 }
 \arguments{
 \item{x}{[\code{character}] A character vector where matches are sought, 

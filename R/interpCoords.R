@@ -40,11 +40,11 @@
 #'            projected into the provided UTM zone. Note that only \code{N} 
 #'            and \code{S} are allowed after the zone number 
 #'            (for example, \code{"31X"} will be not recognized).
-#' @param odometer [\code{logical(1)}] If \code{odometer = TRUE} it is 
-#'                 assumed that data recording was triggered by an odometer.
+#' @param interp3D [\code{logical(1)}] If \code{interp3D = TRUE} it is 
+#'                 assumed that data recording was triggered by an interp3D.
 #'                 In this case, the coordinate interpolation is based on the
 #'                 3D distance between the coordinates (x,y,z). 
-#'                 If \code{odometer = FALSE} (e.g. GPS data) a 2D distance
+#'                 If \code{interp3D = FALSE} (e.g. GPS data) a 2D distance
 #'                 (x, y) is used.
 #' @param tol  [\code{numeric(1)}]     Length-one numeric vector: if the horizontal distance between 
 #'               two consecutive trace positions is smaller than \code{tol}, 
@@ -72,7 +72,7 @@
 setGeneric("interpCoords", function(x, coords, 
                                     tt = NULL, r = NULL, 
                                     UTM = FALSE, 
-                                    odometer = FALSE,
+                                    interp3D = FALSE,
                                     tol = NULL, verbose = TRUE, plot = TRUE,
                                     method = c("linear", "linear", "linear"))
   standardGeneric("interpCoords"))
@@ -84,11 +84,12 @@ setMethod("interpCoords", "GPR",
  function(x, coords, 
           tt = NULL, r = NULL, 
           UTM = FALSE, 
-          odometer = FALSE,
+          interp3D = FALSE,
           tol = NULL, verbose = TRUE, plot = TRUE,
           method = c("linear", "linear", "linear")){
   
    # FIXME > do some checks on args
+   if(is.null(tol)) tol <- sqrt(.Machine$double.eps)
 
    if(inherits(coords, "sf")){
      crs(x) <- sf::st_crs(coords)
@@ -98,6 +99,7 @@ setMethod("interpCoords", "GPR",
      coords <- cbind(coordssf, 
                    sf::st_drop_geometry(coords))
    }
+   #--------------------- CRS TRANSFORM ----------------------------------------
    if(isTRUE(UTM) ){
      coords_utm <- lonLatToUTM(lon = coords[, 1], lat = coords[, 2])
      if(any(is.na(coords_utm$xy))){
@@ -106,16 +108,22 @@ setMethod("interpCoords", "GPR",
      }
      crs(x) <- coords_utm$crs
      coords[, 1:2] <- coords_utm$xy
-   } 
+   }else if(is.character(UTM)){
+     crs(x) <- paste0("EPSG:", UMTStringToEPSG(UTM))
+     coords[, 1:2] <- sf::sf_project(from = "EPSG:4326", 
+                                   to   = crs(x), 
+                                   pts  = coords[, 1:2])
+   }
    
    # 3 Cases:
-   #   - (x, y, z, tr) trace markers
-   #   - (x, y, z, t) time (signal recording at regular time interval)
-   #   - (x, y, z) only coordinates
+   #   - case 1: (x, y, z, tr) trace markers
+   #   - case 2: (x, y, z, t) time (signal recording at regular time interval)
+   #   - case 3: (x, y, z) only coordinates
    
    # Duplicated trace positions -> remove trace?
    
    if(ncol(coords) >= 4 && all(is.na(coords[,4]))){
+     # -> case 3
      warning(x@name, ": no link between the measured points",
              " and the GPR traces!")
      coords <- coords[, 1:3]
@@ -123,9 +131,9 @@ setMethod("interpCoords", "GPR",
    if(ncol(coords) < 3){
      stop("'coords' must have at least 3 columns (x, y, z)!")
    }
-   if(is.null(tol)) tol <- .Machine$double.eps
    
    #----- REMOVE UNUSABLE TRACE MARKERS ----------------------------------------#
+   # case 1
    if(ncol(coords) >=  4 && is.null(tt)){
      # if we have measured some points before the line start or 
      # after the end of the GPR Line, we delete them
@@ -134,6 +142,7 @@ setMethod("interpCoords", "GPR",
      coords[, 4] <- as.integer(coords[,4])
      # keep only the markers corresponding to existing traces
      coords <- coords[coords[, 4] > 0 & coords[, 4] <= ncol(x), ]
+     
      #----- REMOVE DUPLICATED TRACE ID IN coords ---------------------------------#
      coords <- .rmRowDuplicates(coords, coords[, 4])
      # order coords by increasing trace id
@@ -143,17 +152,19 @@ setMethod("interpCoords", "GPR",
      x <- xx$x
      coords <- xx$coords
    }else{
-     dist2D <- pathRelPos(coords[, 1:2])
-     tbdltd <- which(abs(diff(dist2D)) < tol) # to be deleted
-     while(length(tbdltd) > 0){
-       coords <- coords[ -(tbdltd + 1), ]
-       dist2D <- pathRelPos(coords[, 1:2]) # mod
-       tbdltd <- which(abs(diff(dist2D)) < tol)
-     }
+     coords <- dropDuplicatedCoords(coords, tol = tol, z = interp3D, verbose = TRUE)
+     # dist2D <- pathRelPos(coords[, 1:2])
+     # tbdltd <- which(abs(diff(dist2D)) < tol) # to be deleted
+     # while(length(tbdltd) > 0){
+     #   coords <- coords[ -(tbdltd + 1), ]
+     #   dist2D <- pathRelPos(coords[, 1:2]) # mod
+     #   tbdltd <- which(abs(diff(dist2D)) < tol)
+     # }
    }
    #----- IF RASTER -> EXTRACT POSITION ELEVATION FROM RASTER ------------------#
    if(!is.null(r)){
-     coords[,3] <- raster::extract(r, coords[, 1:2], method = "bilinear")
+     # coords[,3] <- raster::extract(r, coords[, 1:2], method = "bilinear")
+     coords[,3] <- terra::extract(r, coords[, 1:2], method = "bilinear")
      if(sum(is.na(coords[, 3])) > 0){
        stop("'extract(r, coords[, c(\"E\",\"N\")], method = \"bilinear\")' ",
             "returns 'NA' values!\n", 
@@ -161,8 +172,9 @@ setMethod("interpCoords", "GPR",
             "there are 'NA' values in raster 'r'!")
      }
    }
-   ntr <- ncol(x@data)
+   ntr <- ncol(x)
    myWarning <- ""
+   
    #----- INTERPOLATE MARKER POSITION THAT ARE NOT LINKED TO A TRACE -----------#
    if(ncol(coords) >= 4 && is.null(tt)){
      # if there are points measured with the total station
@@ -195,17 +207,9 @@ setMethod("interpCoords", "GPR",
        mrk <- coords[, 4]           # pos
        mrki <- seq_len(ntr)       # posi
        v <- 1:2
-       if(isTRUE(odometer))    v <- 1:3
+       if(isTRUE(interp3D))    v <- 1:3
        pos <- pathRelPos(coords[, v])   # dist3D
-       # FIXME: 1:3 or 1:2 ?????
-       # pos <- pathRelPos(coords[, 1:3])   # dist3D
      }else if(!is.null(tt)){
-       # mrk_time <- as.numeric(as.POSIXct(mrk$time))
-       # mrk_pos <- pathRelPos(mrk[, c("x", "y")])
-       # if(is.character(tt)){
-       #   mrk <- as.numeric(as.POSIXct(tt))
-       #   # mrk <- as.numeric(tt)
-       # }
        if(is.character(tt)){
          mrk <- verboseF(as.numeric(tt), verbose = FALSE)
          if(all(is.na(mrk))){
@@ -217,12 +221,7 @@ setMethod("interpCoords", "GPR",
        }
        
        pos <- pathRelPos(coords[, 1:2])
-       # tr_time <- seq(from = mrk_time[1], to = tail(mrk_time, 1), 
-       #                length.out = ntr)
        mrki <- seq(from = mrk[1], to = tail(mrk, 1), length.out = ntr)
-       # intMeth <- ifelse(length(mrk_pos) > 2, method[1], "linear")
-       # tr_pos <- signal::interp1(x = mrk_time, y = mrk_pos, xi = tr_time, 
-       #                          method = "spline", extrap = NA)
      }else{
        id <- c(1, length(x))
        dstid <- c(0, pathLength(coords[, 1:2]))
@@ -264,8 +263,11 @@ setMethod("interpCoords", "GPR",
        ENZ[, 3] <- signal::interp1(pos, coords[, 3], posi, 
                                    method = intMeth, extrap = NA)
      }else if(!is.null(r)){
-       ENZ[, 3] <- raster::extract(r, cbind(ENZ[, 1], ENZ[, 2]), 
-                                   method = "bilinear")
+       # ENZ[, 3] <- raster::extract(r, cbind(ENZ[, 1], ENZ[, 2]), 
+       #                             method = "bilinear")
+       ENZ[, 3] <- terra::extract(r, 
+                                  cbind(ENZ[, 1], ENZ[, 2]), 
+                                  method = "bilinear")
      } 
      lastNA  <- max(which(!is.na(ENZ[, 3])))
      firstNA <- min(which(!is.na(ENZ[, 3])))
@@ -330,43 +332,60 @@ setMethod("interpCoords", "GPR",
 # dim(coords) n x 4
 # check that: https://stackoverflow.com/a/34924247
 # round the coordinates to the tol value and apply duplicated?
-.rmTraceIDDuplicates <- function(x, coords, tol = NULL,
+.rmTraceIDDuplicates <- function(x, coords, tol = NULL, z = FALSE,
                                  verbose = TRUE){
-  if(is.null(tol)) tol <- .Machine$double.eps
-  dist2D <- pathRelPos(coords[, 1:2])
-  tbdltd <- which(abs(diff(dist2D)) < tol)   # to be deleted
-  #if(length(tbdltd) > 0){
-  # nb_tr_coords <- 0
-  nb_tr_x <- 0
-  dtr_id <- c()  # deleted trace ID
-  while(length(tbdltd) > 0){    # add
-    for(i in seq_along(tbdltd)){
-      # i <- 1
-      # number of trace to remove
-      dtr <- coords[tbdltd[i] + 1 , 4] - coords[tbdltd[i], 4]
-      # traces to remove (ID)
-      w <- coords[tbdltd[i], 4] + seq_len(dtr)
-      # remove trace in x
-      x <- x[, -w]
-      # remove traces in coords
-      coords <- coords[-(tbdltd[i] + 1), ]
-      # and actualise the trace numbers of the trace above the delete trace
-      if(tbdltd[i] + 1 <= nrow(coords)){
-        v <- (tbdltd[i] + 1):nrow(coords)
-        # if(any(is.na(coords[v,]))) stop( "lkjlkj")
-        coords[v, 4] <- coords[v, 4] -  dtr
-      }
-      tbdltd <- tbdltd - 1
-      nb_tr_x <- nb_tr_x + dtr
-      # nb_tr_coords <- 1 + nb_tr_coords
-    }
-    dist2D <- pathRelPos(coords[, 1:2])
-    tbdltd <- which(abs(diff(dist2D)) < tol)
+  j <- seq_len(ncol(x))
+  j2 <- rep(FALSE, ncol(x))
+  i <- .dropDuplicatedCoords(coords, tol = tol, z = z, verbose = verbose)
+  ids_notD <- as.integer(coords[!i, 4])  # id of duplicates
+  j2[j %in% ids_notD] <- TRUE
+  # j2[!i]
+  # coords[!i, 4]
+  
+  ids <- as.integer(coords[i, 4])  # id of duplicates
+  new_ids <- which(j2[-ids])
+  
+  x <- x[, -ids]
+  coords <- coords[!i, ]
+  coords[, 4] <- new_ids
+  if(verbose){
+    message(sum(i), " duplicated trace(s) removed from 'x'!")
   }
-  # if(nb_tr_coords > 0 && isTRUE(verbose)){
-  if(nb_tr_x > 0 && isTRUE(verbose)){
-    message(nb_tr_x, " trace(s) removed (duplicated trace position(s))" )
-  }
+  # if(is.null(tol)) tol <- .Machine$double.eps
+  # dist2D <- pathRelPos(coords[, 1:2])
+  # tbdltd <- which(abs(diff(dist2D)) < tol)   # to be deleted
+  # #if(length(tbdltd) > 0){
+  # # nb_tr_coords <- 0
+  # nb_tr_x <- 0
+  # dtr_id <- c()  # deleted trace ID
+  # while(length(tbdltd) > 0){    # add
+  #   for(i in seq_along(tbdltd)){
+  #     # i <- 1
+  #     # number of trace to remove
+  #     dtr <- coords[tbdltd[i] + 1 , 4] - coords[tbdltd[i], 4]
+  #     # traces to remove (ID)
+  #     w <- coords[tbdltd[i], 4] + seq_len(dtr)
+  #     # remove trace in x
+  #     x <- x[, -w]
+  #     # remove traces in coords
+  #     coords <- coords[-(tbdltd[i] + 1), ]
+  #     # and actualise the trace numbers of the trace above the delete trace
+  #     if(tbdltd[i] + 1 <= nrow(coords)){
+  #       v <- (tbdltd[i] + 1):nrow(coords)
+  #       # if(any(is.na(coords[v,]))) stop( "lkjlkj")
+  #       coords[v, 4] <- coords[v, 4] -  dtr
+  #     }
+  #     tbdltd <- tbdltd - 1
+  #     nb_tr_x <- nb_tr_x + dtr
+  #     # nb_tr_coords <- 1 + nb_tr_coords
+  #   }
+  #   dist2D <- pathRelPos(coords[, 1:2])
+  #   tbdltd <- which(abs(diff(dist2D)) < tol)
+  # }
+  # # if(nb_tr_coords > 0 && isTRUE(verbose)){
+  # if(nb_tr_x > 0 && isTRUE(verbose)){
+  #   message(nb_tr_x, " trace(s) removed (duplicated trace position(s))" )
+  # }
   return(list(x = x, coords = coords))
 }
 
@@ -376,7 +395,7 @@ setMethod("interpCoords", "GPR",
 setMethod("interpCoords", "GPRsurvey", 
           function(x, coords, tt = NULL, r = NULL, 
                    UTM = FALSE, 
-                   odometer = FALSE,
+                   interp3D = FALSE,
                    tol = NULL, verbose = TRUE, plot = TRUE,
                    method = c("linear", "linear", "linear")){
             
@@ -393,7 +412,7 @@ setMethod("interpCoords", "GPRsurvey",
                   tt        = tt[[i]], 
                   r         = r, 
                   UTM = UTM, 
-                  odometer  = odometer,
+                  interp3D  = interp3D,
                   tol       = tol,
                   verbose   = verbose,
                   plot      = plot,

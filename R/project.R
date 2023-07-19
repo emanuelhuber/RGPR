@@ -36,9 +36,13 @@ setMethod("project", "GPR", function(x, CRSobj){
   } 
   #------------------------ -
   
-  x_sf     <- sf::st_transform(as.sf(x), .checkCRS(CRSobj))
-  crs(x)   <- sf::st_crs(x_sf)
-  coord(x) <- sf::st_coordinates(x_sf)
+  x@coord[, 1:2] <- sf::sf_project(from = crs(x), 
+                                   to   = .checkCRS(CRSobj),
+                                   pts  = x@coord[, 1:2])
+  
+  # x_sf     <- sf::st_transform(as.sf(x), .checkCRS(CRSobj))
+  # crs(x)   <- sf::st_crs(x_sf)
+  # coordinates(x) <- sf::st_coordinates(x_sf)
 
   return(x)
 })
@@ -51,12 +55,20 @@ setMethod("project", "GPRsurvey", function(x, CRSobj){
   if(length(x@crs) == 1) x_crs <- rep(x@crs, length(x))
   for(i in seq_along(x)){
     if(length(x@coords[[i]]) > 0 ){
-      xi_sf <- sf::st_as_sf(x      = as.data.frame(x@coords[[i]]),
-                            coords = 1:3,
-                            crs    = x_crs[i])
-      xi_sf     <- sf::st_transform(xi_sf, CRSobj)
-      x@coords[[i]] <- as.matrix(sf::st_coordinates(xi_sf))
+      
+      
+      # xi_sf <- sf::st_as_sf(x      = as.data.frame(x@coords[[i]]),
+      #                       coords = 1:3,
+      #                       crs    = x_crs[i])
+      # xi_sf     <- sf::st_transform(xi_sf, CRSobj)
+      # x@coords[[i]] <- as.matrix(sf::st_coordinates(xi_sf))
+      # x@xlengths[i]  <- pathLength(x@coords[[i]])
+      
+      x@coords[[i]][, 1:2] <- sf::sf_project(from = x_crs[i], 
+                                             to   = .checkCRS(CRSobj),
+                                             pts  = x@coords[[i]][, 1:2])
       x@xlengths[i]  <- pathLength(x@coords[[i]])
+      
     }else{
       warning(x@names[i], ": cannot be projected (no coordinates).")
     }

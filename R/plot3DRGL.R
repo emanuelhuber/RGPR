@@ -38,7 +38,7 @@ setMethod("plot3DRGL", "GPR",
             }
             x <- x[,xysel]
             if(!is.null(nupspl)){
-              cat("upsample...")
+              message("upsample...")
               x <- upsample(x, n = nupspl)
             }
             if(!is.null(normalize)){
@@ -67,13 +67,13 @@ setMethod("plot3DRGL", "GPR",
               x <- migrate(x)
               z0 <- rep(max(coord(x, 3)), length(x)) - refCoord[3]
             }
-            cat(refCoord,max(coord(x, 3)),"\n")
+            #cat(refCoord,max(coord(x, 3)),"\n")
             A <-as.matrix(x)
             # cat(refCoord,"\n")
             xpos <- coord(x, 1) - refCoord[1]
             ypos <- coord(x, 2) - refCoord[2]
             zpos <- x@depth
-            if(add==FALSE){
+            if(add == FALSE){
               # rgl.open()
               rgl::open3d()
             }else{
@@ -87,13 +87,14 @@ setMethod("plot3DRGL", "GPR",
 #' @export
 setMethod("plot3DRGL", "GPRsurvey", 
           function(x, addTopo = FALSE, clip = NULL, normalize = NULL, 
-                   nupspl=NULL, add = TRUE, xlim = NULL, ylim= NULL, 
+                   nupspl=NULL, add = FALSE, xlim = NULL, ylim= NULL, 
                    zlim = NULL, ...){
             # add <- add
+            # if( rgl::cur3d() == 0)  add = FALSE
             for(i in seq_along(x)){
-              cat("***", i , "***\n")
-              # gpr <- readGPR(x@filepaths[[i]])
               gpr <- x[[i]]
+              message(paste0("+3D plot ", i , ": ", gpr@name))
+              # gpr <- readGPR(x@filepaths[[i]])
               # if(length(x@coords[[gpr@name]])>0){
               #   gpr@coord <- x@coords[[gpr@name]]
               #   # print(c("COORDREF: ", paste0(x@coordref, collapse=", ")))
@@ -108,7 +109,7 @@ setMethod("plot3DRGL", "GPRsurvey",
                           # zlim = zlim, ...)
               }
               add <- TRUE
-              print(add)
+              # print(add)
             }  
           }
 )
@@ -127,7 +128,7 @@ setMethod("plot3DRGL", "GPRsurvey",
       matrix(z[c(1, nr)], ncol = nc, nrow = 2, byrow = FALSE)
     colA <- col[1]
     if(!is.null(list(...)$alpha) && (list(...)$alpha==0 || is.null(col))){
-      
+      warning("Problem with plot3DRGL - please contact me: emanuel.huber@pm.me")
     }else{
       # rgl::rgl.surface(Y, X, Z, color = colA, back = back, 
       # rgl::rgl.surface(X, Z, Y, color = colA, back = back, 

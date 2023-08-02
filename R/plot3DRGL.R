@@ -64,7 +64,7 @@ setMethod("plot3DRGL", "GPR",
             }
             z0 <- coord(x, 3) - refCoord[3]
             if(addTopo){
-              x <- migration(x)
+              x <- migrate(x)
               z0 <- rep(max(coord(x, 3)), length(x)) - refCoord[3]
             }
             cat(refCoord,max(coord(x, 3)),"\n")
@@ -89,24 +89,26 @@ setMethod("plot3DRGL", "GPRsurvey",
           function(x, addTopo = FALSE, clip = NULL, normalize = NULL, 
                    nupspl=NULL, add = TRUE, xlim = NULL, ylim= NULL, 
                    zlim = NULL, ...){
-            add <- add
+            # add <- add
             for(i in seq_along(x)){
               cat("***", i , "***\n")
-              gpr <- readGPR(x@filepaths[[i]])
-              if(length(x@coords[[gpr@name]])>0){
-                gpr@coord <- x@coords[[gpr@name]]
-                # cat(x@coordref,"\n")
-                gpr@coordref <- x@coordref
-              }
+              # gpr <- readGPR(x@filepaths[[i]])
+              gpr <- x[[i]]
+              # if(length(x@coords[[gpr@name]])>0){
+              #   gpr@coord <- x@coords[[gpr@name]]
+              #   # print(c("COORDREF: ", paste0(x@coordref, collapse=", ")))
+              #   gpr@coordref <- x@coordref
+              # }
               if(length(coord(gpr))==0){
                 message(gpr@name, ": no coordinates, I cannot plot",
                         " this line!!")
               }else{
-                plot3DRGL(gpr, addTopo = addTopo, clip = clip, normalize = normalize, 
-                          nupspl = nupspl, add = add, xlim = xlim, ylim = ylim, 
-                          zlim = zlim, ...)
+                plot3DRGL(gpr, add = add) #, addTopo = addTopo, clip = clip, normalize = normalize, 
+                          # nupspl = nupspl, add = add, xlim = xlim, ylim = ylim, 
+                          # zlim = zlim, ...)
               }
               add <- TRUE
+              print(add)
             }  
           }
 )
@@ -128,8 +130,10 @@ setMethod("plot3DRGL", "GPRsurvey",
       
     }else{
       # rgl::rgl.surface(Y, X, Z, color = colA, back = back, 
-      rgl::rgl.surface(X, Z, Y, color = colA, back = back, 
-                       smooth = smooth, lit = lit, lwd = lwd, ...) 
+      # rgl::rgl.surface(X, Z, Y, color = colA, back = back, 
+      #                  smooth = smooth, lit = lit, lwd = lwd, ...)  # deprecated
+      rgl::surface3d(X, Y, Z, color = colA, back = back, smooth = smooth,
+                     lit = lit, lwd = lwd, ...) 
     }
     # rgl::lines3d(y, z0, x, col = "black", alpha = 1, lwd = lwd)   
     # rgl::lines3d(y, (z0 - z[length(z)]), x, col = "black", alpha = 1, lwd = lwd)   
@@ -153,8 +157,10 @@ setMethod("plot3DRGL", "GPRsurvey",
     # assign colors to heights for each point 
     colA <- col[A * (length(col) - 1) + 1] 
     # rgl::rgl.surface(Y, X, Z, color = colA, back = back, smooth = smooth, 
-    rgl::rgl.surface(X, Z, Y, color = colA, back = back, smooth = smooth,
-                     lit = lit, lwd = lwd,...) 
+    #rgl::rgl.surface(X, Z, Y, color = colA, back = back, smooth = smooth,
+    #                 lit = lit, lwd = lwd,...)  # deprecated
+    rgl::surface3d(X, Y, Z, color = colA, back = back, smooth = smooth,
+                   lit = lit, lwd = lwd, ...) 
   }
 }
 

@@ -1084,12 +1084,12 @@ setMethod(
         if(length(x@rec)    > 0) x@rec    <- x@rec[j,   , drop = FALSE]
         if(length(x@trans)  > 0) x@trans  <- x@trans[j, , drop = FALSE]
         if(!is.null(x@hd[["clip"]])){
-          if(!is.null(x@hd[["clip"]][["clipmin"]]) && length(x@hd[["clip"]][["clipmin"]]) >= j){
+          if(!is.null(x@hd[["clip"]][["clipmin"]]) && length(x@hd[["clip"]][["clipmin"]]) >= max(j)){
             x@hd[["clip"]][["clipmin"]] <- x@hd[["clip"]][["clipmin"]][j]
           }else{
             x@hd[["clip"]][["clipmin"]] <- NULL
           }
-          if(!is.null(x@hd[["clip"]][["clipmax"]]) && length(x@hd[["clip"]][["clipmax"]]) >= j){
+          if(!is.null(x@hd[["clip"]][["clipmax"]]) && length(x@hd[["clip"]][["clipmax"]]) >= max(j)){
             x@hd[["clip"]][["clipmax"]] <- x@hd[["clip"]][["clipmax"]][j]
           }else{
             x@hd[["clip"]][["clipmax"]] <- NULL

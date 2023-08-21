@@ -319,7 +319,7 @@ readDT1 <- function(dsn){
     # read the 28 characters long comment
     # hDT1[[tags[26]]][i] <- readChar(dsn, 28)
     # read the npt * 2 bytes trace data
-    dataDT1[,i] <- readBinary(dsn, what = "integer", n = npt, size = 2)
+    dataDT1[,i] <- readBinary(dsn, what = "integer", n = npt, size = hDT1[["bytes"]][i])
   }
   .closeFileIfNot(dsn)
   return( list(dt1hd = hDT1, data = dataDT1) )

@@ -67,7 +67,13 @@
       }
       data_xyz[, 3] <- x$DTR$trHD[11,]
     }
+  }else{
+    data_xyz[, 1] <- x$DTR$trHD[18,]/x$DTR$trHD[17,]
+    data_xyz[, 2] <- x$DTR$trHD[19,]/x$DTR$trHD[17,]
+    data_xyz[, 3] <- x$DTR$trHD[11,]/x$DTR$trHD[16,]
   }
+  
+  
   k <- verboseF(grepl("scale factor ", x$THD, ignore.case = TRUE), verbose = FALSE)
   if(any(k)){
     scale_fact <- regexpr("scale factor (?<scale>[0-9.]+)", x$THD[k], 
@@ -177,7 +183,15 @@
     }
   }
   
-
+  xpos <- 1:n
+  if(sum(abs(data_xyz)) > 1e-5){
+    if(sum(abs(data_xyz[, 2:3])) < 1e-5){
+      xpos <- data_xyz[, 1]
+      data_xyz <- matrix(nrow = 0, ncol = 0)
+    }else{
+      xpos <- posLine(data_xyz)
+    } 
+  }
  
   
   y <- new("GPR",   
@@ -185,8 +199,8 @@
            data        = bits2volt(Vmax = Vmax, nbits = x$BHD$DATA_BYTES) * x$DTR$data,
            traces      = x$DTR$trHD[1,],
            fid         = rep("", n),
-           coord       = matrix(nrow = 0, ncol = 0),
-           pos         = 1:n,
+           coord       = data_xyz, # matrix(nrow = 0, ncol = 0),
+           pos         = xpos,
            depth       = seq(0, by = data_dt, length.out = nrow(x$DTR$data)),
            rec         = matrix(nrow = 0, ncol = 0),
            trans       = matrix(nrow = 0, ncol = 0),

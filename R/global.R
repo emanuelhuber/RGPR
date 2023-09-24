@@ -23,11 +23,6 @@ setGenericVerif <- function(x,y){setGeneric(x,y)}
 
 #------------------------------
 
-setGenericVerif("as.SpatialPoints", function(x) 
-  standardGeneric("as.SpatialPoints"))
-
-setGenericVerif("as.SpatialLines", function(x) 
-  standardGeneric("as.SpatialLines"))
 
 
 #' @importFrom magrittr %>%
@@ -1430,14 +1425,14 @@ wapplyMat2 <- function(x = NULL, width = NULL, by = NULL, FUN = NULL,
     return(OUT)
   }
 }
-
-xyToLine <- function(x){
-  sp::Line(x[,1:2])
-}
-
-LineToLines <- function(i,pp, myNames){
-  sp::Lines(pp[i],myNames[i])
-}
+# 
+# xyToLine <- function(x){
+#   sp::Line(x[,1:2])
+# }
+# 
+# LineToLines <- function(i,pp, myNames){
+#   sp::Lines(pp[i],myNames[i])
+# }
 
 
 

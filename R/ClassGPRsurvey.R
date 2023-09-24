@@ -204,13 +204,6 @@ GPRsurveyEmpty <- function(n = 1){
 }
 
   
-#' @export
-setAs(from = "GPRsurvey", to = "SpatialLines",
-      def = function (from) as.SpatialLines(from))
-      
-#' @export
-setAs(from = "GPRsurvey", to = "SpatialPoints",
-      def = function (from) as.SpatialPoints(from))    
 
 
 
@@ -224,52 +217,57 @@ setAs(from = "GPRsurvey", to = "SpatialPoints",
             paste0(unique(x@crs), collaspe = ", "), "!\n") 
     } 
   }
-  return( sp::CRS(x@crs[1]) )
+  tryCatch(sf::st_crs(x)$wkt,
+           error = function(e){
+             message("Invalid CRS! Try something like 'EPSG:3857'!")
+             return(NA_character_)
+           })
+  # return( sp::CRS(x@crs[1]) )
 }
 
-#' Coerce to SpatialLines
-#'
-#' @name GPRsurvey.as.SpatialLines
-#' @rdname GPRsurveycoercion
-#' @export
-setMethod("as.SpatialLines", signature(x = "GPRsurvey"), function(x){
-  # remove NULL from list
-  # FIXME
-  # Filter(Negate(is.null), x) = alternative
-  isNotNull <- !sapply(x@coords, is.null)
-  if(any(isNotNull)){
-    xyz <- x@coords[isNotNull]
-    lineList <- lapply(unname(xyz), xyToLine)
-    linesList <- lapply(seq_along(lineList), LineToLines, lineList, 
-                        names(xyz))
-    mySpatLines <- sp::SpatialLines(linesList)
-    
-    sp::proj4string(mySpatLines) <- .getCheckedCRS(x)
-    
-    return(mySpatLines)
-  }else{
-    warning("no coordinates!")
-    return(NULL)   
-  }
-})
+# #' Coerce to SpatialLines
+# #'
+# #' @name GPRsurvey.as.SpatialLines
+# #' @rdname GPRsurveycoercion
+# #' @export
+# setMethod("as.SpatialLines", signature(x = "GPRsurvey"), function(x){
+#   # remove NULL from list
+#   # FIXME
+#   # Filter(Negate(is.null), x) = alternative
+#   isNotNull <- !sapply(x@coords, is.null)
+#   if(any(isNotNull)){
+#     xyz <- x@coords[isNotNull]
+#     lineList <- lapply(unname(xyz), xyToLine)
+#     linesList <- lapply(seq_along(lineList), LineToLines, lineList, 
+#                         names(xyz))
+#     mySpatLines <- sp::SpatialLines(linesList)
+#     
+#     sp::proj4string(mySpatLines) <- .getCheckedCRS(x)
+#     
+#     return(mySpatLines)
+#   }else{
+#     warning("no coordinates!")
+#     return(NULL)   
+#   }
+# })
 
 
 
-#' Coerce to SpatialPoints
-#'
-#' @name GPRsurvey.as.SpatialPoints
-#' @rdname GPRsurveycoercion
-#' @export
-setMethod("as.SpatialPoints", signature(x = "GPRsurvey"), function(x){
-  allTopo <- do.call(rbind, x@coords)  #  N, E, Z
-  allTopo2 <- as.data.frame(allTopo)
-  names(allTopo2) <- c("x", "y", "z")
-  sp::coordinates(allTopo2) <- ~ x + y
-  
-  sp::proj4string(allTopo2) <- .getCheckedCRS(x)
-  
-  return(allTopo2)
-})
+# #' Coerce to SpatialPoints
+# #'
+# #' @name GPRsurvey.as.SpatialPoints
+# #' @rdname GPRsurveycoercion
+# #' @export
+# setMethod("as.SpatialPoints", signature(x = "GPRsurvey"), function(x){
+#   allTopo <- do.call(rbind, x@coords)  #  N, E, Z
+#   allTopo2 <- as.data.frame(allTopo)
+#   names(allTopo2) <- c("x", "y", "z")
+#   sp::coordinates(allTopo2) <- ~ x + y
+#   
+#   sp::proj4string(allTopo2) <- .getCheckedCRS(x)
+#   
+#   return(allTopo2)
+# })
 
 #' Define a local reference coordinate
 #' 
@@ -622,45 +620,96 @@ setMethod(f="length", signature="GPRsurvey", definition=function(x){
 #' Compute the survey intersections
 #' @rdname surveyIntersect
 #' @export
-setMethod("surveyIntersect", "GPRsurvey", function(x){
-  # intersections <- list()
-  for(i in seq_along(x@coords)){
-    if(!is.null(x@coords[[i]])){
-      top0 <- x@coords[[i]]
-      Sa <- verboseF(as.SpatialLines(x[i]), verbose = FALSE)
-      v <- seq_along(x@coords)[-i]
-      int_coords <- c()
-      int_traces <- c()
-      int_names <- c()
-      for(j in seq_along(v)){
-        if(!is.null(x@coords[[v[j]]])){
-          top1 <- x@coords[[v[j]]]
-          Sb <- verboseF(as.SpatialLines(x[v[j]]), verbose = FALSE)
-          pt_int <- rgeos::gIntersection(Sa,Sb)
-          if(!is.null(pt_int) && class(pt_int) == "SpatialPoints"){
-            # for each intersection points
-            for(k in seq_along(pt_int)){
-              d <- sqrt(rowSums((top0[,1:2] - 
-                              matrix(sp::coordinates(pt_int)[k,],
-                              nrow = nrow(top0), ncol = 2, byrow = TRUE))^2))
-              int_coords <- rbind(int_coords, sp::coordinates(pt_int)[k,])
-              int_traces <- c(int_traces, which.min(d)[1])
-              int_names  <- c(int_names, x@names[v[j]])
-            }
+setMethod("intersect", "GPRsurvey", function(x){
+  sel <- sapply(x@coords, function(x) length(x) > 0)
+  if(all(!sel)){
+    return(x)
+    stop("No coordinates: I cannot compute intersections...")
+  }
+  
+  x@intersections <- vector(length = length(x), mode = "list")
+  
+  if(sum(sel) == 1) return(x)  # FIXME compute self-intersection
+  if(length(unique(x@crs[!is.na(x@crs)])) != 1){
+    warning("Your data have different 'crs'.\n",
+            "  I recommend you to set an unique 'crs' to the data\n",
+            "  using either 'crs()<-' or 'project()'")
+  }
+  x_sf <- verboseF(as.sf(x), verbose = FALSE)
+  x_names <- x@names[sel]
+  # currently does not support sefl-intersection....
+  n <- nrow(x_sf)
+  ntsct <- vector(mode = "list", length = n)
+  for(i in 1:(n - 1) ){
+    v <- (i + 1):n
+    for(j in seq_along(v)){
+      pp <- verboseF(sf::st_intersection(x_sf[i, ], x_sf[v[j], ] ), verbose = FALSE)
+      if(nrow(pp) > 0 ){
+        # to avoid the case where two GPR lines perfectly overlapp...
+        tst <- sapply(sf::st_geometry(pp),  inherits, what = c("MULTIPOINT", "POINT"))
+        pp <- pp[tst,]
+        if(nrow(pp) > 0){
+          pp0 <- sf::st_cast(pp, "POINT",  warn = FALSE)
+          # plot(pp, add = TRUE, col = "red")
+          # print(paste0(i, " - ", v[j]))
+          pp <- data.frame(sf::st_coordinates(pp0), name = x_names[v[j]])
+          if(!is.null(ntsct[[i]])){
+            ntsct[[i]] <- rbind(pp, ntsct[[i]])
+          }else{
+            ntsct[[i]] <- pp
+          }
+          pp$name <- x_names[i]
+          if(!is.null(ntsct[[v[j]]])){
+            ntsct[[v[j]]] <- rbind(pp, ntsct[[v[j]]])
+          }else{
+            ntsct[[v[j]]] <- pp
           }
         }
       }
-      if(length(int_names) > 0){
-        x@intersections[[x@names[i]]] <- list(coord = int_coords,
-                                              trace = int_traces,
-                                              name  = int_names)
-      }else{
-        x@intersections[[x@names[i]]] <- NULL
-      }
     }
   }
+  x@intersections[sel] <- ntsct
   return(x)
 })
+# setMethod("surveyIntersect", "GPRsurvey", function(x){
+#   # intersections <- list()
+#   for(i in seq_along(x@coords)){
+#     if(!is.null(x@coords[[i]])){
+#       top0 <- x@coords[[i]]
+#       Sa <- verboseF(as.SpatialLines(x[i]), verbose = FALSE)
+#       v <- seq_along(x@coords)[-i]
+#       int_coords <- c()
+#       int_traces <- c()
+#       int_names <- c()
+#       for(j in seq_along(v)){
+#         if(!is.null(x@coords[[v[j]]])){
+#           top1 <- x@coords[[v[j]]]
+#           Sb <- verboseF(as.SpatialLines(x[v[j]]), verbose = FALSE)
+#           pt_int <- rgeos::gIntersection(Sa,Sb)
+#           if(!is.null(pt_int) && class(pt_int) == "SpatialPoints"){
+#             # for each intersection points
+#             for(k in seq_along(pt_int)){
+#               d <- sqrt(rowSums((top0[,1:2] - 
+#                               matrix(sp::coordinates(pt_int)[k,],
+#                               nrow = nrow(top0), ncol = 2, byrow = TRUE))^2))
+#               int_coords <- rbind(int_coords, sp::coordinates(pt_int)[k,])
+#               int_traces <- c(int_traces, which.min(d)[1])
+#               int_names  <- c(int_names, x@names[v[j]])
+#             }
+#           }
+#         }
+#       }
+#       if(length(int_names) > 0){
+#         x@intersections[[x@names[i]]] <- list(coord = int_coords,
+#                                               trace = int_traces,
+#                                               name  = int_names)
+#       }else{
+#         x@intersections[[x@names[i]]] <- NULL
+#       }
+#     }
+#   }
+#   return(x)
+# })
 
 #' Return intersection from GPRsurvey
 #'
@@ -1039,16 +1088,44 @@ setMethod("georef", "GPRsurvey",
 
 #' @export
 setMethod("trProject", "GPRsurvey", function(x, CRSobj){
-  xshp <- as(x, "SpatialLines")
-  xshpc <- sp::spTransform(xshp, CRSobj)
-  xshpc_coords <- sp::coordinates(xshpc)
-  FUN <- function(x, y){
-    x[, 1:2] <- y[[1]]
-    return(x)
+  # xshp <- as(x, "SpatialLines")
+  # xshpc <- sp::spTransform(xshp, CRSobj)
+  # xshpc_coords <- sp::coordinates(xshpc)
+  # FUN <- function(x, y){
+  #   x[, 1:2] <- y[[1]]
+  #   return(x)
+  # }
+  # x@crs <- as.character(CRSobj)
+  # coords(x) <- mapply(FUN, coords(x), xshpc_coords, 
+  #                     USE.NAMES = FALSE, SIMPLIFY = FALSE)
+  # return(x)
+  x_crs <- x@crs
+  if(length(x@crs) == 1) x_crs <- rep(x@crs, length(x))
+  for(i in seq_along(x)){
+    if(length(x@coords[[i]]) > 0 ){
+      
+      
+      # xi_sf <- sf::st_as_sf(x      = as.data.frame(x@coords[[i]]),
+      #                       coords = 1:3,
+      #                       crs    = x_crs[i])
+      # xi_sf     <- sf::st_transform(xi_sf, CRSobj)
+      # x@coords[[i]] <- as.matrix(sf::st_coordinates(xi_sf))
+      # x@xlengths[i]  <- pathLength(x@coords[[i]])
+      
+      x@coords[[i]][, 1:2] <- sf::sf_project(from = x_crs[i], 
+                                             to   = .getCheckedCRS(CRSobj),
+                                             pts  = x@coords[[i]][, 1:2])
+      x@xlengths[i]  <- pathLength(x@coords[[i]])
+      
+    }else{
+      warning(x@names[i], ": cannot be projected (no coordinates).")
+    }
+    crs(x) <- CRSobj
+    x@intersections <- list()
+    # x <- coordref(x)
+    x <- intersect(x)
+    # crs(x)   <- sf::st_crs(x_sf)
   }
-  x@crs <- as.character(CRSobj)
-  coords(x) <- mapply(FUN, coords(x), xshpc_coords, 
-                      USE.NAMES = FALSE, SIMPLIFY = FALSE)
   return(x)
 })
 

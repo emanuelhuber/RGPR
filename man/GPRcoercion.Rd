@@ -3,8 +3,6 @@
 \name{as.matrix}
 \alias{as.matrix}
 \alias{as.vector}
-\alias{as.SpatialLines}
-\alias{as.SpatialPoints}
 \alias{as.numeric}
 \alias{as.integer}
 \alias{as.GPR.data.frame}
@@ -17,10 +15,6 @@
 \S4method{as.matrix}{GPR}(x)
 
 \S4method{as.vector}{GPR}(x, mode = "any")
-
-\S4method{as.SpatialLines}{GPR}(x)
-
-\S4method{as.SpatialPoints}{GPR}(x)
 
 \S4method{as.numeric}{GPR}(x, ...)
 
@@ -42,10 +36,6 @@ as.GPRset.GPR(x, ...)
 Coercion to matrix
 
 Coercion to vector
-
-Coercion to SpatialLines
-
-Coercion to SpatialPoints
 
 Coercion to numeric
 

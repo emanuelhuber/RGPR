@@ -2,10 +2,10 @@
 % Please edit documentation in R/global.R, R/ClassGPRsurvey.R
 \name{surveyIntersect}
 \alias{surveyIntersect}
-\alias{surveyIntersect,GPRsurvey-method}
+\alias{intersect,GPRsurvey,ANY-method}
 \title{Compute the survey intersections}
 \usage{
-\S4method{surveyIntersect}{GPRsurvey}(x)
+\S4method{intersect}{GPRsurvey,ANY}(x)
 }
 \description{
 Compute the survey intersections

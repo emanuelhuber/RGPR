@@ -733,49 +733,29 @@ setAs(from = "GPR", to = "vector", def = function(from){ from@data})
 setMethod("as.vector", signature(x="GPR"), 
           function(x,mode="any"){as.vector(x@data)})
 
-#' @importClassesFrom sp SpatialLines
-setAs(from = "GPR", to = "SpatialLines",
-      def = function (from) as.SpatialLines(from))
+# #' @importClassesFrom sp SpatialLines
+# setAs(from = "GPR", to = "SpatialLines",
+#       def = function (from) as.SpatialLines(from))
+# 
+# #' Coercion to SpatialLines
+# #'
+# #' @name as.SpatialLines
+# #' @rdname GPRcoercion
+# #' @export
+# # as.SpatialLines <- function (x, ...){
+# setMethod("as.SpatialLines", signature(x = "GPR"), function(x){
+#   myLine <- sp::Line(x@coord[,1:2])
+#   myLines <- sp::Lines(list(myLine), ID = x@name)
+#   mySpatLines <- sp::SpatialLines(list(myLines))
+#   if(length(crs(x)) == 0){
+#     warning("no CRS defined!\n")
+#   }else{
+#     sp::proj4string(mySpatLines) <- sp::CRS(crs(x))
+#   }
+#   return(mySpatLines)
+# })
 
-#' Coercion to SpatialLines
-#'
-#' @name as.SpatialLines
-#' @rdname GPRcoercion
-#' @export
-# as.SpatialLines <- function (x, ...){
-setMethod("as.SpatialLines", signature(x = "GPR"), function(x){
-  myLine <- sp::Line(x@coord[,1:2])
-  myLines <- sp::Lines(list(myLine), ID = x@name)
-  mySpatLines <- sp::SpatialLines(list(myLines))
-  if(length(crs(x)) == 0){
-    warning("no CRS defined!\n")
-  }else{
-    sp::proj4string(mySpatLines) <- sp::CRS(crs(x))
-  }
-  return(mySpatLines)
-})
 
-#' @importClassesFrom sp SpatialPoints
-setAs(from = "GPR", to = "SpatialPoints",
-      def = function (from) as.SpatialPoints(from))
-
-#' Coercion to SpatialPoints
-#'
-#' @name as.SpatialPoints
-#' @rdname GPRcoercion
-#' @export
-# as.SpatialPoints <- function (x, ...){
-setMethod("as.SpatialPoints", signature(x = "GPR"), function(x){
-  myPoints <- as.data.frame(x@coord)
-  names(myPoints) <- c("x", "y", "z")
-  sp::coordinates(myPoints) = ~x + y
-  if(length(crs(x)) == 0){
-    warning("no CRS defined!\n")
-  }else{
-    sp::proj4string(myPoints) <- sp::CRS(crs(x))
-  }
-  return(myPoints)
-})
 
 #' Coercion to numeric
 #'
@@ -1219,11 +1199,8 @@ setMethod("isLengthUnit", "GPR", function(x){
 #'
 #' Project the trace coordinates give a coordinate reference system.
 #' @param x Object of the class GPR
-#' @param CRSobj object of class \link{CRS}, or of class \code{character} in
-#'               which case it is converted to \link{CRS}. 
-#'               If \code{CRSobj = "UTM"}, then the function will try to infer
-#'               the correct UTM zone and project the coordinates to this
-#'               UTM zone.
+#' @param CRSobj [\code{character(1)}] A string accepted by GDAL 
+#'               (e.g., \code{"EPSG:2056"}, WKT-string).
 #' @name trProject
 #' @rdname trProject
 #' @export
@@ -1239,10 +1216,15 @@ setMethod("trProject", "GPR", function(x, CRSobj){
     coord(x)[, 1:2] <- coordUTM$xy  # set coordinates
     crs(x) <- coordUTM$crs          # set estimated CRS
   }else{
-    xsp <- as(x, "SpatialLines")
-    xsptrsf <- sp::spTransform(xsp, CRSobj)
-    x@coord[, 1:2] <- sp::coordinates(xsptrsf)[[1]][[1]]
-    x@crs <- as.character(CRSobj)
+    
+    x@coord[, 1:2] <- sf::sf_project(from = crs(x), 
+                                     to   = CRSobj,
+                                     pts  = x@coord[, 1:2])
+    
+    # xsp <- as(x, "SpatialLines")
+    # xsptrsf <- sp::spTransform(xsp, CRSobj)
+    # x@coord[, 1:2] <- sp::coordinates(xsptrsf)[[1]][[1]]
+    # x@crs <- as.character(CRSobj)
   }
   x@pos <- relTrPos(x)
   return(x)
@@ -2906,10 +2888,17 @@ interpPosFromGPGGA <- function(ntr, GPGGA, tol = NULL, backproject = TRUE){
   
   #--- Convert to UTM
   # fixme: consider S (South) and W (West)
-  tr_crs <-  llToUTM(lat = median(sp::coordinates(mrk0)[,2]), 
-                      lon = median(sp::coordinates(mrk0)[,1]), 
-                      zone = NULL, south = NULL)$crs
-  mrk <- as.data.frame(sp::spTransform(mrk0, tr_crs))
+  # tr_crs <-  llToUTM(lat = median(sp::coordinates(mrk0)[,2]), 
+  #                     lon = median(sp::coordinates(mrk0)[,1]), 
+  #                     zone = NULL, south = NULL)$crs
+  # mrk <- as.data.frame(sp::spTransform(mrk0, tr_crs))
+  xy_crs <-  llToUTM(lat = sf::st_coordinates(mrk0)[,2], 
+                      lon = sf::st_coordinates(mrk0)[,1], 
+                      zone = NULL, south = NULL)
+  
+  tr_crs <- xy_crs$crs
+  
+  mrk <- as.data.frame(xy_crs$xy)
   
   
   #---- 4. remove duplicates

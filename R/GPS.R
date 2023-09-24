@@ -13,7 +13,7 @@
 
 
 #' @export
-readGPGGA <- function(dsn, sep = ","){
+readGPGGA <- function(dsn, sep = ",", returnSf = TRUE){
   if(!inherits(dsn, "connection")){
     dsn <- file(dsn, 'rb')
   }
@@ -26,8 +26,13 @@ readGPGGA <- function(dsn, sep = ","){
                   header = FALSE, colClasses = "character",
                   stringsAsFactors = FALSE, sep = ",")
   llz <- getLonLatFromGPGGA(a)
-  sp::coordinates(llz) <- cbind(x = llz$lon, y = llz$lat)
-  sp::proj4string(llz) <- sp::CRS("+proj=longlat +datum=WGS84")
+  # sp::coordinates(llz) <- cbind(x = llz$lon, y = llz$lat)
+  # sp::proj4string(llz) <- sp::CRS("+proj=longlat +datum=WGS84")
+  if(isTRUE(returnSf)){
+    llz <- sf::st_as_sf(x = llz,
+                        coords = c("lon", "lat"),
+                        crs = 4326)
+  }
   .closeFileIfNot(dsn)
   return(llz)
 }
@@ -137,14 +142,41 @@ llToUTM <- function(lon, lat, zone = NULL, south = NULL, west = FALSE){
   lat_mean <- median(lat)
   if(lat_mean < 0) lat <- -lat
   
-  ll <- data.frame(ID = 1:length(lat), X = lon, Y = lat)
-  sp::coordinates(ll) <- c("X", "Y")
-  sp::proj4string(ll) <- sp::CRS("+proj=longlat +datum=WGS84")
-  xy_crs <- paste0("+proj=utm ", south, "+zone=", zone, " +datum=WGS84",
-                   " +units=m +no_defs", " +ellps=WGS84 +towgs84=0,0,0")
-  xy <- sp::spTransform(ll, sp::CRS(xy_crs))
-  return(list(xy = as.matrix(as.data.frame(xy)[,2:3]), crs = xy_crs))
+  xy_crs <-  UTMToEPSG(zone, south)
+  
+  # ll <- data.frame(ID = 1:length(lat), X = lon, Y = lat)
+  # sp::coordinates(ll) <- c("X", "Y")
+  # sp::proj4string(ll) <- sp::CRS("+proj=longlat +datum=WGS84")
+  # xy_crs <- paste0("+proj=utm ", south, "+zone=", zone, " +datum=WGS84",
+  #                  " +units=m +no_defs", " +ellps=WGS84 +towgs84=0,0,0")
+  # xy <- sp::spTransform(ll, sp::CRS(xy_crs))
+  
+  xy <- sf::sf_project(from = "EPSG:4326", 
+                       to   = paste0("EPSG:", xy_crs), 
+                       pts  = cbind(lon, lat))
+  
+  return(list(xy = xy, crs = xy_crs))
 }
+
+#' EPGS code from UTM zone
+#'
+#' Returns the EPSG code from UTM zone. EPSG code is:
+#'   32600+zone for positive latitudes and  32700+zone for negatives latitudes.
+#' @param zone [\code{integer(1)}] the UTM zone.
+#' @param south [\code{integer(1)}] \code{TRUE} if the UTM is located in 
+#'              southern hemisphere.
+#' @return [\code{integer(1)}] The EPSG code.
+#' @export
+#' @concept GPS 
+#' @concept UTM
+UTMToEPSG <- function(zone, south = FALSE){
+  if(isTRUE(south)){
+    return(32700 + as.integer(zone))
+  }else{
+    return(32600 + as.integer(zone))
+  }
+}
+
 
 #' Get UTM zone from lattidue and longitude
 #'
@@ -177,13 +209,17 @@ UTMToll <- function(xy, xy_crs = NULL){
   #if(max(xy[,1]) > 834000) stop("y-values (northing) are larger than 834000")
   #if(min(xy[,1]) < 166000) stop("x-values (easting) are smaller than 166000")
   if(is.null(xy_crs)){
-    xy_crs <- "+proj=utm +zone=32 +ellps=WGS84"
+    stop("You must set CRSobj")
   } 
-  ll <- data.frame(ID = 1:nrow(xy), X = xy[,1], Y = xy[,2])
-  sp::coordinates(ll) <- c("X", "Y")
-  sp::proj4string(ll) <- sp::CRS(xy_crs)
-  xy <- sp::spTransform(ll, sp::CRS("+init=epsg:4326"))
-  as.matrix(as.data.frame(xy)[,2:3])
+  # ll <- data.frame(ID = 1:nrow(xy), X = xy[,1], Y = xy[,2])
+  # sp::coordinates(ll) <- c("X", "Y")
+  # sp::proj4string(ll) <- sp::CRS(xy_crs)
+  # xy <- sp::spTransform(ll, sp::CRS("+init=epsg:4326"))
+  # as.matrix(as.data.frame(xy)[,2:3])
+  
+  
+  xy[, 1:2] <- sf::sf_project(from = CRSobj, to = "EPSG:4326", pts = xy[, 1:2])
+  return(xy)
 }
 
 # conversion latitude longitude (hh:mm:ss into decimal

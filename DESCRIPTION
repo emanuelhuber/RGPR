@@ -145,15 +145,13 @@ Collate:
   'spBuffer.R'
   'interpolateTimeToDepth.R'
   'inspect.R'
+  'coercion_spatial.R'
 Imports:
     methods,
     graphics,
     stats,
     grDevices,
     utils,
-    sp,
-    rgdal,
-    rgeos,
     MASS,
     signal,
     colorspace,

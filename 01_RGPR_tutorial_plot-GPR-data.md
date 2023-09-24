@@ -2,7 +2,7 @@
 
 layout: page
 title: Plot GPR data
-date: 2021-11-19
+date: 2023-09-24
 ---
 
 <!--
@@ -30,6 +30,7 @@ Table of Contents
     -   [Two-dimensional plot:
         radargramm](#two-dimensional-plot-radargramm)
         -   [Raster plot](#raster-plot)
+        -   [Faster plot function](#faster-plot-function)
         -   [Wiggle plot](#wiggle-plot)
         -   [Plot settings](#plot-settings)
         -   [ggplot2\` plots](#ggplot2-plots)
@@ -58,6 +59,49 @@ Install/load `RGPR`
 # install "devtools" if not already done
 if(!require("devtools")) install.packages("devtools")
 devtools::install_github("emanuelhuber/RGPR")
+```
+
+    ## labeling    (0.4.2   -> 0.4.3) [CRAN]
+    ## htmltools   (0.5.5   -> 0.5.6) [CRAN]
+    ## cpp11       (0.4.5   -> 0.4.6) [CRAN]
+    ## purrr       (1.0.1   -> 1.0.2) [CRAN]
+    ## dplyr       (1.1.2   -> 1.1.3) [CRAN]
+    ## tinytex     (0.45    -> 0.46) [CRAN]
+    ## fontawesome (0.5.1   -> 0.5.2) [CRAN]
+    ## bslib       (0.5.0   -> 0.5.1) [CRAN]
+    ## xfun        (0.39    -> 0.40) [CRAN]
+    ## rmarkdown   (2.23    -> 2.25) [CRAN]
+    ## knitr       (1.43    -> 1.44) [CRAN]
+    ## askpass     (1.1     -> 1.2.0) [CRAN]
+    ## curl        (5.0.1   -> 5.0.2) [CRAN]
+    ## gtable      (0.3.3   -> 0.3.4) [CRAN]
+    ## DEoptimR    (1.1-0   -> 1.1-2) [CRAN]
+    ## wk          (0.7.3   -> 0.8.0) [CRAN]
+    ## promises    (1.2.0.1 -> 1.2.1) [CRAN]
+    ## httr        (1.4.6   -> 1.4.7) [CRAN]
+    ## ggplot2     (3.4.2   -> 3.4.3) [CRAN]
+    ## units       (0.8-2   -> 0.8-4) [CRAN]
+    ## classInt    (0.4-9   -> 0.4-10) [CRAN]
+    ## terra       (1.7-39  -> 1.7-46) [CRAN]
+    ## fields      (14.1    -> 15.2) [CRAN]
+    ## adimpro     (0.9.5   -> 0.9.6) [CRAN]
+    ## Cairo       (1.6-0   -> 1.6-1) [CRAN]
+    ## ── R CMD build ─────────────────────────────────────────────────────────────────
+    ##      checking for file ‘/tmp/RtmpzyfoS1/remotes46ab2ebd7edb/emanuelhuber-RGPR-0ba96b9/DESCRIPTION’...  ✔  checking for file ‘/tmp/RtmpzyfoS1/remotes46ab2ebd7edb/emanuelhuber-RGPR-0ba96b9/DESCRIPTION’
+    ##   ─  preparing ‘RGPR’:
+    ## ✔  checking DESCRIPTION meta-information
+    ##   ─  checking for LF line-endings in source and make files and shell scripts
+    ##   ─  checking for empty or unneeded directories
+    ##        NB: this package now depends on R (>= 3.5.0)
+    ##        WARNING: Added dependency on R >= 3.5.0 because serialized objects in
+    ##      serialize/load version 3 cannot be read in older versions of R.
+    ##      File(s) containing such objects:
+    ##        ‘RGPR/test.rds’
+    ##   ─  building ‘RGPR_0.0.7.tar.gz’
+    ##
+    ##
+
+``` r
 library(RGPR)       # load RGPR in the current R session
 ```
 
@@ -139,11 +183,9 @@ plot(x, col = palGPR("nice", n = 5))
 
 ![](01_RGPR_tutorial_plot-GPR-data_tp_files/figure-markdown_github/plot_GPR_with_color_palette_n-1.png)
 
-
 ### Faster plot function
 
 Instead of `plot(x)` use `plotFast(x)`!
-
 
 ### Wiggle plot
 

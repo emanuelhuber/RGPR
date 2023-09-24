@@ -129,12 +129,12 @@ llToUTM <- function(lon, lat, zone = NULL, south = NULL, west = FALSE){
   if(is.null(south) && lat_mean < 0){
     south <- "+south "
     lat <- -lat
-    print("SOUTH")
   }else if(isTRUE(south)){
     south <- "+south "
   }else{
     south <- ""
   }
+  lat_mean <- median(lat)
   if(lat_mean < 0) lat <- -lat
   
   ll <- data.frame(ID = 1:length(lat), X = lon, Y = lat)

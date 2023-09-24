@@ -332,7 +332,7 @@ readSEG2 <- function(dsn){
 readGPSUSRADAR <- function(dsn, toUTM = FALSE){
   coor <- read.table(dsn, header = FALSE, sep = ",", skip = 1)
   
-  names(coor) <- c("nb", "id", "x", "y", "z", "NA1", "NA2", "NA3", "NA4")
+  names(coor) <- c("nb", "id", "y", "x", "z", "NA1", "NA2", "NA3", "NA4")
   coor_crs <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
   if(toUTM == TRUE){
     topoUTM <-  llToUTM(lat = coor[,"y"], 

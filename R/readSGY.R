@@ -68,9 +68,11 @@
       data_xyz[, 3] <- x$DTR$trHD[11,]
     }
   }else{
-    data_xyz[, 1] <- x$DTR$trHD[18,]/x$DTR$trHD[17,]
-    data_xyz[, 2] <- x$DTR$trHD[19,]/x$DTR$trHD[17,]
-    data_xyz[, 3] <- x$DTR$trHD[11,]/x$DTR$trHD[16,]
+    if(sum(abs(c(x$DTR$trHD[18,], x$DTR$trHD[19,], x$DTR$trHD[16,]))) > 1e-7 ){
+      data_xyz[, 1] <- x$DTR$trHD[18,]/x$DTR$trHD[17,]
+      data_xyz[, 2] <- x$DTR$trHD[19,]/x$DTR$trHD[17,]
+      data_xyz[, 3] <- x$DTR$trHD[11,]/x$DTR$trHD[16,]
+    }
   }
   
   
@@ -95,6 +97,8 @@
   # }
   if( sum(abs(data_xyz)) > 0 ){
     x$BHD$xyz <- data_xyz
+  }else{
+    data_xyz <- matrix(nrow = 0, ncol = 3)
   }
   # data_xyz <- matrix( c(x$DTR$trHD[16+2,], x$DTR$trHD[17+2,], x$DTR$trHD[12,]),
   #                     nrow = n, ncol = 3, byrow = FALSE)

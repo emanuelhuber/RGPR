@@ -224,8 +224,8 @@ readCOR <- function(dsn, toUTM = FALSE){
                         zone = NULL, 
                         south = any(grepl("S", hCOR[["lat"]])),
                         west  = any(grepl("W", hCOR[["long"]])))
-    hCOR[["x"]] <- topoUTM$xy[1]
-    hCOR[["y"]] <- topoUTM$xy[2]
+    hCOR[["x"]] <- topoUTM$xy[,1]
+    hCOR[["y"]] <- topoUTM$xy[,2]
     hCOR_crs <- topoUTM$crs
   } # else{
   #   if(any(grepl("S", hCOR[["lat"]]))) hCOR[["y"]] <- -hCOR[["y"]]

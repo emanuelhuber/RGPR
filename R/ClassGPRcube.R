@@ -1065,9 +1065,9 @@ setMethod("as.raster", signature(x = "GPRcube"), function(x){
 exportCubeToXYZC <- function(x, dsn){
   XYZC <- matrix(nrow = prod(dim(x)), ncol = 4)
   colnames(XYZC) <- c("x", "y", "z", "c")
-  XYZC[, 1] <- as.vector(array(x@x, dim = dim(A)))
-  XYZC[, 2] <- as.vector(aperm(array(x@y, dim = dim(A)[c(2, 1, 3)]), c(2, 1, 3)))
-  XYZC[, 3] <- as.vector(aperm(array(x@depth, dim = dim(A)[c(3, 2, 1)]), c(3, 2, 1)))
+  XYZC[, 1] <- as.vector(array(x@x, dim = dim(x)))
+  XYZC[, 2] <- as.vector(aperm(array(x@y, dim = dim(x)[c(2, 1, 3)]), c(2, 1, 3)))
+  XYZC[, 3] <- as.vector(aperm(array(x@depth, dim = dim(x)[c(3, 2, 1)]), c(3, 2, 1)))
   XYZC[, 4] <- as.vector(as.array(x))
   XYZC[, 4][is.na(XYZC[, 4])] <- 0
   write.table(XYZC, file = dsn, quote = FALSE, row.names = FALSE, )

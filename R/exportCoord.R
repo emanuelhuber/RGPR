@@ -56,6 +56,7 @@ setMethod("exportCoord", "GPRsurvey",
             type <- match.arg(type, c("SpatialPoints", "SpatialLines", "ASCII"))
             if(type=="SpatialLines"){  
               xs <- as.spatialLines(x)
+              if(grepl("(.shp)$", fPath)) xs <- sf::st_zm(xs)
               sf::st_write(xs, fPath, delete_dsn = TRUE)
               # dfl <- data.frame(z=c(1), row.names = x@name)
               # spldf <- sp::SpatialLinesDataFrame(mySpatLines, dfl , 

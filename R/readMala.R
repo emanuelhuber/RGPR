@@ -217,7 +217,7 @@ readCOR <- function(dsn, toUTM = FALSE){
     z <- sapply((strsplit(hCOR[["y"]], ":")), as.numeric)
     hCOR[["y"]] <- z[1, ] + z[2, ]/60 + z[3, ]/3600
   }
-  hCOR_crs <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+  hCOR_crs <- "EPSG:4326"
   if(toUTM == TRUE){
     topoUTM <-  llToUTM(lat = hCOR[["y"]], 
                         lon = hCOR[["x"]], 

@@ -155,7 +155,7 @@ llToUTM <- function(lon, lat, zone = NULL, south = NULL, west = FALSE){
                        to   = paste0("EPSG:", xy_crs), 
                        pts  = cbind(lon, lat))
   
-  return(list(xy = xy, crs = xy_crs))
+  return(list(xy = xy, crs = paste0("EPSG:", xy_crs)))
 }
 
 #' EPGS code from UTM zone

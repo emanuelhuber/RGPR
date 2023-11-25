@@ -217,7 +217,7 @@ GPRsurveyEmpty <- function(n = 1){
             paste0(unique(x@crs), collaspe = ", "), "!\n") 
     } 
   }
-  tryCatch(sf::st_crs(x)$wkt,
+  tryCatch(sf::st_crs(x@crs[1])$wkt,
            error = function(e){
              message("Invalid CRS! Try something like 'EPSG:3857'!")
              return(NA_character_)

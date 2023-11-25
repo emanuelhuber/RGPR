@@ -388,7 +388,7 @@ readDZG <- function(dsn, toUTM = FALSE){
   
   xyzt <- .getLatLonFromGPGGA(gpgga)
   
-  xyzt_crs <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+  xyzt_crs <- "EPSG:4326"
   if(toUTM == TRUE){
     topoUTM <-  llToUTM(lat = xyzt[,2], 
                         lon = xyzt[,1], 

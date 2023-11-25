@@ -2944,7 +2944,7 @@ interpPosFromGPGGA <- function(ntr, GPGGA, tol = NULL, backproject = TRUE){
 
   if(backproject == TRUE){
     tr_xyz[,1:2] <- UTMToll(xy = tr_xyz[,1:2], xy_crs = tr_crs)
-    tr_crs <- "+proj=longlat +ellps=WGS84 +datum=WGS84"
+    tr_crs <- "EPSG:4326"
   }
   
   # utr <- sf::st_as_sf(as.data.frame(uu), coords = c(1,2))

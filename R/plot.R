@@ -786,17 +786,18 @@ plot.GPRsurvey <- function(x, y, ...){
       # print(paste("ASP", asp))
     }
     if(add_shp_files){
-      if(length(shp_files) > 0){
-        sel <- seq(from=1,length.out=length(shp_files),by=2)
-        BASEName <- unlist(strsplit(basename(shp_files),'[.]'), 
-                           use.names = FALSE)[sel]
-        DIRName <- dirname(shp_files)
-        for(i in seq_along(shp_files)){
-          shp <- rgdal::readOGR(DIRName[i], BASEName[i])
-          message(DIRName[i], BASEName[i])
-          plot(shp, add = TRUE, pch = 13, col = "darkblue")
-        }
-      }
+      warning("'add_shp_files' is no more supported!")
+      # if(length(shp_files) > 0){
+      #   sel <- seq(from=1,length.out=length(shp_files),by=2)
+      #   BASEName <- unlist(strsplit(basename(shp_files),'[.]'), 
+      #                      use.names = FALSE)[sel]
+      #   DIRName <- dirname(shp_files)
+      #   for(i in seq_along(shp_files)){
+      #     shp <- rgdal::readOGR(DIRName[i], BASEName[i])
+      #     message(DIRName[i], BASEName[i])
+      #     plot(shp, add = TRUE, pch = 13, col = "darkblue")
+      #   }
+      # }
     }
     for(i in 1:length(x)){
       if(is.null(x@coords[[x@names[i]]])){

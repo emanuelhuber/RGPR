@@ -21,6 +21,9 @@ date: 2019-11-23
 
 ### Publications
 
+* [Duchesne I., Tong Q., Hans G. (2023) Using Ground Penetrating Radar (GPR) to Predict Log Moisture Content of Commercially Important Canadian Softwoods. Forests 2023, 14, 2396, DOI:10.3390/f14122396](http://dx.doi.org/10.3390/f14122396)
+
+* [Briana N. Doering, Ken L. Hladek, Molly A. Herron, Joshua D. Reuther, Julie A. Esdale, Charles E. Holmes & Gerad M. Smith (2023) Evaluating Systematic Use of Ground Penetrating Radar and Auger Surveys to Determine Activity Areas at Three Open Air Sites in Central Alaska, Journal of Field Archaeology, 48:7, 518-533. DOI:10.1080/00934690.2023.2248572](http://dx.doi.org/10.28927/SR.2023.006422)
 
 * [Érdeson Soares Farias, Sandro Lemos Machado, Heraldo Luiz Giacheti, Alexsandro Guerra Cerqueira (2023) Integrated use of georadar, electrical resistivity, and SPT for site characterization and water content estimative. Soil and Rocks, 46:3. DOI: 10.28927/SR.2023.006422](http://dx.doi.org/10.28927/SR.2023.006422)
 

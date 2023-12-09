@@ -1,8 +1,8 @@
----
+-–
 layout: page
 title: Time/depth slice interpolation
-date: 2022-06-19
----
+date: 2023-09-24
+-–
 
 ------------------------------------------------------------------------
 
@@ -400,7 +400,7 @@ Time/depth slice interpolation
 
 Now that the data are well prepared, the interpolation is a simple task.
 We define the grid resolution in all three direction: dx = 0.05 m, dy =
-0.05 m, dz = 0.05 ns as well as an additional parameter `h` (&gt;0) that
+0.05 m, dz = 0.05 ns as well as an additional parameter `h` (\>0) that
 controls the smoothness of the interpolation (the interpolation used is
 the Multilevel B-spline Approximation as implemented in the function
 `mba.surf()` of the package `MBA`).
@@ -495,7 +495,7 @@ argument `extend` that can take the following values:
 -   `bbox`: the axis-aligned bounding box
 -   `obbox`: the oriented bounding box
 -   `buffer`: an area around the GPR lines (like a buffer). In this case
-    a buffer value &gt; 0 must be defined.
+    a buffer value\> 0 must be defined.
 
 Below are some examples (the case `extend = "obbox"` makes here no sense
 because the oriented bounding-box is the same as the axis-aligned
@@ -551,12 +551,6 @@ lines(SU, col = "green", lwd = 2)
 
 ``` r
 SXY <- interpSlices(SU, dx = 0.05, dy = 0.05, dz = 0.05, h = 6, extend = "buffer", buffer = 0.2)
-```
-
-    ## Warning in as.sf(x[sel]): Your data have different CRS (check with 'crs()'!
-    ##   I take the first CRS for the coercion to sf...
-
-``` r
 plot(SXY[,,10])
 lines(SU, col = "green", lwd = 2)
 ```
@@ -572,6 +566,15 @@ object in R (defined in the `raster` package):
 ``` r
 r <- as.raster(SXY[,,10])
 ```
+
+    ## The legacy packages maptools, rgdal, and rgeos, underpinning the sp package,
+    ## which was just loaded, will retire in October 2023.
+    ## Please refer to R-spatial evolution reports for details, especially
+    ## https://r-spatial.org/r/2023/05/15/evolution4.html.
+    ## It may be desirable to make the sf package available;
+    ## package maintainers should consider adding sf to Suggests:.
+    ## The sp package is now running under evolution status 2
+    ##      (status 2 uses the sf package in place of rgdal)
 
 Then, use the `writeRaster()` function of the `raster` package to export
 the slice in the raster format you like (check the help on this

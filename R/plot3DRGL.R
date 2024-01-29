@@ -32,11 +32,22 @@ setMethod("plot3DRGL", "GPR",
               ysel <- coord(x, 2) >= ylim[1] & coord(x, 2) <= ylim[2]
               cat(ylim,"  range = ", range(coord(x, 2)),"\n")
             }
+            zsel <- rep(TRUE, nrow(x))
+            if(!is.null(zlim)){
+              zlim <- sort(zlim)
+              zsel <- coord(x, 3) >= zlim[1] & coord(x, 3) <= zlim[2]
+            }
             xysel <- xsel & ysel
             if(sum(xysel) <= 2){
               return(NULL)
             }
-            x <- x[,xysel]
+            if(sum(zsel) <=2){
+              return(NULL)
+            }
+           
+            
+            
+            x <- x[zsel, xysel]
             if(!is.null(nupspl)){
               message("upsample...")
               x <- upsample(x, n = nupspl)
@@ -104,7 +115,13 @@ setMethod("plot3DRGL", "GPRsurvey",
                 message(gpr@name, ": no coordinates, I cannot plot",
                         " this line!!")
               }else{
-                plot3DRGL(gpr, add = add) #, addTopo = addTopo, clip = clip, normalize = normalize, 
+                plot3DRGL(gpr, 
+                          add = add,  
+                          xlim = xlim, 
+                          ylim = ylim, 
+                          zlim = zlim)
+                          #, addTopo = addTopo, clip = clip, normalize = normalize, 
+                          #, addTopo = addTopo, clip = clip, normalize = normalize, 
                           # nupspl = nupspl, add = add, xlim = xlim, ylim = ylim, 
                           # zlim = zlim, ...)
               }

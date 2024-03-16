@@ -1253,7 +1253,7 @@ setMethod("trProject", "GPR", function(x, CRSobj){
 #' data(frenkeLine00)
 #' plotAmpl(frenkeLine00, FUN = median)
 #' @name plotEnvelope
-#' @rdname envelope
+#' @rdname plotEnvelope
 #' @export
 setMethod("plotEnvelope", "GPR", function(x, npad = 100, FUN = mean, add = FALSE, 
                                           all = FALSE, plotLog = TRUE, ...){

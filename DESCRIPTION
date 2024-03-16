@@ -134,7 +134,7 @@ Collate:
   'NMO.R'
   'NMOstreching.R'
   'velSpectrum.R'
-  'setVel2.R'
+  'setVel.R'
   'plotVel.R'
   'getVel2.R'
   'CMPhyperbolas.R'

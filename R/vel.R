@@ -1,4 +1,3 @@
-
 #' Set and get velocity
 #' 
 #' Set and get velocity model
@@ -99,7 +98,7 @@ checkVelIntegrity <- function(x, value){
         }
       }
       if(!is.null(value[["smooth"]])){
-        if(!is.numeric(value[["smooth"]]) || length(value[["smooth"]]) != 1 ){
+        if(!is.logical(value[["smooth"]]) || length(value[["smooth"]]) != 1 ){
           stop("'smooth' must be a logical and have length one")
         }
       }
@@ -144,11 +143,11 @@ checkVelIntegrity <- function(x, value){
 
 
 # return either 1 value, a vector or FIXME: a matrix
-# @param strict [logical(1)] If TRUE, .getVel2 raises an error if the velocity
+# @param strict [logical(1)] If TRUE, .getVel raises an error if the velocity
 #               type does not exist. If FALSE, it will check if a velocity "v"
 #               exists and return it
-.getVel2 <- function(x, type = c("vrms", "vint", "v"), strict = TRUE){
-  type <- match.arg(type, c("vrms", "vint", "v"))
+.getVel <- function(x, type = c("vrms", "vint"), strict = TRUE){
+  type <- match.arg(type, c("vrms", "vint"))
   if(length(x@vel) == 0){
     stop("You must first assign a positiv velocity value!")
   }else{
@@ -156,17 +155,15 @@ checkVelIntegrity <- function(x, value){
       if(strict){
         stop("You must first set this type of velocity: ", type)
       }else{
-        if(is.null(x@vel[["v"]]) && strict){
+        if(is.null(x@vel[["v"]])){
           stop("You must first set at least one of these types of velocity: ", 
                type, ", v!")
-        }else if(length(x@vel) == 1){
-          v <- .intpSmoothVel(x@vel[[1]], x_z = x@depth)
         }else{
-          v <- .intpSmoothVel(x@vel[["v"]], x_z = x@depth)
+          v <- .intpSmoothVel(x@vel[["v"]], x_z = x@z)
         }
       }
     }else{
-      v <- .intpSmoothVel(x@vel[[type]], x_z = x@depth)
+      v <- .intpSmoothVel(x@vel[[type]], x_z = x@z)
       # if(!is.null(x@vel[["type"]][["intp"]])){
       #   v <- .interpVel(x, type = type, method = x@vel[[type]][["intp"]])
       # }
@@ -183,15 +180,4 @@ checkVelIntegrity <- function(x, value){
   }
 }
 
-#' @name setVel
-#' @rdname vel
-#' @export
-setGenericVerif("setVel", function(x, v) standardGeneric("setVel"))
 
-#' @name setVel
-#' @rdname vel
-#' @export
-setMethod("setVel", "GPR", function(x, v){
-  vel(x) <- v 
-  return(x)
-})

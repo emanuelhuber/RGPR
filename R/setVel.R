@@ -10,14 +10,14 @@
 #'             from CMP data) or internal velocities \code{"vint"} (layer 
 #'             velocities).
 #' @return [\code{GPR}]
-#' @name setVel2
-#' @rdname setVel2
-setGeneric("setVel2", function(x, v, twt, type = c("vrms", "vint")) standardGeneric("setVel2"))
+#' @name setVel
+#' @rdname setVel
+setGeneric("setVel", function(x, v, twt, type = c("vrms", "vint")) standardGeneric("setVel"))
 
 
-#' @rdname setVel2
+#' @rdname setVel
 #' @export
-setMethod("setVel2", "GPR", function(x, v, twt, type = c("vrms", "vint")){
+setMethod("setVel", "GPR", function(x, v, twt, type = c("vrms", "vint")){
   
   type <- match.arg(type, c("vrms", "vint"))
   # print(type)

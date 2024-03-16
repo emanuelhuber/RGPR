@@ -5,7 +5,6 @@
 \alias{vel,GPR-method}
 \alias{vel<-}
 \alias{vel<-,GPR-method}
-\alias{setVel}
 \title{Set and get velocity}
 \usage{
 vel(x)
@@ -15,8 +14,6 @@ vel(x)
 vel(x) <- value
 
 \S4method{vel}{GPR}(x) <- value
-
-\S4method{setVel}{GPR}(x, v)
 }
 \arguments{
 \item{x}{[\code{GPR class}] An object of the class \code{GPR}}

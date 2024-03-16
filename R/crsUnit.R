@@ -9,7 +9,7 @@
 #' @concept units
 crsUnit <- function(crs){
   if(!is.character(crs)) stop("'crs' must be a character!")
-  if(length(crs) == 0 || is.na(crs)){
+  if(length(crs) == 0 || all(is.na(crs))){
     return(NA_character_)
   }else if(length(crs) == 1){
     crs <- tryCatch(sf::st_crs(crs),

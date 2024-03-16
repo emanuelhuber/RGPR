@@ -4,6 +4,8 @@
 \name{plot}
 \alias{plot}
 \alias{plot.GPR}
+\alias{contour}
+\alias{contour.GPR}
 \alias{plot.GPRset}
 \alias{plot.GPRsurvey}
 \alias{plot.GPRcube}
@@ -11,6 +13,29 @@
 \title{Plot the GPR object.}
 \usage{
 \method{plot}{GPR}(
+  x,
+  col = NULL,
+  type = NULL,
+  horiz = TRUE,
+  interpolate = TRUE,
+  sym = TRUE,
+  clim = NULL,
+  add = FALSE,
+  asp = NA,
+  secaxis = TRUE,
+  elev = FALSE,
+  export = NULL,
+  fac = 1,
+  wiggles = list(side = 1, size = 0.2, col = "black", lwd = 0.5),
+  markers = list(lineSymbols = 0.35, pch = 25, colSymbols = "red", bgSymbols = "yellow",
+    cexSymbols = 1, lineText = 0.9, cexText = 0.6, colText = "red"),
+  ann = list(lineText = 1, colLine = "red", colText = "red", cexText = 0.75, lwd = 1),
+  z0 = list(lwd = 1, col = "green", lty = 1),
+  cbar = list(w = 1, pos = 1, hst = 0.5, fticks = 0.5, vclab = 0.5, clab = NULL),
+  ...
+)
+
+\method{contour}{GPR}(
   x,
   col = NULL,
   type = NULL,
@@ -71,8 +96,11 @@ color palette.}
 
 \item{asp}{[\code{numeric(1)}] The y/x aspect ratio.}
 
-\item{secaxis}{[\code{logical(1)}] If \code{TRUE}, add a secondary axis
-(if possible a depth axis). Note that we use the Sensors & 
+\item{secaxis}{[\code{logical(1)}] If \code{TRUE}, add a secondary axis. 
+If the GPR data was acquired in common-offset mode, 
+a secondary depth axsis is added (based on the average wave
+velocity). Else a secondary time axis is added.
+Note that we use the Sensors & 
 Software method to plot the depth axis
 when the data are in time domain: because of the offset 
 between transmitter and receiver, there is an offset between 

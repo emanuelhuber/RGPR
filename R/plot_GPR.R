@@ -99,8 +99,11 @@
 #'             color palette.
 #' @param add [\code{logical(1)}] If \code{TRUE}, add to current plot.
 #' @param asp [\code{numeric(1)}] The y/x aspect ratio.
-#' @param secaxis [\code{logical(1)}] If \code{TRUE}, add a secondary axis
-#'                (if possible a depth axis). Note that we use the Sensors & 
+#' @param secaxis [\code{logical(1)}] If \code{TRUE}, add a secondary axis. 
+#'                If the GPR data was acquired in common-offset mode, 
+#'                a secondary depth axsis is added (based on the average wave
+#'                velocity). Else a secondary time axis is added.
+#'                Note that we use the Sensors & 
 #'                Software method to plot the depth axis
 #'                when the data are in time domain: because of the offset 
 #'                between transmitter and receiver, there is an offset between 
@@ -135,40 +138,40 @@
 plot.GPR <- function(x,
                      col = NULL,
                      type = NULL,
-                    horiz = TRUE,
-                    interpolate = TRUE,
-                    sym = TRUE,
-                    clim = NULL,
-                    add = FALSE,
-                    asp = NA,
-                    secaxis = TRUE,
-                    elev = FALSE,
-                    export = NULL,
-                    fac = 1,
-                    wiggles = list(side = 1, size = 0.2, col = "black", lwd = 0.5),
-                    markers = list(lineSymbols = 0.35, pch = 25, 
-                                   colSymbols = "red", 
-                                   bgSymbols = "yellow", 
-                                   cexSymbols = 1,
-                                   lineText = 0.9, cexText = 0.6, colText = "red"),
-                    ann = list(lineText = 1., colLine = "red", colText = "red", cexText = 0.75, lwd = 1),
-                    z0 = list(lwd = 1, col = "green", lty = 1),
-                    cbar = list(w = 1,
-                                pos = 1,
-                                hst = 0.5,
-                                fticks = 0.5,
-                                vclab = 0.5,
-                                clab = NULL),
-                    ...){
+                     horiz = TRUE,
+                     interpolate = TRUE,
+                     sym = TRUE,
+                     clim = NULL,
+                     add = FALSE,
+                     asp = NA,
+                     secaxis = TRUE,
+                     elev = FALSE,
+                     export = NULL,
+                     fac = 1,
+                     wiggles = list(side = 1, size = 0.2, col = "black", lwd = 0.5),
+                     markers = list(lineSymbols = 0.35, pch = 25, 
+                                    colSymbols = "red", 
+                                    bgSymbols = "yellow", 
+                                    cexSymbols = 1,
+                                    lineText = 0.9, cexText = 0.6, colText = "red"),
+                     ann = list(lineText = 1., colLine = "red", colText = "red", cexText = 0.75, lwd = 1),
+                     z0 = list(lwd = 1, col = "green", lty = 1),
+                     cbar = list(w = 1,
+                                 pos = 1,
+                                 hst = 0.5,
+                                 fticks = 0.5,
+                                 vclab = 0.5,
+                                 clab = NULL),
+                     ...){
   x[is.infinite(x) | is.na(x)] <- 0
   
   if(ncol(x) == 1){
     .plot1D(x, 
-           add = add, 
-           secaxis = secaxis,
-           z0 = z0, 
-           horiz = horiz,
-           ...)
+            add = add, 
+            secaxis = secaxis,
+            z0 = z0, 
+            horiz = horiz,
+            ...)
     
   }else if(nrow(x) == 1){
     par(mar = c(5, 4, 2, 2) + 0.1, oma = c(0, 0, 0, 0), mgp = c(2, 0.5, 0))
@@ -208,35 +211,35 @@ plot.GPR <- function(x,
     .plot2D(x,
             col = col,
             type = type,
-           interpolate = interpolate,
-           sym = sym,
-           clim = clim,
-           add = add,
-           asp = asp,
-           secaxis = secaxis,
-           elev = elev,
-           export = export,
-           fac = fac,
-           wiggles = wiggles,
-           markers = markers,
-           ann = ann,
-           z0 = z0,
-           cbar = cbar,
-           ...)
+            interpolate = interpolate,
+            sym = sym,
+            clim = clim,
+            add = add,
+            asp = asp,
+            secaxis = secaxis,
+            elev = elev,
+            export = export,
+            fac = fac,
+            wiggles = wiggles,
+            markers = markers,
+            ann = ann,
+            z0 = z0,
+            cbar = cbar,
+            ...)
   }
   
 }
 
 
 .plot1D <- function(x, 
-                   type = "l", 
-                   col = "black", 
-                   interpolate, # 2D
-                   add = FALSE, 
-                   secaxis = TRUE,
-                   z0 = list(lwd = 1, col = "green", lty = 1), 
-                   horiz = TRUE,
-                   ...){
+                    type = "l", 
+                    col = "black", 
+                    interpolate, # 2D
+                    add = FALSE, 
+                    secaxis = TRUE,
+                    z0 = list(lwd = 1, col = "green", lty = 1), 
+                    horiz = TRUE,
+                    ...){
   # par(mar = c(5, 4, 3, 2) + 0.1)
   par(mai = c(1.1, 1.02, 1.02, 1.02))
   z <- x@z
@@ -314,24 +317,24 @@ plot.GPR <- function(x,
       x_axis <- pretty(z, 10)
       xat <- axis(side = 1,  tck = +0.01, mgp = c(1,0.5,0), lwd = -1, lwd.ticks = 1)
       
+      if(isTRUE(secaxis)){
       #if(grepl("[m]$", x@zunit) || !isCommonOffset(x) || anyNA(x@antsep) ){
-      if(isZDepth(x)){
-        axis(side = 3, tck = +0.01, mgp = c(1,0.5,0), lwd = -1, lwd.ticks = 1)
-      }else if(isZTime(x)){
-        vmean <- mean(.getVel(x, type = "vrms", strict = FALSE))
-        if(isTRUE(horiz)){
-          .depthAxis(x, z, vmean, t0, xat, side = 3 )
-        }else{
-          .depthAxis(x, y, vmean, t0, yat, side = 4 )
-        }
-        if(isTRUE(secaxis)){
-          depth_0 <- t0 + depth0(0, vmean, antsep = x@antsep)
+        if(isZDepth(x) || length(x@vel) == 0 ){
+          axis(side = 3, tck = +0.01, mgp = c(1,0.5,0), lwd = -1, lwd.ticks = 1)
+        }else if(isZTime(x)){
+          vmean <- mean(.getVel(x, type = "vrms", strict = FALSE))
           if(isTRUE(horiz)){
-            abline(v = depth_0, col = "grey", lty = 3)
+            .depthAxis(x, z, vmean, t0, xat, side = 3 )
           }else{
-            abline(h = depth_0, col = "grey", lty = 3)
+            .depthAxis(x, y, vmean, t0, yat, side = 4 )
           }
-          #axis(side = 4, at = depth_0, labels = "0", tick = FALSE) # necessary?
+            depth_0 <- t0 + depth0(0, vmean, antsep = x@antsep)
+            if(isTRUE(horiz)){
+              abline(v = depth_0, col = "grey", lty = 3)
+            }else{
+              abline(h = depth_0, col = "grey", lty = 3)
+            }
+            #axis(side = 4, at = depth_0, labels = "0", tick = FALSE) # necessary?
         }
       }
     }
@@ -355,7 +358,12 @@ plot.GPR <- function(x,
 # transmitter and receiver, there is an offset between time zero and depth,
 # the depth axes is squished.
 # FIXME: clean, use only x as argument.
+
 .secaxis <- function(x, antsep, z, v, z0, xat, side = 3 ){
+  if(length(antsep) > 1){
+    warning("Antenna separation is not constant! I take the first value.")
+    antsep = 1
+  }
   d <- seq(0.1, by = 0.1, 0.9)
   depthat2 <- depthToTime(d, 0, v, antsep = antsep)
   if(max(z)*v/2 > 1.3){
@@ -374,35 +382,40 @@ plot.GPR <- function(x,
 
 
 .plot2D <- function(x, 
-                   type = c("raster", "wiggles"),
-                   col = palGPR(), 
-                   interpolate = TRUE,
-                   sym = TRUE,
-                   clim = NULL,
-                   add = FALSE,
-                   asp = NA,
-                   secaxis = TRUE,
-                   elev = FALSE,
-                   export = NULL,
-                   fac = 1,
-                   wiggles = list(side = 1, size = 0.2, col = "black", lwd = 0.5),
-                   markers = list(lineSymbols = 0.35, pch = 25, 
-                                  colSymbols = "red", 
-                                  bgSymbols = "yellow", 
-                                  cexSymbols = 1,
-                                  lineText = 0.9, cexText = 0.6),
-                   ann = list(lineText = 1.7, colLine = "red", colText = "red", cexText = 0.9, lwd = 1),
-                   z0 = list(lwd = 1, col = "green", lty = 1),
-                   cbar = list(w = 1,
-                               pos = 1,
-                               hst = 0.5,
-                               fticks = 0.5,
-                               vclab = 0.5,
-                               clab = NULL),
-                   ...){
+                    type = c("raster", "wiggles", "contour"),
+                    col = NULL, 
+                    interpolate = TRUE,
+                    sym = TRUE,
+                    clim = NULL,
+                    add = FALSE,
+                    asp = NA,
+                    secaxis = TRUE,
+                    elev = FALSE,
+                    export = NULL,
+                    fac = 1,
+                    wiggles = list(side = 1, size = 0.2, col = "black", lwd = 0.5),
+                    markers = list(lineSymbols = 0.35, pch = 25, 
+                                   colSymbols = "red", 
+                                   bgSymbols = "yellow", 
+                                   cexSymbols = 1,
+                                   lineText = 0.9, cexText = 0.6),
+                    ann = list(lineText = 1.7, colLine = "red", colText = "red", cexText = 0.9, lwd = 1),
+                    z0 = list(lwd = 1, col = "green", lty = 1),
+                    cbar = list(w = 1,
+                                pos = 1,
+                                hst = 0.5,
+                                fticks = 0.5,
+                                vclab = 0.5,
+                                clab = NULL),
+                    ...){
   
   
   op <- par(no.readonly=TRUE)
+  
+  # # if(isTRUE(secaxis) && !isCommonOffset(x)){
+  #   # message("'secaxis' set equal to 'FALSE': antenna separation not constant")
+  #   secaxis = FALSE
+  # } 
   
   if(isTRUE(elev) && isZDepth(x) && length(x@coord) > 0){
     zmax <- max(x@coord[, 3])
@@ -438,11 +451,19 @@ plot.GPR <- function(x,
   dots <- list(...)
   if(length(dots) > 0)   defaults <- setDots(dots, defaults)
   
-  if(is.null(col)) col <- palGPR()
+  
   
   if(is.null(type)) type <- "raster"
-  type <- match.arg(type[1], c("raster", "wiggles"))
-  if(type == "wiggles") cbar <- NULL
+  type <- match.arg(type[1], c("raster", "wiggles", "contour"))
+  if(type %in% c("wiggles", "contour")) cbar <- NULL
+  
+  if(is.null(col)){
+    if(type == "contour"){
+      col <- "black"
+    }else{
+      col <- palGPR()
+    }
+  }
   
   parMar0 <- par()$mar
   
@@ -464,7 +485,7 @@ plot.GPR <- function(x,
   pleaseExport <- FALSE
   # export = lkjdf.pdf or sldf.png
   if(!is.null(export)){
-     ext <- substr(export, nchar(export) - 2, nchar(export))
+    ext <- substr(export, nchar(export) - 2, nchar(export))
     if(tolower(ext) %in% c("png", "pdf")){
       pleaseExport <- TRUE
       asp <- ifelse(is.null(dots$asp), 1, dots$asp) 
@@ -491,9 +512,9 @@ plot.GPR <- function(x,
       }
     }
   }
-
   
-  if(isFALSE(add)){
+  
+  if(isFALSE(add) && type != "contour"){
     plot(0, type = "n", xaxs = "i", yaxs = "i",
          xaxt = "n", yaxt = "n", xlim = defaults$xlim, 
          ylim = ifelse(c(elev, elev), defaults$ylim, rev(defaults$ylim)), 
@@ -513,58 +534,75 @@ plot.GPR <- function(x,
                  col = wiggles[["col"]],
                  wsize = wiggles[["size"]], wside = wiggles[["side"]], 
                  lwd = wiggles[["lwd"]], ylim = defaults$ylim)
-  }
-  
-  title(x@name,  line = 2)
-  if(length(x@path) > 0){
-    mtext(x@path, side = 1, line = 3.5, adj = 0.5, cex = 0.65)
-  }
-  
-  if(!is.null(markers)){
-    do.call(.addMarkers, c(list(mrks = x@markers, xpos = x@x), markers))
-  }
-  
-  if(!is.null(ann)){
-    do.call(.addAnn, c(list(ann = x@ann, xpos = x@x), ann))
-  }
-  
-  if(!is.null(z0)){
-    do.call(lines, c(list(x = x@x, y = x@z0), z0))
-  }
-  grid()
-  axis(1, tck = 0.01, mgp = c(2, 0.5, 0), lwd = -1, lwd.ticks = 1)
-  axis(2, tck = 0.01, mgp = c(2, 0.5, 0), lwd = -1, lwd.ticks = 1)
-  if(isTRUE(secaxis)){
-    if(isZTime(x)){
-      vmean <- mean(.getVel(x, type = "vrms", strict = FALSE))
-      xat <- sort(par()$usr[3:4])
-      .secaxis(x, antsep = x@antsep, z = x@z, v = vmean, z0 = mean(x@z0), xat = xat, side = 4)
+  }else if(type == "contour"){
+    if(isTRUE(add)){
+      do.call(plot3D::contour2D, list(x = x@x, y = x@z, z = t(x@data), 
+                                   col = col, add = TRUE,
+                                    ...))
     }else{
-      axis(4, tck = 0.01, mgp = c(2, 0.5, 0), lwd = -1, lwd.ticks = 1)
+      do.call(plot3D::contour2D, list(x = x@x, y = x@z, z = t(x@data), 
+                                   col = col, add = FALSE,
+                                   xaxs = "i", yaxs = "i",
+                                   xaxt = "n", yaxt = "n", xlim = defaults$xlim, 
+                                   ylim = ifelse(c(elev, elev), defaults$ylim, rev(defaults$ylim)), 
+                                   xlab = defaults$xlab, ylab = defaults$ylab, bty= "n",
+                                   # mgp = defaults$mpg, 
+                                   asp = asp, ...))      
     }
-  }
+  } 
   
-  box()
-  
-  if(!is.null(cbar)){
-    if(isTRUE(sym)){
-      if(!is.null(clim)){
-        clim <- max(abs(clim), na.rm = TRUE) * c(-1, 1)
+  if(isFALSE(add)){
+    title(x@name,  line = 2)
+    if(length(x@path) > 0){
+      mtext(x@path, side = 1, line = 3.5, adj = 0.5, cex = 0.65)
+    }
+    
+    if(!is.null(markers)){
+      do.call(.addMarkers, c(list(mrks = x@markers, xpos = x@x), markers))
+    }
+    
+    if(!is.null(ann)){
+      do.call(.addAnn, c(list(ann = x@ann, xpos = x@x), ann))
+    }
+    
+    if(!is.null(z0) && length(x@z0) > 0){
+      do.call(lines, c(list(x = x@x, y = x@z0), z0))
+    }
+    grid()
+    axis(1, tck = 0.01, mgp = c(2, 0.5, 0), lwd = -1, lwd.ticks = 1)
+    axis(2, tck = 0.01, mgp = c(2, 0.5, 0), lwd = -1, lwd.ticks = 1)
+    if(isTRUE(secaxis)){
+      if(isZTime(x) && isCommonOffset(x)){
+        vmean <- mean(.getVel(x, type = "vrms", strict = FALSE))
+        xat <- sort(par()$usr[3:4])
+        .secaxis(x, antsep = x@antsep, z = x@z, v = vmean, z0 = mean(x@z0), xat = xat, side = 4)
       }else{
-        clim <- max(abs(x), na.rm = TRUE) * c(-1, 1)
-      }
-    }else{
-      if(!is.null(clim)){
-        clim <- range(clim, na.rm = TRUE)
-      }else{
-        clim <- range(x, na.rm = TRUE)
+        axis(4, tck = 0.01, mgp = c(2, 0.5, 0), lwd = -1, lwd.ticks = 1)
       }
     }
-    # col <- defaults[["col"]]
-    # dim(col) <- c(length(col), 1)
-    if(is.null(cbar[["clab"]])) cbar[["clab"]] <- x@dunit
-    # do.call(colorbar, c(list(col = col, clim = range(x, na.rm = TRUE), zlim = defaults$ylim),  cbar))
-    do.call(.colorbar, c(list(col = col, clim = clim),  cbar))
+    
+    box()
+    
+    if(!is.null(cbar)){
+      if(isTRUE(sym)){
+        if(!is.null(clim)){
+          clim <- max(abs(clim), na.rm = TRUE) * c(-1, 1)
+        }else{
+          clim <- max(abs(x), na.rm = TRUE) * c(-1, 1)
+        }
+      }else{
+        if(!is.null(clim)){
+          clim <- range(clim, na.rm = TRUE)
+        }else{
+          clim <- range(x, na.rm = TRUE)
+        }
+      }
+      # col <- defaults[["col"]]
+      # dim(col) <- c(length(col), 1)
+      if(is.null(cbar[["clab"]])) cbar[["clab"]] <- x@dunit
+      # do.call(colorbar, c(list(col = col, clim = range(x, na.rm = TRUE), zlim = defaults$ylim),  cbar))
+      do.call(.colorbar, c(list(col = col, clim = clim),  cbar))
+    }
   }
   if(isTRUE(pleaseExport)) dev.off()
   par(mar = parMar0)
@@ -637,13 +675,13 @@ plot.GPR <- function(x,
 }
 
 .colorbar <- function(col = palGPR(), clim, # zlim, <- replaced by par()$usr[3:4]
-                     clab = "", 
-                     w = 1,         # colorbar width in lines
-                     pos = 1, 
-                     hst = 0.5,  # space between colorbar and text in lines
-                     fticks = 0.5,  # length factor for the ticks.
-                     # 1 <-> space between colorbar and text
-                     vclab = 0.5){  # vertical space to clab
+                      clab = "", 
+                      w = 1,         # colorbar width in lines
+                      pos = 1, 
+                      hst = 0.5,  # space between colorbar and text in lines
+                      fticks = 0.5,  # length factor for the ticks.
+                      # 1 <-> space between colorbar and text
+                      vclab = 0.5){  # vertical space to clab
   
   zlim <- par()$usr[3:4]
   par(xpd=TRUE)
@@ -798,3 +836,59 @@ points.GPR <- function(x, relTime0 = FALSE, ...){
   }
 }
 
+
+#' \code{contour} extends \code{plot3D::contour2D} and creates a contour plot.
+#' @method contour GPR 
+#' @name contour
+#' @rdname plot
+#' @export
+# options: type=c(raster,wiggles), addTopo, clip, normalize
+contour.GPR <- function(x, 
+                        col = NULL,
+                        # type = NULL,
+                        horiz = TRUE,
+                        interpolate = TRUE,
+                        sym = TRUE,
+                        clim = NULL,
+                        add = FALSE,
+                        asp = NA,
+                        secaxis = TRUE,
+                        elev = FALSE,
+                        export = NULL,
+                        fac = 1,
+                        wiggles = list(side = 1, size = 0.2, col = "black", lwd = 0.5),
+                        markers = list(lineSymbols = 0.35, pch = 25, 
+                                       colSymbols = "red", 
+                                       bgSymbols = "yellow", 
+                                       cexSymbols = 1,
+                                       lineText = 0.9, cexText = 0.6, colText = "red"),
+                        ann = list(lineText = 1., colLine = "red", colText = "red", cexText = 0.75, lwd = 1),
+                        z0 = list(lwd = 1, col = "green", lty = 1),
+                        cbar = list(w = 1,
+                                    pos = 1,
+                                    hst = 0.5,
+                                    fticks = 0.5,
+                                    vclab = 0.5,
+                                    clab = NULL),
+                        ...){
+  
+  plot.GPR(x,
+           col = col,
+           type = "contour",
+           horiz = horiz,
+           interpolate = interpolate,
+           sym = sym,
+           clim = clim,
+           add = add,
+           asp = asp,
+           secaxis = secaxis,
+           elev = elev,
+           export = export,
+           fac = fac,
+           wiggles = wiggles,
+           markers = markers,
+           ann = ann,
+           z0 = z0,
+           cbar = cbar,
+           ...)
+}

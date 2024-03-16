@@ -388,7 +388,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
                         #         "emanuel.huber@pm.me")
                         return(NULL)})
       }
-      if(is.null(A)){ stop() }
+      if(is.null(A)){ stop("I tried both ending: bit and little without success...") }
       # print(names(A))
       # A <- verboseF(readSGY(dsn, ENDIAN = endian), verbose = verbose)
       x <- verboseF( .gprSGY(A, fName = fName, fPath = fPath, 

@@ -997,7 +997,7 @@ safeName <- function(x, y){
 #'
 #' returns string w/o leading or trailing whitespace
 #' @export
-trimStr <- function (x) gsub("^\\s+|\\s+$", "", x)
+trimStr <- function (x, useBytes = FALSE) gsub("^\\s+|\\s+$", "", x, useBytes = useBytes)
 
 # return filename without extension
 #' @export

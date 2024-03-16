@@ -95,9 +95,9 @@
   #   }    
   #   if(all(x$DTR$trHD[16, ] > 0))  data_xyz[, 3] <- data_xyz[, 3] / x$DTR$trHD[16, ]
   # }
-  if( sum(abs(data_xyz)) > 0 ){
-    x$BHD$xyz <- data_xyz
-  }else{
+  data_xyz[is.na(data_xyz)] <- 0
+  if( sum(abs(data_xyz)) < sqrt(.Machine$double.eps) ){
+    # x$BHD$xyz <- data_xyz
     data_xyz <- matrix(nrow = 0, ncol = 3)
   }
   # data_xyz <- matrix( c(x$DTR$trHD[16+2,], x$DTR$trHD[17+2,], x$DTR$trHD[12,]),
@@ -297,9 +297,11 @@ readSGY_textual_file_header <- function(dsn, ENDIAN){
   # readChar(dsn, nchars = 3200, useBytes = TRUE)
   # readBin(dsn, what = "raw", n = 3200, size = 1, endian = ENDIAN)
   uu <- readBin(dsn, what = character(), n = 1, size = 1, endian = ENDIAN)
+  # remove non unicode / non-ASCII character
+  uu <- gsub("[^\u0001-\u007F]+|<U\\+\\w+>","", uu, useBytes = TRUE)
   uu <- trimStr(uu)
   uu1 <- verboseF(strsplit(uu, "(C\\s*[0-9]+)", useBytes = TRUE)[[1]], verbose = FALSE)
-  if(length(uu1) > 1 && !is.na(uu1)){
+  if(length(uu1) > 1 && any(!is.na(uu1))){
     uu1 <- sapply(uu1, trimStr, USE.NAMES = FALSE)
     uu1 <- uu1[uu1!=""]
   }else if(length(uu1) == 1 && !is.na(uu1)){

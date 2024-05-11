@@ -480,12 +480,13 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
                           desc = desc, Vmax = Vmax),  verbose = verbose)
     if( !is.null(dsn[["COR"]]) && isTRUE(interp_pos)){
       x <- tryCatch({
-              x_cor <-  verboseF(readIPRCOR(dsn[["COR"]]), verbose = verbose)
+              gps <-  verboseF(readIPRCOR(dsn[["COR"]], toUTM = toUTM), verbose = verbose)
               x <- interpPos(x, x_cor, tol = sqrt(.Machine$double.eps), 
                              method = method)
-              if(toUTM == TRUE){
-                warning("Option 'toUTM' not yet implemented!")
-              }
+              crs(x) <- gps$crs
+              # if(toUTM == TRUE){
+              #   warning("Option 'toUTM' not yet implemented!")
+              # }
               x
             },
             error = function(cond) {

@@ -204,7 +204,7 @@ readMRK <- function(dsn){
 
 # GPS POSITION: trace date time north N East E Elevation M Quality
 #' @export
-readIPRCOR <- function(dsn){
+readIPRCOR <- function(dsn, toUTM = FALSE){
   if(!inherits(dsn, "connection")){
     dsn <- file(dsn, 'rb')
   }
@@ -221,16 +221,30 @@ readIPRCOR <- function(dsn){
                      sep = "")
   # hCOR <- read.table(textConnection(gsub(",", "\t", readLines(dsn))), 
   #                    dec = ".", header = FALSE, stringsAsFactors = FALSE)
-  colnames(hCOR) <- c("id", "date", "time", "y", 
-                      "lat", "x",
-                      "long", "z", "unit", "accuracy")
+  colnames(hCOR) <- c("id", "date", "time", "y", "lat", 
+                      "x", "long", "z", "unit", "accuracy")
   
   if(any(grepl("S", hCOR[["lat"]]))) hCOR[["y"]] <- -hCOR[["y"]]
   if(any(grepl("W", hCOR[["long"]]))) hCOR[["x"]] <- -hCOR[["x"]]
   
+  xyzt_crs <- "EPSG:4326"
+  if(toUTM == TRUE){
+    topoUTM <-  llToUTM(lat = hCOR[["y"]], 
+                        lon = hCOR[["x"]], 
+                        zone = NULL, 
+                        south = any(grepl("S", hCOR[["lat"]])),
+                        west  = any(grepl("W", hCOR[["long"]])))
+    hCOR[["x"]] <- topoUTM$xy[, 1]
+    hCOR[["y"]] <- topoUTM$xy[, 2]
+    xyzt_crs <- topoUTM$crs
+  }
+  
   .closeFileIfNot(dsn)
   # return(hCOR)
-  return(hCOR[c("x", "y", "z", "id", "date", "time")])
+  #return(hCOR[c("x", "y", "z", "id", "date", "time")])
+  
+  #.closeFileIfNot(dsn)
+  return(list(mrk = hCOR[c("x", "y", "z", "id", "date", "time")], crs = xyzt_crs))
 }
 
 # 

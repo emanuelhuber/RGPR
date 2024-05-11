@@ -156,11 +156,10 @@ The documentation is still incomplete (but check the tutorials, http://emanuelhu
 ### Plot functions
 
 * GPR data
-  * 1D/2D: `plot()`, `contour()`, `lines()`, `points()`
+  * 1D/2D: `plot()`, plotFast()`, `contour()`, `lines()`, `points()`
   * 3D (plot in openGL): `plot3DRGL()`
   * superposition of all traces: `trPlot()`
 * Amplitude: `plotAmpl()`
-* Envelope: `plotEnvelope()`
 * Spectrum:
   * 1D frequency spectrum: `spec()`
   * 2D frequency spectrum (frequency-wavenumber): `spec(x, type = "f-k")`
@@ -171,7 +170,8 @@ The documentation is still incomplete (but check the tutorials, http://emanuelhu
 * Structure tensor: `plotTensor()`
 * Color palette: `plotPal()`
 
-
+### 3D GPR data (interpolation to slices
+* interpSlices(
 
 ### GPR data positioning and referencing
 

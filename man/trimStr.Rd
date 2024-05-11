@@ -4,7 +4,7 @@
 \alias{trimStr}
 \title{Trim string}
 \usage{
-trimStr(x)
+trimStr(x, useBytes = FALSE)
 }
 \description{
 returns string w/o leading or trailing whitespace

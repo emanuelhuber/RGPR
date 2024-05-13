@@ -481,7 +481,7 @@ readGPR <- function(dsn, desc = "", dsn2 = NULL, format = NULL, Vmax = NULL,
     if( !is.null(dsn[["COR"]]) && isTRUE(interp_pos)){
       x <- tryCatch({
               gps <-  verboseF(readIPRCOR(dsn[["COR"]], toUTM = toUTM), verbose = verbose)
-              x <- interpPos(x, x_cor, tol = sqrt(.Machine$double.eps), 
+              x <- interpPos(x, gps$mrk, tol = sqrt(.Machine$double.eps), 
                              method = method)
               crs(x) <- gps$crs
               # if(toUTM == TRUE){

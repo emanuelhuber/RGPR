@@ -252,6 +252,7 @@ setReplaceMethod(
       if(ncol(x@data) == nrow(value) && ncol(value) == 3){
         x@coord <- as.matrix(value)
         x <- trRmDuplicates(x, verbose = FALSE)
+        x@pos <- posLine(coord(x)[,1:2])
         x@proc <- c(x@proc, "coord<-//")
       }else if(length(value) == 0){
         x@coord <- matrix(nrow = 0, ncol = 3)

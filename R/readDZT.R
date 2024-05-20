@@ -345,13 +345,26 @@ readDZG <- function(dsn, toUTM = FALSE){
     u <- which(test_gssis)
     v <- which(test_gpgga)
     if(length(u) > 0 && length(v) > 0){
-      i <- (u + 1) %in% v
-      j <- v %in% (u + 1)
-      if(length(i) > 0 && length(j) > 0 && sum(i) == sum(j)){
-        sel <- as.vector(rbind(u[i], v[j]))
-        x <- x[sel]
-        test_gssis <- grepl("(\\$GSSIS)", x, ignore.case = TRUE, useBytes = TRUE )
-        test_gpgga <- grepl("(\\$GPGGA)", x, ignore.case = TRUE, useBytes = TRUE )
+      vnew <- rep(NA_integer_, length(u))
+      for(k in seq_len(length(u)-1)){
+        tst <- which(v > u[k] & v < u[k+1] )
+        if(length(tst) > 0){
+          vnew[k] = min(v[tst])
+        }
+      }
+      k <- k + 1
+      tst <- which(v > u[k]  )
+      if(length(tst) > 0){
+        vnew[k] = min(v[tst])
+      }
+      if(!all(is.na(vnew))){ 
+        u <- u[!is.na(vnew)]
+        vnew <- vnew[!is.na(vnew)]
+        x <- x[c(u, vnew)]
+        test_gssis <- grepl("(\\$GSSIS)", x, ignore.case = TRUE, 
+                            useBytes = TRUE)
+        test_gpgga <- grepl("(\\$GPGGA)", x, ignore.case = TRUE, 
+                            useBytes = TRUE)
       }else{
         stop("File '.dzg' is corrupted! I cannot read it... sorry.")
       }
@@ -365,9 +378,6 @@ readDZG <- function(dsn, toUTM = FALSE){
                       "(?<NS>[NS]),(?<lon>[0-9.]+),(?<EW>[EW]),(?<fix>[0-9]),",
                       "(?<NbSat>[0-9.]+),(?<HDOP>[0-9.]+),(?<H>[-]?[0-9.]+),",
                       "(?<mf>[MmFf]+)") 
-  #,(?<HGeoid>[0-9.]+),(?<mf2>[mMfF+),",
-  # "(?<TDGPS>[0-9.]+),(?<DGPSID> [A-z0-9.]+)"
-  # )
   
   # matches <- regexpr(pat_gpgga, x[xgpgga], perl=TRUE)
   # first <- attr(matches, "capture.start")

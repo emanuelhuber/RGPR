@@ -18,8 +18,8 @@ setMethod("exportCoord", "GPR",
           function(x, type = c("SpatialPoints", "SpatialLines", "ASCII"),
                    fPath = NULL, driver = "ESRI Shapefile", ...){
             type <- match.arg(type, c("SpatialPoints", "SpatialLines", "ASCII"))
-            fPath <- ifelse(is.null(fPath), x@name, 
-                            file.path(dirname(fPath), .fNameWExt(fPath))) 
+            # fPath <- ifelse(is.null(fPath), x@name, 
+            #                 file.path(dirname(fPath), .fNameWExt(fPath))) 
             if(type=="SpatialLines"){  
               xs <- as.spatialLines(x)
               sf::st_write(xs, fPath, delete_dsn = TRUE)
@@ -43,7 +43,7 @@ setMethod("exportCoord", "GPR",
             }else if(type == "ASCII"){
               xCoord <- x@coord
               colnames(xCoord) <- c("x", "y", "z")
-              fPath <- paste0(fPath, ".txt")
+              # fPath <- paste0(fPath, ".txt")
               write.table(xCoord, fPath, row.names = FALSE, 
                           col.names = TRUE, quote = FALSE, ...)
             }

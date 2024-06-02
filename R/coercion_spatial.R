@@ -127,13 +127,15 @@ setGeneric("as.spatialPoints", function(x)
 setMethod("as.spatialPoints", signature(x = "GPR"), function(x){
   if(length(x@coord) > 0){
     xdf <- as.data.frame(x@coord)
-    if(length(x@fid) == ncol(x)) xdf['fid'] <- x@fid
+    if(length(x@fid) == ncol(x)) xdf['markers'] <- x@fid
     if(length(x@ann) == ncol(x)) xdf['ann'] <- x@ann
     if(length(x@time) == ncol(x)) xdf['time'] <- x@time
     
     x_sf <- sf::st_as_sf(x      = xdf,
-                         coords = 1:3,
-                         crs    = x@crs)
+                         coords = 1:3)
+    if(length(x@crs) > 0){
+      sf::st_crs(x_sf) <- x@crs
+    }
     
     return(x_sf)
   }else{

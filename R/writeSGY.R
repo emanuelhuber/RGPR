@@ -369,7 +369,11 @@ writeSGY_binary_trace_header <- function(dsn, x,  endian = "little"){
     XYZ <- matrix(0, nrow = ncol(x), ncol = 3)
     XYZ[, 1] <- x@pos
   }
-  XYZ <-round(XYZ * 1000)
+  if(max(abs(XYZ) ) * 1000 > 2147483647){
+    XYZ <- round(XYZ)
+  }else{
+    XYZ <- floor(round(XYZ * 1000))
+  }
   storage.mode(XYZ) <- "integer"
   nspls <- nrow(x)
   storage.mode(nspls) <- "integer"

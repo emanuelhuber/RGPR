@@ -169,6 +169,10 @@ readRAD <- function(dsn){
                       stringsAsFactors = FALSE)
   for(i in seq_along(headRAD)){
     hdline <- strsplit(headRAD[i], ":")[[1]]
+    # if the value has a ":" inside, rebuild the value
+    if(length(hdline) > 2){
+      hdline[2] <- paste0(hdline[-1], collapse = ":")
+    }
     hRAD[i,1:2] <-  as.character(sapply(hdline[1:2],trimStr))
   }
   ntr <- .getHD(hRAD, "LAST TRACE")

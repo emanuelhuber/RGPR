@@ -643,7 +643,7 @@ trInterp <- function(x, z, zi){
 
 
 .sliceInterp <- function(x, dx = NULL, dy = NULL, dz = NULL, h = 6,
-                         extend = "bbox+", buffer = NULL, shp =  NULL){
+                         extend = "bbox", buffer = NULL, shp =  NULL){
   if(!all(sapply(x@coords, length) > 0) ){
     stop("Some of the data have no coordinates. Please set first coordinates to all data.")
   }

@@ -606,6 +606,12 @@ setMethod(f="length", signature="GPRsurvey", definition=function(x){
   }
 )
 
+#different
+as.list.GPRsurvey <-function(x) {
+  lapply(seq_along(x), function(i) x[[i]])
+}
+# @export
+setMethod("as.list", "GPRsurvey", as.list.GPRsurvey)
 
 
 # intersection
@@ -778,6 +784,22 @@ setMethod("interpPosArray" , "GPRsurvey",
             return(x)
           })
 
+
+setGeneric("setPosArray", function(x, xyz, d)
+  standardGeneric("setPosArray"))
+
+#' @export
+setMethod("setPosArray" , "GPRsurvey",
+          function(x, xyz, d){
+            if(length(unique(x@ntraces)) > 1){
+              stop("All GPR data must have exactly the same number of traces!")
+            }
+            xyp <- perpPoints(xyz, d = d)
+            for(i in seq_along(x)){
+              x@coords[[x@names[i]]] <-  cbind(xyp$x[, i], xyp$y[, i], xyz[,3])
+            }
+            return(x)
+          })
 
 
 #' Reverse the trace position.

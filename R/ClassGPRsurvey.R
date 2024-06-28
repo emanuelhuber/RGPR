@@ -606,11 +606,12 @@ setMethod(f="length", signature="GPRsurvey", definition=function(x){
   }
 )
 
-#different
+#' @export
 as.list.GPRsurvey <-function(x) {
   lapply(seq_along(x), function(i) x[[i]])
 }
-# @export
+
+#' @export
 setMethod("as.list", "GPRsurvey", as.list.GPRsurvey)
 
 

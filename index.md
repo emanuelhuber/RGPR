@@ -19,6 +19,14 @@ I am developing this package on my free time as a gift to the GPR community. Any
 [![](https://bmc-cdn.nyc3.digitaloceanspaces.com/BMC-button-images/custom_images/orange_img.png)](https://www.buymeacoffee.com/EmanuelHuber)
 
 -->
+<p class="message"> 
+ am developing this package on my free time as a gift to the GPR community. Any support will be appreciated! 
+</p>
+
+[![](https://bmc-cdn.nyc3.digitaloceanspaces.com/BMC-button-images/custom_images/orange_img.png)](https://www.buymeacoffee.com/EmanuelHuber)
+
+[Buy me a coffee with Paypal](https://www.paypal.com/donate/?hosted_button_id=ZGSWR9SLV4MM2)
+
 
 ## About
 

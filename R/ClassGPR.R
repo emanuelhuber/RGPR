@@ -2781,6 +2781,7 @@ setMethod("interpPos", "GPR",
     #   crs(x) <- topoUTM$crs
     # }
     x@coord <- A
+    x@pos <- posLine(A[,1:2])
     x@proc <- c(x@proc, "interpPos")
     return(x)
   }

@@ -108,6 +108,7 @@ Collate:
   'checkArgs.R'
   'checkSlots.R'
   'z_interp.R'
+  'z_path.R'
   'setLayerVelocities.R'
   'convertTimeToDepth.R'
   'getVel.R'

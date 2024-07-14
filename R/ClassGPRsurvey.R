@@ -209,19 +209,28 @@ GPRsurveyEmpty <- function(n = 1){
 
 
 .getCheckedCRS <- function(x){
-  if(length(x@crs) == 0 || all(x@crs == "")){
-    warning("no CRS defined!\n")
-  }else{
-    if(length(unique(x@crs)) > 1){
-      warning( "Not all the coordinate reference systems are identical: \n",
-            paste0(unique(x@crs), collaspe = ", "), "!\n") 
-    } 
+  if(inherits(x, c("GPR", "GPRsurvey"))){
+    if(length(x@crs) == 0 || all(x@crs == "")){
+      warning("no CRS defined!\n")
+    }else{
+      if(length(unique(x@crs)) > 1){
+        warning( "Not all the coordinate reference systems are identical: \n",
+              paste0(unique(x@crs), collaspe = ", "), "!\n") 
+      } 
+    }
+    tryCatch(sf::st_crs(x@crs[1])$wkt,
+             error = function(e){
+               message("Invalid CRS! Try something like 'EPSG:3857'!")
+               return(NA_character_)
+             })
+    
+  }else if(is.character(x)){
+    tryCatch(sf::st_crs(x)$wkt,
+             error = function(e){
+               message("Invalid CRS! Try something like 'EPSG:3857'!")
+               return(NA_character_)
+             })
   }
-  tryCatch(sf::st_crs(x@crs[1])$wkt,
-           error = function(e){
-             message("Invalid CRS! Try something like 'EPSG:3857'!")
-             return(NA_character_)
-           })
   # return( sp::CRS(x@crs[1]) )
 }
 
@@ -1138,7 +1147,7 @@ setMethod("trProject", "GPRsurvey", function(x, CRSobj){
       x@coords[[i]][, 1:2] <- sf::sf_project(from = x_crs[i], 
                                              to   = .getCheckedCRS(CRSobj),
                                              pts  = x@coords[[i]][, 1:2])
-      x@xlengths[i]  <- pathLength(x@coords[[i]])
+      x@lengths[i]  <- pathLength(x@coords[[i]])
       
     }else{
       warning(x@names[i], ": cannot be projected (no coordinates).")

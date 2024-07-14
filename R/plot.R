@@ -52,6 +52,7 @@
 #' @param NAcol lengthe-one vector: color to be used.
 #' @param fast logical: if \code{TRUE} plots only a subset of the data (max. 
 #'            1000 traces) to speed up plotting.               
+#' @param ylab2 Label for the secondary axis
 #' @param ... additional arguments passed to the plotting methods 
 #'            \code{\link[graphics]{plot}} for 1D plot and 
 #'            \code{\link[plot3D]{Image}} for 2D plot. See also  \code{details}.
@@ -86,6 +87,7 @@ plot.GPR <- function(x,
                      pngFac = 20,
                      NAcol = "white",
                      fast = FALSE,
+                     ylab2 = NULL,
                      ...){
   # print(list(...))
   if(isTRUE(fast) && ncol(x) > 1000){
@@ -187,7 +189,11 @@ plot.GPR <- function(x,
                 depthat2 <- depthToTime(depth2, 0, v, antsep = x@antsep)
                 axis(side =3, at = t0 + depthat2, labels = FALSE, tck =+0.01)
                 if(isTRUE(addDepth0)) abline(v = depth_0, col = "grey", lty = 3)
-                mtext(paste0("depth (m),   v=", v, "m/ns"), side = 3, line = 2)
+                if(is.null(ylab2)){
+                  mtext(paste0("depth (m),   v=", v, "m/ns"), side = 3, line = 2)
+                }else{
+                  mtext(ylab2,  side = 3, line = 2)
+                }
               }else{
                 depth <- pretty(xat * v / 2, 10)
                 depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
@@ -566,16 +572,26 @@ plot.GPR <- function(x,
               axis(side = 4, at = depth_0, labels = "0", tick = FALSE)
               if(isTRUE(addDepth0)) abline(h = depth_0, col = "grey", lty = 3)
               # mtext(paste0("depth (m),   v=", v, "m/ns"), side = 4, line = 2)
-              mtext(paste0("depth (", x@posunit, "),   v = ", round(v, 3), " ", x@posunit, 
-                           "/",  x@depthunit), side = 4, line = 2.5)
+              if(is.null(ylab2)){
+                mtext(paste0("depth (", x@posunit, "),   v = ", round(v, 3), " ", x@posunit, 
+                             "/",  x@depthunit), side = 4, line = 2.5)
+              }else{
+                mtext(ylab2, side = 4, line = 2.5)
+              }
+              
             }else{
               depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
               depth <- pretty(yat * v / 2, 10)
               depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
               axis(side = 4, at = t0 + depthat, labels = depth, tck = -0.02)
               if(isTRUE(addDepth0)) abline(h = depth_0, col = "grey", lty = 3)
-              mtext(paste0("depth (", x@posunit, "),   v = ", round(v, 3), " ", x@posunit, 
-                           "/",  x@depthunit), side = 4, line = 2.5)
+              if(is.null(ylab2)){
+                mtext(paste0("depth (", x@posunit, "),   v = ", round(v, 3), " ", x@posunit, 
+                             "/",  x@depthunit), side = 4, line = 2.5)
+              }else{
+                mtext(ylab2, side = 4, line = 2.5)
+              }
+              
             }
           }else{
             axis(side = 4)
@@ -985,11 +1001,13 @@ lines.GPRsurvey <- function(x, ...){
   box()
 }
 
+
+# not used...
 # we use the Sensors & Software method to plot the depth axis
 # when the data are in time domain: because of the offset between
 # transmitter and receiver, there is an offset between time zero and depth,
 # the depth axes is squished.
-.depthAxis <- function(y, pretty_y, time_0, v, antsep, depthunit, posunit ){
+.depthAxis <- function(y, pretty_y, time_0, v, antsep, depthunit, posunit, ylab2 ){
   if(grepl("[s]$",depthunit)){
     maxDepth <- v * max( abs(y - time_0) ) / 2
     #print(maxDepth)
@@ -999,8 +1017,13 @@ lines.GPRsurvey <- function(x, ...){
     depth2  <- seq(0.1, by = 0.1, 0.9)
     depthat2 <- depthToTime(depth2, 0, v, antsep = antsep)
     axis(side = 4, at = - depthat2 - time_0, labels = FALSE, tck = -0.01)
-    mtext(paste0("depth (", posunit, "),   v = ",v, " ", posunit, "/", 
-                 depthunit), side = 4, line = 2.5)
+    if(is.null(ylab2)){
+      mmtext(paste0("depth (", posunit, "),   v = ",v, " ", posunit, "/", 
+                    depthunit), side = 4, line = 2.5)
+    }else{
+      mtext(ylab2, side = 4, line = 2.5)
+    }
+    
   }else{
     axis(side = 4, at = pretty_y, labels = -pretty_y)
     mtext(paste0("depth (", depthunit, ")") ,side = 4, line = 3)

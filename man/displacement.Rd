@@ -7,5 +7,6 @@
 displacement(x, y, method = c("phase", "WSSD"), dxy = NULL)
 }
 \description{
-Displacement to align two matrix
+Displacement to align two matrix.
+WSSD = weighted Sum of Squared Differences
 }

@@ -81,6 +81,7 @@
   pngFac = 20,
   NAcol = "white",
   fast = FALSE,
+  ylab2 = NULL,
   ...
 )
 
@@ -172,6 +173,8 @@ without extension}
 
 \item{fast}{logical: if \code{TRUE} plots only a subset of the data (max. 
 1000 traces) to speed up plotting.}
+
+\item{ylab2}{Label for the secondary axis}
 }
 \description{
 Plot GPR data cube.

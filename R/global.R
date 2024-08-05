@@ -533,13 +533,14 @@ setGenericVerif("writeSurvey", function(x, fPath, overwrite=FALSE){
 #' @export
 setGenericVerif("interpSlices", function(x, dx = NULL, dy = NULL, dz = NULL, 
                                          h = 6, extend = c("chull", "bbox", "obbox", "buffer"),
-                                         buffer = NULL, shp = NULL){ 
+                                         buffer = NULL, shp = NULL,
+                                         m = NULL, n = NULL){ 
   standardGeneric("interpSlices")})
 
 #' @name tpShift
 #' @rdname tpShift
 #' @export
-setGenericVerif("tpShift", function(x, i, dx = 0, dy = 0){ 
+setGenericVerif("tpShift", function(x, i, dx = 0, dy = 0, dz = 0){ 
   standardGeneric("tpShift")})
 
 
@@ -2186,7 +2187,8 @@ dy_gkernel <- function(n, m, sd=1){
 
 #' Displacement to align two matrix
 #'
-#' Displacement to align two matrix
+#' Displacement to align two matrix.
+#' WSSD = weighted Sum of Squared Differences
 #' @export
 displacement <- function(x, y, method=c("phase", "WSSD"), dxy = NULL){
   nm <- c(max(nrow(x), nrow(y)), max(ncol(x), ncol(y)))

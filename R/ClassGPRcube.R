@@ -643,7 +643,7 @@ trInterp <- function(x, z, zi){
 
 
 .sliceInterp <- function(x, dx = NULL, dy = NULL, dz = NULL, h = 6,
-                         extend = "bbox", buffer = NULL, shp =  NULL){
+                         extend = "bbox", buffer = NULL, shp =  NULL, m = NULL, n = NULL){
   if(!all(sapply(x@coords, length) > 0) ){
     stop("Some of the data have no coordinates. Please set first coordinates to all data.")
   }
@@ -759,14 +759,18 @@ trInterp <- function(x, z, zi){
   
   SL <- array(dim = c(para$nx, para$ny, length(x_zi)))
   
-  n <- 1
-  m <- 1
+  if(is.null(m)){
+    m <- 1
+  }
+  if(is.null(n)){
+    n <- 1
+  }
   # ratio_x_y <- bbox_dy / bbox_dx
   ratio_x_y <- (para$bbox[4] - para$bbox[3]) / (para$bbox[2] - para$bbox[1])
   if(ratio_x_y < 1){
-    m <- round(1/ratio_x_y)
+    if(is.null(m)) m <- round(1/ratio_x_y)
   }else{
-    n <- round(ratio_x_y)
+    if(is.null(n)) n <- round(ratio_x_y)
   }
   if(m < 1) m <- 1L
   if(n < 1) n <- 1L
@@ -962,7 +966,8 @@ setMethod("interpSlices", "GPRsurvey",
                   h = 6,
                   extend = c("chull", "bbox", "obbox", "buffer"),
                   buffer = NULL,
-                  shp = NULL){
+                  shp = NULL,
+                  m = NULL, n = NULL){
   
   if(is.null(dx) || is.null(dy) || is.null(dz)){
     stop("'dx', 'dy' and 'dz' must all be defined!")
@@ -973,7 +978,7 @@ setMethod("interpSlices", "GPRsurvey",
   
   extend <- match.arg(extend)
   SXY <- .sliceInterp(x = x, dx = dx, dy = dy, dz = dz, h = h,
-                      extend = extend, buffer = buffer)
+                      extend = extend, buffer = buffer, m = m, n = n)
   
   xyref <- c(min(SXY$x), min(SXY$y))
   xpos <- SXY$x - min(SXY$x)

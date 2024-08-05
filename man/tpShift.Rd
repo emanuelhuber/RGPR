@@ -4,7 +4,7 @@
 \alias{tpShift}
 \title{Shift trace positions of one GPR data}
 \usage{
-\S4method{tpShift}{GPRsurvey}(x, i, dx = 0, dy = 0)
+\S4method{tpShift}{GPRsurvey}(x, i, dx = 0, dy = 0, dz = 0)
 }
 \description{
 Shift trace positions of GPR data \code{i} by \code{dx} along x-axis and

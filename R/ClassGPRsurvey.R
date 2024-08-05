@@ -499,13 +499,20 @@ setMethod("getGPR", "GPRsurvey", function(x,id){
       warning("Length of id > 1, I take only the first element!\n")
       id <- id[1]
     }
+  interp_pos <- TRUE
     if(is.numeric(id)){
       no <- id
-      gpr <- readGPR(x@filepaths[[id]])
+      if(!is.null(x@coords[[id]])){
+        interp_pos <- FALSE
+      }
+      gpr <- readGPR(x@filepaths[[id]], interp_pos = interp_pos)
     }else if(is.character(id)){
       no <- which(x@names == trimStr(id))
       if(length(no > 0)){
-        gpr <- readGPR(x@filepaths[[no]])
+        if(!is.null(x@coords[[id]])){
+          interp_pos <- FALSE
+        }
+        gpr <- readGPR(x@filepaths[[no]], interp_pos = interp_pos)
       }else{
         stop("There is no GPR data with the name '", trimStr(id),"'\n")
       }
@@ -1272,11 +1279,11 @@ setMethod("shiftEst", "GPRsurvey", function(x, y = NULL,
 #' @name tpShift
 #' @rdname tpShift
 #' @export
-setMethod("tpShift", "GPRsurvey", function(x, i, dx = 0, dy = 0){
+setMethod("tpShift", "GPRsurvey", function(x, i, dx = 0, dy = 0, dz = 0){
   # if you want to shift the coordinates by 1 m along x-direction, 
   # 0.5 m along the y-direction
   # for your 3rd GPR data line, do that
-  coords(x)[[names(x)[i]]] <- t(t(coords(x)[[names(x)[i]]]) + c(dx, dy , 0))
+  coords(x)[[names(x)[i]]] <- t(t(coords(x)[[names(x)[i]]]) + c(dx, dy , dz))
   return(x)
 })
                                             

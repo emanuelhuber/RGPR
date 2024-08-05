@@ -12,7 +12,9 @@
   h = 6,
   extend = c("chull", "bbox", "obbox", "buffer"),
   buffer = NULL,
-  shp = NULL
+  shp = NULL,
+  m = NULL,
+  n = NULL
 )
 }
 \arguments{

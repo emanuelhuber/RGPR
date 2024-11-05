@@ -21,6 +21,14 @@ date: 2019-11-23
 
 ### Publications
 
+* [Mariliis Eensalu, Nathan D. Stansell, Hannes Tõnisson, Jaanus Terasmaa, Egert Vandel, Tiit Vaasma, Eric S. Klein, Cameron R. Kuhle, Daniel B. Nelson  (2024) **Holocene hydroclimate variability reconstructed from Lake Pangodi sediments in Estonia.** Palaeogeography, Palaeoclimatology, Palaeoecology, Volume 655](https://doi.org/10.1016/j.palaeo.2024.112531)
+
+* [Vergnano, A., Franco, D., and Godio, A. (2024) **Ground penetrating radar on Rutor temperate glacier supported by ice-thickness modeling algorithms for bedrock detection.** EGUsphere](https://doi.org/10.5194/egusphere-2024-2569)
+
+* [Chao Li, JinHai Zhang (2024) **Enhancing the vertical resolution of lunar penetrating radar data using predictive deconvolution.** Earth and Planetary Physics, 8(4): 570-578](https://doi.org/10.26464/epp2024042)
+
+* [B. Dupuy, M. Lee, M. Chatel, A. Grøver, S. Garambois, H. Dahle, A. Tobiesen, S. Salazar, R. Frauenfelder, T. Humstad, J. Hendrik (2024) **Snow measurements with UAV GPR tool.** Near Surface Geoscience NSG 2024 4th Conference on Airborne, Drone and Robotic Geophysics, Sep 2024, Volume 2024, p.1 - 5](https://doi.org/10.3997/2214-4609.202420198)
+
 * [Elizabeth H. Davis, Christopher J. Hein, Nicholas Cohn, Andrew E. White, Julie C. Zinnert (2024) **Differences in internal sedimentologic and biotic structure between natural, managed, and constructed coastal foredunes.** Geomorphology 451](https://doi.org/10.1016/j.geomorph.2024.109083)
 
 * [Xiaogang Guo and Ning Wang (2024) **Automated Identification of Pavement Structural Distress Using State-of-the-Art Object Detection Models and Nondestructive Testing.** Journal of Computing in Civil Engineering Volume 38(4).](https://doi.org/10.1061/JCCEE5.CPENG-5864)

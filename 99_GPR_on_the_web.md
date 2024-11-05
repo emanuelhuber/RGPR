@@ -21,6 +21,8 @@ date: 2019-11-23
 
 ### Publications
 
+* [Jesse T. Korus, R. Matthew Joeckel, Aaron R. Mittelstet, Nawaraj Shrestha (2024) **Multiscale characterization of splays produced by a historic, rain-on-snow flood on a large braided stream (Platte River, Central USA).** Earth Surface Processes and Landforms](https://doi.org/10.1002/esp.5997)
+
 * [Mariliis Eensalu, Nathan D. Stansell, Hannes Tõnisson, Jaanus Terasmaa, Egert Vandel, Tiit Vaasma, Eric S. Klein, Cameron R. Kuhle, Daniel B. Nelson  (2024) **Holocene hydroclimate variability reconstructed from Lake Pangodi sediments in Estonia.** Palaeogeography, Palaeoclimatology, Palaeoecology, Volume 655](https://doi.org/10.1016/j.palaeo.2024.112531)
 
 * [Vergnano, A., Franco, D., and Godio, A. (2024) **Ground penetrating radar on Rutor temperate glacier supported by ice-thickness modeling algorithms for bedrock detection.** EGUsphere](https://doi.org/10.5194/egusphere-2024-2569)
@@ -34,6 +36,8 @@ date: 2019-11-23
 * [Xiaogang Guo and Ning Wang (2024) **Automated Identification of Pavement Structural Distress Using State-of-the-Art Object Detection Models and Nondestructive Testing.** Journal of Computing in Civil Engineering Volume 38(4).](https://doi.org/10.1061/JCCEE5.CPENG-5864)
 
 * [Luyun Zhang, Zheng Zhang, Li Guo, Xihong Cui, John R. Butnor, Shupeng Li, Xin Cao, Xuehong Chen (2024) **A simple method for estimating the coarse lateral root biomass of shrubs using ground-penetrating radar: Validation by Caragana microphylla Lam. in Inner Mongolia.** Science of the Total Environment, 919](https://doi.org/10.1016/j.scitotenv.2024.170897)
+
+* [Shreedhar Savant Todkar; Vincent Baltazart; Xavier Dérobert (2023) **AI-Based Graphical User Interface to Detect Debonded Pavement Sections from GPR B-Scan Data.** 12th International Workshop on Advanced Ground Penetrating Radar (IWAGPR)](https://doi.org/10.1109/IWAGPR57138.2023.10329222)
 
 * [Arasti Afrasiabi, Asaad Faramarzi, David Chapman, Alireza Keshavarzi, Matthew Stringfellow (2023) **Toward the optimisation of the Kalman Filter approach in ground penetrating radar application for detection and locating buried utilities.** Journal of Applied Geophysics, 219.](https://doi.org/10.1016/j.jappgeo.2023.105220)
 

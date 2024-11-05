@@ -241,6 +241,7 @@ readDZT <- function(dsn){
   hd$NPROC <- .readBin_ushort(dsn)        # rh_nproc
   # number of channels
   hd$NCHAN <- .readBin_ushort(dsn)        # rh_nchan
+  if(hd$NCHAN < 1) hd$NCHAN <- 1     # minimum 1 channel
   # average dilectric
   hd$EPSR <- .readBin_float(dsn)          # rhf_epsr
   # position in meters (useless?)

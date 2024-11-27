@@ -71,7 +71,7 @@ Instead of `plot(x)` use `plotFast(x)`!
 ### Supported file formats (read only):
 
 - [X] [Sensors & Software](https://www.sensoft.ca) file format (**\*.dt1**, **\*.hd**, **\*.gps**).
-- [X] [MALA](https://www.malagpr.com.au) file format (**\*.rd3**, **\*.rd7**, **\*.rad**, **\*.cor**).
+- [X] [MALA](https://www.guidelinegeo.com/mala-ground-penetrating-radar-gpr/) file format (**\*.rd3**, **\*.rd7**, **\*.rad**, **\*.cor**).
 - [X] [ImpulseRadar](https://www.impulseradar.se) file format (**\*.iprb**, **\*.iprh**, **\*.cor**, **\*.time**, **\*.mrk**).
 - [X] [GSSI](https://www.geophysical.com) file format (**\*.dzt**, **\*.dzx**).
 - [X] [Geomatrix Earth Science Ltd](https://www.geomatrix.co.uk/) file format (Utsi Electronics format) for the **GroundVue 3**, **7**, **100**, **250** and **400** as well as for the **TriVue** devices (**\*.dat**, **\*.hdr**, **\*.gpt**, **\*.gps**).

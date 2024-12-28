@@ -21,6 +21,12 @@ date: 2019-11-23
 
 ### Publications
 
+* [Arasti Afrasiabi, Asaad Faramarzi, David Chapman, Alireza Keshavarzi (2025) **Optimising Ground Penetrating Radar data interpretation: A hybrid approach with AI-assisted Kalman Filter and Wavelet Transform for detecting and locating buried utilities.** Journal of Applied Geophysics Volume 232](https://doi.org/10.1016/j.jappgeo.2024.105567)
+
+[Koki Oikawa, Hirotaka Saito, Seiichiro Kuroda, Kazunori Takahashi (2024) **Construction of dense CMP data from sparsely collected GPR CMP data for the improved estimation of soil dielectric constant profile.** Vadose Zone Journal, Volume 24, Issue 1](https://doi.org/10.1002/vzj2.20392)
+
+* [Erik S. Mannerfelt, Andrew J. Hodson, Lena Håkansson, and Harold Lovell (2024) Dynamic LIA advances hastened the demise of small valley glaciers in central Svalbard. Arctic Science.](https://doi.org/10.1139/as-2024-0024)
+
 * [Jesse T. Korus, R. Matthew Joeckel, Aaron R. Mittelstet, Nawaraj Shrestha (2024) **Multiscale characterization of splays produced by a historic, rain-on-snow flood on a large braided stream (Platte River, Central USA).** Earth Surface Processes and Landforms](https://doi.org/10.1002/esp.5997)
 
 * [Mariliis Eensalu, Nathan D. Stansell, Hannes Tõnisson, Jaanus Terasmaa, Egert Vandel, Tiit Vaasma, Eric S. Klein, Cameron R. Kuhle, Daniel B. Nelson  (2024) **Holocene hydroclimate variability reconstructed from Lake Pangodi sediments in Estonia.** Palaeogeography, Palaeoclimatology, Palaeoecology, Volume 655](https://doi.org/10.1016/j.palaeo.2024.112531)

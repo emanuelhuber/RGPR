@@ -23,7 +23,7 @@ date: 2019-11-23
 
 * [Arasti Afrasiabi, Asaad Faramarzi, David Chapman, Alireza Keshavarzi (2025) **Optimising Ground Penetrating Radar data interpretation: A hybrid approach with AI-assisted Kalman Filter and Wavelet Transform for detecting and locating buried utilities.** Journal of Applied Geophysics Volume 232](https://doi.org/10.1016/j.jappgeo.2024.105567)
 
-[Koki Oikawa, Hirotaka Saito, Seiichiro Kuroda, Kazunori Takahashi (2024) **Construction of dense CMP data from sparsely collected GPR CMP data for the improved estimation of soil dielectric constant profile.** Vadose Zone Journal, Volume 24, Issue 1](https://doi.org/10.1002/vzj2.20392)
+* [Koki Oikawa, Hirotaka Saito, Seiichiro Kuroda, Kazunori Takahashi (2024) **Construction of dense CMP data from sparsely collected GPR CMP data for the improved estimation of soil dielectric constant profile.** Vadose Zone Journal, Volume 24, Issue 1](https://doi.org/10.1002/vzj2.20392)
 
 * [Erik S. Mannerfelt, Andrew J. Hodson, Lena Håkansson, and Harold Lovell (2024) Dynamic LIA advances hastened the demise of small valley glaciers in central Svalbard. Arctic Science.](https://doi.org/10.1139/as-2024-0024)
 

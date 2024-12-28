@@ -704,6 +704,7 @@ trInterp <- function(x, z, zi){
   }
   
   xy_clip <- NULL
+  para <- getbbox_nx_ny(x_shp[,1], x_shp[,2], dx, dy, 0)
   if(extend == "chull"){
     xsf_chull <- spConvexHull(x_shp)
     if(is.null(buffer)){

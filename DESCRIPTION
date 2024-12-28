@@ -171,11 +171,11 @@ Imports:
     checkmate,
     RConics,
     robfilter,
-    plotly,
     png,
     units,
     hdf5r,
     ggplot2
 RoxygenNote: 7.3.1
 Suggests: 
-    testthat
+    testthat,
+    plotly

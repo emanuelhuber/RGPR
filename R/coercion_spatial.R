@@ -22,7 +22,7 @@ setMethod("as.sf", signature(x = "GPR"), function(x){
     stop("No coordinates. Set first coordinates either with 'coordinates(x) <-'\n",
          "  or with ' interpCoords(x, ...)'.")
   }
-  .as_LINESTRING(x@coord, x@crs)
+  .as_LINESTRING(x@coord, x@name, x@crs)
 })
 
 
@@ -38,10 +38,12 @@ setMethod("as.sf", signature(x = "GPRsurvey"), function(x){
   if(length(x@crs) != 1){
     stop("'crs' length must be 1")
   }
-  test <- lapply(x@coords[sel], .as_LINESTRING,  x@crs)
-  x_sfc <- do.call(c, test)
+  # test <- lapply(x@coords[sel], .as_LINESTRING,  x@crs)
+  test <- mapply(.as_LINESTRING,  x@coords[sel], x@names[sel], MoreArgs = list(x@crs[1]), SIMPLIFY = FALSE, USE.NAMES = FALSE)
+  x_sfc <- do.call(rbind, test)
+  # x_sfc <- c(test)
   x_sf <- sf::st_sf(x_sfc)
-  x_sf$names <- x@names[sel]
+  # x_sf$names <- x@names[sel]
   x_sf$modes <- x@modes[sel]
   x_sf$dates <- x@dates[sel]
   
@@ -54,13 +56,15 @@ setMethod("as.sf", signature(x = "GPRsurvey"), function(x){
   return(x_sf)
 })
 
-.as_LINESTRING <- function(x, CRS){
+.as_LINESTRING <- function(x, id, CRS){
   if(length(x) > 0){
     xi_sf <- sf::st_as_sf(x      = as.data.frame(x),
-                          coords = 1:3,
+                          coords = 1:2,
                           crs    = CRS)
     xi_sf <- sf::st_combine(xi_sf)
     xi_sf <- sf::st_cast(xi_sf, "LINESTRING")
+    xi_sf <- sf::st_as_sf(xi_sf)
+    xi_sf$name <- id
     return(xi_sf)
   }
 }
@@ -111,12 +115,13 @@ setGeneric("as.spatialPoints", function(x)
 setMethod("as.spatialPoints", signature(x = "GPR"), function(x){
   if(length(x@coord) > 0){
     xdf <- as.data.frame(x@coord)
+    names(xdf) <- c("x", "y", "z")
     if(length(x@markers) == ncol(x)) xdf['markers'] <- x@markers
     if(length(x@ann) == ncol(x)) xdf['ann'] <- x@ann
     if(length(x@time) == ncol(x)) xdf['time'] <- x@time
   
   x_sf <- sf::st_as_sf(x      = xdf,
-                       coords = 1:3,
+                       coords = 1:2,
                        crs    = x@crs)
   
   return(x_sf)
@@ -138,8 +143,10 @@ setMethod("as.spatialPoints", signature(x = "GPRsurvey"), function(x){
     stop("'crs' length must be 1")
   }
   fun <-function(x, x_crs){
-    sf::st_as_sf(x      = as.data.frame(x),
-                 coords = 1:3,
+    xdf <- as.data.frame(x)
+    names(xdf) <- c("x", "y", "z")
+    sf::st_as_sf(x      = xdf,
+                 coords = 1:2,
                  crs    = x_crs)
   }
   Xsf <- lapply(x@coords[sel], fun, x@crs)

@@ -27,6 +27,9 @@ setMethod("CMPhyperbolas", "GPR", function(x){
   if(!isCMP(x)){
     stop("This function only works on CMP data.")
   }
+  if(!isZTime(x)){
+    stop("This function only works on data as a function of TIME.")
+  }
   if(is.null(x@vel[["vrms"]])){
     stop("You must first set v_rms velocities with 'setVel()'")
   }

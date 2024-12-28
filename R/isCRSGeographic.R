@@ -30,6 +30,12 @@ setMethod("isCRSGeographic", "character", function(x){
 
 #' @rdname isCRSGeographic   
 #' @export
+setMethod("isCRSGeographic", "crs", function(x){
+  .isCRSGeographic(x)
+})
+
+#' @rdname isCRSGeographic   
+#' @export
 setMethod("isCRSGeographic", "GPR", function(x){
   .isCRSGeographic(x@crs)
 })

@@ -1,0 +1,46 @@
+angle: x
+ann: x
+ann<-: x, value
+antsep: x
+antsep<-: x, value
+as.sf: x
+as.spatialLines: x
+as.spatialPoints: x
+CMPhyperbolas: x
+convertTimeToDepth: x, dz, zmax, method
+convexhull: x, verbose
+coordinates: x
+coordinates<-: x, value
+dropDuplicatedCoords: x, tol, z, verbose
+getVel: x, type
+interpCoords: x, coords, tt, r, UTM, interp3D, tol, verbose, plot, method
+isCMP: x
+isCommonOffset: x
+isCRSGeographic: x
+isVelModel: x
+isVelSpectrum: x
+metadata: x
+NMO: x, v
+NMOcorrect: x, thrs, v, method
+NMOstack: x, thrs, v, method
+NMOstreching: x, v
+obbox: x
+plotCMPhyperbolas: x, ...
+plotVel: x
+proc: x
+proc<-: x, value
+relPos: x
+setVel: x, v, twt, type
+shiftToTime0: x, method, crop, track
+smooth2D: x, method, ...
+spunit: x
+spunit<-: x, value
+vel: x
+vel<-: x, value
+velInterp: x, type, method
+velPick: x, ...
+velSmooth: x, type, w
+velSpectrum: x, method, v, w
+writeGPR: x, fPath, format, overwrite, ...
+xpos: x
+xpos<-: x, value

@@ -5,6 +5,7 @@
 \alias{isCRSGeographic,numeric-method}
 \alias{isCRSGeographic,integer-method}
 \alias{isCRSGeographic,character-method}
+\alias{isCRSGeographic,crs-method}
 \alias{isCRSGeographic,GPR-method}
 \alias{isCRSGeographic,GPRsurvey-method}
 \title{Check wether the Coordinate Reference Systems is lon/lat}
@@ -16,6 +17,8 @@ isCRSGeographic(x)
 \S4method{isCRSGeographic}{integer}(x)
 
 \S4method{isCRSGeographic}{character}(x)
+
+\S4method{isCRSGeographic}{crs}(x)
 
 \S4method{isCRSGeographic}{GPR}(x)
 

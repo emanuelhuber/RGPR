@@ -4,7 +4,8 @@
 # - '...'
 # - 
 
-#FIXME add clim (color limitation)
+#FIXME cbar = FALSE -> no colorscale -> remove space
+#      cbar = NULL -> no colorscale but space is kept 
 
 #' Plot the GPR object.
 #'
@@ -430,7 +431,7 @@ plot.GPR <- function(x,
                    ylab = .zlab(x),
                    xlim = range(x@x),
                    ylim = range(x@z),
-                   main = x@name,
+                   main = x@name,     #FIXME Not working when plot(x, main = "lkjl")
                    note = x@path,
                    mpg = c(2, 1, 0)  #c(2, 0.5, 0)
   )
@@ -500,7 +501,7 @@ plot.GPR <- function(x,
                         height = heightPDF,
                         bg = "white",
                         pointsize=10,
-                        title = x@name)
+                        title = defaults$main)
         
       }else{
         Cairo::CairoPNG(file = export,
@@ -508,7 +509,7 @@ plot.GPR <- function(x,
                         height = round(heightPDF),
                         bg = "white",
                         pointsize=10,
-                        title = x@name)
+                        title = defaults$main)
       }
     }
   }
@@ -552,7 +553,7 @@ plot.GPR <- function(x,
   } 
   
   if(isFALSE(add)){
-    title(x@name,  line = 2)
+    title(defaults$main,  line = 2)
     if(length(x@path) > 0){
       mtext(x@path, side = 1, line = 3.5, adj = 0.5, cex = 0.65)
     }

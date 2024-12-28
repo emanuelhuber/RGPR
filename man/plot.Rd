@@ -38,7 +38,6 @@
 \method{contour}{GPR}(
   x,
   col = NULL,
-  type = NULL,
   horiz = TRUE,
   interpolate = TRUE,
   sym = TRUE,

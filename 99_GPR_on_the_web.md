@@ -21,7 +21,9 @@ date: 2019-11-23
 
 ### Publications
 
+
 * [Arasti Afrasiabi, Asaad Faramarzi, David Chapman, Alireza Keshavarzi (2025) **Optimising Ground Penetrating Radar data interpretation: A hybrid approach with AI-assisted Kalman Filter and Wavelet Transform for detecting and locating buried utilities.** Journal of Applied Geophysics Volume 232](https://doi.org/10.1016/j.jappgeo.2024.105567)
+
 
 * [Koki Oikawa, Hirotaka Saito, Seiichiro Kuroda, Kazunori Takahashi (2024) **Construction of dense CMP data from sparsely collected GPR CMP data for the improved estimation of soil dielectric constant profile.** Vadose Zone Journal, Volume 24, Issue 1](https://doi.org/10.1002/vzj2.20392)
 
@@ -87,7 +89,11 @@ date: 2019-11-23
 
 ### Others
 
+* [Martin Châtel (2024) **Geophysical snow-mapping using Ground Penetrating Radar (GPR) borne by Uncrewed Aerial Vehicles (UAVs)** Internship report, (Master thesis), April 8th – July 26th, 2024, Institut Polytechnique de Paris](https://vegvesen.brage.unit.no/vegvesen-xmlui/handle/11250/3171744)
+
 *  [Ask Olsson Uv and Lucas Rochard (2023) Real-time Snow Depth Measurement: Development and Construction of a System to Conduct Vehicle- Based Measurements of Snow Depth in Real-Time. Master thesis, CHALMERS UNIVERSITY OF TECHNOLOGY](http://hdl.handle.net/20.500.12380/306578)
+
+* [José L. Marrero-Rosado (2022) **Geophyisical survey of a choleric mass grave in San Juan, Puerto Rico.** Stahl Research Report #41, Archaeological Research Facility, UC Berkeley](https://escholarship.org/uc/item/553313dz)
 
 * [Przemyslaw Dolowy (2022) The non-invasive detection of soil compaction and the effect of traffic management on crop performance](http://hdl.handle.net/10197/13337): PhD thesis, University College Dublin
 
@@ -104,6 +110,8 @@ date: 2019-11-23
 * [Paulo Guilherme Tabarro (2018) A new WebGIS approach to support ground penetrating radar deployment. Mémoire](https://corpus.ulaval.ca/jspui/bitstream/20.500.11794/33487/1/34965.pdf)
 
 * [Project seminar (Philipps Universität Marburg): Processing, analysing and interpreting ground radar images. ](https://geomoer.github.io/moer-bsc-project-seminar-ground-radar/)
+
+
 
 ## Misc
 

@@ -15,7 +15,7 @@ project(x, CRSobj)
 \arguments{
 \item{x}{Object of the class GPR}
 
-\item{CRSobj}{[\code{character(1)}] A string accepted by GDAL 
+\item{CRSobj}{(\code{character[1]}) A string accepted by GDAL
 (e.g., \code{"EPSG:2056"}, WKT-string).}
 }
 \description{
@@ -24,11 +24,11 @@ Project the trace coordinates give a coordinate reference system.
 \details{
 Modified slots
 \itemize{
-  \item \code{coord} the trace coordinates
-  \item \code{x} the local trace position (along profile)
-  \item \code{crs} the coordinate reference system.
-  \item \code{spunit} the spatial units are updated accroding to the new
-                      coordinate reference system.
+\item \code{coord} the trace coordinates
+\item \code{x} the local trace position (along profile)
+\item \code{crs} the coordinate reference system.
+\item \code{spunit} the spatial units are updated accroding to the new
+coordinate reference system.
 }
 }
 \concept{spatial computation}

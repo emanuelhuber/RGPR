@@ -28,10 +28,10 @@ isVelModel(x)
 \S4method{isVelModel}{GPR}(x)
 }
 \arguments{
-\item{x}{[\code{GPR}] An object of the class GPR.}
+\item{x}{(\code{GPR}) An object of the class GPR.}
 }
 \value{
-[\code{logical()}] \code{TRUE} if \code{x} is of type CMP/WARR
+(\code{logical()}) \code{TRUE} if \code{x} is of type CMP/WARR
 }
 \description{
 Return TRUE if survey mode is CMP/WARR

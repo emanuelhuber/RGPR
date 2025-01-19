@@ -1,8 +1,9 @@
 #' Relative positions along path
 #' 
-#' @param x [\code{GPR|GPRsurvey}] An object of the class \code{GPR} or
-#'          \code{GPRsurvey}
-#' @return [\code{numeric{m}}] Relative trace position along GPR line.
+#' Returns the relative positions.
+#' 
+#' @param x (`GPR|GPRsurvey`) An object
+#' @return (`numeric[m]`) Relative trace position along GPR line.
 #' @name relPos
 setGeneric("relPos", function(x) 
   standardGeneric("relPos"))

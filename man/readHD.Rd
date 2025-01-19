@@ -7,18 +7,18 @@
 readHD(dsn)
 }
 \arguments{
-\item{dsn}{[\code{character(1)|connection object}] data source name: 
+\item{dsn}{(\verb{character(1)|connection object}) data source name:
 either the filepath to the GPR data (character),
 or an open file connection.}
 }
 \value{
-[\code{list(3)}]  Three-elements list: \code{HD} containing the 
-        header info, \code{ntr} the number of trace and \code{npt} the
-        number of points per trace.
+(\code{list(3)})  Three-elements list: \code{HD} containing the
+header info, \code{ntr} the number of trace and \code{npt} the
+number of points per trace.
 }
 \description{
 Read Sensors and Software .HD file
 }
 \seealso{
-\code{\link{readDT1}}, \code{\link{readGPS}}
+\code{\link[=readDT1]{readDT1()}}, \code{\link[=readGPS]{readGPS()}}
 }

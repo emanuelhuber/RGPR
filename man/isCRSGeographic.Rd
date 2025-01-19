@@ -25,10 +25,10 @@ isCRSGeographic(x)
 \S4method{isCRSGeographic}{GPRsurvey}(x)
 }
 \arguments{
-\item{x}{[\code{character}] CRS (one or more)}
+\item{x}{(\code{character}) CRS (one or more)}
 }
 \value{
-[\code{logical}] \code{TRUE} if lon/lat else \code{FALSE}
+(\code{logical}) \code{TRUE} if lon/lat else \code{FALSE}
 }
 \description{
 Returns \code{TRUE} or \code{FALSE}.

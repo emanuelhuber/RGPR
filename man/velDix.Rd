@@ -7,13 +7,13 @@
 velDix(twt, v)
 }
 \arguments{
-\item{twt}{[\code{numeric(n)}] $n$ two-way travel times ($n > 0$)}
+\item{twt}{(\code{numeric[n]}) $n$ two-way travel times ($n > 0$)}
 
-\item{v}{[\code{numeric(n)}] $n$ corresponding velocities}
+\item{v}{[\code{numeric[n]}] $n$ corresponding velocities}
 }
 \value{
-[\code{list}] List with two elements: \code{t} (time) and
-        [\code{v}] (corresponding Dix velocities)
+(\code{list}) List with two elements: \code{t} (time) and
+\code{v} (corresponding Dix velocities)
 }
 \description{
 Computes Dix velocities from root-mean-square velocity and corresponding

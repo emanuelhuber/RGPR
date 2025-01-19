@@ -7,10 +7,11 @@
 \S4method{mean}{GPRvirtual}(x, ...)
 }
 \arguments{
-\item{x}{[\code{GPR}]}
+\item{x}{(\code{GPR})}
 
-\item{...}{Additional parameters to be passed (see \code{\link{mean}}).}
+\item{...}{Additional parameters to be passed (see \code{\link[=mean]{mean()}}).}
 }
 \description{
 Mean of all the values contained in \code{x}.
 }
+\concept{statistics}

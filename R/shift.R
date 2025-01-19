@@ -7,29 +7,29 @@
 #' 
 #' Modified slots
 #' \itemize{
-#'   \item \code{data}: trace shifted. The number of rows of data may 
-#'         be smaller if \code{crop = TRUE}.
-#'   \item \code{proc}: updated with function name and arguments.
+#'   \item `data`: trace shifted. The number of rows of data may 
+#'         be smaller if `crop = TRUE`.
+#'   \item `proc`: updated with function name and arguments.
 #' }
 #'
-#' @param x      [\code{GPR class}] An object of the class \code{GPR}
-#' @param z     [\code{numeric}] Amount of time (or depth, depending on the
+#' @param x      (`GPR`) An object of the class `GPR`
+#' @param z     (`numeric`) Amount of time (or depth, depending on the
 #'               trace unit) to shift the traces. 
-#'               \code{z} is eiter a single value (all the traces are shifted by 
-#'               the same amount \code{z}) or a vector with \eqn{m} elements 
+#'               `z` is eiter a single value (all the traces are shifted by 
+#'               the same amount `z`) or a vector with \eqn{m} elements 
 #'               (\eqn{m} is equal to the number of traces).
-#' @param method [\code{character(1)}] Interpolation method to be applied:
-#'               one of \code{pchip}, \code{linear}, \code{nearest}, 
-#'               \code{spline}, \code{cubic}, \code{none} 
-#'               (see also \code{\link[signal]{interp1}}). 
-#'                \code{"none"} means that the trace is shifted by the
-#'               amount of trace samples the closest to \code{z} without
+#' @param method (`character[1]`) Interpolation method to be applied:
+#'               one of `pchip`, `linear`, `nearest`, 
+#'               `spline`, `cubic`, `none` 
+#'               (see also [signal::interp1()]). 
+#'                `"none"` means that the trace is shifted by the
+#'               amount of trace samples the closest to `z` without
 #'               interpolation.
-#' @param crop   [\code{logical(1)}] 
-#'               If \code{TRUE} (default), remove the rows containing only 
+#' @param crop   (`logical[1]`) 
+#'               If `TRUE` (default), remove the rows containing only 
 #'               zero's (no data).
-#' @param track [\code{logical(1)}] If \code{TRUE}, processing will be tracked.              
-#' @return [\code{GPR class}] An object of the class GPR.
+#' @param track (`logical[1]`) If `TRUE`, processing will be tracked.              
+#' @return (`GPR class`) An object of the class GPR.
 # #' @seealso \code{\link{time0Cor}} to shift the traces such that they start
 # #'          at time-zero.
 #' @name shift

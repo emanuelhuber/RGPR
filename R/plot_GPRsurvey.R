@@ -1,8 +1,5 @@
- 
-
-# FIXME DOCUMENTATION in plot_GPR.R
-#' @method plot GPRsurvey 
 #' @name plot
+#' @method plot GPRsurvey
 #' @export
 plot.GPRsurvey <- function(x, 
                            markers = list(pch = 21, col = "black", bg = "red", cex = 0.7),
@@ -97,7 +94,7 @@ plot.GPRsurvey <- function(x,
   }
 }
 
-# FIXME: documentation in file plot_GPR.R
+
 #' @method lines GPRsurvey 
 #' @name lines
 #' @export

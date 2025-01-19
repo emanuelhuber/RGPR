@@ -14,7 +14,9 @@ detectASCIIProp(dsn, lns = 20, verbose = TRUE)
 \item{verbose}{(boolean) If \code{TRUE} print messages allowed.}
 }
 \value{
-1) header, 2) skip, 3)
+\enumerate{
+\item header, 2) skip, 3)
+}
 }
 \description{
 To get header, separator, column with na values, etc.
@@ -22,4 +24,4 @@ To get header, separator, column with na values, etc.
 \details{
 don't forget to skip blank line when reading dsn
 }
-\concept{files}
+\concept{I/O}

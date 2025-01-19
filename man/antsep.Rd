@@ -16,12 +16,12 @@ antsep(x) <- value
 \S4method{antsep}{GPR}(x) <- value
 }
 \arguments{
-\item{x}{[\code{GPR}] An object of the class GPR.}
+\item{x}{(\code{GPR}) An object of the class GPR.}
 
-\item{value}{[\code{numeric(1)|numeric(m)}]}
+\item{value}{(\code{numeric[1]|numeric[m]})}
 }
 \value{
-[\code{GPR}]
+(\code{GPR})
 }
 \description{
 Antenna separation distance(s)
@@ -29,8 +29,8 @@ Antenna separation distance(s)
 \details{
 Modified slots
 \itemize{
-  \item \code{antsep} the antenna separation distance
-  \item \code{x} the x-position only for CMP/WARR (plot twt as a function of antenna separation)
+\item \code{antsep} the antenna separation distance
+\item \code{x} the x-position only for CMP/WARR (plot twt as a function of antenna separation)
 }
 }
 \concept{getters/setters}

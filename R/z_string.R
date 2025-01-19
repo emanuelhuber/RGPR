@@ -4,17 +4,17 @@
 #' 
 #' Get the match in a string given a regular expression and extract 
 #' substrings.
-#' @param x [\code{character}] A character vector where matches are sought, 
-#'          or an object which can be coerced by \code{\link{as.character}} 
+#' @param x (`character`) A character vector where matches are sought, 
+#'          or an object which can be coerced by [as.character()] 
 #'          to a character vector.
-#' @param pattern [\code{character}] String containing a regular expression 
-#'                 to be matched (see \code{\link{grep}}). 
-#' @param start [\code{integer}] The first element of the matched string 
-#'                              to be extracted (see \code{\link{substr}}).
-#' @param stop [\code{integer}] The last element of the matched string 
-#'                              to be extracted (see \code{\link{substr}}).
-#' @return [\code{character}] The matched string 
-#' @seealso \code{\link{substr}} and \code{\link{regexpr}}
+#' @param pattern (`character`) String containing a regular expression 
+#'                 to be matched (see [grep()]). 
+#' @param start (`integer`) The first element of the matched string 
+#'                              to be extracted (see [substr()]).
+#' @param stop (`integer`) The last element of the matched string 
+#'                              to be extracted (see [substr()]).
+#' @return (`character`) The matched string 
+#' @seealso [substr()] and [regexpr()]
 #' @name GPRvirtual-class
 #' @rdname GPRvirtual-class
 #' @export
@@ -29,7 +29,7 @@ extractPattern <- function(x, pattern, start = 0, stop = -1){
 #' Trim string
 #'
 #' returns string w/o leading or trailing whitespace
-#' @param x [\code{character}] a string or a vector of strings (characters)
+#' @param x (`character`) a string or a vector of strings (characters)
 #' @export
 trimStr <- function (x) gsub("^\\s+|\\s+$", "", x)
 

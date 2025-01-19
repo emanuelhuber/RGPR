@@ -7,17 +7,17 @@
 readDZX(dsn)
 }
 \arguments{
-\item{dsn}{[\code{character(1)|connection object}] data source name: 
+\item{dsn}{(\verb{character(1)|connection object}) data source name:
 either the filepath to the GPR data (character),
 or an open file connection.}
 }
 \value{
-[\code{list}] contains the markers, the trace position and 
-        the spatial sampling.
+(\code{list}) contains the markers, the trace position and
+the spatial sampling.
 }
 \description{
 .dzx files are xml files
 }
 \seealso{
-\code{\link{readDZT}}, \code{\link{readDZG}}
+\code{\link[=readDZT]{readDZT()}}, \code{\link[=readDZG]{readDZG()}}
 }

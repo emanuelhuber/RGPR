@@ -12,7 +12,7 @@ NMOstreching(x, v = NULL)
 \arguments{
 \item{x}{An object of the class \code{GPR}}
 
-\item{v}{A length-one numeric vector defining the radar wave velocity in 
+\item{v}{A length-one numeric vector defining the radar wave velocity in
 the ground}
 }
 \description{

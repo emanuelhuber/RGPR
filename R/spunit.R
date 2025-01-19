@@ -2,10 +2,10 @@
 #' Spatial unit
 #' 
 #' Spatial unit of the trace coordinates
-#' @param x      [\code{GPR class}] An object of the class \code{GPR}
-#' @param value  [\code{character(1)}] Spatial units: "m", "feet", etc.
+#' @param x     (`GPR class`) An object of the class `GPR`
+#' @param value (`character[1]`) Spatial units: "m", "feet", etc.
 #'                                     see units package.
-#' @return [\code{GPR class}] An object of the class \code{GPR}
+#' @return (`GPR class`) An object of the class `GPR`
 #' @name spunit
 setGeneric("spunit", function(x) 
   standardGeneric("spunit"))

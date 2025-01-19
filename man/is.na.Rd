@@ -7,11 +7,11 @@
 \S4method{is.na}{GPRvirtual}(x)
 }
 \arguments{
-\item{x}{[\code{GPR*}]}
+\item{x}{(\verb{GPR*})}
 }
 \value{
-[\code{GPR*}] With logical values (\code{TRUE} is the value is 
-         \code{NA}, \code{FALSE} if not.)
+(\verb{GPR*}) With logical values (\code{TRUE} is the value is
+\code{NA}, \code{FALSE} if not.)
 }
 \description{
 Indicates which elements are missing.

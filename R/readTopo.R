@@ -3,7 +3,7 @@
 #' read topo file
 #' @param TOPO file
 #' @param sep  separatro
-#' @param verbose logical(1)
+#' @param verbose `logical[1]`
 #' @return list
 #' @export
 readTopo <- function(TOPO, sep = NULL, verbose = TRUE){

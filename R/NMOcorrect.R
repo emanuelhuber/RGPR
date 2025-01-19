@@ -34,18 +34,18 @@
 #' \deqn{\Delta_{NMO} = t_0 (\sqrt{1 + \frac{x^2}{v^2 t_0^2}} - 1)}
 #' 
 #' 
-#' @param x An object of the class \code{GPR}
-#' @param thrs [\code{numeric(1)|NULL}] Definite the threshold for muting
+#' @param x An object of the class `GPR`
+#' @param thrs (`numeric[1]|NULL`) Definite the threshold for muting
 #'             (i.e., suppressing) the values where the NMO-stretching is
-#'             above the threshold. Setting \code{thrs = NULL}, the full data
-#'             will be used. \code{thrs = NULL} ranges between 0 and 1.
+#'             above the threshold. Setting `thrs = NULL`, the full data
+#'             will be used. `thrs = NULL` ranges between 0 and 1.
 #' @param v A length-one numeric vector defining the radar wave velocity in 
 #'          the ground
-#' @param method [\code{character(1)}] Interpolation method to be applied:
-#'               one of \code{pchip}, \code{linear}, \code{nearest}, 
-#'               \code{spline}, \code{cubic} 
-#'               (see also \code{\link[signal]{interp1}}). 
-#' @return An object of the class \code{GPR} with NMO removed and with antenna 
+#' @param method (`character[1]`) Interpolation method to be applied:
+#'               one of `pchip`, `linear`, `nearest`, 
+#'               `spline`, `cubic` 
+#'               (see also [signal::interp1()]). 
+#' @return An object of the class `GPR` with NMO removed and with antenna 
 #'          separation set equal to zero.
 #' @references
 #' \itemize{

@@ -4,7 +4,7 @@
 \name{RGPR-package}
 \alias{RGPR}
 \alias{RGPR-package}
-\title{RGPR: A package for processing and visualising ground-penetrating data 
+\title{RGPR: A package for processing and visualising ground-penetrating data
 radar (GPR) data.}
 \description{
 The RGPR package provides two classes GPR and GPRsurvey

@@ -1,7 +1,7 @@
 
   
 #' Print GPRslice
-#' @param x [\code{GPRslice object}] 
+#' @param x (`GPRslice object`) 
 #' @param ... Not used. 
 #' @export
 print.GPRslice <- function(x, ...){
@@ -34,6 +34,6 @@ print.GPRslice <- function(x, ...){
 #' Show some information on the GPRslice object
 #'
 #' Identical to print().
-#' @param object [\code{GPRslice object}] 
+#' @param object (`GPRslice object`) 
 #' @export
 setMethod("show", "GPRslice", function(object){print.GPRslice(object)}) 

@@ -1,0 +1,41 @@
+spatial computation: angle
+getters/setters:
+- ann
+- antsep
+- coordinates
+- crs
+arith: atan2
+array:
+- length
+- nrow
+- ncol
+- dim
+signal processing:
+- clipData
+- convertTimeToDepth
+velocity model: CMPhyperbolas
+coercion:
+- as.matrix
+- as.array
+- as.vector
+- as.numeric
+- as.integer
+- as.GPR.data.frame
+- as.GPR.matrix
+- as.GPR.list
+- as.sf
+- as.spatialLines
+- as.spatialPoints
+colors:
+- palGPR
+- palPlot
+- palDisplay
+- palCol
+units: crsUnit
+GPS:
+- getLonLatFromGPGGA
+- lonLatToUTM
+- getUTMzone
+UTM:
+- lonLatToUTM
+- getUTMzone

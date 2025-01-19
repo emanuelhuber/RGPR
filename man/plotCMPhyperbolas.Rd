@@ -10,24 +10,24 @@ plotCMPhyperbolas(x, ...)
 \S4method{plotCMPhyperbolas}{GPR}(x, lty = 1, lwd = 1, type = "l", ...)
 }
 \arguments{
-\item{x}{[\code{GPR class}] A CMP object of the class \code{GPR}}
+\item{x}{(\verb{GPR class}) A CMP object of the class \code{GPR}}
 
-\item{...}{see arguments of \code{\link[graphics]{matplot}}}
+\item{...}{see arguments of \code{\link[graphics:matplot]{graphics::matplot()}}}
 
-\item{lty}{[\code{numeric(1)}] The line type 
-(default is \code{1} for solid lines). See \code{\link[graphics]{par}}}
+\item{lty}{(\code{numeric[1]}) The line type
+(default is \code{1} for solid lines). See \code{\link[graphics:par]{graphics::par()}}}
 
-\item{lwd}{[\code{numeric(1)}] Line width
-(default is \code{1}). See \code{\link[graphics]{par}}}
+\item{lwd}{(\code{numeric[1]}) Line width
+(default is \code{1}). See \code{\link[graphics:par]{graphics::par()}}}
 
-\item{type}{[\code{character(1)}] what type of plot should be drawn 
-(default is \code{"l"} for lines). See \code{\link[graphics]{plot}}}
+\item{type}{(\code{character[1]}) what type of plot should be drawn
+(default is \code{"l"} for lines). See \code{\link[graphics:plot.default]{graphics::plot()}}}
 }
 \value{
-[\code{list}] A list element key \code{antsep} containing a numeric 
-       vector of \eqn{n} antenna separation values, and element \code{twt} 
-       containing a \eqn{n \times m} matrix, where \eqn{m} is the
-       number of hyperbolas (i.e., the number of velocities).
+(\code{list}) A list element key \code{antsep} containing a numeric
+vector of \eqn{n} antenna separation values, and element \code{twt}
+containing a \eqn{n \times m} matrix, where \eqn{m} is the
+number of hyperbolas (i.e., the number of velocities).
 }
 \description{
 Plot hyperbolas associated with root-mean-square velocities stored in

@@ -7,18 +7,19 @@
 hyperbolicTWT(t0, antsep, v)
 }
 \arguments{
-\item{t0}{[\code{numeric}] two-way travel time when \code{a} = 0 
+\item{t0}{(\code{numeric}) two-way travel time when \code{a} = 0
 (zero-offset)}
 
-\item{antsep}{[\code{numeric}] antenna separation}
+\item{antsep}{(\code{numeric}) antenna separation}
 
-\item{v}{[\code{numeric}] layer velocity (vrms)}
+\item{v}{(\code{numeric}) layer velocity (vrms)}
 }
 \value{
-[\code{numeric}] two-way travel time
+(\code{numeric}) two-way travel time
 }
 \description{
 Returns two-way travel time as a function of
 antenna separation, two-way travel time at zero-offset, and wave velocity
 in the medium
 }
+\concept{velocity model}

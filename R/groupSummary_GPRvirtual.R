@@ -2,10 +2,10 @@
 
 #' Basic summary functions
 #'
-#' Methods for the base Summary methods \link[methods]{S4groupGeneric}
+#' Methods for the base Summary methods [S4groupGeneric][methods::S4groupGeneric]
 #' @param x An object of the class GPRvirtual
 #' @param ... further arguments 
-#' @param na.rm [\code{logical(1)}] should missing values be removed?
+#' @param na.rm (`logical[1]`) should missing values be removed?
 #' @details Currently implemented methods include:
 #' \itemize{
 #'  \item{all, any, sum, prod, min, max, range}

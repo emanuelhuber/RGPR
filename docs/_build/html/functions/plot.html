@@ -1,0 +1,380 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plot GPR data &mdash; RGPR 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Plot hyperbolas associated with Vrms velociies" href="plotCMPhyperbolas.html" />
+    <link rel="prev" title="Relative position on a path" href="pathRelPos.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            RGPR
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../intro.html">Introduction</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Functions</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="angle.html">angle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ann.html">ann</a></li>
+<li class="toctree-l1"><a class="reference internal" href="antsep.html">antsep</a></li>
+<li class="toctree-l1"><a class="reference internal" href="antSepFromAntFreq.html">antSepFromAntFreq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="apply-GPRvirtual-method.html">apply-GPRvirtual-method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Arith-methods.html">Arith-methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="as.sf.html">as.sf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="as.spatialLines.html">as.spatialLines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="as.spatialPoints.html">as.spatialPoints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="atan2.html">atan2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bits2volt.html">bits2volt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="buffer.html">buffer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="checkArg.html">checkArg</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clipData.html">clipData</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clippedData.html">clippedData</a></li>
+<li class="toctree-l1"><a class="reference internal" href="CMPhyperbolas.html">CMPhyperbolas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="colSums.html">colSums</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Compare-methods.html">Compare-methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Complex-methods.html">Complex-methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contour.html">contour</a></li>
+<li class="toctree-l1"><a class="reference internal" href="convertTimeToDepth.html">convertTimeToDepth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="convexhull.html">convexhull</a></li>
+<li class="toctree-l1"><a class="reference internal" href="coordinates.html">coordinates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="crs.html">crs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="crsUnit.html">crsUnit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="declip.html">declip</a></li>
+<li class="toctree-l1"><a class="reference internal" href="depth0.html">depth0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="depthToTime.html">depthToTime</a></li>
+<li class="toctree-l1"><a class="reference internal" href="detectASCIIProp.html">detectASCIIProp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dim-GPRvirtual-method.html">dim-GPRvirtual-method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dropDuplicatedCoords.html">dropDuplicatedCoords</a></li>
+<li class="toctree-l1"><a class="reference internal" href="findClosestCoord.html">findClosestCoord</a></li>
+<li class="toctree-l1"><a class="reference internal" href="freqFromString.html">freqFromString</a></li>
+<li class="toctree-l1"><a class="reference internal" href="georef.html">georef</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getAntFreqGSSI.html">getAntFreqGSSI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getFName.html">getFName</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getGPR.html">getGPR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getLonLatFromGPGGA.html">getLonLatFromGPGGA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getUTMzone.html">getUTMzone</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getVel.html">getVel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GPR-class.html">GPR-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GPRcoercion.html">GPRcoercion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GPRcube-class.html">GPRcube-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GPRset-class.html">GPRset-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GPRslice-class.html">GPRslice-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GPRsurvey-class.html">GPRsurvey-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GPRsurvey.html">GPRsurvey</a></li>
+<li class="toctree-l1"><a class="reference internal" href="GPRvirtual-class.html">GPRvirtual-class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hyperbolicTWT.html">hyperbolicTWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interpCoords.html">interpCoords</a></li>
+<li class="toctree-l1"><a class="reference internal" href="interpSlices.html">interpSlices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="intersect.html">intersect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="is.finite-GPRvirtual.html">is.finite-GPRvirtual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="is.na.html">is.na</a></li>
+<li class="toctree-l1"><a class="reference internal" href="isCMP.html">isCMP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="isCRSGeographic.html">isCRSGeographic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="isZTime.html">isZTime</a></li>
+<li class="toctree-l1"><a class="reference internal" href="length-GPR-method.html">length-GPR-method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="length-GPRcube-method.html">length-GPRcube-method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="length-GPRsurvey-method.html">length-GPRsurvey-method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="line2user.html">line2user</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lines.html">lines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Logic-methods.html">Logic-methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logicalNegation-GPRvirtual.html">logicalNegation-GPRvirtual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lonLatToUTM.html">lonLatToUTM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Math-methods.html">Math-methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Math2-methods.html">Math2-methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mean-GPRvirtual-method.html">mean-GPRvirtual-method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="median-GPRvirtual-method.html">median-GPRvirtual-method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metadata.html">metadata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ncol-GPRvirtual-method.html">ncol-GPRvirtual-method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NMO.html">NMO</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NMOcorrect.html">NMOcorrect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NMOstack.html">NMOstack</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NMOstreching.html">NMOstreching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nrow-GPRvirtual-method.html">nrow-GPRvirtual-method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="obbox.html">obbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="palCol.html">palCol</a></li>
+<li class="toctree-l1"><a class="reference internal" href="palGPR.html">palGPR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pathLength.html">pathLength</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pathRelPos.html">pathRelPos</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">plot</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#arguments">Arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#details">Details</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="plotCMPhyperbolas.html">plotCMPhyperbolas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotTr.html">plotTr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotVel.html">plotVel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="points.html">points</a></li>
+<li class="toctree-l1"><a class="reference internal" href="print.GPR.html">print.GPR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="print.GPRcube.html">print.GPRcube</a></li>
+<li class="toctree-l1"><a class="reference internal" href="print.GPRslice.html">print.GPRslice</a></li>
+<li class="toctree-l1"><a class="reference internal" href="print.GPRsurvey.html">print.GPRsurvey</a></li>
+<li class="toctree-l1"><a class="reference internal" href="proc.html">proc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="project.html">project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readDT1.html">readDT1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readDZG.html">readDZG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readDZT.html">readDZT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readDZX.html">readDZX</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readFID.html">readFID</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readGPGGA.html">readGPGGA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readGPR.html">readGPR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readGPS.html">readGPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readHD.html">readHD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="readTopo.html">readTopo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="relPos.html">relPos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="RGPR-package.html">RGPR-package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setDefaultListValues.html">setDefaultListValues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setDots.html">setDots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setVel.html">setVel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shift.html">shift</a></li>
+<li class="toctree-l1"><a class="reference internal" href="shiftToTime0.html">shiftToTime0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="show-GPR-method.html">show-GPR-method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="show-GPRcube-method.html">show-GPRcube-method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="show-GPRslice-method.html">show-GPRslice-method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="show-GPRsurvey-method.html">show-GPRsurvey-method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simWavelet.html">simWavelet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="smooth2D.html">smooth2D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spunit.html">spunit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subset-GPR.html">subset-GPR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subset-GPRcube.html">subset-GPRcube</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subset-GPRset.html">subset-GPRset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="subset-GPRsurvey.html">subset-GPRsurvey</a></li>
+<li class="toctree-l1"><a class="reference internal" href="summary-GPRvirtual-method.html">summary-GPRvirtual-method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Summary-methods.html">Summary-methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeToDepth.html">timeToDepth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trimStr.html">trimStr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="UMTStringToEPSG.html">UMTStringToEPSG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="UTMToEPSG.html">UTMToEPSG</a></li>
+<li class="toctree-l1"><a class="reference internal" href="UTMTolonlat.html">UTMTolonlat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="vel.html">vel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="velDix.html">velDix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="velInterp.html">velInterp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="velPick.html">velPick</a></li>
+<li class="toctree-l1"><a class="reference internal" href="velSmooth.html">velSmooth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="velSpectrum.html">velSpectrum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="verboseF.html">verboseF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="window.html">window</a></li>
+<li class="toctree-l1"><a class="reference internal" href="writeGPR.html">writeGPR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="xpos.html">xpos</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">RGPR</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Plot GPR data</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/functions/plot.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="plot-gpr-data">
+<h1>Plot GPR data<a class="headerlink" href="#plot-gpr-data" title="Link to this heading"></a></h1>
+<div class="highlight-r notranslate"><div class="highlight"><pre><span></span><span class="c1">## S3 method for class &#39;GPR&#39;</span>
+<span class="nf">plot</span><span class="p">(</span>
+<span class="w">  </span><span class="n">x</span><span class="p">,</span>
+<span class="w">  </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">horiz</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span>
+<span class="w">  </span><span class="n">interpolate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span>
+<span class="w">  </span><span class="n">sym</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span>
+<span class="w">  </span><span class="n">clim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">add</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span>
+<span class="w">  </span><span class="n">asp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NA</span><span class="p">,</span>
+<span class="w">  </span><span class="n">secaxis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span>
+<span class="w">  </span><span class="n">elev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span>
+<span class="w">  </span><span class="n">export</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">,</span>
+<span class="w">  </span><span class="n">fac</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span>
+<span class="w">  </span><span class="n">wiggles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">side</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.2</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;black&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.5</span><span class="p">),</span>
+<span class="w">  </span><span class="n">markers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">lineSymbols</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.35</span><span class="p">,</span><span class="w"> </span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">25</span><span class="p">,</span><span class="w"> </span><span class="n">colSymbols</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">bgSymbols</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;yellow&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">cexSymbols</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">lineText</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.9</span><span class="p">,</span><span class="w"> </span><span class="n">cexText</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.6</span><span class="p">,</span><span class="w"> </span><span class="n">colText</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">ann</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">lineText</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">colLine</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">colText</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">cexText</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.75</span><span class="p">,</span><span class="w"> </span><span class="n">lwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">),</span>
+<span class="w">  </span><span class="n">z0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">lwd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;green&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">lty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">),</span>
+<span class="w">  </span><span class="n">cbar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">w</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">hst</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.5</span><span class="p">,</span><span class="w"> </span><span class="n">fticks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.5</span><span class="p">,</span><span class="w"> </span><span class="n">vclab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.5</span><span class="p">,</span><span class="w"> </span><span class="n">clab</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">),</span>
+<span class="w">  </span><span class="kc">...</span>
+<span class="p">)</span>
+
+<span class="c1">## S3 method for class &#39;GPRset&#39;</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kc">...</span><span class="p">)</span>
+
+<span class="c1">## S3 method for class &#39;GPRsurvey&#39;</span>
+<span class="nf">plot</span><span class="p">(</span>
+<span class="w">  </span><span class="n">x</span><span class="p">,</span>
+<span class="w">  </span><span class="n">markers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">21</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;black&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">bg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">cex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.7</span><span class="p">),</span>
+<span class="w">  </span><span class="n">ann</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">pch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="n">cex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.8</span><span class="p">,</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;black&quot;</span><span class="p">),</span>
+<span class="w">  </span><span class="n">dirArrows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.1</span><span class="p">),</span>
+<span class="w">  </span><span class="n">asp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span>
+<span class="w">  </span><span class="n">add</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span>
+<span class="w">  </span><span class="kc">...</span>
+<span class="p">)</span>
+
+<span class="c1">## S3 method for class &#39;GPRcube&#39;</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kc">...</span><span class="p">)</span>
+
+<span class="c1">## S3 method for class &#39;GPRslice&#39;</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kc">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="arguments">
+<h2>Arguments<a class="headerlink" href="#arguments" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">x</span></code>: (<code class="docutils literal notranslate"><span class="pre">class</span> <span class="pre">GPR</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">col</span></code>: Color palette. See details.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: (<code class="docutils literal notranslate"><span class="pre">character[1]</span></code>) Plot type. See details</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">horiz</span></code>: (<code class="docutils literal notranslate"><span class="pre">logical[1]</span></code>) Only for 1D plot. If <code class="docutils literal notranslate"><span class="pre">TRUE</span></code>, the 1D plot is horizontal (else vertical).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">interpolate</span></code>: (<code class="docutils literal notranslate"><span class="pre">logical[1]</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sym</span></code>: (<code class="docutils literal notranslate"><span class="pre">logical[1]</span></code>) if <code class="docutils literal notranslate"><span class="pre">TRUE</span></code> the colorscale is symmetric if the amplitudes vary around zero. FIXME</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">clim</span></code>: (<code class="docutils literal notranslate"><span class="pre">numeric[2]</span></code>) The range of the color values, used in the color palette.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">add</span></code>: (<code class="docutils literal notranslate"><span class="pre">logical[1]</span></code>) If <code class="docutils literal notranslate"><span class="pre">TRUE</span></code>, add to current plot.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">asp</span></code>: (<code class="docutils literal notranslate"><span class="pre">numeric[1]</span></code>) The y/x aspect ratio.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">secaxis</span></code>: (<code class="docutils literal notranslate"><span class="pre">logical[1]</span></code>) If <code class="docutils literal notranslate"><span class="pre">TRUE</span></code>, add a secondary axis. If the GPR data was acquired in common-offset mode, a secondary depth axsis is added (based on the average wave velocity). Else a secondary time axis is added. Note that we use the Sensors and Software method to plot the depth axis when the data are in time domain: because of the offset between transmitter and receiver, there is an offset between time-zero and depth, the depth axes is squished.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">elev</span></code>: (<code class="docutils literal notranslate"><span class="pre">logical[1]</span></code>) If <code class="docutils literal notranslate"><span class="pre">TRUE</span></code>, plot signal as a function of elevation (datum).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">export</span></code>: (<code class="docutils literal notranslate"><span class="pre">NULL|character[1]</span></code>) If <code class="docutils literal notranslate"><span class="pre">export</span></code> is a filename with png or pdf extension, the plot is exported in a png/pdf with filename equal to <code class="docutils literal notranslate"><span class="pre">export</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fac</span></code>: (<code class="docutils literal notranslate"><span class="pre">numeric[1]</span></code>) Factor to set the size of the pdf (aspect ratio is defined by <code class="docutils literal notranslate"><span class="pre">asp</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">wiggles</span></code>: (<code class="docutils literal notranslate"><span class="pre">list</span></code>) Parameter list for plotting wiggles. Only used when <code class="docutils literal notranslate"><span class="pre">type</span> <span class="pre">=</span> <span class="pre">&quot;wiggles&quot;</span></code>. See details below.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">markers</span></code>: (<code class="docutils literal notranslate"><span class="pre">list|NULL</span></code>) If not <code class="docutils literal notranslate"><span class="pre">NULL</span></code>, display the fiducial markers according to the parameter list. See details below.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ann</span></code>: (<code class="docutils literal notranslate"><span class="pre">list|NULL</span></code>) If not <code class="docutils literal notranslate"><span class="pre">NULL</span></code>, display the fiducial markers according to the parameter list. See details below.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">z0</span></code>: (<code class="docutils literal notranslate"><span class="pre">list|NULL</span></code>) If not <code class="docutils literal notranslate"><span class="pre">NULL</span></code>, display a line corresponding to time-zero. See details.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cbar</span></code>: (<code class="docutils literal notranslate"><span class="pre">list|NULL</span></code>) If not <code class="docutils literal notranslate"><span class="pre">NULL</span></code>, display a colorbar. See details</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">...</span></code>: additional arguments passed to the plotting methods <code class="docutils literal notranslate"><span class="pre">graphics::plot()</span></code> for 1D plot and <code class="docutils literal notranslate"><span class="pre">plot3D::image2D()</span></code> for 2D plot. See also <code class="docutils literal notranslate"><span class="pre">details</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dirArrows</span></code>: (<code class="docutils literal notranslate"><span class="pre">list|NULL</span></code>) If not <code class="docutils literal notranslate"><span class="pre">NULL</span></code>, display an arrow indicating the survey direction (only for plot of GPRsurvey) data.</p></li>
+</ul>
+<p>Nice function to plot data. If the GPR object consists of a single trace, wiggle plot is shown. For CMP, the position of the traces on the x-axis is defined by the antenna separation (<code class="docutils literal notranslate"><span class="pre">antsep(x)</span></code>).</p>
+</section>
+<section id="details">
+<h2>Details<a class="headerlink" href="#details" title="Link to this heading"></a></h2>
+<p>The argument <code class="docutils literal notranslate"><span class="pre">col</span></code> is :</p>
+<ul class="simple">
+<li><p>1D plot: a single color</p></li>
+<li><p>2D plot: a color palette. Default = <code class="docutils literal notranslate"><span class="pre">palGPR()</span></code></p></li>
+</ul>
+<p>The argument <code class="docutils literal notranslate"><span class="pre">type</span></code> is :</p>
+<ul>
+<li><p>1D plot: <code class="docutils literal notranslate"><span class="pre">p</span></code>, <code class="docutils literal notranslate"><span class="pre">l</span></code>, <code class="docutils literal notranslate"><span class="pre">b</span></code>, <code class="docutils literal notranslate"><span class="pre">c</span></code>, <code class="docutils literal notranslate"><span class="pre">o</span></code>, <code class="docutils literal notranslate"><span class="pre">h</span></code>, <code class="docutils literal notranslate"><span class="pre">s</span></code>, <code class="docutils literal notranslate"><span class="pre">S</span></code>, <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+<p>(see argument <code class="docutils literal notranslate"><span class="pre">type</span></code> in <code class="docutils literal notranslate"><span class="pre">graphics::plot()</span></code>).</p>
+</li>
+<li><p>2D plot: <code class="docutils literal notranslate"><span class="pre">&quot;raster&quot;</span></code> (default), <code class="docutils literal notranslate"><span class="pre">&quot;wiggles&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;contour&quot;</span></code>.</p></li>
+</ul>
+<p>The argument <code class="docutils literal notranslate"><span class="pre">wiggles</span></code> is a list with following items:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">side</span></code> Either <code class="docutils literal notranslate"><span class="pre">1</span></code> or <code class="docutils literal notranslate"><span class="pre">-1</span></code> defining on which side the wiggles are drawn.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">size</span></code> Size of the wiggles (default = 0.2).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">col</span></code> Color of the wiggles.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lwd</span></code> Line thickness.</p></li>
+</ul>
+<p>The argument <code class="docutils literal notranslate"><span class="pre">markers</span></code> is a list with following items:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">lineSymbols</span></code> Symbol position on margin lines (starting at 0, counting outwards).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pch</span></code> plotting ‘character’, i.e., symbol to use. See <code class="docutils literal notranslate"><span class="pre">graphics::points()</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">colSymbols</span></code> Symbol color</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bgSymbols</span></code> Background color for the open plot symbols given by <code class="docutils literal notranslate"><span class="pre">pch</span> <span class="pre">=</span> <span class="pre">21:25</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cexSymbols</span></code> Symbol expansion: a numerical value.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lineText</span></code> Text position on margin lines (starting at 0, counting outwards).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cexText</span></code> Character expansion: a numerical value.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">colText</span></code> Text color.</p></li>
+</ul>
+<p>The argument <code class="docutils literal notranslate"><span class="pre">ann</span></code> is a list with following items:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">lineText</span></code> Text position on margin lines (starting at 0, counting outwards).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">colLine</span></code> Line color.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">colText</span></code> Text color.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cexText</span></code> Character expansion: a numerical value.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lwd</span></code> Line thickness.</p></li>
+</ul>
+<p>The argument <code class="docutils literal notranslate"><span class="pre">z0</span></code> is a list with following items:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">lwd</span></code> Line thickness.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">col</span></code> Line color.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lty</span></code> Line type.</p></li>
+</ul>
+<p>The argument <code class="docutils literal notranslate"><span class="pre">cbar</span></code> is a list with following items:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">w</span></code> colorbar width in lines (default = 1)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pos</span></code> left position of the colorbar in lines (default = 1)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hst</span></code> space between colorbar and text in lines (default = 0.5)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fticks</span></code> length factor for the ticks (default = 0.5)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">vclab</span></code> length factor for the ticks (if <code class="docutils literal notranslate"><span class="pre">vclab</span> <span class="pre">=</span> <span class="pre">1</span></code>, then the tick length is equal to the space between the colorbar and the text.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">clab</span></code> The label of the colorbar that is plotted above the colorbar (default = NULL, the label is inferred from the GPR data <code class="docutils literal notranslate"><span class="pre">x</span></code>)</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pathRelPos.html" class="btn btn-neutral float-left" title="Relative position on a path" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="plotCMPhyperbolas.html" class="btn btn-neutral float-right" title="Plot hyperbolas associated with Vrms velociies" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Emanuel Huber, Guillaume Hans.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

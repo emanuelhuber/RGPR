@@ -1,8 +1,8 @@
 #' Get processing steps applied to the data
 #' 
-#' \code{processing} returns all the processing steps applied to the data.
-#' @param x [\code{GPR}] An object of the class GPR.
-#' @param value [\code{character}]
+#' `processing` returns all the processing steps applied to the data.
+#' @param x (`GPR`) An object of the class GPR.
+#' @param value (`character`)
 #' @return A character vector whose elements contain the name of the 
 #' processing functions with their arguments applied previously on the
 #' GPR data.

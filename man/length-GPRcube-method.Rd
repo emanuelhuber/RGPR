@@ -7,8 +7,9 @@
 \S4method{length}{GPRcube}(x)
 }
 \arguments{
-\item{x}{[\code{GPR}]}
+\item{x}{(\code{GPR})}
 }
 \description{
 Return length of a GPRcube/GPRslice object (number of slices)
 }
+\concept{array}

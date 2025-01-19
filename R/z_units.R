@@ -1,7 +1,7 @@
 
 #' Check if the unit is valid
-#' @param x [\code{character(n)|units}]
-#' @return [\code{character(n)}] 
+#' @param x (`character[n]|units`)
+#' @return (`character[n]`) 
 #' @noRd
 .checkUnit <- function(x){
   if(length(x) > 1){

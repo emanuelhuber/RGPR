@@ -15,19 +15,20 @@ dropDuplicatedCoords(x, tol = NULL, z = FALSE, verbose = TRUE)
 \arguments{
 \item{x}{An object of the class GPR}
 
-\item{tol}{Length-one numeric vector: if the horizontal distance between two 
+\item{tol}{Length-one numeric vector: if the horizontal distance between two
 consecutive traces is smaller than \code{tol}, then
 the second trace is removed.
 If \code{tol = NULL}, \code{tol} is set equal to
 \code{sqrt(.Machine$double.eps)}.}
 
-\item{z}{[\code{logical(1)}] If \code{TRUE}, the third dimension 
+\item{z}{(\code{logical[1]}) If \code{TRUE}, the third dimension
 (z-dimension) will also be accounted for.}
 
-\item{verbose}{Logical. \code{TRUE}: a message will be thrown, 
+\item{verbose}{Logical. \code{TRUE}: a message will be thrown,
 \code{FALSE}: no message will be thrown.}
 }
 \description{
-Checks for duplicates trace positions (up to precision defined by 'tol') 
+Checks for duplicates trace positions (up to precision defined by 'tol')
 and remove them from 'x' (object of the class GPR or GPRsurvey).
 }
+\concept{spatial computing}

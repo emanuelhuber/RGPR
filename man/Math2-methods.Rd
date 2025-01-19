@@ -12,5 +12,5 @@
 \item{digits}{number of digits to be used in round or signif.}
 }
 \description{
-Methods for the base Math2 methods \link[methods]{S4groupGeneric}: "round", "signif"
+Methods for the base Math2 methods \link[methods:S4groupGeneric]{S4groupGeneric}: "round", "signif"
 }

@@ -4,12 +4,12 @@
 #' 
 #' Modified slots
 #' \itemize{
-#'   \item \code{x} the x-position 
-#'   \item \code{xpos} the antenna separation distance only for CMP/WARR (plot twt as a function of antenna separation)
+#'   \item `x` the x-position 
+#'   \item `xpos` the antenna separation distance only for CMP/WARR (plot twt as a function of antenna separation)
 #' }
-#' @param x [\code{GPR}] An object of the class GPR.
-#' @param value [\code{numeric(m)}]
-#' @return [\code{GPR}] 
+#' @param x (`GPR`) An object of the class GPR.
+#' @param value (`numeric[m]`)
+#' @return (`GPR`) 
 #' @name xpos
 #' @rdname xpos
 #' @concept spatial computation

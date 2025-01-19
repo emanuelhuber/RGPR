@@ -9,7 +9,7 @@
 \alias{obbox,sf-method}
 \title{Oriented bounding box}
 \source{
-source "whuber" from stackexchange.com, 
+source "whuber" from stackexchange.com,
 https://gis.stackexchange.com/questions/22895/finding-minimum-area-rectangle-for-given-points/181883#181883
 }
 \usage{
@@ -26,27 +26,27 @@ obbox(x)
 \S4method{obbox}{sf}(x)
 }
 \arguments{
-\item{x}{[\code{GPR class}] An object of the class \code{GPR}}
+\item{x}{(\verb{GPR class}) An object of the class \code{GPR}}
 }
 \value{
-[\code{matrix(5,2)}] The coordinates of the corners of the oriented 
-         bounding box, whereby the last row is identical to the first row.
-         FIXME!!
+(\code{matrix[5,2]}) The coordinates of the corners of the oriented
+bounding box, whereby the last row is identical to the first row.
+FIXME!!
 }
 \description{
 Returns the oriented bounding box of the trace position of the survey.
 }
 \details{
-The algorithm you are looking for is known in polygon generalisation as 
+The algorithm you are looking for is known in polygon generalisation as
 "smallest surrounding rectangle".
 Compute the convex hull of the cloud.
 For each edge of the convex hull:
 compute the edge orientation (with arctan),
-rotate the convex hull using this orientation in order to compute easily 
+rotate the convex hull using this orientation in order to compute easily
 the bounding rectangle area with min/max of x/y of the rotated convex hull,
 Store the orientation corresponding to the minimum area found,
 Return the rectangle corresponding to the minimum area found.
 In 3D, the same applies, except:
-  The convex hull will be a volume,
-  The orientations tested will be the orientations (in 3D) of the convex hull faces.
+The convex hull will be a volume,
+The orientations tested will be the orientations (in 3D) of the convex hull faces.
 }

@@ -7,12 +7,12 @@
 GPRsurvey(x, verbose = TRUE, ...)
 }
 \arguments{
-\item{x}{[\code{character(k)}]     Vector of \code{k} file paths of GPR data.}
+\item{x}{(\code{character[k]})     Vector of \code{k} file paths of GPR data.}
 
-\item{verbose}{[\code{logical(1)}] If \code{TRUE} the function prints some
+\item{verbose}{(\code{logical[1]}) If \code{TRUE} the function prints some
 information.}
 
-\item{...}{Additional parameters to be passed to \code{\link{readGPR}}.}
+\item{...}{Additional parameters to be passed to \code{\link[=readGPR]{readGPR()}}.}
 }
 \description{
 Create an object of the class GPRsurvey using a vector of GPR data filepath

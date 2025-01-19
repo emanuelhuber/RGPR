@@ -1,7 +1,7 @@
 
   
 #' Print GPRsurvey
-#' @param x [\code{GPRsurvey object}] 
+#' @param x (`GPRsurvey object`) 
 #' @param ... Not used. 
 #' @export
 print.GPRsurvey <- function(x, ...){
@@ -17,7 +17,7 @@ print.GPRsurvey <- function(x, ...){
   testCoords <- as.integer(testCoords) + 1
   testInt    <- sapply(x@intersections, 
                        function(x) ifelse(length(x) > 0, nrow(x), 0))
-  
+  if(length(testInt) == 0) testInt <- 0
   cat("- - - - - - - - - - - - - - -\n")
   is_test <- c("-","YES")
   overview <- data.frame(
@@ -61,6 +61,6 @@ print.GPRsurvey <- function(x, ...){
 #' Show some information on the GPR object
 #'
 #' Identical to print().
-#' @param object [\code{GPRsurvey object}] 
+#' @param object (`GPRsurvey object`) 
 #' @export
 setMethod("show", "GPRsurvey", function(object){print.GPRsurvey(object)}) 

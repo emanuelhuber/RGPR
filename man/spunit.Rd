@@ -22,13 +22,13 @@ spunit(x) <- value
 \S4method{spunit}{GPRsurvey}(x) <- value
 }
 \arguments{
-\item{x}{[\code{GPR class}] An object of the class \code{GPR}}
+\item{x}{(\verb{GPR class}) An object of the class \code{GPR}}
 
-\item{value}{[\code{character(1)}] Spatial units: "m", "feet", etc.
+\item{value}{(\code{character[1]}) Spatial units: "m", "feet", etc.
 see units package.}
 }
 \value{
-[\code{GPR class}] An object of the class \code{GPR}
+(\verb{GPR class}) An object of the class \code{GPR}
 }
 \description{
 Spatial unit of the trace coordinates

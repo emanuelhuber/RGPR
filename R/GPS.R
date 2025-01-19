@@ -13,11 +13,11 @@
 
 #' Get longitude and latitude from GPGGA sentence information (NMEA)
 #' 
-#' @param a [\code{data.frame}] GPGGA sentence information 
-#' @return [\code{data.frame}] Columns = latitude, longitude, elevation and
+#' @param a (`data.frame`) GPGGA sentence information 
+#' @return (`data.frame`) Columns = latitude, longitude, elevation and
 #'         time
 #' @export
-#' @concept GPS
+#' @concept CRS
 getLonLatFromGPGGA <- function(a){  
   a <- as.data.frame(a, stringsAsFactors = FALSE)
   a <- a[a[,1]=="$GPGGA",]
@@ -95,19 +95,18 @@ stringToLat <- function(x, NW = "N"){
 #' see https://stackoverflow.com/a/30225804
 #' https://stackoverflow.com/questions/18639967/converting-latitude-and-longitude-points-to-utm
 #' check also https://stackoverflow.com/questions/176137/java-convert-lat-lon-to-utm
-#' @param lon [\code{numeric}] Longitude.
-#' @param lat [\code{numeric}] Latitude
-#' @param zone [\code{integer(1)}] UMT zone (optional).
-#' @param south [\code{logical(1)}] \code{TRUE} if the coordinates are in the
-#'              southern hemisphere, else \code{FALSE}.
-#' @param west  [\code{logical(1)}] \code{TRUE} if the longitude measures the 
-#' angle west of the Prime Meridian; \code{FALSE} if the longitude measures the 
+#' @param lon (`numeric`) Longitude.
+#' @param lat (`numeric`) Latitude
+#' @param zone (`integer[1]`) UMT zone (optional).
+#' @param south (`logical[1]`) `TRUE` if the coordinates are in the
+#'              southern hemisphere, else `FALSE`.
+#' @param west  (`logical[1]`) `TRUE` if the longitude measures the 
+#' angle west of the Prime Meridian; `FALSE` if the longitude measures the 
 #' angle east of the Prime Meridian.
-#' @return [\code{list(2)}] \code{xy} the coordinates in UTM, 
-#'         \code{crs} the UTM coordinate reference system (proj4string).
+#' @return (`list[2]`) `xy` the coordinates in UTM, 
+#'         `crs` the UTM coordinate reference system (proj4string).
 #' @export
-#' @concept GPS 
-#' @concept UTM
+#' @concept CRS
 lonLatToUTM <- function(lon, lat, zone = NULL, south = NULL, west = FALSE){
   # FIXME
   # - convert UTM to EPSG: https://gis.stackexchange.com/questions/365584/convert-utm-zone-into-epsg-code
@@ -158,12 +157,11 @@ lonLatToUTM <- function(lon, lat, zone = NULL, south = NULL, west = FALSE){
 
 #' Get UTM zone from lattidue and longitude
 #'
-#' @param lon [\code{numeric}] Longitude.
-#' @param lat [\code{numeric}] Latitude
-#' @return [\code{integer(1)}] The UTM zone.
+#' @param lon (`numeric`) Longitude.
+#' @param lat (`numeric`) Latitude
+#' @return (`integer([1]`) The UTM zone.
 #' @export
-#' @concept GPS 
-#' @concept UTM
+#' @concept CRS
 getUTMzone <- function(lat, lon){
   # see https://stackoverflow.com/a/9188972
   # The formula is to simple: it does not work for the both 
@@ -188,13 +186,12 @@ getUTMzone <- function(lat, lon){
 
 #' UTM to latitude-longitude
 #' 
-#' @param xy     [\code{matrix(,2)}] Columns = x and y coordinates.
-#' @param CRSobj [\code{character(1)}] Coordinate reference system 
+#' @param xy     (`matrix[,2]`) Columns = x and y coordinates.
+#' @param CRSobj (`character[1]`) Coordinate reference system 
 #'               (proj4string)
-#' @return a 2-column-matrix (longitude (N), latitude (E))
+#' @return a 2-column-matrix (longitude N, latitude (E))
 #' @export
-#' @concept GPS 
-#' @concept UTM
+#' @concept CRS
 #' 
 # not yet used!
 UTMTolonlat <- function(xy, CRSobj = NULL){
@@ -231,13 +228,12 @@ lonlatToDeci <- function(x){
 #'
 #' Returns the EPSG code from UTM zone. EPSG code is:
 #'   32600+zone for positive latitudes and  32700+zone for negatives latitudes.
-#' @param zone [\code{integer(1)}] the UTM zone.
-#' @param south [\code{integer(1)}] \code{TRUE} if the UTM is located in 
+#' @param zone (`integer[1]`) the UTM zone.
+#' @param south (`integer[1]`) `TRUE` if the UTM is located in 
 #'              southern hemisphere.
-#' @return [\code{integer(1)}] The EPSG code.
+#' @return (`integer[1]`) The EPSG code.
 #' @export
-#' @concept GPS 
-#' @concept UTM
+#' @concept CRS
 UTMToEPSG <- function(zone, south = FALSE){
   if(isTRUE(south)){
     return(32700 + as.integer(zone))
@@ -251,11 +247,10 @@ UTMToEPSG <- function(zone, south = FALSE){
 #'
 #' Returns the EPSG code from UTM zone string (e.g., '32N'). EPSG code is:
 #'   32600+zone for positive latitudes and  32700+zone for negatives latitudes.
-#' @param x [\code{character(1)}] The EPSG code string (e.g. 32N).
-#' @return [\code{integer(1)}] The EPSG code.
+#' @param x (`character[1]`) The EPSG code string (e.g. 32N).
+#' @return (`integer[1]`) The EPSG code.
 #' @export
-#' @concept GPS 
-#' @concept UTM
+#' @concept CRS
 UMTStringToEPSG <- function(x){
   pat <- extractPattern(x, "(\\d{1,2})(N|S)", start = 0, stop = -1)
   UTMToEPSG(zone = as.numeric(pat[1]),

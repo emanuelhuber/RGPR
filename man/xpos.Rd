@@ -16,12 +16,12 @@ xpos(x) <- value
 \S4method{xpos}{GPR}(x) <- value
 }
 \arguments{
-\item{x}{[\code{GPR}] An object of the class GPR.}
+\item{x}{(\code{GPR}) An object of the class GPR.}
 
-\item{value}{[\code{numeric(m)}]}
+\item{value}{(\code{numeric[m]})}
 }
 \value{
-[\code{GPR}]
+(\code{GPR})
 }
 \description{
 Antenna separation distance(s)
@@ -29,8 +29,8 @@ Antenna separation distance(s)
 \details{
 Modified slots
 \itemize{
-  \item \code{x} the x-position 
-  \item \code{xpos} the antenna separation distance only for CMP/WARR (plot twt as a function of antenna separation)
+\item \code{x} the x-position
+\item \code{xpos} the antenna separation distance only for CMP/WARR (plot twt as a function of antenna separation)
 }
 }
 \concept{spatial computation}

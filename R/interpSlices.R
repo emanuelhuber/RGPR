@@ -3,18 +3,18 @@
 #' 
 #' 
 #' Interpolate horizontal slices
-#' @param x [\code{GPRsurvey}]
-#' @param dx [\code{numeric(1)}] x-resolution
-#' @param dy [\code{numeric(1)}] y-resolution
-#' @param dz [\code{numeric(1)}] z-resolution
-#' @param h [\code{numeric(1)}] FIXME: see function...
-#' @param extend [\code{character(1)}] FIXME: see function...
-#' @param buffer [\code{numeric(1)}] FIXME: see function...
-#' @param shp [\code{matrix(n,2)|list(2)|sf}] FIXME: see function...
-#' @param rot [\code{logical(1)|numeric(1)}] If \code{TRUE} the GPR lines are 
+#' @param x (`GPRsurvey`)
+#' @param dx (`numeric[1]`) x-resolution
+#' @param dy (`numeric[1]`) y-resolution
+#' @param dz (`numeric[1]`) z-resolution
+#' @param h (`numeric[1]`) FIXME: see function...
+#' @param extend (`character[1]`) FIXME: see function...
+#' @param buffer (`numeric[1]`) FIXME: see function...
+#' @param shp (`matrix[n,2]|list[2]|sf`) FIXME: see function...
+#' @param rot (`logical[1]|numeric[1]`) If `TRUE` the GPR lines are 
 #'            fist rotated such to minimise their axis-aligned bounding box. 
-#'            If \code{rot} is numeric, the GPR lines is rotated first
-#'            rotated by \code{rot} (in radian).
+#'            If `rot` is numeric, the GPR lines is rotated first
+#'            rotated by `rot` (in radian).
 #' @name interpSlices
 setGeneric("interpSlices", function(x, 
                                     dx = NULL, 
@@ -80,6 +80,8 @@ setMethod("interpSlices", "GPRsurvey", function(x,
     class_name <- "GPRcube"
     ddata <- SXY$z
   }
+  xtrsf <- numeric(0)
+  if(length(x@transf)>0) xtrsf <- c(x@transf[1:2], x_rot)
   
   y <- new(class_name,
            #----------------- GPRvirtual --------------------------------------#
@@ -117,7 +119,7 @@ setMethod("interpSlices", "GPRsurvey", function(x,
            ylab   = "",   #,  # set names, length = 1|p
            
            center = xyref,    # coordinates grid corner bottom left (0,0)
-           rot    = c(x@transf[1:2], x_rot)#x_rot     # rotation angle
+           rot    = xtrsf #x_rot     # rotation angle
   )
   if(class_name == "GPRslice") y@z <- SXY$vz[1]
   return(y)
@@ -143,11 +145,11 @@ defVz <- function(x){
     # elevation coordinates
     zmax <- sapply(x@coords, function(x) max(x[,3]))
     zmin <- sapply(x@coords, function(x) min(x[,3])) - max(x@zlengths)
-    d_z <- x@zlengths/x@nz
+    d_z <- x@zlengths/(x@nz - 1)
     vz <- seq(from = min(zmin), to = max(zmax), by = min(d_z))
   }else{
     # time/depth
-    d_z <- x@zlengths/x@nz
+    d_z <- x@zlengths/(x@nz - 1)
     vz <- seq(from = 0, by = min(d_z), length.out = max(x@nz))
   }
   return(vz)
@@ -169,9 +171,7 @@ trInterp <- function(x, z, zi){
 
 
 .sliceInterp <- function(x, dx = NULL, dy = NULL, dz = NULL, h = 6,
-                         extend = "bbox",
-                         buffer = NULL,
-                         shp = shp){
+                         extend = "bbox", buffer = NULL, shp =  NULL, m = NULL, n = NULL){
   if(!all(sapply(x@coords, length) > 0) ){
     stop("Some of the data have no coordinates. Please set first coordinates to all data.")
   }
@@ -185,6 +185,9 @@ trInterp <- function(x, z, zi){
   
   if(is.null(dx)){
     dx <- mean(sapply(x@coords, function(x) mean(diff(pathRelPos(x)))))
+    # nx <- (max(sapply(x@coords, function(x) max(x[,1]))) -
+    #          min(sapply(x@coords, function(x) min(x[,1])) )) / dxy
+    # nx <- round(nx)
   }
   if(is.null(dy)){
     dy <- dx
@@ -195,20 +198,19 @@ trInterp <- function(x, z, zi){
   #Z <- list()
   V <- list()
   for(i in seq_along(X)){
-    X_i <- X[[i]]
-    if(isZDepth(X_i)){
-      if(length(unique(X_i@coord[,3])) > 1){
+    if(isZDepth(X[[i]])){
+      if(length(unique(X[[i]]@coord[,3])) > 1){
         stop("The traces have different elevation!")
       } 
-      x_z   <- X_i@coord[1,3] - X_i@z
+      x_z   <- X[[i]]@coord[1,3] - X[[i]]@z
     }else{
-      x_z   <- X_i@z
+      x_z   <- X[[i]]@z
     }
-    x_data <- X_i@data
+    x_data <- X[[i]]@data
     x_data[is.na(x_data)] <- 0
     # interpolation
     V[[i]] <- apply(x_data, 2, trInterp, z = x_z, zi = x_zi )
-    # Z[[i]] <- x_zi   # X_i@depth
+    # Z[[i]] <- x_zi   # X[[i]]@depth
   }
   
   # vj <- seq(dz, by = dz, to = length(x_zi))
@@ -217,26 +219,6 @@ trInterp <- function(x, z, zi){
   # positions obervations
   xpos <- unlist(lapply(X@coords, function(x) x[,1]))
   ypos <- unlist(lapply(X@coords, function(x) x[,2]))
-  
-  # # define bounding box + number of points for interpolation
-  # obb <- obbox(x)
-  # bbox <- c(min(obb[,1]), max(obb[,1]), min(obb[,2]), max(obb[,2]))
-  # 
-  # 
-  # bbox_dx <- bbox[2] - bbox[1]
-  # bbox_dy <- bbox[4] - bbox[3]
-  # nx <- ceiling(bbox_dx / dx )
-  # ny <- ceiling(bbox_dy / dy )
-  # 
-  # # correct bbox (such that dx, dy are correct)
-  # Dx <- (nx * dx - bbox_dx)/2
-  # Dy <- (ny * dy - bbox_dy)/2
-  # bbox[1:2] <- bbox[1:2] + c(-1, 1) * Dx
-  # bbox[3:4] <- bbox[3:4] + c(-1, 1) * Dy 
-  # bbox_dx <- bbox[2] - bbox[1]
-  # bbox_dy <- bbox[4] - bbox[3]
-  # SL <- array(dim = c(nx, ny, length(x_zi)))
-  # 
   
   x_shp <- x
   if(!is.null(shp)){
@@ -248,8 +230,9 @@ trInterp <- function(x, z, zi){
       x_shp <- shp
     }
   }
-
-  xy_clipData <- NULL
+  
+  xy_clip <- NULL
+  # para <- getbbox_nx_ny(x_shp[,1], x_shp[,2], dx, dy, 0)
   if(extend == "chull"){
     xsf_chull <- convexhull(x_shp)
     if(is.null(buffer)){
@@ -264,8 +247,8 @@ trInterp <- function(x, z, zi){
     if(buffer > 0){
       xsf_chull <- sf::st_buffer(xsf_chull, buffer)
     }
-    xy_clipData <- sf::st_coordinates(xsf_chull)
-    para <- getbbox_nx_ny(xy_clipData[,1], xy_clipData[,2], dx, dy, buffer = 0)
+    xy_clip <- sf::st_coordinates(xsf_chull)
+    para <- getbbox_nx_ny(xy_clip[,1], xy_clip[,2], dx, dy, buffer = 0)
   }else if(extend == "bbox"){
     if(!is.null(shp)){
       if(is.null(buffer)) buffer <- 0
@@ -288,43 +271,49 @@ trInterp <- function(x, z, zi){
       sf_obb <- sf::st_buffer(sf_obb, buffer)
       sf_obb <- obbox(sf_obb)
     }
-    xy_clipData <- sf::st_coordinates(sf_obb)
+    xy_clip <- sf::st_coordinates(sf_obb)
     
-    para <- getbbox_nx_ny(xy_clipData[,1], xy_clipData[,2], dx, dy, buffer = 0)
+    para <- getbbox_nx_ny(xy_clip[,1], xy_clip[,2], dx, dy, buffer = 0)
   }else if(extend == "buffer"){
     if(is.null(buffer) || !(buffer > 0)){
       stop("When 'extend = buffer', 'buffer' must be larger than 0!")
     }else{
       x_shp <- buffer(x, buffer)
-      xy_clipData <- sf::st_coordinates(x_shp)
-      para <- getbbox_nx_ny(xy_clipData[,1], xy_clipData[,2], dx, dy, buffer = 0)
+      xy_clip <- sf::st_coordinates(x_shp)
+      para <- getbbox_nx_ny(xy_clip[,1], xy_clip[,2], dx, dy, buffer = 0)
     }
   }
   
   fk <- NULL
-
+  
   SL <- array(dim = c(para$nx, para$ny, length(x_zi)))
-
-  n <- 1
-  m <- 1
+  
+  if(is.null(m)){
+    m <- 1
+  }
+  if(is.null(n)){
+    n <- 1
+  }
   # ratio_x_y <- bbox_dy / bbox_dx
   ratio_x_y <- (para$bbox[4] - para$bbox[3]) / (para$bbox[2] - para$bbox[1])
   if(ratio_x_y < 1){
-    m <- round(1/ratio_x_y)
+    if(is.null(m)) m <- round(1/ratio_x_y)
   }else{
-    n <- round(ratio_x_y)
+    if(is.null(n)) n <- round(ratio_x_y)
   }
   if(m < 1) m <- 1L
   if(n < 1) n <- 1L
   for(j in  seq_along(x_zi)){
     val[[j]] <- unlist(lapply(V, function(v, k = j) v[k,]))
-    S <- MBA::mba.surf(cbind(xpos, ypos, val[[j]]), para$nx , para$ny, n = n, m = m, 
-                       extend = TRUE, h = h, b.box = para$bbox)$xyz.est
-    if(!is.null(xy_clipData)){
+    # MBA::mba.surf echoes a warning when 
+    # all(c(range(xpos), range(ypos)) == para$bbox) == TRUE!!
+    S <- suppressWarnings(MBA::mba.surf(cbind(xpos, ypos, val[[j]]), para$nx , para$ny, n = n, m = m, 
+                                        extend = TRUE, h = h, b.box = para$bbox)$xyz.est)
+    if(!is.null(xy_clip)){
       if(is.null(fk)){
         fk <- outer(S$x, S$y, inPoly,
-                    vertx = xy_clipData[,1],
-                    verty = xy_clipData[,2])
+                    vertx = xy_clip[,1],
+                    verty = xy_clip[,2])
         fk <- !as.logical(fk)
       }
       S$z[fk] <- NA
@@ -343,13 +332,13 @@ getbbox_nx_ny <- function(xpos, ypos, dx, dy, buffer = NULL){
   
   if(is.null(buffer)){
     buffer <- min(diff(xpos_rg) * 0.05,  diff(ypos_rg) * 0.05)
-    print(buffer)
+    # print(buffer)
   }
   if(buffer > 0 ){
-    print(buffer)
+    # print(buffer)
     xpos_rg <- xpos_rg + c(-1, 1) * buffer
     ypos_rg <- ypos_rg + c(-1, 1) * buffer
-    print(c(-1, 1) * buffer)
+    # print(c(-1, 1) * buffer)
   }
   # if(isTRUE(prettyExtend)){
   #   xpos_rg <- pretty( xpos_rg)

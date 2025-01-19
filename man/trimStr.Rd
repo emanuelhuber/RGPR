@@ -7,7 +7,7 @@
 trimStr(x)
 }
 \arguments{
-\item{x}{[\code{character}] a string or a vector of strings (characters)}
+\item{x}{(\code{character}) a string or a vector of strings (characters)}
 }
 \description{
 returns string w/o leading or trailing whitespace

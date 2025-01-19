@@ -2,12 +2,13 @@
 #  - warnings & messages suppressed in functions other than 'GPRsurvey()'
 #  - raise an error when crs/zunit and spunit are different
 
-
+#' GPR survey data
+#'
 #' An S4 class to represent a collection of \eqn{k} GPR data. 
-#' An object of the class \code{GPRsurvey} does only contain the links to 
+#' An object of the class `GPRsurvey` does only contain the links to 
 #' the GPR data files as well as information about the GPR data such as 
 #' coordinates, frequencies, antenna separation etc.  
-#' The methods of the \code{GPRsurvey} class exclusively manipulate the trace 
+#' The methods of the `GPRsurvey` class exclusively manipulate the trace 
 #' (A-scan) coordinates. More specifically, the methods currently allow to:
 #' \itemize{
 #'   \item display map of the GPR measurement lines that can be superimposed 
@@ -21,28 +22,28 @@
 #'   \item project the GPR data to any coordinate reference system,
 #'   \item estimate the spatial shift between two (parallel)GPR profiles.
 #' }
-#' @slot version   [\code{character(1)}] Version of RGPR.
-#' @slot names     [\code{character(k)}] Names of the GPR data.
-#' @slot paths     [\code{character(k)}] File paths of the original GPR data.
-#' @slot descs     [\code{character(k)}] Descriptions of the GPR data.
-#' @slot modes     [\code{character(k)}] Survey modes of the GPR data
-#'                 (e.g., \code{"CO"}, \code{"CMP"}).
-#' @slot dates     [\code{Date(k)}] Date of the GPR data (class \code{Date},
-#'                 e.g., \code{Sys.Date()}).
-#' @slot freqs     [\code{numeric(k)}] Antennae frequency of the GPR data 
+#' @slot version   (`character[1]`) Version of RGPR.
+#' @slot names     (`character[k]`) Names of the GPR data.
+#' @slot paths     (`character[k]`) File paths of the original GPR data.
+#' @slot descs     (`character[k]`) Descriptions of the GPR data.
+#' @slot modes     (`character[k]`) Survey modes of the GPR data
+#'                 (e.g., `"CO"`, `"CMP"`).
+#' @slot dates     (`Date[k]`) Date of the GPR data (class `Date`,
+#'                 e.g., `Sys.Date()`).
+#' @slot freqs     (`numeric[k]`) Antennae frequency of the GPR data 
 #'                 (in MHz).               
-#' @slot antseps   [\code{numeric(k)}] Antennae separation of the GPR data 
-#' @slot spunit    [\code{character(1)}] Spatial units.
-#' @slot crs       [\code{character(1)}] Coordinate reference system in wkt format (sf package)
-#' @slot coords    [\code{list(k)}] GPR data coordinates
-#' @slot intersections [\code{list(k)}] Intersections coordinates of the GPR data
-#' @slot markers   [\code{list(k)}] Fiducial markers of the GPR data
-#' @slot nz        [\code{integer(k)}] Number of samples in each GPR data.
-#' @slot zlengths  [\code{numeric(k)}] Range along \code{z} in each GPR data.
-#' @slot zunits    [\code{character(1)}] Unit of \code{z}.
-#' @slot nx        [\code{integer(k)}] Number of traces in each GPR data.
-#' @slot xlengths  [\code{numeric(k)}] Length of the GPR data.
-#' @slot transf  [\code{numeric(5)}] Translation vector before rotation, after and rotation angle
+#' @slot antseps   (`numeric[k]`) Antennae separation of the GPR data 
+#' @slot spunit    (`character[1]`) Spatial units.
+#' @slot crs       (`character[1]`) Coordinate reference system in wkt format (sf package)
+#' @slot coords    (`list[k]`) GPR data coordinates
+#' @slot intersections (`list[k]`) Intersections coordinates of the GPR data
+#' @slot markers   (`list[k]`) Fiducial markers of the GPR data
+#' @slot nz        (`integer[k]`) Number of samples in each GPR data.
+#' @slot zlengths  (`numeric[k]`) Range along `z` in each GPR data.
+#' @slot zunits    (`character[1]`) Unit of `z`.
+#' @slot nx        (`integer[k]`) Number of traces in each GPR data.
+#' @slot xlengths  (`numeric[k]`) Length of the GPR data.
+#' @slot transf  (`numeric(5)`) Translation vector before rotation, after and rotation angle
 #' @name GPRsurvey-class
 #' @rdname GPRsurvey-class
 #' @export

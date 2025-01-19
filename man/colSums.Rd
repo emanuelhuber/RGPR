@@ -16,14 +16,15 @@
 \S4method{rowMeans}{GPRvirtual}(x, na.rm = FALSE, dims = 1)
 }
 \arguments{
-\item{x}{[\code{GPR}]}
+\item{x}{(\code{GPR})}
 
-\item{na.rm}{[\code{logical(1)}]. Should missing values (including 
+\item{na.rm}{(\code{logical[1]}). Should missing values (including
 \code{NaN}) be omitted from the calculations?}
 
-\item{dims}{[\code{integer(1)}]  Which dimensions are regarded as ‘rows’ or 
-‘columns’ to sum over.(see \code{\link{colSums}}).}
+\item{dims}{(\code{integer[1]})  Which dimensions are regarded as ‘rows’ or
+‘columns’ to sum over.(see \code{\link[=colSums]{colSums()}}).}
 }
 \description{
 Form row and column sums and means
 }
+\concept{arithmetic}

@@ -4,15 +4,15 @@
 #' 
 #' Modified slots
 #' \itemize{
-#'   \item \code{coord} the trace coordinates
-#'   \item \code{x} the local trace position (along profile)
-#'   \item \code{crs} the coordinate reference system.
-#'   \item \code{spunit} the spatial units are updated accroding to the new
+#'   \item `coord` the trace coordinates
+#'   \item `x` the local trace position (along profile)
+#'   \item `crs` the coordinate reference system.
+#'   \item `spunit` the spatial units are updated accroding to the new
 #'                       coordinate reference system.
 #' }
 #' @param x Object of the class GPR
-#' @param CRSobj [\code{character(1)}] A string accepted by GDAL 
-#'               (e.g., \code{"EPSG:2056"}, WKT-string).
+#' @param CRSobj (`character[1]`) A string accepted by GDAL 
+#'               (e.g., `"EPSG:2056"`, WKT-string).
 #' @name project
 setGeneric("project", function(x, CRSobj)
     standardGeneric("project"))
@@ -43,7 +43,7 @@ setMethod("project", "GPR", function(x, CRSobj){
   # x_sf     <- sf::st_transform(as.sf(x), .checkCRS(CRSobj))
   # crs(x)   <- sf::st_crs(x_sf)
   # coordinates(x) <- sf::st_coordinates(x_sf)
-
+  x@x <- relPos(x)
   return(x)
 })
 

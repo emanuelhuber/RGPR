@@ -69,6 +69,7 @@ Collate:
 	'readDT1.R'
 	'readDZT.R'
 	'readRDS.R'
+	'readRDX.R'
 	'readTXT.R'
 	'readFID.R'
 	'readTopo.R'
@@ -77,6 +78,8 @@ Collate:
 	'coercion_GPRvirtual.R'
 	'coercion_spatial.R'
 	'GPRsurvey.R'
+	'gridCoords.R'
+	'shiftGridLine.R'
 	'interpSlices.R'
 	'GPS.R'
 	'isCRSGeographic.R'
@@ -97,10 +100,15 @@ Collate:
 	'convexhull.R'
 	'buffer.R'
 	'relPos.R'
-	'clippedValues.R'
+	'declip.R'
+	'clippedData.R'
 	'clipData.R'
 	'shift.R'
 	'shiftToTime0.R'
+	'time0.R'
+	'estimateTime0.R'
+	'pickFirstBreak.R'
+	'firstBreakToTime0.R'
 	'convertTimeToDepth.R'
 	'NMOcorrect.R'
 	'NMO.R'
@@ -124,6 +132,7 @@ Collate:
 	'z_con.R'
 	'z_files.R'
 	'z_checkArgs.R'
+	'z_processing.R'
 	'wapply.R'
 	'z_path.R'
 	'z_spatial.R'
@@ -131,6 +140,15 @@ Collate:
 	'z_messages.R'
 	'getArgs.R'
 	'z_graphics.R'
+	'delineate.R'
+	'rmDCShift.R'
+	'dewow.R'
+	'trapply.R'
+	'gainSEC.R'
+	'filterFreq.R'
+	'filter1D.R'
+	'filter2D.R'
+	'robustSmooth.R'
 Imports:
     methods,
     graphics,
@@ -141,17 +159,20 @@ Imports:
     sf,
     terra,
     signal,
+    interp,
     colorspace,
     Cairo,
     mmand,
     MBA,
     XML,
-    checkmate,
     units,
     adimpro,
-    plot3D
-RoxygenNote: 7.3.1
+    plot3D,
+    robfilter
+RoxygenNote: 7.3.2
 Suggests: 
     geojsonsf,
+    checkmate,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+Roxygen: list(markdown = TRUE)

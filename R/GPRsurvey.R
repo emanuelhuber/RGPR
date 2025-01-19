@@ -3,10 +3,10 @@
 #' Create an object of the class GPRsurvey
 #'
 #' Create an object of the class GPRsurvey using a vector of GPR data filepath
-#' @param x [\code{character(k)}]     Vector of \code{k} file paths of GPR data.
-#' @param verbose [\code{logical(1)}] If \code{TRUE} the function prints some
+#' @param x (`character[k]`)     Vector of `k` file paths of GPR data.
+#' @param verbose (`logical[1]`) If `TRUE` the function prints some
 #'                                    information.
-#' @param ...     Additional parameters to be passed to \code{\link{readGPR}}.
+#' @param ...     Additional parameters to be passed to [readGPR()].
 #' @name GPRsurvey
 #' @export
 # LINES = list of datapath

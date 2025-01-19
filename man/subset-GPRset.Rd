@@ -12,23 +12,23 @@
 \S4method{[}{GPRset,ANY,ANY}(x, i, j, k, ...) <- value
 }
 \arguments{
-\item{x}{[class \code{GPRset}]}
+\item{x}{(\code{GPRset})}
 
-\item{i}{[\code{integer}] Indices specifying elements to extract or replace.}
+\item{i}{(\code{integer}) Indices specifying elements to extract or replace.}
 
-\item{j}{[\code{integer}] Indices specifying elements to extract or replace.}
+\item{j}{(\code{integer}) Indices specifying elements to extract or replace.}
 
-\item{k}{[\code{integer}] Indices specifying elements to extract or replace.}
+\item{k}{(\code{integer}) Indices specifying elements to extract or replace.}
 
 \item{...}{Not used.}
 
 \item{drop}{Not used.}
 
-\item{value}{[\code{numeric}] Value to set.}
+\item{value}{(\code{numeric}) Value to set.}
 }
 \value{
-[\code{GPR}|\code{numeric}] Returns a numeric vector
-       only if \code{x[]}.
+(\code{GPR|numeric}) Returns a numeric vector
+only if \code{x[]}.
 }
 \description{
 Extract parts of a GPR object

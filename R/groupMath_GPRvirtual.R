@@ -1,7 +1,7 @@
 # getGroupMembers("Math")
 #' Basic mathematical functions
 #'
-#' Methods for the base Math methods \link[methods]{S4groupGeneric}
+#' Methods for the base Math methods [S4groupGeneric][methods::S4groupGeneric]
 #' @param x An object of the class GPRvirtual
 #' @details Currently implemented methods include:
 #' \itemize{

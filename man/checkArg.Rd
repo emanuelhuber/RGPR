@@ -9,9 +9,9 @@ checkArg(x, u, type, y, ...)
 \arguments{
 \item{x}{Object to test.}
 
-\item{u}{[\code{character}] Message.}
+\item{u}{(\code{character}) Message.}
 
-\item{type}{[\code{character}] Code for what to check.}
+\item{type}{(\code{character}) Code for what to check.}
 
 \item{y}{Additional argument for checking (e.g., length).}
 

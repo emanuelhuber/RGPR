@@ -22,28 +22,28 @@ coordinates(x) <- value
 \S4method{coordinates}{GPRsurvey}(x) <- value
 }
 \arguments{
-\item{x}{[\code{GPR class}] An object of the class \code{GPR}}
+\item{x}{(\verb{GPR class}) An object of the class \code{GPR}}
 
-\item{value}{[\code{matrix(n,3)|list}] coordinates (x, y, z)}
+\item{value}{(\code{matrix[n,3]|list}) coordinates (x, y, z)}
 }
 \value{
-[\code{GPR class}] An object of the class \code{GPR}
+(\verb{GPR class}) An object of the class \code{GPR}
 }
 \description{
-Return or update the trace coordinates (x, y, z). Not that you cannot 
+Return or update the trace coordinates (x, y, z). Not that you cannot
 change the number of coordinates with \code{coord}.
 }
 \details{
 Modified slots class GPR
 \itemize{
-  \item \code{coord} the trace coordinates
-  \item \code{x} the local trace position (along profile)
+\item \code{coord} the trace coordinates
+\item \code{x} the local trace position (along profile)
 }
 Modified slots class GPRsurvey
 \itemize{
-  \item \code{coords} the trace coordinates
-  \item \code{xlengths} the local trace position (along profile)
-  \item \code{intersections} the local trace position (along profile)
+\item \code{coords} the trace coordinates
+\item \code{xlengths} the local trace position (along profile)
+\item \code{intersections} the local trace position (along profile)
 }
 }
 \concept{getters/setters}

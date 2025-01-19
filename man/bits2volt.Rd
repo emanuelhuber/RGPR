@@ -3,23 +3,23 @@
 \name{bits2volt}
 \alias{bits2volt}
 \title{Bits to volt conversion
-      
+
 Convert bits to volt values}
 \usage{
 bits2volt(Vmax = 50, Vmin = 50, nbits = 16)
 }
 \arguments{
-\item{Vmax}{[\code{numeric(1)}] Maximal nominal analog input voltage. 
-If \code{Vmax = NULL} or \code{Vmax = FALSE} 
+\item{Vmax}{(\code{numeric[1]}) Maximal nominal analog input voltage.
+If \code{Vmax = NULL} or \code{Vmax = FALSE}
 it returns \code{1} (no bytes to volt transformation)}
 
-\item{Vmin}{[\code{numeric(1)}] Minimal nominal analog input voltage. 
+\item{Vmin}{(\code{numeric[1]}) Minimal nominal analog input voltage.
 If missing, then \code{Vmin = -Vmax}.}
 
-\item{nbits}{[\code{integer(1)} Number of bits.}
+\item{nbits}{(\code{integer[1]}) Number of bits.}
 }
 \description{
 Bits to volt conversion
-      
+
 Convert bits to volt values
 }

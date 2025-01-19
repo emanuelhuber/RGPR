@@ -30,24 +30,24 @@ interpSlices(
 )
 }
 \arguments{
-\item{x}{[\code{GPRsurvey}]}
+\item{x}{(\code{GPRsurvey})}
 
-\item{dx}{[\code{numeric(1)}] x-resolution}
+\item{dx}{(\code{numeric[1]}) x-resolution}
 
-\item{dy}{[\code{numeric(1)}] y-resolution}
+\item{dy}{(\code{numeric[1]}) y-resolution}
 
-\item{dz}{[\code{numeric(1)}] z-resolution}
+\item{dz}{(\code{numeric[1]}) z-resolution}
 
-\item{h}{[\code{numeric(1)}] FIXME: see function...}
+\item{h}{(\code{numeric[1]}) FIXME: see function...}
 
-\item{extend}{[\code{character(1)}] FIXME: see function...}
+\item{extend}{(\code{character[1]}) FIXME: see function...}
 
-\item{buffer}{[\code{numeric(1)}] FIXME: see function...}
+\item{buffer}{(\code{numeric[1]}) FIXME: see function...}
 
-\item{shp}{[\code{matrix(n,2)|list(2)|sf}] FIXME: see function...}
+\item{shp}{(\code{matrix[n,2]|list[2]|sf}) FIXME: see function...}
 
-\item{rot}{[\code{logical(1)|numeric(1)}] If \code{TRUE} the GPR lines are 
-fist rotated such to minimise their axis-aligned bounding box. 
+\item{rot}{(\code{logical[1]|numeric[1]}) If \code{TRUE} the GPR lines are
+fist rotated such to minimise their axis-aligned bounding box.
 If \code{rot} is numeric, the GPR lines is rotated first
 rotated by \code{rot} (in radian).}
 }

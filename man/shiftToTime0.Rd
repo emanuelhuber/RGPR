@@ -20,24 +20,24 @@ shiftToTime0(
 )
 }
 \arguments{
-\item{x}{[\code{GPR* object}] An object of the class \code{GPR}}
+\item{x}{(\code{GPR* object}) An object of the class \code{GPR}}
 
-\item{method}{[\code{character(1)}] Interpolation method to be applied
-(one of \code{pchip} \code{linear}, \code{nearest}, 
-\code{spline}, \code{cubic}, \code{none}, 
-see also \code{\link[signal]{interp1}}). 
- \code{"none"} means that the trace is shifted by the
+\item{method}{(\code{character[1]}) Interpolation method to be applied
+(one of \code{pchip} \code{linear}, \code{nearest},
+\code{spline}, \code{cubic}, \code{none},
+see also \code{\link[signal:interp1]{signal::interp1()}}).
+\code{"none"} means that the trace is shifted by the
 amount of trace samples the closest to \code{ts} without
 interpolation.}
 
-\item{crop}{[\code{logical(1)}] 
-If \code{TRUE} (default), remove the rows containing only 
+\item{crop}{(\code{logical[1]})
+If \code{TRUE} (default), remove the rows containing only
 zero's (no data).}
 
-\item{track}{[\code{logical(1)}] If \code{TRUE}, processing will be tracked.}
+\item{track}{(\code{logical[1]}) If \code{TRUE}, processing will be tracked.}
 }
 \value{
-[\code{GPR class}] An object of the class \code{GPR}
+(\verb{GPR class}) An object of the class \code{GPR}
 }
 \description{
 \code{shiftToTime0} shift the traces vertically such that they start at
@@ -47,15 +47,15 @@ New traces are interpolated.
 \details{
 This function is a wrapper for the following commands
 \itemize{
-  \item \code{x <- traceShift( x,  -time0(x), method = method, crop = crop)}
-  \item \code{time0(x) <- 0}
+\item \code{x <- traceShift( x,  -time0(x), method = method, crop = crop)}
+\item \code{time0(x) <- 0}
 }
 
 Modified slots
 \itemize{
-  \item \code{data}: trace shifted. The number of rows of data may 
-        be smaller if \code{crop = TRUE}.
-  \item \code{time0}: set to 0.
-  \item \code{proc}: updated with function name and arguments.
+\item \code{data}: trace shifted. The number of rows of data may
+be smaller if \code{crop = TRUE}.
+\item \code{time0}: set to 0.
+\item \code{proc}: updated with function name and arguments.
 }
 }

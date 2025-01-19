@@ -2,22 +2,22 @@
 #' 
 #' Set and get velocity model
 #' 
-#' The argument \code{value} can be
+#' The argument `value` can be
 #' \itemize{
 #'   \item a scalar (length-one vector) for uniform velocity
-#'   \item a vector of length equal to the sample number (row number) of x (\code{m}).
+#'   \item a vector of length equal to the sample number (row number) of x (`m`).
 #'   \item a matrix of dimension equal to the sample and trace numner 
-#'          (row and column number) of x (\code{m} \eqn{\times} \code{n}).
-#'   \item a list with elements \code{t} and \code{v} having the same length.
-#'         \code{t} defines the lower time boundaries of the velocities
-#'         \code{v}. FIXME: "intp", "smooth"
+#'          (row and column number) of x (`m` \eqn{\times} `n`).
+#'   \item a list with elements `t` and `v` having the same length.
+#'         `t` defines the lower time boundaries of the velocities
+#'         `v`. FIXME: "intp", "smooth"
 #' }
 #' 
-#' @param x [\code{GPR class}] An object of the class \code{GPR}
-#' @param value [numeric(1)|numeric(m)|matrix(m,n)|list] The velocity model, see section 
+#' @param x (`GPR class`) An object of the class `GPR`
+#' @param value (`[numeric[1]|numeric[m]|matrix[m,n]|list`) The velocity model, see section 
 #' Details
-#' @return [\code{list}|\code{numeric}|\code{matrix}] The velocities as they
-#'         are stored in \code{x}.
+#' @return (`list|numeric|matrix`) The velocities as they
+#'         are stored in `x`.
 #' @name vel
 #' @rdname vel
 setGeneric("vel", function(x) standardGeneric("vel"))

@@ -8,12 +8,12 @@
 \method{points}{GPR}(x, relTime0 = FALSE, ...)
 }
 \arguments{
-\item{x}{[\code{GPR class}]}
+\item{x}{(\verb{GPR class})}
 
-\item{relTime0}{[\code{logical(1)}] If \code{TRUE}, shift \code{x} to time-
+\item{relTime0}{(\code{logical[1]}) If \code{TRUE}, shift \code{x} to time-
 zero.}
 
-\item{...}{Additional parameters to be passed to \code{\link{points}}.}
+\item{...}{Additional parameters to be passed to \code{\link[=points]{points()}}.}
 }
 \description{
 Add a GPR trace points on a plot

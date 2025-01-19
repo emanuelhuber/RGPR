@@ -12,11 +12,11 @@
 \S4method{[[}{GPRsurvey,ANY,ANY}(x, i, j, ..., exact = TRUE)
 }
 \arguments{
-\item{x}{[class \code{GPRsurvey}]}
+\item{x}{(\code{GPRsurvey})}
 
-\item{i}{[\code{integer}] Indices specifying elements to extract or replace.}
+\item{i}{(\code{integer}) Indices specifying elements to extract or replace.}
 
-\item{j}{[\code{integer}] Not used.}
+\item{j}{(\code{integer}) Not used.}
 
 \item{...}{Not used.}
 
@@ -25,7 +25,7 @@
 \item{exact}{Not used.}
 }
 \value{
-[\code{GPRsurvey}]
+(\code{GPRsurvey})
 }
 \description{
 Extract parts of a GPRsurvey object

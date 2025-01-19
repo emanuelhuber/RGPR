@@ -17,7 +17,7 @@
 
 #' Logic operations
 #'
-#' Methods for the base Logic methods \link[methods]{S4groupGeneric}: "==", ">", "<", "!=", "<=", ">="
+#' Methods for the base Logic methods [S4groupGeneric][methods::S4groupGeneric]: "==", ">", "<", "!=", "<=", ">="
 #' @param e1 An object of the class GPRvirtual
 #' @param e2 An object of the class GPRvirtual
 #' @rdname Logic-methods

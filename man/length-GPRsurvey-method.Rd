@@ -7,7 +7,7 @@
 \S4method{length}{GPRsurvey}(x)
 }
 \arguments{
-\item{x}{[\code{GPRsurvey}]}
+\item{x}{(\code{GPRsurvey})}
 }
 \description{
 Return length of a GPRsurvey object (number of GPR lines)

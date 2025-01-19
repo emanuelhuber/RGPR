@@ -5,29 +5,29 @@
 \alias{GPRset-class}
 \title{Class GPRset}
 \description{
-A S4 class to represent GPR data sets. 
-Array of dimension \eqn{n \times m \times p} (\eqn{n} samples, 
+A S4 class to represent GPR data sets.
+Array of dimension \eqn{n \times m \times p} (\eqn{n} samples,
 \eqn{m} traces or A-scans, and \eqn{p} set elements).
-A GPR set is, for example, the 
+A GPR set is, for example, the
 multi-dimensional output of a transform function. Examples:
 \describe{
-  \item{Fourier transform}{The GPR data can be decomposed into two
-  element set: phase and amplitude as a function of the frequency.}
-  \item{Eigenimage decomposition}{Also called Karhunen-Loeve (KL) 
-  transformation. The GPR data is decomposed into a set of eigenimages.}
+\item{Fourier transform}{The GPR data can be decomposed into two
+element set: phase and amplitude as a function of the frequency.}
+\item{Eigenimage decomposition}{Also called Karhunen-Loeve (KL)
+transformation. The GPR data is decomposed into a set of eigenimages.}
 }
 }
 \section{Slots}{
 
 \describe{
-\item{\code{y}}{[\code{numeric(p)}] Values associated with the \code{p} 
+\item{\code{y}}{(\code{numeric[p]}) Values associated with the \code{p}
 elements of the set.}
 
-\item{\code{yunit}}{[\code{character(1|p)}] Unit(s) of set elements.}
+\item{\code{yunit}}{(\code{character[1|p]}) Unit(s) of set elements.}
 
-\item{\code{ylab}}{[\code{character(1|p)}] Label(s) of set elements.}
+\item{\code{ylab}}{(\code{character[1|p]}) Label(s) of set elements.}
 
-\item{\code{formula}}{[\code{expression}] Expression to reconstruct the GPR data
+\item{\code{formula}}{(\code{expression}) Expression to reconstruct the GPR data
 (backtransform).}
 }}
 

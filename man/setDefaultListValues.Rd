@@ -7,9 +7,9 @@
 setDefaultListValues(x, xdefault)
 }
 \arguments{
-\item{x}{[\code{list}] A list.}
+\item{x}{(\code{list}) A list.}
 
-\item{xdefault}{[\code{list}] The list with default values.}
+\item{xdefault}{(\code{list}) The list with default values.}
 }
 \description{
 Set default values to elements of a list.

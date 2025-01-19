@@ -12,11 +12,11 @@
 #'   \item{Eigenimage decomposition}{Also called Karhunen-Loeve (KL) 
 #'   transformation. The GPR data is decomposed into a set of eigenimages.}
 #' }
-#' @slot y       [\code{numeric(p)}] Values associated with the \code{p} 
+#' @slot y       (`numeric[p]`) Values associated with the `p` 
 #'               elements of the set.
-#' @slot yunit   [\code{character(1|p)}] Unit(s) of set elements.
-#' @slot ylab    [\code{character(1|p)}] Label(s) of set elements.
-#' @slot formula [\code{expression}] Expression to reconstruct the GPR data
+#' @slot yunit   (`character[1|p]`) Unit(s) of set elements.
+#' @slot ylab    (`character[1|p]`) Label(s) of set elements.
+#' @slot formula (`expression`) Expression to reconstruct the GPR data
 #'               (backtransform).
 #' @name GPRset-class
 #' @rdname GPRset-class

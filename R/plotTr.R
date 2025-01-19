@@ -1,8 +1,8 @@
 #' Plot all the traces in one 1D plot
 #' 
 #' @param x Object of the class GPR
-#' @param add [\code{logical(1)}] If \code{TRUE}, add to current plot.
-#' @param ... Arguments to be passed to \code{plot}/\code{line}
+#' @param add (`logical[1]`) If `TRUE`, add to current plot.
+#' @param ... Arguments to be passed to `plot`/`line`
 #' @name plotTr
 setGeneric("plotTr", function(x, add = FALSE,  ...)
   standardGeneric("plotTr"))

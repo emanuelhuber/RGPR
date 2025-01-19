@@ -1,7 +1,7 @@
 #' Logical negation
 #' 
 #' Apply logical negation to GPR data
-#' @param x [\code{GPRvirtual}]
+#' @param x (`GPRvirtual`)
 #' @name logicalNegation
 #' @aliases !,GPRvirtual-method
 #' @rdname logicalNegation-GPRvirtual

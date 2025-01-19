@@ -7,11 +7,11 @@
 getAntFreqGSSI(x)
 }
 \arguments{
-\item{x}{[\code{character}] Name(s) of the antenna(e)}
+\item{x}{(\code{character}) Name(s) of the antenna(e)}
 }
 \value{
-[\code{list}] List of numeric values corresponding to the 
-                      frequency/frequencies
+(\code{list}) List of numeric values corresponding to the
+frequency/frequencies
 }
 \description{
 Given the antenna name, returns the frequency of GSSI antenna

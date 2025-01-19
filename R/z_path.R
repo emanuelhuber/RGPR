@@ -5,8 +5,8 @@
 #' Relative position on a path
 #'
 #' Relative position of each coordinates (knots) along a path (polyline).
-#' @param xy [\code{matrix}] Each column corresponding to a coordinate
-#' @param lonlat [\code{logical(1)}] If \code{TRUE} computes geodistance. 
+#' @param xy (`matrix`) Each column corresponding to a coordinate
+#' @param lonlat (`logical[1]`) If `TRUE` computes geodistance. 
 #'               Otherwise Euclidean distance.
 #' @return Relative position of the coordinates (cumulative distance).
 #' @export
@@ -34,8 +34,8 @@ pathRelPos <- function(xy, lonlat = FALSE){
 #' Path length
 #'
 #' Path length
-#' @param xy [\code{matrix}] Each column corresponding to a coordinate
-#' @param lonlat [\code{logical(1)}] If \code{TRUE} computes geodistance. 
+#' @param xy (`matrix`) Each column corresponding to a coordinate
+#' @param lonlat (`logical(1)`) If `TRUE` computes geodistance. 
 #'               Otherwise Euclidean distance.
 #' @return Path length.
 #' @export

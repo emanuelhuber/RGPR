@@ -7,7 +7,7 @@
 \S4method{length}{GPR}(x)
 }
 \arguments{
-\item{x}{[\code{GPR}]}
+\item{x}{(\code{GPR})}
 }
 \description{
 Return length of a GPR object (number of traces)

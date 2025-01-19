@@ -10,16 +10,16 @@ getGPR(x, id, verbose = FALSE)
 \S4method{getGPR}{GPRsurvey}(x, id, verbose = FALSE)
 }
 \arguments{
-\item{x}{[class \code{GPRsurvey}]}
+\item{x}{(\code{GPRsurvey})}
 
-\item{id}{[\code{integer(1)|character(1)}] Indice or name of the GPR line to
+\item{id}{(\code{integer[1]|character[1]}) Indice or name of the GPR line to
 extract.}
 
-\item{verbose}{[\code{logical(1)}] If \code{TRUE} the function prints some
+\item{verbose}{(\code{logical[1]}) If \code{TRUE} the function prints some
 information.}
 }
 \value{
-[\code{GPR class}] An object of the class GPR.
+(\verb{GPR class}) An object of the class GPR.
 }
 \description{
 Extract GPR object from GPRsurvey object

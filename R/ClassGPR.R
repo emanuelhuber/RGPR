@@ -6,17 +6,17 @@
 #' Matrix of dimension \eqn{n \times m} (\eqn{n} samples, 
 #' \eqn{m} traces or A-scans).
 #' 
-#' @slot z0      [\code{numeric(m)}]   Time-zero or depth-zero.
-#' @slot time    [\code{numeric(m)}]   Recording time of every trace (UTC).
-#' @slot antsep  [\code{numeric(m)}]   Antenna separation.
-#' @slot markers [\code{character(m)}] Fiducial markers associated with the traces.
-#' @slot ann     [\code{character(m)}] Annotations associated with the traces.
-#' @slot coord   [\code{matrix(m,3)}]  Trace positions.
-#' @slot rec     [\code{matrix(m,3)}]  Receiver positions
-#' @slot trans   [\code{matrix(m,3)}]  Transmitter positions
-#' @slot x       [\code{numeric}]      Relative trace position
-#' @slot z       [\code{numeric}]      Relative sample position
-#' @slot angles  [\code{matrix(m,2)}]  Transmitter positions
+#' @slot z0      (`numeric[m]`)   Time-zero or depth-zero.
+#' @slot time    (`numeric[m]`)   Recording time of every trace (UTC).
+#' @slot antsep  (`numeric[m]`)   Antenna separation.
+#' @slot markers (`character[m]`) Fiducial markers associated with the traces.
+#' @slot ann     (`character[m]`) Annotations associated with the traces.
+#' @slot coord   (`matrix[m,3]`)  Trace positions.
+#' @slot rec     (`matrix[m,3]`)  Receiver positions
+#' @slot trans   (`matrix[m,3]`)  Transmitter positions
+#' @slot x       (`numeric`)      Relative trace position
+#' @slot z       (`numeric`)      Relative sample position
+#' @slot angles  (`matrix[m,2]`)  Transmitter positions
 #' @name GPR-class
 #' @rdname GPR-class
 #' @export

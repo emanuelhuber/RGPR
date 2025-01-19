@@ -34,7 +34,7 @@ as.GPR.matrix(x, ...)
 as.GPR.list(x, ...)
 }
 \arguments{
-\item{x}{[\code{GPR}]}
+\item{x}{(\code{GPR})}
 
 \item{...}{Not used}
 

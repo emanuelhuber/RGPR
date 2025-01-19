@@ -1,6 +1,7 @@
 # FIXME DOCUMENTATION in plot_GPR.R
-#' @method plot GPRcube 
+
 #' @name plot
+#' @method plot GPRcube
 #' @export
 plot.GPRcube <- function(x, ...){
   plot(x[,,1])

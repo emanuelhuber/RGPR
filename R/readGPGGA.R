@@ -1,14 +1,14 @@
 #FIXME -> what does it return? A spatialPoints
 #' Read GPS file with GPGGA string
-#' @param dsn [\code{character(1)|connection object}] Data source name: 
+#' @param dsn (`character(1)|connection object`) Data source name: 
 #'            either the filepath to the GPR data (character),
 #'            or an open file connection.
-#' @param sep [\code{character(1)}] The field separator character
-#'            (see\code{\link{read.table}}).
-#' @param returnSf [\code{logical(1)}] If \code{TRUE} returns an object of class
-#'              \code{sf} (see \code{\link{sf}{sf}}). If \code{FALSE} returns
-#'              a \code{data.frame}.
-#' @return [\code{SpatialPoints}]
+#' @param sep (`character(1)`) The field separator character
+#'            (see[read.table()]).
+#' @param returnSf (`logical(1)`) If `TRUE` returns an object of class
+#'              `sf`. If `FALSE` returns
+#'              a `data.frame`.
+#' @return (`SpatialPoints`)
 #' @export
 readGPGGA <- function(dsn, sep = ",", returnSf = TRUE){
   if(!inherits(dsn, "connection")){

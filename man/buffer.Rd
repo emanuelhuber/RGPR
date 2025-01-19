@@ -19,18 +19,19 @@ buffer(x, d, combine = TRUE)
 \S4method{buffer}{sf}(x, d, combine = TRUE)
 }
 \arguments{
-\item{x}{[\code{GPR|GPRsurvey}] An object of the class \code{GPR} or
+\item{x}{(\code{GPR|GPRsurvey}) An object of the class \code{GPR} or
 \code{GPRsurvey}}
 
-\item{d}{[\code{numeric(1)}] buffer distance}
+\item{d}{(\code{numeric[1]}) buffer distance}
 
-\item{combine}{[\code{logical(1)}] If \code{TRUE}, returns the buffer for
+\item{combine}{(\code{logical[1]}) If \code{TRUE}, returns the buffer for
 all the GPR lines together. Otherwise it returns the buffer
 for each line.}
 }
 \value{
-[\code{sfc}] Polygon as a simple feature geometry list-column.
+(\code{sfc}) Polygon as a simple feature geometry list-column.
 }
 \description{
 Returns the buffered lines as polygon(s)
 }
+\concept{spatial computation}

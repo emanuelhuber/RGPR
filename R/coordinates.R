@@ -3,22 +3,22 @@
 #' Trace coordinates
 #' 
 #' Return or update the trace coordinates (x, y, z). Not that you cannot 
-#' change the number of coordinates with \code{coord}.
+#' change the number of coordinates with `coord`.
 #' 
 #' Modified slots class GPR
 #' \itemize{
-#'   \item \code{coord} the trace coordinates
-#'   \item \code{x} the local trace position (along profile)
+#'   \item `coord` the trace coordinates
+#'   \item `x` the local trace position (along profile)
 #' }
 #' Modified slots class GPRsurvey
 #' \itemize{
-#'   \item \code{coords} the trace coordinates
-#'   \item \code{xlengths} the local trace position (along profile)
-#'   \item \code{intersections} the local trace position (along profile)
+#'   \item `coords` the trace coordinates
+#'   \item `xlengths` the local trace position (along profile)
+#'   \item `intersections` the local trace position (along profile)
 #' }
-#' @param x      [\code{GPR class}] An object of the class \code{GPR}
-#' @param value  [\code{matrix(n,3)|list}] coordinates (x, y, z)
-#' @return [\code{GPR class}] An object of the class \code{GPR}
+#' @param x      (`GPR class`) An object of the class `GPR`
+#' @param value  (`matrix[n,3]|list`) coordinates (x, y, z)
+#' @return (`GPR class`) An object of the class `GPR`
 #' @name coordinates
 #' @concept getters/setters
 setGeneric("coordinates", function(x) 
@@ -54,6 +54,7 @@ setReplaceMethod("coordinates", signature="GPR", function(x, value){
     } 
     #------------------------ -
     
+    if(length(value) > 0 && (length(value) %% 3) == 0)   colnames(value) <- c("x", "y", "z")
     x@coord  <- value
     
     x <- dropDuplicatedCoords(x, verbose = FALSE)
@@ -97,6 +98,7 @@ setReplaceMethod("coordinates", signature="GPRsurvey", function(x, value){
          paste("elt.", paste(which(tst2), x@nx[tst2], sep = "->"),
                collapse = ",  "))
   }
+  if(length(value) > 0 && (length(value) %% 3) == 0)   colnames(value) <- c("x", "y", "z")
   x@coords  <- value
   
   x_lengths <- sapply(x@coords[test_value_len], pathLength, USE.NAMES = FALSE)

@@ -7,20 +7,20 @@
 depthToTime(x, t0, v = 0.1, antsep = 1)
 }
 \arguments{
-\item{x}{[\code{numeric(n)}] Depth vector.}
+\item{x}{[\code{numeric[n]}] Depth vector.}
 
-\item{t0}{[\code{numeric(1)}] Time-zero.}
+\item{t0}{[\code{numeric[1]}] Time-zero.}
 
-\item{v}{[\code{numeric(1)}] Electromagnetic wave propagation in the 
+\item{v}{[\code{numeric[1]}] Electromagnetic wave propagation in the
 ground (or in the considered media).}
 
-\item{antsep}{[\code{numeric(1)}] Antenna separation (distance between the
+\item{antsep}{(\code{numeric[1]}) Antenna separation (distance between the
 transmitter and the receiver).}
 }
 \value{
-[\code{numeric}] Corresponding two-way travel time
+(\code{numeric}) Corresponding two-way travel time
 }
 \description{
-Convert depth to the equivalent two-way travel time by accounting for the 
+Convert depth to the equivalent two-way travel time by accounting for the
 antenna separation between the transmitter and the receiver.
 }

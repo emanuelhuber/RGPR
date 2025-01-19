@@ -11,14 +11,14 @@
 
 \item{...}{further arguments}
 
-\item{na.rm}{[\code{logical(1)}] should missing values be removed?}
+\item{na.rm}{(\code{logical[1]}) should missing values be removed?}
 }
 \description{
-Methods for the base Summary methods \link[methods]{S4groupGeneric}
+Methods for the base Summary methods \link[methods:S4groupGeneric]{S4groupGeneric}
 }
 \details{
 Currently implemented methods include:
 \itemize{
- \item{all, any, sum, prod, min, max, range}
- }
+\item{all, any, sum, prod, min, max, range}
+}
 }

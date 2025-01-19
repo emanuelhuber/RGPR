@@ -10,10 +10,10 @@ intersect(x)
 \S4method{intersect}{GPRsurvey}(x)
 }
 \arguments{
-\item{x}{[\code{object class GPRsurvey}] An object of the class \code{GPRsurvey}}
+\item{x}{\code{\link{GPRsurvey}} An object of the class \code{GPRsurvey}}
 }
 \value{
-[\code{object GPRsurvey}] An object of the class GPRsurvey.
+(\verb{object GPRsurvey}) An object of the class GPRsurvey.
 }
 \description{
 Compute GPR profile intersections
@@ -21,7 +21,8 @@ Compute GPR profile intersections
 \details{
 Modified slots
 \itemize{
-  \item \code{intersects}: trace shifted. The number of rows of data may 
-        be smaller if \code{crop = TRUE}.
+\item \code{intersects}: trace shifted. The number of rows of data may
+be smaller if \code{crop = TRUE}.
 }
 }
+\concept{spatial computing}

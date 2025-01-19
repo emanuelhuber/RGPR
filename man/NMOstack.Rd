@@ -22,20 +22,20 @@ NMOstack(
 \arguments{
 \item{x}{An object of the class \code{GPR}}
 
-\item{thrs}{[\code{numeric(1)|NULL}] Definite the threshold for muting
+\item{thrs}{(\code{numeric[1]|NULL}) Definite the threshold for muting
 (i.e., suppressing) the values where the NMO-stretching is
 above the threshold. Setting \code{thrs = NULL}, the full data
 will be used.}
 
-\item{v}{A length-one numeric vector defining the radar wave velocity in 
+\item{v}{A length-one numeric vector defining the radar wave velocity in
 the ground}
 
-\item{method}{[\code{character(1)}] Interpolation method to be applied:
-one of \code{pchip}, \code{linear}, \code{nearest}, 
-\code{spline}, \code{cubic} 
-(see also \code{\link[signal]{interp1}}).}
+\item{method}{(\code{character[1]}) Interpolation method to be applied:
+one of \code{pchip}, \code{linear}, \code{nearest},
+\code{spline}, \code{cubic}
+(see also \code{\link[signal:interp1]{signal::interp1()}}).}
 }
 \description{
-Removes the Normal Move-Out (NMO) from the trace given a velocity and 
+Removes the Normal Move-Out (NMO) from the trace given a velocity and
 stacks (sums) the traces.
 }

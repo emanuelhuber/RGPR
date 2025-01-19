@@ -13,10 +13,10 @@ as.spatialLines(x)
 \S4method{as.spatialLines}{GPR}(x)
 }
 \arguments{
-\item{x}{[\code{class GPR|GPRsurvey}]}
+\item{x}{(\verb{class GPR|GPRsurvey})}
 }
 \value{
-[\code{SpatialLines object}]
+(\verb{SpatialLines object})
 }
 \description{
 Coerce object to an object of the class SpatialLines

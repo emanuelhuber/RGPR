@@ -1,8 +1,8 @@
 #' Return TRUE if survey mode is CMP
 #' 
 #' Return TRUE if survey mode is CMP/WARR
-#' @param x [\code{GPR}] An object of the class GPR.
-#' @return [\code{logical()}] \code{TRUE} if \code{x} is of type CMP/WARR
+#' @param x (`GPR`) An object of the class GPR.
+#' @return (`logical()`) `TRUE` if `x` is of type CMP/WARR
 #' @name isCMP
 #' @rdname isCMP
 #' @export

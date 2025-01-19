@@ -7,7 +7,7 @@
 \method{print}{GPRcube}(x, ...)
 }
 \arguments{
-\item{x}{[\code{GPRcube object}]}
+\item{x}{(\verb{GPRcube object})}
 
 \item{...}{Not used.}
 }

@@ -10,7 +10,7 @@
 #' Therefore, the NMO-correction \eqn{\Delta_{NMO}} is
 #' \deqn{\Delta_{NMO} = t_{TWT}(x) - t_0}  
 #' \deqn{\Delta_{NMO} = t_0 (\sqrt{1 + \frac{x^2}{v^2 t_0^2}} - 1)}
-#' @param x An object of the class \code{GPR}
+#' @param x An object of the class `GPR`
 #' @param v A length-one numeric vector defining the radar wave velocity in 
 #'          the ground
 #' @name NMO

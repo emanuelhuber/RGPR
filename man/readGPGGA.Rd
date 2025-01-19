@@ -7,19 +7,19 @@
 readGPGGA(dsn, sep = ",", returnSf = TRUE)
 }
 \arguments{
-\item{dsn}{[\code{character(1)|connection object}] Data source name: 
+\item{dsn}{(\verb{character(1)|connection object}) Data source name:
 either the filepath to the GPR data (character),
 or an open file connection.}
 
-\item{sep}{[\code{character(1)}] The field separator character
-(see\code{\link{read.table}}).}
+\item{sep}{(\code{character(1)}) The field separator character
+(see\code{\link[=read.table]{read.table()}}).}
 
-\item{returnSf}{[\code{logical(1)}] If \code{TRUE} returns an object of class
-\code{sf} (see \code{\link{sf}{sf}}). If \code{FALSE} returns
+\item{returnSf}{(\code{logical(1)}) If \code{TRUE} returns an object of class
+\code{sf}. If \code{FALSE} returns
 a \code{data.frame}.}
 }
 \value{
-[\code{SpatialPoints}]
+(\code{SpatialPoints})
 }
 \description{
 Read GPS file with GPGGA string

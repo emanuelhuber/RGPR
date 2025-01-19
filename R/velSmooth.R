@@ -3,15 +3,15 @@
 #' 
 #' Define the smoothing parameters that will be used when the velocities 
 #' will be plotted or used in other functions. 
-#' To undo smoothing, set \code{w = NULL}.
-#' @param x [\code{GPR class}] An object of the class \code{GPR}
-#' @param type [\code{character(1)}] Which type of velocity values has to be
-#'             updated? The root-mean-square velocity (\code{vrms}) or the
-#'             internal velocity (\code{vint})?
-#' @param w [\code{numeric(1)}|\code{NULL}] Standard deviation of the
-#'          standard deviation of the smoothing kernel. If \code{w = NULL},
+#' To undo smoothing, set `w = NULL`.
+#' @param x (`GPR class`) An object of the class `GPR`
+#' @param type (`character[1]`) Which type of velocity values has to be
+#'             updated? The root-mean-square velocity (`vrms`) or the
+#'             internal velocity (`vint`)?
+#' @param w (`numeric[1]|NULL`) Standard deviation of the
+#'          standard deviation of the smoothing kernel. If `w = NULL`,
 #'          no smoothing will be applied.
-#' @return [\code{GPR class}] An object of the class GPR.
+#' @return (`GPR class`) An object of the class GPR.
 #' @name velSmooth
 setGeneric("velSmooth",  function(x, type = c("vrms", "vint"), w)
   standardGeneric("velSmooth"))

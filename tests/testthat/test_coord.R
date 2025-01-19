@@ -46,9 +46,9 @@ test_that("'coord' for GPRsurvey",{
   expect_identical(x_coords, coordinates(x))
   
   # i.O.
-  expect_silent(coordinates(x)[2] <- list(matrix(nrow = 0, ncol =0) )  )
+  expect_silent(coordinates(x)[2] <- list(matrix(nrow = 0, ncol =3, dimnames = list(NULL, c("x", "y", "z"))) )  )
   # i.O.
-  expect_silent(coordinates(x)[[3]] <- matrix(nrow = 0, ncol =0) )
+  expect_silent(coordinates(x)[[3]] <- matrix(nrow = 0, ncol =3, dimnames = list(NULL, c("x", "y", "z")))  )
   # Error
   expect_error(coordinates(x)[[4]] <- matrix(10, nrow = 10, ncol = 3) )
   # i.O

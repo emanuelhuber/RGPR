@@ -5,15 +5,16 @@
 #' and remove them from 'x' (object of the class GPR or GPRsurvey). 
 #' @param x   An object of the class GPR
 #' @param tol Length-one numeric vector: if the horizontal distance between two 
-#'            consecutive traces is smaller than \code{tol}, then
+#'            consecutive traces is smaller than `tol`, then
 #'            the second trace is removed.
-#'            If \code{tol = NULL}, \code{tol} is set equal to
-#'            \code{sqrt(.Machine$double.eps)}.
-#' @param z [\code{logical(1)}] If \code{TRUE}, the third dimension 
+#'            If `tol = NULL`, `tol` is set equal to
+#'            `sqrt(.Machine$double.eps)`.
+#' @param z (`logical[1]`) If `TRUE`, the third dimension 
 #'          (z-dimension) will also be accounted for.
-#' @param verbose Logical. \code{TRUE}: a message will be thrown, 
-#'                \code{FALSE}: no message will be thrown.
+#' @param verbose Logical. `TRUE`: a message will be thrown, 
+#'                `FALSE`: no message will be thrown.
 #' @name dropDuplicatedCoords
+#' @concept spatial computing
 setGeneric("dropDuplicatedCoords", function(x, tol = NULL, z = FALSE, verbose = TRUE)
   standardGeneric("dropDuplicatedCoords"))
  

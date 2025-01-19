@@ -12,8 +12,8 @@ checkArgStop <- function(x){
 #' 
 #' To be used inside a function.
 #' @param x Object to test.
-#' @param u [\code{character}] Message.
-#' @param type [\code{character}] Code for what to check.
+#' @param u (`character`) Message.
+#' @param type (`character`) Code for what to check.
 #' @param y Additional argument for checking (e.g., length).
 #' @param ... Additional argument for checking.
 #' @export

@@ -10,9 +10,9 @@ plotVel(x)
 \S4method{plotVel}{GPR}(x)
 }
 \arguments{
-\item{x}{[\code{GPR class}] An object of the class \code{GPR}}
+\item{x}{(\verb{GPR class}) An object of the class \code{GPR}}
 }
 \description{
 Plot Velocities (only 1D for now)
 }
-\concept{velocity model}
+\concept{plot}

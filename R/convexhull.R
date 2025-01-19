@@ -1,11 +1,12 @@
 #' Convex hull of GPR data
 #' 
 #' Return the convex hull.
-#' @param x [\code{GPR|GPRsurvey}] 
-#' @param verbose [\code{logical(1)}] If \code{FALSE}, all messages and warnings 
+#' @param x (`GPR|GPRsurvey`) 
+#' @param verbose (`logical[1]`) If `FALSE`, all messages and warnings 
 #'        are suppressed (use with care).
 
 #' @name convexhull
+#' @concept spatial computation
 setGeneric("convexhull", function(x, verbose = FALSE) 
   standardGeneric("convexhull"))
 

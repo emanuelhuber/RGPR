@@ -7,7 +7,7 @@
 \method{print}{GPRsurvey}(x, ...)
 }
 \arguments{
-\item{x}{[\code{GPRsurvey object}]}
+\item{x}{(\verb{GPRsurvey object})}
 
 \item{...}{Not used.}
 }

@@ -33,14 +33,14 @@
 #' Extract and replace parts of a GPR object
 #' 
 #' Extract parts of a GPR object
-#' @param x [\code{GPR}]
-#' @param i [\code{integer}] Indices specifying elements to extract or replace.
-#' @param j [\code{integer}] Indices specifying elements to extract or replace.
+#' @param x (`GPR`)
+#' @param i (`integer`) Indices specifying elements to extract or replace.
+#' @param j (`integer`) Indices specifying elements to extract or replace.
 #' @param ... Not used.
 #' @param drop Not used.
-#' @param value [\code{numeric}] Value to set.
-#' @return [\code{GPR}|\code{numeric}] Returns a numeric vector
-#'        only if \code{x[]}.
+#' @param value (`numeric`) Value to set.
+#' @return (`GPR|`)numeric`] Returns a numeric vector
+#'        only if `x[]`.
 #' @aliases [,GPR-method
 #' @rdname subset-GPR
 #' @export

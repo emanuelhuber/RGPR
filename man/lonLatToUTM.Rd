@@ -7,27 +7,26 @@
 lonLatToUTM(lon, lat, zone = NULL, south = NULL, west = FALSE)
 }
 \arguments{
-\item{lon}{[\code{numeric}] Longitude.}
+\item{lon}{(\code{numeric}) Longitude.}
 
-\item{lat}{[\code{numeric}] Latitude}
+\item{lat}{(\code{numeric}) Latitude}
 
-\item{zone}{[\code{integer(1)}] UMT zone (optional).}
+\item{zone}{(\code{integer[1]}) UMT zone (optional).}
 
-\item{south}{[\code{logical(1)}] \code{TRUE} if the coordinates are in the
+\item{south}{(\code{logical[1]}) \code{TRUE} if the coordinates are in the
 southern hemisphere, else \code{FALSE}.}
 
-\item{west}{[\code{logical(1)}] \code{TRUE} if the longitude measures the 
-angle west of the Prime Meridian; \code{FALSE} if the longitude measures the 
+\item{west}{(\code{logical[1]}) \code{TRUE} if the longitude measures the
+angle west of the Prime Meridian; \code{FALSE} if the longitude measures the
 angle east of the Prime Meridian.}
 }
 \value{
-[\code{list(2)}] \code{xy} the coordinates in UTM, 
-        \code{crs} the UTM coordinate reference system (proj4string).
+(\code{list[2]}) \code{xy} the coordinates in UTM,
+\code{crs} the UTM coordinate reference system (proj4string).
 }
 \description{
 see https://stackoverflow.com/a/30225804
 https://stackoverflow.com/questions/18639967/converting-latitude-and-longitude-points-to-utm
 check also https://stackoverflow.com/questions/176137/java-convert-lat-lon-to-utm
 }
-\concept{GPS}
-\concept{UTM}
+\concept{CRS}

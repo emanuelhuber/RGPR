@@ -5,19 +5,19 @@
 #' 
 #' Convert the two-way travel time of the recorded waves into depth. It does
 #' not account for the topography. To add the topography, 
-#' use \code{\link{migrate}} instead. This is a non-linear operation
-#' @param x      [\code{GPR* object}] An object of the class \code{GPR}
-#' @param dz     [\code{numeric(1)}] Desired depth resolution. 
-#'               If \code{dz = NULL}, then \code{dz} is set equal 
+#' use [migrate()] instead. This is a non-linear operation
+#' @param x      (`GPR* object`) An object of the class `GPR`
+#' @param dz     (`numeric[1]`) Desired depth resolution. 
+#'               If `dz = NULL`, then `dz` is set equal 
 #'               to the smallest depth resolution inferred from the data.
-#' @param zmax   [\code{numeric(1)}] Maximum Desired depth.
-#'               If \code{zmax = NULL}, then \code{zmax} is set 
+#' @param zmax   (`numeric[1]`) Maximum Desired depth.
+#'               If `zmax = NULL`, then `zmax` is set 
 #'               equal to the largest depth inferred from the data.
-#' @param method [\code{character(1)}] Interpolation method to be applied:
-#'               one of \code{pchip}, \code{linear}, \code{nearest}, 
-#'               \code{spline}, or \code{cubic}
-#'               (see also \code{\link[signal]{interp1}}). 
-#' @return [\code{GPR* object}] with signal as a function of depth.
+#' @param method (`character[1]`) Interpolation method to be applied:
+#'               one of `pchip`, `linear`, `nearest`, 
+#'               `spline`, or `cubic`
+#'               (see also [signal::interp1()]). 
+#' @return (`GPR* object`) with signal as a function of depth.
 #' @name convertTimeToDepth
 #' @concept signal processing
 setGeneric("convertTimeToDepth", 

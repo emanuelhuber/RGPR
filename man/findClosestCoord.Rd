@@ -17,3 +17,4 @@ Indice (integer) of the closest trace.
 \description{
 Return the indice of the closest trace to the point \code{y}
 }
+\concept{spatial computing}

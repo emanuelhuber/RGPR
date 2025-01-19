@@ -4,12 +4,12 @@
 #' Bits to volt conversion
 #'       
 #' Convert bits to volt values
-#' @param Vmax [\code{numeric(1)}] Maximal nominal analog input voltage. 
-#'             If \code{Vmax = NULL} or \code{Vmax = FALSE} 
-#'             it returns \code{1} (no bytes to volt transformation)
-#' @param Vmin [\code{numeric(1)}] Minimal nominal analog input voltage. 
-#'             If missing, then \code{Vmin = -Vmax}.
-#' @param nbits [\code{integer(1)} Number of bits.
+#' @param Vmax (`numeric[1]`) Maximal nominal analog input voltage. 
+#'             If `Vmax = NULL` or `Vmax = FALSE` 
+#'             it returns `1` (no bytes to volt transformation)
+#' @param Vmin (`numeric[1]`) Minimal nominal analog input voltage. 
+#'             If missing, then `Vmin = -Vmax`.
+#' @param nbits (`integer[1]`) Number of bits.
 #' @export
 bits2volt <- function( Vmax = 50, Vmin = 50, nbits = 16) {
   if(is.null(Vmax) || isFALSE(Vmax)){
@@ -24,9 +24,9 @@ bits2volt <- function( Vmax = 50, Vmin = 50, nbits = 16) {
 
 #' Suppressing output from cat(), warnings & messages in functions
 #' 
-#' @param g       [\code{function}] A function.
-#' @param verbose [\code{logical(1)}] If \code{FALSE}, suppress any warnings
-#'                and messages in function \code{g}, else do nothing.
+#' @param g       [`function`] A function.
+#' @param verbose (`logical[1]`) If `FALSE`, suppress any warnings
+#'                and messages in function `g`, else do nothing.
 #' @export
 verboseF <- function(g, verbose = TRUE){
   if(verbose){
@@ -60,14 +60,14 @@ quiet <- function(x) {
 #'
 #' Convert two-way travel time into depth by accounting for the antenna 
 #' separation between the transmitter and the receiver.
-#' @param twt    [\code{numeric}] Two-way travel time vector.
-#' @param t0     [\code{numeric(1)}] Time-zero: only \code{x >= x0} will be
+#' @param twt    [`numeric`] Two-way travel time vector.
+#' @param t0     [`numeric[1]`] Time-zero: only `x >= x0` will be
 #'               considered.
-#' @param v      [\code{numeric(1)}] Electromagnetic wave propagation in the 
+#' @param v      [`numeric[1]`] Electromagnetic wave propagation in the 
 #'               ground (or in the considered media).
-#' @param antsep [\code{numeric(1)}] Antenna separation (distance between the
+#' @param antsep (`numeric[1]`) Antenna separation (distance between the
 #'                transmitter and the receiver).
-#' @return [\code{numeric}] Corresponding depth.
+#' @return (`numeric`) Corresponding depth.
 #' @export                  
 timeToDepth <- function(twt, t0, v = 0.1, antsep = 1){
   # t0 <- t0 - antsep/c0
@@ -93,20 +93,20 @@ timeToDepth <- function(twt, t0, v = 0.1, antsep = 1){
 #   # sqrt(v^2*(x - t0)- antsep^2)/2
 # }
 
-# #' @param c0     [\code{numeric(1)}] Electromagnetic wave propagation in 
+# #' @param c0     [\code{numeric[1]}] Electromagnetic wave propagation in 
 # #'               the air.
 
 #' Depth to time conversion
 #' 
 #' Convert depth to the equivalent two-way travel time by accounting for the 
 #' antenna separation between the transmitter and the receiver.
-#' @param x      [\code{numeric(n)}] Depth vector.
-#' @param t0     [\code{numeric(1)}] Time-zero.
-#' @param v      [\code{numeric(1)}] Electromagnetic wave propagation in the 
+#' @param x      [`numeric[n]`] Depth vector.
+#' @param t0     [`numeric[1]`] Time-zero.
+#' @param v      [`numeric[1]`] Electromagnetic wave propagation in the 
 #'               ground (or in the considered media).
-#' @param antsep [\code{numeric(1)}] Antenna separation (distance between the
+#' @param antsep (`numeric[1]`) Antenna separation (distance between the
 #'                transmitter and the receiver).
-#' @return [\code{numeric}] Corresponding two-way travel time
+#' @return (`numeric`) Corresponding two-way travel time
 #' @export
 depthToTime <- function(x, t0, v = 0.1, antsep = 1){
   #FIXME
@@ -114,18 +114,18 @@ depthToTime <- function(x, t0, v = 0.1, antsep = 1){
   sqrt((4*x^2 + antsep^2)/(v^2)) + t0
 }
 
-# #' @param c0     [\code{numeric(1)}] Electromagnetic wave propagation in 
+# #' @param c0     [\code{numeric[1]}] Electromagnetic wave propagation in 
 # #'               the air.
 
 #' Return the position of depth-zero on the two-way travel time axis
 #' 
 #' Useful if you want to plot a depth axis beside the two-way travel time axis.
-#' @param t0     [\code{numeric(1)}] Time-zero.
-#' @param v      [\code{numeric(1)}] Electromagnetic wave propagation in the 
+#' @param t0     [`numeric[1]`] Time-zero.
+#' @param v      [`numeric[1]`] Electromagnetic wave propagation in the 
 #'               ground (or in the considered media).
-#' @param antsep [\code{numeric(1)}] Antenna separation (distance between the
+#' @param antsep (`numeric[1]`) Antenna separation (distance between the
 #'                transmitter and the receiver).
-#' @return [\code{numeric}] Position of depth-zero on the two-way time axis
+#' @return (`numeric`) Position of depth-zero on the two-way time axis
 #' @export
 depth0 <- function(t0 = 0, v = 0.1, antsep = 1){#, c0 = 0.299){
   # t0 - antsep/c0 + antsep/v
@@ -179,8 +179,8 @@ depth0 <- function(t0 = 0, v = 0.1, antsep = 1){#, c0 = 0.299){
 #' Frequency of GSSI antenna
 #' 
 #' Given the antenna name, returns the frequency of GSSI antenna
-#' @param x [\code{character}] Name(s) of the antenna(e)
-#' @return [\code{list}] List of numeric values corresponding to the 
+#' @param x (`character`) Name(s) of the antenna(e)
+#' @return (`list`) List of numeric values corresponding to the 
 #'                       frequency/frequencies
 #' @export
 getAntFreqGSSI <- function(x){
@@ -222,9 +222,9 @@ getAntFreqGSSI <- function(x){
 #' Extract frequency from string
 #' 
 #' Extract with regex the antenna frequency in a string
-#' @param s [\code{character}] Character string that may contain an 
+#' @param s (`character`) Character string that may contain an 
 #'                                indication of a frequency.
-#' @return [\code{numeric}] The frequency (\code{NA} if no frequency value
+#' @return (`numeric`) The frequency (`NA` if no frequency value
 #'                             is found)
 #' @examples 
 #' s <- "1230 fds 200-MHZ 12.3"
@@ -266,10 +266,10 @@ freqFromString <- function(s){
 
 
 #' Estimate antenna separation from antenna frequency
-#' @param antfreq [\code{numeric(1)}] Antenna frequency.
-#' @param verbose [\code{logical(1)}] If \code{TRUE} the function gives a
+#' @param antfreq (`numeric[1]`) Antenna frequency.
+#' @param verbose (`logical[1]`) If `TRUE` the function gives a
 #'                                    message.
-#' @return [\code{numeric(1)}] Antenna separation
+#' @return (`numeric[1]`) Antenna separation
 #' @name antSepFromAntFreq
 #' @rdname antSepFromAntFreq
 #' @export
@@ -311,8 +311,8 @@ inPoly <- function(x, y, vertx, verty){
 #' 
 #' Set default values to elements of a list.
 #' 
-#' @param x [\code{list}] A list.
-#' @param xdefault [\code{list}] The list with default values.
+#' @param x (`list`) A list.
+#' @param xdefault (`list`) The list with default values.
 #' @export
 setDefaultListValues <- function(x, xdefault){
   if(is.null(x) || isFALSE(x)){
@@ -328,8 +328,8 @@ setDefaultListValues <- function(x, xdefault){
 #' set default values
 #' 
 #' Set default values to missing elements of a list.
-#' @param dots [\code{list}] A list.
-#' @param defaults [\code{list}] The list with default values.
+#' @param dots (`list`) A list.
+#' @param defaults (`list`) The list with default values.
 #' @export
 setDots <- function(dots, defaults){
   sapply(names(defaults), .setDots, dots, defaults, simplify = FALSE)
@@ -337,4 +337,84 @@ setDots <- function(dots, defaults){
 .setDots <- function(n, dot, def){
   if(!is.null(dot[[n]])) def[[n]] <- dot[[n]]
   return(def[[n]])
+}
+
+
+.whichMin <- function(x,y){
+  which.min(abs(x-y))
+}
+
+.which <- function(x,y){
+  which(x==y)
+}
+
+.lengthList <- function(x){
+  if(typeof(x)=="list"){
+    return(length(x))
+    # print(typeof(x))
+  }else{
+    return(1)
+  }
+}
+
+
+# flatte a nested list
+#' @export
+flattenlist <- function(x){  
+  # morelists <- sapply(x, function(xprime) class(xprime)[1] == "list")
+  morelists <- sapply(x, function(xprime) inherits(xprime, "list"))
+  if(any(morelists)){ 
+    out <- lapply(seq_along(morelists), .unlist, x = x, z = morelists)
+    out <- unlist(out, recursive = FALSE)
+    Recall(out)
+  }else{
+    return(x)
+  }
+}
+
+
+.unlist <- function(i, x, z){
+  if(isTRUE(z[i])){
+    names(x[[i]]) <- rep(names(x[i]), length(x[[i]]))
+    x[[i]]
+  }else{
+    x[i]
+    # print(names(x[i]))
+  }
+}
+
+#  --> Use interp::bilinear() function <--- TOO SLOW
+interpRegRaster <- function(vx, vy, z, nx, ny, method = c("linear", "nearest", "pchip", "cubic", "spline"),
+                            xy = c(TRUE, TRUE)){
+  # print(vx)
+  # # Define irregularly spaced axes
+  # x <- c(1, 3, 7, 10)  # Irregular x-axis
+  # y <- c(2, 5, 8)      # Irregular y-axis
+  #
+  # # Define a matrix (z) corresponding to these axes
+  # z <- matrix(c(1, 4, 7, 10,
+  #               2, 5, 8, 11,
+  #               3, 6, 9, 12), nrow = 3, byrow = TRUE)
+
+  method <- match.arg(method,  c("linear", "nearest", "pchip", "cubic", "spline"))
+  # Define new regular axes
+
+  # Interpolate along the rows (x-direction)
+  if(isTRUE(xy[1])){
+    x_new <- seq(min(vx), max(vx), length.out = nx)  # Regular x-axis
+    z1 <- apply(z, 2, function(row, x, x_new, method = method) signal::interp1(x, row, x_new, method = method), vx, x_new, method = method)
+  }
+
+  # Transpose and interpolate along columns (y-direction)
+  if(isTRUE(xy[2])){
+    y_new <- seq(min(vy), max(vy), length.out = ny)  # Regular y-axis
+    z2 <- apply(z1, 1, function(col, y, y_new, method = method) signal::interp1(y, col, y_new, method = method), vy, y_new, method = method)
+  }
+  
+  return(t(z2))
+  # # Transpose back to get the final interpolated matrix
+  # z_interp <- t(z2)
+  # 
+  # # View result
+  # z_interp
 }

@@ -10,20 +10,20 @@ setVel(x, v, twt, type = c("vrms", "vint"))
 \S4method{setVel}{GPR}(x, v, twt, type = c("vrms", "vint"))
 }
 \arguments{
-\item{x}{[\code{GPR}] GPR object}
+\item{x}{(\code{GPR}) GPR object}
 
-\item{v}{[\code{numeric(n)}] \code{n} velocity values}
+\item{v}{(\code{numeric[n]}) \code{n} velocity values}
 
-\item{twt}{[\code{numeric(n)}] \code{n} two-way travel time values associated
+\item{twt}{(\code{numeric[n]}) \code{n} two-way travel time values associated
 with the velocities \code{v}. Optional.}
 
-\item{type}{[\code{"vrms"}|\code{vint}] Kind of velocities \code{v}: 
+\item{type}{(\code{vrms|vint}) Kind of velocities \code{v}:
 root-mean-square velocities \code{"vrms"} (genrally inferred
-from CMP data) or internal velocities \code{"vint"} (layer 
+from CMP data) or internal velocities \code{"vint"} (layer
 velocities).}
 }
 \value{
-[\code{GPR}]
+(\code{GPR})
 }
 \description{
 set velocities.

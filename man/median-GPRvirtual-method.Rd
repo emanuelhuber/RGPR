@@ -7,11 +7,12 @@
 \S4method{median}{GPRvirtual}(x, na.rm = FALSE)
 }
 \arguments{
-\item{x}{[\code{GPR}]}
+\item{x}{(\code{GPR})}
 
-\item{na.rm}{[\code{logical}]  If \code{TRUE} NA values are stripped before 
+\item{na.rm}{\code{\link{logical}}  If \code{TRUE} NA values are stripped before
 the computation proceeds.}
 }
 \description{
 Median of all the values contained in \code{x}.
 }
+\concept{statistics}

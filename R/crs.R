@@ -6,19 +6,19 @@
 #' 
 #' Modified slots
 #' \itemize{
-#'   \item \code{crs} the coordinate reference system.
-#'   \item \code{spunit} the spatial units are updated accroding to the new
+#'   \item `crs` the coordinate reference system.
+#'   \item `spunit` the spatial units are updated accroding to the new
 #'                       coordinate reference system.
 #' }
-#' @param x      [\code{GPR class}] An object of the class \code{GPR}
-#' @param value  [\code{character(1)}] A string accepted by GDAL 
-#'               (e.g., \code{"EPSG:2056"}, WKT-string).
+#' @param x      (`GPR class`) An object of the class `GPR`
+#' @param value  (`character[1]`) A string accepted by GDAL 
+#'               (e.g., `"EPSG:2056"`, WKT-string).
 #' @examples 
 #' \dontrun{
 #' x <- readGPR("LINE.DT1")
 #' crs(x) <- "EPSG:3857"
 #' }
-#' @return [\code{GPR class}] An object of the class \code{GPR}
+#' @return (`GPR class`) An object of the class `GPR`
 #' @name crs
 #' @concept getters/setters
 setGeneric("crs", function(x) 
@@ -123,7 +123,7 @@ setReplaceMethod("crs", signature="GPRsurvey", function(x, value){
 
 #' Check if the CRS is valid
 #' @param x wkt code, crs class of sf package, integer or EPSG:#### (length 1)
-#' @return [\code{character}] WKT code.
+#' @return (`character`) WKT code.
 #' @noRd
 .checkCRS <- function(x){
   tryCatch(sf::st_crs(x)$wkt,

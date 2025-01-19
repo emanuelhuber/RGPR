@@ -7,17 +7,17 @@
 readDZG(dsn)
 }
 \arguments{
-\item{dsn}{[\code{character(1)|connection object}] data source name: 
+\item{dsn}{(\verb{character(1)|connection object}) data source name:
 either the filepath to the GPR data (character),
 or an open file connection.}
 }
 \value{
-[\code{data.frame(,5)}] position (\code{x}, \code{y}, \code{z}),
-        trace id (\code{id}), and time (\code{time}).
+(\code{data.frame(,5)}) position (\code{x}, \code{y}, \code{z}),
+trace id (\code{id}), and time (\code{time}).
 }
 \description{
 Read GSSI GPS data
 }
 \seealso{
-\code{\link{readDZT}}, \code{\link{readDZX}}
+\code{\link[=readDZT]{readDZT()}}, \code{\link[=readDZX]{readDZX()}}
 }

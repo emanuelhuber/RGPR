@@ -7,22 +7,23 @@
 getFName(fPath, ext = c(".hd", ".dt1"), throwError = TRUE)
 }
 \arguments{
-\item{fPath}{[\code{character(1)}] Filepath.}
+\item{fPath}{[\code{character[1]}] Filepath.}
 
-\item{ext}{[\code{character}] Extensions to check 
+\item{ext}{\code{\link{character}} Extensions to check
 (e.g., \code{".hd"}).}
 
-\item{throwError}{[\code{logical(1)}] If TRUE, an error is thrown if the 
-filepath with one of the extension does not exist. 
+\item{throwError}{(\code{logical[1]}) If TRUE, an error is thrown if the
+filepath with one of the extension does not exist.
 If FALSE, it returns NULL for the missing extension}
 }
 \value{
-[\code{list}] The list keys correspond to \code{ext} and 
-                  the values to the filepaths 
-                  (e.g., \code{$hd  -> xline01.hd}).
+\if{html}{\out{<div class="sourceCode">}}\preformatted{      [`list`] The list keys correspond to `ext` and 
+              the values to the filepaths 
+              (e.g., `$hd  -> xline01.hd`).
+}\if{html}{\out{</div>}}
 }
 \description{
-Returns the filepaths with the correct extension and check for 
+Returns the filepaths with the correct extension and check for
 upper and lower case extension (e.g., ".txt" or ".TXT")
 }
-\concept{files}
+\concept{I/O}

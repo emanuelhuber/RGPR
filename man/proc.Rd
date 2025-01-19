@@ -16,12 +16,12 @@ proc(x) <- value
 \S4method{proc}{GPR}(x) <- value
 }
 \arguments{
-\item{x}{[\code{GPR}] An object of the class GPR.}
+\item{x}{(\code{GPR}) An object of the class GPR.}
 
-\item{value}{[\code{character}]}
+\item{value}{(\code{character})}
 }
 \value{
-A character vector whose elements contain the name of the 
+A character vector whose elements contain the name of the
 processing functions with their arguments applied previously on the
 GPR data.
 }

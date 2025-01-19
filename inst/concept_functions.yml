@@ -1,0 +1,64 @@
+spatial computation:
+- angle
+- buffer
+- project
+- xpos
+getters/setters:
+- ann
+- antsep
+- coordinates
+- crs
+arithmetic:
+- atan2
+- colSums
+- rowSums
+- colMeans
+- rowMeans
+array:
+- length
+- length
+- apply
+- nrow
+- ncol
+- dim
+statistics:
+- summary
+- mean
+- median
+signal processing:
+- clipData
+- clippedData
+- convertTimeToDepth
+velocity model:
+- CMPhyperbolas
+- getVel
+coercion:
+- as.matrix
+- as.array
+- as.vector
+- as.numeric
+- as.integer
+- as.GPR.data.frame
+- as.GPR.matrix
+- as.GPR.list
+- as.sf
+- as.spatialLines
+- as.spatialPoints
+plot:
+- palGPR
+- palPlot
+- palDisplay
+- palCol
+- plotVel
+units: crsUnit
+CRS:
+- getLonLatFromGPGGA
+- lonLatToUTM
+- getUTMzone
+- UTMTolonlat
+- UTMToEPSG
+- UMTStringToEPSG
+I/O:
+- readDT1
+- getFName
+- detectASCIIProp

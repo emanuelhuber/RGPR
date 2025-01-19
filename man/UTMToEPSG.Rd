@@ -7,17 +7,16 @@
 UTMToEPSG(zone, south = FALSE)
 }
 \arguments{
-\item{zone}{[\code{integer(1)}] the UTM zone.}
+\item{zone}{(\code{integer[1]}) the UTM zone.}
 
-\item{south}{[\code{integer(1)}] \code{TRUE} if the UTM is located in 
+\item{south}{(\code{integer[1]}) \code{TRUE} if the UTM is located in
 southern hemisphere.}
 }
 \value{
-[\code{integer(1)}] The EPSG code.
+(\code{integer[1]}) The EPSG code.
 }
 \description{
 Returns the EPSG code from UTM zone. EPSG code is:
-  32600+zone for positive latitudes and  32700+zone for negatives latitudes.
+32600+zone for positive latitudes and  32700+zone for negatives latitudes.
 }
-\concept{GPS}
-\concept{UTM}
+\concept{CRS}

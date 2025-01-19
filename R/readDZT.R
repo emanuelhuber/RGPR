@@ -196,13 +196,13 @@
 
 #' Read GSSI GPR data
 #' 
-#' @param dsn [\code{character(1)|connection object}] data source name: 
+#' @param dsn (`character(1)|connection object`) data source name: 
 #'            either the filepath to the GPR data (character),
 #'            or an open file connection.
-#' @return [\code{list(4)}] \code{hd} header data,
-#'         \code{data} GPR data, \code{depth} time or depth, and \code{pos}
+#' @return (`list(4)`) `hd` header data,
+#'         `data` GPR data, `depth` time or depth, and `pos`
 #'         position of the traces.
-#' @seealso \code{\link{readDZG}}, \code{\link{readDZX}}
+#' @seealso [readDZG()], [readDZX()]
 #' @name readDZT
 #' @rdname readDZT
 #' @export
@@ -351,12 +351,12 @@ readDZT <- function(dsn){
 
 #' Read GSSI GPS data
 #' 
-#' @param dsn [\code{character(1)|connection object}] data source name: 
+#' @param dsn (`character(1)|connection object`) data source name: 
 #'            either the filepath to the GPR data (character),
 #'            or an open file connection.
-#' @return [\code{data.frame(,5)}] position (\code{x}, \code{y}, \code{z}),
-#'         trace id (\code{id}), and time (\code{time}).
-#' @seealso \code{\link{readDZT}}, \code{\link{readDZX}}
+#' @return (`data.frame(,5)`) position (`x`, `y`, `z`),
+#'         trace id (`id`), and time (`time`).
+#' @seealso [readDZT()], [readDZX()]
 #' @name readDZG
 #' @rdname readDZG
 #' @export
@@ -410,12 +410,12 @@ readDZG <- function(dsn){
 #' Read GSSI's .dzx file
 #' 
 #' .dzx files are xml files
-#' @param dsn [\code{character(1)|connection object}] data source name: 
+#' @param dsn (`character(1)|connection object`) data source name: 
 #'            either the filepath to the GPR data (character),
 #'            or an open file connection.
-#' @return [\code{list}] contains the markers, the trace position and 
+#' @return (`list`) contains the markers, the trace position and 
 #'         the spatial sampling.
-#' @seealso \code{\link{readDZT}}, \code{\link{readDZG}}
+#' @seealso [readDZT()], [readDZG()]
 #' @name readDZX
 #' @rdname readDZX
 #' @export

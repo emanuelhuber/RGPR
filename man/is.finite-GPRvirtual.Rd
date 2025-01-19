@@ -16,14 +16,14 @@
 \S4method{is.nan}{GPRvirtual}(x)
 }
 \arguments{
-\item{x}{[\code{GPR*}]}
+\item{x}{(\verb{GPR*})}
 }
 \value{
-[\code{GPR*}] With logical values (\code{TRUE} is the value is 
-         finite, \code{FALSE} if not.)
+(\verb{GPR*}) With logical values (\code{TRUE} is the value is
+finite, \code{FALSE} if not.)
 }
 \description{
-is.finite and is.infinite return an object of the same dimension as x, 
-indicating which elements are finite (not infinite and not missing) or 
+is.finite and is.infinite return an object of the same dimension as x,
+indicating which elements are finite (not infinite and not missing) or
 infinite.
 }

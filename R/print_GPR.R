@@ -59,7 +59,7 @@
 
 
 #' Print GPR
-#' @param x [\code{GPR}] 
+#' @param x (`GPR`) 
 #' @param ... Not used. 
 #' @export
 print.GPR <- function(x, ...){
@@ -72,7 +72,7 @@ print.GPR <- function(x, ...){
 #' Show some information on the GPR object
 #'
 #' Identical to print().
-#' @param object [\code{GPR}] 
+#' @param object (`GPR`) 
 #' @export
 setMethod("show", "GPR", function(object){
   print.GPR(object)

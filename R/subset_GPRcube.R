@@ -2,15 +2,15 @@
 #' Extract and replace parts of a GPRcube object
 #' 
 #' Extract parts of a GPR object
-#' @param x [class \code{GPRcube}]
-#' @param i [\code{integer}] Indices specifying elements to extract or replace.
-#' @param j [\code{integer}] Indices specifying elements to extract or replace.
-#' @param k [\code{integer}] Indices specifying elements to extract or replace.
+#' @param x (`GPRcube`)
+#' @param i (`integer`) Indices specifying elements to extract or replace.
+#' @param j (`integer`) Indices specifying elements to extract or replace.
+#' @param k (`integer`) Indices specifying elements to extract or replace.
 # @param ... Not used.
 #' @param drop Not used.
 # #' @param value [\code{numeric}] Value to set.
-#' @return [\code{GPR}|\code{numeric}] Returns a numeric vector
-#'        only if \code{x[]}.
+#' @return (`GPR|numeric`) Returns a numeric vector
+#'        only if `x[]`.
 #' @aliases [,GPRcube-method
 #' @rdname subset-GPRcube
 #' @export
@@ -39,18 +39,6 @@ setMethod(
     if(length(k) == 1){
       new_center <- sapply(list(vx[i], vy[j], vz[k]), min)
       y <- new("GPRslice",
-               # version      = "0.1",
-               # date         = x@date,  
-               # freq         = x@freq,
-               # x            = x@x[i],
-               # y            = x@y[j],
-               # data         = x@data[i, j, k, drop = TRUE],
-               # coord        = x@coord,
-               # posunit      = x@posunit,
-               # crs          = x@crs,
-               # depth        = x@depth[k],
-               # depthunit    = x@depthunit,
-               
                #---------- GPRvirtual ------------------#
                version      = "0.3",  # class version
                name         = x@name,
@@ -81,9 +69,6 @@ setMethod(
                md           =  x@md,
                
                #---------- GPRcube ------------------#
-               # x     = x@x[i],
-               # y     = x@y[j],
-               # z     = x@z[k],
                dx     = x@dx,
                dy     = x@dy,
                dz     = x@dz,
@@ -94,6 +79,7 @@ setMethod(
                #---------- GPRslice ------------------#
                z = vz[k]
       )
+      return(y)
       # extract GPR alons x or y axis
     }else if(length(i) == 1 || length(j) == 1){
       u <- which(c(length(i), length(j)) == 1)[1]
@@ -158,7 +144,7 @@ setMethod(
               x            = xpos,    
               z            = vz[k]  #x@z[k]
       )
-     
+     return(y)
     }else{
       y <- new("GPRcube",
            #----------------- GPRvirtual --------------------------------------#
@@ -192,13 +178,7 @@ setMethod(
                 center = c(vx[i][1], vy[j][1], vz[k][1]),
                 rot    = x@rot
       )
-
-      
-      
-     
-     
+      return(y)
     }
-    
-    return(y)
   }
 )

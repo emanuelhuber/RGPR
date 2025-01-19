@@ -7,16 +7,16 @@
 depth0(t0 = 0, v = 0.1, antsep = 1)
 }
 \arguments{
-\item{t0}{[\code{numeric(1)}] Time-zero.}
+\item{t0}{[\code{numeric[1]}] Time-zero.}
 
-\item{v}{[\code{numeric(1)}] Electromagnetic wave propagation in the 
+\item{v}{[\code{numeric[1]}] Electromagnetic wave propagation in the
 ground (or in the considered media).}
 
-\item{antsep}{[\code{numeric(1)}] Antenna separation (distance between the
+\item{antsep}{(\code{numeric[1]}) Antenna separation (distance between the
 transmitter and the receiver).}
 }
 \value{
-[\code{numeric}] Position of depth-zero on the two-way time axis
+(\code{numeric}) Position of depth-zero on the two-way time axis
 }
 \description{
 Useful if you want to plot a depth axis beside the two-way travel time axis.

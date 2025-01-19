@@ -22,11 +22,11 @@ isZDepth(x)
 \S4method{isZDepth}{GPRvirtual}(x)
 }
 \arguments{
-\item{x}{[\code{GPR class}] An object of the class \code{GPR}}
+\item{x}{(\code{GPR}) An object of the class \code{GPR}}
 }
 \value{
-[\code{logical(1)}] \code{TRUE} if the z-dimension is in unit of
-          time, \code{FALSE} if the z-dimension is in unit of length (depth)
+(\code{logical[1]}) \code{TRUE} if the z-dimension is in unit of
+time, \code{FALSE} if the z-dimension is in unit of length (depth)
 }
 \description{
 Is the z-dimension time?

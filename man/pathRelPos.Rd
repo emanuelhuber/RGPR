@@ -7,9 +7,9 @@
 pathRelPos(xy, lonlat = FALSE)
 }
 \arguments{
-\item{xy}{[\code{matrix}] Each column corresponding to a coordinate}
+\item{xy}{(\code{matrix}) Each column corresponding to a coordinate}
 
-\item{lonlat}{[\code{logical(1)}] If \code{TRUE} computes geodistance. 
+\item{lonlat}{(\code{logical[1]}) If \code{TRUE} computes geodistance.
 Otherwise Euclidean distance.}
 }
 \value{

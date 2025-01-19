@@ -16,12 +16,12 @@ ann(x) <- value
 \S4method{ann}{GPR}(x) <- value
 }
 \arguments{
-\item{x}{[\code{GPR}] An object of the class GPR.}
+\item{x}{(\code{GPR}) An object of the class GPR.}
 
-\item{value}{[\code{character}]}
+\item{value}{(\code{character[n]})}
 }
 \value{
-[\code{GPR}]
+(\code{GPR})
 }
 \description{
 Annotations are currently used to store the intersections of GPR lines.

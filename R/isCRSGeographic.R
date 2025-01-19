@@ -1,9 +1,9 @@
 
 #' Check wether the Coordinate Reference Systems is lon/lat
 #' 
-#' Returns \code{TRUE} or \code{FALSE}.
-#' @param x [\code{character}] CRS (one or more)
-#' @return [\code{logical}] \code{TRUE} if lon/lat else \code{FALSE}
+#' Returns `TRUE` or `FALSE`.
+#' @param x (`character`) CRS (one or more)
+#' @return (`logical`) `TRUE` if lon/lat else `FALSE`
 #' @name isCRSGeographic
 setGeneric("isCRSGeographic", function(x) 
   standardGeneric("isCRSGeographic"))

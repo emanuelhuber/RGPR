@@ -8,19 +8,19 @@
 \S4method{[}{GPRcube,ANY,ANY}(x, i, j, k, drop = TRUE)
 }
 \arguments{
-\item{x}{[class \code{GPRcube}]}
+\item{x}{(\code{GPRcube})}
 
-\item{i}{[\code{integer}] Indices specifying elements to extract or replace.}
+\item{i}{(\code{integer}) Indices specifying elements to extract or replace.}
 
-\item{j}{[\code{integer}] Indices specifying elements to extract or replace.}
+\item{j}{(\code{integer}) Indices specifying elements to extract or replace.}
 
-\item{k}{[\code{integer}] Indices specifying elements to extract or replace.}
+\item{k}{(\code{integer}) Indices specifying elements to extract or replace.}
 
 \item{drop}{Not used.}
 }
 \value{
-[\code{GPR}|\code{numeric}] Returns a numeric vector
-       only if \code{x[]}.
+(\code{GPR|numeric}) Returns a numeric vector
+only if \code{x[]}.
 }
 \description{
 Extract parts of a GPR object

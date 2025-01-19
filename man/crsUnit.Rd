@@ -7,11 +7,11 @@
 crsUnit(crs)
 }
 \arguments{
-\item{crs}{[\code{character(1)}] A string accepted by GDAL 
+\item{crs}{(\code{character[1]}) A string accepted by GDAL
 (e.g., \code{"EPSG:2056"}, WKT-string).}
 }
 \value{
-[\code{character}] The unit abbreviation (except for degree)
+(\code{character}) The unit abbreviation (except for degree)
 }
 \description{
 Returns the unit of the CRS

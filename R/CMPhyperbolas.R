@@ -4,9 +4,9 @@
 #' 
 #' Returns hyperbolas associated with root-mean-square velocities stored in
 #' the CMP data.
-#' @param x [\code{GPR class}] A CMP object of the class \code{GPR}
-#' @return [\code{list}] A list element key \code{antsep} containing a numeric 
-#'        vector of \eqn{n} antenna separation values, and element \code{twt} 
+#' @param x (`GPR class`) A CMP object of the class `GPR`
+#' @return (`list`) A list element key `antsep` containing a numeric 
+#'        vector of \eqn{n} antenna separation values, and element `twt` 
 #'        containing a \eqn{n \times m} matrix, where \eqn{m} is the
 #'        number of hyperbolas (i.e., the number of velocities).
 #' @examples 

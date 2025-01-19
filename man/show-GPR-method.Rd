@@ -7,7 +7,7 @@
 \S4method{show}{GPR}(object)
 }
 \arguments{
-\item{object}{[\code{GPR}]}
+\item{object}{(\code{GPR})}
 }
 \description{
 Identical to print().

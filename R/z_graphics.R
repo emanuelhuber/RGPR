@@ -11,11 +11,11 @@
 #' Get user coordinates from margin line location.
 #'
 #' Get user coordinates from margin line location.
-#' @param line [\code{numeric(1)}] margin line location.
-#' @param side [\code{integer(1)}] an integer specifying which side of the plot 
+#' @param line (`numeric[1]`) margin line location.
+#' @param side (`integer[1]`) an integer specifying which side of the plot 
 #' the axis is to be drawn on. The axis is placed as follows: 1=below, 2=left, 
 #' 3=above and 4=right.
-#' @return [\code{numeric(2)}] Coordinates in user coordinate system.
+#' @return (`numeric[2]`) Coordinates in user coordinate system.
 #' @export 
 line2user <- function(line, side) {
   lh <- par('cin')[2] * par('cex') * par('lheight')

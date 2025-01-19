@@ -13,21 +13,21 @@ palPlot(col, border = NA)
 palDisplay()
 }
 \arguments{
-\item{pal}{[\code{character(1)}] Name of the color palette.}
+\item{pal}{(\code{character[1]}) Name of the color palette.}
 
-\item{n}{[\code{integer(1)}] Number of colors to be in the palette.}
+\item{n}{(\code{integer[1]}) Number of colors to be in the palette.}
 
-\item{power}{[\code{integer(1)}] Control parameter determining how chroma 
+\item{power}{(\code{integer[1]}) Control parameter determining how chroma
 should be increased (1 = linear, 2 = quadratic, etc.).}
 
-\item{returnNames}{[\code{logical(1)}] If \code{TRUE}, returns only the
+\item{returnNames}{(\code{logical[1]}) If \code{TRUE}, returns only the
 color palette names.}
 
-\item{col}{[\code{character}] Colors to be plotted.}
+\item{col}{(\code{character}) Colors to be plotted.}
 
-\item{border}{[\code{character}] color for rectangle border(s). 
-The default means par("fg"). Use border = NA to omit borders. 
-If there are shading lines, border = TRUE means use the same colour 
+\item{border}{(\code{character}) color for rectangle border(s).
+The default means par("fg"). Use border = NA to omit borders.
+If there are shading lines, border = TRUE means use the same colour
 for the border as for the shading lines.}
 }
 \description{
@@ -37,4 +37,4 @@ source: vignette of the R-package "colorspace" (Color Space Manipulation)
 palPlot(palGPR("hcl_5"))
 palDisplay()
 }
-\concept{colors}
+\concept{plot}

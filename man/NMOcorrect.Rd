@@ -22,42 +22,42 @@ NMOcorrect(
 \arguments{
 \item{x}{An object of the class \code{GPR}}
 
-\item{thrs}{[\code{numeric(1)|NULL}] Definite the threshold for muting
+\item{thrs}{(\code{numeric[1]|NULL}) Definite the threshold for muting
 (i.e., suppressing) the values where the NMO-stretching is
 above the threshold. Setting \code{thrs = NULL}, the full data
 will be used. \code{thrs = NULL} ranges between 0 and 1.}
 
-\item{v}{A length-one numeric vector defining the radar wave velocity in 
+\item{v}{A length-one numeric vector defining the radar wave velocity in
 the ground}
 
-\item{method}{[\code{character(1)}] Interpolation method to be applied:
-one of \code{pchip}, \code{linear}, \code{nearest}, 
-\code{spline}, \code{cubic} 
-(see also \code{\link[signal]{interp1}}).}
+\item{method}{(\code{character[1]}) Interpolation method to be applied:
+one of \code{pchip}, \code{linear}, \code{nearest},
+\code{spline}, \code{cubic}
+(see also \code{\link[signal:interp1]{signal::interp1()}}).}
 }
 \value{
-An object of the class \code{GPR} with NMO removed and with antenna 
-         separation set equal to zero.
+An object of the class \code{GPR} with NMO removed and with antenna
+separation set equal to zero.
 }
 \description{
-Remove the Normal Move-Out (NMO) from the trace given a velocity. 
-The NMO correction is a non-linear transformation of the time axis to 
-compensate for the offset between transmitter and receiver antennae 
-(antenna separation distance): the time of data acquired with a bi-static 
-antenna system is converted into the time of data virtually acquired with 
-a mono-static system under the assumption of the multi-layer model with 
-constant velocities. 
+Remove the Normal Move-Out (NMO) from the trace given a velocity.
+The NMO correction is a non-linear transformation of the time axis to
+compensate for the offset between transmitter and receiver antennae
+(antenna separation distance): the time of data acquired with a bi-static
+antenna system is converted into the time of data virtually acquired with
+a mono-static system under the assumption of the multi-layer model with
+constant velocities.
 Note that
-only the conventional NMO correction is currently implemented. The 
+only the conventional NMO correction is currently implemented. The
 conventional NMO introduces a streching effect. A nonstretch NMO will
 be implemented in a near future. The Normal Move-out is defined as the
-difference between the two-way time at a given offset and the two-way 
+difference between the two-way time at a given offset and the two-way
 zero-offset time.
 }
 \details{
 Assuming a horizontal reflecting plane and homogeneous medium, the two-way
-bistatic travel time of the reflected wave 
-for an antenna separation \eqn{x} follows directly from the Pythagorean 
+bistatic travel time of the reflected wave
+for an antenna separation \eqn{x} follows directly from the Pythagorean
 theorem:
 \deqn{t_{TWT}(x,z) = \sqrt{\frac{x^2}{v^2} + \frac{4z^2}{v^2}}}
 where \eqn{t_{TWT}(x)} is the two-way travel time at antenna
@@ -65,21 +65,21 @@ separation \eqn{x} of the wave reflected at depth \eqn{z} with propagation
 velocity \eqn{v}. This equation defines an hyperbola (keep \eqn{z} constant,
 increase the antenna separation \eqn{x} and you obtain a hyperbola similar
 to the reflection signals you obtain with common-mid point survey).
-The idea behind NMO-correction is to correct the signal for the antenna 
-separation (offset) and therefore to transform the signal to the signal we 
+The idea behind NMO-correction is to correct the signal for the antenna
+separation (offset) and therefore to transform the signal to the signal we
 would have recorded with zero offset (\eqn{x = 0}). We write the vertical
-two-way traveltime at zero offset 
+two-way traveltime at zero offset
 \deqn{t_0 = t_{TWT}(x = 0) = \frac{2z}{v}}
 Therefore, the NMO-correction \eqn{\Delta_{NMO}} is
-\deqn{\Delta_{NMO} = t_{TWT}(x) - t_0}  
+\deqn{\Delta_{NMO} = t_{TWT}(x) - t_0}
 \deqn{\Delta_{NMO} = t_0 (\sqrt{1 + \frac{x^2}{v^2 t_0^2}} - 1)}
 }
 \references{
 \itemize{
-  \item{Tillard and Dubois (1995) Analysis of GPR data: wave propagation
-        velocity determination. Journal of Applied Geophysics, 33:77-91}
-  \item{Shatilo and Aminzadeh (2000) Constant normal-moveout (CNMO) 
-        correction: a technique and test results. Geophysical Prospecting,
-        473-488}
+\item{Tillard and Dubois (1995) Analysis of GPR data: wave propagation
+velocity determination. Journal of Applied Geophysics, 33:77-91}
+\item{Shatilo and Aminzadeh (2000) Constant normal-moveout (CNMO)
+correction: a technique and test results. Geophysical Prospecting,
+473-488}
 }
 }

@@ -1,24 +1,24 @@
 
 #' Adapative weights 2D smoothing
 #' 
-#' A wrapper for the following \code{adimpro} functions: 
-#' \code{\link[adimpro]{awsaniso}}, \code{\link[adimpro]{awsimage}}, and
-#'            \code{\link[adimpro]{awsimage}}.
-#' @param x [\code{GPR}] 
-#' @param method [\code{character(1)}] \code{awsaniso} stand for anisotropic
+#' A wrapper for the following `adimpro` functions: 
+#' [adimpro::awsaniso()], [adimpro::awsimage()], and
+#'            [adimpro::awsimage()].
+#' @param x (`GPR`) 
+#' @param method (`character[1]`) `awsaniso` stand for anisotropic
 #'               adaptive weights smoothing 
-#'               (call the function \code{\link[adimpro]{awsaniso}}),
-#'               \code{aws} stand for adaptive weights smoothing using
+#'               (call the function [adimpro::awsaniso()]),
+#'               `aws` stand for adaptive weights smoothing using
 #'               a local constant model
-#'               (call the function \code{\link[adimpro]{awsimage}}), and
-#'               \code{awsp} stand for adaptive weights smoothing using a
+#'               (call the function [adimpro::awsimage()]), and
+#'               `awsp` stand for adaptive weights smoothing using a
 #'                local polynomial models up to a degree of 2.
-#'               (call the function \code{\link[adimpro]{awsimage}}).
-#' @param ... additional parameters to be passed to the \code{adimpro} 
-#'            functions: \code{\link[adimpro]{awsaniso}},
-#'            \code{\link[adimpro]{awsimage}}, and
-#'            \code{\link[adimpro]{awsimage}}.
-#' @return [\code{GPR}]
+#'               (call the function [adimpro::awsimage()]).
+#' @param ... additional parameters to be passed to the `adimpro` 
+#'            functions: [adimpro::awsaniso()],
+#'            [adimpro::awsimage()], and
+#'            [adimpro::awsimage()].
+#' @return (`GPR`)
 #' @name smooth2D
 setGeneric("smooth2D", function(x, method = c("awsaniso", "aws", "awsp"), ...) 
   standardGeneric("smooth2D"))

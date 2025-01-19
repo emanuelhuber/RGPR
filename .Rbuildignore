@@ -1,3 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^.*\.md$
+.readthedocs.yaml
+^docs/

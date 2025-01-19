@@ -10,5 +10,5 @@
 \item{z}{An object of the class GPRvirtual}
 }
 \description{
-Methods for the base Complex methods \link[methods]{S4groupGeneric}: "Arg", "Conj", "Im", "Mod", "Re"
+Methods for the base Complex methods \link[methods:S4groupGeneric]{S4groupGeneric}: "Arg", "Conj", "Im", "Mod", "Re"
 }

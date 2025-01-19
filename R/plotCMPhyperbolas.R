@@ -4,16 +4,16 @@
 #' 
 #' Plot hyperbolas associated with root-mean-square velocities stored in
 #' the CMP data.
-#' @param x [\code{GPR class}] A CMP object of the class \code{GPR}
-#' @param lty [\code{numeric(1)}] The line type 
-#'            (default is \code{1} for solid lines). See \code{\link[graphics]{par}}
-#' @param lwd [\code{numeric(1)}] Line width
-#'             (default is \code{1}). See \code{\link[graphics]{par}}
-#' @param type [\code{character(1)}] what type of plot should be drawn 
-#'             (default is \code{"l"} for lines). See \code{\link[graphics]{plot}}
-#' @param ... see arguments of \code{\link[graphics]{matplot}}
-#' @return [\code{list}] A list element key \code{antsep} containing a numeric 
-#'        vector of \eqn{n} antenna separation values, and element \code{twt} 
+#' @param x (`GPR class`) A CMP object of the class `GPR`
+#' @param lty (`numeric[1]`) The line type 
+#'            (default is `1` for solid lines). See [graphics::par()]
+#' @param lwd (`numeric[1]`) Line width
+#'             (default is `1`). See [graphics::par()]
+#' @param type (`character[1]`) what type of plot should be drawn 
+#'             (default is `"l"` for lines). See [graphics::plot()]
+#' @param ... see arguments of [graphics::matplot()]
+#' @return (`list`) A list element key `antsep` containing a numeric 
+#'        vector of \eqn{n} antenna separation values, and element `twt` 
 #'        containing a \eqn{n \times m} matrix, where \eqn{m} is the
 #'        number of hyperbolas (i.e., the number of velocities).
 #' @name plotCMPhyperbolas

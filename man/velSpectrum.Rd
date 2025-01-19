@@ -27,17 +27,17 @@ velSpectrum(
 \item{method}{A length-one character vector}
 
 \item{v}{A numeric vector defining at which velocities the analysis is
-performed. If \code{v = NULL}, then 
+performed. If \code{v = NULL}, then
 \code{v = exp(seq(log(0.02), log(0.3), length = 100))}.}
 
 \item{w}{A length-one numeric vector defining the window length for the
 methods 'wincoherence' and 'wincoherence2'.}
 }
 \description{
-Transform the space-time domain of the radargram into a velocity-time domain to obtain 
+Transform the space-time domain of the radargram into a velocity-time domain to obtain
 the velocity spectrum (i.e. change in wave velocity with depth or time). This is achieved by applying
-Normal Move-Out (NMO) corrections to the radargram for the range of selected velocities 
-and computing a coherency measure for each result. In RGPR, the coherency measure can be defined using 
+Normal Move-Out (NMO) corrections to the radargram for the range of selected velocities
+and computing a coherency measure for each result. In RGPR, the coherency measure can be defined using
 different functions: "semblance", "winsemblance", "wincoherence", "wincoherence2".
 }
 \details{
@@ -46,27 +46,27 @@ or give the distance between the antennas (asep)
 or \code{seq(x@antsep, by = x@dx, length.out = length(x))}
 
 \describe{
-  \item{semblance}{also described as the ratio of input to output
-        energy (Niedell and Taner, 1971)}
-  \item{winsemblance}{windowed semblance}       
-  \item{wincoherence}{Windowed coherence measure based on 
-        eigen-decomposition that estimates the 
-        signal-to-noise ratio for high resolution velocity analysis
-        (Sacchi, 2002)}
-  \item{wincoherence2}{Windowed coherence measure based on a log-generalized
-        likelihood ratio which tests the hypothesis of equality of 
-        eigenvalues (Key and Smithson, 1990)}
+\item{semblance}{also described as the ratio of input to output
+energy (Niedell and Taner, 1971)}
+\item{winsemblance}{windowed semblance}
+\item{wincoherence}{Windowed coherence measure based on
+eigen-decomposition that estimates the
+signal-to-noise ratio for high resolution velocity analysis
+(Sacchi, 2002)}
+\item{wincoherence2}{Windowed coherence measure based on a log-generalized
+likelihood ratio which tests the hypothesis of equality of
+eigenvalues (Key and Smithson, 1990)}
 }
 }
 \references{
 \itemize{
-  \item{Neidell and Taner (1971) Semblance and other coherency measures
-        for multichannel data. 
-        Geophysics, 36(3):482-497.}
-  \item{Key and Smithson (1990) New approach to seismic-reflection
-        event detection and velocity determination. 
-        Geophysics, 55(8):1057-1069.}
-  \item{Textbook: Sacchi (2002) Statistical and Transform Methods
-        in Geophysical Signal Processing}
+\item{Neidell and Taner (1971) Semblance and other coherency measures
+for multichannel data.
+Geophysics, 36(3):482-497.}
+\item{Key and Smithson (1990) New approach to seismic-reflection
+event detection and velocity determination.
+Geophysics, 55(8):1057-1069.}
+\item{Textbook: Sacchi (2002) Statistical and Transform Methods
+in Geophysical Signal Processing}
 }
 }

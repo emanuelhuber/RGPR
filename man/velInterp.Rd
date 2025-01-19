@@ -18,22 +18,22 @@ velInterp(
 )
 }
 \arguments{
-\item{x}{[\code{GPR class}] An object of the class \code{GPR}}
+\item{x}{(\verb{GPR class}) An object of the class \code{GPR}}
 
-\item{type}{[\code{character(1)}] Which type of velocity values has to be
+\item{type}{(\code{character[1]}) Which type of velocity values has to be
 updated? The root-mean-square velocity (\code{vrms}) or the
 internal velocity (\code{vint})?}
 
-\item{method}{[\code{character(1)}] Interpolation method to be applied:
-one of \code{stairs}, \code{linear}, \code{nearest}, 
-\code{pchip}, \code{spline}, \code{cubic} 
-(see also \code{\link[signal]{interp1}}).}
+\item{method}{(\code{character[1]}) Interpolation method to be applied:
+one of \code{stairs}, \code{linear}, \code{nearest},
+\code{pchip}, \code{spline}, \code{cubic}
+(see also \code{\link[signal:interp1]{signal::interp1()}}).}
 }
 \value{
-[\code{GPR class}] An object of the class GPR.
+(\verb{GPR class}) An object of the class GPR.
 }
 \description{
-Define the interpolation parameters that will be used when the velocities 
+Define the interpolation parameters that will be used when the velocities
 will be plotted or used in other functions.
 To undo the interpolation, simply set \code{method = stairs}.
 }

@@ -12,7 +12,7 @@ plotTr(x, add = FALSE, ...)
 \arguments{
 \item{x}{Object of the class GPR}
 
-\item{add}{[\code{logical(1)}] If \code{TRUE}, add to current plot.}
+\item{add}{(\code{logical[1]}) If \code{TRUE}, add to current plot.}
 
 \item{...}{Arguments to be passed to \code{plot}/\code{line}}
 }

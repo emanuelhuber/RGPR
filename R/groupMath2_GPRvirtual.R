@@ -1,6 +1,6 @@
 #' Round and signif
 #'
-#' Methods for the base Math2 methods \link[methods]{S4groupGeneric}: "round", "signif"
+#' Methods for the base Math2 methods [S4groupGeneric][methods::S4groupGeneric]: "round", "signif"
 #' @param x An object of the class GPRvirtual
 #' @param digits number of digits to be used in round or signif.
 #' @rdname Math2-methods

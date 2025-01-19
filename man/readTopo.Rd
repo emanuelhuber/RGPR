@@ -11,7 +11,7 @@ readTopo(TOPO, sep = NULL, verbose = TRUE)
 
 \item{sep}{separatro}
 
-\item{verbose}{logical(1)}
+\item{verbose}{\code{logical[1]}}
 }
 \value{
 list

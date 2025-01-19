@@ -10,13 +10,13 @@ CMPhyperbolas(x)
 \S4method{CMPhyperbolas}{GPR}(x)
 }
 \arguments{
-\item{x}{[\code{GPR class}] A CMP object of the class \code{GPR}}
+\item{x}{(\verb{GPR class}) A CMP object of the class \code{GPR}}
 }
 \value{
-[\code{list}] A list element key \code{antsep} containing a numeric 
-       vector of \eqn{n} antenna separation values, and element \code{twt} 
-       containing a \eqn{n \times m} matrix, where \eqn{m} is the
-       number of hyperbolas (i.e., the number of velocities).
+(\code{list}) A list element key \code{antsep} containing a numeric
+vector of \eqn{n} antenna separation values, and element \code{twt}
+containing a \eqn{n \times m} matrix, where \eqn{m} is the
+number of hyperbolas (i.e., the number of velocities).
 }
 \description{
 Returns hyperbolas associated with root-mean-square velocities stored in

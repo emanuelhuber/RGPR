@@ -225,14 +225,14 @@
 #------------------------------------------------------------------------------#
 #' Read Sensors and Software GPR data
 #' 
-#' @param dsn [\code{character(1)|connection object}] data source name: 
+#' @param dsn (`character(1)|connection object`) data source name: 
 #'            either the filepath to the GPR data (character),
 #'            or an open file connection.
-#' @param ntr [\code{integer(1)}] Number of traces (given by .hd file)
-#' @param npt [\code{integer(1)}] Number of samples per traces (given by .hd file)
-#' @return [\code{list(2)}] Two-elements list: \code{dt1hd} with trace header and
-#'         \code{data} with the traces.
-#' @seealso \code{\link{readHD}}, \code{\link{readGPS}}
+#' @param ntr (`integer(1)`) Number of traces (given by .hd file)
+#' @param npt (`integer(1)`) Number of samples per traces (given by .hd file)
+#' @return (`list(2)`) Two-elements list: `dt1hd` with trace header and
+#'         `data` with the traces.
+#' @seealso [readHD()], [readGPS()]
 #' @name readDT1
 #' @rdname readDT1
 #' @export
@@ -270,13 +270,13 @@ readDT1 <- function(dsn, ntr, npt){
 
 #' Read Sensors and Software .HD file
 #' 
-#' @param dsn [\code{character(1)|connection object}] data source name: 
+#' @param dsn (`character(1)|connection object`) data source name: 
 #'            either the filepath to the GPR data (character),
 #'            or an open file connection.
-#' @return [\code{list(3)}]  Three-elements list: \code{HD} containing the 
-#'         header info, \code{ntr} the number of trace and \code{npt} the
+#' @return (`list(3)`)  Three-elements list: `HD` containing the 
+#'         header info, `ntr` the number of trace and `npt` the
 #'         number of points per trace.
-#' @seealso \code{\link{readDT1}}, \code{\link{readGPS}}
+#' @seealso [readDT1()], [readGPS()]
 #' @name readHD
 #' @rdname readHD
 #' @export
@@ -307,15 +307,15 @@ readHD <- function(dsn){
 
 #' Read Sensors and Software .GPS file
 #' 
-#' @param dsn [\code{character(1)|connection object}] data source name: 
+#' @param dsn (`character(1)|connection object`) data source name: 
 #'             either the filepath to the GPR data (character),
 #'            or an open file connection.
-#' @param UTM [\code{logical(1)}] If \code{TRUE} project coordinates to 
+#' @param UTM (`logical(1)`) If `TRUE` project coordinates to 
 #'              the corresponding UTM zone. 
-#' @return [\code{sf|data.frame|NULL}] Either an object of class
-#'         \code{sf} or a \code{data.frame} or \code{NULL} if no
+#' @return (`sf|data.frame|NULL`) Either an object of class
+#'         `sf` or a `data.frame` or `NULL` if no
 #'         coordinates could be extracted.
-#' @seealso \code{\link{readDT1}}, \code{\link{readHD}}
+#' @seealso [readDT1()], [readHD()]
 #' @name readGPS
 #' @rdname readGPS
 #' @export
@@ -343,16 +343,11 @@ readGPS <- function(dsn, UTM = TRUE){
                                 pts  = xyzt[, 1:2])
     xyzt_crs <- paste0("EPSG:", UTM_crs)
   }
-  # xyzt <- .getLonLatFromGPGGA(X$gpgga)
   mrk <- cbind(xyzt[ ,1:3], X$tr_id, X$tr_pos, xyzt[ ,4])
   names(mrk) <- c("x", "y", "z", "id", "pos", "time")
-  # if(isTRUE(sf)){
-    mrk <- sf::st_as_sf(x      = mrk,
-                        coords = c("x", "y", "z"),
-                        crs    = xyzt_crs)
-  # }else{
-  #   mrk <- list(mrk = mrk, crs = xyzt_crs)
-  # }
+  mrk <- sf::st_as_sf(x      = mrk,
+                      coords = c("x", "y", "z"),
+                      crs    = xyzt_crs)
   .closeFileIfNot(dsn)
   return(mrk)
 }
@@ -456,60 +451,6 @@ readGPS <- function(dsn, UTM = TRUE){
   }
   # .closeFileIfNot(dsn)
   return(list(tr_id = tr_id, tr_pos = tr_pos, gpgga = gpgga, type = type))
-  # # read file
-  # x <- scan(dsn, what = character(), sep = "\n", quiet = TRUE)
-  # # find positions corresponding to trace markers
-  # xtr <- which(grepl("Trace \\#[0-9]+", x,            # index of the marker rows
-  #                    ignore.case = TRUE, useBytes = TRUE ))
-  # xgpgga <- integer(length(xtr) - 1)
-  # xtr <- c(xtr, nrow(x))
-  # todelete <- c()
-  # for(i in seq_along(xtr[-1])){
-  #   for(j in (xtr[i] + 1):(xtr[i+1] - 1)){
-  #     test <- grepl("(\\$GPGGA)", x[j], ignore.case = TRUE, useBytes = TRUE )
-  #     if(isTRUE(test)){
-  #       xgpgga[i] <- j
-  #       break
-  #     }
-  #   }
-  #   if(!isTRUE(test)){
-  #     todelete <- c(todelete, i)
-  #   }
-  # }
-  # if(length(todelete) > 0){
-  #   xtr <- xtr[-todelete]
-  #   xgpgga <- xgpgga[-todelete]
-  # }
-  # # trace number
-  # tr_id <- as.integer(extractPattern(x[xtr], pattern = "(\\#[0-9]+)", 
-  #                                    start = 1, stop = -1))
-  # # trace position
-  # tr_pos <- as.numeric(extractPattern(x[xtr], 
-  #                                     pattern = "(position [0-9]*\\.?[0-9]*)", 
-  #                                     start = 9, stop = 0))
-  # pat_gpgga <- paste0("\\$(?<ID>GPGGA),(?<UTC>[0-9.]+),(?<lat>[0-9.]+),",
-  #                     "(?<NS>[NS]),(?<lon>[0-9.]+),(?<EW>[EW]),(?<fix>[0-9]),",
-  #                     "(?<NbSat>[0-9.]+),(?<HDOP>[0-9.]+),(?<H>[0-9.]+),",
-  #                     "(?<mf>[MmFf]+)") 
-  # #,(?<HGeoid>[0-9.]+),(?<mf2>[mMfF+),",
-  # # "(?<TDGPS>[0-9.]+),(?<DGPSID> [A-z0-9.]+)"  )
-  # 
-  # gpgga <- extractPattern(x[xgpgga], pattern = pat_gpgga, 
-  #                         start = 0, stop = -1)
-  # dim(gpgga) <- c(length(xgpgga), 11)
-  # gpgga <- as.data.frame(gpgga, stringsAsFactors = FALSE)
-  # colnames(gpgga) <- c("ID", "UTC", "lat", "NS", "lon", "EW", 
-  #                      "fix", "NbSat", "HDOP", "H", "mf")
-  # sel <- which(gpgga[,1] != "")
-  # tr_id <- tr_id[sel]
-  # tr_pos <- tr_pos[sel]
-  # gpgga <- gpgga[sel,]
-  # if(any(c(nrow(gpgga), length(tr_id)) != length(tr_pos))){
-  #   stop("Problem - code 'qoiwelk'. Please contact me\n",
-  #        "emanuel.huber@pm.me")
-  # }
-  # # .closeFileIfNot(dsn)
-  # return(list(tr_id = tr_id, tr_pos = tr_pos, gpgga = gpgga))
 }
 
 

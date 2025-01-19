@@ -15,40 +15,40 @@ readGPR(
 )
 }
 \arguments{
-\item{dsn}{[\code{character|connection}] Data source name: either the 
+\item{dsn}{(\code{character|connection}) Data source name: either the
 filepath to the GPR data (character),
 or an open file connection (can be a list of filepaths or
 open file connections). See Details.}
 
-\item{desc}{[\code{character(1)}] Short description of the data.}
+\item{desc}{(\code{character[1]}) Short description of the data.}
 
-\item{Vmax}{[\code{numeric(1)|NULL}] Nominal analog input voltage used 
-for the bits to volt transformation. 
+\item{Vmax}{(\code{numeric[1]|NULL}) Nominal analog input voltage used
+for the bits to volt transformation.
 It assumes that \code{Vmin = -Vmax}. If \code{Vmax = NULL},
 no bits to Volt transformation is applied.}
 
-\item{verbose}{[\code{logical(1)}] If \code{FALSE}, all messages and warnings are
+\item{verbose}{(\code{logical[1]}) If \code{FALSE}, all messages and warnings are
 suppressed (use with care).}
 
-\item{interpGPS}{[\code{logical(1)}] Should the trace position be interpolated 
+\item{interpGPS}{(\code{logical[1]}) Should the trace position be interpolated
 if possible (that means if a GPS file is available)?}
 
-\item{UTM}{[\code{logical(1)|character(1)}] If \code{TRUE} it is assumed 
-that the coordinates are in the in geographic (longitude/latitude) 
+\item{UTM}{(\code{logical[1]|character[1]}) If \code{TRUE} it is assumed
+that the coordinates are in the in geographic (longitude/latitude)
 coordinate reference system (WGS84) and the coordinates are
-projected into the guessed UTM WGS84 coordinate reference 
+projected into the guessed UTM WGS84 coordinate reference
 system (RGPR guesses the UTM zone based on the coordinates).
-Only used if `interpGPS = TRUE`.}
+Only used if \code{interpGPS = TRUE}.}
 
-\item{...}{additional parameters to be passed to \code{\link{interpCoords}}}
+\item{...}{additional parameters to be passed to \code{\link[=interpCoords]{interpCoords()}}}
 }
 \value{
-[\code{GPR|GPRset}] If the data contains more than one frequency
-        data, it returns an object of the class \code{GPRset}. Else
-        an object of the class \code{GPR}.
+(\code{GPR|GPRset}) If the data contains more than one frequency
+data, it returns an object of the class \code{GPRset}. Else
+an object of the class \code{GPR}.
 }
 \description{
-Read GPR data file from various manufacturers and interpolate trace 
+Read GPR data file from various manufacturers and interpolate trace
 positions.
 }
 \section{Supported file format}{
@@ -73,29 +73,29 @@ txt files                    \tab \strong{.txt}           \tab                \t
 
 
 \itemize{
-  \item If the class of \code{dsn} is character, \code{readGPR} is 
-        insensitive to the case of the extension (.DT1 or dt1)
-  \item If \code{dsn} is a list of connections or a character vector, the 
-        order of the elements does not play any rolle.
-  \item If you use connections, \code{dsn} must contain at least all the 
-        connections to the mandatory files (in any order). If there is
-        more than one mandatory file, use a list of connection.
-  \item If you use a file path for \code{dsn} (character), you only
-        need to provide the path to the main mandatory file (marked in bold
-        in the table): RGPR will find the other files if they only differ
-        in their extension (same name). If the files have different names,
-        you must provide at least the path to all the mandatory files.
-  \item If an optional GPS data file is passed in \code{dsn} or exists,
-        the GPS data file will be red even if \code{interpGPS = FALSE}. 
-        The (formated) content of the GPS data file is then stored as 
-        meta-data and can be retrieved with \code{metadata(x)$GPS}.
-  \item If an optional GPS data file (longitude, latitude) is red 
-        (when \code{interpGPS = TRUE} and a GPS data file exists), the 
-        coordinates will be per default projected into the corresponding 
-        UTM (WGS 84) projection (see \code{\link{interpCoords}}).
-  \item When reading GPR data, the clipDataped signal values are directly
-        estimated from the bit values and stored as metadata.
-        They can be retrieved with \code{metadata(x)$clipData}.
+\item If the class of \code{dsn} is character, \code{readGPR} is
+insensitive to the case of the extension (.DT1 or dt1)
+\item If \code{dsn} is a list of connections or a character vector, the
+order of the elements does not play any rolle.
+\item If you use connections, \code{dsn} must contain at least all the
+connections to the mandatory files (in any order). If there is
+more than one mandatory file, use a list of connection.
+\item If you use a file path for \code{dsn} (character), you only
+need to provide the path to the main mandatory file (marked in bold
+in the table): RGPR will find the other files if they only differ
+in their extension (same name). If the files have different names,
+you must provide at least the path to all the mandatory files.
+\item If an optional GPS data file is passed in \code{dsn} or exists,
+the GPS data file will be red even if \code{interpGPS = FALSE}.
+The (formated) content of the GPS data file is then stored as
+meta-data and can be retrieved with \code{metadata(x)$GPS}.
+\item If an optional GPS data file (longitude, latitude) is red
+(when \code{interpGPS = TRUE} and a GPS data file exists), the
+coordinates will be per default projected into the corresponding
+UTM (WGS 84) projection (see \code{\link[=interpCoords]{interpCoords()}}).
+\item When reading GPR data, the clipped signal values are directly
+estimated from the bit values and stored as metadata.
+They can be retrieved with \code{metadata(x)$clip}.
 }
 }
 
@@ -115,5 +115,5 @@ y1 <- readGPR(con)
 }
 }
 \seealso{
-\code{\link{writeGPR}}, \code{\link{interpCoords}}, and \code{\link{metadata}}
+\code{\link[=writeGPR]{writeGPR()}}, \code{\link[=interpCoords]{interpCoords()}}, and \code{\link[=metadata]{metadata()}}
 }

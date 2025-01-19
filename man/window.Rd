@@ -11,18 +11,18 @@
 \method{window}{GPR}(x, xlim, zlim, ...)
 }
 \arguments{
-\item{x}{[\code{GPR}]}
+\item{x}{(\code{GPR})}
 
-\item{xlim}{[\code{numeric(2)}] Data range along x-axis}
+\item{xlim}{(\code{numeric[2]}) Data range along x-axis}
 
-\item{ylim}{[\code{numeric(2)}] Data range along y-axis}
+\item{ylim}{(\code{numeric[2]}) Data range along y-axis}
 
-\item{zlim}{[\code{numeric(2)}] Data range along z-axis}
+\item{zlim}{(\code{numeric[2]}) Data range along z-axis}
 
 \item{...}{Not used.}
 }
 \value{
-[\code{GPR}]
+(\code{GPR})
 }
 \description{
 Based on the units...

@@ -7,19 +7,20 @@
 \S4method{apply}{GPRvirtual}(X, MARGIN, FUN, ..., simplify = TRUE)
 }
 \arguments{
-\item{X}{[\code{GPR}]}
+\item{X}{(\code{GPR})}
 
-\item{MARGIN}{[\code{integer(1|2)}] A vector giving the subscripts which the 
+\item{MARGIN}{(\code{integer[1|2]}) A vector giving the subscripts which the
 function will be applied over
-(see \code{\link{apply}}).}
+(see \code{\link[=apply]{apply()}}).}
 
-\item{FUN}{[\code{function}] The function to be applied
-(see \code{\link{apply}}).}
+\item{FUN}{(\code{function}) The function to be applied
+(see \code{\link[=apply]{apply()}}).}
 
-\item{...}{Additional parameters to be passed (see \code{\link{apply}}).}
+\item{...}{Additional parameters to be passed (see \code{\link[=apply]{apply()}}).}
 
-\item{simplify}{[\code{logical(1)}] If \code{TRUE} the results should be simplified if possible.}
+\item{simplify}{(\code{logical[1]}) If \code{TRUE} the results should be simplified if possible.}
 }
 \description{
 Apply a function along the rows (samples per trace) or columns (traces)
 }
+\concept{array}

@@ -13,13 +13,13 @@ as.sf(x)
 \S4method{as.sf}{GPRsurvey}(x)
 }
 \arguments{
-\item{x}{[\code{class GPR|GPRsurvey}]}
+\item{x}{(\verb{class GPR|GPRsurvey})}
 }
 \value{
-[\code{class sf}] Geometry type is \code{POINT}.
+(\verb{class sf}) Geometry type is \code{POINT}.
 }
 \description{
-Coerce object to a simple feature (sf) geometry POINT. 
+Coerce object to a simple feature (sf) geometry POINT.
 Only coordinates are coerced, no additional information.
 }
 \concept{coercion}

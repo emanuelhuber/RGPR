@@ -1,7 +1,7 @@
 
   
 #' Print GPRcube
-#' @param x [\code{GPRcube object}] 
+#' @param x (`GPRcube object`) 
 #' @param ... Not used. 
 #' @export
 print.GPRcube <- function(x, ...){
@@ -33,6 +33,6 @@ print.GPRcube <- function(x, ...){
 #' Show some information on the GPRcube object
 #'
 #' Identical to print().
-#' @param object [\code{GPRcube object}] 
+#' @param object (`GPRcube object`) 
 #' @export
 setMethod("show", "GPRcube", function(object){print.GPRcube(object)}) 

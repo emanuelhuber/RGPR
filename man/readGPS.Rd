@@ -7,21 +7,21 @@
 readGPS(dsn, UTM = TRUE)
 }
 \arguments{
-\item{dsn}{[\code{character(1)|connection object}] data source name: 
- either the filepath to the GPR data (character),
+\item{dsn}{(\verb{character(1)|connection object}) data source name:
+either the filepath to the GPR data (character),
 or an open file connection.}
 
-\item{UTM}{[\code{logical(1)}] If \code{TRUE} project coordinates to 
+\item{UTM}{(\code{logical(1)}) If \code{TRUE} project coordinates to
 the corresponding UTM zone.}
 }
 \value{
-[\code{sf|data.frame|NULL}] Either an object of class
-        \code{sf} or a \code{data.frame} or \code{NULL} if no
-        coordinates could be extracted.
+(\code{sf|data.frame|NULL}) Either an object of class
+\code{sf} or a \code{data.frame} or \code{NULL} if no
+coordinates could be extracted.
 }
 \description{
 Read Sensors and Software .GPS file
 }
 \seealso{
-\code{\link{readDT1}}, \code{\link{readHD}}
+\code{\link[=readDT1]{readDT1()}}, \code{\link[=readHD]{readHD()}}
 }

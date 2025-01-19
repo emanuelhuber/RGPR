@@ -1,9 +1,9 @@
 #' Annotations of the GPR data
 #' 
 #' Annotations are currently used to store the intersections of GPR lines.
-#' @param x [\code{GPR}] An object of the class GPR.
-#' @param value [\code{character}]
-#' @return [\code{GPR}] 
+#' @param x (`GPR`) An object of the class GPR.
+#' @param value (`character[n]`)
+#' @return (`GPR`) 
 #' @name ann
 #' @rdname ann
 #' @concept getters/setters

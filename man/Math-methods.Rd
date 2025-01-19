@@ -10,15 +10,15 @@
 \item{x}{An object of the class GPRvirtual}
 }
 \description{
-Methods for the base Math methods \link[methods]{S4groupGeneric}
+Methods for the base Math methods \link[methods:S4groupGeneric]{S4groupGeneric}
 }
 \details{
 Currently implemented methods include:
 \itemize{
- \item{"abs", "sign", "sqrt", "ceiling", "floor", "trunc", "cummax", 
-       "cummin", "cumprod", "cumsum", "log", "log10", "log2", "log1p", 
-       "acos", "acosh", "asin", "asinh", "atan", "atanh", "exp", "expm1", 
-       "cos", "cosh", "cospi", "sin", "sinh", "sinpi", "tan", "tanh", 
-       "tanpi", "gamma", "lgamma", "digamma", "trigamma"}
- }
+\item{"abs", "sign", "sqrt", "ceiling", "floor", "trunc", "cummax",
+"cummin", "cumprod", "cumsum", "log", "log10", "log2", "log1p",
+"acos", "acosh", "asin", "asinh", "atan", "atanh", "exp", "expm1",
+"cos", "cosh", "cospi", "sin", "sinh", "sinpi", "tan", "tanh",
+"tanpi", "gamma", "lgamma", "digamma", "trigamma"}
+}
 }

@@ -8,32 +8,32 @@
 An S4 class to represent a ground-penetrating radar (GPR) data.
 }
 \details{
-Matrix of dimension \eqn{n \times m} (\eqn{n} samples, 
+Matrix of dimension \eqn{n \times m} (\eqn{n} samples,
 \eqn{m} traces or A-scans).
 }
 \section{Slots}{
 
 \describe{
-\item{\code{z0}}{[\code{numeric(m)}]   Time-zero or depth-zero.}
+\item{\code{z0}}{(\code{numeric[m]})   Time-zero or depth-zero.}
 
-\item{\code{time}}{[\code{numeric(m)}]   Recording time of every trace (UTC).}
+\item{\code{time}}{(\code{numeric[m]})   Recording time of every trace (UTC).}
 
-\item{\code{antsep}}{[\code{numeric(m)}]   Antenna separation.}
+\item{\code{antsep}}{(\code{numeric[m]})   Antenna separation.}
 
-\item{\code{markers}}{[\code{character(m)}] Fiducial markers associated with the traces.}
+\item{\code{markers}}{(\code{character[m]}) Fiducial markers associated with the traces.}
 
-\item{\code{ann}}{[\code{character(m)}] Annotations associated with the traces.}
+\item{\code{ann}}{(\code{character[m]}) Annotations associated with the traces.}
 
-\item{\code{coord}}{[\code{matrix(m,3)}]  Trace positions.}
+\item{\code{coord}}{(\code{matrix[m,3]})  Trace positions.}
 
-\item{\code{rec}}{[\code{matrix(m,3)}]  Receiver positions}
+\item{\code{rec}}{(\code{matrix[m,3]})  Receiver positions}
 
-\item{\code{trans}}{[\code{matrix(m,3)}]  Transmitter positions}
+\item{\code{trans}}{(\code{matrix[m,3]})  Transmitter positions}
 
-\item{\code{x}}{[\code{numeric}]      Relative trace position}
+\item{\code{x}}{(\code{numeric})      Relative trace position}
 
-\item{\code{z}}{[\code{numeric}]      Relative sample position}
+\item{\code{z}}{(\code{numeric})      Relative sample position}
 
-\item{\code{angles}}{[\code{matrix(m,2)}]  Transmitter positions}
+\item{\code{angles}}{(\code{matrix[m,2]})  Transmitter positions}
 }}
 

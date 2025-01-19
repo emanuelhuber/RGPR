@@ -1,15 +1,15 @@
 ##------------- COLOR FUNCTIONS -------------------##
 #' Color palettes for GPR data
-#' @param pal [\code{character(1)}] Name of the color palette.
-#' @param n [\code{integer(1)}] Number of colors to be in the palette.
-#' @param power [\code{integer(1)}] Control parameter determining how chroma 
+#' @param pal (`character[1]`) Name of the color palette.
+#' @param n (`integer[1]`) Number of colors to be in the palette.
+#' @param power (`integer[1]`) Control parameter determining how chroma 
 #' should be increased (1 = linear, 2 = quadratic, etc.).
-#' @param returnNames [\code{logical(1)}] If \code{TRUE}, returns only the
+#' @param returnNames (`logical[1]`) If `TRUE`, returns only the
 #'                                        color palette names. 
 #' @name palGPR
 #' @rdname palGPR
 #' @export
-#' @concept colors
+#' @concept plot
 palGPR <- function(pal = "default", n = 101, power = 1, returnNames = FALSE){
   pal <- gsub("gray", "grey", x= pal)
   tmp <- structure(list(
@@ -84,8 +84,8 @@ palGPR <- function(pal = "default", n = 101, power = 1, returnNames = FALSE){
 #' Plot single colour palette
 #' 
 #' source: vignette of the R-package "colorspace" (Color Space Manipulation) 
-#' @param col [\code{character}] Colors to be plotted.
-#' @param border [\code{character}] color for rectangle border(s). 
+#' @param col (`character`) Colors to be plotted.
+#' @param border (`character`) color for rectangle border(s). 
 #' The default means par("fg"). Use border = NA to omit borders. 
 #' If there are shading lines, border = TRUE means use the same colour 
 #' for the border as for the shading lines.
@@ -94,7 +94,7 @@ palGPR <- function(pal = "default", n = 101, power = 1, returnNames = FALSE){
 #' @name palPlot
 #' @rdname palGPR
 #' @export
-#' @concept colors
+#' @concept plot
 palPlot <- function(col, border = NA){
   n <- length(col)
   plot(0, 0, type="n", xlim = c(0, 1), ylim = c(0, 1), axes = FALSE, 
@@ -109,7 +109,7 @@ palPlot <- function(col, border = NA){
 #' @name palDisplay
 #' @rdname palGPR
 #' @export
-#' @concept colors
+#' @concept plot
 palDisplay <- function(){
   op <- par(no.readonly=TRUE)
   par(mai=c(1,1,1,0), oma = c(0,0,1,0))
@@ -128,27 +128,37 @@ palDisplay <- function(){
 
 #' Return color from palette
 #' @param x Values
-#' @param col [\code{character}] Colors to be used.
-#' @param sym [\code{logical(1)}] Should the color palette be symmetric?
-#' @param clim [\code{numeric(2)}] The range of the color values, used in the 
+#' @param col (`character`) Colors to be used.
+#' @param sym (`logical[1]`) Should the color palette be symmetric?
+#' @param clim (`numeric[2]`) The range of the color values, used in the 
 #'             color palette.
 #' @export
-#' @concept colors
+#' @concept plot
 palCol <- function(x , col = palGPR(n=101), sym = TRUE, clim = NULL){
   # test 1 - slower
   # CCY = (x - min(x, na.rm = TRUE))/(max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
   # x[] <- col[ CCY * (length(col) - 1) + 1 ]
   # return(x)
   if(!is.null(clim)  ){
+    clim <- sort(clim)
     x[x <= clim[1]] <- clim[1]
     x[x >= clim[2]] <- clim[2]
+  }else{
+    clim <- range(x, na.rm = TRUE)
   }
   # test 2 - faster
-  if(isTRUE(sym) && min(x, na.rm = TRUE) < 0){
-    absmax <- max(-min(x, na.rm = TRUE), max(x, na.rm = TRUE))
+  # if(isTRUE(sym) && min(x, na.rm = TRUE) < 0){
+  #   absmax <- max(-min(x, na.rm = TRUE), max(x, na.rm = TRUE))
+  #   CCY = (x + absmax)/2/absmax
+  # }else{
+  #   CCY = (x - min(x, na.rm = TRUE))/(max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+  # }
+  # test 2 - faster
+  if(isTRUE(sym) && clim[1] < 0){
+    absmax <- max(-clim[1], clim[2])
     CCY = (x + absmax)/2/absmax
   }else{
-    CCY = (x - min(x, na.rm = TRUE))/(max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
+    CCY = (x - clim[1])/(clim[2] - clim[1])
   }
   idx <- findInterval(CCY, seq(0, 1, length.out = length(col) ))
   A <- matrix(nrow = nrow(x), ncol = ncol(x))

@@ -7,7 +7,7 @@
 \S4method{nrow}{GPRvirtual}(x)
 }
 \arguments{
-\item{x}{[\code{GPR}]}
+\item{x}{(\code{GPR})}
 }
 \description{
 Number of rows (samples per trace)

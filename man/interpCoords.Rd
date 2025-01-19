@@ -46,83 +46,84 @@ interpCoords(
 )
 }
 \arguments{
-\item{x}{[\code{GPR|GRPsurvey}]}
+\item{x}{(\code{GPR|GRPsurvey})}
 
-\item{coords}{[\code{matrix|sf::sf|list}] A numeric matrix with at least
+\item{coords}{\code{matrix|sf::sf|list}: A numeric matrix with at least
 3 columns (the (x,y,z)-coordinates) and optionally a fourth
 column containing the trace number (id) or \code{NA} if
 for some coordinates there is no link to the trace number;
 or a simple feature from the \code{sf} package of \code{POINT}
 geometry type (one point per coordinates). If there are some
 attributes, it is assumed that the first one corresponds to the
-trace number (id). 
-Use \code{sf::st_cast(..., "POINT")} to convert a 
-\code{LINESTRING} simple feature to a 
+trace number (id).
+Use \code{sf::st_cast(..., "POINT")} to convert a
+\code{LINESTRING} simple feature to a
 \code{point} simple feature.
 If \code{x} is a \code{GPRsurvey} \code{coords} is a list of either
 matrix or simple featue as previously defined.}
 
-\item{tt}{[\code{numeric|list}] A numeric vector or a list of vectors
+\item{tt}{(\code{numeric|list}) A numeric vector or a list of vectors
 (if \code{x} is a \code{GPRsurvey} object) corresponding to the
 trace recording time (e.g., output GPS device). If provided,
 it will be assumed that the traces were recorded at regular
 time interval (the 4th column of \code{coords} will be ignored).}
 
-\item{r}{[\code{terra::SpatRaster}]  A \code{SpatRaster} 
-object from the package 
-\code{terra} from which trace elevation \code{z} will be extracted 
-based on the trace position \code{(x, y)} on the raster. 
-The extracted trace elevation will overwrite the values from the 
+\item{r}{(\code{terra::SpatRaster})  A \code{SpatRaster}
+object from the package
+\code{terra} from which trace elevation \code{z} will be extracted
+based on the trace position \verb{(x, y)} on the raster.
+The extracted trace elevation will overwrite the values from the
 third column of \code{coords}.}
 
-\item{UTM}{[\code{logical(1)|character(1)}] If \code{TRUE} it is assumed 
-that the coordinates are in the in geographic (longitude/latitude) 
+\item{UTM}{(\code{logical[1]|character[1]}) If \code{TRUE} it is assumed
+that the coordinates are in the in geographic (longitude/latitude)
 coordinate reference system (WGS84) and the coordinates are
-projected into the guessed UTM WGS84 coordinate reference 
+projected into the guessed UTM WGS84 coordinate reference
 system (RGPR guesses the UTM zone based on the coordinates).
 If \code{UTM} is a character string corresponding to a UTM zone
-(for example \code{UTM = "32N"}), it is assumed 
-that the coordinates are in the in geographic (longitude/latitude) 
+(for example \code{UTM = "32N"}), it is assumed
+that the coordinates are in the in geographic (longitude/latitude)
 coordinate reference system (WGS84) and the coordinates are
-projected into the provided UTM zone. Note that only \code{N} 
-and \code{S} are allowed after the zone number 
+projected into the provided UTM zone. Note that only \code{N}
+and \code{S} are allowed after the zone number
 (for example, \code{"31X"} will be not recognized).}
 
-\item{interp3D}{[\code{logical(1)}] If \code{interp3D = TRUE} it is 
+\item{interp3D}{(\code{logical[1]}) If \code{interp3D = TRUE} it is
 assumed that data recording was triggered by an interp3D.
 In this case, the coordinate interpolation is based on the
-3D distance between the coordinates (x,y,z). 
+3D distance between the coordinates (x,y,z).
 If \code{interp3D = FALSE} (e.g. GPS data) a 2D distance
 (x, y) is used.}
 
-\item{tol}{[\code{numeric(1)}]     Length-one numeric vector: if the horizontal distance between 
-two consecutive trace positions is smaller than \code{tol}, 
+\item{tol}{[\code{numeric[1]}]     Length-one numeric vector: if the horizontal distance between
+two consecutive trace positions is smaller than \code{tol},
 then the traces in between as well as the second trace
 position are removed.
 If \code{tol = NULL}, \code{tol} is set equal to
 \code{sqrt(.Machine$double.eps)}.}
 
-\item{verbose}{[\code{logical(1)}] If \code{FALSE}, all messages and warnings are
+\item{verbose}{(\code{logical[1]}) If \code{FALSE}, all messages and warnings are
 suppressed (use with care).}
 
-\item{plot}{[\code{logical(1)}] If \code{TRUE} some control/diagnostic 
+\item{plot}{(\code{logical[1]}) If \code{TRUE} some control/diagnostic
 plots are displayed.}
 
-\item{method}{[\code{character(3)}] The interpolation
+\item{method}{(\code{character[3]}) The interpolation
 methods:
-First element for the interpolation of the 
-inter-trace distances, 
-second element for the interpolation of the horizontal 
+First element for the interpolation of the
+inter-trace distances,
+second element for the interpolation of the horizontal
 trace positions, and third element for the interpolation
 of the vertical trace positions.
-The methods that can be used are 
-\code{linear}, \code{nearest}, \code{pchip}, \code{cubic}, 
+The methods that can be used are
+\code{linear}, \code{nearest}, \code{pchip}, \code{cubic},
 and \code{spline}
- (same methods as in \code{\link{signal}{interp1}}.}
+(same methods as in \code{[signal]{interp1}}.}
 }
 \value{
 x with interpolated trace positions.
 }
 \description{
-Interpolate trace positions from measurement (e.g., GPS).
+Update slot \code{x@x}!
 }
+\concept{spatial computing}

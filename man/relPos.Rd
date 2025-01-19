@@ -10,12 +10,11 @@ relPos(x)
 \S4method{relPos}{GPR}(x)
 }
 \arguments{
-\item{x}{[\code{GPR|GPRsurvey}] An object of the class \code{GPR} or
-\code{GPRsurvey}}
+\item{x}{(\code{GPR|GPRsurvey}) An object}
 }
 \value{
-[\code{numeric{m}}] Relative trace position along GPR line.
+(\code{numeric[m]}) Relative trace position along GPR line.
 }
 \description{
-Relative positions along path
+Returns the relative positions.
 }

@@ -7,13 +7,13 @@
 antSepFromAntFreq(antfreq, verbose = TRUE)
 }
 \arguments{
-\item{antfreq}{[\code{numeric(1)}] Antenna frequency.}
+\item{antfreq}{(\code{numeric[1]}) Antenna frequency.}
 
-\item{verbose}{[\code{logical(1)}] If \code{TRUE} the function gives a
+\item{verbose}{(\code{logical[1]}) If \code{TRUE} the function gives a
 message.}
 }
 \value{
-[\code{numeric(1)}] Antenna separation
+(\code{numeric[1]}) Antenna separation
 }
 \description{
 Estimate antenna separation from antenna frequency

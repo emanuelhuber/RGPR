@@ -13,13 +13,13 @@ angle(x)
 \S4method{angle}{GPRsurvey}(x)
 }
 \arguments{
-\item{x}{[\code{GPR|GPRsurvey}]}
+\item{x}{(\code{GPR|GPRsurvey})}
 }
 \value{
-[\code{numeric(1)}] The angle of the oriented bounding box.
+(\code{numeric[1]}) The angle of the oriented bounding box.
 }
 \description{
 The angle is computed based on the orientation of the oriented bounding
-box (\code{\link{obbox}}).
+box (\code{\link[=obbox]{obbox()}}).
 }
 \concept{spatial computation}

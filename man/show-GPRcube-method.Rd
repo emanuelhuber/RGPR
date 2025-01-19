@@ -7,7 +7,7 @@
 \S4method{show}{GPRcube}(object)
 }
 \arguments{
-\item{object}{[\code{GPRcube object}]}
+\item{object}{(\verb{GPRcube object})}
 }
 \description{
 Identical to print().

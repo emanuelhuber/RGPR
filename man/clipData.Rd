@@ -3,32 +3,32 @@
 \name{clipData}
 \alias{clipData}
 \alias{clipData,GPRvirtual-method}
-\title{clipData the amplitude}
+\title{Clip the amplitude}
 \usage{
-clipData(x, xclipData = NULL, track = TRUE)
+clipData(x, cl = NULL, track = TRUE)
 
-\S4method{clipData}{GPRvirtual}(x, xclipData = NULL, track = TRUE)
+\S4method{clipData}{GPRvirtual}(x, cl = NULL, track = TRUE)
 }
 \arguments{
-\item{x}{[\code{GPR}] GPR object.}
+\item{x}{(\code{GPR}) GPR object.}
 
-\item{xclipData}{[\code{numeric(1|2)}] Value above and below which the signal has 
-to be clipDataped. If \code{xclipData} is a length-one
-vector, the signal outside the range 
-\code{-xclipData}, \code{xclipData} will be clipDataped.
-If \code{xclipData} is a length-one
-vector, the signal outside the range 
-\code{xclipData[1]}, \code{xclipData[2]} will be 
+\item{cl}{(\code{numeric[1|2]}) Value above and below which the signal has
+to be clipDataped. If \code{cl} is a length-one
+vector, the signal outside the range
+\code{-cl}, \code{cl} will be clipDataped.
+If \code{cl} is a length-one
+vector, the signal outside the range
+\code{cl[1]}, \code{cl[2]} will be
 clipDataped.}
 
-\item{track}{[\code{logical(1)}] If \code{TRUE}, processing will be tracked.}
+\item{track}{(\code{logical[1]}) If \code{TRUE}, processing will be tracked.}
 }
 \value{
-[\code{GPR class}] clipDataped GPR object.
+(\verb{GPR class}) clipDataped GPR object.
 }
 \description{
-clipData the amplitude
+Clip the amplitude
 
-clipData the amplitude
+Clip the amplitude
 }
 \concept{signal processing}

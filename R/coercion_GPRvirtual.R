@@ -3,7 +3,7 @@
 setAs(from = "GPRvirtual", to = "matrix", def = function(from){ from@data } )
 
 #' Coercion to matrix, vector or numeri
-#' @param x [\code{GPR}]
+#' @param x (`GPR`)
 #' @param ... Not used
 #' @param mode Not used
 #' @name as.matrix

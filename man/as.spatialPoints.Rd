@@ -13,10 +13,10 @@ as.spatialPoints(x)
 \S4method{as.spatialPoints}{GPRsurvey}(x)
 }
 \arguments{
-\item{x}{[\code{class GPR|GPRsurvey}]}
+\item{x}{(\verb{class GPR|GPRsurvey})}
 }
 \value{
-[\code{SpatialPoints}]
+(\code{SpatialPoints})
 }
 \description{
 Coerce object to an object of the class SpatialPoints

@@ -22,13 +22,13 @@ crs(x) <- value
 \S4method{crs}{GPRsurvey}(x) <- value
 }
 \arguments{
-\item{x}{[\code{GPR class}] An object of the class \code{GPR}}
+\item{x}{(\verb{GPR class}) An object of the class \code{GPR}}
 
-\item{value}{[\code{character(1)}] A string accepted by GDAL 
+\item{value}{(\code{character[1]}) A string accepted by GDAL
 (e.g., \code{"EPSG:2056"}, WKT-string).}
 }
 \value{
-[\code{GPR class}] An object of the class \code{GPR}
+(\verb{GPR class}) An object of the class \code{GPR}
 }
 \description{
 Coordinate reference system (CRS) of the GPR data
@@ -36,9 +36,9 @@ Coordinate reference system (CRS) of the GPR data
 \details{
 Modified slots
 \itemize{
-  \item \code{crs} the coordinate reference system.
-  \item \code{spunit} the spatial units are updated accroding to the new
-                      coordinate reference system.
+\item \code{crs} the coordinate reference system.
+\item \code{spunit} the spatial units are updated accroding to the new
+coordinate reference system.
 }
 }
 \examples{

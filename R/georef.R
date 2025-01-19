@@ -2,22 +2,23 @@
 #' Rotate coordinates of the GPR traces
 #' 
 #' Rotate coordinates of the GPR traces... 
-#' @param x [\code{GPR|GPRsurvey}] 
-#' @param alpha [\code{numeric(1)}] The rotation angle in radians. 
-#'              If \code{alpha = NULL}, \code{alpha} is estimated from the 
-#'              pairs of points in the local reference system (\code{ploc}) 
-#'              and in the regional reference system (\code{preg}).
-#' @param cloc [\code{numeric(2)}] the coordinate
+#' @param x (`GPR|GPRsurvey`) 
+#' @param alpha (`numeric[1]`) The rotation angle in radians. 
+#'              If `alpha = NULL`, `alpha` is estimated from the 
+#'              pairs of points in the local reference system (`ploc`) 
+#'              and in the regional reference system (`preg`).
+#' @param cloc (`numeric[2]`) the coordinate
 #'             center of the local reference system
-#' @param creg [\code{numeric(2|3)}] the coordinate
+#' @param creg (`numeric[2|3]`) the coordinate
 #'             center of the regional reference system. Setting 
-#'             \code{creg = NULL} (default) is equivalent to apply a rotation
-#'             of angle \code{alpha} and center \code{cloc}.
-#' @param ploc [\code{numeric(2|3)}] the first two columns corresponding
+#'             `creg = NULL` (default) is equivalent to apply a rotation
+#'             of angle `alpha` and center `cloc`.
+#' @param ploc (`numeric[2|3]`) the first two columns corresponding
 #            to coordinates in the local reference system.
-#' @param preg [\code{numeric(2|3)}]
-#' @param FUN [\code{function}]
+#' @param preg (`numeric[2|3]`)
+#' @param FUN (`function`)
 #' @name georef
+#' @concept spatial computing
 setGeneric("georef", function(x, alpha = NULL, cloc = NULL, creg = NULL,
            ploc = NULL, preg = NULL, FUN = mean) 
   standardGeneric("georef"))
@@ -59,8 +60,8 @@ setMethod("georef", "GPRsurvey",
 # Georeferencing
 #
 # Perform on a set of x,y coordinates
-# (1) a translation by \code{-cloc}, then
-# (2) a rotation by \code{alpha} (radian), and (3)
+# [1] a translation by \code{-cloc}, then
+# [2] a rotation by \code{alpha} (radian), and (3)
 # a translation by \code{creg}. If \code{creg}
 # is \code{NULL}, then \code{creg} is set equal
 # to \code{cloc}.

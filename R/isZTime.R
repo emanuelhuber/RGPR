@@ -2,9 +2,9 @@
 #' Is the z-dimension time?
 #' 
 #' Is the z-dimension time?
-#' @param x  [\code{GPR class}] An object of the class \code{GPR}
-#' @return   [\code{logical(1)}] \code{TRUE} if the z-dimension is in unit of
-#'           time, \code{FALSE} if the z-dimension is in unit of length (depth)
+#' @param x  (`GPR`) An object of the class `GPR`
+#' @return   (`logical[1]`) `TRUE` if the z-dimension is in unit of
+#'           time, `FALSE` if the z-dimension is in unit of length (depth)
 #' @name isZTime
 setGeneric("isZTime", function(x) 
   standardGeneric("isZTime"))

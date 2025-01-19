@@ -7,134 +7,115 @@
 #FIXME cbar = FALSE -> no colorscale -> remove space
 #      cbar = NULL -> no colorscale but space is kept 
 
-#' Plot the GPR object.
+#' Plot GPR data
 #'
-#' \code{plot}: If the GPR object consists of a single trace, wiggle plot 
+#' Nice function to plot data. If the GPR object consists of a single trace, wiggle plot 
 #' is shown. For CMP, the position of the traces on the x-axis is defined
-#' by the antenna separation (\code{antsep(x)}).
+#' by the antenna separation (`antsep(x)`).
 #' 
-#' The argument \code{col} is :
-#' \itemize{
-#' \item 1D plot: a single color
-#' \item 2D plot: a color palette. Default = \code{palGPR()}
-#' }
+#' The argument `col` is :
+#' * 1D plot: a single color
+#' * 2D plot: a color palette. Default = `palGPR()`
 #' 
-#' The argument \code{type} is :
-#'   \itemize{
-#'      \item 1D plot: \code{p}, \code{l}, 
-#'             \code{b}, \code{c}, \code{o}, \code{h}, \code{s}, \code{S}, 
-#'             \code{n} (see argument \code{type} in
-#'             \code{\link[graphics]{plot}}).
-#'      \item  2D plot: \code{"raster"} (default), \code{"wiggles"} or
-#'             \code{contour}.
-#'   }
+#' The argument `type` is :
+#' * 1D plot: `p`, `l`, `b`, `c`, `o`, `h`, `s`, `S`, `n` 
+#'   (see argument `type` in [graphics::plot()]).
+#' * 2D plot: `"raster"` (default), `"wiggles"` or `"contour"`.
 #' 
-#' The argument \code{wiggles} is a list with following items:
-#' \itemize{
-#' \item \code{side} Either \code{1} or \code{-1} defining on which side the 
-#'       wiggles are drawn.
-#' \item \code{size} Size of the wiggles (default = 0.2).
-#' \item \code{col} Color of the wiggles.
-#' \item \code{lwd} Line thickness.
-#' }
-#'  
+#' The argument `wiggles` is a list with following items:
+#' * `side` Either `1` or `-1` defining on which side the 
+#'          wiggles are drawn.
+#' * `size` Size of the wiggles (default = 0.2).
+#' * `col` Color of the wiggles.
+#' * `lwd` Line thickness.
 #'
-#' The argument \code{markers} is a list with following items:
-#' \itemize{
-#' \item \code{lineSymbols} Symbol position on margin lines (starting at 0,
-#'        counting outwards).
-#' \item \code{pch} plotting ‘character’, i.e., symbol to use. See 
-#'       \code{\link[graphics]{points}}.
-#' \item \code{colSymbols} Symbol color
-#' \item \code{bgSymbols} Background color for the open plot symbols given by 
-#'       \code{pch = 21:25}.
-#' \item \code{cexSymbols} Symbol expansion: a numerical value.
-#' \item \code{lineText} Text position on margin lines (starting at 0,
-#'        counting outwards).
-#' \item \code{cexText} Character expansion: a numerical value.
-#' \item \code{colText} Text color.
-#' }
+#' The argument `markers` is a list with following items:
+#' * `lineSymbols` Symbol position on margin lines (starting at 0,
+#'            counting outwards).
+#' * `pch` plotting ‘character’, i.e., symbol to use. See 
+#'          [graphics::points()].
+#' * `colSymbols` Symbol color
+#' * `bgSymbols` Background color for the open plot symbols given by 
+#'          `pch = 21:25`.
+#' * `cexSymbols` Symbol expansion: a numerical value.
+#' * `lineText` Text position on margin lines (starting at 0, counting outwards).
+#' * `cexText` Character expansion: a numerical value.
+#' * `colText` Text color.
 #' 
+#' The argument `ann` is a list with following items:
+#' * `lineText` Text position on margin lines (starting at 0,
+#'            counting outwards).
+#' * `colLine` Line color.
+#' * `colText` Text color.
+#' * `cexText` Character expansion: a numerical value.
+#' * `lwd` Line thickness.
 #' 
-#' The argument \code{ann} is a list with following items:
-#' \itemize{
-#' \item \code{lineText} Text position on margin lines (starting at 0,
-#'        counting outwards).
-#' \item \code{colLine} Line color.
-#' \item \code{colText} Text color.
-#' \item \code{cexText} Character expansion: a numerical value.
-#' \item \code{lwd} Line thickness.
-#' }
-#' 
-#' The argument \code{z0} is a list with following items:
-#' \itemize{
-#' \item \code{lwd} Line thickness.
-#' \item \code{col} Line color.
-#' \item \code{lty} Line type.
-#' }
-#' 
+#' The argument `z0` is a list with following items:
+#' * `lwd` Line thickness.
+#' * `col` Line color.
+#' * `lty` Line type. 
 #'  
-#' The argument \code{cbar} is a list with following items:
-#' \itemize{
-#' \item \code{w} colorbar width in lines (default = 1)
-#' \item \code{pos} left position of the colorbar in lines (default = 1)
-#' \item \code{hst} space between colorbar and text in lines (default = 0.5)
-#' \item \code{fticks} length factor for the ticks (default = 0.5)
-#' \item \code{vclab} length factor for the ticks (if \code{vclab = 1}, then
+#' The argument `cbar` is a list with following items:
+#' * `w` colorbar width in lines (default = 1)
+#' * `pos` left position of the colorbar in lines (default = 1)
+#' * `hst` space between colorbar and text in lines (default = 0.5)
+#' * `fticks` length factor for the ticks (default = 0.5)
+#' * `vclab` length factor for the ticks (if `vclab = 1`, then
 #'       the tick length is equal to the space between 
 #'       the colorbar and the text.
-#' \item \code{clab} The label of the colorbar that is plotted above the 
+#' * `clab` The label of the colorbar that is plotted above the 
 #'       colorbar (default = NULL, the label is inferred from the 
-#'       GPR data \code{x})
-#' }
+#'       GPR data `x`)
 #'
-#' @param x [\code{class GPR}]
+#' 
+#' @param x (`class GPR`)
 #' @param col Color palette. See details.
-#' @param type [\code{character(1)}] Plot type. See details
-#' @param horiz [\code{logical(1)}] Only for 1D plot. If \code{TRUE}, the 1D
+#' @param type (`character[1]`) Plot type. See details
+#' @param horiz (`logical[1]`) Only for 1D plot. If `TRUE`, the 1D
 #'              plot is horizontal (else vertical).
-#' @param interpolate [\code{logical(1)}]
-#' @param sym [\code{logical(1)}] if \code{TRUE} the colorscale is symmetric
-#'             if the amplitudes vary around zero. # FIXME
-#' @param clim [\code{numeric(2)}] The range of the color values, used in the 
+#' @param interpolate (`logical[1]`)
+#' @param sym (`logical[1]`) if `TRUE` the colorscale is symmetric
+#'             if the amplitudes vary around zero. FIXME
+#' @param clim (`numeric[2]`) The range of the color values, used in the 
 #'             color palette.
-#' @param add [\code{logical(1)}] If \code{TRUE}, add to current plot.
-#' @param asp [\code{numeric(1)}] The y/x aspect ratio.
-#' @param secaxis [\code{logical(1)}] If \code{TRUE}, add a secondary axis. 
+#' @param add (`logical[1]`) If `TRUE`, add to current plot.
+#' @param asp (`numeric[1]`) The y/x aspect ratio.
+#' @param secaxis (`logical[1]`) If `TRUE`, add a secondary axis. 
 #'                If the GPR data was acquired in common-offset mode, 
-#'                a secondary depth axsis is added (based on the average wave
+#'                a secondary depth axis is added (based on the average wave
 #'                velocity). Else a secondary time axis is added.
-#'                Note that we use the Sensors & 
+#'                Note that we use the Sensors and 
 #'                Software method to plot the depth axis
 #'                when the data are in time domain: because of the offset 
 #'                between transmitter and receiver, there is an offset between 
 #'                time-zero and depth, the depth axes is squished.
-#' @param elev [\code{logical(1)}] If \code{TRUE}, plot signal as a function of
+#' @param elev (`logical[1]`) If `TRUE`, plot signal as a function of
 #'             elevation (datum).
-#' @param export [\code{NULL|character(1)}] If \code{export} is a filename with
+#' @param export (`NULL|character[1]`) If `export` is a filename with
 #'               png or pdf extension, the plot is exported in a png/pdf with
-#'               filename equal to \code{export}.
-#' @param fac [\code{numeric(1)}] Factor to set the size of the pdf 
-#'            (aspect ratio is defined by \code{asp}).
-#' @param wiggles [\code{list}] Parameter list for plotting wiggles. Only used
-#'                when \code{type = "wiggles"}. See details below.
-#' @param markers [\code{list|NULL}] If not \code{NULL}, display the fiducial 
+#'               filename equal to `export`.
+#' @param fac (`numeric[1]`) Factor to set the size of the pdf 
+#'            (aspect ratio is defined by `asp`).
+#' @param wiggles (`list`) Parameter list for plotting wiggles. Only used
+#'                when `type = "wiggles"`. See details below.
+#' @param markers (`list|NULL`) If not `NULL`, display the fiducial 
 #'                markers according to the parameter list. See details below.
-#' @param ann [\code{list|NULL}] If not \code{NULL}, display the fiducial 
+#' @param ann (`list|NULL`) If not `NULL`, display the fiducial 
 #'                markers according to the parameter list. See details below.            
-#' @param z0 [\code{list|NULL}] If not \code{NULL}, display a line corresponding
+#' @param z0 (`list|NULL`) If not `NULL`, display a line corresponding
 #'           to time-zero. See details.
-#' @param cbar [\code{list|NULL}]  If not \code{NULL}, display a colorbar.
+#' @param cbar (`list|NULL`)  If not `NULL`, display a colorbar.
 #'             See details
-#' @param dirArrows [\code{list|NULL}] If not \code{NULL}, display an arrow
+#' @param dirArrows (`list|NULL`) If not `NULL`, display an arrow
 #'                  indicating the survey direction (only for plot of GPRsurvey)
 #'                  data.
 #' @param ... additional arguments passed to the plotting methods 
-#'            \code{\link[graphics]{plot}} for 1D plot and 
-#'            \code{\link[plot3D]{Image}} for 2D plot. See also  \code{details}.
-#'            
-#' @method plot GPR 
-#' @name plot
+#'            [graphics::plot()] for 1D plot and 
+#'            [plot3D::image2D()] for 2D plot. See also  `details`.
+#'
+#' @method plot GPR
+#' @name plot      
+#' @rdname plot
 #' @export
 plot.GPR <- function(x,
                      col = NULL,
@@ -172,6 +153,8 @@ plot.GPR <- function(x,
             secaxis = secaxis,
             z0 = z0, 
             horiz = horiz,
+            col = col,
+            type = type, 
             ...)
     
   }else if(nrow(x) == 1){
@@ -181,8 +164,6 @@ plot.GPR <- function(x,
     # if(is.null(col)) col <- "black"
     
     if(is.null(dots$xlab)) dots$xlab <- .xlab(x)
-    if(is.null(dots$type)) dots$type <- "l"
-    if(is.null(dots$col))  dots$col <- "black"
     if(is.null(dots$ylab)) dots$ylab <- .dlab(x)
     dotsxaxt <- dots$xaxt 
     if(is.null(dots$xaxt)) dots$xaxt <- "n"
@@ -198,6 +179,14 @@ plot.GPR <- function(x,
       dots[["log"]] <- ""
       x@data <- log(x@data)
     }
+    # if(is.null(dots$type)) 
+    dots$type <- ifelse(is.null(type), "l", type)
+    dots$col <- ifelse(is.null(col), "black", col)
+    # if(is.null(col)){
+    #   dots$col <- "black"
+    # }else{
+    #   dots$col <- col
+    # }
     if(isTRUE(add)){
       do.call(lines, c(list(x = x@x, y = x@data), dots))
     }else{
@@ -514,7 +503,9 @@ plot.GPR <- function(x,
     }
   }
   
+  sd(diff(x@x)) == 0
   
+    
   if(isFALSE(add) && type != "contour"){
     plot(0, type = "n", xaxs = "i", yaxs = "i",
          xaxt = "n", yaxt = "n", xlim = defaults$xlim, 
@@ -523,7 +514,21 @@ plot.GPR <- function(x,
          mgp = defaults$mpg, asp = asp)
   }
   if(type == "raster"){
-    rasterImage(palCol(x@data, col = col, sym = sym, clim = clim), 
+    if( isTRUE(all.equal(diff(x@x), 0)) || isTRUE(all.equal(diff(x@z), 0)) ){
+      xdata <- x@data
+    }else{
+      nx = round(diff(range(x@z)) / median(diff(x@z))) + 1
+      ny = round(diff(range(x@x)) / median(diff(x@x))) + 1
+      xdata <- interpRegRaster(vx = x@z, vy = x@x, z = x@data, nx = nx, ny = ny)
+      # xdata <- interp::bilinear.grid(x@z, x@x, x@data, 
+      #                                xlim = range(x@z),
+      #                                ylim = range(x@x),
+      #                                dx = median(diff(x@z)),
+      #                                dy = median(diff(x@x)))
+    }
+    # FIXME: use Window
+    # FIXME: if too large, reduce!
+    rasterImage(palCol(xdata, col = col, sym = sym, clim = clim), 
                 xleft       = min(x@x), 
                 xright      = max(x@x), 
                 ytop        = ifelse(elev, max(x@z), min(x@z)),
@@ -751,10 +756,10 @@ plot.GPR <- function(x,
 
 
 #' Add a GPR trace on a plot
-#' @param x [\code{GPR class}]
-#' @param relTime0 [\code{logical(1)}] If \code{TRUE}, shift \code{x} to time-
+#' @param x (`GPR class`)
+#' @param relTime0 (`logical[1]`) If `TRUE`, shift `x` to time-
 #'                                      zero. 
-#' @param ... Additional parameters to be passed to \code{\link{lines}}.
+#' @param ... Additional parameters to be passed to [lines()].
 #' @name lines
 #' @export
 lines.GPR <- function(x, relTime0 = FALSE, ...){
@@ -780,7 +785,7 @@ lines.GPR <- function(x, relTime0 = FALSE, ...){
       dots[["log"]] <- NULL
       x@data <- log(x@data)
     }
-    if(isTRUE(dots$horiz)){
+    if(isTRUE(dots$horiz) || is.null(dots$horiz)){
       dots[["y"]] <- x@data
       dots[["x"]] <- z
     }else{
@@ -799,10 +804,10 @@ lines.GPR <- function(x, relTime0 = FALSE, ...){
 
 #' Add a GPR trace points on a plot
 #'
-#' @param x [\code{GPR class}]
-#' @param relTime0 [\code{logical(1)}] If \code{TRUE}, shift \code{x} to time-
+#' @param x (`GPR class`)
+#' @param relTime0 (`logical[1]`) If `TRUE`, shift `x` to time-
 #'                                      zero. 
-#' @param ... Additional parameters to be passed to \code{\link{points}}.
+#' @param ... Additional parameters to be passed to [points()].
 #' @name points
 #' @export
 points.GPR <- function(x, relTime0 = FALSE, ...){
@@ -828,8 +833,14 @@ points.GPR <- function(x, relTime0 = FALSE, ...){
       dots[["log"]] <- NULL
       x@data <- log(x@data)
     }
-    dots[["x"]] <- z
-    dots[["y"]] <- x@data
+    if(isTRUE(dots$horiz) || is.null(dots$horiz)){
+      dots[["y"]] <- x@data
+      dots[["x"]] <- z
+    }else{
+      dots[["y"]] <- z
+      dots[["x"]] <- x@data
+    }
+    dots$horiz <- NULL
     invisible( do.call(points, dots) )
     #lines(z, x@data,...)
   }else{
@@ -837,11 +848,13 @@ points.GPR <- function(x, relTime0 = FALSE, ...){
   }
 }
 
-
-#' \code{contour} extends \code{plot3D::contour2D} and creates a contour plot.
-#' @method contour GPR 
-#' @name contour
+#' Contours
+#' 
+#' `contour` extends `plot3D::contour2D` and creates a contour plot.
+#' 
+#' @method contour GPR
 #' @rdname plot
+#' @name contour
 #' @export
 # options: type=c(raster,wiggles), addTopo, clip, normalize
 contour.GPR <- function(x, 

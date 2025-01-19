@@ -7,18 +7,18 @@
 readDZT(dsn)
 }
 \arguments{
-\item{dsn}{[\code{character(1)|connection object}] data source name: 
+\item{dsn}{(\verb{character(1)|connection object}) data source name:
 either the filepath to the GPR data (character),
 or an open file connection.}
 }
 \value{
-[\code{list(4)}] \code{hd} header data,
-        \code{data} GPR data, \code{depth} time or depth, and \code{pos}
-        position of the traces.
+(\code{list(4)}) \code{hd} header data,
+\code{data} GPR data, \code{depth} time or depth, and \code{pos}
+position of the traces.
 }
 \description{
 Read GSSI GPR data
 }
 \seealso{
-\code{\link{readDZG}}, \code{\link{readDZX}}
+\code{\link[=readDZG]{readDZG()}}, \code{\link[=readDZX]{readDZX()}}
 }

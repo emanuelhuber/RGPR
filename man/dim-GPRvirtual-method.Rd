@@ -2,18 +2,15 @@
 % Please edit documentation in R/base_GPR.R
 \name{dim,GPRvirtual-method}
 \alias{dim,GPRvirtual-method}
-\title{Dimensions of a GPR object 
-Return the number of rows (samples per trace) and 
-columns (samples per trace).}
+\title{Dimensions of a GPR object}
 \usage{
 \S4method{dim}{GPRvirtual}(x)
 }
 \arguments{
-\item{x}{[\code{GPR}]}
+\item{x}{(\code{GPR})}
 }
 \description{
-Dimensions of a GPR object 
-Return the number of rows (samples per trace) and 
+Return the number of rows (samples per trace) and
 columns (samples per trace).
 }
 \concept{array}

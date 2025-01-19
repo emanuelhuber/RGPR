@@ -7,14 +7,14 @@
 line2user(line, side)
 }
 \arguments{
-\item{line}{[\code{numeric(1)}] margin line location.}
+\item{line}{(\code{numeric[1]}) margin line location.}
 
-\item{side}{[\code{integer(1)}] an integer specifying which side of the plot 
-the axis is to be drawn on. The axis is placed as follows: 1=below, 2=left, 
+\item{side}{(\code{integer[1]}) an integer specifying which side of the plot
+the axis is to be drawn on. The axis is placed as follows: 1=below, 2=left,
 3=above and 4=right.}
 }
 \value{
-[\code{numeric(2)}] Coordinates in user coordinate system.
+(\code{numeric[2]}) Coordinates in user coordinate system.
 }
 \description{
 Get user coordinates from margin line location.

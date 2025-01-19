@@ -10,21 +10,21 @@ velSmooth(x, type = c("vrms", "vint"), w)
 \S4method{velSmooth}{GPR}(x, type = c("vrms", "vint"), w)
 }
 \arguments{
-\item{x}{[\code{GPR class}] An object of the class \code{GPR}}
+\item{x}{(\verb{GPR class}) An object of the class \code{GPR}}
 
-\item{type}{[\code{character(1)}] Which type of velocity values has to be
+\item{type}{(\code{character[1]}) Which type of velocity values has to be
 updated? The root-mean-square velocity (\code{vrms}) or the
 internal velocity (\code{vint})?}
 
-\item{w}{[\code{numeric(1)}|\code{NULL}] Standard deviation of the
+\item{w}{(\code{numeric[1]|NULL}) Standard deviation of the
 standard deviation of the smoothing kernel. If \code{w = NULL},
 no smoothing will be applied.}
 }
 \value{
-[\code{GPR class}] An object of the class GPR.
+(\verb{GPR class}) An object of the class GPR.
 }
 \description{
-Define the smoothing parameters that will be used when the velocities 
-will be plotted or used in other functions. 
+Define the smoothing parameters that will be used when the velocities
+will be plotted or used in other functions.
 To undo smoothing, set \code{w = NULL}.
 }

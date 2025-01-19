@@ -3,16 +3,16 @@
 #' 
 #' Define the interpolation parameters that will be used when the velocities 
 #' will be plotted or used in other functions.
-#' To undo the interpolation, simply set \code{method = stairs}.
-#' @param x [\code{GPR class}] An object of the class \code{GPR}
-#' @param type [\code{character(1)}] Which type of velocity values has to be
-#'             updated? The root-mean-square velocity (\code{vrms}) or the
-#'             internal velocity (\code{vint})?
-#' @param method [\code{character(1)}] Interpolation method to be applied:
-#'               one of \code{stairs}, \code{linear}, \code{nearest}, 
-#'               \code{pchip}, \code{spline}, \code{cubic} 
-#'               (see also \code{\link[signal]{interp1}}). 
-#' @return [\code{GPR class}] An object of the class GPR.
+#' To undo the interpolation, simply set `method = stairs`.
+#' @param x (`GPR class`) An object of the class `GPR`
+#' @param type (`character[1]`) Which type of velocity values has to be
+#'             updated? The root-mean-square velocity (`vrms`) or the
+#'             internal velocity (`vint`)?
+#' @param method (`character[1]`) Interpolation method to be applied:
+#'               one of `stairs`, `linear`, `nearest`, 
+#'               `pchip`, `spline`, `cubic` 
+#'               (see also [signal::interp1()]). 
+#' @return (`GPR class`) An object of the class GPR.
 #' @name velInterp
 setGeneric("velInterp", function(x, 
                                  type = c("vrms", "vint"),

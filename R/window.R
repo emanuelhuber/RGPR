@@ -8,12 +8,12 @@
 #' Subset GPR data
 #' 
 #' Based on the units...
-#' @param x [\code{GPR}]
-#' @param xlim [\code{numeric(2)}] Data range along x-axis
-#' @param ylim [\code{numeric(2)}] Data range along y-axis
-#' @param zlim [\code{numeric(2)}] Data range along z-axis
+#' @param x (`GPR`)
+#' @param xlim (`numeric[2]`) Data range along x-axis
+#' @param ylim (`numeric[2]`) Data range along y-axis
+#' @param zlim (`numeric[2]`) Data range along z-axis
 #' @param ... Not used.
-#' @return [\code{GPR}]
+#' @return (`GPR`)
 #' @method window GPRvirtual 
 #' @name window
 #' @export

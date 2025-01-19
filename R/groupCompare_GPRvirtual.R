@@ -21,7 +21,7 @@
 
 #' Comparison operations
 #'
-#' Methods for the base Compare methods \link[methods]{S4groupGeneric}: "==", ">", "<", "!=", "<=", ">="
+#' Methods for the base Compare methods [S4groupGeneric][methods::S4groupGeneric]: "==", ">", "<", "!=", "<=", ">="
 #' @param e1 An object of the class GPRvirtual
 #' @param e2 An object of the class GPRvirtual
 #' @rdname Compare-methods

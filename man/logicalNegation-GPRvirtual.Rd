@@ -8,7 +8,7 @@
 \S4method{!}{GPRvirtual}(x)
 }
 \arguments{
-\item{x}{[\code{GPRvirtual}]}
+\item{x}{(\code{GPRvirtual})}
 }
 \description{
 Apply logical negation to GPR data

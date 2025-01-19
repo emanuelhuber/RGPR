@@ -26,27 +26,28 @@ georef(
 )
 }
 \arguments{
-\item{x}{[\code{GPR|GPRsurvey}]}
+\item{x}{(\code{GPR|GPRsurvey})}
 
-\item{alpha}{[\code{numeric(1)}] The rotation angle in radians. 
-If \code{alpha = NULL}, \code{alpha} is estimated from the 
-pairs of points in the local reference system (\code{ploc}) 
+\item{alpha}{(\code{numeric[1]}) The rotation angle in radians.
+If \code{alpha = NULL}, \code{alpha} is estimated from the
+pairs of points in the local reference system (\code{ploc})
 and in the regional reference system (\code{preg}).}
 
-\item{cloc}{[\code{numeric(2)}] the coordinate
+\item{cloc}{(\code{numeric[2]}) the coordinate
 center of the local reference system}
 
-\item{creg}{[\code{numeric(2|3)}] the coordinate
-center of the regional reference system. Setting 
+\item{creg}{(\code{numeric[2|3]}) the coordinate
+center of the regional reference system. Setting
 \code{creg = NULL} (default) is equivalent to apply a rotation
 of angle \code{alpha} and center \code{cloc}.}
 
-\item{ploc}{[\code{numeric(2|3)}] the first two columns corresponding}
+\item{ploc}{(\code{numeric[2|3]}) the first two columns corresponding}
 
-\item{preg}{[\code{numeric(2|3)}]}
+\item{preg}{(\code{numeric[2|3]})}
 
-\item{FUN}{[\code{function}]}
+\item{FUN}{(\code{function})}
 }
 \description{
 Rotate coordinates of the GPR traces...
 }
+\concept{spatial computing}

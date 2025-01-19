@@ -7,12 +7,12 @@
 freqFromString(s)
 }
 \arguments{
-\item{s}{[\code{character}] Character string that may contain an 
+\item{s}{(\code{character}) Character string that may contain an
 indication of a frequency.}
 }
 \value{
-[\code{numeric}] The frequency (\code{NA} if no frequency value
-                            is found)
+(\code{numeric}) The frequency (\code{NA} if no frequency value
+is found)
 }
 \description{
 Extract with regex the antenna frequency in a string

@@ -3,14 +3,15 @@
 #' 
 #' Returns the buffered lines as polygon(s)
 #' 
-#' @param x [\code{GPR|GPRsurvey}] An object of the class \code{GPR} or
-#'          \code{GPRsurvey}
-#' @param d [\code{numeric(1)}] buffer distance 
-#' @param combine [\code{logical(1)}] If \code{TRUE}, returns the buffer for
+#' @param x (`GPR|GPRsurvey`) An object of the class `GPR` or
+#'          `GPRsurvey`
+#' @param d (`numeric[1]`) buffer distance 
+#' @param combine (`logical[1]`) If `TRUE`, returns the buffer for
 #'                all the GPR lines together. Otherwise it returns the buffer
 #'                for each line.
-#' @return [\code{sfc}] Polygon as a simple feature geometry list-column.
+#' @return (`sfc`) Polygon as a simple feature geometry list-column.
 #' @name buffer
+#' @concept spatial computation
 setGeneric(name = "buffer", 
            signature = c("x", "d"),
            def = function(x, d, combine = TRUE) 

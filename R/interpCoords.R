@@ -2,61 +2,63 @@
 
 
 #' Interpolate trace positions from measurement (e.g., GPS).
+#' 
+#' Update slot `x@x`!
 #'
-#' @param x      [\code{GPR|GRPsurvey}]
-#' @param coords [\code{matrix|sf::sf|list}] A numeric matrix with at least
+#' @param x      (`GPR|GRPsurvey`)
+#' @param coords `matrix|sf::sf|list`: A numeric matrix with at least
 #'             3 columns (the (x,y,z)-coordinates) and optionally a fourth
-#'             column containing the trace number (id) or \code{NA} if
+#'             column containing the trace number (id) or `NA` if
 #'             for some coordinates there is no link to the trace number;
-#'             or a simple feature from the \code{sf} package of \code{POINT}
+#'             or a simple feature from the `sf` package of `POINT`
 #'             geometry type (one point per coordinates). If there are some
 #'             attributes, it is assumed that the first one corresponds to the
 #'             trace number (id). 
-#'             Use \code{sf::st_cast(..., "POINT")} to convert a 
-#'             \code{LINESTRING} simple feature to a 
-#'             \code{point} simple feature.
-#'             If \code{x} is a \code{GPRsurvey} \code{coords} is a list of either
+#'             Use `sf::st_cast(..., "POINT")` to convert a 
+#'             `LINESTRING` simple feature to a 
+#'             `point` simple feature.
+#'             If `x` is a `GPRsurvey` `coords` is a list of either
 #'             matrix or simple featue as previously defined.
-#' @param tt [\code{numeric|list}] A numeric vector or a list of vectors  
-#'           (if \code{x} is a \code{GPRsurvey} object) corresponding to the
+#' @param tt (`numeric|list`) A numeric vector or a list of vectors  
+#'           (if `x` is a `GPRsurvey` object) corresponding to the
 #'           trace recording time (e.g., output GPS device). If provided,
 #'           it will be assumed that the traces were recorded at regular
-#'           time interval (the 4th column of \code{coords} will be ignored).
-#' @param r [\code{terra::SpatRaster}]  A \code{SpatRaster} 
+#'           time interval (the 4th column of `coords` will be ignored).
+#' @param r (`terra::SpatRaster`)  A `SpatRaster` 
 #'          object from the package 
-#'          \code{terra} from which trace elevation \code{z} will be extracted 
-#'          based on the trace position \code{(x, y)} on the raster. 
+#'          `terra` from which trace elevation `z` will be extracted 
+#'          based on the trace position `(x, y)` on the raster. 
 #'          The extracted trace elevation will overwrite the values from the 
-#'          third column of \code{coords}.
-#' @param UTM [\code{logical(1)|character(1)}] If \code{TRUE} it is assumed 
+#'          third column of `coords`.
+#' @param UTM (`logical[1]|character[1]`) If `TRUE` it is assumed 
 #'            that the coordinates are in the in geographic (longitude/latitude) 
 #'            coordinate reference system (WGS84) and the coordinates are
 #'            projected into the guessed UTM WGS84 coordinate reference 
 #'            system (RGPR guesses the UTM zone based on the coordinates).
-#'            If \code{UTM} is a character string corresponding to a UTM zone
-#'            (for example \code{UTM = "32N"}), it is assumed 
+#'            If `UTM` is a character string corresponding to a UTM zone
+#'            (for example `UTM = "32N"`), it is assumed 
 #'            that the coordinates are in the in geographic (longitude/latitude) 
 #'            coordinate reference system (WGS84) and the coordinates are
-#'            projected into the provided UTM zone. Note that only \code{N} 
-#'            and \code{S} are allowed after the zone number 
-#'            (for example, \code{"31X"} will be not recognized).
-#' @param interp3D [\code{logical(1)}] If \code{interp3D = TRUE} it is 
+#'            projected into the provided UTM zone. Note that only `N` 
+#'            and `S` are allowed after the zone number 
+#'            (for example, `"31X"` will be not recognized).
+#' @param interp3D (`logical[1]`) If `interp3D = TRUE` it is 
 #'                 assumed that data recording was triggered by an interp3D.
 #'                 In this case, the coordinate interpolation is based on the
 #'                 3D distance between the coordinates (x,y,z). 
-#'                 If \code{interp3D = FALSE} (e.g. GPS data) a 2D distance
+#'                 If `interp3D = FALSE` (e.g. GPS data) a 2D distance
 #'                 (x, y) is used.
-#' @param tol  [\code{numeric(1)}]     Length-one numeric vector: if the horizontal distance between 
-#'               two consecutive trace positions is smaller than \code{tol}, 
+#' @param tol  [`numeric[1]`]     Length-one numeric vector: if the horizontal distance between 
+#'               two consecutive trace positions is smaller than `tol`, 
 #'               then the traces in between as well as the second trace
 #'               position are removed.
-#'               If \code{tol = NULL}, \code{tol} is set equal to
-#'               \code{sqrt(.Machine$double.eps)}.
-#' @param verbose [\code{logical(1)}] If \code{FALSE}, all messages and warnings are
+#'               If `tol = NULL`, `tol` is set equal to
+#'               `sqrt(.Machine$double.eps)`.
+#' @param verbose (`logical[1]`) If `FALSE`, all messages and warnings are
 #'                suppressed (use with care).
-#' @param plot [\code{logical(1)}] If \code{TRUE} some control/diagnostic 
+#' @param plot (`logical[1]`) If `TRUE` some control/diagnostic 
 #'             plots are displayed.
-#' @param method [\code{character(3)}] The interpolation
+#' @param method (`character[3]`) The interpolation
 #'               methods:
 #'               First element for the interpolation of the 
 #'               inter-trace distances, 
@@ -64,11 +66,12 @@
 #'               trace positions, and third element for the interpolation
 #'               of the vertical trace positions.
 #'               The methods that can be used are 
-#'               \code{linear}, \code{nearest}, \code{pchip}, \code{cubic}, 
-#'               and \code{spline}
-#'                (same methods as in \code{\link{signal}{interp1}}.
+#'               `linear`, `nearest`, `pchip`, `cubic`, 
+#'               and `spline`
+#'                (same methods as in \code{[signal]{interp1}}.
 #' @return x with interpolated trace positions.
 #' @name interpCoords
+#' @concept spatial computing
 setGeneric("interpCoords", function(x, coords, 
                                     tt = NULL, r = NULL, 
                                     UTM = FALSE, 
@@ -308,7 +311,10 @@ setMethod("interpCoords", "GPR",
      }
    }
    # coord(x) <- ENZ
+   colnames(ENZ) <- c("x", "y", "z")
    x@coord <- ENZ
+   
+   x@x <- relPos(x)
 
    # if(!is.null(CRSout)){
    #   x <- verboseF(project(x, CRSout), FALSE)
@@ -337,13 +343,17 @@ setMethod("interpCoords", "GPR",
   j <- seq_len(ncol(x))
   j2 <- rep(FALSE, ncol(x))
   i <- .dropDuplicatedCoords(coords, tol = tol, z = z, verbose = verbose)
-  ids_notD <- as.integer(coords[!i, 4])  # id of duplicates
+  if(all(sapply(i, isFALSE))){
+    return(list(x = x, coords = coords))
+  }
+  ids_notD <- as.integer(coords[!i, 4])  # id of not duplicates
   j2[j %in% ids_notD] <- TRUE
   # j2[!i]
   # coords[!i, 4]
   
   ids <- as.integer(coords[i, 4])  # id of duplicates
-  new_ids <- which(j2[-ids])
+  
+  new_ids <- which(j2[-ids])   # id of not duplicates
   
   x <- x[, -ids]
   coords <- coords[!i, ]

@@ -1,0 +1,25 @@
+# Extract and replace parts of a GPRset object
+
+```r
+## S4 method for signature 'GPRset,ANY,ANY'
+x[i, j, k, ..., drop]
+
+## S4 replacement method for signature 'GPRset,ANY,ANY'
+x[i, j, k, ...] <- value
+```
+
+## Arguments
+
+- `x`: (`GPRset`)
+- `i`: (`integer`) Indices specifying elements to extract or replace.
+- `j`: (`integer`) Indices specifying elements to extract or replace.
+- `k`: (`integer`) Indices specifying elements to extract or replace.
+- `...`: Not used.
+- `drop`: Not used.
+- `value`: (`numeric`) Value to set.
+
+## Returns
+
+(`GPR|numeric`) Returns a numeric vector only if `x[]`.
+
+Extract parts of a GPR object

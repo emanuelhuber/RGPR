@@ -7,7 +7,7 @@
 \S4method{show}{GPRslice}(object)
 }
 \arguments{
-\item{object}{[\code{GPRslice object}]}
+\item{object}{(\verb{GPRslice object})}
 }
 \description{
 Identical to print().

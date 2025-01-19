@@ -16,11 +16,12 @@ convexhull(x, verbose = FALSE)
 \S4method{convexhull}{matrix}(x, verbose = FALSE)
 }
 \arguments{
-\item{x}{[\code{GPR|GPRsurvey}]}
+\item{x}{(\code{GPR|GPRsurvey})}
 
-\item{verbose}{[\code{logical(1)}] If \code{FALSE}, all messages and warnings 
+\item{verbose}{(\code{logical[1]}) If \code{FALSE}, all messages and warnings
 are suppressed (use with care).}
 }
 \description{
 Return the convex hull.
 }
+\concept{spatial computation}

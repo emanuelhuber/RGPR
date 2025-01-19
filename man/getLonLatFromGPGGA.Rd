@@ -7,13 +7,13 @@
 getLonLatFromGPGGA(a)
 }
 \arguments{
-\item{a}{[\code{data.frame}] GPGGA sentence information}
+\item{a}{(\code{data.frame}) GPGGA sentence information}
 }
 \value{
-[\code{data.frame}] Columns = latitude, longitude, elevation and
-        time
+(\code{data.frame}) Columns = latitude, longitude, elevation and
+time
 }
 \description{
 Get longitude and latitude from GPGGA sentence information (NMEA)
 }
-\concept{GPS}
+\concept{CRS}

@@ -10,10 +10,10 @@ metadata(x)
 \S4method{metadata}{GPR}(x)
 }
 \arguments{
-\item{x}{[\code{GPR}] An object of the class GPR.}
+\item{x}{(\code{GPR}) An object of the class GPR.}
 }
 \value{
-[\code{list}]
+(\code{list})
 }
 \description{
 Meta-data extracted from the GPR data that depends on the manufacturer
@@ -23,21 +23,21 @@ objects is still stored as meta-data and can be retrieved with \code{md()}.
 \details{
 The element names of the list are given below
 \describe{
-  \item{hd}{Here comes all the information from the raw GPR data file that
-            is not used to construct a RGPR object.
-            It can be retrieved with \code{metadata(x)$hd}.}
-  \item{GPS}{When reading GPR data, the optional GPS data file is red if 
-             available and red even if \code{interpGPS = FALSE} 
-             (see \code{\link{readGPR}}). If \code{interpGPS = FALSE}, 
-             the (formated) content of the GPS data file is then stored as 
-             meta-data and can be retrieved with \code{metadata(x)$GPS}.}
-  \item{clipData}{When reading GPR data, the clipDataped signal values are directly
-              estimated from the bit values and stored as metadata.
-              They can be retrieved with \code{metadata(x)$clipData}.
-              These clipDataped values can be used directly
-              .}
+\item{hd}{Here comes all the information from the raw GPR data file that
+is not used to construct a RGPR object.
+It can be retrieved with \code{metadata(x)$hd}.}
+\item{GPS}{When reading GPR data, the optional GPS data file is red if
+available and red even if \code{interpGPS = FALSE}
+(see \code{\link[=readGPR]{readGPR()}}). If \code{interpGPS = FALSE},
+the (formated) content of the GPS data file is then stored as
+meta-data and can be retrieved with \code{metadata(x)$GPS}.}
+\item{clipData}{When reading GPR data, the clipDataped signal values are directly
+estimated from the bit values and stored as metadata.
+They can be retrieved with \code{metadata(x)$clipData}.
+These clipDataped values can be used directly
+.}
 }
 }
 \seealso{
-\code{\link{readGPR}}
+\code{\link[=readGPR]{readGPR()}}
 }

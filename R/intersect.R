@@ -7,13 +7,14 @@
 #' 
 #' Modified slots
 #' \itemize{
-#'   \item \code{intersects}: trace shifted. The number of rows of data may 
-#'         be smaller if \code{crop = TRUE}.
+#'   \item `intersects`: trace shifted. The number of rows of data may 
+#'         be smaller if `crop = TRUE`.
 #' }
 #'
-#' @param x      [\code{object class GPRsurvey}] An object of the class \code{GPRsurvey}
-#' @return [\code{object GPRsurvey}] An object of the class GPRsurvey.
+#' @param x      [`GPRsurvey`] An object of the class `GPRsurvey`
+#' @return (`object GPRsurvey`) An object of the class GPRsurvey.
 #' @name intersect
+#' @concept spatial computing
 setGeneric("intersect", function(x) 
   standardGeneric("intersect"))
 

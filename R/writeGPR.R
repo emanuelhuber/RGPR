@@ -5,18 +5,18 @@
 
 #' Write the GPR object in a file.
 #'
-#' @param x Object of the class \code{GPR} or \code{GPRsurvey}
-#' @param fPath Filepath (Length-one character vector). If \code{fPath = NULL},
+#' @param x Object of the class `GPR` or `GPRsurvey`
+#' @param fPath Filepath (Length-one character vector). If `fPath = NULL`,
 #'              the file will be save in the current working directory with
-#'              the name of x (\code{name(x)}) with the extension depending 
-#'              of \code{format}.
+#'              the name of x (`name(x)`) with the extension depending 
+#'              of `format`.
 #' @param format Format type. See Details.
-#' @param overwrite Boolean. If \code{TRUE} existing files will be overwritten,
-#'                  if \code{FALSE} an error will be thrown if the file(s) 
+#' @param overwrite Boolean. If `TRUE` existing files will be overwritten,
+#'                  if `FALSE` an error will be thrown if the file(s) 
 #'                  already exist(s).
-#' @param ... additional parameters to be passed to \code{\link{write.table}}
-#'            when \code{format = "ASCII"} or \code{format = "xyza"}.
-#' @seealso \code{\link{readGPR}}
+#' @param ... additional parameters to be passed to [write.table()]
+#'            when `format = "ASCII"` or `format = "xyza"`.
+#' @seealso [readGPR()]
 #' @name writeGPR
 setGeneric("writeGPR", function(x, fPath = NULL, 
                                 format = c("rds", "dt1", "ascii", "xta", "xyza"),

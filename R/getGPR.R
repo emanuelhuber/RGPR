@@ -1,12 +1,12 @@
 #' Extract GPR object from GPRsurvey object
 #' 
 #' Extract GPR object from GPRsurvey object
-#' @param x [class \code{GPRsurvey}]
-#' @param id [\code{integer(1)|character(1)}] Indice or name of the GPR line to
+#' @param x (`GPRsurvey`)
+#' @param id (`integer[1]|character[1]`) Indice or name of the GPR line to
 #'                                            extract.
-#' @param verbose [\code{logical(1)}] If \code{TRUE} the function prints some
+#' @param verbose (`logical[1]`) If `TRUE` the function prints some
 #'                                    information.
-#' @return [\code{GPR class}] An object of the class GPR.
+#' @return (`GPR class`) An object of the class GPR.
 #' @name getGPR
 #' @export
 setGeneric("getGPR", function(x, id, verbose = FALSE) 
@@ -75,7 +75,7 @@ setMethod("getGPR", "GPRsurvey", function(x, id, verbose = FALSE){
     gpr@coord <- unname(x@coords[[id]] )
     gpr@x <- relPos(gpr)
   }
-  if(length(x@intersections[[id]]) > 0 ){
+  if(length(x@intersections) && length(x@intersections[[id]]) > 0 ){
     
     FUN <- function(y, x){
       findClosestCoord(x, y = y)

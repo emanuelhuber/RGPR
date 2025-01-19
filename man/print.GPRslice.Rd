@@ -7,7 +7,7 @@
 \method{print}{GPRslice}(x, ...)
 }
 \arguments{
-\item{x}{[\code{GPRslice object}]}
+\item{x}{(\verb{GPRslice object})}
 
 \item{...}{Not used.}
 }

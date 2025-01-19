@@ -7,7 +7,7 @@
 \method{print}{GPR}(x, ...)
 }
 \arguments{
-\item{x}{[\code{GPR}]}
+\item{x}{(\code{GPR})}
 
 \item{...}{Not used.}
 }

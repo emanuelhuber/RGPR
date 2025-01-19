@@ -12,17 +12,17 @@ getFPath <- function(x){
 #' 
 #' Returns the filepaths with the correct extension and check for 
 #' upper and lower case extension (e.g., ".txt" or ".TXT")
-#' @param fPath      [\code{character(1)}] Filepath.
-#' @param ext        [\code{character}] Extensions to check 
-#'                   (e.g., \code{".hd"}).
-#' @param throwError [\code{logical(1)}] If TRUE, an error is thrown if the 
+#' @param fPath      [`character[1]`] Filepath.
+#' @param ext        [`character`] Extensions to check 
+#'                   (e.g., `".hd"`).
+#' @param throwError (`logical[1]`) If TRUE, an error is thrown if the 
 #'                   filepath with one of the extension does not exist. 
 #'                   If FALSE, it returns NULL for the missing extension
-#' @return           [\code{list}] The list keys correspond to \code{ext} and 
+#' @return           [`list`] The list keys correspond to `ext` and 
 #'                   the values to the filepaths 
-#'                   (e.g., \code{$hd  -> xline01.hd}).
+#'                   (e.g., `$hd  -> xline01.hd`).
 #' @export  
-#' @concept files
+#' @concept I/O
 getFName <- function(fPath, ext = c(".hd", ".dt1"), throwError = TRUE){
   fp <- file.path(dirname(fPath), .fNameWExt(fPath))
   ext <- tolower(ext)
@@ -90,7 +90,10 @@ safeName <- function(x, y){
 # #' @export
 .fExt <- function(x){
   #   cat("with caution... because split \'.\' may not be so good\n")
-  unlist(lapply(strsplit(basename(x),"[.]"), tail , 1 ), use.names = FALSE)
+  # unlist(lapply(strsplit(basename(x),"[.]"), tail , 1 ), use.names = FALSE)
+  
+  gsub(".*\\.([a-zA-Z0-9]{3,4})$", "\\1", x)
+  
 }
 
 
@@ -102,17 +105,17 @@ safeName <- function(x, y){
 
 
 
-#' Get properties of ASCII file to read it with \code{read.table}
+#' Get properties of ASCII file to read it with `read.table`
 #' 
 #' To get header, separator, column with na values, etc.
 #' 
 #' don't forget to skip blank line when reading dsn
 #' @param dsn   (character) File path or connection
 #' @param lns     (numeric) Number of lines to read to get the properties of the ASCII file
-#' @param verbose (boolean) If \code{TRUE} print messages allowed.
+#' @param verbose (boolean) If `TRUE` print messages allowed.
 #' @return 1) header, 2) skip, 3) 
 #' @export
-#' @concept files
+#' @concept I/O
 detectASCIIProp <- function(dsn, lns = 20, verbose = TRUE){
   
   #---------------------- read first 'lns' lines ------------------------------#

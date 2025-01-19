@@ -7,9 +7,9 @@
 verboseF(g, verbose = TRUE)
 }
 \arguments{
-\item{g}{[\code{function}] A function.}
+\item{g}{\code{\link{function}} A function.}
 
-\item{verbose}{[\code{logical(1)}] If \code{FALSE}, suppress any warnings
+\item{verbose}{(\code{logical[1]}) If \code{FALSE}, suppress any warnings
 and messages in function \code{g}, else do nothing.}
 }
 \description{

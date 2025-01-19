@@ -19,5 +19,5 @@
 \item{e2}{An object of the class GPRvirtual}
 }
 \description{
-Methods for the base Logic methods \link[methods]{S4groupGeneric}: "==", ">", "<", "!=", "<=", ">="
+Methods for the base Logic methods \link[methods:S4groupGeneric]{S4groupGeneric}: "==", ">", "<", "!=", "<=", ">="
 }

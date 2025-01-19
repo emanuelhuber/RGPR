@@ -2,9 +2,9 @@
 #' Unit of Coordinate Reference System (CRS)
 #' 
 #' Returns the unit of the CRS
-#' @param crs [\code{character(1)}] A string accepted by GDAL 
-#'               (e.g., \code{"EPSG:2056"}, WKT-string).
-#' @return [\code{character}] The unit abbreviation (except for degree)
+#' @param crs (`character[1]`) A string accepted by GDAL 
+#'               (e.g., `"EPSG:2056"`, WKT-string).
+#' @return (`character`) The unit abbreviation (except for degree)
 #' @export
 #' @concept units
 crsUnit <- function(crs){

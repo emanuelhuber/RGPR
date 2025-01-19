@@ -7,22 +7,22 @@
 readDT1(dsn, ntr, npt)
 }
 \arguments{
-\item{dsn}{[\code{character(1)|connection object}] data source name: 
+\item{dsn}{(\verb{character(1)|connection object}) data source name:
 either the filepath to the GPR data (character),
 or an open file connection.}
 
-\item{ntr}{[\code{integer(1)}] Number of traces (given by .hd file)}
+\item{ntr}{(\code{integer(1)}) Number of traces (given by .hd file)}
 
-\item{npt}{[\code{integer(1)}] Number of samples per traces (given by .hd file)}
+\item{npt}{(\code{integer(1)}) Number of samples per traces (given by .hd file)}
 }
 \value{
-[\code{list(2)}] Two-elements list: \code{dt1hd} with trace header and
-        \code{data} with the traces.
+(\code{list(2)}) Two-elements list: \code{dt1hd} with trace header and
+\code{data} with the traces.
 }
 \description{
 Read Sensors and Software GPR data
 }
 \seealso{
-\code{\link{readHD}}, \code{\link{readGPS}}
+\code{\link[=readHD]{readHD()}}, \code{\link[=readGPS]{readGPS()}}
 }
 \concept{I/O}

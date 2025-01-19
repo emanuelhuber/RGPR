@@ -3,12 +3,12 @@
 #' The arc-tangent of two arguments atan2(y, x) returns the angle between 
 #' the x-axis and the vector from the origin to (x, y), i.e., 
 #' for positive arguments atan2(y, x) == atan(y/x).
-#' @param y [\code{GPR}|numeric|matrix|complex]
-#' @param x [\code{GPR}|numeric|matrix|complex]
-#' @return [\code{GPR}] 
+#' @param y (`GPR|numeric|matrix|complex`)
+#' @param x (`GPR|numeric|matrix|complex`)
+#' @return (`GPR`) 
 #' @rdname atan2
 #' @name atan2
-#' @concept arith
+#' @concept arithmetic
 setGeneric("atan2", function(y, x) standardGeneric("atan2"))
 
 

@@ -2,11 +2,12 @@
 #' 
 #' Return the velocity model (either the root-mean square or internal velocity).
 #' 
-#' @param x [\code{GPR class}] An object of the class \code{GPR}
-#' @param type [\code{vrm|vint}] Set the velocity you want (either root-mean square or internal velocity)
-#' @return [\code{GPR class}] An object of the class \code{GPR} containing the velocity model.
+#' @param x (`GPR class`) An object of the class `GPR`
+#' @param type (`vrm|vint`) Set the velocity you want (either root-mean square or internal velocity)
+#' @return (`GPR class`) An object of the class `GPR` containing the velocity model.
 #' @name getVel
 #' @rdname getVel
+#' @concept velocity model
 setGeneric("getVel", function(x, type = c("vrms", "vint")) standardGeneric("getVel"))
 
 #' @rdname getVel

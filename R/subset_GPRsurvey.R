@@ -4,13 +4,13 @@
 #' Extract and replace parts of a GPRsurvey object
 #' 
 #' Extract parts of a GPRsurvey object
-#' @param x [class \code{GPRsurvey}]
-#' @param i [\code{integer}] Indices specifying elements to extract or replace.
-#' @param j [\code{integer}] Not used.
+#' @param x (`GPRsurvey`)
+#' @param i (`integer`) Indices specifying elements to extract or replace.
+#' @param j (`integer`) Not used.
 #' @param ... Not used.
 #' @param drop Not used.
 #' @param exact Not used.
-#' @return [\code{GPRsurvey}]
+#' @return (`GPRsurvey`)
 #' @aliases [,GPRsurvey-method
 #' @rdname subset-GPRsurvey
 #' @export

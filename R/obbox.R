@@ -16,8 +16,8 @@
 #'   The orientations tested will be the orientations (in 3D) of the convex hull faces.
 #' @source  source "whuber" from stackexchange.com, 
 #' https://gis.stackexchange.com/questions/22895/finding-minimum-area-rectangle-for-given-points/181883#181883
-#' @param x      [\code{GPR class}] An object of the class \code{GPR}
-#' @return [\code{matrix(5,2)}] The coordinates of the corners of the oriented 
+#' @param x      (`GPR class`) An object of the class `GPR`
+#' @return (`matrix[5,2]`) The coordinates of the corners of the oriented 
 #'          bounding box, whereby the last row is identical to the first row.
 #'          FIXME!!
 #' @name obbox

@@ -7,10 +7,11 @@
 \S4method{summary}{GPRvirtual}(object, ...)
 }
 \arguments{
-\item{object}{[\code{GPR}]}
+\item{object}{(\code{GPR})}
 
-\item{...}{Additional parameters to be passed (see \code{\link{summary}}).}
+\item{...}{Additional parameters to be passed (see \code{\link[=summary]{summary()}}).}
 }
 \description{
 Summary of all the values contained in \code{object}.
 }
+\concept{statistics}

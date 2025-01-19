@@ -7,9 +7,9 @@
 setDots(dots, defaults)
 }
 \arguments{
-\item{dots}{[\code{list}] A list.}
+\item{dots}{(\code{list}) A list.}
 
-\item{defaults}{[\code{list}] The list with default values.}
+\item{defaults}{(\code{list}) The list with default values.}
 }
 \description{
 Set default values to missing elements of a list.

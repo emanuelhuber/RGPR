@@ -7,8 +7,8 @@ setAs(from = "GPR", to = "sf",
 #'
 #' Coerce object to a simple feature (sf) geometry POINT. 
 #' Only coordinates are coerced, no additional information.
-#' @param x [\code{class GPR|GPRsurvey}]
-#' @return [\code{class sf}] Geometry type is \code{POINT}.
+#' @param x (`class GPR|GPRsurvey`)
+#' @return (`class sf`) Geometry type is `POINT`.
 #' @name as.sf
 #' @concept coercion
 setGeneric("as.sf", function(x) 
@@ -75,8 +75,8 @@ setMethod("as.sf", signature(x = "GPRsurvey"), function(x){
 #' Coerce object to an object of the class SpatialLines
 #'
 #' Coerce object to an object of the class SpatialLines
-#' @param x [\code{class GPR|GPRsurvey}]
-#' @return [\code{SpatialLines object}]
+#' @param x (`class GPR|GPRsurvey`)
+#' @return (`SpatialLines object`)
 #' @name as.spatialLines
 #' @concept coercion
 setGeneric("as.spatialLines", function(x) 
@@ -101,8 +101,8 @@ setMethod("as.spatialLines", signature(x = "GPR"), function(x){
 #' Coerce object to an object of the class SpatialPoints
 #'
 #' Coerce object to an object of the class SpatialPoints
-#' @param x [\code{class GPR|GPRsurvey}]
-#' @return [\code{SpatialPoints}]
+#' @param x (`class GPR|GPRsurvey`)
+#' @return (`SpatialPoints`)
 #' @name as.spatialPoints
 #' @concept coercion
 setGeneric("as.spatialPoints", function(x) 

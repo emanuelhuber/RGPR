@@ -7,16 +7,15 @@
 UTMTolonlat(xy, CRSobj = NULL)
 }
 \arguments{
-\item{xy}{[\code{matrix(,2)}] Columns = x and y coordinates.}
+\item{xy}{(\code{matrix[,2]}) Columns = x and y coordinates.}
 
-\item{CRSobj}{[\code{character(1)}] Coordinate reference system 
+\item{CRSobj}{(\code{character[1]}) Coordinate reference system
 (proj4string)}
 }
 \value{
-a 2-column-matrix (longitude (N), latitude (E))
+a 2-column-matrix (longitude N, latitude (E))
 }
 \description{
 UTM to latitude-longitude
 }
-\concept{GPS}
-\concept{UTM}
+\concept{CRS}

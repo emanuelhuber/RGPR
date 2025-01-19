@@ -1,9 +1,82 @@
-# FIXME DOCUMENTATION in plot_GPR.R
-#' @method plot GPRslice
 #' @name plot
+#' @method plot GPRslice
 #' @export
-plot.GPRslice <- function(x, ...){
-  plot(x, ...)
+plot.GPRslice <- function(x, 
+                          type = "raster",
+                          col = NULL, 
+                          interpolate = TRUE,
+                          sym = TRUE,
+                          clim = NULL,
+                          add = FALSE,
+                          asp = NA,
+                          secaxis = TRUE,
+                          elev = FALSE,
+                          export = NULL,
+                          fac = 1,
+                          wiggles = list(side = 1, size = 0.2, col = "black", lwd = 0.5),
+                          markers = list(lineSymbols = 0.35, pch = 25, 
+                                         colSymbols = "red", 
+                                         bgSymbols = "yellow", 
+                                         cexSymbols = 1,
+                                         lineText = 0.9, cexText = 0.6),
+                          ann = list(lineText = 1.7, colLine = "red", colText = "red", cexText = 0.9, lwd = 1),
+                          z0 = list(lwd = 1, col = "green", lty = 1),
+                          cbar = list(w = 1,
+                                      pos = 1,
+                                      hst = 0.5,
+                                      fticks = 0.5,
+                                      vclab = 0.5,
+                                      clab = NULL),
+                          ...){
+  
+  defaults <- list(xlab = .xlab(x),
+                   ylab = paste0(x@ylab, " (", x@xunit, ")"),
+                   xlim = x@center[1] + c(0, x@dx * (nrow(x) - 1)),
+                   ylim = x@center[2] + c(0, x@dy * (ncol(x) - 1)),
+                   main = x@name,     #FIXME Not working when plot(x, main = "lkjl")
+                   note = x@path,
+                   mpg = c(2, 1, 0)  #c(2, 0.5, 0)
+  )
+  cbardefaults <- list(w = 1, pos = 1, hst = 0.5, fticks = 0.5, vclab = 0.5, clab = NULL)
+  z0defaults <- list(lwd = 1, col = "green", lty = 1)
+  mrkdefaults <- list(lineSymbols = 0.35, pch = 25, 
+                      colSymbols = "red", 
+                      bgSymbols = "yellow", 
+                      cexSymbols = 1,
+                      lineText = 0.9, cexText = 0.6)
+  wigglesdefaults <- list(side = 1, size = 0.2, col = "black", lwd = 0.5)
+  
+  cbar <- setDefaultListValues(cbar, cbardefaults)
+  markers <- setDefaultListValues(markers, mrkdefaults)
+  wiggles <- setDefaultListValues(wiggles, wigglesdefaults)
+  z0 <- setDefaultListValues(z0, z0defaults)
+  
+  if(is.null(col)) col <- palGPR()
+  
+  
+    
+  plot(0, 
+       type = "n", 
+       xaxs = "i", yaxs = "i",
+       xaxt = "n", yaxt = "n", 
+       xlim = defaults$xlim, 
+       ylim =  defaults$ylim, 
+       xlab = defaults$xlab, 
+       ylab = defaults$ylab, 
+       bty  = "n",
+       mgp  = defaults$mpg, 
+       asp  = asp)
+  rasterImage(palCol(x@data, col = col, sym = sym, clim = clim), 
+              xleft       = min(defaults$xlim), 
+              xright      = max(defaults$xlim), 
+              ytop        = max(defaults$ylim),
+              ybottom     = min(defaults$ylim),
+              interpolate = interpolate)
+  
+  grid()
+  axis(1, tck = 0.01, mgp = c(2, 0.5, 0), lwd = -1, lwd.ticks = 1)
+  axis(2, tck = 0.01, mgp = c(2, 0.5, 0), lwd = -1, lwd.ticks = 1)
+  box()
 }
 #                           
 #                           main = NULL, 

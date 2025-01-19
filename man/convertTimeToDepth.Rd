@@ -20,27 +20,27 @@ convertTimeToDepth(
 )
 }
 \arguments{
-\item{x}{[\code{GPR* object}] An object of the class \code{GPR}}
+\item{x}{(\code{GPR* object}) An object of the class \code{GPR}}
 
-\item{dz}{[\code{numeric(1)}] Desired depth resolution. 
-If \code{dz = NULL}, then \code{dz} is set equal 
+\item{dz}{(\code{numeric[1]}) Desired depth resolution.
+If \code{dz = NULL}, then \code{dz} is set equal
 to the smallest depth resolution inferred from the data.}
 
-\item{zmax}{[\code{numeric(1)}] Maximum Desired depth.
-If \code{zmax = NULL}, then \code{zmax} is set 
+\item{zmax}{(\code{numeric[1]}) Maximum Desired depth.
+If \code{zmax = NULL}, then \code{zmax} is set
 equal to the largest depth inferred from the data.}
 
-\item{method}{[\code{character(1)}] Interpolation method to be applied:
-one of \code{pchip}, \code{linear}, \code{nearest}, 
+\item{method}{(\code{character[1]}) Interpolation method to be applied:
+one of \code{pchip}, \code{linear}, \code{nearest},
 \code{spline}, or \code{cubic}
-(see also \code{\link[signal]{interp1}}).}
+(see also \code{\link[signal:interp1]{signal::interp1()}}).}
 }
 \value{
-[\code{GPR* object}] with signal as a function of depth.
+(\code{GPR* object}) with signal as a function of depth.
 }
 \description{
 Convert the two-way travel time of the recorded waves into depth. It does
-not account for the topography. To add the topography, 
-use \code{\link{migrate}} instead. This is a non-linear operation
+not account for the topography. To add the topography,
+use \code{\link[=migrate]{migrate()}} instead. This is a non-linear operation
 }
 \concept{signal processing}

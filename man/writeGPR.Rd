@@ -35,21 +35,21 @@ writeGPR(
 
 \item{fPath}{Filepath (Length-one character vector). If \code{fPath = NULL},
 the file will be save in the current working directory with
-the name of x (\code{name(x)}) with the extension depending 
+the name of x (\code{name(x)}) with the extension depending
 of \code{format}.}
 
 \item{format}{Format type. See Details.}
 
 \item{overwrite}{Boolean. If \code{TRUE} existing files will be overwritten,
-if \code{FALSE} an error will be thrown if the file(s) 
+if \code{FALSE} an error will be thrown if the file(s)
 already exist(s).}
 
-\item{...}{additional parameters to be passed to \code{\link{write.table}}
+\item{...}{additional parameters to be passed to \code{\link[=write.table]{write.table()}}
 when \code{format = "ASCII"} or \code{format = "xyza"}.}
 }
 \description{
 Write the GPR object in a file.
 }
 \seealso{
-\code{\link{readGPR}}
+\code{\link[=readGPR]{readGPR()}}
 }

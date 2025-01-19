@@ -10,7 +10,7 @@
 \alias{plot.GPRsurvey}
 \alias{plot.GPRcube}
 \alias{plot.GPRslice}
-\title{Plot the GPR object.}
+\title{Plot GPR data}
 \usage{
 \method{plot}{GPR}(
   x,
@@ -71,77 +71,99 @@
 
 \method{plot}{GPRcube}(x, ...)
 
-\method{plot}{GPRslice}(x, ...)
+\method{plot}{GPRslice}(
+  x,
+  type = "raster",
+  col = NULL,
+  interpolate = TRUE,
+  sym = TRUE,
+  clim = NULL,
+  add = FALSE,
+  asp = NA,
+  secaxis = TRUE,
+  elev = FALSE,
+  export = NULL,
+  fac = 1,
+  wiggles = list(side = 1, size = 0.2, col = "black", lwd = 0.5),
+  markers = list(lineSymbols = 0.35, pch = 25, colSymbols = "red", bgSymbols = "yellow",
+    cexSymbols = 1, lineText = 0.9, cexText = 0.6),
+  ann = list(lineText = 1.7, colLine = "red", colText = "red", cexText = 0.9, lwd = 1),
+  z0 = list(lwd = 1, col = "green", lty = 1),
+  cbar = list(w = 1, pos = 1, hst = 0.5, fticks = 0.5, vclab = 0.5, clab = NULL),
+  ...
+)
 }
 \arguments{
-\item{x}{[\code{class GPR}]}
+\item{x}{(\verb{class GPR})}
 
 \item{col}{Color palette. See details.}
 
-\item{type}{[\code{character(1)}] Plot type. See details}
+\item{type}{(\code{character[1]}) Plot type. See details}
 
-\item{horiz}{[\code{logical(1)}] Only for 1D plot. If \code{TRUE}, the 1D
+\item{horiz}{(\code{logical[1]}) Only for 1D plot. If \code{TRUE}, the 1D
 plot is horizontal (else vertical).}
 
-\item{interpolate}{[\code{logical(1)}]}
+\item{interpolate}{(\code{logical[1]})}
 
-\item{sym}{[\code{logical(1)}] if \code{TRUE} the colorscale is symmetric
-if the amplitudes vary around zero. # FIXME}
+\item{sym}{(\code{logical[1]}) if \code{TRUE} the colorscale is symmetric
+if the amplitudes vary around zero. FIXME}
 
-\item{clim}{[\code{numeric(2)}] The range of the color values, used in the 
+\item{clim}{(\code{numeric[2]}) The range of the color values, used in the
 color palette.}
 
-\item{add}{[\code{logical(1)}] If \code{TRUE}, add to current plot.}
+\item{add}{(\code{logical[1]}) If \code{TRUE}, add to current plot.}
 
-\item{asp}{[\code{numeric(1)}] The y/x aspect ratio.}
+\item{asp}{(\code{numeric[1]}) The y/x aspect ratio.}
 
-\item{secaxis}{[\code{logical(1)}] If \code{TRUE}, add a secondary axis. 
-If the GPR data was acquired in common-offset mode, 
-a secondary depth axsis is added (based on the average wave
+\item{secaxis}{(\code{logical[1]}) If \code{TRUE}, add a secondary axis.
+If the GPR data was acquired in common-offset mode,
+a secondary depth axis is added (based on the average wave
 velocity). Else a secondary time axis is added.
-Note that we use the Sensors & 
+Note that we use the Sensors and
 Software method to plot the depth axis
-when the data are in time domain: because of the offset 
-between transmitter and receiver, there is an offset between 
+when the data are in time domain: because of the offset
+between transmitter and receiver, there is an offset between
 time-zero and depth, the depth axes is squished.}
 
-\item{elev}{[\code{logical(1)}] If \code{TRUE}, plot signal as a function of
+\item{elev}{(\code{logical[1]}) If \code{TRUE}, plot signal as a function of
 elevation (datum).}
 
-\item{export}{[\code{NULL|character(1)}] If \code{export} is a filename with
+\item{export}{(\code{NULL|character[1]}) If \code{export} is a filename with
 png or pdf extension, the plot is exported in a png/pdf with
 filename equal to \code{export}.}
 
-\item{fac}{[\code{numeric(1)}] Factor to set the size of the pdf 
+\item{fac}{(\code{numeric[1]}) Factor to set the size of the pdf
 (aspect ratio is defined by \code{asp}).}
 
-\item{wiggles}{[\code{list}] Parameter list for plotting wiggles. Only used
+\item{wiggles}{(\code{list}) Parameter list for plotting wiggles. Only used
 when \code{type = "wiggles"}. See details below.}
 
-\item{markers}{[\code{list|NULL}] If not \code{NULL}, display the fiducial 
+\item{markers}{(\code{list|NULL}) If not \code{NULL}, display the fiducial
 markers according to the parameter list. See details below.}
 
-\item{ann}{[\code{list|NULL}] If not \code{NULL}, display the fiducial 
+\item{ann}{(\code{list|NULL}) If not \code{NULL}, display the fiducial
 markers according to the parameter list. See details below.}
 
-\item{z0}{[\code{list|NULL}] If not \code{NULL}, display a line corresponding
+\item{z0}{(\code{list|NULL}) If not \code{NULL}, display a line corresponding
 to time-zero. See details.}
 
-\item{cbar}{[\code{list|NULL}]  If not \code{NULL}, display a colorbar.
+\item{cbar}{(\code{list|NULL})  If not \code{NULL}, display a colorbar.
 See details}
 
-\item{...}{additional arguments passed to the plotting methods 
-\code{\link[graphics]{plot}} for 1D plot and 
-\code{\link[plot3D]{Image}} for 2D plot. See also  \code{details}.}
+\item{...}{additional arguments passed to the plotting methods
+\code{\link[graphics:plot.default]{graphics::plot()}} for 1D plot and
+\code{\link[plot3D:Image]{plot3D::image2D()}} for 2D plot. See also  \code{details}.}
 
-\item{dirArrows}{[\code{list|NULL}] If not \code{NULL}, display an arrow
+\item{dirArrows}{(\code{list|NULL}) If not \code{NULL}, display an arrow
 indicating the survey direction (only for plot of GPRsurvey)
 data.}
 }
 \description{
-\code{plot}: If the GPR object consists of a single trace, wiggle plot 
+Nice function to plot data. If the GPR object consists of a single trace, wiggle plot
 is shown. For CMP, the position of the traces on the x-axis is defined
 by the antenna separation (\code{antsep(x)}).
+
+\code{contour} extends \code{plot3D::contour2D} and creates a contour plot.
 }
 \details{
 The argument \code{col} is :
@@ -151,46 +173,40 @@ The argument \code{col} is :
 }
 
 The argument \code{type} is :
-  \itemize{
-     \item 1D plot: \code{p}, \code{l}, 
-            \code{b}, \code{c}, \code{o}, \code{h}, \code{s}, \code{S}, 
-            \code{n} (see argument \code{type} in
-            \code{\link[graphics]{plot}}).
-     \item  2D plot: \code{"raster"} (default), \code{"wiggles"} or
-            \code{contour}.
-  }
+\itemize{
+\item 1D plot: \code{p}, \code{l}, \code{b}, \code{c}, \code{o}, \code{h}, \code{s}, \code{S}, \code{n}
+(see argument \code{type} in \code{\link[graphics:plot.default]{graphics::plot()}}).
+\item 2D plot: \code{"raster"} (default), \code{"wiggles"} or \code{"contour"}.
+}
 
 The argument \code{wiggles} is a list with following items:
 \itemize{
-\item \code{side} Either \code{1} or \code{-1} defining on which side the 
-      wiggles are drawn.
+\item \code{side} Either \code{1} or \code{-1} defining on which side the
+wiggles are drawn.
 \item \code{size} Size of the wiggles (default = 0.2).
 \item \code{col} Color of the wiggles.
 \item \code{lwd} Line thickness.
 }
- 
 
 The argument \code{markers} is a list with following items:
 \itemize{
 \item \code{lineSymbols} Symbol position on margin lines (starting at 0,
-       counting outwards).
-\item \code{pch} plotting ‘character’, i.e., symbol to use. See 
-      \code{\link[graphics]{points}}.
+counting outwards).
+\item \code{pch} plotting ‘character’, i.e., symbol to use. See
+\code{\link[graphics:points]{graphics::points()}}.
 \item \code{colSymbols} Symbol color
-\item \code{bgSymbols} Background color for the open plot symbols given by 
-      \code{pch = 21:25}.
+\item \code{bgSymbols} Background color for the open plot symbols given by
+\code{pch = 21:25}.
 \item \code{cexSymbols} Symbol expansion: a numerical value.
-\item \code{lineText} Text position on margin lines (starting at 0,
-       counting outwards).
+\item \code{lineText} Text position on margin lines (starting at 0, counting outwards).
 \item \code{cexText} Character expansion: a numerical value.
 \item \code{colText} Text color.
 }
 
-
 The argument \code{ann} is a list with following items:
 \itemize{
 \item \code{lineText} Text position on margin lines (starting at 0,
-       counting outwards).
+counting outwards).
 \item \code{colLine} Line color.
 \item \code{colText} Text color.
 \item \code{cexText} Character expansion: a numerical value.
@@ -204,7 +220,6 @@ The argument \code{z0} is a list with following items:
 \item \code{lty} Line type.
 }
 
- 
 The argument \code{cbar} is a list with following items:
 \itemize{
 \item \code{w} colorbar width in lines (default = 1)
@@ -212,10 +227,10 @@ The argument \code{cbar} is a list with following items:
 \item \code{hst} space between colorbar and text in lines (default = 0.5)
 \item \code{fticks} length factor for the ticks (default = 0.5)
 \item \code{vclab} length factor for the ticks (if \code{vclab = 1}, then
-      the tick length is equal to the space between 
-      the colorbar and the text.
-\item \code{clab} The label of the colorbar that is plotted above the 
-      colorbar (default = NULL, the label is inferred from the 
-      GPR data \code{x})
+the tick length is equal to the space between
+the colorbar and the text.
+\item \code{clab} The label of the colorbar that is plotted above the
+colorbar (default = NULL, the label is inferred from the
+GPR data \code{x})
 }
 }

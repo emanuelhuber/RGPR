@@ -1,10 +1,11 @@
 #' Closest trace
 #' 
-#' Return the indice of the closest trace to the point \code{y}
+#' Return the indice of the closest trace to the point `y`
 #' @param x Object of the class GPR.
 #' @param y Length-two numeric vector of the (x, y)-coordinates.
 #' @return Indice (integer) of the closest trace.
 #' @export
+#' @concept spatial computing
 findClosestCoord <- function(x, y){
   ymat <- matrix(as.numeric(y[1:2]), 
                  nrow = length(x),

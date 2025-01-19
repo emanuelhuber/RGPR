@@ -2,9 +2,9 @@
 #' Angle of the GPR data
 #'
 #' The angle is computed based on the orientation of the oriented bounding
-#' box (\code{\link{obbox}}).
-#' @param x [\code{GPR|GPRsurvey}]
-#' @return [\code{numeric(1)}] The angle of the oriented bounding box.
+#' box ([obbox()]).
+#' @param x (`GPR|GPRsurvey`)
+#' @return (`numeric[1]`) The angle of the oriented bounding box.
 #' @name angle
 #' @concept spatial computation
 setGeneric("angle", function(x) 

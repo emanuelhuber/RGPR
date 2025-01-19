@@ -7,14 +7,13 @@
 UMTStringToEPSG(x)
 }
 \arguments{
-\item{x}{[\code{character(1)}] The EPSG code string (e.g. 32N).}
+\item{x}{(\code{character[1]}) The EPSG code string (e.g. 32N).}
 }
 \value{
-[\code{integer(1)}] The EPSG code.
+(\code{integer[1]}) The EPSG code.
 }
 \description{
 Returns the EPSG code from UTM zone string (e.g., '32N'). EPSG code is:
-  32600+zone for positive latitudes and  32700+zone for negatives latitudes.
+32600+zone for positive latitudes and  32700+zone for negatives latitudes.
 }
-\concept{GPS}
-\concept{UTM}
+\concept{CRS}

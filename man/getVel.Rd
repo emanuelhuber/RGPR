@@ -10,13 +10,14 @@ getVel(x, type = c("vrms", "vint"))
 \S4method{getVel}{GPR}(x, type = c("vrms", "vint"))
 }
 \arguments{
-\item{x}{[\code{GPR class}] An object of the class \code{GPR}}
+\item{x}{(\verb{GPR class}) An object of the class \code{GPR}}
 
-\item{type}{[\code{vrm|vint}] Set the velocity you want (either root-mean square or internal velocity)}
+\item{type}{(\code{vrm|vint}) Set the velocity you want (either root-mean square or internal velocity)}
 }
 \value{
-[\code{GPR class}] An object of the class \code{GPR} containing the velocity model.
+(\verb{GPR class}) An object of the class \code{GPR} containing the velocity model.
 }
 \description{
 Return the velocity model (either the root-mean square or internal velocity).
 }
+\concept{velocity model}

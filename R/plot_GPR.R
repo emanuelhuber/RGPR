@@ -503,7 +503,7 @@ plot.GPR <- function(x,
     }
   }
   
-  sd(diff(x@x)) == 0
+  # sd(diff(x@x)) == 0
   
     
   if(isFALSE(add) && type != "contour"){

@@ -122,6 +122,7 @@ Collate:
 	'velInterp.R'
 	'velSmooth.R'
 	'velPick.R'
+	'velLayers.R'
 	'getVel.R'
 	'simWavelet.R'
 	'smooth2D.R'
@@ -148,6 +149,7 @@ Collate:
 	'filterFreq.R'
 	'filter1D.R'
 	'filter2D.R'
+	'scale1D.R'
 	'robustSmooth.R'
 Imports:
     methods,

@@ -384,6 +384,8 @@ flattenlist <- function(x){
 }
 
 #  --> Use interp::bilinear() function <--- TOO SLOW
+#' Interpolate raster to regular spacing
+#' @export
 interpRegRaster <- function(vx, vy, z, nx, ny, method = c("linear", "nearest", "pchip", "cubic", "spline"),
                             xy = c(TRUE, TRUE)){
   # print(vx)
@@ -412,9 +414,4 @@ interpRegRaster <- function(vx, vy, z, nx, ny, method = c("linear", "nearest", "
   }
   
   return(t(z2))
-  # # Transpose back to get the final interpolated matrix
-  # z_interp <- t(z2)
-  # 
-  # # View result
-  # z_interp
 }

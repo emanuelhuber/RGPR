@@ -82,7 +82,7 @@ readVOL <- function(dsn){
   # network byte order (“big endian”), making a total of 
   # at least 15 header words. This implies that the byte order has to be swapped 
   # to read the values on an Intel-based PC.
-  
+  seek(dsn, where = 0, origin = "start")
   # 0 Magic token. This is always 192837465 (decimal)
   hd$magic_token <- readBin(dsn, what = "integer", size = 4, endian = "big")
   # 1 Header size in bytes, including the magic token and size fields
@@ -162,7 +162,7 @@ readVOL <- function(dsn){
     for(k in seq_len(hd$z_dim)){
       for(i in seq_len(hd$x_dim)){
         for(j in seq_len(hd$y_dim)){
-          XYZ[i,j,k] <- readBin(dsn, what = "numeric", size = 8, endian = "big")
+          #XYZ[i,j,k] <- readBin(dsn, what = "numeric", size = 8, endian = "big")
           realPart <- readBin(dsn, what = "integer", size = hd$bits/8/2, endian = "big")
           imagPart <- readBin(dsn, what = "integer", size = hd$bits/8/2, endian = "big")
           XYZ[i,j,k] <- complex(real = realPart,

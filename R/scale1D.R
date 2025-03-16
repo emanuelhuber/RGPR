@@ -1,8 +1,14 @@
-
+#' Scale the traces
+#' 
+#' Scale the traces
+#' @param obj (`GPR* object`)
+#' @param type (`character[1]`) Type of scaling
+#' @param track (`logical[1]`) Should the processing step be tracked? 
 #' @name scale1D
 #' @rdname scale1D
+#' @export
 setGeneric("scale1D", 
-           function(x, 
+           function(obj, 
                     type = c("stat", "min-max", "95", "eq", 
                              "sum", "rms", "mad", "invNormal"),
                     track = TRUE) 
@@ -10,20 +16,16 @@ setGeneric("scale1D",
 
 
 
-#' Scale the traces
-#'
-#' @name scale1D
 #' @rdname scale1D
 #' @export
 setMethod("scale1D", 
           "GPR", 
-          function(x,type = c("stat", "min-max", "95", "eq", 
+          function(obj,type = c("stat", "min-max", "95", "eq", 
                               "sum", "rms", "mad", "invNormal"),
                    track = TRUE){
-            x@data <- scaleCol(x@data, type = type)
-            if(isTRUE(track)) proc(x) <- getArgs()
-            #   x@proc <- c(x@proc, proc)
-            return(x)
+            obj@data <- scaleCol(obj@data, type = type)
+            if(isTRUE(track)) proc(obj) <- getArgs()
+            return(obj)
           }
 )
 

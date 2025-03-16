@@ -1,22 +1,27 @@
-
+#' One dimensional filters
+#' 
+#' One dimensional filters
+#' @param obj (`GPR* object`)
+#' @param type (`character[1]`) Filter method.
+#' @param w (`numeric[1]`)  Filter window width.
+#' @param track (`logical[1]`) Should the processing step be tracked? 
+#' @return (`GPR* object`)
 #' @name filter1D
 #' @rdname filter1D
+#' @export
 setGeneric("filter1D", 
-                function(x, 
-                         type = c("runmed", "runmean", "MAD", "Gaussian"), 
+                function(obj, 
+                         type = c("runmed", "runmean", "mad", "gaussian", "hampel"), 
                          w = NULL,
                          track = TRUE) 
                   standardGeneric("filter1D"))
 
 
-#' One dimensional filters
-#' 
-#' @name filter1D
 #' @rdname filter1D
 #' @export
 setMethod("filter1D", 
           "GPR", 
-          function(x, 
+          function(obj, 
                    type = c("runmed", "runmean", "mad", "gaussian", "hampel"), 
                    w = NULL, track = TRUE){
             # type <- match.arg(type, c("MAD", "Gaussian"))
@@ -30,26 +35,26 @@ setMethod("filter1D",
             checkArgStop(msg)
             #-----------------------------------
             
-            dz <- mean(diff(x@z))
+            dz <- mean(diff(obj@z))
             if(is.null(w)) w <- 10 * dz
             w <- round(w / dz)
             
             if(type == "runmed"){
-              x@data <- .runmmmMat(x@data, w, type = "runmed")
+              obj@data <- .runmmmMat(obj@data, w, type = "runmed")
             }else if(type == "runmean"){
-              x@data <- .runmmmMat(x@data, w, type = "runmean")
+              obj@data <- .runmmmMat(obj@data, w, type = "runmean")
             }else if(type == "gaussian"){
-              xdata <- x@data
-              xDepth <- matrix(x@z, byrow = FALSE, nrow = nrow(x), ncol = ncol(x))
-              xTime0 <- matrix(x@z0, byrow = TRUE, nrow = nrow(x), ncol = ncol(x))
-              test <- xDepth <= xTime0
-              # before_t0 <- x@z <= mean(x@z0)
-              xdata[test] <- 0
-              x@data[!test] <- x@data[!test] - mmand::gaussianSmooth(xdata, w)[!test]
+              objdata <- obj@data
+              objDepth <- matrix(obj@z, byrow = FALSE, nrow = nrow(obj), ncol = ncol(obj))
+              objTime0 <- matrix(obj@z0, byrow = TRUE, nrow = nrow(obj), ncol = ncol(obj))
+              test <- objDepth <= objTime0
+              # before_t0 <- obj@z <= mean(obj@z0)
+              objdata[test] <- 0
+              obj@data[!test] <- obj@data[!test] - mmand::gaussianSmooth(objdata, w)[!test]
             }else if(type == "hampel"){
-              x@data <- .runmmmMat(x@data, w, type = "hampel")
+              obj@data <- .runmmmMat(obj@data, w, type = "hampel")
             }
-            if(isTRUE(track)) proc(x) <- getArgs()
-            return(x)
+            if(isTRUE(track)) proc(obj) <- getArgs()
+            return(obj)
           } 
 )

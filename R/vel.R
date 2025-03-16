@@ -146,38 +146,67 @@ checkVelIntegrity <- function(x, value){
 # @param strict [logical(1)] If TRUE, .getVel raises an error if the velocity
 #               type does not exist. If FALSE, it will check if a velocity "v"
 #               exists and return it
-.getVel <- function(x, type = c("vrms", "vint"), strict = TRUE){
+.getVel <- function(obj, type = c("vrms", "vint"), strict = TRUE){
   type <- match.arg(type, c("vrms", "vint"))
-  if(length(x@vel) == 0){
+  if(length(obj@vel) == 0){
     stop("You must first assign a positiv velocity value!")
-  }else{
-    if(is.null(x@vel[[type]])){
-      if(strict){
-        stop("You must first set this type of velocity: ", type)
-      }else{
-        if(is.null(x@vel[["v"]])){
-          stop("You must first set at least one of these types of velocity: ", 
-               type, ", v!")
-        }else{
-          v <- .intpSmoothVel(x@vel[["v"]], x_z = x@z)
-        }
-      }
-    }else{
-      v <- .intpSmoothVel(x@vel[[type]], x_z = x@z)
-      # if(!is.null(x@vel[["type"]][["intp"]])){
-      #   v <- .interpVel(x, type = type, method = x@vel[[type]][["intp"]])
-      # }
-      # if(!is.null(x@vel[["type"]][["smooth"]])){
-      #   v <-  mmand::gaussianSmooth(v, sigma = x@vel[["type"]][["smooth"]]) 
-      # }
-    }
-    # v <- x@vel[["v"]]
-    if(is.list(v)){
-      return(v[["v"]])
-    }else{
-      return(v)
+  }
+  if(!(type %in% names(obj@vel))){
+    if(strict) stop("You must first set this type of velocity: ", type)
+    sel <- c("vrms", "vint", "v") %in% names(obj@vel)
+    type <- c("vrms", "vint", "v")[sel][1]
+    if(length(type) == 0){ 
+      stop("You must first set at least one of these types of velocity: ", 
+           c("vrms", "vint", "v"), "!")
     }
   }
-}
-
-
+  v <- obj@vel[[type]]
+  if(inherits(v, "matrix")){
+    if(all(dim(obj@vel[[1]]) == dim(obj))){
+      return(v)
+    }else{
+      stop("errror, your matrix velocity is wrong!")
+    }
+  }else if(inherits(v, "list")){
+    v <- .intpSmoothVel(v, x_z = obj@z)
+    return(v[["v"]])
+  }else{
+    return(v)
+  }
+}  
+# 
+# .getVel <- function(x, type = c("vrms", "vint"), strict = TRUE){
+#   type <- match.arg(type, c("vrms", "vint"))
+#   if(length(x@vel) == 0){
+#     stop("You must first assign a positiv velocity value!")
+#   }else{
+#     if(is.null(x@vel[[type]])){
+#       if(strict){
+#         stop("You must first set this type of velocity: ", type)
+#       }else{
+#         if(is.null(x@vel[["v"]])){
+#           stop("You must first set at least one of these types of velocity: ", 
+#                type, ", v!")
+#         }else{
+#           v <- .intpSmoothVel(x@vel[["v"]], x_z = x@z)
+#         }
+#       }
+#     }else{
+#       v <- .intpSmoothVel(x@vel[[type]], x_z = x@z)
+#       # if(!is.null(x@vel[["type"]][["intp"]])){
+#       #   v <- .interpVel(x, type = type, method = x@vel[[type]][["intp"]])
+#       # }
+#       # if(!is.null(x@vel[["type"]][["smooth"]])){
+#       #   v <-  mmand::gaussianSmooth(v, sigma = x@vel[["type"]][["smooth"]]) 
+#       # }
+#     }
+#     # v <- x@vel[["v"]]
+#     if(is.list(v)){
+#       return(v[["v"]])
+#     }else{
+#       return(v)
+#     }
+#   }
+# }
+# 
+# 

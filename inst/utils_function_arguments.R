@@ -17,5 +17,5 @@ exportFunctionArgs <- function(x, pkg, fPath = NULL){
   return(u)
 }
 
-u <- exportFunctionArgs(x = "GPR", pkg = "RGPR", fPath = "list_fxArgs_GPR.txt")
+u <- exportFunctionArgs(x = "GPR", pkg = "RGPR", fPath = "inst/list_fxArgs_GPR.txt")
 u

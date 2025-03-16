@@ -2,6 +2,7 @@
 % Please edit documentation in R/dewow.R
 \name{dewow}
 \alias{dewow}
+\alias{dewow,GPR-method}
 \title{Trace dewowing}
 \usage{
 dewow(x, type = c("runmed", "runmean", "gaussian"), w = NULL, track = TRUE)
@@ -24,6 +25,8 @@ unit.
 If \code{w = NULL}, \code{w} is estimated as five times the
 wavelength corresponding to the maximum frequency of x
 (estimated with \link{spec})}
+
+\item{track}{(\code{logical[1]}) Should the processing step be tracked?}
 }
 \value{
 (\code{GPR}) An object of the class GPR whose traces are dewowed.

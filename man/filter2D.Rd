@@ -2,11 +2,21 @@
 % Please edit documentation in R/filter2D.R
 \name{filter2D}
 \alias{filter2D}
+\alias{filter2D,GPR-method}
 \title{Two-dimensional filters}
 \usage{
-filter2D(x, type = c("median3x3", "adimpro", "smooth"), ..., track = TRUE)
+filter2D(obj, type = c("median3x3", "adimpro", "gaussian"), ..., track = TRUE)
 
-\S4method{filter2D}{GPR}(x, type = c("median3x3", "adimpro", "smooth"), ..., track = TRUE)
+\S4method{filter2D}{GPR}(obj, type = c("median3x3", "adimpro", "gaussian"), ..., track = TRUE)
+}
+\arguments{
+\item{obj}{(\code{GPR* object})}
+
+\item{type}{(\code{character[1]}) Filter method.}
+
+\item{...}{(\code{*}) Additional parameters}
+
+\item{track}{(\code{logical[1]}) Should the processing step be tracked?}
 }
 \description{
 Two-dimensional filters

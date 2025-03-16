@@ -2,11 +2,13 @@
 % Please edit documentation in R/filterFreq.R
 \name{filterFreq1D}
 \alias{filterFreq1D}
+\alias{filterFreq1D,GPR-method}
 \alias{filterFreq2D}
+\alias{filterFreq2D,GPR-method}
 \title{Frequency filter}
 \usage{
-\S4method{filterFreq1D}{GPR}(
-  x,
+filterFreq1D(
+  obj,
   f = 100,
   type = c("low", "high", "bandpass", "bandpass-reject"),
   L = 257,
@@ -14,10 +16,21 @@
   track = TRUE
 )
 
-\S4method{filterFreq2D}{GPR}(x, fk = NULL, L = c(5, 5), npad = 1, track = TRUE)
+\S4method{filterFreq1D}{GPR}(
+  obj,
+  f = 100,
+  type = c("low", "high", "bandpass", "bandpass-reject"),
+  L = 257,
+  plotSpec = FALSE,
+  track = TRUE
+)
+
+filterFreq2D(obj, fk = NULL, L = c(5, 5), npad = 1, track = TRUE)
+
+\S4method{filterFreq2D}{GPR}(obj, fk = NULL, L = c(5, 5), npad = 1, track = TRUE)
 }
 \arguments{
-\item{x}{An object of the class GPR}
+\item{obj}{(\code{GPR* object})}
 
 \item{f}{numeric vector: cut-off frequencies. Cutoff frequency is the
 frequency beyond which the filter will not pass signals.
@@ -30,6 +43,12 @@ for low-pass filter, \code{high} for high-pass filter and
 \item{L}{length-one numeric defining the filter length. See Details.}
 
 \item{plotSpec}{boolean. If \code{TRUE} plot the frequency spectrum as well.}
+
+\item{track}{(\code{logical[1]}) Should the processing step be tracked?}
+
+\item{fk}{(\code{FIXME}) FILTER}
+
+\item{npad}{(\code{FIXME}) FILTER}
 }
 \description{
 The frequency filter alters the signal amplitude with respect to frequency.
@@ -39,6 +58,8 @@ The frequency filter alters the signal amplitude with respect to frequency.
 \item Band-pass filter: only frequencies in a frequency band are passed.
 \item Band-pass-reject filter: a normally narrow band of frequencies is attenuated.
 }
+
+Frequency-wavenumber filter
 }
 \details{
 For the low- and high-pass filter, only one cut-off frequency can be defined

@@ -17,6 +17,14 @@ shift(
   crop = FALSE,
   track = TRUE
 )
+
+## S4 method for signature 'GPR'
+shiftTopo(
+  x,
+  method = c("pchip", "linear", "nearest", "spline", "cubic", "none"),
+  crop = FALSE,
+  track = TRUE
+)
 ```
 
 ## Arguments

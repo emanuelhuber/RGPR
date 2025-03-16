@@ -22,23 +22,10 @@ setGeneric("NMO", function(x, v = NULL)
 #' @rdname NMO
 #' @export
 setMethod("NMO", "GPR", function(x, v = NULL){
-  if(any(x@z0 > 0)){
-    stop(msg_do_shiftToTime0)
-  }
-  if(!isZTime(x)){
-    stop(msg_set_zunitToDepth)
-  }
+  if(any(x@z0 > 0))      stop(msg_do_shiftToTime0)
+  if(!isZTime(x))        stop(msg_set_zunitToDepth)
   if(is.null(v)){
-    # if(length(x@vel) == 0){
-    #   stop("You must assign a positiv numerical value to 'v'!")
-    # }else{
-    #   if(is.null(v)){
-    #     if(is.null(x@vel[["v"]])){
-    #       x <- velInterp(x, type = "vrms", method = "pchip")
-    #     }
-    #     v <- x@vel[["v"]]
-    #   } 
-    # }
+    if(length(x@vel) == 0) stop(msg_no_vel)
     v <- .getVel(x, strict = FALSE)
   }
   if(anyNA(x@antsep)){

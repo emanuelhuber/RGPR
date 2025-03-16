@@ -11,6 +11,10 @@ LINES_GPS <- file.path("/home/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/DEVELO
 
 x <- GPRsurvey(LINES, verbose = FALSE)
 x_coords <- x@coords
+
+
+
+
 # 
 # x <-readGPR(LINES[2], interpGPS = FALSE)
 # x_gps <- readGPS(LINES_GPS[2])
@@ -42,11 +46,23 @@ x_coords <- x@coords
 # 
 # RGPR:::.updateXpos(x)
 
+
+y <- x[2]
+
+coordinates(y) <- list(matrix(nrow = 0, ncol =3, dimnames = list(NULL, c("x", "y", "z"))) )
+
 test_that("'coord' for GPRsurvey",{
   expect_identical(x_coords, coordinates(x))
   
   # i.O.
   expect_silent(coordinates(x)[2] <- list(matrix(nrow = 0, ncol =3, dimnames = list(NULL, c("x", "y", "z"))) )  )
+  
+  # somehow not working
+  expect_error(coordinates(x[2]) <- list(matrix(nrow = 0, ncol =3, dimnames = list(NULL, c("x", "y", "z"))) )  )
+  # but that works
+  expect_silent(coordinates(y) <- list(matrix(nrow = 0, ncol =3, dimnames = list(NULL, c("x", "y", "z"))) )  )
+  
+  
   # i.O.
   expect_silent(coordinates(x)[[3]] <- matrix(nrow = 0, ncol =3, dimnames = list(NULL, c("x", "y", "z")))  )
   # Error

@@ -1,3 +1,14 @@
+#' Delineate structure on GPR data
+#'
+#' @param x (`GPR`)
+#' @param name (`character[1]`) Names of the delineated line
+#' @param values (`list`) list of x and y coordinates (optional). If `NULL`, 
+#'               `locator()` function is run.
+#' @param n (`numeric[1]`) the maximum number of points to locate. Valid values start at 1.
+#' @param plotDel (`logical[1]`) If `TRUE`plot delineation.
+#' @param ... Additional arguments for `plot`/`line` function
+#' @param col (`character[n]`) `n` colors for the `n` delineations
+#' @param method (`character[1]`) Interpolation method
 #' @name delineate
 #' @rdname delineation
 #' @export
@@ -9,15 +20,6 @@ setGeneric("delineate", function(x,
                                  ...) 
   standardGeneric("delineate"))
 
-#' Delineate structure on GPR data
-#'
-#' @param x (`GPR`)
-#' @param name (`character[1]`) Names of the delineated line
-#' @param values (`list`) list of x and y coordinates (optional). If `NULL`, 
-#'               `locator()` function is run.
-#' @param n (`numeric[1]`) the maximum number of points to locate. Valid values start at 1.
-#' @param plotDel (`logical[1]`) If `TRUE`plot delineation.
-#' @name delineate
 #' @rdname delineation
 #' @export
 setMethod("delineate", "GPR", function(x, 
@@ -69,6 +71,8 @@ setMethod("delineate", "GPR", function(x,
 })  
 
 
+#' Plot the delineation on a 2D plot
+#'
 #' @name plotDelineations
 #' @rdname delineation
 #' @export
@@ -79,9 +83,7 @@ setGeneric("plotDelineations",
                     col = NULL, ...) 
              standardGeneric("plotDelineations"))
 
-#' Plot the delineation on a 2D plot
-#'
-#' @name plotDelineations
+
 #' @rdname delineation
 #' @export
 setMethod("plotDelineations", "GPR", 

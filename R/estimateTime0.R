@@ -1,14 +1,3 @@
-#' @name estimateTime0
-#' @rdname estimateTime0
-#' @export
-setGeneric("estimateTime0",
-                function(x, method = c("coppens", "threshold", "MER"), 
-                         thr = NULL, w = NULL, ns = NULL, bet = NULL, 
-                         shorten = TRUE, c0 = 0.299, 
-                         FUN = NULL, ..., track = TRUE)
-                  standardGeneric("estimateTime0"))
-
-
 #' Estimate and set time-zero
 #' 
 #' `estimateTime0` estimates for each trace individually the first wave 
@@ -66,28 +55,30 @@ setGeneric("estimateTime0",
 #'            estimated time-zero of every traces (e.g., `mean` or 
 #'            `median` to get set a single time-zero value to the data).
 #' @param ...  Further arguments to be passed to `FUN`.
-#'  
+#' @param track (`logical[1]`) Should the processing step be tracked? 
 #' @return (`GPR`) An object of the class `GPR`.
-#'          
 #' @seealso [pickFirstBreak()] to estimate the first wave break;
 #'          [firstBreakToTime0()] to convert the first wave break
 #'          into time zero.
 #'          [time0()] and [setTime0()] to set time-zero;
 #'          [shiftToTime0()] to shift the traces such that they start
 #'          at time-zero.
-#'          
-#' @examples 
-#' data("frenkeLine00")
-#' x <- frenkeLine00
-#' x1 <- estimateTime0(x, w = 10)
-#' time0(x1)
-#' x2 <- estimateTime0(x, w = 10, FUN = mean)
-#' time0(x2)
-#' 
 #' @name estimateTime0
 #' @rdname estimateTime0
 #' @export
 #' @concept processing
+setGeneric("estimateTime0",
+                function(x, method = c("coppens", "threshold", "MER"), 
+                         thr = NULL, w = NULL, ns = NULL, bet = NULL, 
+                         shorten = TRUE, c0 = 0.299, 
+                         FUN = NULL, ..., track = TRUE)
+                  standardGeneric("estimateTime0"))
+
+
+
+
+#' @rdname estimateTime0
+#' @export
 setMethod("estimateTime0", "GPR", 
           function(x, method = c("coppens", "threshold", "MER"), 
                    thr = NULL, w = NULL, ns = NULL, bet = NULL, 

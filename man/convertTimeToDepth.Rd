@@ -40,7 +40,6 @@ one of \code{pchip}, \code{linear}, \code{nearest},
 }
 \description{
 Convert the two-way travel time of the recorded waves into depth. It does
-not account for the topography. To add the topography,
-use \code{\link[=migrate]{migrate()}} instead. This is a non-linear operation
+not account for the topography.
 }
 \concept{signal processing}

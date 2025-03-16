@@ -8,6 +8,10 @@ setGeneric("plotTr", function(x, add = FALSE,  ...)
   standardGeneric("plotTr"))
 
 
+
+# FIXME
+# plotTr(x, log = "y", col = rgb(0.2,0.2,0.2,7/100)) -> ylabel not good!
+
 #' @rdname plotTr
 #' @export
 setMethod(

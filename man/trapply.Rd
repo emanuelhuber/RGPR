@@ -2,6 +2,7 @@
 % Please edit documentation in R/trapply.R
 \name{trapply}
 \alias{trapply}
+\alias{trapply,GPR-method}
 \title{Trace statistics}
 \usage{
 trapply(x, w = NULL, FUN = mean, ..., track = TRUE)
@@ -12,12 +13,13 @@ trapply(x, w = NULL, FUN = mean, ..., track = TRUE)
 \item{x}{An object of the class GPR}
 
 \item{w}{A length-one integer vector equal to the window length of the
-average window. If \code{w = NULL} a single trace corresponding to
-the average trace of the whole profile is returned.}
+average window. If \code{w = NULL} similar to \code{apply(x, MARGIN = 2, FUN, ...)}}
 
 \item{FUN}{A function to compute the average (default is \code{mean})}
 
 \item{...}{Additional parameters for the FUN functions}
+
+\item{track}{(\code{logical[1]}) Should the processing step be tracked?}
 }
 \value{
 An object of the class GPR. When \code{w = NULL}, this function

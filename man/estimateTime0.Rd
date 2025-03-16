@@ -2,6 +2,7 @@
 % Please edit documentation in R/estimateTime0.R
 \name{estimateTime0}
 \alias{estimateTime0}
+\alias{estimateTime0,GPR-method}
 \title{Estimate and set time-zero}
 \usage{
 estimateTime0(
@@ -75,6 +76,8 @@ estimated time-zero of every traces (e.g., \code{mean} or
 \code{median} to get set a single time-zero value to the data).}
 
 \item{...}{Further arguments to be passed to \code{FUN}.}
+
+\item{track}{(\code{logical[1]}) Should the processing step be tracked?}
 }
 \value{
 (\code{GPR}) An object of the class \code{GPR}.
@@ -101,15 +104,6 @@ Modified slots:
 \item \code{time0}: new estimated time-zero.
 \item \code{proc}: updated with function name and arguments.
 }
-}
-\examples{
-data("frenkeLine00")
-x <- frenkeLine00
-x1 <- estimateTime0(x, w = 10)
-time0(x1)
-x2 <- estimateTime0(x, w = 10, FUN = mean)
-time0(x2)
-
 }
 \seealso{
 \code{\link[=pickFirstBreak]{pickFirstBreak()}} to estimate the first wave break;

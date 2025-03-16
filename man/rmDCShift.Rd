@@ -2,6 +2,7 @@
 % Please edit documentation in R/rmDCShift.R
 \name{rmDCShift}
 \alias{rmDCShift}
+\alias{rmDCShift,GPR-method}
 \title{Direct-Current shift removal}
 \usage{
 rmDCShift(x, u = NULL, FUN = mean, ..., track = TRUE)
@@ -22,6 +23,8 @@ could be of interest because it is more robust but slower to
 compute).}
 
 \item{...}{(\code{ANY}) Further arguments to be passed to \code{FUN}.}
+
+\item{track}{(\code{logical[1]}) Should the processing step be tracked?}
 }
 \value{
 (\code{GPR}) An object of the class \code{GPR}.
@@ -45,4 +48,3 @@ Modified slots
 \item \code{proc}: updated with function name and arguments.
 }
 }
-\concept{processing}

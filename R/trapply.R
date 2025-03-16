@@ -1,11 +1,3 @@
-#' @name trapply
-#' @rdname trapply
-#' @export
-setGeneric("trapply", 
-           function(x, w = NULL, FUN = mean, ...,
-                    track = TRUE)
-             standardGeneric("trapply"))
-
 #' Trace statistics
 #'
 #' `trapply` is a generic function used to produce results defined
@@ -16,10 +8,10 @@ setGeneric("trapply",
 #' 
 #' @param x An object of the class GPR
 #' @param w A length-one integer vector equal to the window length of the 
-#'          average window. If `w = NULL` a single trace corresponding to
-#'          the average trace of the whole profile is returned.
+#'          average window. If `w = NULL` similar to `apply(x, MARGIN = 2, FUN, ...)`
 #' @param FUN A function to compute the average (default is `mean`)
 #' @param ... Additional parameters for the FUN functions
+#' @param track (`logical[1]`) Should the processing step be tracked? 
 #' @return An object of the class GPR. When `w = NULL`, this function 
 #'         returns a GPR object with a single trace corresponding to the 
 #'         average trace of the whole radargram. When `w` is equal to a
@@ -30,21 +22,27 @@ setGeneric("trapply",
 #' @rdname trapply
 #' @export
 #' @concept processing
+setGeneric("trapply", 
+           function(x, w = NULL, FUN = mean, ...,
+                    track = TRUE)
+             standardGeneric("trapply"))
+
+#' @rdname trapply
+#' @export
 setMethod("trapply", "GPR", function(x, w = NULL, FUN = mean, ...,
                                        track = TRUE){
   FUN <- match.fun(FUN)
+  # xdata <- x@data
   if(is.null(w)){
-    xdata <- x@data
-    x <- x[,1]
-    x@data <- as.matrix(apply(xdata, 1, FUN, ...))
-    x@z0 <- mean(x@z0)
-    x@time <- mean(x@time)
-    x@coord <- matrix(ncol = 0, nrow = 0)
-    x@rec <- matrix(ncol = 0, nrow = 0)
-    x@trans <- matrix(ncol = 0, nrow = 0)
+    xdata <- apply(x@data, 2, FUN, ...)
+    if(is.null(dim(xdata))){
+      dim(xdata) <- c(1, length(xdata))
+    }
   }else{
-    x@data <- wapplyMat(x@data, width = w, by = 1, FUN = FUN, MARGIN = 1, ...)
+    xdata <- wapplyMat(x@data, width = w, by = 1, FUN = FUN, MARGIN = 2, ...)
   }
+  x <- x[1:nrow(xdata), ]
+  x@data <- xdata
   if(isTRUE(track)) proc(x) <- getArgs()
   return(x)
 }

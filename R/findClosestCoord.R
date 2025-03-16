@@ -12,4 +12,16 @@ findClosestCoord <- function(x, y){
                  ncol = 2,
                  byrow = TRUE)
   which.min(rowSums((ymat - x@coord[,1:2])^2))
+  
+  # FIXME:
+#   use
+#   # Use findInterval for multiple values
+#   idx_x <- findInterval(x, d)
+#   
+#   # Adjust indices where the next value in d is closer
+#   idx_x <- ifelse(
+#     idx_x < length(d) & abs(d[idx_x + 1] - x) < abs(d[idx_x] - x),
+#     idx_x + 1,
+#     idx_x
+#   )
 }

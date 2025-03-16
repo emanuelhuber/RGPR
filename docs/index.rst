@@ -73,6 +73,11 @@ clicking *View page source* at the top left of any page.
 
 
 
+
+
+
+
+
 .. toctree::
    :maxdepth: 1
    :caption: Functions
@@ -103,13 +108,21 @@ clicking *View page source* at the top left of any page.
    crs <functions/crs.md>
    crsUnit <functions/crsUnit.md>
    declip <functions/declip.md>
+   delineation <functions/delineation.md>
    depth0 <functions/depth0.md>
    depthToTime <functions/depthToTime.md>
    detectASCIIProp <functions/detectASCIIProp.md>
+   dewow <functions/dewow.md>
    dim-GPRvirtual-method <functions/dim-GPRvirtual-method.md>
    dropDuplicatedCoords <functions/dropDuplicatedCoords.md>
+   estimateTime0 <functions/estimateTime0.md>
+   filter1D <functions/filter1D.md>
+   filter2D <functions/filter2D.md>
+   filterFreq <functions/filterFreq.md>
    findClosestCoord <functions/findClosestCoord.md>
+   firstBreakToTime0 <functions/firstBreakToTime0.md>
    freqFromString <functions/freqFromString.md>
+   gainSEC <functions/gainSEC.md>
    georef <functions/georef.md>
    getAntFreqGSSI <functions/getAntFreqGSSI.md>
    getFName <functions/getFName.md>
@@ -125,8 +138,10 @@ clicking *View page source* at the top left of any page.
    GPRsurvey-class <functions/GPRsurvey-class.md>
    GPRsurvey <functions/GPRsurvey.md>
    GPRvirtual-class <functions/GPRvirtual-class.md>
+   gridCoords <functions/gridCoords.md>
    hyperbolicTWT <functions/hyperbolicTWT.md>
    interpCoords <functions/interpCoords.md>
+   interpRegRaster <functions/interpRegRaster.md>
    interpSlices <functions/interpSlices.md>
    intersect <functions/intersect.md>
    is.finite-GPRvirtual <functions/is.finite-GPRvirtual.md>
@@ -158,6 +173,7 @@ clicking *View page source* at the top left of any page.
    palGPR <functions/palGPR.md>
    pathLength <functions/pathLength.md>
    pathRelPos <functions/pathRelPos.md>
+   pickFirstBreak <functions/pickFirstBreak.md>
    plot <functions/plot.md>
    plotCMPhyperbolas <functions/plotCMPhyperbolas.md>
    plotTr <functions/plotTr.md>
@@ -181,10 +197,15 @@ clicking *View page source* at the top left of any page.
    readTopo <functions/readTopo.md>
    relPos <functions/relPos.md>
    RGPR-package <functions/RGPR-package.md>
+   rmDCShift <functions/rmDCShift.md>
+   robustSmooth <functions/robustSmooth.md>
+   scale1D <functions/scale1D.md>
    setDefaultListValues <functions/setDefaultListValues.md>
    setDots <functions/setDots.md>
    setVel <functions/setVel.md>
    shift <functions/shift.md>
+   shiftGridLine <functions/shiftGridLine.md>
+   shiftTopo <functions/shiftTopo.md>
    shiftToTime0 <functions/shiftToTime0.md>
    show-GPR-method <functions/show-GPR-method.md>
    show-GPRcube-method <functions/show-GPRcube-method.md>
@@ -199,14 +220,18 @@ clicking *View page source* at the top left of any page.
    subset-GPRsurvey <functions/subset-GPRsurvey.md>
    summary-GPRvirtual-method <functions/summary-GPRvirtual-method.md>
    Summary-methods <functions/Summary-methods.md>
+   time0 <functions/time0.md>
    timeToDepth <functions/timeToDepth.md>
+   trapply <functions/trapply.md>
    trimStr <functions/trimStr.md>
    UMTStringToEPSG <functions/UMTStringToEPSG.md>
+   unscale <functions/unscale.md>
    UTMToEPSG <functions/UTMToEPSG.md>
    UTMTolonlat <functions/UTMTolonlat.md>
    vel <functions/vel.md>
    velDix <functions/velDix.md>
    velInterp <functions/velInterp.md>
+   velLayers <functions/velLayers.md>
    velPick <functions/velPick.md>
    velSmooth <functions/velSmooth.md>
    velSpectrum <functions/velSpectrum.md>

@@ -2,42 +2,42 @@
 #' 
 #' Return the velocity model (either the root-mean square or internal velocity).
 #' 
-#' @param x (`GPR class`) An object of the class `GPR`
+#' @param obj (`GPR class`) An object of the class `GPR`
 #' @param type (`vrm|vint`) Set the velocity you want (either root-mean square or internal velocity)
 #' @return (`GPR class`) An object of the class `GPR` containing the velocity model.
 #' @name getVel
 #' @rdname getVel
 #' @concept velocity model
-setGeneric("getVel", function(x, type = c("vrms", "vint")) standardGeneric("getVel"))
+setGeneric("getVel", function(obj, type = c("vint", "vrms")) standardGeneric("getVel"))
 
 #' @rdname getVel
 #' @export
-setMethod("getVel", "GPR", function(x, type = c("vrms", "vint")){
-  velAsGPR(x, type = type)
+setMethod("getVel", "GPR", function(obj, type = c("vint", "vrms")){
+  velAsGPR(obj, type = type)
 })
 
 
 
-velAsGPR <- function(x, type = c("vrms", "vint")){
-  type <- match.arg(type, c("vrms", "vint"))
-  x_vel <- .getVel(x, type = type, strict = FALSE)
-  if(is.null(dim(x_vel))){
-    x <- x[,1]
+velAsGPR <- function(obj, type = c("vint", "vrms")){
+  type <- match.arg(type, c("vint", "vrms"))
+  obj_vel <- .getVel(obj, type = type, strict = FALSE)
+  if(is.null(dim(obj_vel))){
+    obj <- obj[,1]
+    obj@antsep <- 0
+    obj@x <- 0
   }else{
-    x <- x[1:nrow(x_vel),1:ncol(x_vel)]
+    obj <- obj[1:nrow(obj_vel),1:ncol(obj_vel)]
   }
-  x@mode <- "velModel"
-  x@antsep <- 0
-  x@vel <- list()
-  x@x <- 0
-  x@data[] <- x_vel
+  obj@mode <- "velModel"
+  obj@vel <- list()
+  obj@data[] <- obj_vel
   
-  x@dunit <- paste0(x@xunit, "/", x@zunit)
-  x@xlab <- "position" 
-  x@dlab <- "velocity"
-  x@name <- "Velocity"
-  x@z0 <- x@z0
-  # x_tv@time0 <- 0
-  #proc(x) <- getArgs()
-  return(x)
+  obj@dunit <- paste0(obj@xunit, "/", obj@zunit)
+  obj@xlab <- "position" 
+  obj@dlab <- "velocity"
+  obj@name <- "Velocity"
+  #obj@z0 <- obj@z0
+  # obj_tv@time0 <- 0
+  #proc(obj) <- getArgs()
+  return(obj)
 }

@@ -514,7 +514,8 @@ plot.GPR <- function(x,
          mgp = defaults$mpg, asp = asp)
   }
   if(type == "raster"){
-    if( isTRUE(all.equal(diff(x@x), 0)) || isTRUE(all.equal(diff(x@z), 0)) ){
+    # isReg <- isSamplingRegular(x)
+    if( isTRUE(isSamplingRegular(x)) ){
       xdata <- x@data
     }else{
       nx = round(diff(range(x@z)) / median(diff(x@z))) + 1
@@ -579,6 +580,7 @@ plot.GPR <- function(x,
     axis(2, tck = 0.01, mgp = c(2, 0.5, 0), lwd = -1, lwd.ticks = 1)
     if(isTRUE(secaxis)){
       if(isZTime(x) && isCommonOffset(x)){
+        # FIXME: is it vrms or vint?
         vmean <- mean(.getVel(x, type = "vrms", strict = FALSE))
         xat <- sort(par()$usr[3:4])
         .secaxis(x, antsep = x@antsep, z = x@z, v = vmean, z0 = mean(x@z0), xat = xat, side = 4)
@@ -590,19 +592,28 @@ plot.GPR <- function(x,
     box()
     
     if(!is.null(cbar)){
-      if(isTRUE(sym)){
-        if(!is.null(clim)){
-          clim <- max(abs(clim), na.rm = TRUE) * c(-1, 1)
-        }else{
-          clim <- max(abs(x), na.rm = TRUE) * c(-1, 1)
-        }
+      # clim <- like in function `palCol()`
+      if(!is.null(clim)  ){
+        clim <- sort(clim)
       }else{
-        if(!is.null(clim)){
-          clim <- range(clim, na.rm = TRUE)
-        }else{
-          clim <- range(x, na.rm = TRUE)
-        }
+        clim <- range(x, na.rm = TRUE)
       }
+      if(isTRUE(sym) && clim[1] < 0){
+        clim <- c(-1, 1) * max(abs(clim)) 
+      }
+      # if(isTRUE(sym)){
+      #   if(!is.null(clim)){
+      #     clim <- max(abs(clim), na.rm = TRUE) * c(-1, 1)
+      #   }else{
+      #     clim <- max(abs(x), na.rm = TRUE) * c(-1, 1)
+      #   }
+      # }else{
+      #   if(!is.null(clim)){
+      #     clim <- range(clim, na.rm = TRUE)
+      #   }else{
+      #     clim <- range(x, na.rm = TRUE)
+      #   }
+      # }
       # col <- defaults[["col"]]
       # dim(col) <- c(length(col), 1)
       if(is.null(cbar[["clab"]])) cbar[["clab"]] <- x@dunit
@@ -785,11 +796,16 @@ lines.GPR <- function(x, relTime0 = FALSE, ...){
       dots[["log"]] <- NULL
       x@data <- log(x@data)
     }
+    if(length(x@x) > 1){
+      vy <- x@x
+    }else{
+      vy <- z
+    }
     if(isTRUE(dots$horiz) || is.null(dots$horiz)){
       dots[["y"]] <- x@data
-      dots[["x"]] <- z
+      dots[["x"]] <- vy
     }else{
-      dots[["y"]] <- z
+      dots[["y"]] <- vy
       dots[["x"]] <- x@data
     }
     dots$horiz <- NULL

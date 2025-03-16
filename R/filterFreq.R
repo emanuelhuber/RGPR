@@ -1,8 +1,3 @@
-setGeneric("filterFreq1D", function(x, f = 100, 
-                                    type = c('low', 'high', 'bandpass', 'bandpass-reject'),
-                                    L = 257, plotSpec = FALSE, track = TRUE) 
-  standardGeneric("filterFreq1D")) 
-
 #' Frequency filter
 #' 
 #' The frequency filter alters the signal amplitude with respect to frequency.
@@ -31,7 +26,7 @@ setGeneric("filterFreq1D", function(x, f = 100,
 #' Check this free book: The Scientist and Engineer's Guide to Digital Signal 
 #' Processing By Steven W. Smith, Ph.D.
 #'
-#' @param x An object of the class GPR
+#' @param obj (`GPR* object`)
 #' @param f numeric vector: cut-off frequencies. Cutoff frequency is the 
 #'          frequency beyond which the filter will not pass signals.
 #'           See Details.
@@ -40,45 +35,61 @@ setGeneric("filterFreq1D", function(x, f = 100,
 #'             `bandpass` for bandpass filter.
 #' @param L length-one numeric defining the filter length. See Details.
 #' @param plotSpec boolean. If `TRUE` plot the frequency spectrum as well.
+#' @param track (`logical[1]`) Should the processing step be tracked? 
 #' @name filterFreq1D
 #' @rdname filterFreq
 #' @export
 #' @concept processing
+setGeneric("filterFreq1D", function(obj, f = 100, 
+                                    type = c('low', 'high', 'bandpass', 'bandpass-reject'),
+                                    L = 257, plotSpec = FALSE, track = TRUE) 
+  standardGeneric("filterFreq1D")) 
+
+#' @rdname filterFreq
+#' @export
 setMethod("filterFreq1D", "GPR", 
-          function(x, f = 100, 
+          function(obj, f = 100, 
                    type = c('low', 'high', 'bandpass', 'bandpass-reject'),
                    L = 257, plotSpec = FALSE, track = TRUE){
-            dz <- mean(diff(x@z))
-            x@data <- .filterFreq1D1D(x@data, f = f,  type = type, L = L, dT = dz, 
+            dz <- mean(diff(obj@z))
+            obj@data <- .filterFreq1D(obj@data, f = f,  type = type, L = L, dT = dz, 
                                  plotSpec = plotSpec)
-            if(isTRUE(track)) proc(x) <- getArgs()
-            #   x@proc <- c(x@proc, proc)
-            return(x)
+            if(isTRUE(track)) proc(obj) <- getArgs()
+            #   obj@proc <- c(obj@proc, proc)
+            return(obj)
           } 
 )
 
-setGeneric("filterFreq2D", function(x, fk = NULL, L = c(5 , 5), npad = 1,
-                                    track = TRUE) 
-  standardGeneric("filterFreq2D")) 
 
 #' Frequency-wavenumber filter
 #'
+#' Frequency-wavenumber filter
+#' @param obj (`GPR* object`)
+#' @param fk (`FIXME`) FILTER
+#' @param npad (`FIXME`) FILTER
 #' @name filterFreq2D
 #' @rdname filterFreq
 #' @export
-setMethod("filterFreq2D", "GPR", function(x, fk = NULL, L = c(5 , 5), npad = 1,
+setGeneric("filterFreq2D", function(obj, fk = NULL, L = c(5 , 5), npad = 1,
+                                    track = TRUE) 
+  standardGeneric("filterFreq2D")) 
+
+
+#' @rdname filterFreq
+#' @export
+setMethod("filterFreq2D", "GPR", function(obj, fk = NULL, L = c(5 , 5), npad = 1,
                                       track = TRUE){
   if(is.null(fk)) stop("fk argument has to be specified")
   # if polygon
   if(is.list(fk) && length(fk) == 2){
     areaunclosed <- t(do.call("rbind", fk))
     
-    dx <- mean(diff(x@x))
-    dz <- mean(diff(x@z))
+    dx <- mean(diff(obj@x))
+    dz <- mean(diff(obj@z))
     
     
-    nk <- npad*(nextpower2(ncol(x@data)))
-    nf <- npad*(nextpower2(nrow(x@data)))
+    nk <- npad*(nextpower2(ncol(obj@data)))
+    nf <- npad*(nextpower2(nrow(obj@data)))
     # frequency
     Ts = dz*10^(-9)    # [s] Sample time
     fac = 1000000
@@ -95,16 +106,15 @@ setMethod("filterFreq2D", "GPR", function(x, fk = NULL, L = c(5 , 5), npad = 1,
   }else if(is.matrix(fk)){
     cat("# FIXME! function to transform matrix into polygon\n")
   }
-  x@data <- .FKFilter(x@data, fk = fk, L = L, npad = npad)
-  if(isTRUE(track)) proc(x) <- getArgs()
-  #   x@proc <- c(x@proc, proc)
-  return(x)
+  obj@data <- .FKFilter(obj@data, fk = fk, L = L, npad = npad)
+  if(isTRUE(track)) proc(obj) <- getArgs()
+  return(obj)
   
 } 
 )
 
 
-.filterFreq1D1D <- function(A, f = c(100), type = c('low', 'high', 'bandpass',
+.filterFreq1D <- function(A, f = c(100), type = c('low', 'high', 'bandpass',
                                                'bandpass-reject'), 
                        L = 257, dT = 0.8, plotSpec = FALSE, fac = 1000000){
   type <- match.arg(type)
@@ -264,3 +274,58 @@ hammingWindow <- function(L){
 nextpower2 <- function(x){
   return(2^(ceiling(log2(x))))
 }
+
+
+.FKFilter <- function(A, fk, L = c(5, 5), npad=1){
+  nr <- nrow(A)  # time  
+  nc <- ncol(A)  # x  
+  
+  #============== PLOT F-K SPECTRUM ===============#
+  # padding (try also 2*(2^nextpow2(nc))
+  nk <- npad*(nextpower2(nc))
+  nf <- npad*(nextpower2(nr))
+  A1 <- matrix(0,nrow=nf,ncol=nk)
+  A1[1:nr,1:nc] <- A
+  
+  # function to center the spectrum!! (no need of fttshift!)
+  #centres spectrum: Gonzalez & Wintz (1977) Digital Image Processing p.53
+  # A1  <- A1 * (-1)^(row(A1) + col(A1))
+  A1_fft <- stats::fft(A1)
+  
+  # plotGPR(Mod(A1_fft)^0.05)
+  # plotGPR(Re(fft(A1_fft,inv=TRUE))[1:nr,1:nc])
+  # plotGPR(A)
+  
+  #============== FILTER F-K SPECTRUM ===============#
+  myFlong <- matrix(0,nrow=nf,ncol=nk)
+  myFlong[1:(nf/2),1:(nk/2)] <- fk[(nf/2):1,(nk/2):1]
+  # myFlong  <- myFlong * (-1)^(row(myFlong) + col(myFlong))
+  myFlong[(nf/2+1):(nf),(nk/2 + 1):nk] <- fk[1:(nf/2),1:(nk/2)]
+  myFlong[1:(nf/2),(nk/2 + 1):nk] <- fk[(nf/2):1,(nk):(nk/2 + 1)]
+  # myFlong[(nf/2+1):(nf),1:(nk/2)] <- fk[1:(nf/2),(nk/2 + 1):(nk)]
+  myFlong[(nf/2+1):(nf),1:(nk/2)] <- fk[1:(nf/2),(nk/2 + 1):nk]
+  # plotGPR(myFlong)
+  
+  
+  # hamming window
+  if(length(L)==1) L <- c(L,L)
+  if(all(L!=0)){
+    ham2D <- hammingWindow(L[1])%*%t(hammingWindow(L[2]))
+    ham2Dlong <- matrix(0,nrow=nf,ncol=nk)
+    ham2Dlong[1:L[1],1:L[2]] <- ham2D
+    # plotGPR(ham2Dlong)
+    FF <-  Re(stats::fft(stats::fft(myFlong) * stats::fft(ham2Dlong),inv=TRUE))
+  }else{
+    FF <- myFlong
+  }
+  FF <- FF/sum(FF)
+  
+  # plotGPR(Re(fft(fft(myFlong) * fft(ham2Dlong),inv=TRUE))[1:nr,1:nc])
+  
+  A_back <- Re(stats::fft(A1_fft * FF,inv=TRUE))[1:nr,1:nc]
+  # plotGPR(A_back)
+  # plotGPR(A_back)
+  # scaling
+  return(A_back/(max(A_back)-min(A_back))*(max(A)-min(A)))
+}
+

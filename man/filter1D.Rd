@@ -2,21 +2,34 @@
 % Please edit documentation in R/filter1D.R
 \name{filter1D}
 \alias{filter1D}
+\alias{filter1D,GPR-method}
 \title{One dimensional filters}
 \usage{
 filter1D(
-  x,
-  type = c("runmed", "runmean", "MAD", "Gaussian"),
+  obj,
+  type = c("runmed", "runmean", "mad", "gaussian", "hampel"),
   w = NULL,
   track = TRUE
 )
 
 \S4method{filter1D}{GPR}(
-  x,
+  obj,
   type = c("runmed", "runmean", "mad", "gaussian", "hampel"),
   w = NULL,
   track = TRUE
 )
+}
+\arguments{
+\item{obj}{(\code{GPR* object})}
+
+\item{type}{(\code{character[1]}) Filter method.}
+
+\item{w}{(\code{numeric[1]})  Filter window width.}
+
+\item{track}{(\code{logical[1]}) Should the processing step be tracked?}
+}
+\value{
+(\code{GPR* object})
 }
 \description{
 One dimensional filters

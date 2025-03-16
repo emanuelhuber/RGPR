@@ -2,19 +2,27 @@
 % Please edit documentation in R/scale1D.R
 \name{scale1D}
 \alias{scale1D}
+\alias{scale1D,GPR-method}
 \title{Scale the traces}
 \usage{
 scale1D(
-  x,
+  obj,
   type = c("stat", "min-max", "95", "eq", "sum", "rms", "mad", "invNormal"),
   track = TRUE
 )
 
 \S4method{scale1D}{GPR}(
-  x,
+  obj,
   type = c("stat", "min-max", "95", "eq", "sum", "rms", "mad", "invNormal"),
   track = TRUE
 )
+}
+\arguments{
+\item{obj}{(\code{GPR* object})}
+
+\item{type}{(\code{character[1]}) Type of scaling}
+
+\item{track}{(\code{logical[1]}) Should the processing step be tracked?}
 }
 \description{
 Scale the traces

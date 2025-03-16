@@ -2,8 +2,19 @@
 % Please edit documentation in R/pickFirstBreak.R
 \name{pickFirstBreak}
 \alias{pickFirstBreak}
+\alias{pickFirstBreak,GPR-method}
 \title{Time of first wave break}
 \usage{
+pickFirstBreak(
+  x,
+  method = c("coppens", "threshold", "MER"),
+  thr = NULL,
+  w = NULL,
+  ns = NULL,
+  bet = NULL,
+  shorten = TRUE
+)
+
 \S4method{pickFirstBreak}{GPR}(
   x,
   method = c("coppens", "threshold", "MER"),
@@ -90,6 +101,6 @@ into time-zero;
 \code{\link[=time0]{time0()}} and \code{\link[=setTime0]{setTime0()}} to set time-zero;
 \code{\link[=estimateTime0]{estimateTime0()}} to estimate first wave break, convert
 it to time-zero and set time zero (all in one step);
-\code{\link[=time0Cor]{time0Cor()}} to shift the traces such that they start
+\code{\link[=shiftToTime0]{shiftToTime0()}} to shift the traces such that they start
 at time-zero.
 }

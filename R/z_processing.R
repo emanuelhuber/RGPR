@@ -96,6 +96,9 @@ rollapplyHampel <- function(x, w, FUN){
 #' Unscale
 #'
 #' Back-transform/unscale from \code{scale}
+#' @param x (`numeric[n]`) A numerical vector
+#' @param y (`numeric[n]`) A numerical vector
+#' @return (`numeric[n]`)
 #' @export
 unscale <- function(x, y){
   xCenter <- attr(x, 'scaled:center')

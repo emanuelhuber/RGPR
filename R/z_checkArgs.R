@@ -132,6 +132,19 @@ checkArg <- function(x, u, type, y, ...){
              msg <- paste0(msg, " or a 'NULL'")
            }
          },
+         "PERCENT1_NULL" = {
+           if(!checkmate::testNumeric(x, 
+                                      finite = TRUE,
+                                      any.missing = FALSE, 
+                                      all.missing = FALSE,
+                                      len = 1,
+                                      upper = 1,
+                                      null.ok = TRUE)){
+             msg <- "must be a numeric value < 1"
+             if(is.finite(y)) msg <- paste0(msg, " < ", y)
+             msg <- paste0(msg, " or a 'NULL'")
+           }
+         },
          # length = 1, Strictly POSitive
          "NUMERIC1_SPOS_NULL" = {
            if(!checkmate::testNumeric(x, lower = sqrt(.Machine$double.eps),

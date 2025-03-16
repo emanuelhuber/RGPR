@@ -1,12 +1,3 @@
-#' @name rmDCShift
-#' @rdname rmDCShift
-#' @export
-setGeneric("rmDCShift", 
-           function(x, u = NULL, FUN = mean, ...,
-                    track = TRUE)
-             standardGeneric("rmDCShift"))
-
-
 #' Direct-Current shift removal 
 #' 
 #' The direct-current offset (DC-shift) is estimated and removed from every 
@@ -34,13 +25,21 @@ setGeneric("rmDCShift",
 #'            could be of interest because it is more robust but slower to 
 #'            compute).
 #' @param ... (`ANY`) Further arguments to be passed to `FUN`. 
-#'          
+#' @param track (`logical[1]`) Should the processing step be tracked?          
 #' @return (`GPR`) An object of the class `GPR`.
 #' 
 #' @name rmDCShift
 #' @rdname rmDCShift
 #' @export
-#' @concept processing
+setGeneric("rmDCShift", 
+           function(x, u = NULL, FUN = mean, ...,
+                    track = TRUE)
+             standardGeneric("rmDCShift"))
+
+
+
+#' @rdname rmDCShift
+#' @export
 setMethod("rmDCShift", "GPR", function(x, u = NULL, FUN = mean, ...,
                                      track = TRUE){
   

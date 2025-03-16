@@ -15,6 +15,8 @@ convertTimeToDepth(
   zmax = NULL,
   method = c("pchip", "linear", "nearest", "spline", "cubic")
 )
+
+getDepth(obj)
 ```
 
 ## Arguments
@@ -25,9 +27,14 @@ convertTimeToDepth(
 - `method`: (`character[1]`) Interpolation method to be applied: one of `pchip`, `linear`, `nearest`, `spline`, or `cubic`
     
     (see also `signal::interp1()`).
+- `obj`: (`GPR* object`) An object of the class `GPR`
 
 ## Returns
 
 (`GPR* object`) with signal as a function of depth.
 
+(`GPR* object`) with signal as a function of depth.
+
 Convert the two-way travel time of the recorded waves into depth. It does not account for the topography. To add the topography, use `migrate()` instead. This is a non-linear operation
+
+Retunrs an object identical to `obj` but with values equal to the signal depth

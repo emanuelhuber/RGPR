@@ -16,10 +16,10 @@
 \S4method{is.nan}{GPRvirtual}(x)
 }
 \arguments{
-\item{x}{(\verb{GPR*})}
+\item{x}{(\code{GPR* object})}
 }
 \value{
-(\verb{GPR*}) With logical values (\code{TRUE} is the value is
+(\code{GPR* object}) With logical values (\code{TRUE} is the value is
 finite, \code{FALSE} if not.)
 }
 \description{

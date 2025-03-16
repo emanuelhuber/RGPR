@@ -1,3 +1,5 @@
+amplEnv: x, method, npad, threshold
+analyticSignal: x, npad
 angle: x
 ann: x
 ann<-: x, value
@@ -6,41 +8,81 @@ antsep<-: x, value
 as.sf: x
 as.spatialLines: x
 as.spatialPoints: x
+buffer: x, d, combine
+clippedData: obj, dlim, verbose
 CMPhyperbolas: x
 convertTimeToDepth: x, dz, zmax, method
 convexhull: x, verbose
 coordinates: x
 coordinates<-: x, value
+crs: x
+crs<-: x, value
+declip: obj, drange, lambda, mu, objclip
+delineate: x, name, values, n, plotDel, ...
+delineations: obj, name
+dewow: x, type, w, track
 dropDuplicatedCoords: x, tol, z, verbose
-getVel: x, type
+estimateTime0: x, method, thr, w, ns, bet, shorten, c0, FUN, ..., track
+exportDelineations: obj, dsn
+filter1D: obj, type, w, track
+filter2D: obj, type, ..., track
+filterFreq1D: obj, f, type, L, plotSpec, track
+filterFreq2D: obj, fk, L, npad, track
+firstBreakToTime0: x, fb, c0
+freqSpectrum: obj, MARGIN, plotSpec, unwrapPhase, ...
+gainEnv: x, FUN, track
+gainSEC: obj, a, b, t0, tend, tcst, return_gain, track
+getDepth: obj
+getVel: obj, type
+identifyDelineations: obj, method, ...
+instAmpl: x, npad
+instPhase: x, npad, unwrapPhase
 interpCoords: x, coords, tt, r, UTM, interp3D, tol, verbose, plot, method
 isCMP: x
 isCommonOffset: x
 isCRSGeographic: x
+isSamplingRegular: x
 isVelModel: x
 isVelSpectrum: x
+isZTime: x
 metadata: x
 NMO: x, v
 NMOcorrect: x, thrs, v, method
 NMOstack: x, thrs, v, method
 NMOstreching: x, v
 obbox: x
+pickFirstBreak: x, method, thr, w, ns, bet, shorten
 plotCMPhyperbolas: x, ...
+plotDelineations: x, method, col, ...
 plotVel: x
+plotVelLayers: obj, method, col, ...
 proc: x
 proc<-: x, value
+project: x, CRSobj
 relPos: x
+rmDCShift: x, u, FUN, ..., track
+rmDelineations<-: x, value
+scale1D: obj, type, track
+setTime0: obj, t0, track
 setVel: x, v, twt, type
+shift: x, z, method, crop, track
+shiftTopo: x, method, crop, track
 shiftToTime0: x, method, crop, track
 smooth2D: x, method, ...
 spunit: x
 spunit<-: x, value
+time0: obj
+time0<-: obj, value
+trapply: x, w, FUN, ..., track
 vel: x
 vel<-: x, value
 velInterp: x, type, method
+velLayers: obj, name
 velPick: x, ...
+velSetLayers: obj, v, twt, method, clean
 velSmooth: x, type, w
 velSpectrum: x, method, v, w
+wapply: x, w, FUN, ..., track
 writeGPR: x, fPath, format, overwrite, ...
 xpos: x
 xpos<-: x, value

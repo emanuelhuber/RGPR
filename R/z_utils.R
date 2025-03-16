@@ -1,6 +1,19 @@
 
 
 
+closest <- function(x, xref){
+    # Use findInterval for multiple values
+    idx_x <- findInterval(x, xref)
+
+    # Adjust indices where the next value in d is closer
+    idx_x <- ifelse(
+      idx_x < length(xref) & abs(xref[idx_x + 1] - x) < abs(xref[idx_x] - x),
+      idx_x + 1,
+      idx_x
+    )
+    return(idx_x)
+}
+
 #' Bits to volt conversion
 #'       
 #' Convert bits to volt values
@@ -71,17 +84,31 @@ quiet <- function(x) {
 #' @export                  
 timeToDepth <- function(twt, t0, v = 0.1, antsep = 1){
   # t0 <- t0 - antsep/c0
+  # FIXME: t0? Do I need that?
+  if(t0 > 0) stop("t0 must be = 0")
+  t0 <- 0
+  # Single value
   if(length(v) == 1){
     y <- v^2 * (twt - t0)^2 - antsep^2
     test <- (y >= 0) & ((twt - t0) >= 0)
-  }else if(length(v) == length(twt)){
-    y <- cumsum( c(0, diff(twt)) * v )^2  - antsep^2
-    test <- (y >= 0)
+  # vector
+  }else if(is.null(dim(v)) && length(v) == length(twt)){
+    # y <- cumsum( c(0, diff(twt)) * v )^2  - antsep^2
+    # test <- (y >= 0)
+    y <- .timeToDepth(v, twt, t0, antsep = 1)
+  }else if(inherits(v, "matrix") && nrow(v) == length(twt)){
+    y <- apply(v, 2, .timeToDepth, twt, t0, antsep = 1)
   }
+  test <- (y >= 0)
   y[!test] <- NA
   y[test] <- sqrt(y[test])/2
+  
   return(y)
   # sqrt(v^2*(twt - t0)- antsep^2)/2
+}
+
+.timeToDepth <- function(v, twt, t0, antsep = 1){
+  y <- cumsum( c(0, diff(twt)) * v )^2  - antsep^2
 }
 # timeToDepth <- function(twt, t0 = 0, v = 0.1, antsep = 1){
 #   # t0 <- t0 - antsep/c0
@@ -359,7 +386,6 @@ setDots <- function(dots, defaults){
 
 
 # flatte a nested list
-#' @export
 flattenlist <- function(x){  
   # morelists <- sapply(x, function(xprime) class(xprime)[1] == "list")
   morelists <- sapply(x, function(xprime) inherits(xprime, "list"))
@@ -384,8 +410,7 @@ flattenlist <- function(x){
 }
 
 #  --> Use interp::bilinear() function <--- TOO SLOW
-#' Interpolate raster to regular spacing
-#' @export
+# Interpolate raster to regular spacing
 interpRegRaster <- function(vx, vy, z, nx, ny, method = c("linear", "nearest", "pchip", "cubic", "spline"),
                             xy = c(TRUE, TRUE)){
   # print(vx)

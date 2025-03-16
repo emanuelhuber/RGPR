@@ -68,4 +68,4 @@ interpCoords(
 
 x with interpolated trace positions.
 
-Interpolate trace positions from measurement (e.g., GPS).
+Update slot `x@x`!

@@ -1,15 +1,15 @@
 # Get velocity model as GPR object
 
 ```r
-getVel(x, type = c("vrms", "vint"))
+getVel(obj, type = c("vint", "vrms"))
 
 ## S4 method for signature 'GPR'
-getVel(x, type = c("vrms", "vint"))
+getVel(obj, type = c("vint", "vrms"))
 ```
 
 ## Arguments
 
-- `x`: (`GPR class`) An object of the class `GPR`
+- `obj`: (`GPR class`) An object of the class `GPR`
 - `type`: (`vrm|vint`) Set the velocity you want (either root-mean square or internal velocity)
 
 ## Returns

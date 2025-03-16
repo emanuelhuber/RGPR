@@ -25,6 +25,8 @@
 "plot"
 "plot"
 "units"
+"processing"
+"spatial computing"
 "CRS"
 "CRS"
 "CRS"

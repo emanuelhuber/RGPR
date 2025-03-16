@@ -23,7 +23,7 @@ should be increased (1 = linear, 2 = quadratic, etc.).}
 \item{returnNames}{(\code{logical[1]}) If \code{TRUE}, returns only the
 color palette names.}
 
-\item{col}{(\code{character}) Colors to be plotted.}
+\item{col}{(\code{character}) Colors to `be plotted.}
 
 \item{border}{(\code{character}) color for rectangle border(s).
 The default means par("fg"). Use border = NA to omit borders.

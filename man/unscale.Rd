@@ -6,6 +6,14 @@
 \usage{
 unscale(x, y)
 }
+\arguments{
+\item{x}{(\code{numeric[n]}) A numerical vector}
+
+\item{y}{(\code{numeric[n]}) A numerical vector}
+}
+\value{
+(\code{numeric[n]})
+}
 \description{
 Back-transform/unscale from \code{scale}
 }

@@ -194,6 +194,12 @@ readRAD <- function(dsn){
   return(list(HD = hRAD, ntr = as.numeric(ntr), npt = as.numeric(npt)))
 }
 
+#' Read MALA coordinate files
+#' 
+#' Read MALA coordinate files
+#' @param dsn (`*`) Data source name. Can be a filename or a connection to a file.
+#' @param UTM (`logical[1]`) Project to UTM CRS?
+#' @return (`sf`) A `sf` point object.
 #' @export
 readCOR <- function(dsn, UTM = FALSE){
   if(!inherits(dsn, "connection")){

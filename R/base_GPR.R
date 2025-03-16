@@ -63,10 +63,15 @@ setMethod("median", "GPRvirtual", function(x, na.rm = FALSE)
 setMethod("apply", "GPRvirtual", definition = function(X, MARGIN, FUN, ..., simplify = TRUE){
     x_apply <- apply(X@data, MARGIN, FUN,...)
     if(MARGIN == 1 && is.null(dim(x_apply)) && length(x_apply) == nrow(X)){
-      X[, 1:ncol(x_apply)] <- x_apply
+      X <- X[,1]
+      X[, 1] <- x_apply
+    }else if(MARGIN == 2 && is.null(dim(x_apply)) && length(x_apply) == ncol(X)){
+      X <- X[1,]
+      X[1, ] <- x_apply
     }
-    return(x_apply)
+    return(X)
 })
+
 
 #' Number of rows (samples per trace)
 #' @param x (`GPR`)
@@ -155,8 +160,8 @@ setMethod("rowMeans", "GPRvirtual", function(x, na.rm = FALSE, dims = 1){
 #' is.finite and is.infinite return an object of the same dimension as x, 
 #' indicating which elements are finite (not infinite and not missing) or 
 #' infinite.
-#' @param x (`GPR*`)
-#' @return  (`GPR*`) With logical values (`TRUE` is the value is 
+#' @param x (`GPR* object`)
+#' @return  (`GPR* object`) With logical values (`TRUE` is the value is 
 #'          finite, `FALSE` if not.)
 #' @name is.finite
 #' @aliases is.finite,GPRvirtual-method
@@ -193,8 +198,8 @@ setMethod("is.nan", "GPRvirtual", function(x){
 #' Logical negation
 #' 
 #'  Indicates which elements are missing.
-#' @param x (`GPR*`)
-#' @return  (`GPR*`) With logical values (`TRUE` is the value is 
+#' @param x (`GPR* object`)
+#' @return  (`GPR* object`) With logical values (`TRUE` is the value is 
 #'          `NA`, `FALSE` if not.)
 #' @rdname is.na
 setMethod("is.na", "GPRvirtual", function(x){

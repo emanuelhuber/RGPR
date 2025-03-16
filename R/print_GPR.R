@@ -3,7 +3,8 @@
   toprint[1] <- paste0(class(x)[1], " object with ", ncol(x@data), 
                        " traces and ", nrow(x@data), " samples per traces")
   if(inherits(x, "GPRset")){
-    toprint[2] <- paste0(length(x@y), " sets:         ", x@ylab)
+    print("lkjlkjsf")
+    toprint[2] <- paste0(length(x@y), " sets:         ", paste0(x@ylab, collapse = ", "))
   }
   
   toprint[3] <- paste0("name:           ", x@name)

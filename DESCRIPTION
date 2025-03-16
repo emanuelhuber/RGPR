@@ -62,6 +62,7 @@ Collate:
 	'plot_GPRslice.R'
 	'plotTr.R'
 	'plotVel.R'
+	'plotVelLayers.R'
 	'plotCMPhyperbolas.R'
 	'CMPhyperbolas.R'
 	'window.R'
@@ -76,6 +77,7 @@ Collate:
 	'readGPGGA.R'
 	'writeGPR.R'
 	'coercion_GPRvirtual.R'
+	'coercion_GPRset.R'
 	'coercion_spatial.R'
 	'GPRsurvey.R'
 	'gridCoords.R'
@@ -85,6 +87,7 @@ Collate:
 	'isCRSGeographic.R'
 	'isZTime.R'
 	'isCMP.R'
+	'isSamplingRegular.R'
 	'coordinates.R'
 	'crs.R'
 	'crsUnit.R'
@@ -104,6 +107,7 @@ Collate:
 	'clippedData.R'
 	'clipData.R'
 	'shift.R'
+	'shiftTopo.R'
 	'shiftToTime0.R'
 	'time0.R'
 	'estimateTime0.R'
@@ -123,7 +127,9 @@ Collate:
 	'velSmooth.R'
 	'velPick.R'
 	'velLayers.R'
+	'velSetLayers.R'
 	'getVel.R'
+	'getDepth.R'
 	'simWavelet.R'
 	'smooth2D.R'
 	'color.R'
@@ -142,13 +148,23 @@ Collate:
 	'getArgs.R'
 	'z_graphics.R'
 	'delineate.R'
+	'delineations.R'
+	'rmDelineations.R'
+	'identifyDelineations.R'
+	'exportDelineations.R'
 	'rmDCShift.R'
 	'dewow.R'
 	'trapply.R'
 	'gainSEC.R'
+	'gainEnv.R'
+	'amplEnv.R'
+	'complextrace.R'
 	'filterFreq.R'
 	'filter1D.R'
 	'filter2D.R'
+	'freqSpectrum.R'
+	'freqSpectrum2D.R'
+	'FFT1D.R'
 	'scale1D.R'
 	'robustSmooth.R'
 Imports:
@@ -161,7 +177,6 @@ Imports:
     sf,
     terra,
     signal,
-    interp,
     colorspace,
     Cairo,
     mmand,

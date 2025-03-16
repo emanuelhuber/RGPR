@@ -1,6 +1,7 @@
 spatial computation:
 - angle
 - buffer
+- convexhull
 - project
 - xpos
 getters/setters:
@@ -29,9 +30,12 @@ signal processing:
 - clipData
 - clippedData
 - convertTimeToDepth
+- declip
+- getDepth
 velocity model:
 - CMPhyperbolas
 - getVel
+- hyperbolicTWT
 coercion:
 - as.matrix
 - as.array
@@ -51,6 +55,21 @@ plot:
 - palCol
 - plotVel
 units: crsUnit
+processing:
+- dewow
+- estimateTime0
+- filter2D
+- filterFreq1D
+- gainSEC
+- rmDCShift
+- trapply
+spatial computing:
+- dropDuplicatedCoords
+- findClosestCoord
+- georef
+- gridCoords
+- interpCoords
+- intersect
 CRS:
 - getLonLatFromGPGGA
 - lonLatToUTM

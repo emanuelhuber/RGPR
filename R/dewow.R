@@ -1,12 +1,3 @@
-#' @name dewow
-#' @rdname dewow
-#' @export
-setGeneric("dewow", 
-           function(x, type = c("runmed", "runmean", 
-                                "gaussian"), 
-                    w = NULL, track = TRUE)
-             standardGeneric("dewow"))
-
 #' Trace dewowing
 #' 
 #' `dewow` remove the low-frequency component (the so-called 'wow') of 
@@ -36,11 +27,20 @@ setGeneric("dewow",
 #'             If `w = NULL`, `w` is estimated as five times the 
 #'             wavelength corresponding to the maximum frequency of x 
 #'             (estimated with [spec])
+#' @param track (`logical[1]`) Should the processing step be tracked?
 #' @return (`GPR`) An object of the class GPR whose traces are dewowed.
 #' @name dewow
 #' @rdname dewow
 #' @export
 #' @concept processing
+setGeneric("dewow", 
+           function(x, type = c("runmed", "runmean", 
+                                "gaussian"), 
+                    w = NULL, track = TRUE)
+             standardGeneric("dewow"))
+
+#' @rdname dewow
+#' @export
 setMethod("dewow", "GPR", function(x, type = c("runmed", "runmean", 
                                                "gaussian"), 
                                    w = NULL, track = TRUE){
@@ -49,8 +49,9 @@ setMethod("dewow", "GPR", function(x, type = c("runmed", "runmean",
   
   #------------------- check arguments
   msg <- checkArgInit()
-  msg <- checkArg(type, msg, "STRING_CHOICE", c("runmed", "runmean",
-                                                 "gaussian"))
+  msg <- checkArg(type, msg, 
+                  "STRING_CHOICE", 
+                  c("runmed", "runmean", "gaussian"))
   msg <- checkArg(w,    msg, "NUMERIC1_SPOS_NULL", Inf)
   checkArgStop(msg)
   #-----------------------------------
@@ -60,11 +61,14 @@ setMethod("dewow", "GPR", function(x, type = c("runmed", "runmean",
   if(is.null(w)){
     # argument initialization
     # pulse width in ns, (x@freq is in MHz)
-    a <- RGPR::spec(x, plotSpec = FALSE, unwrapPhase = FALSE)
-    freq <- a$freq[which.max(rowMeans(a$pow))]
-    # pw <- 1/(x@freq * 10^6)/10^-9
-    pw <- 1/(freq * 10^6)/10^-9
-    w <- round((5 * pw)/dz)
+    
+    # FIXME
+    stop("YOU MUST FIRST INTEGRATE FUNCTION 'spec' IN RGPR")
+    
+    # a <- RGPR::spec(x, plotSpec = FALSE, unwrapPhase = FALSE)
+    # freq <- a$freq[which.max(rowMeans(a$pow))]
+    # pw <- 1/(freq * 10^6)/10^-9
+    # w <- round((5 * pw)/dz)
   }else{
     w <- round(w / dz)
   }

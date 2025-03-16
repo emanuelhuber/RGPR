@@ -1,5 +1,5 @@
 
-DIR <- "/home/huber/Documents/RESEARCH/PROJECTS/RGPR/CODE/RGPR/R"
+
 DIR <- "R"
 
 trimStr <- function (x) gsub("^\\s+|\\s+$", "", x)
@@ -55,11 +55,11 @@ for(j in seq_along(lf)){
   }
 }
 
-write.table( concept , file = "inst/utils_list_of_concepts____.txt", row.names = FALSE, col.names = FALSE) 
+write.table( concept , file = "inst/list_of_concepts____.txt", row.names = FALSE, col.names = FALSE) 
 
 library(yaml)
 
-write_yaml(list_concept, file = "inst/concept_functions.yml")
+write_yaml(list_concept, file = "inst/list_of_concept_functions.yml")
 
 RShowDoc("KEYWORDS")
 

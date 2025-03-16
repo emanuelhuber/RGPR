@@ -84,7 +84,7 @@ palGPR <- function(pal = "default", n = 101, power = 1, returnNames = FALSE){
 #' Plot single colour palette
 #' 
 #' source: vignette of the R-package "colorspace" (Color Space Manipulation) 
-#' @param col (`character`) Colors to be plotted.
+#' @param col (`character`) Colors to `be plotted.
 #' @param border (`character`) color for rectangle border(s). 
 #' The default means par("fg"). Use border = NA to omit borders. 
 #' If there are shading lines, border = TRUE means use the same colour 

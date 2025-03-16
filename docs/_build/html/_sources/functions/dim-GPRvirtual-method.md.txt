@@ -1,4 +1,4 @@
-# Dimensions of a GPR object Return the number of rows (samples per trace) and columns (samples per trace).
+# Dimensions of a GPR object
 
 ```r
 ## S4 method for signature 'GPRvirtual'
@@ -9,4 +9,4 @@ dim(x)
 
 - `x`: (`GPR`)
 
-Dimensions of a GPR object Return the number of rows (samples per trace) and columns (samples per trace).
+Return the number of rows (samples per trace) and columns (samples per trace).

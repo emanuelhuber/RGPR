@@ -1,14 +1,3 @@
-setGeneric("pickFirstBreak", 
-                function(x, method = c("coppens", "threshold",  "MER"), 
-                         thr = NULL, w = NULL, ns = NULL, bet = NULL,
-                         shorten = TRUE)
-                  standardGeneric("pickFirstBreak"))
-
-# @examples
-# data("frenkeLine00")
-# fb <- firstbreak(frenkeLine00, w = 10)
-# plot(seq_along(frenkeLine00), fb)
-
 #----------------- FIRST-BREAK
 #' Time of first wave break
 #'
@@ -70,7 +59,7 @@ setGeneric("pickFirstBreak",
 #'          [time0()] and [setTime0()] to set time-zero;
 #'          [estimateTime0()] to estimate first wave break, convert
 #'          it to time-zero and set time zero (all in one step);
-#'          [time0Cor()] to shift the traces such that they start
+#'          [shiftToTime0()] to shift the traces such that they start
 #'          at time-zero.
 #'          
 #' @references
@@ -82,6 +71,19 @@ setGeneric("pickFirstBreak",
 #'        GeoCanada 2010 Convention - Working with the Earth, Calgary, AB, 
 #'        Canada, p. 4`
 #' @name pickFirstBreak
+#' @rdname pickFirstBreak
+#' @export
+setGeneric("pickFirstBreak", 
+                function(x, method = c("coppens", "threshold",  "MER"), 
+                         thr = NULL, w = NULL, ns = NULL, bet = NULL,
+                         shorten = TRUE)
+                  standardGeneric("pickFirstBreak"))
+
+# @examples
+# data("frenkeLine00")
+# fb <- firstbreak(frenkeLine00, w = 10)
+# plot(seq_along(frenkeLine00), fb)
+
 #' @rdname pickFirstBreak
 #' @export
 setMethod("pickFirstBreak", 
@@ -185,7 +187,7 @@ setMethod("pickFirstBreak",
     }
     x <- x[1:nmax]
   }
-  E <- wapply(x, width = w, by = 1, FUN = sum)
+  E <- .wapply(x, width = w, by = 1, FUN = sum)
   v1 <- 1:(length(x) - 2*(w-1))
   v2 <- v1 + (w-1)
   E1 <- E[v1]
@@ -298,7 +300,7 @@ setMethod("pickFirstBreak",
   }
   # x <- x^2
   
-  E1 <- c(wapply(x, width = w, by = 1, FUN = sum), rep(0, 2 * floor(w/2)))
+  E1 <- c(.wapply(x, width = w, by = 1, FUN = sum), rep(0, 2 * floor(w/2)))
   E2 <- cumsum(x)
   Er <- E1/(E2 + bet)
   Er_fil <- .eps(Er, ns = ns)
@@ -311,12 +313,12 @@ setMethod("pickFirstBreak",
 # The Leading edge, 21: 136-158
 .eps <- function(x, ns){
   xmean <-  c(rep(0, floor(ns/2)), 
-              wapply(x, width = ns, by = 1, FUN = mean),
+              .wapply(x, width = ns, by = 1, FUN = mean),
               rep(0, floor(ns/2)))
   xsd <- c(rep(0, floor(ns/2)), 
-           wapply(x, width = ns, by = 1, FUN = sd),
+           .wapply(x, width = ns, by = 1, FUN = sd),
            rep(0, floor(ns/2)))
-  xtest <- wapply(xsd, width = ns, by = 1, FUN = which.min) + 
+  xtest <- .wapply(xsd, width = ns, by = 1, FUN = which.min) + 
     (0):(length(xmean)- 2*floor(ns/2)-1)
   return(c(rep(0, floor(ns/2)), xmean[xtest], rep(0, floor(ns/2))))
 }

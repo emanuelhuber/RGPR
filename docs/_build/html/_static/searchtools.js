@@ -547,9 +547,8 @@ const Search = {
 
         // set score for the word in each file
         recordFiles.forEach((file) => {
-          if (!scoreMap.has(file)) scoreMap.set(file, new Map());
-          const fileScores = scoreMap.get(file);
-          fileScores.set(word, record.score);
+          if (!scoreMap.has(file)) scoreMap.set(file, {});
+          scoreMap.get(file)[word] = record.score;
         });
       });
 
@@ -588,7 +587,7 @@ const Search = {
         break;
 
       // select one (max) score for the file.
-      const score = Math.max(...wordList.map((w) => scoreMap.get(file).get(w)));
+      const score = Math.max(...wordList.map((w) => scoreMap.get(file)[w]));
       // add result to the result list
       results.push([
         docNames[file],

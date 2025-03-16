@@ -77,6 +77,8 @@ setMethod("coordinates", "GPRsurvey", function(x){
 #' @export
 setReplaceMethod("coordinates", signature="GPRsurvey", function(x, value){
   
+  # str(x)
+  
   # check length
   if(length(value) != length(x@coords)){
     stop("'value' must have the same length as 'coordinates(x)', ", 
@@ -98,9 +100,35 @@ setReplaceMethod("coordinates", signature="GPRsurvey", function(x, value){
          paste("elt.", paste(which(tst2), x@nx[tst2], sep = "->"),
                collapse = ",  "))
   }
-  if(length(value) > 0 && (length(value) %% 3) == 0)   colnames(value) <- c("x", "y", "z")
+  
+  if(inherits(value, "list")){
+    setcolnames <- function(x, nm = c("x", "y", "z")){
+      if(is.null(x)){
+        # print("isnull")
+        return(matrix(nrow = 0, ncol =3, 
+                      dimnames = list(NULL, c("x", "y", "z"))))
+      }else if(ncol(x) != 3){
+        # print("ncol != 3")
+        # warning("coordinate matrix has not 3 columns!!")
+        return(matrix(nrow = 0, ncol =3, 
+                      dimnames = list(NULL, c("x", "y", "z"))))
+      }else{
+        # print("OK")
+        colnames(x) <-nm
+        return(x)
+      }
+    }
+    value <- lapply(value, setcolnames)
+      
+  }
+  # str(value)
+  
+  
+  # if(length(value) > 0 && (length(value) %% 3) == 0)   colnames(value) <- c("x", "y", "z")
+
   x@coords  <- value
   
+  # update length of GPR objects
   x_lengths <- sapply(x@coords[test_value_len], pathLength, USE.NAMES = FALSE)
   if(length(x_lengths) > 0){
     x@xlengths[test_value_len] <- x_lengths

@@ -4,22 +4,31 @@
 \alias{time0}
 \alias{time0<-}
 \alias{setTime0}
-\title{'time-zero' of every traces}
+\alias{time0,GPR-method}
+\alias{time0<-,GPR-method}
+\alias{setTime0,GPR-method}
+\title{Return time-zero}
 \usage{
-time0(x)
+time0(obj)
 
-time0(x) <- value
+time0(obj) <- value
 
-setTime0(x, t0, track = TRUE)
+setTime0(obj, t0, track = TRUE)
 
-\S4method{time0}{GPR}(x)
+\S4method{time0}{GPR}(obj)
 
-\S4method{time0}{GPR}(x) <- value
+\S4method{time0}{GPR}(obj) <- value
 
-\S4method{setTime0}{GPR}(x, t0, track = TRUE)
+\S4method{setTime0}{GPR}(obj, t0, track = TRUE)
 }
 \arguments{
-\item{x}{An object of the class GPR.}
+\item{obj}{(\code{GPR* object})}
+
+\item{value}{(\code{numeric[n]}) Time-zero with \code{n = 1} or \code{n = ncol(obj)}}
+
+\item{t0}{(\code{numeric[n]}) Time-zero with \code{n = 1} or \code{n = ncol(obj)}}
+
+\item{track}{(\code{logical[1]}) Should the processing step be tracked?}
 }
 \value{
 A vector containing the time-zero values of each traces.
@@ -29,10 +38,6 @@ A vector containing the time-zero values of each traces.
 'time-zero' corresponds to the first wave arrival (also called first wave
 break).
 }
-\examples{
-data(frenkeLine00)
-time0(frenkeLine00)
-}
 \seealso{
-\code{\link{firstBreak}} to estimate the first wave break.
+\code{\link[=pickFirstBreak]{pickFirstBreak()}}  to estimate the first wave break.
 }

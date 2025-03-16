@@ -96,11 +96,13 @@ setMethod("interpCoords", "GPR",
 
    if(inherits(coords, "sf")){
      crs(x) <- sf::st_crs(coords)
+     if(sf::st_crs(coords)$epsg != 4326) UTM <- FALSE
      coordssf <- sf::st_coordinates(coords)
      # if 2D coordinates
      if(ncol(coordssf) == 2) coordssf <- cbind(coordssf, 0)
      coords <- cbind(coordssf, 
                    sf::st_drop_geometry(coords))
+     # FIXME apply here the UTM transform
    }
    #--------------------- CRS TRANSFORM ----------------------------------------
    if(isTRUE(UTM) ){

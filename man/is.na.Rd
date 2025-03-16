@@ -7,10 +7,10 @@
 \S4method{is.na}{GPRvirtual}(x)
 }
 \arguments{
-\item{x}{(\verb{GPR*})}
+\item{x}{(\code{GPR* object})}
 }
 \value{
-(\verb{GPR*}) With logical values (\code{TRUE} is the value is
+(\code{GPR* object}) With logical values (\code{TRUE} is the value is
 \code{NA}, \code{FALSE} if not.)
 }
 \description{

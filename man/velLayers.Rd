@@ -2,24 +2,18 @@
 % Please edit documentation in R/velLayers.R
 \name{velLayers}
 \alias{velLayers}
-\title{Set layer velocities}
+\alias{velLayers,GPR-method}
+\title{Print the list of delineation of the GPR data}
 \usage{
-velLayers(x, v, twt = NULL, method = "pchip", clean = TRUE)
+velLayers(obj, name = NULL)
 
-\S4method{velLayers}{GPR}(x, v, twt = NULL, method = "pchip", clean = TRUE)
+\S4method{velLayers}{GPR}(obj, name = NULL)
 }
 \arguments{
-\item{x}{GPR object}
+\item{obj}{(\code{GPR* object}) An object of the class \code{GPR}}
 
-\item{v}{\link{\code{numeric}} velocities (length equal number of delineations plus one)}
-
-\item{twt}{vertical resolution of the migrated data}
-
-\item{method}{\link{\code{character(1)}} interpolation method.
-One of \code{linear}, \code{nearest}, \code{pchip},
-\code{cubic}, \code{spline}.}
+\item{name}{(\code{character[n]}) Names of the delineations.}
 }
 \description{
-Given delineation or the output of the function... and velocity values,
-set 2D velocity model
+Print and invisible returns the GPR data delineations.
 }

@@ -5,12 +5,12 @@
 \alias{getVel,GPR-method}
 \title{Get velocity model as GPR object}
 \usage{
-getVel(x, type = c("vrms", "vint"))
+getVel(obj, type = c("vint", "vrms"))
 
-\S4method{getVel}{GPR}(x, type = c("vrms", "vint"))
+\S4method{getVel}{GPR}(obj, type = c("vint", "vrms"))
 }
 \arguments{
-\item{x}{(\verb{GPR class}) An object of the class \code{GPR}}
+\item{obj}{(\verb{GPR class}) An object of the class \code{GPR}}
 
 \item{type}{(\code{vrm|vint}) Set the velocity you want (either root-mean square or internal velocity)}
 }

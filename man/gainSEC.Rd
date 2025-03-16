@@ -2,10 +2,22 @@
 % Please edit documentation in R/gainSEC.R
 \name{gainSEC}
 \alias{gainSEC}
+\alias{gainSEC,GPR-method}
 \title{Spreading and Exponential Compensation (SEC) gain}
 \usage{
+gainSEC(
+  obj,
+  a = 0.01,
+  b = 1,
+  t0 = NULL,
+  tend = NULL,
+  tcst = NULL,
+  return_gain = FALSE,
+  track = TRUE
+)
+
 \S4method{gainSEC}{GPR}(
-  x,
+  obj,
   a = 0.01,
   b = 1,
   t0 = NULL,
@@ -16,21 +28,25 @@
 )
 }
 \arguments{
-\item{x}{\code{GPR} An object of the class GPR.}
+\item{obj}{(\code{GPR* object}) An object of the class GPR.}
 
-\item{a}{\code{numeric[1]} Parameter of the exponential filter
+\item{a}{(\code{numeric[1]}) Parameter of the exponential filter
 (\code{a} \eqn{\geq} 0).}
 
 \item{b}{\code{numeric(1)} Parameter of the power filter
 (\code{b} \eqn{\geq} 0). Usually, \code{b = 1}.}
 
-\item{t0}{\code{numeric} Start time of the gain filter
+\item{t0}{(\code{numeric[1]}) Start time of the gain filter
 (if \code{t0 = NULL}, \code{t0} is set equal to \code{time0(x)}).}
 
-\item{tend}{\code{numeric[1]} End time of the gain filter (optional)}
+\item{tend}{(\code{numeric[1]}) End time of the gain filter (optional)}
 
-\item{tcst}{\code{numeric[1]} Constant time: the gain before
+\item{tcst}{(\code{numeric[1]}) Constant time: the gain before
 \code{tcst} is set equal to the gain value at \code{tcst}.}
+
+\item{return_gain}{(\code{logical[1]}) Should the gain be returned (instead of the gained object)?}
+
+\item{track}{(\code{logical[1]}) Should the processing step be tracked?}
 }
 \value{
 \verb{GPR class} An object of the class GPR.
@@ -50,8 +66,5 @@ exponential gain.
 Modified slots
 \code{data}: trace gained.
 \code{proc}: updated with function name and arguments.
-}
-\seealso{
-\code{\link[=gainAGC]{gainAGC()}}
 }
 \concept{processing}

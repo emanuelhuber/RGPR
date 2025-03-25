@@ -164,7 +164,9 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
                        col=rgb(0.2,0.2,0.2,7/max(ncol(A),7))) )
     }
     lines(fre,pow_mean,col="red")
-    axis(side = 1, tcl = +0.3,  labels = FALSE)
+    xaxp_upper <- signif(max(fre), digits=2)
+    axis(side = 1, tcl = +0.3,  labels = FALSE, 
+         xaxp=c(0, xaxp_upper, max(xaxp_upper/100, 6)))
     if(!is.null(titleSpec)){
       title(titleSpec)
     }
@@ -179,7 +181,8 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
                         col = rgb(0.2,0.2,0.2,7/max(ncol(A), 7))) )
     }
     lines(fre,pha_mean,col="red")
-    axis(side = 1, tcl = +0.3,  labels = TRUE)
+    axis(side = 1, tcl = +0.3,  labels = TRUE, 
+         xaxp=c(0, xaxp_upper, max(xaxp_upper/100, 6)))
     grid()
     par(op)
   }

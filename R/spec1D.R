@@ -165,12 +165,13 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
     }
     lines(fre,pow_mean,col="red")
     xaxp_upper <- signif(max(fre), digits=2)
-    axis(side = 1, tcl = +0.3,  labels = FALSE, 
+    xtck <- axis(side = 1, tcl = +0.3,  labels = FALSE, 
          xaxp=c(0, xaxp_upper, max(xaxp_upper/100, 6)))
     if(!is.null(titleSpec)){
       title(titleSpec)
     }
-    grid()
+    abline(v = xtck, lty = 3, col = "grey")
+    grid(nx = NA)
     par(mar=c(4, 4, 0.3, 2))
     plot(fre,pha_mean, type="n", 
          xaxt = "n",
@@ -183,7 +184,8 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
     lines(fre,pha_mean,col="red")
     axis(side = 1, tcl = +0.3,  labels = TRUE, 
          xaxp=c(0, xaxp_upper, max(xaxp_upper/100, 6)))
-    grid()
+    abline(v = xtck, lty = 3, col = "grey")
+    grid(nx = NA)
     par(op)
   }
   return(list(freq = fre, pow = pow, pha = pha))

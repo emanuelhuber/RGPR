@@ -5,6 +5,8 @@ setGenericVerif("gammaCorrection", function(x, a = 1, b = 1, track = TRUE)
   standardGeneric("gammaCorrection"))
 
 #' Gamma correction of the amplitude
+#'
+#' This function computes the gamma correction.
 #' 
 #' @name gammaCorrection
 #' @rdname rgCorrectGamma
@@ -25,7 +27,7 @@ setGenericVerif("adjustGamma", function(x, a = 1, b = 1, track = TRUE)
 
 #' Gamma correction of the amplitude
 #' 
-#' This function compute the gamma correction.
+#' This function computes the gamma correction.
 #'
 #' @name adjustGamma
 #' @rdname adjustGamma

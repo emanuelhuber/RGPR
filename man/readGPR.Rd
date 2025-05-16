@@ -99,8 +99,10 @@ Supported file format
   \item RadSys Zond GPR device (*.sgy). 
         \strong{Note: it is not the SEG-Y file format)}.
         \code{readGPR(dsn = 'xline.sgy')}
-  \item US Radar (*.RA1*, *RA2*, *RAD*). 
+  \item US Radar (*.RA1, *.RA2, *.RAD). 
         \code{readGPR(dsn = 'xline.RA1')}  
+  \item Geotech OKO (*.GPR, *GPR2). 
+        \code{readGPR(dsn = 'xline.GPR')}  
   \item ASCII file format (*.txt): either 4-column format 
         (x,t,amplitude) or matrix-format (without header/rownames).
         \code{readGPR(dsn = 'xline.txt')}  

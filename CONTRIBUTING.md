@@ -35,8 +35,7 @@ Please, try to follow our:
 * [coding guide](https://github.com/emanuelhuber/RGPR/wiki/Coding-guide)
 * [documenting guide](https://github.com/emanuelhuber/RGPR/wiki/How-to-document-with-roxygen2)
 
-Follow the 
-[fork workflow](https://github.com/emanuelhuber/RGPR/wiki/Fork-Workflow) to 
+Follow the [fork workflow](https://github.com/emanuelhuber/RGPR/wiki/Fork-Workflow) to 
 adapt the code locally and submit your changes (with pull requests). Make sure 
 that you are working with the latest version of `RGPR` and use meaningfull
 commits in present tense.

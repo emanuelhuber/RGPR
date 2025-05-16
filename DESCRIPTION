@@ -49,6 +49,7 @@ Collate:
   'readIDS.R'
   'readSGPR.R'
   'readOUT.R'
+  'readGPR2.R'
   'data.R'
   'ampl.R'
   'adjustGamma.R'
@@ -175,7 +176,7 @@ Imports:
     units,
     hdf5r,
     ggplot2
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Suggests: 
     testthat,
     plotly

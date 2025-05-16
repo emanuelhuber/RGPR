@@ -5,7 +5,7 @@ setAs(from = "GPR", to = "sf",
 #' Coerce object to an sf POINT object
 #'
 #' Coerce object to a simple feature (sf) geometry POINT. 
-#' Only coordinates are coerced, no additional information.
+#' Only coordinates are coerced, all additional information is lost.
 #' @param x [\code{class GPR|GPRsurvey}]
 #' @return [\code{class sf}] Geometry type is \code{POINT}.
 #' @name as.sf

@@ -38,6 +38,7 @@ setMethod("ACF", "GPR", function(x,
   return(Xout)
 })
 
+# private function
 .acf <- function(x, lag.max = NULL,
                  type = c("correlation", "covariance", "partial"),
                  plot = TRUE, na.action = na.fail, demean = TRUE, ...){

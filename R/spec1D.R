@@ -44,7 +44,7 @@ setMethod("spec1D", "GPR", function(x, MARGIN = 2, plotSpec = TRUE,
                                     unwrapPhase = TRUE, ...){
   # FIXME: don't use "spec()" but "trFFT()"
   # X <- spec(x, plotSpec = plotSpec, unwrapPhase = unwrapPhase)
-  X <- powSpec(x@data, dT = x@dz, fac = 1000000, 
+  X <- powSpec(A = x@data, dT = x@dz, fac = 1000000, 
                plotSpec = plotSpec, titleSpec = x@name)
   # names(X)
   # length(X$freq)
@@ -158,15 +158,20 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
     plot(fre,pow_mean, type="n",
          xaxt = "n",
          ylim=c(0,max(pow)),
-         ylab="amplitude",xlab="")
+         ylab="amplitude",xlab="",
+         xaxs = "i")
     if(!is.null(dim(A))){
       invisible( apply(pow, 2, lines, x = fre, 
                        col=rgb(0.2,0.2,0.2,7/max(ncol(A),7))) )
     }
-    lines(fre,pow_mean,col="red")
+    lines(fre, pow_mean, col = "red")
+    
     xaxp_upper <- signif(max(fre), digits=2)
+    vx <- pretty(c(0, xaxp_upper), n = 15)
+    
     xtck <- axis(side = 1, tcl = +0.3,  labels = FALSE, 
-         xaxp=c(0, xaxp_upper, max(xaxp_upper/100, 6)))
+                 at = vx)
+    # xaxp=c(0, xaxp_upper, max(xaxp_upper/100, 6)))
     if(!is.null(titleSpec)){
       title(titleSpec)
     }
@@ -176,14 +181,17 @@ powSpec <- function(A, dT = 0.8, fac = 1000000, plotSpec = TRUE,
     plot(fre,pha_mean, type="n", 
          xaxt = "n",
          ylim=range(pha), 
-         xlab = "frequency MHz", ylab="phase") 
+         xlab = "frequency MHz", 
+         ylab="phase",
+         xaxs = "i") 
     if(!is.null(dim(A))){
       invisible(  apply(pha, 2, lines, x = fre, 
                         col = rgb(0.2,0.2,0.2,7/max(ncol(A), 7))) )
     }
     lines(fre,pha_mean,col="red")
     axis(side = 1, tcl = +0.3,  labels = TRUE, 
-         xaxp=c(0, xaxp_upper, max(xaxp_upper/100, 6)))
+         at=vx)
+    # xaxp=c(0, xaxp_upper, max(xaxp_upper/100, 6)))
     abline(v = xtck, lty = 3, col = "grey")
     grid(nx = NA)
     par(op)

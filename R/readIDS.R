@@ -273,16 +273,22 @@ readDT <- function(dsn){
 #' @export
 readGEC <- function(dsn){
   # if(!inherits(dsn, "connection")){
-    # dsn <- file(dsn, 'rt', raw = TRUE)
+  # dsn <- file(dsn, 'rt', raw = TRUE)
   # }
   dsn <- .openFileIfNot(dsn)  # in case there is some binary stuff
   tags <- scan(dsn,  what = character(), n = 100, skipNul = TRUE)
   # UTMzone <- strsplit(tags[which(tags == "<UTM_ZONE>")[1] + 1], ",")[[1]]
   # number of makers
   # nmrk <- as.integer(tags[which(tags == "<VALID_MARKERS_SWEEP>")[1] + 1])
-  nstart <- max(grep("^<(.*?)>$", tags)) + 1
-  invisible(seek(dsn, where = 0, origin = "start"))
-  xyz <- read.table(dsn, header = FALSE,  skip = nstart, sep = ",", col.names = c("ID", "xpos", "ypos", "x", "y", "z", "crs", "crs_add"))
+  nstart <- max(grep("^<(.*?)>$", tags)) + 0
+  # invisible(seek(dsn, where = 0, origin = "start"))
+  invisible(seek(dsn, where = nstart, origin = "start"))
+  # xyz <- read.table(dsn, header = FALSE,  skip = 0, sep = ",", 
+  #                   col.names = c("ID", "xpos", "ypos", "x", "y", "z", "crs", "crs_add"))
+  xyz <- scan(dsn,  skip = nstart, sep = ",")
+  xyz <- matrix(xyz, ncol = 8, byrow = TRUE, 
+                dimnames = list(NULL, c("ID", "xpos", "ypos", 
+                                        "x", "y", "z", "crs", "crs_add")))
   .closeFileIfNot(dsn)
   return(xyz[, c("x", "y", "z", "ID", "crs", "crs_add")])
 }

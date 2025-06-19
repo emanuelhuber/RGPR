@@ -27,6 +27,7 @@ date: 2019-11-23
 
 * [Koki Oikawa, Hirotaka Saito, Seiichiro Kuroda, Kazunori Takahashi (2024) **Construction of dense CMP data from sparsely collected GPR CMP data for the improved estimation of soil dielectric constant profile.** Vadose Zone Journal, Volume 24, Issue 1](https://doi.org/10.1002/vzj2.20392)
 
+
 * [Erik S. Mannerfelt, Andrew J. Hodson, Lena Håkansson, and Harold Lovell (2024) Dynamic LIA advances hastened the demise of small valley glaciers in central Svalbard. Arctic Science.](https://doi.org/10.1139/as-2024-0024)
 
 * [Jesse T. Korus, R. Matthew Joeckel, Aaron R. Mittelstet, Nawaraj Shrestha (2024) **Multiscale characterization of splays produced by a historic, rain-on-snow flood on a large braided stream (Platte River, Central USA).** Earth Surface Processes and Landforms](https://doi.org/10.1002/esp.5997)
@@ -44,6 +45,10 @@ date: 2019-11-23
 * [Xiaogang Guo and Ning Wang (2024) **Automated Identification of Pavement Structural Distress Using State-of-the-Art Object Detection Models and Nondestructive Testing.** Journal of Computing in Civil Engineering Volume 38(4).](https://doi.org/10.1061/JCCEE5.CPENG-5864)
 
 * [Luyun Zhang, Zheng Zhang, Li Guo, Xihong Cui, John R. Butnor, Shupeng Li, Xin Cao, Xuehong Chen (2024) **A simple method for estimating the coarse lateral root biomass of shrubs using ground-penetrating radar: Validation by Caragana microphylla Lam. in Inner Mongolia.** Science of the Total Environment, 919](https://doi.org/10.1016/j.scitotenv.2024.170897)
+
+
+* [Hernán Darío Guerrero and Luis Hernán Ocho (2024) **Subsoil geophysical evaluation using GPR and free softwar.** Earth Sciences Research Journal, 28(3):255-263](https://doi.org/10.15446/esrj.v28n3.97305)
+
 
 * [Shreedhar Savant Todkar; Vincent Baltazart; Xavier Dérobert (2023) **AI-Based Graphical User Interface to Detect Debonded Pavement Sections from GPR B-Scan Data.** 12th International Workshop on Advanced Ground Penetrating Radar (IWAGPR)](https://doi.org/10.1109/IWAGPR57138.2023.10329222)
 

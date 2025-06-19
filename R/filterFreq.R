@@ -220,16 +220,26 @@ setMethod("filterFreq2D", "GPR", function(obj, fk = NULL, L = c(5 , 5), npad = 1
     # plot the power spectrum
     m = seq(0,900,by=50)
     #par(mfrow=c(2,1), mar=c(5, 4, 4, 6) + 0.1 )
-    par( mar=c(0, 4, 0.3, 2) + 0.1, oma=c(3,2,1,2) )
+    par( mar=c(4, 4, 0.3, 2) + 0.1, oma=c(3,2,1,2) )
     plot(fre, pow_A, type="l",
          ylim=c(0,max(pow_A,pow_y)),
-         ylab="power",lwd=2)
+         ylab="power",
+         xlab = "Frequency (MHz)",
+         lwd=2,
+         xaxt = "n", xaxs = "i")
     lines(fre,pow_y, type="l",col="blue",lwd=2)
+    xaxp_upper <- signif(max(fre), digits=2)
+    vx <- pretty(c(0, xaxp_upper), n = 15)
+    xtck <- axis(side = 1, tcl = +0.3,  labels = TRUE, 
+                 at = vx)
+    abline(v = xtck, lty = 3, col = "grey")
+    
     par(new=TRUE)
-    plot(fre, pow_h, type = "l", col = "red", yaxt = "n", ylab = "")
+    plot(fre, pow_h, type = "l", col = "red", yaxt = "n", ylab = "", xlab = "",
+         xaxt = "n", xaxs = "i")
     legend("topright", c("input signal", "filter", "filtered signal"),
            col = c("black", "red", "blue"), lwd = c(2, 1, 2), bg = "white")
-    abline(v = f/1000000, col = "grey", lty = 2)
+    # abline(v = f/1000000, col = "grey", lty = 2)
     par(op)
   }
   a = (L-1)/2

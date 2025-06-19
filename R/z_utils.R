@@ -429,14 +429,20 @@ interpRegRaster <- function(vx, vy, z, nx, ny, method = c("linear", "nearest", "
   # Interpolate along the rows (x-direction)
   if(isTRUE(xy[1])){
     x_new <- seq(min(vx), max(vx), length.out = nx)  # Regular x-axis
-    z1 <- apply(z, 2, function(row, x, x_new, method = method) signal::interp1(x, row, x_new, method = method), vx, x_new, method = method)
+    z <- apply(z, 2, 
+               function(row, x, x_new, method = method) 
+                 signal::interp1(x, row, x_new, method = method), 
+               vx, x_new, method = method)
   }
 
   # Transpose and interpolate along columns (y-direction)
   if(isTRUE(xy[2])){
     y_new <- seq(min(vy), max(vy), length.out = ny)  # Regular y-axis
-    z2 <- apply(z1, 1, function(col, y, y_new, method = method) signal::interp1(y, col, y_new, method = method), vy, y_new, method = method)
+    z <- apply(z, 1, 
+               function(col, y, y_new, method = method) 
+                 signal::interp1(y, col, y_new, method = method), 
+               vy, y_new, method = method)
+    z <- t(z)
   }
-  
-  return(t(z2))
+  return(z)
 }

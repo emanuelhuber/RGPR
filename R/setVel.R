@@ -7,7 +7,7 @@
 #' @param v (`numeric[n]`) `n` velocity values
 #' @param twt (`numeric[n]`) `n` two-way travel time values associated
 #'            with the velocities `v`. Optional.
-#' @param type (`vrms|vint`) Kind of velocities `v`: 
+#' @param type (`"vrms"|"vint"`) Kind of velocities `v`: 
 #'             root-mean-square velocities `"vrms"` (genrally inferred
 #'             from CMP data) or internal velocities `"vint"` (layer 
 #'             velocities).

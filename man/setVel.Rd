@@ -17,7 +17,7 @@ setVel(x, v, twt, type = c("vrms", "vint"))
 \item{twt}{(\code{numeric[n]}) \code{n} two-way travel time values associated
 with the velocities \code{v}. Optional.}
 
-\item{type}{(\code{vrms|vint}) Kind of velocities \code{v}:
+\item{type}{(\code{"vrms"|"vint"}) Kind of velocities \code{v}:
 root-mean-square velocities \code{"vrms"} (genrally inferred
 from CMP data) or internal velocities \code{"vint"} (layer
 velocities).}

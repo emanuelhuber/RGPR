@@ -18,8 +18,8 @@
 #'         returns a GPR object with a single trace corresponding to the 
 #'         average trace of the whole radargram. When `w` is equal to a
 #'         strictly positive interger this function returns a GPR object with
-#'         a size identical to x where each trace corresponds to the average
-#'         of the `w` neighbouring traces centered on the considered trace.
+#'         a size identical to x where each trace corresponds to the function `FUN`
+#'         applied to `w` neighboring traces centered on the considered trace.
 #' @name wapply
 #' @rdname wapply
 #' @export

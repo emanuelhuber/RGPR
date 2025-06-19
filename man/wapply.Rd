@@ -30,8 +30,8 @@ An object of the class GPR. When \code{w = NULL}, this function
 returns a GPR object with a single trace corresponding to the
 average trace of the whole radargram. When \code{w} is equal to a
 strictly positive interger this function returns a GPR object with
-a size identical to x where each trace corresponds to the average
-of the \code{w} neighbouring traces centered on the considered trace.
+a size identical to x where each trace corresponds to the function \code{FUN}
+applied to \code{w} neighboring traces centered on the considered trace.
 }
 \description{
 \code{wapply} is a generic function used to produce results defined

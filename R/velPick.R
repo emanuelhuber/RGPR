@@ -46,6 +46,7 @@ setMethod("velPick", "GPR", function(x, ...){
   vv <- locator(type = type, pch = pch, col = col, cex = cex, ...)
   if(length(vv) > 0){
     x <- setVel(x, v = vv$x, twt = vv$y, type = "vrms")
+    # x@md[["velPick"]] <- list(v = vv$x, twt = vv$y, type = "vrms") # not necessary, use vel(x)$vrms
   }
   return(x)
 })

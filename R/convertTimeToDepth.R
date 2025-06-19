@@ -80,6 +80,11 @@ setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, zmax = NULL,
   }else if( is.null(dim(x_vel)) && length(x_vel) == nrow(x) ){
     x_depth <- timeToDepth(twt = x@z, t0 = 0, v = x_vel, 
                            antsep = x@antsep) # here difference to matrix case
+    
+    # FIXME > compute depth for the velocity model
+    # x@vel$xvrms$d <- timeToDepth(twt = x@vel$xvrms$t, t0 = 0, v = x_vel, 
+    #             antsep = x@antsep) # here difference to matrix case
+    
     test <- !is.na(x_depth)
     x <- x[test,]
     x_depth <- x_depth[test]

@@ -229,6 +229,7 @@ plot.GPR <- function(x,
                     secaxis = TRUE,
                     z0 = list(lwd = 1, col = "green", lty = 1), 
                     horiz = TRUE,
+                    bty = "n",
                     ...){
   # par(mar = c(5, 4, 3, 2) + 0.1)
   par(mai = c(1.1, 1.02, 1.02, 1.02))
@@ -249,6 +250,7 @@ plot.GPR <- function(x,
   
   dots <- list(...)
   
+  dots$bty <- bty
   dots$type <- type
   dots$col <-  col 
   dotsxaxt <- dots$xaxt 
@@ -297,6 +299,7 @@ plot.GPR <- function(x,
     do.call(plot, c(list(x = z, y = y), dots))
   }
   grid()
+  box()
   
   
   if(is.null(dots$ann) || dots$ann != FALSE){
@@ -508,7 +511,8 @@ plot.GPR <- function(x,
     
   if(isFALSE(add) && type != "contour"){
     plot(0, type = "n", xaxs = "i", yaxs = "i",
-         xaxt = "n", yaxt = "n", xlim = defaults$xlim, 
+         xaxt = "n", yaxt = "n", 
+         xlim = defaults$xlim, 
          ylim = ifelse(c(elev, elev), defaults$ylim, rev(defaults$ylim)), 
          xlab = defaults$xlab, ylab = defaults$ylab, bty = "n",
          mgp = defaults$mpg, asp = asp)

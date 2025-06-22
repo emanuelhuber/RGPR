@@ -33,9 +33,9 @@ not appearent in the filepath or the connection (either
 \code{dt1}, \code{rad}, \code{dzt}, \code{sgy}, \code{iprb},
 \code{txt}, \code{rds})}
 
-\item{Vmax}{length-one numeric vector: nominal analog input voltage used 
-for the bits to volt transformation. 
-It assumes that \code{Vmin = -Vmax}. If \code{Vmax = NULL}, the 
+\item{Vmax}{length-one numeric vector: nominal analog input voltage used
+for the bits to volt transformation.
+It assumes that \code{Vmin = -Vmax}. If \code{Vmax = NULL}, the
 default values depending on the file format and given by the
 GPR device manufacturer will be used. If \code{Vmax = FALSE},
 no bits to Volt transformation is applied (i.e., the bit values
@@ -55,19 +55,19 @@ the corresponding UTM coordinate reference system.}
 
 \item{method}{A length-three character vector defining the interpolation
 methods (same methods as in \code{signal::interp1}:
-"linear", "nearest", "pchip", "cubic", and "spline"). 
-First element for the interpolation of the 
-inter-trace distances, 
-second element for the interpolation of the horizontal 
+"linear", "nearest", "pchip", "cubic", and "spline").
+First element for the interpolation of the
+inter-trace distances,
+second element for the interpolation of the horizontal
 trace positions, and third element for the interpolation
 of the vertical trace positions.}
 
-\item{endian}{The endian-ness (\code{"big"} or \code{"little"}) of the 
-target system for 
-the file. Default value is \code{.Platform$endian}. 
-If the endianness is not correct, RGPR will automatically 
-detect it and try the other endianness. That means that it is 
-not necessary to set the correct endianness 
+\item{endian}{The endian-ness (\code{"big"} or \code{"little"}) of the
+target system for
+the file. Default value is \code{.Platform$endian}.
+If the endianness is not correct, RGPR will automatically
+detect it and try the other endianness. That means that it is
+not necessary to set the correct endianness
 (but if you do so, 'readGPR()' will be faster).}
 }
 \value{
@@ -93,40 +93,40 @@ Supported file format
   \item IDS (*.dt, *.gec).
         \code{readGPR(dsn = 'xline.dt')}
   \item SEG-Y file format (*.sgy/*.segy).
-        \code{readGPR(dsn = 'xline.sgy')} 
+        \code{readGPR(dsn = 'xline.sgy')}
   \item SEG-2 file format (*.sg2/*.seg2).
-        \code{readGPR(dsn = 'xline.sg2')}  
-  \item RadSys Zond GPR device (*.sgy). 
+        \code{readGPR(dsn = 'xline.sg2')}
+  \item RadSys Zond GPR device (*.sgy).
         \strong{Note: it is not the SEG-Y file format)}.
         \code{readGPR(dsn = 'xline.sgy')}
-  \item US Radar (*.RA1, *.RA2, *.RAD). 
-        \code{readGPR(dsn = 'xline.RA1')}  
-  \item Geotech OKO (*.GPR, *GPR2). 
-        \code{readGPR(dsn = 'xline.GPR')}  
-  \item ASCII file format (*.txt): either 4-column format 
+  \item US Radar (*.RA1, *.RA2, *.RAD).
+        \code{readGPR(dsn = 'xline.RA1')}
+  \item Geotech OKO (*.GPR, *GPR2).
+        \code{readGPR(dsn = 'xline.GPR')}
+  \item ASCII file format (*.txt): either 4-column format
         (x,t,amplitude) or matrix-format (without header/rownames).
-        \code{readGPR(dsn = 'xline.txt')}  
+        \code{readGPR(dsn = 'xline.txt')}
   \item GPRmax file format (*.out): hdf5
   \item R object file format (*rds). These files are created by saving the
-        \code{GPR} object with 
+        \code{GPR} object with
         \code{writeGPR(x, fPath = 'xline.rds', type = "rds")}.
-        \code{readGPR(dsn = 'xline.txt')}  
+        \code{readGPR(dsn = 'xline.txt')}
 }
 }
 \section{GSSI files (*.dzt)}{
 
-The first trace sample is constant and does not belong to the signal 
-(no idea what is does mean). 
+The first trace sample is constant and does not belong to the signal
+(no idea what is does mean).
 That is why RGPR removes the first sample of each trace.
-The second sample of each trace is used to indicate if there is a fiducial 
-marker. RGPR extracts this information (maybe not always correctly) and 
-removes the second sample of each trace. That is the reason why the *.dzt 
+The second sample of each trace is used to indicate if there is a fiducial
+marker. RGPR extracts this information (maybe not always correctly) and
+removes the second sample of each trace. That is the reason why the *.dzt
 files exported by RGPR have two samples/trace less.
 }
 
 \section{Mala files (*.rd3/rd7, *.rad)}{
 
-RGPR check the dimension of the data against the number of traces and 
+RGPR check the dimension of the data against the number of traces and
 samples specified in the *.rad file and try to find the correct setup.
 }
 

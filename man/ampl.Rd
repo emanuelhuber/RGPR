@@ -7,5 +7,5 @@
 \S4method{ampl}{GPR}(x, npad = 100, FUN = NULL, ...)
 }
 \description{
-Do not use this function!!!
+Do not use this function!
 }

@@ -7,5 +7,5 @@
 \S4method{gammaCorrection}{GPR}(x, a = 1, b = 1, track = TRUE)
 }
 \description{
-Gamma correction of the amplitude
+This function computes the gamma correction.
 }

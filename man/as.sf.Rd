@@ -28,7 +28,7 @@ as.sf(x)
 }
 \description{
 Coerce object to a simple feature (sf) geometry POINT. 
-Only coordinates are coerced, no additional information.
+Only coordinates are coerced, all additional information is lost.
 
 Coerce object to a simple feature (sf) geometry POINT. 
 Only coordinates are coerced, no additional information.

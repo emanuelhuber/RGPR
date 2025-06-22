@@ -7,5 +7,5 @@
 \S4method{adjustGamma}{GPR}(x, a = 1, b = 1, track = TRUE)
 }
 \description{
-This function compute the gamma correction.
+This function computes the gamma correction.
 }

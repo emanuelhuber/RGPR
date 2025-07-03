@@ -1,8 +1,8 @@
--–
+---
 layout: page
 title: Import GPR data
 date: 2025-07-03
--–
+---
 
 <!--
 "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"

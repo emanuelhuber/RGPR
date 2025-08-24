@@ -17,13 +17,20 @@
 #' @method window GPRvirtual 
 #' @name window
 #' @export
-window.GPRvirtual <- function(x, xlim, ylim, zlim, ...){
-  x[x@z >= zlim[1] & x@z <= zlim[2], x@x >= xlim[1] & x@x <= xlim[2]]
+window.GPRvirtual <- function(x, xlim = NULL, ylim = NULL, zlim = NULL, ...){
+  if(is.null(xlim)) xlim <- range(x@x, na.rm = FALSE)
+  if(is.null(ylim)) xlim <- range(x@y, na.rm = FALSE)
+  if(is.null(zlim)) xlim <- range(x@z, na.rm = FALSE)
+  x <- x[x@z >= zlim[1] & x@z <= zlim[2], x@x >= xlim[1] & x@x <= xlim[2]]
+  return(x)
 }
 
 #' @method window GPR 
 #' @name window
 #' @export
-window.GPR <- function(x, xlim, zlim, ...){
-  x[x@z >= zlim[1] & x@z <= zlim[2], x@x >= xlim[1] & x@x <= xlim[2]]
+window.GPR <- function(x, xlim = NULL, zlim = NULL, ...){
+  if(is.null(xlim)) xlim <- range(x@x, na.rm = FALSE)
+  if(is.null(zlim)) zlim <- range(x@z, na.rm = FALSE)
+  x <- x[x@z >= zlim[1] & x@z <= zlim[2], x@x >= xlim[1] & x@x <= xlim[2]]
+  return(x)
 }

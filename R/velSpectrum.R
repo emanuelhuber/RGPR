@@ -96,6 +96,7 @@ setMethod("velSpectrum", "GPR",
               if(method == "wincoherence"){
                 for(i in seq_along(v)){
                   y <- .NMOCor(x, v = v[i], asep = x@antsep)
+                  y[is.na(y)] <- 0
                   x_tv@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, 
                                              FUN = signalNoiseRatio)
                 }
@@ -103,19 +104,24 @@ setMethod("velSpectrum", "GPR",
               }else if(method == "wincoherence2"){
                 for(i in seq_along(v)){
                   y <- .NMOCor(x, v = v[i], asep = x@antsep)
+                  y[is.na(y)] <- 0
                   x_tv@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, 
                                               FUN = signalNoiseRatio2)
+                  # RGPR:::wapplyRowC(y@data, width = wi, by = 1, 
+                  #                   FUN = function(x)x)
                 }
                 x_tv@data[vabove,] <- 0
               }else if(method == "winsemblance"){
                 for(i in seq_along(v)){
                   y <- .NMOCor(x, v = v[i], asep = x@antsep)
+                  y[is.na(y)] <- 0
                   x_tv@data[,i] <- wapplyRowC(y@data, width = wi, by = 1, 
                                               FUN = winsemblance)
                 }
               }else if(method == "minsemblance"){
                 for(i in seq_along(v)){
                   y <- .NMOCor(x, v = v[i], asep = x@antsep)
+                  y[is.na(y)] <- 0
                   SS <- semblance(y@data)/ncol(x)
                   x_tv@data[,i] <- wapplyC(SS, width = wi, by = 1, 
                                               FUN = min)
@@ -125,6 +131,7 @@ setMethod("velSpectrum", "GPR",
             }else if(method == "semblance"){
               for(i in seq_along(v)){
                 y <- .NMOCor(x, v = v[i], asep = x@antsep)
+                y[is.na(y)] <- 0
                 x_tv@data[,i] <- semblance(y@data)/ncol(x)
               }
             }

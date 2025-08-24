@@ -6,9 +6,9 @@
 \alias{window.GPR}
 \title{Subset GPR data}
 \usage{
-\method{window}{GPRvirtual}(x, xlim, ylim, zlim, ...)
+\method{window}{GPRvirtual}(x, xlim = NULL, ylim = NULL, zlim = NULL, ...)
 
-\method{window}{GPR}(x, xlim, zlim, ...)
+\method{window}{GPR}(x, xlim = NULL, zlim = NULL, ...)
 }
 \arguments{
 \item{x}{(\code{GPR})}

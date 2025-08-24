@@ -168,6 +168,7 @@ Collate:
 	'FFT1D.R'
 	'scale1D.R'
 	'robustSmooth.R'
+	'raytracing.R'
 Imports:
     methods,
     graphics,

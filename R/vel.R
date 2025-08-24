@@ -93,12 +93,12 @@ checkVelIntegrity <- function(x, value){
         stop("'v' and 't' must have the same length")
       }
       if(!is.null(value[["intp"]])){
-        if(!is.character(value[["intp"]]) || length(value[["intp"]]) != 1 ){
+        if(!is.character(value[["intp"]])  || length(value[["intp"]]) != 1 ){
           stop("'intp' must be a character and have length one")
         }
       }
       if(!is.null(value[["smooth"]])){
-        if(!is.logical(value[["smooth"]]) || length(value[["smooth"]]) != 1 ){
+        if(!is.logical(value[["smooth"]]) && !is.numeric(value[["smooth"]])  || length(value[["smooth"]]) != 1 ){
           stop("'smooth' must be a logical and have length one")
         }
       }

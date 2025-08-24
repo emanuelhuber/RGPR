@@ -10,6 +10,7 @@
 #' @return list
 #' @export
 readFID <- function(FID, sep = NULL, verbose = TRUE){
+  if(!is.list(FID)) FID <- list(FID)
   myFid <- list() 
   for(i in seq_along(FID)){
     if(verbose) message("read ", FID[[i]], "...")

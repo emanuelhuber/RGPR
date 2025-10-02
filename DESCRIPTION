@@ -97,6 +97,7 @@ Collate:
 	'spunit.R'
 	'project.R'
 	'intersect.R'
+	'reverse.R'
 	'findClosestCoord.R'
 	'obbox.R'
 	'angle.R'

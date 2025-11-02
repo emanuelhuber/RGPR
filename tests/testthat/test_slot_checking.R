@@ -1,7 +1,6 @@
 context("Slot checking")
 library(RGPR)
 
-# devtools::test()
 
 data("frenkeLine00")
 x <- frenkeLine00

@@ -7,7 +7,7 @@
 quiet(x)
 }
 \description{
-This function suppresses the output from cat() or print() in a function. 
-It was proposed by Hadley Wickham 
+This function suppresses the output from cat() or print() in a function.
+It was proposed by Hadley Wickham
 https://r.789695.n4.nabble.com/Suppressing-output-e-g-from-cat-td859876.html
 }

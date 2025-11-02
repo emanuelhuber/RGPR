@@ -1494,10 +1494,11 @@ depthToTime <- function(z, time_0, v = 0.1, antsep = 1, c0 = 0.299){
 
 #' Depth zero
 #'
-#' Depth zero: wrong equation
+#' Deprecated
 #' @export
 depth0 <- function(time_0, v=0.1, antsep=1, c0 = 0.299){
   # time_0 - antsep/c0 <- in fact: time_0 = firstBreak - antsep/c0
+  warning("deprecated")
   time_0 - antsep/c0 + antsep/v
 }
 

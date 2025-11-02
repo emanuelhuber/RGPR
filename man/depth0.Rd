@@ -7,5 +7,5 @@
 depth0(time_0, v = 0.1, antsep = 1, c0 = 0.299)
 }
 \description{
-Depth zero
+Deprecated
 }

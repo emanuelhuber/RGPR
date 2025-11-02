@@ -2,14 +2,10 @@
 % Please edit documentation in R/global.R
 \name{shiftmat}
 \alias{shiftmat}
-\title{shift a matrix by n and m
-    
-shift a matrix by n and m}
+\title{shift a matrix by n and m}
 \usage{
 shiftmat(x, n, m)
 }
 \description{
-shift a matrix by n and m
-    
 shift a matrix by n and m
 }

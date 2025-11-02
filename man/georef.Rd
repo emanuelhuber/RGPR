@@ -28,7 +28,7 @@ georef(
 \item{x}{A matrix with the first two columns corresponding
 to coordinates.}
 
-\item{alpha}{A length-one numeric vector corresponding to 
+\item{alpha}{A length-one numeric vector corresponding to
 the rotation angle in radians. If \code{alpha = NULL},
 \code{alpha} is estimated from the pairs of points in
 the local reference system (\code{ploc}) and in the
@@ -38,7 +38,7 @@ regional reference system (\code{preg}).}
 center of the local reference system}
 
 \item{creg}{A length-two numeric vector corresponding to the coordinate
-center of the regional reference system. Setting 
+center of the regional reference system. Setting
 \code{creg = NULL} (default) is equivalent to apply a rotation
 of angle \code{alpha} and center \code{cloc}.}
 

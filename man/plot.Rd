@@ -129,11 +129,11 @@ is adjusted to the mean time-zero. Apply first the function
 in time unit, the data are migrated with a static
 migration)}
 
-\item{clip}{numeric. If length-one numeric vector, clip the amplitudes 
+\item{clip}{numeric. If length-one numeric vector, clip the amplitudes
 larger than \code{clip} and smaller than \code{-clip}.
 If length-two numeric vector, clip the amplitudes
-smaller than \code{clip[1]} and larger than 
-\code{clip[2]}. Per default, values below the 
+smaller than \code{clip[1]} and larger than
+\code{clip[2]}. Per default, values below the
 0.01-quantile and above the 0.99-quantile are clipped.
 If \code{clip = FALSE} the data are not clipped.}
 
@@ -147,11 +147,11 @@ If \code{clip = FALSE} the data are not clipped.}
 is colored. If negative, the left part of the wavelet is
 colored.}
 
-\item{pdfName}{length-one character. Name/path of the PDF to export 
+\item{pdfName}{length-one character. Name/path of the PDF to export
 without extension}
 
-\item{...}{additional arguments passed to the plotting methods 
-\code{\link[graphics]{plot}} for 1D plot and 
+\item{...}{additional arguments passed to the plotting methods
+\code{\link[graphics]{plot}} for 1D plot and
 \code{\link[plot3D]{Image}} for 2D plot. See also  \code{details}.}
 
 \item{main}{character. Plot title.}
@@ -164,14 +164,14 @@ conversion is applied).}
 
 \item{pdfFac}{length-one vector: factor to scale the exported PNG}
 
-\item{pngName}{length-one character. Name/path of the PNG to export 
+\item{pngName}{length-one character. Name/path of the PNG to export
 without extension}
 
 \item{pngFac}{length-one vector: factor to scale the exported PNG}
 
 \item{NAcol}{lengthe-one vector: color to be used.}
 
-\item{fast}{logical: if \code{TRUE} plots only a subset of the data (max. 
+\item{fast}{logical: if \code{TRUE} plots only a subset of the data (max.
 1000 traces) to speed up plotting.}
 
 \item{ylab2}{Label for the secondary axis}
@@ -179,7 +179,7 @@ without extension}
 \description{
 Plot GPR data cube.
 
-\code{plot}: If the GPR object consists of a single trace, wiggle plot 
+\code{plot}: If the GPR object consists of a single trace, wiggle plot
 is shown. For CMP, the position of the traces on the x-axis is defined
 by the antenna separation (\code{antsep(x)}).
 

@@ -16,12 +16,12 @@ with one of the extension does not exist. If FALSE,
 it returns NULL for the missing extension}
 }
 \value{
-A list whose keys correspond to \code{ext} and the values to 
+A list whose keys correspond to \code{ext} and the values to
         the filepaths:
         $hd  -> xline01.hd
         $dt1 -> xline01.dt1
 }
 \description{
-Returns the filepaths with the correct extension and check for 
+Returns the filepaths with the correct extension and check for
 upper and lower case extension (e.g., ".txt" or ".TXT")
 }

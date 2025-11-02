@@ -4,7 +4,7 @@
 \alias{wapply}
 \title{wapply: A faster (but less functional) "rollapply" for vector setups
 April 23, 2013.
-By A.N. Spiess, senior scientist at the Department of Andrology at the 
+By A.N. Spiess, senior scientist at the Department of Andrology at the
 University Hospital Hamburg-Eppendorf.
 This is what turned out (wapply for "window apply").}
 \usage{
@@ -13,7 +13,7 @@ wapply(x = NULL, width = NULL, by = NULL, FUN = NULL, ...)
 \description{
 wapply: A faster (but less functional) "rollapply" for vector setups
 April 23, 2013.
-By A.N. Spiess, senior scientist at the Department of Andrology at the 
+By A.N. Spiess, senior scientist at the Department of Andrology at the
 University Hospital Hamburg-Eppendorf.
 This is what turned out (wapply for "window apply").
 }

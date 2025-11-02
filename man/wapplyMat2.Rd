@@ -8,7 +8,7 @@ wapplyMat2(x = NULL, width = NULL, by = NULL, FUN = NULL, MARGIN = 1, ...)
 }
 \description{
 based on wapply and modified by Manu.
-not centered moving window! start first row/column and 
+not centered moving window! start first row/column and
 stop when the extremity of the windwo reach the last row/column.
 return a matrix of with smaller dimension than x (margin - 2*width)
 }

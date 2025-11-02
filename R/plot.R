@@ -1,9 +1,9 @@
 #' Plot the GPR object.
 #'
-#' \code{plot}: If the GPR object consists of a single trace, wiggle plot 
+#' \code{plot}: If the GPR object consists of a single trace, wiggle plot
 #' is shown. For CMP, the position of the traces on the x-axis is defined
 #' by the antenna separation (\code{antsep(x)}).
-#' 
+#'
 #' Additional arguments
 #' \itemize{
 #'   \item \code{type}: Possible values for 1D plot: see argument \code{type} in
@@ -11,7 +11,7 @@
 #'              For 2D plot: \code{"raster"} (default) or \code{"wiggles"}.
 #'   \item \code{col}: Color. Default 1D: "black". 2D: \code{palGPR(n = 101)}
 #' }
-#' 
+#'
 #' @param x Object of class \code{GPR}
 #' @param add logical. If \code{TRUE}, add to current plot
 #' @param relTime0 logical. If \code{TRUE}, adjust vertical axis to time-zero.
@@ -30,11 +30,11 @@
 #' @param elev logical. If \code{TRUE} the elevation instead of depth is
 #'                      displayed on y-axis (and therefore, time-to-depth
 #'                      conversion is applied).
-#' @param clip numeric. If length-one numeric vector, clip the amplitudes 
+#' @param clip numeric. If length-one numeric vector, clip the amplitudes
 #'                      larger than \code{clip} and smaller than \code{-clip}.
 #'                      If length-two numeric vector, clip the amplitudes
-#'                      smaller than \code{clip[1]} and larger than 
-#'                      \code{clip[2]}. Per default, values below the 
+#'                      smaller than \code{clip[1]} and larger than
+#'                      \code{clip[2]}. Per default, values below the
 #'                      0.01-quantile and above the 0.99-quantile are clipped.
 #'                      If \code{clip = FALSE} the data are not clipped.
 #' @param ratio logical.
@@ -43,31 +43,31 @@
 #' @param wside length-one numeric. If positive the right part of the wavelet
 #'              is colored. If negative, the left part of the wavelet is
 #'              colored.
-#' @param pdfName length-one character. Name/path of the PDF to export 
+#' @param pdfName length-one character. Name/path of the PDF to export
 #'                without extension
 #' @param pdfFac length-one vector: factor to scale the exported PNG
-#' @param pngName length-one character. Name/path of the PNG to export 
+#' @param pngName length-one character. Name/path of the PNG to export
 #'                without extension
 #' @param pngFac length-one vector: factor to scale the exported PNG
 #' @param NAcol lengthe-one vector: color to be used.
-#' @param fast logical: if \code{TRUE} plots only a subset of the data (max. 
-#'            1000 traces) to speed up plotting.               
+#' @param fast logical: if \code{TRUE} plots only a subset of the data (max.
+#'            1000 traces) to speed up plotting.
 #' @param ylab2 Label for the secondary axis
-#' @param ... additional arguments passed to the plotting methods 
-#'            \code{\link[graphics]{plot}} for 1D plot and 
+#' @param ... additional arguments passed to the plotting methods
+#'            \code{\link[graphics]{plot}} for 1D plot and
 #'            \code{\link[plot3D]{Image}} for 2D plot. See also  \code{details}.
-#' @method plot GPR 
+#' @method plot GPR
 #' @name plot
 #' @rdname plot
 #' @export
 #Default 1D: "black". 2D: \code{palGPR(n = 101)}
 # ##' @param y \code{NULL,} not used
 # options: type=c(raster,wiggles), addTopo, clip, normalize
-plot.GPR <- function(x, 
-                     #y = NULL, 
-                     add = FALSE, 
+plot.GPR <- function(x,
+                     #y = NULL,
+                     add = FALSE,
                      relTime0 = FALSE,
-                     note = NULL, 
+                     note = NULL,
                      addFid = TRUE,
                      addAnn = TRUE,
                      addTime0 = TRUE,
@@ -78,7 +78,7 @@ plot.GPR <- function(x,
                      elev    = FALSE,
                      clip = NULL,
                      # ratio = 1,
-                     barscale = TRUE, 
+                     barscale = TRUE,
                      wsize = 1,   # wiggles
                      wside = 1,   # wiggles
                      pdfName = NULL,
@@ -95,7 +95,7 @@ plot.GPR <- function(x,
     x <- x[, round(seq(from = 1, to = ncol(x), length.out = 1000))]
   }
   v <- 0
-  if(length(x@vel)>0){  
+  if(length(x@vel)>0){
     if(length(x@vel[[1]]) > 0){
       v <- x@vel[[1]]
     }
@@ -133,7 +133,7 @@ plot.GPR <- function(x,
         }
         if(dots$xlim[1] < dots$xlim[2]) dots$xlim <- rev(dots$xlim)
       }
-      
+
       if(is.null(dots$xlab)){
         if(grepl("[m]$", x@depthunit)){
           dots$xlab <- paste0(y_lab, " (",x@depthunit,")")
@@ -146,24 +146,24 @@ plot.GPR <- function(x,
       if(is.null(dots$type)) dots$type <- "l"
       if(is.null(dots$col)) dots$col <- "black"
       if(is.null(dots$ylab)) dots$ylab <- "amplitude (mV)"
-      dotsxaxt <- dots$xaxt 
+      dotsxaxt <- dots$xaxt
       if(is.null(dots$xaxt)) dots$xaxt <- "n"
       if(is.null(dots$main)){
-        myMain <- paste0(x@name, ": trace #", x@traces," @", round(x@pos,2), 
+        myMain <- paste0(x@name, ": trace #", x@traces," @", round(x@pos,2),
                          x@posunit)
       }else{
         myMain <- dots$main
         dots$main <- NULL
-      } 
+      }
       if(!is.null(dots[["log"]]) && dots[["log"]] == "y"){
         dots[["log"]] <- ""
         x@data <- log(x@data)
       }
-      
-      
-      
+
+
+
       do.call(plot, c(list(x = z, y = x@data), dots))
-      
+
       if(is.null(dots$ann) || dots$ann != FALSE){
         if(is.null(dotsxaxt) || dotsxaxt != "n"){
           x_axis <- pretty(z, 10)
@@ -205,14 +205,14 @@ plot.GPR <- function(x,
           }
         }
       }
-      
+
       title(myMain, outer = TRUE)
-      
+
       if(isTRUE(addAmpl0))  abline(h = 0, lty = 3, col = "grey")
       if(isTRUE(addTime0))  abline(v = t0, col = "red")
     }
   #------------------------ radargram plot (2D) -------------------------------#
-  # Plot 2D ------  
+  # Plot 2D ------
   }else{
     ##    Pre-processing   ----------------
     if(grepl("[s]$", x@depthunit) && isTRUE(addTopo)){
@@ -229,8 +229,8 @@ plot.GPR <- function(x,
       x@data <- .clip(x@data, quantile(as.vector(x@data), 0.99, na.rm = TRUE),
                       quantile(as.vector(x@data), 0.01, na.rm = TRUE))
     }
-   
-    
+
+
     if(is.null(note)) note <- x@filepath
     xvalues <- x@pos
     yvalues <- x@depth
@@ -254,15 +254,15 @@ plot.GPR <- function(x,
       x <- spRmDuplicates(x, verbose = FALSE)
       xvalues <- relTrPos(x)
     }
-    
-    time_0 <- x@time0    
+
+    time_0 <- x@time0
     t0 <- median(x@time0)
     z <- t( as.matrix(x@data) )
-    
+
     if(addFid == FALSE){
       x@fid <- character(length(x@fid))
     }
-    
+
     if( grepl("[s]$", x@depthunit) ){
       myylab <- paste0("two-way travel time (", x@depthunit, ")")
     }else if(grepl("[m]$", x@depthunit)){
@@ -270,14 +270,14 @@ plot.GPR <- function(x,
     }else{
       myylab <- x@depthunit
     }
-    
+
     if(is.null(dots$xlab)) dots$xlab <- myxlab
     if(is.null(dots$ylab)) dots$ylab <- myylab
     if(!is.null(dots$main)) mymain <- dots$main
     dots$main <- NULL
     if(is.null(dots$type)) dots$type <- "raster"
     dots$type <- match.arg(dots$type, c("raster","wiggles", "contour"))
-    
+
     if(dots$type == "contour"){
       if(is.null(dots[["col"]]))      dots[["col"]] <- "black"
       if(length(dots[["col"]]) == 1)  barscale <- FALSE
@@ -290,8 +290,8 @@ plot.GPR <- function(x,
         note <- ""
       }
     }
-    
-    
+
+
     # if(is.null(xlim)){
     #   xlim <- range(xvalues)
     # }
@@ -311,17 +311,17 @@ plot.GPR <- function(x,
       }
       if(dots$ylim[1] < dots$ylim[2]) dots$ylim <- rev(dots$ylim)
     }
-    
+
     if(is.null(dots$xlim)) dots$xlim <- range(xvalues)
-    
+
     op <- par(no.readonly=TRUE)
-    
+
     colkeyDist <- 0.05
     if(barscale == FALSE){
       mai <- c(1.1, 1.02, 1.02, 1.02)
     }else{
       mai <- c(1.1, 1.02, 1.02, 1.4)
-      if(grepl("[s]$", x@depthunit) && !isCMP(x) && 
+      if(grepl("[s]$", x@depthunit) && !isCMP(x) &&
          toupper(x@surveymode) != "CMPANALYSIS" && tolower(x@surveymode) != "velspectrum"){
         if(length(x@antsep) > 0 ){
           mai <- c(1.1, 1.02, 1.02, 2)
@@ -334,7 +334,7 @@ plot.GPR <- function(x,
     mai <- mai + c(0, 0, 0, 0)
     mgp <- c(2.5, 0.75, 0)
     omi <- par()$omi
-    
+
     if(!is.null(pdfName)){
       # if the depthunit are "meters"
       xlim <- dots$xlim
@@ -345,7 +345,7 @@ plot.GPR <- function(x,
         asp <- dots$asp
         dots$asp <- NULL
       }
-      
+
       if(grepl("[m]$", x@depthunit)){
         heightPDF <- pdfFac * abs(diff(ylim)) * asp + sum(omi[c(1,3)] + mai[c(1,3)])
         widthPDF <- pdfFac * abs(diff(xlim)) +  sum(omi[c(2,4)] + mai[c(2,4)])
@@ -375,7 +375,7 @@ plot.GPR <- function(x,
         heightPDF <- pngFac * abs(diff(ylim)) * asp + sum(omi[c(1,3)] + mai[c(1,3)])
         widthPDF <- pngFac * abs(diff(xlim)) +  sum(omi[c(2,4)] + mai[c(2,4)])
       }else{
-        heightPDF <- pngFac * abs(diff(ylim)) * asp * v/2 + 
+        heightPDF <- pngFac * abs(diff(ylim)) * asp * v/2 +
           sum(omi[c(1,3)] + mai[c(1,3)])
         widthPDF <- pngFac * abs(diff(xlim))  + sum(omi[c(2,4)] + mai[c(2,4)])
       }
@@ -390,9 +390,9 @@ plot.GPR <- function(x,
                       title = pngName)
     }
     #------------------------------ RASTER ------------------------------------#
-    
+
     # Plot raster ======
-    
+
     if(dots$type %in% c("raster", "contour")){
       dots$NAcol <- NAcol
       if(is.null(dots$clab)) dots$clab <- myclab
@@ -418,8 +418,8 @@ plot.GPR <- function(x,
           # if I use 'dots$col', R returns 'dots$colkey'!!!!
           if(is.null(dots[["col"]]) && diff(range(z, na.rm = TRUE)) != 0){
             dots[["col"]] <- palGPR("slice", n = 101)
-          } 
-        }else if(!is.null(x@surveymode) && 
+          }
+        }else if(!is.null(x@surveymode) &&
                  tolower(x@surveymode) %in% c("cmp", "reflection")){
           dots$zlim <- c(-1, 1) * max(abs(z), na.rm = TRUE)
         }else{
@@ -429,20 +429,20 @@ plot.GPR <- function(x,
       clim <- dots$zlim
       # if I use 'dots$col', R returns 'dots$colkey'!!!!
       if(is.null(dots[["col"]])) dots[["col"]] <- palGPR(n = 101)
-      
-      
+
+
       if(!all(is.na(z)) && diff(range(z, na.rm = TRUE)) == 0){
         dots$zlim <- rep(0, 2)
         clim <- rep(z[1], 2)
         z[!is.na(z)] <- 0
       }
-      
+
       if(is.null(dots$xaxs)) dots$xaxs <- "i"
       if(is.null(dots$yaxs)) dots$yaxs <- "i"
       if(is.null(dots$yaxt)) dots$yaxt <- "n"
       if(is.null(dots[["colkey"]])) dots[["colkey"]] <- FALSE
-      
-      if(add == TRUE){ 
+
+      if(add == TRUE){
         #par(new = TRUE)
         dots$add <- TRUE
         barscale <- FALSE
@@ -457,23 +457,23 @@ plot.GPR <- function(x,
         note <- ""
         dots[["ann"]] <- FALSE
         dots[["axes"]] <- FALSE
-        
+
       }else{
         # par( mai = mai, omi = omi, mgp = mgp)
         # par( mai = mai, mgp = mgp)
         par( mai = mai)
       }
-      
-      # print(clim)  
-      # print(dots)  
-      
+
+      # print(clim)
+      # print(dots)
+
       if(dots$type == "contour"){
         # if(is.null(dots[["colkey"]]) && isTRUE(dots[["add"]])){
         #   dots[["colkey"]] <- list(plot = FALSE)
-        # } 
+        # }
         #if(is.null(dots[["col"]])) dots[["col"]] <- "black"
         dots$type <- NULL
-        do.call(plot3D::contour2D, c(list(x = xvalues, y = yvalues, z = z), 
+        do.call(plot3D::contour2D, c(list(x = xvalues, y = yvalues, z = z),
                                      dots))
       }else if(dots$type == "raster"){
         #if(is.null(dots$bty)) dots$bty <- "n"
@@ -485,8 +485,8 @@ plot.GPR <- function(x,
     }else if(dots$type == "wiggles"){
       dots$type <- NULL
       barscale <- FALSE
-      
-      op <- par(no.readonly = TRUE) 
+
+      op <- par(no.readonly = TRUE)
       dx <- mean(diff(xvalues)) # estimated x-step
       z <- x@data
       z[is.na(z)] = 0
@@ -495,29 +495,29 @@ plot.GPR <- function(x,
       nc <- ncol(z)
       y0 <- 0
       topo <- rep(0L,nc)
-      
+
       xlim <- dots$xlim + c(-1,1)*dx
       dots$xlim <- NULL
-      
+
       ylim <- dots$ylim
       dots$ylim <- NULL
-      
+
       if(is.null(dots$side)) side <- 1
       yaxt <- "s"
       bty <- "o"
-      
+
       # col and lwd have no influence on plot
       col <- dots$col
       if(is.null(dots$col)) col <- "black"
       lwd  <- dots$lwd
       if(is.null(dots$lwd)) lwd <- 0.5
-      
+
       par(mai = mai, omi = omi, mgp = mgp)
-      
-      do.call(plot, c( list( x = 0, type = "n", xaxs = "i", yaxs = "i", 
+
+      do.call(plot, c( list( x = 0, type = "n", xaxs = "i", yaxs = "i",
                              yaxt = "n", xlim = xlim, ylim = ylim, bty = "n"),
                        dots))
-      
+
       if(wside > 0){
         for(i in rev(seq_along(xvalues))){
           y2 <- yvalues + topo[i]
@@ -534,13 +534,13 @@ plot.GPR <- function(x,
           wig = cbind(wsize*z[,i] + xvalues[i], y2)
           wig1 = rbind(c(xvalues[i], y2[1]), wig, c(xvalues[i], tail(y2,1) ))
           polygon(wig1, col = col, border = NA)
-          rect(max(wig1[,1]), ylim[1], xvalues[i], ylim[2], col = "white", 
+          rect(max(wig1[,1]), ylim[1], xvalues[i], ylim[2], col = "white",
                border = NA)
         }
       }
       for(i in (seq_along(xvalues))){
         y2 <- yvalues + topo[i]
-        lines(xvalues[i]+wsize*z[,i],y2,lwd=lwd)  
+        lines(xvalues[i]+wsize*z[,i],y2,lwd=lwd)
       }
       box(bty = bty)
     }
@@ -558,27 +558,83 @@ plot.GPR <- function(x,
           # if(is.null(dim(x@vel[[1]])) && length(v) == 1 && v > 0 ){
           if(is.null(dim(v)) && length(v) == 1 && v > 0 ){
             if(x@antsep > 0){
-              depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
-              depth2  <- seq(0.1, by = 0.1, 0.9)
-              depthat0 <- depthToTime(0, 0, v, antsep = x@antsep)
-              if(max(yvalues) * v / 2 > 1.3){
-                # depth <- pretty(seq(1.1, by = 0.1, max(z)*v/2), 10)
-                depth <- pretty(yat * v / 2, 10)
-                depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
-                axis(side = 4, at = t0 + depthat, labels = depth, tck = -0.02)
+              # we assume here that time0 is set (and not firstbreak)!
+              # depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
+
+              # plot(x, add2ndYAxis = FALSE, ylim = c(60, 70))
+              # plot(x, add2ndYAxis = FALSE, ylim = c(60, 63))
+              # plot(x, add2ndYAxis = FALSE, ylim = c(62, 62.5))
+              # plot(x, add2ndYAxis = FALSE, ylim = c(62.15, 62.5))
+              # plot(x, add2ndYAxis = FALSE, ylim = c(62.15, 100))
+              # plot(x, add2ndYAxis = FALSE, ylim = c(62.15, 200))
+              # plot(x, add2ndYAxis = FALSE, ylim = c(0, 500))
+              # plot(x, add2ndYAxis = FALSE, ylim = c(0, 60))
+              # plot(x, add2ndYAxis = FALSE, ylim = c(0, 70))
+              # plot(x, add2ndYAxis = FALSE, ylim = c(0, 80))
+              # plot(x, add2ndYAxis = FALSE)
+
+
+              depthToTime <- function(z, time_0, v = 0.1, antsep = 1){
+                sqrt((4*z^2 + antsep^2)/(v^2)) + time_0
               }
-              depthat2 <- depthToTime(depth2, 0, v, antsep = x@antsep)
-              axis(side = 4, at = t0 + depthat2, labels = FALSE, tck = -0.01)
-              axis(side = 4, at = depth_0, labels = "0", tick = FALSE)
-              if(isTRUE(addDepth0)) abline(h = depth_0, col = "grey", lty = 3)
+              tdepth <-  timeToDepth(sort(par()$usr[3:4]), time_0 = t0)
+              tdepth[is.na(tdepth)] <- 0
+              # sm_depth
+              tck1_depth <- pretty(tdepth, bounds = FALSE, high.u.bias = 1)
+              # tck1_time <- depthToTime(tck1_depth, t0, v, antsep = x@antsep)
+              tck2_depth <- unique(c(seq(0, by = 0.1, 1), tck1_depth))
+              tck2_time <- depthToTime(tck2_depth, t0, v, antsep = x@antsep)
+
+              y_in <- grconvertY(tck2_time, from = "user", to = "inches")
+
+              min_inches <- 0.2
+              keep <- rep(TRUE, length(tck2_time))
+              keep[2:11] <- FALSE
+              tst1 <- abs(y_in[1] - y_in[2]) > min_inches
+              if(abs(y_in[1] - y_in[2]) > min_inches){
+                keep[2:11] <- TRUE
+              }else if(abs(y_in[1] - y_in[3]) > min_inches){
+                keep[3:11] <- TRUE
+              }else if(abs(y_in[1] - y_in[5]) > min_inches){
+                keep[c(6,11)] <- TRUE
+              }
+              if(abs(y_in[1] - y_in[11]) > min_inches){
+                keep[11] <- TRUE
+                tck2add_time <- depthToTime(seq(0.1, by = 0.1, 0.9), t0, v, antsep = x@antsep)
+                axis(side = 4, at = tck2add_time, labels = FALSE, tck = -0.01)
+              }
+              tck2_time <-tck2_time[keep]
+              tck2_depth <- tck2_depth[keep]
+
+              axis(side = 4, at = tck2_time, labels = tck2_depth, tck = -0.02)
+              # axis(side = 4, at = tck1_time, labels = tck1_depth, tck = 0)
+
+              # pretty(sort(par()$usr[3:4]))
+              #
+              # depth2  <- seq(0.1, by = 0.1, 0.9)
+              # depthat0 <- depthToTime(0, 0, v, antsep = x@antsep)
+              # if(max(yvalues) * v / 2 > 1.3){
+              #   # depth <- pretty(seq(1.1, by = 0.1, max(z)*v/2), 10)
+              #   depth <- pretty(yat * v / 2, 10)
+              #   depthat <- depthToTime(depth, 0, v, antsep = x@antsep)
+              #   axis(side = 4, at = t0 + depthat, labels = depth, tck = -0.02)
+              # }
+              # depthat2 <- depthToTime(depth2, 0, v, antsep = x@antsep)
+              # axis(side = 4, at = t0 + depthat2, labels = FALSE, tck = -0.01)
+              # axis(side = 4, at = depth_0, labels = "0", tick = FALSE)
+              # we assume here that time0 is set (and not firstbreak)!
+              if(isTRUE(addDepth0)){
+                depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
+                abline(h = depth_0, col = "grey", lty = 3)
+              }
               # mtext(paste0("depth (m),   v=", v, "m/ns"), side = 4, line = 2)
               if(is.null(ylab2)){
-                mtext(paste0("depth (", x@posunit, "),   v = ", round(v, 3), " ", x@posunit, 
+                mtext(paste0("depth (", x@posunit, "),   v = ", round(v, 3), " ", x@posunit,
                              "/",  x@depthunit), side = 4, line = 2.5)
               }else{
                 mtext(ylab2, side = 4, line = 2.5)
               }
-              
+
             }else{
               depth_0 <- t0 + depth0(0, v, antsep = x@antsep)
               depth <- pretty(yat * v / 2, 10)
@@ -586,12 +642,12 @@ plot.GPR <- function(x,
               axis(side = 4, at = t0 + depthat, labels = depth, tck = -0.02)
               if(isTRUE(addDepth0)) abline(h = depth_0, col = "grey", lty = 3)
               if(is.null(ylab2)){
-                mtext(paste0("depth (", x@posunit, "),   v = ", round(v, 3), " ", x@posunit, 
+                mtext(paste0("depth (", x@posunit, "),   v = ", round(v, 3), " ", x@posunit,
                              "/",  x@depthunit), side = 4, line = 2.5)
               }else{
                 mtext(ylab2, side = 4, line = 2.5)
               }
-              
+
             }
           }else{
             axis(side = 4)
@@ -599,7 +655,7 @@ plot.GPR <- function(x,
         }
       }
     }
-    
+
     if(isTRUE(addTime0) && !grepl("CMPANALYSIS", toupper(x@surveymode)) &&
        !grepl("velspectrum", tolower(x@surveymode))){
       dx <- diff(xvalues)/2
@@ -607,51 +663,51 @@ plot.GPR <- function(x,
       lines(xt0, c(time_0, tail(time_0, 1)), type = "s", col = "chartreuse",
             lwd = 2)
     }
-    
+
     # plot note
     if(!is.null(note) && length(note) > 0){
       mtext(note, side = 1, line = 4, cex=0.6)
     }
-    
-    
+
+
     test <- ( xvalues >= dots$xlim[1] & xvalues <= dots$xlim[2] )
     # plot fiducial markers
     if(isTRUE(addFid) && !is.null(x@fid) && length(x@fid) > 0){
       .plotFid(x@fid[test], xvalues[test])
     }
-    
+
     # plot annotations
     testAnn <- FALSE
     if(isTRUE(addAnn) && !is.null(x@ann) && length(x@ann) > 0){
       testAnn <- .plotAnn(x@ann[test], xvalues[test])
     }
-    
+
     # plot title
     if(isTRUE(addAnn) && isTRUE(testAnn)){
       title(mymain, outer = TRUE, line = 1)
     }else{
-      title(mymain)  
+      title(mymain)
     }
-    
+
     if(barscale){
       # op2 <- par(no.readonly=TRUE)
-      # plot3D::colkey (col = dots$col, clim = clim, clab = dots$clab, clog = FALSE, 
+      # plot3D::colkey (col = dots$col, clim = clim, clab = dots$clab, clog = FALSE,
       #                 add = TRUE, cex.clab = 0.75, dist = colkeyDist)
       if(is.null(clim)){
         clim <- c(-0.1, 0.1)
       }else if(clim[1] == clim[2]){
         clim <- clim + c(-0.1, 0.1)
-      } 
-      fields::image.plot(zlim = clim, 
-                         legend.only = TRUE, 
-                         col = dots$col, 
+      }
+      fields::image.plot(zlim = clim,
+                         legend.only = TRUE,
+                         col = dots$col,
                          legend.shrink = 1)
-      # .barScale(clim = clim, y = yvalues, col = dots$col, 
+      # .barScale(clim = clim, y = yvalues, col = dots$col,
       # clab = dots$clab, clabcex = 0.8)
       # par(op2)
     }
     # par(op)
-    
+
     if(!is.null(pdfName)){
       dev.off()
     }
@@ -662,15 +718,15 @@ plot.GPR <- function(x,
 }
 
 #' \code{contour} extends \code{plot3D::contour2D} and creates a contour plot.
-#' @method contour GPR 
+#' @method contour GPR
 #' @name contour
 #' @rdname plot
 #' @export
 # options: type=c(raster,wiggles), addTopo, clip, normalize
-contour.GPR <- function(x, 
+contour.GPR <- function(x,
                         relTime0 = FALSE,
-                        add = FALSE, 
-                        note = NULL, 
+                        add = FALSE,
+                        note = NULL,
                         addFid = TRUE,
                         addAnn = TRUE,
                         addTime0 = TRUE,
@@ -679,14 +735,14 @@ contour.GPR <- function(x,
                         addTopo = FALSE,
                         clip = NULL,
                         asp = 1,
-                        barscale = TRUE, 
+                        barscale = TRUE,
                         pdfName = NULL,
                         ...){
-  
-  plot.GPR(x, 
-           add = add, 
+
+  plot.GPR(x,
+           add = add,
            relTime0 = relTime0,
-           note = note, 
+           note = note,
            addFid = addFid,
            addAnn = addAnn,
            addTime0 = addTime0,
@@ -695,7 +751,7 @@ contour.GPR <- function(x,
            addTopo = addTopo,
            clip = clip,
            #ratio = ratio,
-           barscale = barscale, 
+           barscale = barscale,
            pdfName = pdfName,
            type = "contour",
            ...)
@@ -709,7 +765,7 @@ contour.GPR <- function(x,
 #' Plot the GPRsurvey object.
 #'
 #' Plot GPR suvey lines
-#' @method plot GPRsurvey 
+#' @method plot GPRsurvey
 #' @name plot
 #' @rdname plot
 #' @export
@@ -735,7 +791,7 @@ plot.GPRsurvey <- function(x, y, ...){
       uN <- table(names(dots))
       if(any(uN > 1)){
         idx <- which(uN > 1)
-        stop("Arguments '", names(uN[idx]), "' is not unique!")  
+        stop("Arguments '", names(uN[idx]), "' is not unique!")
       }
       if( !is.null(dots$add) && isTRUE(dots$add) ){
         add <- TRUE
@@ -805,7 +861,7 @@ plot.GPRsurvey <- function(x, y, ...){
       warning("'add_shp_files' is no more supported!")
       # if(length(shp_files) > 0){
       #   sel <- seq(from=1,length.out=length(shp_files),by=2)
-      #   BASEName <- unlist(strsplit(basename(shp_files),'[.]'), 
+      #   BASEName <- unlist(strsplit(basename(shp_files),'[.]'),
       #                      use.names = FALSE)[sel]
       #   DIRName <- dirname(shp_files)
       #   for(i in seq_along(shp_files)){
@@ -832,41 +888,41 @@ plot.GPRsurvey <- function(x, y, ...){
           units <- par(c('usr', 'pin'))
           x_to_inches <- with(units, pin[1L]/diff(usr[1:2]))
           y_to_inches <- with(units, pin[2L]/diff(usr[3:4]))
-          
+
           it <- 1
           x0 = xyz[nrow(xyz)-it,1]
-          y0 = xyz[nrow(xyz)-it,2] 
+          y0 = xyz[nrow(xyz)-it,2]
           x1 = xyz[nrow(xyz),1]
           y1 = xyz[nrow(xyz),2]
-          dists <- sqrt((x_to_inches * (x0 - x1))**2 + 
+          dists <- sqrt((x_to_inches * (x0 - x1))**2 +
                           (y_to_inches * (y0 - y1))**2)
-          distsmax <- sqrt((x_to_inches * diff(range(xyz[,1])))^2 + 
+          distsmax <- sqrt((x_to_inches * diff(range(xyz[,1])))^2 +
                              (y_to_inches *  diff(range(xyz[,2])))^2)
           while(dists < 0.001 && distsmax > 0.001){
             it <- it + 1
             x0 = xyz[nrow(xyz)-it,1]
-            y0 = xyz[nrow(xyz)-it,2] 
+            y0 = xyz[nrow(xyz)-it,2]
             x1 = xyz[nrow(xyz),1]
             y1 = xyz[nrow(xyz),2]
-            
-            dists <- sqrt((x_to_inches * (x0 - x1))^2 + 
+
+            dists <- sqrt((x_to_inches * (x0 - x1))^2 +
                             (y_to_inches * (y0 - y1))^2)
-            
+
           }
-          
-          # do.call(arrows, c(x0 = xyz[nrow(xyz)-1,1], 
-          #                   y0 = xyz[nrow(xyz)-1,2], 
+
+          # do.call(arrows, c(x0 = xyz[nrow(xyz)-1,1],
+          #                   y0 = xyz[nrow(xyz)-1,2],
           #                   x1 = xyz[nrow(xyz),1],
-          #                   y1 = xyz[nrow(xyz),2], 
+          #                   y1 = xyz[nrow(xyz),2],
           #                   parArrows))
-          do.call(arrows, c(x0 = x0, 
-                            y0 = y0, 
+          do.call(arrows, c(x0 = x0,
+                            y0 = y0,
                             x1 = x1,
-                            y1 = y1, 
+                            y1 = y1,
                             parArrows))
         }
         if(!is.null(parFid) && length(x@fids) > 0){
-          fidxyz <- x@coords[[x@names[i]]][trimStr(x@fids[[i]]) != "", , 
+          fidxyz <- x@coords[[x@names[i]]][trimStr(x@fids[[i]]) != "", ,
                                            drop = FALSE]
           if(length(fidxyz)>0){
             do.call( graphics::points, c(list(x = fidxyz[, 1:2]), parFid))
@@ -878,25 +934,25 @@ plot.GPRsurvey <- function(x, y, ...){
     # if(!is.null(parArrows)){
     #   for(i in 1:length(x)){
     #     xyz <- unname(x@coords[[i]])
-    #     do.call(arrows, c(xyz[nrow(xyz)-1,1], xyz[nrow(xyz)-1,2], 
-    #                       x1 = xyz[nrow(xyz),1],   y1 = xyz[nrow(xyz),2], 
+    #     do.call(arrows, c(xyz[nrow(xyz)-1,1], xyz[nrow(xyz)-1,2],
+    #                       x1 = xyz[nrow(xyz),1],   y1 = xyz[nrow(xyz),2],
     #                       parArrows))
     #   }
     #   #niet <- lapply(x@coords, .plotArrows, parArrows)
     # }
     # if(!is.null(parFid)){
     #   for(i in 1:length(x)){
-    #     fidxyz <- x@coords[[i]][trimStr(x@fids[[i]]) != "", , 
+    #     fidxyz <- x@coords[[i]][trimStr(x@fids[[i]]) != "", ,
     #                                 drop = FALSE]
     #     if(length(fidxyz)>0){
     #       do.call( points, c(list(x = fidxyz[, 1:2]), parFid))
     #     }
     #   }
     # }
-    if(!is.null(parIntersect) && length(x@intersections) > 0){ 
+    if(!is.null(parIntersect) && length(x@intersections) > 0){
       for(i in 1:length(x@intersections)){
         if(!is.null(x@intersections[[i]])){
-          do.call(points , c(list(x=x@intersections[[i]]$coord), 
+          do.call(points , c(list(x=x@intersections[[i]]$coord),
                              parIntersect))
         }
       }
@@ -909,7 +965,7 @@ plot.GPRsurvey <- function(x, y, ...){
 #' Plot the GPR survey as lines
 #'
 #' Plot the GPR survey as lines
-#' @method lines GPRsurvey 
+#' @method lines GPRsurvey
 #' @name lines
 #' @rdname lines
 #' @export
@@ -949,7 +1005,7 @@ lines.GPRsurvey <- function(x, ...){
     posfid <- x
     testfid <- (fid != "")
     yr <- diff(usr[3:4])/(pin[2])
-    if(sum(testfid)>0){  
+    if(sum(testfid)>0){
       par(xpd=TRUE)
       cst <- yr*cin
       points(posfid[testfid],cst/2*0.75+rep(usr[4],sum(testfid)),pch=25,
@@ -979,10 +1035,10 @@ lines.GPRsurvey <- function(x, ...){
   # ystrip <- seq(min(y), max(y), length.out = length(col))
   ystrip <- rev(seq(usr[3], usr[4], length.out = length(col)))
   ystrip <- sort(ystrip)
-  dclim <- clim[2] - clim[1] 
+  dclim <- clim[2] - clim[1]
   if(dclim == 0){
     axis(side = 4, las = 2, at = (usr[3] - usr[4])/2, labels = clim[1])
-    image(x = xstrip, y = c(usr[4], usr[3]), 
+    image(x = xstrip, y = c(usr[4], usr[3]),
           z = matrix(rep(clim[1], 2), nrow = 1),
           add = TRUE, col = col,
           axes = FALSE, xlab = "", ylab = "", xaxs = "i", yaxs = "i")
@@ -1018,12 +1074,12 @@ lines.GPRsurvey <- function(x, ...){
     depthat2 <- depthToTime(depth2, 0, v, antsep = antsep)
     axis(side = 4, at = - depthat2 - time_0, labels = FALSE, tck = -0.01)
     if(is.null(ylab2)){
-      mmtext(paste0("depth (", posunit, "),   v = ",v, " ", posunit, "/", 
+      mmtext(paste0("depth (", posunit, "),   v = ",v, " ", posunit, "/",
                     depthunit), side = 4, line = 2.5)
     }else{
       mtext(ylab2, side = 4, line = 2.5)
     }
-    
+
   }else{
     axis(side = 4, at = pretty_y, labels = -pretty_y)
     mtext(paste0("depth (", depthunit, ")") ,side = 4, line = 3)

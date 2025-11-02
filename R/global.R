@@ -232,7 +232,7 @@ setGenericVerif("antsep", function(x) standardGeneric("antsep"))
 #' @name antsep<-
 #' @rdname antsep
 #' @export
-setGenericVerif("antsep<-",function(x,value){standardGeneric("antsep<-")})                
+setGenericVerif("antsep<-",function(x,value){standardGeneric("antsep<-")})
 
 
 #' @name antfreq
@@ -243,7 +243,7 @@ setGenericVerif("antfreq", function(x) standardGeneric("antfreq"))
 #' @name antfreq<-
 #' @rdname antfreq
 #' @export
-setGenericVerif("antfreq<-",function(x,value){standardGeneric("antfreq<-")})                
+setGenericVerif("antfreq<-",function(x,value){standardGeneric("antfreq<-")})
 
 
 
@@ -256,7 +256,7 @@ setGenericVerif("surveymode", function(x) standardGeneric("surveymode"))
 #' @rdname surveymode
 #' @export
 setGenericVerif("surveymode<-",
-                function(x, value){standardGeneric("surveymode<-")})    
+                function(x, value){standardGeneric("surveymode<-")})
 
 #' @name isCMP
 #' @rdname isCMP
@@ -282,7 +282,7 @@ setGenericVerif("description", function(x) standardGeneric("description"))
 #' @name description<-
 #' @rdname description
 #' @export
-setGenericVerif("description<-", function(x, value) 
+setGenericVerif("description<-", function(x, value)
   standardGeneric("description<-"))
 
 
@@ -310,14 +310,14 @@ setGenericVerif("svAngle", function(x) standardGeneric("svAngle"))
 setGenericVerif("gethd", function(x,hd=NULL) standardGeneric("gethd"))
 
 
-setGenericVerif("plotAmpl", function(x, npad = 100, FUN = mean, add = FALSE, 
+setGenericVerif("plotAmpl", function(x, npad = 100, FUN = mean, add = FALSE,
                                      all = FALSE,...) standardGeneric("plotAmpl"))
 
 
 
 
 
-setGenericVerif("plotEnvelope", function(x, npad = 100, FUN = mean, add = FALSE, 
+setGenericVerif("plotEnvelope", function(x, npad = 100, FUN = mean, add = FALSE,
                                          all = FALSE,...) standardGeneric("plotEnvelope"))
 
 
@@ -326,49 +326,49 @@ setGenericVerif("plotEnvelope", function(x, npad = 100, FUN = mean, add = FALSE,
 #' @name trRmDuplicates
 #' @rdname trRmDuplicates
 #' @export
-setGenericVerif("trRmDuplicates", function(x, tol = NULL, verbose = TRUE) 
+setGenericVerif("trRmDuplicates", function(x, tol = NULL, verbose = TRUE)
   standardGeneric("trRmDuplicates"))
 
 #' @name interpPos
 #' @rdname interpPos
 #' @export
-setGenericVerif("interpPos", function(x, topo, plot = FALSE, r = NULL, tol = NULL, 
-                                      method = c("linear", "linear", "linear"), crs = NULL, ...) 
+setGenericVerif("interpPos", function(x, topo, plot = FALSE, r = NULL, tol = NULL,
+                                      method = c("linear", "linear", "linear"), crs = NULL, ...)
   standardGeneric("interpPos"))
 
 #' @name interpPosFromXYZ
 #' @rdname interpPosFromXYZ
 #' @export
-setGenericVerif("interpPosFromXYZ", function(x, xyz, tol = NULL) 
+setGenericVerif("interpPosFromXYZ", function(x, xyz, tol = NULL)
   standardGeneric("interpPosFromXYZ"))
 
-setGeneric("interpPosArray", function(x, d, GPGGA = NULL, geojson = NULL, 
+setGeneric("interpPosArray", function(x, d, GPGGA = NULL, geojson = NULL,
                    tol = NULL, backproject = FALSE)
   standardGeneric("interpPosArray"))
 
 # #' @name interpPosFromGPGGA
 # #' @rdname interpPosFromGPGGA
 # #' @export
-# setGenericVerif("interpPosFromGPGGA", 
+# setGenericVerif("interpPosFromGPGGA",
 #           function(x, GPGGA, tol = NULL, backproject = TRUE)
 #             standardGeneric("interpPosFromGPGGA"))
 
 #' @name regInterpPos
 #' @rdname regInterpPos
 #' @export
-setGenericVerif("regInterpPos", function(x, type = c("linear", "cosine"), 
+setGenericVerif("regInterpPos", function(x, type = c("linear", "cosine"),
                                          dx = NULL)  standardGeneric("regInterpPos"))
 
 #' @name relTrPos
 #' @rdname relTrPos
 #' @export
-setGenericVerif("relTrPos", function(x, last = FALSE) 
+setGenericVerif("relTrPos", function(x, last = FALSE)
   standardGeneric("relTrPos"))
 
 #' @name relTrPos3D
 #' @rdname relTrPos
 #' @export
-setGenericVerif("relTrPos3D", function(x, last = FALSE) 
+setGenericVerif("relTrPos3D", function(x, last = FALSE)
   standardGeneric("relTrPos3D"))
 
 
@@ -376,7 +376,7 @@ setGenericVerif("relTrPos3D", function(x, last = FALSE)
 # #' @name readGPR
 # #' @rdname readGPR
 # #' @export
-# setGenericVerif("readGPR", function(fPath, desc = "", ...) 
+# setGenericVerif("readGPR", function(fPath, desc = "", ...)
 #   standardGeneric("readGPR")
 # )
 
@@ -385,7 +385,7 @@ setGenericVerif("relTrPos3D", function(x, last = FALSE)
 #' @name reverse
 #' @rdname reverse
 #' @export
-setGenericVerif("reverse", function(x, id = NULL,  tol = 0.3) 
+setGenericVerif("reverse", function(x, id = NULL,  tol = 0.3)
   standardGeneric("reverse"))
 
 
@@ -398,8 +398,8 @@ setGeneric("setGridCoord<-",function(x,value){standardGeneric("setGridCoord<-")}
 #' @name shiftEst
 #' @rdname shiftEst
 #' @export
-setGenericVerif("shiftEst", function(x, y = NULL, 
-                                     method=c("phase", "WSSD"), dxy = NULL, ...) 
+setGenericVerif("shiftEst", function(x, y = NULL,
+                                     method=c("phase", "WSSD"), dxy = NULL, ...)
   standardGeneric("shiftEst"))
 
 
@@ -409,7 +409,7 @@ setGenericVerif("shiftEst", function(x, y = NULL,
 
 
 
-setGenericVerif("timeCorOffset", function(x, t0 = NULL, track = TRUE) 
+setGenericVerif("timeCorOffset", function(x, t0 = NULL, track = TRUE)
   standardGeneric("timeCorOffset"))
 
 
@@ -418,34 +418,34 @@ setGenericVerif("corAntElev", function(x, c0 = 0.3)
 
 #' @name filter1D
 #' @rdname filter1D
-setGenericVerif("filter1D", 
-                function(x, 
-                         type = c("runmed", "runmean", "MAD", "Gaussian"), 
+setGenericVerif("filter1D",
+                function(x,
+                         type = c("runmed", "runmean", "MAD", "Gaussian"),
                          w = NULL,
-                         track = TRUE) 
+                         track = TRUE)
                   standardGeneric("filter1D"))
 
 
-setGenericVerif("dewow", 
+setGenericVerif("dewow",
                 function(x,
-                         type = c("runmed", "runmean", "MAD", "Gaussian"), 
-                         w = NULL, 
-                         track = TRUE ) 
+                         type = c("runmed", "runmean", "MAD", "Gaussian"),
+                         w = NULL,
+                         track = TRUE )
   standardGeneric("dewow"))
 
 
 
 
 
-setGenericVerif("trAmplCor", 
-                function(x, type=c("power", "exp", "agc"),  ...) 
+setGenericVerif("trAmplCor",
+                function(x, type=c("power", "exp", "agc"),  ...)
                   standardGeneric("trAmplCor"))
 
-setGenericVerif("dcshift", function(x, u = NULL, FUN = mean, ..., track = TRUE) 
+setGenericVerif("dcshift", function(x, u = NULL, FUN = mean, ..., track = TRUE)
   standardGeneric("dcshift"))
 
 setGenericVerif("firstBreak", function(x, method = c("coppens",
-                                                     "threshold",  "MER"), thr = 0.12, w = 11, ns = NULL, 
+                                                     "threshold",  "MER"), thr = 0.12, w = 11, ns = NULL,
                                        bet = NULL)
   standardGeneric("firstBreak"))
 
@@ -453,56 +453,56 @@ setGenericVerif("firstBreak", function(x, method = c("coppens",
 
 
 
-setGenericVerif("traceScaling", 
-                function(x, 
-                         type = c("stat", "min-max", "95", "eq", "sum", "rms", 
-                                  "mad", "invNormal"), 
-                         track = TRUE) 
+setGenericVerif("traceScaling",
+                function(x,
+                         type = c("stat", "min-max", "95", "eq", "sum", "rms",
+                                  "mad", "invNormal"),
+                         track = TRUE)
   standardGeneric("traceScaling"))
 
 
-setGenericVerif("fFilter", function(x, f = 100, 
+setGenericVerif("fFilter", function(x, f = 100,
                                     type = c('low', 'high', 'bandpass', 'bandpass-reject'),
-                                    L = 257, plotSpec = FALSE, track = TRUE) 
+                                    L = 257, plotSpec = FALSE, track = TRUE)
   standardGeneric("fFilter"))
 
-setGenericVerif("fkFilter", function(x, fk = NULL, L = c(5, 5), npad = 1, 
-                                     track = TRUE) 
+setGenericVerif("fkFilter", function(x, fk = NULL, L = c(5, 5), npad = 1,
+                                     track = TRUE)
   standardGeneric("fkFilter"))
 
-setGenericVerif("eigenFilter", function(x, eigenvalue = NA, center = TRUE, 
-                                        scale = FALSE, track = TRUE) 
+setGenericVerif("eigenFilter", function(x, eigenvalue = NA, center = TRUE,
+                                        scale = FALSE, track = TRUE)
   standardGeneric("eigenFilter"))
 
-setGenericVerif("traceShift", 
-                function(x,  ts, 
-                         method = c("pchip", "linear", "nearest", 
-                                    "spline", "cubic", "none"), 
+setGenericVerif("traceShift",
+                function(x,  ts,
+                         method = c("pchip", "linear", "nearest",
+                                    "spline", "cubic", "none"),
                          crop = TRUE, track = TRUE)
                   standardGeneric("traceShift"))
 
-setGenericVerif("interpTrace", 
-                function(x,  z, method = c("pchip", "linear", 
-                                           "nearest", "spline", "cubic"), 
-                         crop = TRUE, track = TRUE) 
+setGenericVerif("interpTrace",
+                function(x,  z, method = c("pchip", "linear",
+                                           "nearest", "spline", "cubic"),
+                         crop = TRUE, track = TRUE)
   standardGeneric("interpTrace"))
 
 
 
 
-setGenericVerif("traceAverage", function(x, w = NULL, FUN = mean, ..., 
-                                         track = TRUE) 
+setGenericVerif("traceAverage", function(x, w = NULL, FUN = mean, ...,
+                                         track = TRUE)
   standardGeneric("traceAverage"))
 
-setGenericVerif("traceStat", function(x, w = NULL, FUN = mean, ..., 
-                                      track = TRUE) 
+setGenericVerif("traceStat", function(x, w = NULL, FUN = mean, ...,
+                                      track = TRUE)
   standardGeneric("traceStat"))
 
 
 
-setGenericVerif("time0Cor",  function(x, t0 = NULL, 
-                                      method = c("spline", "linear", "nearest", "pchip", "cubic", 
-                                                 "none"), crop = TRUE, keep = 0, track = TRUE) 
+setGenericVerif("time0Cor",  function(x, t0 = NULL,
+                                      method = c("spline", "linear", "nearest", "pchip", "cubic",
+                                                 "none"), crop = TRUE, keep = 0, track = TRUE)
   standardGeneric("time0Cor"))
 
 
@@ -518,29 +518,29 @@ setGenericVerif("getGPR", function(x,id) standardGeneric("getGPR"))
 #' @name surveyIntersect
 #' @rdname surveyIntersect
 #' @export
-setGenericVerif("surveyIntersect", function(x) 
+setGenericVerif("surveyIntersect", function(x)
   standardGeneric("surveyIntersect"))
 
 #' @name writeSurvey
 #' @rdname writeSurvey
 #' @export
-setGenericVerif("writeSurvey", function(x, fPath, overwrite=FALSE){ 
+setGenericVerif("writeSurvey", function(x, fPath, overwrite=FALSE){
   standardGeneric("writeSurvey")})
 
 
 #' @name interpSlices
 #' @rdname interpSlices
 #' @export
-setGenericVerif("interpSlices", function(x, dx = NULL, dy = NULL, dz = NULL, 
+setGenericVerif("interpSlices", function(x, dx = NULL, dy = NULL, dz = NULL,
                                          h = 6, extend = c("chull", "bbox", "obbox", "buffer"),
                                          buffer = NULL, shp = NULL,
-                                         m = NULL, n = NULL){ 
+                                         m = NULL, n = NULL){
   standardGeneric("interpSlices")})
 
 #' @name tpShift
 #' @rdname tpShift
 #' @export
-setGenericVerif("tpShift", function(x, i, dx = 0, dy = 0, dz = 0){ 
+setGenericVerif("tpShift", function(x, i, dx = 0, dy = 0, dz = 0){
   standardGeneric("tpShift")})
 
 
@@ -554,7 +554,7 @@ setGenericVerif("tpShift", function(x, i, dx = 0, dy = 0, dz = 0){
 #' to \code{cloc}.
 #' @param x A matrix with the first two columns corresponding
 #'          to coordinates.
-#' @param alpha A length-one numeric vector corresponding to 
+#' @param alpha A length-one numeric vector corresponding to
 #'              the rotation angle in radians. If \code{alpha = NULL},
 #'              \code{alpha} is estimated from the pairs of points in
 #'              the local reference system (\code{ploc}) and in the
@@ -562,7 +562,7 @@ setGenericVerif("tpShift", function(x, i, dx = 0, dy = 0, dz = 0){
 #' @param cloc A length-two numeric vector corresponding to the coordinate
 #'             center of the local reference system
 #' @param creg A length-two numeric vector corresponding to the coordinate
-#'             center of the regional reference system. Setting 
+#'             center of the regional reference system. Setting
 #'             \code{creg = NULL} (default) is equivalent to apply a rotation
 #'             of angle \code{alpha} and center \code{cloc}.
 #' @param ploc A matrix with the first two columns corresponding
@@ -576,47 +576,47 @@ setGenericVerif("tpShift", function(x, i, dx = 0, dy = 0, dz = 0){
 #' @name georef
 #' @rdname georef
 setGeneric("georef", function(x, alpha = NULL, cloc = NULL, creg = NULL,
-                               ploc = NULL, preg = NULL, FUN = mean){ 
+                               ploc = NULL, preg = NULL, FUN = mean){
   standardGeneric("georef")})
 
 #------------------------------BOTH
 
 #' Robust smoothing
-#' 
+#'
 #' A wrapper for the functions \code{robfilter::hybrid.filte} and
 #' \code{smooth.spline}
 #' @param x       a numeric vector or (univariate) time series object.
 #' @param spar    smoothing parameter, typically (but not necessarily) in (0,1].
 #'                See \code{\link[stats]{smooth.spline}}.
-#' @param width	  an odd positive integer (>=3) defining the window width 
+#' @param width	  an odd positive integer (>=3) defining the window width
 #'                used for fitting.
 #'                See \code{\link[robfilter]{hybrid.filter}}.
-#' @param method	a (vector of) character string(s) containing the method(s) 
-#'                to be used for the estimation of the signal level. 
-#'                Method choice: "MED", "RM", 
-#'                "MEAN", FMH, "PFMH", "CFMH", "MH", "PRMH", "CRMH", "MMH", 
+#' @param method	a (vector of) character string(s) containing the method(s)
+#'                to be used for the estimation of the signal level.
+#'                Method choice: "MED", "RM",
+#'                "MEAN", FMH, "PFMH", "CFMH", "MH", "PRMH", "CRMH", "MMH",
 #'                "PRMMH", "CRMMH".
 #'                See \code{\link[robfilter]{hybrid.filter}}.
-#' @param extrapolate	a logical indicating whether the level estimations 
-#'                    should be extrapolated to the edges of the time series.  
-#'                    See \code{\link[robfilter]{hybrid.filter}}. 
-#' @param  minNonNAs a positive integer defining the minimum number of 
-#'                   non-missing observationswithin each window (half) 
+#' @param extrapolate	a logical indicating whether the level estimations
+#'                    should be extrapolated to the edges of the time series.
+#'                    See \code{\link[robfilter]{hybrid.filter}}.
+#' @param  minNonNAs a positive integer defining the minimum number of
+#'                   non-missing observationswithin each window (half)
 #'                   which is required for a 'sensible' estimation.
 #'                   See \code{\link[robfilter]{hybrid.filter}}.
-#' @export            
-robustSmooth <- function(x, spar = NULL, width,  method = "PRMMH", 
+#' @export
+robustSmooth <- function(x, spar = NULL, width,  method = "PRMMH",
                          extrapolate = TRUE,
                          minNonNAs = 3){
   if (missing(width)) {
     stop("argument 'width' is missing with no default")
   }
-  xf <- robfilter::hybrid.filter(x, width = width, method = method, 
+  xf <- robfilter::hybrid.filter(x, width = width, method = method,
                                  extrapolate = extrapolate,
                                  minNonNAs = minNonNAs)
   if(sum(is.na(xf$level$PRMMH)) > 1){
     x_NA <- is.na(xf$level$PRMMH)
-    xfok <- signal::interp1(which(!x_NA), xf$level$PRMMH[!x_NA], seq_along(x_NA), method = "pchip", 
+    xfok <- signal::interp1(which(!x_NA), xf$level$PRMMH[!x_NA], seq_along(x_NA), method = "pchip",
             extrap = TRUE)
   }else{
     xfok <- xf$level$PRMMH
@@ -640,7 +640,7 @@ robustSmooth <- function(x, spar = NULL, width,  method = "PRMMH",
 # # second derivative
 derivativeMtx2d <- function(nr, nc){
   if(missing(nc)) nc <- nr
-  D <- diag(x = 1, nrow = nr, ncol = nc) 
+  D <- diag(x = 1, nrow = nr, ncol = nc)
   D[ col(D) == row(D) +1  ] <- -2
   D[ col(D) == row(D) +2  ] <-  1
   return(D)
@@ -649,7 +649,7 @@ derivativeMtx2d <- function(nr, nc){
 # third derivative
 derivativeMtx3rd <- function(nr, nc){
   if(missing(nc)) nc <- nr
-  D <- diag(x = 1, nrow = nr, ncol = nc) 
+  D <- diag(x = 1, nrow = nr, ncol = nc)
   D[ col(D) == row(D) +1  ] <- -3
   D[ col(D) == row(D) +2  ] <-  3
   D[ col(D) == row(D) +3  ] <- -1
@@ -659,20 +659,20 @@ derivativeMtx3rd <- function(nr, nc){
 
 ##----------- helper functions -------------------##
 # FID <- choose.files(caption = " txt files",filters = c("txt","*.txt"))
-# output = list of data frame (one for each file from FID) 
+# output = list of data frame (one for each file from FID)
 #    with c("x","y","z","trace_number") structure
 #' read fiducial marker files
-#' 
+#'
 #' read fiducial marker files
 #' @export
 readFID <- function(FID, sep = NULL, verbose = TRUE){
-  myFid <- list() 
+  myFid <- list()
   for(i in seq_along(FID)){
     if(verbose) message("read ", FID[[i]], "...")
     pp <- verboseF( detectASCIIProp(FID[[i]]), verbose = verbose)
-    A <- read.table(file             = FID[[i]], 
-                    sep              = pp$sep, 
-                    stringsAsFactors = FALSE, 
+    A <- read.table(file             = FID[[i]],
+                    sep              = pp$sep,
+                    stringsAsFactors = FALSE,
                     header           = pp$header,
                     skip             = pp$skip)
     # A <- read.table(FID[[i]], sep=",", stringsAsFactors=FALSE,header=TRUE)
@@ -702,17 +702,17 @@ readFID <- function(FID, sep = NULL, verbose = TRUE){
 }
 
 #' read topo file
-#' 
+#'
 #' read topo file
 #' @export
 readTopo <- function(TOPO, sep = NULL, verbose = TRUE){
-  myTopo <- list() 
+  myTopo <- list()
   for(i in seq_along(TOPO)){
     if(verbose) message("read ", TOPO[[i]], "...")
     pp <- verboseF( detectASCIIProp(TOPO[[i]]), verbose = verbose)
-    A <- read.table(file             = TOPO[[i]], 
-                    sep              = pp$sep, 
-                    stringsAsFactors = FALSE, 
+    A <- read.table(file             = TOPO[[i]],
+                    sep              = pp$sep,
+                    stringsAsFactors = FALSE,
                     header           = pp$header,
                     skip             = pp$skip)
     if(ncol(A) < 3){
@@ -788,7 +788,7 @@ addFid <- function(xyz, fid, tt, pos, fidx){
     if(length(idtime) > 0){
       # en fait il faudrait regarder au cas par cas pour chaque
       # coordonnee auquelle il manque un fiducial
-      if(length(idtime) >= dn){ 
+      if(length(idtime) >= dn){
         posTopo <- posLine(xyz[, 1:2])
         vx <- combn(seq_along(idtime), dn)
         regres <- numeric(ncol(vx))
@@ -808,8 +808,8 @@ addFid <- function(xyz, fid, tt, pos, fidx){
       }else{
         stop("TO BE IMPLEMENTED")
       }
-      fid <- data.frame(TRACE    = dxt, 
-                        POSITION = pos[dxt], 
+      fid <- data.frame(TRACE    = dxt,
+                        POSITION = pos[dxt],
                         COMMENT  = ffid)
       com <- paste0("  find ", dn," new FIDs!")
     }
@@ -871,7 +871,7 @@ rmfid <- function(xyz, fid){
 #' @param xyz matrix of coordinates
 #' @param pcode character vector (length(pcode) = nrow(xyz)) indicating which
 #'              coordinates to which GPR data belongs
-#' @param tol Tolerance to detect duplicates from topo data   
+#' @param tol Tolerance to detect duplicates from topo data
 #' @export
 linkCoordFid <- function(y, xyz, pcode, tol = 0.1 ){
   FIDs <- list()
@@ -926,19 +926,19 @@ linkCoordFid <- function(y, xyz, pcode, tol = 0.1 ){
 ##------------- FILENAME/FILEPATH/EXTENSION -------------------##
 
 #' Filepath(s) with correct extension(s)
-#' 
-#' Returns the filepaths with the correct extension and check for 
+#'
+#' Returns the filepaths with the correct extension and check for
 #' upper and lower case extension (e.g., ".txt" or ".TXT")
 #' @param fPath length-one character vector (e.g., "xline01.dt1")
 #' @param ext   character vector of the extension required
 #' @param throwError boolean. If TRUE, an error is thrown if the filepath
 #'                   with one of the extension does not exist. If FALSE,
 #'                   it returns NULL for the missing extension
-#' @return A list whose keys correspond to \code{ext} and the values to 
+#' @return A list whose keys correspond to \code{ext} and the values to
 #'         the filepaths:
 #'         $hd  -> xline01.hd
 #'         $dt1 -> xline01.dt1
-#' @export  
+#' @export
 getFName <- function(fPath, ext = c(".hd", ".dt1"), throwError = TRUE){
   fp <- file.path(dirname(fPath), .fNameWExt(fPath))
   ext <- tolower(ext)
@@ -975,7 +975,7 @@ safeFPath <- function(fPath = NULL){
   }
   fPath_orgi <- fPath
   k <- 0
-  while(file.exists(paste0(fPath, ".", ext)) || 
+  while(file.exists(paste0(fPath, ".", ext)) ||
         file.exists( paste0(fPath, ".HD"))){
     fPath <- paste0(fPath_orgi, "_", k)
     k <- k + 1
@@ -1068,21 +1068,21 @@ selectBBox <- function(border="red",lwd=2,...){
 # https://gis.stackexchange.com/questions/22895/finding-minimum-area-rectangle-for-given-points/181883#181883
 # Oriented Bounding Box
 OBB <- function(p) {
-  # Analyze the convex hull edges     
+  # Analyze the convex hull edges
   a <- chull(p)                                   # Indexes of extremal points
   a <- c(a, a[1])                                 # Close the loop
   e <- p[a[-1],] - p[a[-length(a)], ]             # Edge directions
   norms <- sqrt(rowSums(e^2))                     # Edge lengths
   v <- e / norms                                  # Unit edge directions
   w <- cbind(-v[,2], v[,1])                       # Normal directions to the edges
-  
+
   # Find the MBR
   vertices <- p[a, ]                              # Convex hull vertices
   x <- apply(vertices %*% t(v), 2, range)         # Extremes along edges
   y <- apply(vertices %*% t(w), 2, range)         # Extremes normal to edges
   areas <- (y[1,]-y[2,])*(x[1,]-x[2,])            # Areas
   k <- which.min(areas)                           # Index of the best edge (smallest area)
-  
+
   # Form a rectangle from the extremes of the best edge
   cbind(x[c(1,2,2,1,1),k], y[c(1,1,2,2,1),k]) %*% rbind(v[k,], w[k,])
 }
@@ -1109,7 +1109,7 @@ perpPoints <- function(xy, d){
     }else{
       #get the slope of the line
       m <- ((xy2[i - 1, 2] - xy2[i + 1, 2])/(xy2[i - 1, 1] - xy2[i + 1, 1]))
-      #get the negative reciprocal, 
+      #get the negative reciprocal,
       n_m <- -1/m
       sng <- sign(xy2[i + 1, 1] - xy2[i - 1, 1])
       DD <- d / sqrt( n_m^2 + 1)
@@ -1123,13 +1123,13 @@ perpPoints <- function(xy, d){
         xlat[i-1, ] = xy2[i, 1] - DD
         ylat[i-1, ] = xy2[i, 2] - n_m * DD
       }
-    }  
+    }
   }
   return(list(x = xlat, y = ylat))
 }
 
 #' Capitalize the first letter in a word string in R
-#' 
+#'
 #' @param x [character(1)] A character string
 #' @return The character string with first letter capitalised
 capFirstLetter <- function(x){
@@ -1147,7 +1147,7 @@ capFirstLetter <- function(x){
 }
 
 .plotArrows <- function(xyz, ...){
-  arrows(xyz[nrow(xyz)-1,1], xyz[nrow(xyz)-1,2], xyz[nrow(xyz),1], 
+  arrows(xyz[nrow(xyz)-1,1], xyz[nrow(xyz)-1,2], xyz[nrow(xyz),1],
          xyz[nrow(xyz),2], ...)
 }
 
@@ -1170,9 +1170,9 @@ capFirstLetter <- function(x){
 
 # flatte a nested list
 #' @export
-flattenlist <- function(x){  
+flattenlist <- function(x){
   morelists <- sapply(x, function(xprime) class(xprime)[1] == "list")
-  if(sum(morelists)){ 
+  if(sum(morelists)){
     out <- lapply(seq_along(morelists), .unlist, x = x, z = morelists)
     out <- unlist(out, recursive = FALSE)
     Recall(out)
@@ -1202,7 +1202,7 @@ flattenlist <- function(x){
 # to \code{cloc}.
 # @param x A matrix with the first two columns corresponding
 #          to coordinates.
-# @param alpha A length-one numeric vector corresponding to 
+# @param alpha A length-one numeric vector corresponding to
 #              the rotation angle in radians. If \code{alpha = NULL},
 #              \code{alpha} is estimated from the pairs of points in
 #              the local reference system (\code{ploc}) and in the
@@ -1210,7 +1210,7 @@ flattenlist <- function(x){
 # @param cloc A length-two numeric vector corresponding to the coordinate
 #             center of the local reference system
 # @param creg A length-two numeric vector corresponding to the coordinate
-#             center of the regional reference system. Setting 
+#             center of the regional reference system. Setting
 #             \code{creg = NULL} (default) is equivalent to apply a rotation
 #             of angle \code{alpha} and center \code{cloc}.
 # @param ploc A matrix with the first two columns corresponding
@@ -1234,13 +1234,13 @@ flattenlist <- function(x){
     alphaloc <- atan2(ploc[,1] - cloc[1], ploc[,2] - cloc[2])
     alphareg <- atan2(preg[,1] - creg[1], preg[,2] - creg[2])
     alpha <- alphareg - alphaloc
-    #message(paste0("rotation angles: ", 
+    #message(paste0("rotation angles: ",
     #               paste0(round(alpha,4), collapse = ", "), "."))
     alpha <- FUN(alpha)
   }
   ROT <- matrix(c( cos(alpha), sin(alpha),
                    -sin(alpha), cos(alpha)), nrow=2, ncol=2)
-  TRL <-  matrix(as.double(cloc[1:2]), nrow = nrow(x0), 
+  TRL <-  matrix(as.double(cloc[1:2]), nrow = nrow(x0),
                  ncol = 2, byrow = TRUE)
   if(is.null(creg)){
     TRL2 <- TRL
@@ -1268,14 +1268,14 @@ posLine <- function(x, last = FALSE){
 
 
 #' Closest trace
-#' 
+#'
 #' Return the indice of the closest trace to the point \code{y}
 #' @param x Object of the class GPR.
 #' @param y Length-two numeric vector of the (x, y)-coordinates.
 #' @return Indice (integer) of the closest trace.
 #' @export
 closestTr <- function(x, y){
-  ymat <- matrix(as.numeric(y[1:2]), 
+  ymat <- matrix(as.numeric(y[1:2]),
                  nrow = length(x),
                  ncol = 2,
                  byrow = TRUE)
@@ -1303,7 +1303,7 @@ closestTr <- function(x, y){
 #' wapply: A faster (but less functional) "rollapply" for vector setups
 
 #' April 23, 2013.
-#' By A.N. Spiess, senior scientist at the Department of Andrology at the 
+#' By A.N. Spiess, senior scientist at the Department of Andrology at the
 #' University Hospital Hamburg-Eppendorf.
 #' This is what turned out (wapply for "window apply").
 #' @export
@@ -1313,7 +1313,7 @@ wapply <- function(x=NULL, width = NULL, by = NULL, FUN = NULL, ...){
   lenX <- length(x)
   SEQ1 <- seq(1, lenX - width + 1, by = by)
   SEQ2 <- lapply(SEQ1, function(x) x:(x + width - 1))
-  
+
   OUT <- lapply(SEQ2, function(a) FUN(x[a], ...))
   OUT <- base::simplify2array(OUT, higher = TRUE)
   return(OUT)
@@ -1328,7 +1328,7 @@ wapplyc <- function(x=NULL, width = NULL, by = NULL, FUN = NULL, ...){
   SEQ2 <- lapply(SEQ1, function(x){ xnew <- x:(x + width - 1)
   xnew <- xnew[xnew > 0]
   xnew <- xnew[xnew <= lenX]})
-  
+
   OUT <- lapply(SEQ2, function(a) FUN(x[a], ...))
   OUT <- base::simplify2array(OUT, higher = TRUE)
   return(OUT)
@@ -1345,7 +1345,7 @@ wapplyRow <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, ...){
   lenX <- nrow(x)
   SEQ1 <- seq(1, lenX - width + 1, by = by)
   SEQ2 <- lapply(SEQ1, function(x) x:(x + width - 1))
-  
+
   OUT <- lapply(SEQ2, function(a) FUN(x[a,,drop=FALSE], ...))
   OUT <- base::simplify2array(OUT, higher = TRUE)
   return(OUT)
@@ -1364,7 +1364,7 @@ wapplyRowC <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, ...){
   SEQ2 <- lapply(SEQ1, function(x){ xnew <- x:(x + width - 1)
   xnew <- xnew[xnew > 0]
   xnew <- xnew[xnew <= lenX]})
-  
+
   OUT <- lapply(SEQ2, function(a) FUN(x[a,,drop=FALSE], ...))
   OUT <- base::simplify2array(OUT, higher = TRUE)
   return(OUT)
@@ -1377,7 +1377,7 @@ wapplyRowC <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, ...){
 #' return a matrix of the same dimension than x.
 #' some border effect at a distance < width/2 at the first and last col/row
 #' @export
-wapplyMat <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, 
+wapplyMat <- function(x = NULL, width = NULL, by = NULL, FUN = NULL,
                       MARGIN = 1, ...){
   FUN <- match.fun(FUN)
   width <- ifelse(width %% 2 == 0, width + 1, width)
@@ -1403,11 +1403,11 @@ wapplyMat <- function(x = NULL, width = NULL, by = NULL, FUN = NULL,
 #' windowing with not centered window
 #'
 #' based on wapply and modified by Manu.
-#' not centered moving window! start first row/column and 
+#' not centered moving window! start first row/column and
 #' stop when the extremity of the windwo reach the last row/column.
 #' return a matrix of with smaller dimension than x (margin - 2*width)
 #' @export
-wapplyMat2 <- function(x = NULL, width = NULL, by = NULL, FUN = NULL, 
+wapplyMat2 <- function(x = NULL, width = NULL, by = NULL, FUN = NULL,
                        MARGIN = 1, ...){
   FUN <- match.fun(FUN)
   if (is.null(by)) by <- width
@@ -1426,11 +1426,11 @@ wapplyMat2 <- function(x = NULL, width = NULL, by = NULL, FUN = NULL,
     return(OUT)
   }
 }
-# 
+#
 # xyToLine <- function(x){
 #   sp::Line(x[,1:2])
 # }
-# 
+#
 # LineToLines <- function(i,pp, myNames){
 #   sp::Lines(pp[i],myNames[i])
 # }
@@ -1455,7 +1455,7 @@ extrema <- function(x, type=c("max","min")){
 }
 
 #--- see trTime in "ClassGPR.R"
-#  @export                  
+#  @export
 # trRecTime <- function(x, origin = "1970-01-01"){
 #   return(as.POSIXct(x@time, origin = origin))
 # }
@@ -1463,7 +1463,7 @@ extrema <- function(x, type=c("max","min")){
 #' time to depth conversion
 #'
 #' time to depth conversion
-#' @export                  
+#' @export
 timeToDepth <- function(tt, time_0, v = 0.1, antsep = 1){
   # t0 <- time_0 - antsep/c0
   if(length(v) == 1){
@@ -1479,21 +1479,25 @@ timeToDepth <- function(tt, time_0, v = 0.1, antsep = 1){
   # sqrt(v^2*(tt - t0)- antsep^2)/2
 }
 
+
+
 #' Depth to time conversion
-#' 
+#'
 #' Depth to time conversion
 #' @export
 depthToTime <- function(z, time_0, v = 0.1, antsep = 1, c0 = 0.299){
   #FIXME
-  t0 <- time_0 - antsep/c0
-  sqrt((4*z^2 + antsep^2)/(v^2)) + t0
+  # t0 <- time_0 - antsep/c0
+  # sqrt((4*z^2 + antsep^2)/(v^2)) + t0
+  sqrt((4*z^2 + antsep^2)/(v^2)) + time_0
 }
 
-#' Depth zero 
-#' 
-#' Depth zero 
+#' Depth zero
+#'
+#' Depth zero: wrong equation
 #' @export
 depth0 <- function(time_0, v=0.1, antsep=1, c0 = 0.299){
+  # time_0 - antsep/c0 <- in fact: time_0 = firstBreak - antsep/c0
   time_0 - antsep/c0 + antsep/v
 }
 
@@ -1501,7 +1505,7 @@ depth0 <- function(time_0, v=0.1, antsep=1, c0 = 0.299){
 #'
 #' Account for the delay time between time of wave emission and time of first
 #' wave break recording due to the antenna separation (offset).
-#' 
+#'
 #' @rdname firstBreakToTime0
 #' @export
 firstBreakToTime0 <- function(fb, x, c0 = 0.299){
@@ -1528,8 +1532,8 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
 #     xit <- seq(ceiling(new_t[1]/dz), ceiling(new_t[nrow(x)-2]/dz))
 #     # interpolate
 #     # FIX ME! does not work well (not nice interpolation)
-#     xShifted[xit + 1, i] = signal::interp1(new_t, x[,i], xi = xit * dz, 
-#                                            method = "spline", extrap = TRUE)  
+#     xShifted[xit + 1, i] = signal::interp1(new_t, x[,i], xi = xit * dz,
+#                                            method = "spline", extrap = TRUE)
 #   }
 #   return(xShifted)
 # }
@@ -1553,7 +1557,7 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
       Anew[vShift[tst], i] <- A[tst, i]
     }
     else {
-      Anew[vShift[tst], i] <- signal::interp1(tt, A[, i], tt + 
+      Anew[vShift[tst], i] <- signal::interp1(tt, A[, i], tt +
                                                 relts, method = method, extrap = TRUE)[tst]
     }
   }
@@ -1580,7 +1584,7 @@ firstBreakToTime0 <- function(fb, x, c0 = 0.299){
 # run med mean mad
 .runmmmMat <- function(x, w, type = c("runmed", "runmean", "runmad", "hampel")){
   type <- match.arg(type, c("runmed", "runmean", "runmad", "hampel"))
-  if( (w %% 2) == 0 )  w <- w + 1 
+  if( (w %% 2) == 0 )  w <- w + 1
   xdata <- matrix(0, nrow = nrow(x) + 2*w , ncol = ncol(x) )
   xdata[1:nrow(x) + w, ] <- x
   if(type == "runmed"){
@@ -1601,7 +1605,7 @@ rollapplyHampel <- function(x, w, FUN){
   k <- trunc((w - 1)/ 2)
   locs <- (k + 1):(length(x) - k)
   num <- vapply(
-    locs, 
+    locs,
     function(i) FUN(x[(i - k):(i + k)], x[i]),
     numeric(1)
   )
@@ -1633,7 +1637,7 @@ rollapplyHampel <- function(x, w, FUN){
     max_sc <- max(x)
     x1 <- c(min_x, tbl[,1], max_x)
     nsc <- c(min_sc, tbl[,2], max_sc)
-    
+
     back.xf <- approxfun(nsc,x1) # Develop the back transform function
     val <- back.xf(x)
     return(val)
@@ -1704,34 +1708,34 @@ scaleCol <- function(A, type = c("stat", "min-max", "95",
       Ascl <- apply( A, 2, .nScoreTrans)
       return(Ascl)
     }else if(type == "stat"){
-      # A <- scale(A, center=.colMeans(A, nrow(A), ncol(A)), 
+      # A <- scale(A, center=.colMeans(A, nrow(A), ncol(A)),
       #            scale = apply(A, 2, sd, na.rm = TRUE))
       Ascl <- scale(A)
     }else if(type == "sum"){
       Ascl <- scale(A, center=FALSE, scale = colSums(abs(A)))
     }else if(type == "eq"){
-      # equalize line such each trace has same value for 
+      # equalize line such each trace has same value for
       # sqrt(\int  (A(t))^2 dt)
-      Aamp <- matrix(apply((A)^2,2,sum), nrow = nrow(A), 
+      Aamp <- matrix(apply((A)^2,2,sum), nrow = nrow(A),
                      ncol = ncol(A), byrow=TRUE)
       Ascl <- A*sqrt(Aamp)/sum(sqrt(Aamp))
     }else if(type == "rms"){
       Ascl <- scale(A, center = FALSE)
-      # Ascl <- matrix(apply(A ,2, .rms), nrow = nrow(A), 
+      # Ascl <- matrix(apply(A ,2, .rms), nrow = nrow(A),
       #                ncol = ncol(A), byrow=TRUE)
     }else if(type == "min-max"){  # min-max
-      Ascl <- scale(A, center = FALSE, 
-                    scale = apply(A, 2, max, na.rm = TRUE) - 
+      Ascl <- scale(A, center = FALSE,
+                    scale = apply(A, 2, max, na.rm = TRUE) -
                       apply(A, 2, min, na.rm = TRUE))
     }else if(type == "mad"){  # mad
-      Ascl <- scale(A, center = apply(A, 2, median), 
+      Ascl <- scale(A, center = apply(A, 2, median),
                     scale = apply(A, 2, mad))
     }
   }
   # FIXME: why did I write these 3 commented lines below?
-  # test <- (!is.na(Ascl[1,] ) & abs(Ascl[1,]) > .Machine$double.eps^0.75) 
+  # test <- (!is.na(Ascl[1,] ) & abs(Ascl[1,]) > .Machine$double.eps^0.75)
   # A[,test] <- Ascl[,test]
-  # A[, !test] <- 0test <- (!is.na(Ascl[1,] ) & abs(Ascl[1,]) > .Machine$double.eps^0.75) 
+  # A[, !test] <- 0test <- (!is.na(Ascl[1,] ) & abs(Ascl[1,]) > .Machine$double.eps^0.75)
   tst <- is.na(Ascl)
   A[!tst] <- Ascl[!tst]
   A[test] <- 0
@@ -1747,26 +1751,26 @@ rmsScaling <- function(...){
 
 
 # @param [matrix]/[vector]   A     (each column represent a trace / a trace)
-# @param [double]       dT     (sampling time in nanoseconde)  
+# @param [double]       dT     (sampling time in nanoseconde)
 
 
 # @return power spectrum (frequency, power, phase)
 # -------------------------------------------
 
 .fFilter1D <- function(A, f = c(100), type = c('low', 'high', 'bandpass',
-                                               'bandpass-reject'), 
+                                               'bandpass-reject'),
                        L = 257, dT = 0.8, plotSpec = FALSE, fac = 1000000){
   type <- match.arg(type)
   # A <- as.matrix(A)
   nr <- nrow(A)      # signal length
-  
+
   # samping interval GPR = 0.8 ns
   Ts    <- dT*(10^(-9))     # [s] Sample time
   Fs    <- 1/Ts             # [Hz] Sampling frequency
-  
+
   # cut-off frequency/ies fc in (MHz)
   f <- sort(f) * 10^6    # cut-off frequency in Hz
-  
+
   # FIXME > write a function setFFilter(f, type=..., Fs)
   if(type == "low" || type == "high"){
     # Design the filter using the window method:
@@ -1775,7 +1779,7 @@ rmsScaling <- function(...){
       fc <- f[1] + (f[2] - f[1])/2    # cut frequency
       L <- round(4 / BW)
       if(L %% 2 == 0){
-        L <- L + 1  
+        L <- L + 1
       }
     }else if(length(f) == 1){
       fc <- f[1]
@@ -1806,8 +1810,8 @@ rmsScaling <- function(...){
     }
     L = max(length(h1), length(h2))
     if(length(h2) < L ){
-      h2 = c(rep(0, (L-length(h2))/2), 
-             h2, 
+      h2 = c(rep(0, (L-length(h2))/2),
+             h2,
              rep(0, (L-length(h2))/2))
     }
     if(length(h1) < L ){
@@ -1816,29 +1820,29 @@ rmsScaling <- function(...){
              rep(0,(L-length(h1))/2))
     }
     if(type == "bandpass"){
-    # change the band-reject filter kernel into a band-pass 
+    # change the band-reject filter kernel into a band-pass
       h = -h1 - h2
     }else{
       h = h1 + h2
     }
     h[(L+1)/2] = h[(L+1)/2] + 1
   }
-  
+
   # L <- length(h)
-  
-  # Choose the next power of 2 greater than L+nr-1 
+
+  # Choose the next power of 2 greater than L+nr-1
   Nfft = 2^(ceiling(log2(L + nr - 1)))
   # Zero pad the signal and impulse response:
   h_long = c( h, rep(0, Nfft - L) )
   A = rbind(A , matrix(0, nrow = Nfft - nr, ncol = ncol(A)) )
-  
+
   fft_A = stats::mvfft(A)    # signal
   fft_h = stats::fft(h_long)        # filter
-  
-  # Now we perform cyclic convolution in the time domain using 
+
+  # Now we perform cyclic convolution in the time domain using
   # pointwise multiplication in the frequency domain:
   Y = fft_A * fft_h
-  
+
   pow_A = Mod(fft_A)
   pow_h = Mod(fft_h)
   pow_y = Mod(Y)
@@ -1848,12 +1852,12 @@ rmsScaling <- function(...){
     pow_y = apply(pow_y, 1, mean, na.rm=TRUE)
   }
   # select only first half of vectors
-  pow_A = pow_A[1:(Nfft/2+1)] 
-  pow_y = pow_y[1:(Nfft/2+1)] 
-  pow_h = pow_h[1:(Nfft/2+1)] 
-  
+  pow_A = pow_A[1:(Nfft/2+1)]
+  pow_y = pow_y[1:(Nfft/2+1)]
+  pow_h = pow_h[1:(Nfft/2+1)]
+
   fre = Fs*(0:(Nfft/2))/Nfft/fac  #[MHz]
-  
+
   if(plotSpec == TRUE){
     op <- par(no.readonly=TRUE)
     # plot the power spectrum
@@ -1878,7 +1882,7 @@ rmsScaling <- function(...){
 }
 
 winSincKernel <- function(L, f, type = c("low", "high")){
-  type <- match.arg(type)  
+  type <- match.arg(type)
   # if L is even (because L - filter length - must be odd)
   x = (-(L-1)/2):((L-1)/2)
   # low-pass
@@ -1908,7 +1912,7 @@ hammingWindow <- function(L){
   return(0.54 - 0.46*cos(2*pi*n/N))
 }
 
-# Choose the next power of 2 greater than L+M-1 
+# Choose the next power of 2 greater than L+M-1
 # Nfft = 2^(ceiling(log2(L+M-1)))  # -1)))    # or 2^nextpow2(L+M-1)
 nextpower2 <- function(x){
   return(2^(ceiling(log2(x))))
@@ -1920,7 +1924,7 @@ nextpower2 <- function(x){
 # ------------addProfile3D--------------------------
 # -------------------------------------------
 # @name  addProfile3D (plot/add a 2D profile in rgl)
-# @description read one or several DT1 file and plot/add 
+# @description read one or several DT1 file and plot/add
 # the 2D profiles in a rgl plot
 
 # # @date 14.10.2013 15:15
@@ -1938,7 +1942,7 @@ nextpower2 <- function(x){
 # cat('"GPR_gain.R" \n')
 
 # @param [list]   LINE       (list containing several fPath of the DT1 file)
-# @param [c(1)]   col=NULL   (palette of color)  
+# @param [c(1)]   col=NULL   (palette of color)
 # @param [boolean]   plotNew=FALSE  (if true, open a new rgl window)
 # @return void
 # -------------------------------------------
@@ -1979,12 +1983,12 @@ nextpower2 <- function(x){
 # if(AGC){
 # A <- apply(A,2,gain,sig=sig)
 # }
-# # example with GPR profile A 
+# # example with GPR profile A
 # nr = nrow(A)
 # nc = ncol(A)
 # X <- matrix(HD$recx, ncol=nc, nrow=nr, byrow=TRUE)
 # Y <- matrix(HD$recy, ncol=nc, nrow=nr, byrow=TRUE)
-# Z <-  matrix(HD$topo, ncol=nc, nrow=nr, byrow=TRUE) - 
+# Z <-  matrix(HD$topo, ncol=nc, nrow=nr, byrow=TRUE) -
 # matrix(myGPRdZ*v*(0:(
 # nr-1)), ncol=nc, nrow=nr, byrow=FALSE)
 # if(all(HD$topo==0)){
@@ -2002,22 +2006,22 @@ nextpower2 <- function(x){
 
 # # if(is.null(col))     col <- tim.colors(101)  # height color lookup table
 
-# colA <- col[ (A)*100+1 ] # assign colors to heights for each point 
-# rgl.surface(X, Y, Z, color=colA, back="fill", smooth = TRUE, lit=FALSE, 
-# lwd=0) 
-# # surface3d(X, Y, Z, color=colA, back="fill", smooth = FALSE, lit=FALSE, 
-# lwd=0) 
+# colA <- col[ (A)*100+1 ] # assign colors to heights for each point
+# rgl.surface(X, Y, Z, color=colA, back="fill", smooth = TRUE, lit=FALSE,
+# lwd=0)
+# # surface3d(X, Y, Z, color=colA, back="fill", smooth = FALSE, lit=FALSE,
+# lwd=0)
 # }
 # }
 
 
 #' Bytes to volt conversion
-#'       
+#'
 #' Convert bytes to volt values
-#' @param Vmax length-one numeric vector: maximal nominal analog input voltage. 
-#'             If \code{Vmax = NULL} it returns \code{1} (no bytes to volt 
+#' @param Vmax length-one numeric vector: maximal nominal analog input voltage.
+#'             If \code{Vmax = NULL} it returns \code{1} (no bytes to volt
 #'             transformation)
-#' @param Vmin length-one numeric vector: minimal nominal analog input voltage. 
+#' @param Vmin length-one numeric vector: minimal nominal analog input voltage.
 #'             If missing, then \code{Vmin = -Vmax}.
 #' @param nBytes Length-one numeric vector: number of bytes
 #' @export
@@ -2034,12 +2038,12 @@ byte2volt <- function( Vmax = 50, Vmin = 50, nBytes = 16) {
 }
 
 #' Bytes to volt conversion
-#'       
+#'
 #' Convert bytes to volt values
-#' @param Vmax length-one numeric vector: maximal nominal analog input voltage. 
-#'             If \code{Vmax = NULL} it returns \code{1} (no bytes to volt 
+#' @param Vmax length-one numeric vector: maximal nominal analog input voltage.
+#'             If \code{Vmax = NULL} it returns \code{1} (no bytes to volt
 #'             transformation)
-#' @param Vmin length-one numeric vector: minimal nominal analog input voltage. 
+#' @param Vmin length-one numeric vector: minimal nominal analog input voltage.
 #'             If missing, then \code{Vmin = -Vmax}.
 #' @param nbits Length-one numeric vector: number of bits
 #' @export
@@ -2106,16 +2110,16 @@ bits2volt <- function( Vmax = 50, Vmin = 50, nbits = 16) {
 #   Y = matrix(v_x,nrow=length(v_x),ncol=length(v_y),byrow=FALSE)
 #   for(i in seq_along(v_x)){
 #     for(j in seq_along(v_y)){
-#       E <- ellipse(saxes = c(l1[i,j], l2[i,j])/max(m,n)/5, 
-#                    loc   = c(X[i,j]/m, 1-Y[i,j]/n), 
+#       E <- ellipse(saxes = c(l1[i,j], l2[i,j])/max(m,n)/5,
+#                    loc   = c(X[i,j]/m, 1-Y[i,j]/n),
 #                    theta = -angle[i,j], n=10)
 #       lines(E, lwd=0.5)
 #     }
 #   }
 #   for(i in seq_along(v_x)){
 #     for(j in seq_along(v_y)){
-#       E <- ellipse(saxes = c(l1[i,j], l2[i,j])/max(l1,l2)*len1, 
-#                    loc   = c(X[i,j], Y[i,j]), 
+#       E <- ellipse(saxes = c(l1[i,j], l2[i,j])/max(l1,l2)*len1,
+#                    loc   = c(X[i,j], Y[i,j]),
 #                    theta = -angle[i,j], n=10)
 #       lines(E, lwd=0.5)
 #     }
@@ -2164,7 +2168,7 @@ dx_gkernel <- function(n, m, sd=1){
   x <- matrix(-siz:siz, nrow = n, ncol = m, byrow = TRUE)
   g <- x*exp(-(x^2+y^2)/(2*sd^2))
   return(g)
-  
+
 }
 
 #' Gaussian y-derivative kernel (edge detector)
@@ -2209,7 +2213,7 @@ displacement <- function(x, y, method=c("phase", "WSSD"), dxy = NULL){
     Y  <- fft(wy * y0)
     X2  <- fft(wx * x0^2)
     Y2  <- fft(wy * y0^2)
-    WSSD <- Mod(fft(WX * Conj(Y2) + X2 * Conj(WY) - 2 * X * Conj(Y), 
+    WSSD <- Mod(fft(WX * Conj(Y2) + X2 * Conj(WY) - 2 * X * Conj(Y),
                     inverse = TRUE))
     WSSD <- WSSD[1:nm[1] , 1:nm[2]]
     d <- which(WSSD == max(WSSD), arr.ind = TRUE)[1,]
@@ -2226,7 +2230,7 @@ displacement <- function(x, y, method=c("phase", "WSSD"), dxy = NULL){
     R <- Mod(fft( X * Conj(Y) / (Mod(X*Y)), inverse = TRUE))
     #     R <- R[1:nm[1] , 1:nm[2]]
     if(!is.null(dxy)){
-      R <- R[c(1:(dxy[1] + 1), (nm[1] - dxy[1]+1):nm[1]), 
+      R <- R[c(1:(dxy[1] + 1), (nm[1] - dxy[1]+1):nm[1]),
              c(1:(dxy[2] + 1), (nm[2] - dxy[2]+1):nm[2]), drop = FALSE]
       nm <- 2*dxy
     }
@@ -2239,7 +2243,7 @@ displacement <- function(x, y, method=c("phase", "WSSD"), dxy = NULL){
 
 
 #' shift a matrix by n and m
-#'     
+#'
 #' shift a matrix by n and m
 #' @export
 shiftmat <- function(x, n, m){
@@ -2255,7 +2259,7 @@ shiftmat <- function(x, n, m){
 }
 
 #' pad a matrix
-#' 
+#'
 #' pad a matrix
 #' @export
 padmat <- function(x, n, m, what = 0){
@@ -2264,11 +2268,11 @@ padmat <- function(x, n, m, what = 0){
   return(x0)
 }
 
-# pads the edges of an image to minimize edge effects 
-# %during convolutions and Fourier transforms. 
-# %Inputs %I - image to pad 
-# %p - size of padding around image 
-# %Output %Ipad - padded image 
+# pads the edges of an image to minimize edge effects
+# %during convolutions and Fourier transforms.
+# %Inputs %I - image to pad
+# %p - size of padding around image
+# %Output %Ipad - padded image
 # SOURCE: http://matlabgeeks.com/tips-tutorials/how-to-blur-an-image-with-a-
 # fourier-transform-in-matlab-part-i/
 # service@matlabgeeks.com i
@@ -2284,13 +2288,13 @@ paddMatrix <- function(I, p1, p2 = NULL, zero = FALSE){
   # top and bottom
   if(zero == FALSE){
     Ipad[1:p1,(p2+1):(p2+mI)] <- repmat(I[1,,drop=FALSE], p1, 1)
-    Ipad[(p1+nI+1):(nI+2*p1), (p2+1):(p2+mI)] <- repmat(I[nI,,drop=FALSE], 
+    Ipad[(p1+nI+1):(nI+2*p1), (p2+1):(p2+mI)] <- repmat(I[nI,,drop=FALSE],
                                                         p1, 1)
   }
   if(p2 > 0 && zero == FALSE){
     # left and right
     Ipad[(p1+1):(p1+nI), 1:p2] <- repmat(I[,1,drop=FALSE], 1, p2)
-    Ipad[(p1+1):(p1+nI), (p2+mI+1):(mI + 2*p2)] <- 
+    Ipad[(p1+1):(p1+nI), (p2+mI+1):(mI + 2*p2)] <-
       repmat(I[,mI, drop=FALSE],1,p2)
     # corner
     Ipad[1:p1, 1:p2] <- I[1,1]
@@ -2306,7 +2310,7 @@ paddMatrix <- function(I, p1, p2 = NULL, zero = FALSE){
 #' Repeat matrix
 #'
 #' Repeat a matrix row-wise n times and column-wise m times.
-#' 
+#'
 #' Source
 #' A replication of MatLab repmat function!
 #' R FOR OCTAVE USERS
@@ -2327,7 +2331,7 @@ repmat <- function(A,n,m) {
 
 # version vectoriel!!!!
 #' Return points that are within a polygon
-#' 
+#'
 #' Return points that are within a polygon
 #' @export
 inPoly <- function(x, y, vertx, verty){
@@ -2336,7 +2340,7 @@ inPoly <- function(x, y, vertx, verty){
   for(i in 1:nvert){
     j <- ifelse(i==1, nvert,i-1)
     myTest <- ((verty[i] > y) != (verty[j]>y)) &
-      (x < (vertx[j]-vertx[i]) * (y-verty[i]) / 
+      (x < (vertx[j]-vertx[i]) * (y-verty[i]) /
          (verty[j]-verty[i]) + vertx[i])
     inPo[myTest] <- !inPo[myTest]
   }
@@ -2377,25 +2381,25 @@ taper <- function(n, type = c("hamming", "hanning", "triang", "bartlett", "black
 
 
 .FKFilter <- function(A, fk, L = c(5, 5), npad=1){
-  nr <- nrow(A)  # time  
-  nc <- ncol(A)  # x  
-  
+  nr <- nrow(A)  # time
+  nc <- ncol(A)  # x
+
   #============== PLOT F-K SPECTRUM ===============#
   # padding (try also 2*(2^nextpow2(nc))
   nk <- npad*(nextpower2(nc))
   nf <- npad*(nextpower2(nr))
   A1 <- matrix(0,nrow=nf,ncol=nk)
   A1[1:nr,1:nc] <- A
-  
+
   # function to center the spectrum!! (no need of fttshift!)
   #centres spectrum: Gonzalez & Wintz (1977) Digital Image Processing p.53
   # A1  <- A1 * (-1)^(row(A1) + col(A1))
   A1_fft <- stats::fft(A1)
-  
+
   # plotGPR(Mod(A1_fft)^0.05)
   # plotGPR(Re(fft(A1_fft,inv=TRUE))[1:nr,1:nc])
   # plotGPR(A)
-  
+
   #============== FILTER F-K SPECTRUM ===============#
   myFlong <- matrix(0,nrow=nf,ncol=nk)
   myFlong[1:(nf/2),1:(nk/2)] <- fk[(nf/2):1,(nk/2):1]
@@ -2405,8 +2409,8 @@ taper <- function(n, type = c("hamming", "hanning", "triang", "bartlett", "black
   # myFlong[(nf/2+1):(nf),1:(nk/2)] <- fk[1:(nf/2),(nk/2 + 1):(nk)]
   myFlong[(nf/2+1):(nf),1:(nk/2)] <- fk[1:(nf/2),(nk/2 + 1):nk]
   # plotGPR(myFlong)
-  
-  
+
+
   # hamming window
   if(length(L)==1) L <- c(L,L)
   if(all(L!=0)){
@@ -2419,9 +2423,9 @@ taper <- function(n, type = c("hamming", "hanning", "triang", "bartlett", "black
     FF <- myFlong
   }
   FF <- FF/sum(FF)
-  
+
   # plotGPR(Re(fft(fft(myFlong) * fft(ham2Dlong),inv=TRUE))[1:nr,1:nc])
-  
+
   A_back <- Re(stats::fft(A1_fft * FF,inv=TRUE))[1:nr,1:nc]
   # plotGPR(A_back)
   # plotGPR(A_back)
@@ -2465,14 +2469,14 @@ rmNaCol <- function(x){
 #     x <- file(fName$vol , "rb")
 #   }
 #   hd <- c()
-#   
+#
 #   #================================ HEADER ======================================#
-#   # The header consists of at least 60 bytes of binary data. 
-#   # Each field in the header is a 32 bit (4 byte) word in 
-#   # network byte order (“big endian”), making a total of 
-#   # at least 15 header words. This implies that the byte order has to be swapped 
+#   # The header consists of at least 60 bytes of binary data.
+#   # Each field in the header is a 32 bit (4 byte) word in
+#   # network byte order (“big endian”), making a total of
+#   # at least 15 header words. This implies that the byte order has to be swapped
 #   # to read the values on an Intel-based PC.
-#   
+#
 #   # 0 Magic token. This is always 192837465 (decimal)
 #   hd$magic_token <- readBin(x, what = "integer", size = 4, endian = "big")
 #   # 1 Header size in bytes, including the magic token and size fields
@@ -2493,9 +2497,9 @@ rmNaCol <- function(x){
 #   hd$minor_vers <- readBin(x, what = "integer", size = 4, endian = "big")
 #   # 12 File format revision number
 #   hd$rev <- readBin(x, what = "integer", size = 4, endian = "big")
-#   
-#   
-#   # These two words define the file offset and size of a block of XML data 
+#
+#
+#   # These two words define the file offset and size of a block of XML data
 #   # in 8 bit ASCII that define further metadata for the volume file.
 #   seek(x, where = 60, origin = "start")
 #   if(hd$header_size >= 68){
@@ -2503,19 +2507,19 @@ rmNaCol <- function(x){
 #     hd$xml_fo <- readBin(x, what = "integer", size = 4, endian = "big")
 #     # 16 XML data size
 #     hd$xml_size <- readBin(x, what = "integer", size = 4, endian = "big")
-#     
+#
 #     seek(x, where = hd$xml_fo, origin = "start")
 #     hd$XML <- readBin(x, what = "character", n = 1, size = 1, endian = "big")
-#     
+#
 #     data <- XML::xmlParse(hd$XML)
-#     
+#
 #     els <- XML::getNodeSet(data, "//MetadataDictionary/entry[@name]")
 #     if(length(els) > 0){
 #       metaD <- sapply(els, function(el) XML::xmlGetAttr(el, "value"))
 #       names(metaD) <- sapply(els, function(el) XML::xmlGetAttr(el, "name"))
 #       hd$meta_cst <- metaD
 #     }
-#     
+#
 #     els2 <- XML::getNodeSet(data, "//meta-data[@DataDomainType]")
 #     if(length(els2) > 0){
 #       metaD2 <- XML::xmlAttrs(els2[[1]])
@@ -2532,7 +2536,7 @@ rmNaCol <- function(x){
 #       }
 #     }
 #   }
-#   
+#
 #   #================================ Binary Data =================================#
 #   seek(x, where = hd$header_size , origin = "start")
 #   XYZ_dim <- c(hd$x_dim, hd$y_dim, hd$z_dim)
@@ -2561,30 +2565,30 @@ rmNaCol <- function(x){
 #       }
 #     }
 #   }
-#   
+#
 #   if( !inherits(fPath, "connection") ){
 #     close(x)
 #   }
-#   
+#
 #   return(list(hd = hd, data = XYZ))
 # }
 
-# # Data is stored in 16 bits as raw data. The only parameters that affect the 
-# # recorded data directly are Tsweep and Read.  The other parameters affect the 
-# # display and may be varied during or after completion of the survey 
-# # (see sections 5.3 and 6.3).  
-# # The data is stored under the run name as RUNNAME.dat. The run details are 
-# # stored in the file RUNNAME.hdr.  The stored data format is 2 bytes per point 
-# # with LSB byte followed by MSB byte. There are 256 points (512 bytes) 
+# # Data is stored in 16 bits as raw data. The only parameters that affect the
+# # recorded data directly are Tsweep and Read.  The other parameters affect the
+# # display and may be varied during or after completion of the survey
+# # (see sections 5.3 and 6.3).
+# # The data is stored under the run name as RUNNAME.dat. The run details are
+# # stored in the file RUNNAME.hdr.  The stored data format is 2 bytes per point
+# # with LSB byte followed by MSB byte. There are 256 points (512 bytes)
 # # followed by 1 byte of marker (ASCII).
-# # In addition to the data and header files, GPS files (.gps) and gps number 
-# # files (.gpt) are generated, irrespective of whether or not a GPS is used.  
+# # In addition to the data and header files, GPS files (.gps) and gps number
+# # files (.gpt) are generated, irrespective of whether or not a GPS is used.
 # # If a GPS is not used, the .gps and .gpt files will be 0kB in size.
-# # The HDR file is an ASCII file (can be read using notepad) that contains the 
+# # The HDR file is an ASCII file (can be read using notepad) that contains the
 # # radar parameters and notes about the run.
-# 
+#
 # readUtsi <- function(dsn, dsn2 = NULL){
-#   
+#
 #   if( inherits(dsn, "connection") ){
 #     if(!inherits(dsn2, "connection")){
 #       stop("Please add an additional connection to 'readGPR()' for ",
@@ -2606,26 +2610,26 @@ rmNaCol <- function(x){
 #     dsn  <- file(dsn_save[grepl("(\\.dat)$", dsn_save)], "rb")
 #     dsn2 <- dsn_save[grepl("(\\.hdr)$", dsn_save)]
 #   }
-#   
-#   hd <- readUtsiHDR(dsn2) 
+#
+#   hd <- readUtsiHDR(dsn2)
 #   z <- readUtsiDat(dsn, splPerScan = hd$splPerScan, bits = hd$bits)
 #   z[["hd"]] <- hd
 #   close(dsn)
 #   close(dsn2)
 #   return(z)
-#   
+#
 # }
-# 
+#
 # readUtsiHDR <- function(con){
 #   hd <- c()
-#   
+#
 #   seek(con, where = 0, origin = "start")
 #   #------------------ Utsi header *.hdr -----------------------------------------#
 #   u <- readBin(con, what = "raw", n = 2, size = 1)
 #   hd$magic_number <- sf::rawToHex(u)
 #   if(hd$magic_number != "0f20"){
-#     message("Magic number in '", 
-#             summary.connection(con)$description, 
+#     message("Magic number in '",
+#             summary.connection(con)$description,
 #             "' is '",
 #             hd$magic_number,
 #             "' instead of '0f20'")
@@ -2634,49 +2638,49 @@ rmNaCol <- function(x){
 #   u <- strsplit(u, split = ", ")[[1]]
 #   hd$software_version <- u[1]
 #   hd$software_date <- u[2]
-#   
+#
 #   # scan(con, what = "character", n = 1, skipNul = TRUE)
-#   
+#
 #   # u <- readLines(con, n = 1, skipNul = TRUE, warn = FALSE)
 #   u <- readBin(con, what = "character", n = 1)
 #   hd$date <- as.Date(u[1], "%d\\%m\\%y")
-#   
+#
 #   invisible(readBin(con, what = "character", n = 1))
 #   u <- readBin(con, what = "character", n = 1)
 #   u <- strsplit(gsub("\005", "", u), " ")[[1]]
 #   hd$time <- u[1]
 #   hd$site_text <- u[2]
-#   
-#   
+#
+#
 #   invisible(readBin(con, what = "character", n = 5))
 #   u <- readBin(con, what = "character", n = 1)
 #   hd$time_sweep <- as.numeric(gsub("\002|\005|\n|\004", "", u))
-#   
+#
 #   u <- readBin(con, what = "character", n = 1)
 #   hd$depth_scaling <- as.numeric(gsub("\0016|\002|\005|\n|\004", "", u))
-#   
+#
 #   u <- readBin(con, what = "character", n = 1)
 #   hd$encoder_div_selection <- as.numeric(gsub("\004|\005|\n|\002", "", u))
-#   
+#
 #   u <- readBin(con, what = "character", n = 1)
 #   hd$antsep <- as.numeric(trimStr(gsub("\002|\005|\n|\004", "", u)))
-#   
+#
 #   u <- readBin(con, what = "character", n = 1)
 #   hd$unused_zero <- as.numeric(gsub("\002|\005|\n|\004", "", u))
-#   
+#
 #   u <- readBin(con, what = "character", n = 1)
 #   hd$splPerScan <- as.numeric(gsub("\002|\005|\n|\004", "", u))
-#   
+#
 #   invisible(readBin(con, what = "character", n = 1))
-#   
+#
 #   u <- readBin(con, what = "character", n = 1)
 #   hd$bits <- as.numeric(gsub("\002|\005|\n|\004", "", u))
-#   
+#
 #   return(hd)
 # }
-# 
-# 
-# 
+#
+#
+#
 # readUtsiDat <- function(con, splPerScan = 512, bits = 16){
 #   con_len <- .flen(con)
 #   # seek(con, where = 0, "start")
@@ -2686,9 +2690,9 @@ rmNaCol <- function(x){
 #   # nc <- length(xraw)/(nr+1+nr)
 #   nc <- con_len/(nr*bits/8 + 1)
 #   xdata <- matrix(nrow = nr, ncol = nc)
-#   
+#
 #   mrkr <- character(nc)
-#   
+#
 #   seek(con, where = 0, "start")
 #   for(i in seq_len(nc)){
 #     xdata[,i] <- readBin(con, what = "integer", n = nr, size = bits/8, endian = "little")
@@ -2701,17 +2705,17 @@ rmNaCol <- function(x){
 #--------------------------------------
 
 # https://stackoverflow.com/questions/50561768/r-get-argument-names-from-function-call
-# Using the same formalArgs suggested by @Akrun 
+# Using the same formalArgs suggested by @Akrun
 # (and also in the almost duplicate Get the argument names of an R function):
-#   
+#
 #   getArgNames <- function(value) formalArgs(deparse(substitute(value)[[1]]))
-# 
-# substitute(value) quotes the input, to prevent immediate evaluation, [[1]] 
-# retrieves the function from the parsed input, deparse turns it into character 
+#
+# substitute(value) quotes the input, to prevent immediate evaluation, [[1]]
+# retrieves the function from the parsed input, deparse turns it into character
 # (since formalArgs can take the function name as character).
-# 
+#
 # getArgNames(testFun())
-# 
+#
 # #[1] "x" "z"
 
 
@@ -2736,15 +2740,15 @@ getArgs <- function (returnCharacter = TRUE, addArgs = NULL) {
       if(narg  >= 3){
         eval_arg <- tryCatch(sapply(arg[3:narg], eval, simplify = FALSE),
                              error = function(cond){return(NULL)})
-        if(!is.null(eval_arg)){                     
-          argChar <- paste0(arg[[1]],"//", 
-                            paste(names(arg[3:narg]), 
-                                  mapply(pasteArgs, eval_arg, arg[3:narg]), 
-                                  #sapply(eval_arg, pasteArgs, arg[3:narg]), 
+        if(!is.null(eval_arg)){
+          argChar <- paste0(arg[[1]],"//",
+                            paste(names(arg[3:narg]),
+                                  mapply(pasteArgs, eval_arg, arg[3:narg]),
+                                  #sapply(eval_arg, pasteArgs, arg[3:narg]),
                                   sep = "=", collapse = "+"))
         }else{
           return(c())
-        }  
+        }
       }else{
         argChar <- paste0(arg[[1]],"//")
       }
@@ -2817,13 +2821,13 @@ verboseF <- function(g, verbose = TRUE){
 
 
 #' Suppressing output from cat() or print()
-#' 
-#' This function suppresses the output from cat() or print() in a function. 
-#' It was proposed by Hadley Wickham 
+#'
+#' This function suppresses the output from cat() or print() in a function.
+#' It was proposed by Hadley Wickham
 #' https://r.789695.n4.nabble.com/Suppressing-output-e-g-from-cat-td859876.html
 #' @export
 quiet <- function(x) {
   sink(tempfile())
   on.exit(sink())
   invisible(force(x))
-} 
+}

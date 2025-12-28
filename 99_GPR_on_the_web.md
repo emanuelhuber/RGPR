@@ -36,6 +36,8 @@ date: 2019-11-23
 
 
 
+
+
 * [Koki Oikawa, Hirotaka Saito, Seiichiro Kuroda, Kazunori Takahashi (2024) **Construction of dense CMP data from sparsely collected GPR CMP data for the improved estimation of soil dielectric constant profile.** Vadose Zone Journal, Volume 24, Issue 1](https://doi.org/10.1002/vzj2.20392)
 
 
@@ -104,6 +106,8 @@ date: 2019-11-23
 
 
 ### Theses and others...
+
+* [John  Creighton, Lieven Verdonck, Martin Millett, and Thomas Matthews Boehmer (2025) **Ground Penetrating Radar Surveys within the Precinct of York Minster Roman York: beneath the streets.** GPR Report 1, University of Cambridge Open Data repository.](https://doi.org/10.17863/CAM.107099)
 
 * [Martin Châtel (2024) **Geophysical snow-mapping using Ground Penetrating Radar (GPR) borne by Uncrewed Aerial Vehicles (UAVs)** Internship report, (Master thesis), April 8th – July 26th, 2024, Institut Polytechnique de Paris](https://vegvesen.brage.unit.no/vegvesen-xmlui/handle/11250/3171744)
 

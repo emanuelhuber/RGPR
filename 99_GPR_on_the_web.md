@@ -1,6 +1,6 @@
 ---
 layout: page
-title: RGPR on the web
+title: RGPR in the web
 date: 2019-11-23
 ---
 
@@ -17,18 +17,29 @@ date: 2019-11-23
 
 * [RGPR: Best Poster Award at the 17th International Conference on Ground Penetrating Radar](https://www.gpr2018.hsr.ch/index.php?id=18108) - [Link to the poster](https://emanuelhuber.github.io/publications/poster_2018_huber-and-hans_RGPR-new-open-source-package.pdf)
 
-## They use RGPR
+## They used / cited RGPR
 
 ### Publications
 
+* [Bastien Dupuy, Arnt Grøver, Stéphane Garambois, Andrew Tobiesen, Pauline Lorand, Halgeir Dahle, Sean Salazar, Regula Frauenfelder, Benjamin Emmel, Aslak Einbu, and Tore Humstad (2026) **UAV-borne GPR for snowpack characterization: Potential, limitations and operational guidelines.** Cold Regions Science and Technology, Volume 241](https://doi.org/10.1016/j.coldregions.2025.104641)
+
 
 * [Arasti Afrasiabi, Asaad Faramarzi, David Chapman, Alireza Keshavarzi (2025) **Optimising Ground Penetrating Radar data interpretation: A hybrid approach with AI-assisted Kalman Filter and Wavelet Transform for detecting and locating buried utilities.** Journal of Applied Geophysics Volume 232](https://doi.org/10.1016/j.jappgeo.2024.105567)
+
+* [Afrasiabi, Arasti, Farough Rahimzadeh, and Alireza Keshavarzi (2025) **Advances in electromagnetic techniques for subsurface infrastructure detection: A comprehensive review of methods, challenges, and innovations.**  e-Journal of Nondestructive Testing, 2025-12.](https://doi.org/10.58286/32350)
+
+* [Luyun Zhang, Li Guo, Kailiang Yu, Xihong Cui, Xin Cao, Xuehong Chen, Miaogen Shen, and Jin Chen (2025) **Aboveground-canopy and belowground-root-trait correlations contribute to root system characteristics estimation: Insights from ground penetrating radar data.** Ecological Indicators 173: 113354.](https://doi.org/10.1016/j.ecolind.2025.113354)
+
+* [Vergnano, Andrea, Diego Franco, and Alberto Godio (2025) **Integrating GPR and ice-thickness models for improved bedrock detection: the case study of Rutor temperate glacier.** The Cryosphere 19(12): 6965-6988.](https://doi.org/10.5194/tc-19-6965-2025)
+
+<!-- Moqadam, Hameed, and Olaf Eisen. "Feature tracing in radio-echo sounding products of terrestrial ice sheets and planetary bodies." The Cryosphere 19(6) (2025): 2159-2196. https://doi.org/10.5194/tc-19-2159-2025-->
+
 
 
 * [Koki Oikawa, Hirotaka Saito, Seiichiro Kuroda, Kazunori Takahashi (2024) **Construction of dense CMP data from sparsely collected GPR CMP data for the improved estimation of soil dielectric constant profile.** Vadose Zone Journal, Volume 24, Issue 1](https://doi.org/10.1002/vzj2.20392)
 
 
-* [Erik S. Mannerfelt, Andrew J. Hodson, Lena Håkansson, and Harold Lovell (2024) Dynamic LIA advances hastened the demise of small valley glaciers in central Svalbard. Arctic Science.](https://doi.org/10.1139/as-2024-0024)
+* [Erik S. Mannerfelt, Andrew J. Hodson, Lena Håkansson, and Harold Lovell (2024) **Dynamic LIA advances hastened the demise of small valley glaciers in central Svalbard.** Arctic Science.](https://doi.org/10.1139/as-2024-0024)
 
 * [Jesse T. Korus, R. Matthew Joeckel, Aaron R. Mittelstet, Nawaraj Shrestha (2024) **Multiscale characterization of splays produced by a historic, rain-on-snow flood on a large braided stream (Platte River, Central USA).** Earth Surface Processes and Landforms](https://doi.org/10.1002/esp.5997)
 
@@ -92,7 +103,7 @@ date: 2019-11-23
 
 
 
-### Others
+### Theses and others...
 
 * [Martin Châtel (2024) **Geophysical snow-mapping using Ground Penetrating Radar (GPR) borne by Uncrewed Aerial Vehicles (UAVs)** Internship report, (Master thesis), April 8th – July 26th, 2024, Institut Polytechnique de Paris](https://vegvesen.brage.unit.no/vegvesen-xmlui/handle/11250/3171744)
 

@@ -22,6 +22,7 @@ plotDelineations(
   x,
   method = c("linear", "nearest", "pchip", "cubic", "spline", "none"),
   col = NULL,
+  addTopo = FALSE,
   ...
 )
 
@@ -29,6 +30,7 @@ plotDelineations(
   x,
   method = c("linear", "nearest", "pchip", "cubic", "spline", "none"),
   col = NULL,
+  addTopo = FALSE,
   ...
 )
 

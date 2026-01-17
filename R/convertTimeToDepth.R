@@ -8,7 +8,7 @@
 #' 
 #' Convert the two-way travel time of the recorded waves into depth. It does
 #' not account for the topography. 
-#' @param x      (`GPR* object`) An object of the class `GPR`
+#' @param obj      (`GPR* object`) An object of the class `GPR`
 #' @param dz     (`numeric[1]`) Desired depth resolution. 
 #'               If `dz = NULL`, then `dz` is set equal 
 #'               to the smallest depth resolution inferred from the data.
@@ -24,72 +24,72 @@
 #' @concept signal processing
 #' @export
 setGeneric("convertTimeToDepth", 
-           function(x, dz = NULL, zmax = NULL,
+           function(obj, dz = NULL, zmax = NULL,
                     method = c("pchip", "linear","nearest", "spline", "cubic")) 
   standardGeneric("convertTimeToDepth"))
 
 
 #' @rdname convertTimeToDepth
 #' @export
-setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, zmax = NULL, 
+setMethod("convertTimeToDepth", "GPR", function(obj, dz = NULL, zmax = NULL, 
                                                 method = c("pchip", "linear", 
                                                            "nearest", "spline", 
                                                            "cubic")){
   method <- match.arg(method[1], c("pchip", "linear", "nearest", 
                                    "spline", "cubic"))
-  if(length(x@vel) == 0) stop(msg_no_vel)
-  if(!isZTime(x))    stop(msg_set_zunitToDepth)
+  if(length(obj@vel) == 0) stop(msg_no_vel)
+  if(!isZTime(obj))    stop(msg_set_zunitToDepth)
   
-  if(length(x@coord) != 0 && ncol(x@coord) == 3){
-    topo <- x@coord[1:ncol(x@data), 3]
+  if(length(obj@coord) != 0 && ncol(obj@coord) == 3){
+    topo <- obj@coord[1:ncol(obj@data), 3]
   }else{
-    topo <- rep.int(0L, ncol(x@data))
+    topo <- rep.int(0L, ncol(obj@data))
     message("Trace vertical positions set to zero!")
   }
   
-  if(any(x@z0 != 0)){
-    x <- shiftToTime0(x, method = c("pchip"))
+  if(any(obj@z0 != 0)){
+    obj <- shiftToTime0(obj, method = c("pchip"))
   }
   
-  x_vel <- .getVel(x, type = "vint", strict = FALSE)
+  x_vel <- .getVel(obj, type = "vint", strict = FALSE)
   
-  x[is.infinite(x) | is.na(x)] <- 0
+  obj[is.infinite(obj) | is.na(obj)] <- 0
   
   # single velocity value
   if(length(x_vel) == 1){
     message("time to depth conversion with constant velocity (", x_vel,
-            " ", x@xunit, "/", x@zunit, ")")
-    z <- timeToDepth(twt = x@z, t0 = 0, v = x_vel, 
-                     antsep = antsep(x))
+            " ", obj@xunit, "/", obj@zunit, ")")
+    z <- timeToDepth(twt = obj@z, t0 = 0, v = x_vel, 
+                     antsep = antsep(obj))
     test <- !is.na(z)
-    x <- x[test,]
+    obj <- obj[test,]
     if(is.null(dz)){
-      dz <- min(x_vel) * min(diff(x@z))/2
+      dz <- min(x_vel) * min(diff(obj@z))/2
     }
     if(is.null(zmax)){
       zmax <- max(z, 1, na.rm = TRUE)
     }
-    x@z <- seq(from = 0, to = zmax, by = dz)
+    obj@z <- seq(from = 0, to = zmax, by = dz)
     funInterp321 <- function(x, z, zreg, method){
       signal::interp1(x = z, y = x, xi = zreg, 
                       method = method, extrap = TRUE)
     }
-    x@data <- apply(x@data, 2, funInterp321, 
-                    z = z[test], zreg = x@z, method = method)
+    obj@data <- apply(obj@data, 2, funInterp321, 
+                    z = z[test], zreg = obj@z, method = method)
     # vector velocity
-  }else if( is.null(dim(x_vel)) && length(x_vel) == nrow(x) ){
-    x_depth <- timeToDepth(twt = x@z, t0 = 0, v = x_vel, 
-                           antsep = x@antsep) # here difference to matrix case
+  }else if( is.null(dim(x_vel)) && length(x_vel) == nrow(obj) ){
+    x_depth <- timeToDepth(twt = obj@z, t0 = 0, v = x_vel, 
+                           antsep = obj@antsep) # here difference to matrix case
     
     # FIXME > compute depth for the velocity model
-    # x@vel$xvrms$d <- timeToDepth(twt = x@vel$xvrms$t, t0 = 0, v = x_vel, 
-    #             antsep = x@antsep) # here difference to matrix case
+    # obj@vel$xvrms$d <- timeToDepth(twt = obj@vel$xvrms$t, t0 = 0, v = x_vel, 
+    #             antsep = obj@antsep) # here difference to matrix case
     
     test <- !is.na(x_depth)
-    x <- x[test,]
+    obj <- obj[test,]
     x_depth <- x_depth[test]
     if(is.null(dz)){
-      dz <- min(x_vel) * min(diff(x@z))/2
+      dz <- min(x_vel) * min(diff(obj@z))/2
     }
     if( is.null(zmax)){
       zmax <- max(x_depth, na.rm = TRUE)
@@ -99,62 +99,62 @@ setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, zmax = NULL,
       signal::interp1(x = x_depth, y = A, xi = x_depth_int, 
                       method = method)
     }
-    x@data <- apply(x@data, 2, funInterp123, 
+    obj@data <- apply(obj@data, 2, funInterp123, 
                     x_depth = x_depth, 
                     x_depth_int = d, 
                     method = method)
-    x@z     <- d
+    obj@z     <- d
   # matrix velocity
   }else if(is.matrix(x_vel)){
-    x_depth <- timeToDepth(twt = x@z, t0 = 0, v = x_vel, 
-                           antsep = x@antsep) 
+    x_depth <- timeToDepth(twt = obj@z, t0 = 0, v = x_vel, 
+                           antsep = obj@antsep) 
     if(is.null(dz)){
-      dz <- min(x_vel) * min(diff(x@z))/2
+      dz <- min(x_vel) * min(diff(obj@z))/2
     }
     if(is.null(zmax)){
       zmax <- max(x_depth, na.rm = TRUE)
     }
     d <- seq(from = 0, by = dz, to = zmax)
-    x_new <- matrix(nrow = length(d), ncol = ncol(x))
-    n <- nrow(x)
-    for(i in seq_along(x)){
+    x_new <- matrix(nrow = length(d), ncol = ncol(obj))
+    n <- nrow(obj)
+    for(i in seq_along(obj)){
       # xNA <- is.na(x_depth[,i])
       # ni <- max(which(xNA))+1
       # vi <- ni:n
       vi <- !is.na(x_depth[,i])
       x_new[, i] <- signal::interp1(x  = x_depth[vi,i],
-                                    y  = x@data[vi,i],
+                                    y  = obj@data[vi,i],
                                     xi = d,
                                     method = method, extrap = FALSE)
     }
-    if(length(x@delineations) > 0){
-      x@delineations <- convertTimeToDepthDelineation(x@delineations, d, x_depth)
+    if(length(obj@delineations) > 0){
+      obj@delineations <- convertTimeToDepthDelineation(obj@delineations, d, x_depth)
     }
-    if(!is.null(x@md$velocity_interfaces) && length(x@md$velocity_interfaces) ){
-      x@md$velocity_interfaces <- convertTimeToDepthDelineation(x@md$velocity_interfaces, d, x_depth)
+    if(!is.null(obj@md$velocity_interfaces) && length(obj@md$velocity_interfaces) ){
+      obj@md$velocity_interfaces <- convertTimeToDepthDelineation(obj@md$velocity_interfaces, d, x_depth)
     }
       
      
     
-    x@data <- x_new
-    x@z    <- d
-    x@vel <- list()
+    obj@data <- x_new
+    obj@z    <- d
+    obj@vel <- list()
   }
   
   # FIXME
   # zShift <- (max(topo) - topo)
   # if( all(zShift != 0) ){
-  #   x <- traceShift(x,  ts = zShift, method = c("pchip"), crop = FALSE)
+  #   obj <- traceShift(obj,  ts = zShift, method = c("pchip"), crop = FALSE)
   # }
-  # if(length(x@coord) > 0 && ncol(x@coord) == 3 ){
-  #   x@coord[, 3] <- max(x@coord[,3])
+  # if(length(obj@coord) > 0 && ncol(obj@coord) == 3 ){
+  #   obj@coord[, 3] <- max(obj@coord[,3])
   # }
   
-  # x@vel <- list()  # keep velocity model
-  x@zunit <- x@xunit # FIXME: check that
-  x@zlab <- "depth"
-  proc(x) <- getArgs()
-  return(x)
+  # obj@vel <- list()  # keep velocity model
+  obj@zunit <- obj@xunit # FIXME: check that
+  obj@zlab <- "depth"
+  proc(obj) <- getArgs()
+  return(obj)
 } 
 )
 

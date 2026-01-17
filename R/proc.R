@@ -18,15 +18,17 @@ setGeneric("proc<-", function(x, value) standardGeneric("proc<-"))
 
 #' @rdname proc
 #' @export
-setMethod("proc", "GPR", function(x){
+setMethod("proc", "GPRvirtual", function(x){
   return(x@proc)
 })
 
 
 #' @rdname proc
 #' @export
-setReplaceMethod("proc", "GPR", function(x, value){
+setReplaceMethod("proc", "GPRvirtual", function(x, value){
   value <- as.character(value)
   x@proc <- c(x@proc, value)
   return(x)
 })
+
+

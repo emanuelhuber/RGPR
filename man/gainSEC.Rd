@@ -33,7 +33,7 @@ gainSEC(
 \item{a}{(\code{numeric[1]}) Parameter of the exponential filter
 (\code{a} \eqn{\geq} 0).}
 
-\item{b}{\code{numeric(1)} Parameter of the power filter
+\item{b}{(\code{numeric[1]}) Parameter of the power filter
 (\code{b} \eqn{\geq} 0). Usually, \code{b = 1}.}
 
 \item{t0}{(\code{numeric[1]}) Start time of the gain filter

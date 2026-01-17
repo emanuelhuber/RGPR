@@ -6,7 +6,7 @@
 \title{Estimate and set time-zero}
 \usage{
 estimateTime0(
-  x,
+  obj,
   method = c("coppens", "threshold", "MER"),
   thr = NULL,
   w = NULL,
@@ -20,7 +20,7 @@ estimateTime0(
 )
 
 \S4method{estimateTime0}{GPR}(
-  x,
+  obj,
   method = c("coppens", "threshold", "MER"),
   thr = NULL,
   w = NULL,
@@ -34,7 +34,7 @@ estimateTime0(
 )
 }
 \arguments{
-\item{x}{(\code{GPR}) An object of the class `GPR}
+\item{obj}{(\code{GPR}) An object of the class `GPR}
 
 \item{method}{(\verb{character[1]) Method to be applied (either }"coppens"\verb{, }"threshold"\code{or}"MER"\verb{).  }"coppens"\verb{corresponds to the modified Coppens method, }"threshold"\verb{to the threshold method,  and}"MER"` to the modified energy ratio method.}
 
@@ -94,9 +94,9 @@ this case, all traces would have the same time-zero).
 \details{
 This function is a wrapper for the following commands:
 \itemize{
-\item \code{tfb <- pickFirstBreak(x, ...)}
-\item \code{t0 <- firstBreakToTime0(x, tfb)}
-\item \code{time0(x) <- t0} (if \code{FUN} is not \code{NULL} else \code{time0(x) <- FUN(t0, ...)})
+\item \code{tfb <- pickFirstBreak(obj, ...)}
+\item \code{t0 <- firstBreakToTime0(obj, tfb)}
+\item \code{time0(obj) <- t0} (if \code{FUN} is not \code{NULL} else \code{time0(obj) <- FUN(t0, ...)})
 }
 
 Modified slots:

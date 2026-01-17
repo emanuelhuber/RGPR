@@ -5,12 +5,12 @@
 \alias{rmDCShift,GPR-method}
 \title{Direct-Current shift removal}
 \usage{
-rmDCShift(x, u = NULL, FUN = mean, ..., track = TRUE)
+rmDCShift(obj, u = NULL, FUN = mean, ..., track = TRUE)
 
-\S4method{rmDCShift}{GPR}(x, u = NULL, FUN = mean, ..., track = TRUE)
+\S4method{rmDCShift}{GPR}(obj, u = NULL, FUN = mean, ..., track = TRUE)
 }
 \arguments{
-\item{x}{(\code{GPR}) An object of the class \code{GPR}.}
+\item{obj}{(\code{GPR}) An object of the class \code{GPR}.}
 
 \item{u}{(\code{integer[1]}) Index of the trace samples used to evaluate for
 every trace the DC-shift. If \code{u = NULL}, the function takes

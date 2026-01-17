@@ -3,7 +3,7 @@ Type: Package
 Title: Ground-penetrating radar (GPR) data visualisation, processing and 
 	delineation
 Version: 1.0.0
-Date: 2019-09-15
+Date: 2025-12-31
 Authors@R: c(
   person("Emanuel", "Huber", email = "emanuel.huber@pm.me",
   role = c("aut", "cre")),
@@ -11,7 +11,7 @@ Authors@R: c(
   role = "aut"))
 Author: Emanuel Huber and Guillaume Hans
 Maintainer: Emanuel Huber <emanuel.huber@pm.me>
-Description: S4 classes and R functions to read, write, analyse and visualise
+Description: S4 classes and R functions to read, write, analyse and visualize
     ground-penetrating radar (GPR) data.
 Depends:
 	base,
@@ -76,9 +76,12 @@ Collate:
 	'readTopo.R'
 	'readGPGGA.R'
 	'writeGPR.R'
+	'writeDT1.R'
+	'writeProfileVTK.R'
 	'coercion_GPRvirtual.R'
 	'coercion_GPRset.R'
 	'coercion_spatial.R'
+	'coercion_GPRcube.R'
 	'GPRsurvey.R'
 	'gridCoords.R'
 	'shiftGridLine.R'
@@ -142,7 +145,6 @@ Collate:
 	'z_files.R'
 	'z_checkArgs.R'
 	'z_processing.R'
-	'wapply.R'
 	'z_path.R'
 	'z_spatial.R'
 	'z_units.R'
@@ -156,20 +158,30 @@ Collate:
 	'exportDelineations.R'
 	'rmDCShift.R'
 	'dewow.R'
+	'wapply.R'
 	'trapply.R'
+	'papply.R'
 	'gainSEC.R'
 	'gainEnv.R'
+	'gainAGC.R'
 	'amplEnv.R'
 	'complextrace.R'
 	'filterFreq.R'
 	'filter1D.R'
 	'filter2D.R'
+	'filterEigen.R'
 	'freqSpectrum.R'
 	'freqSpectrum2D.R'
 	'FFT1D.R'
 	'scale1D.R'
 	'robustSmooth.R'
 	'raytracing.R'
+	'switchPolarity.R'
+	'createCubeFromGrid.R'
+	'rmStripes.R'
+	'filter2D_all.R'
+	'radon.R'
+	'RcppExports.R'
 Imports:
     methods,
     graphics,
@@ -188,7 +200,12 @@ Imports:
     units,
     adimpro,
     plot3D,
-    robfilter
+    robfilter,
+    imager,
+    Rcpp,
+    RcppEigen,
+    RcppThread
+LinkingTo: Rcpp, RcppEigen, RcppThread
 RoxygenNote: 7.3.2
 Suggests: 
     geojsonsf,

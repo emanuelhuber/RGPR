@@ -7,35 +7,35 @@
 \title{Write the GPR object in a file.}
 \usage{
 writeGPR(
-  x,
-  fPath = NULL,
-  format = c("rds", "dt1", "ascii", "xta", "xyza"),
+  obj,
+  dsn = NULL,
+  format = c("rds", "dt1", "ascii", "xta", "xyza", "vtk"),
   overwrite = FALSE,
   ...
 )
 
 \S4method{writeGPR}{GPR}(
-  x,
-  fPath = NULL,
-  format = c("rds", "dt1", "ascii", "xta", "xyza"),
+  obj,
+  dsn = NULL,
+  format = c("rds", "dt1", "ascii", "xta", "xyza", "vtk"),
   overwrite = FALSE,
   ...
 )
 
 \S4method{writeGPR}{GPRsurvey}(
-  x,
-  fPath = NULL,
-  format = c("DT1", "rds", "ASCII", "xta", "xyzv"),
+  obj,
+  dsn = NULL,
+  format = c("DT1", "rds", "ASCII", "xta", "xyzv", "vtk"),
   overwrite = FALSE,
   ...
 )
 }
 \arguments{
-\item{x}{Object of the class \code{GPR} or \code{GPRsurvey}}
+\item{obj}{Object of the class \code{GPR} or \code{GPRsurvey}}
 
-\item{fPath}{Filepath (Length-one character vector). If \code{fPath = NULL},
+\item{dsn}{Filepath (Length-one character vector). If \code{dsn = NULL},
 the file will be save in the current working directory with
-the name of x (\code{name(x)}) with the extension depending
+the name of obj (\code{name(obj)}) with the extension depending
 of \code{format}.}
 
 \item{format}{Format type. See Details.}

@@ -18,7 +18,9 @@
                                "emanuel.huber@pm.me"))
 }
 
-
+#' @useDynLib RGPR
+#' @importFrom Rcpp sourceCpp
+NULL
 
 # @references Several books!
 # @section Reading/writing/export functions:

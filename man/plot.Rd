@@ -79,7 +79,7 @@
   sym = TRUE,
   clim = NULL,
   add = FALSE,
-  asp = NA,
+  asp = 1,
   secaxis = TRUE,
   elev = FALSE,
   export = NULL,

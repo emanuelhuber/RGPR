@@ -93,6 +93,7 @@ setMethod("shift", "GPR",
   for(i in seq_len(ncol(A))){
     # relts <- floor(ps[i])*dz - z[i]
     if(method == "none"){
+      stop("Methode 'none' not yet implemented!")
       ynew <- A[,i]
     }else{
       ttnew <- tt + z[i]

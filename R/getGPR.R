@@ -15,42 +15,7 @@ setGeneric("getGPR", function(x, id, verbose = FALSE)
 #' @rdname getGPR
 #' @export
 setMethod("getGPR", "GPRsurvey", function(x, id, verbose = FALSE){
-  # if(length(id)>1){
-  #   warning("Length of id > 1, I take only the first element!\n")
-  #   id <- id[1]
-  # }
-  # if(is.numeric(id)){
-  #   no <- as.integer(id)
-  #   if(!(no %in% seq_along(x@paths))){
-  #     stop("'id' not in x!")
-  #   }
-  #   gpr <- verboseF(readGPR(x@paths[[no]]), verbose = verbose)
-  # }else if(is.character(id)){
-  #   no <- which(x@names == trimStr(id))
-  #   if(length(no > 0)){
-  #     gpr <- verboseF(readGPR(x@paths[[no]]), verbose = verbose)
-  #   }else{
-  #     stop("There is no GPR data with the name '", trimStr(id),"'\n")
-  #   }
-  # }
-  # # FIXME : check if nrow(x@coord)
-  # if(length(x@coords[[gpr@name]])>0){
-  #   gpr@coord <- x@coords[[gpr@name]]
-  # }
-  # # if(length(x@intersects[[gpr@name]])>0){
-  # #   ann(gpr) <- cbind(x@intersects[[gpr@name]]$trace,
-  # #                     x@intersects[[gpr@name]]$name)
-  # # }
-  # # FIXME
-  # if(length(x@crs) == 1){
-  #   gpr@crs <- x@crs
-  # }else{
-  #   gpr@crs <- x@crs[no]
-  # }
-  # # if(length(x@coordref)>0){
-  # #   gpr@coordref <- x@coordref
-  # # }
-  # return(gpr)
+
   if(length(id)>1){
     warning("Length of id > 1, I take only the first element!\n")
     id <- id[1]
@@ -60,8 +25,8 @@ setMethod("getGPR", "GPRsurvey", function(x, id, verbose = FALSE){
     gpr <- readGPR(x@paths[[id]])
   }else if(is.character(id)){
     no <- which(x@names == trimStr(id))
-    if(length(no > 0)){
-      id <- no
+    if(length(no) > 0){
+      id <- no[1]
       gpr <- readGPR(x@paths[[id]])
     }else{
       stop("There is no GPR data with the name '", trimStr(id),"'\n")
@@ -91,14 +56,24 @@ setMethod("getGPR", "GPRsurvey", function(x, id, verbose = FALSE){
     gpr@crs <- x@crs[id]
   }
   
-  gpr@spunit <- x@spunit
-  if(any(x@zunits != "")){
+  # FIXME
+  if(length(x@spunit) == 1){
+    gpr@spunit <- x@spunit
+  }else{
+    gpr@spunit <- x@spunit[id]
+  }
+  
+  if(all(x@zunits != "")){
+    gpr@zunit <- x@zunits[id]
+  }else if(any(x@zunits != "")){
     gpr@zunit <- x@zunits[x@zunits != ""][1]
   }else{
     gpr@zunit <- ""
     warning("No z-units!!")
   }
-  gpr@xunit <- x@spunit
+  
+  # gpr@xunit <- x@spunit
+  
   # what about gpr@xunit ??
   # if(length(x@coordref)>0){
   #   gpr@coordref <- x@coordref

@@ -56,6 +56,8 @@ setMethod("as.sf", signature(x = "GPRsurvey"), function(x){
   return(x_sf)
 })
 
+
+
 .as_LINESTRING <- function(x, id, CRS){
   if(length(x) > 0){
     xi_sf <- sf::st_as_sf(x      = as.data.frame(x),
@@ -164,4 +166,46 @@ setMethod("as.spatialPoints", signature(x = "GPRsurvey"), function(x){
   return(x_sf)
   
   
+})
+
+setGeneric("as.raster", function(x) standardGeneric("as.raster"))
+
+#' Coercion to SpatRaster
+#'
+#' @name as.raster
+#' @rdname GPRcoercion
+#' @export
+setMethod("as.raster", signature(x = "GPRslice"), function(x){
+  
+  r <- terra::rast(
+    nrows = dim(x@data)[1],
+    ncols = dim(x@data)[2],
+    xmin  = x@center[1],
+    xmax  = x@center[1] + x@dx * (dim(x@data)[1] - 1),
+    ymin  = x@center[2],
+    ymax  = x@center[2] + x@dy * (dim(x@data)[2] - 1),
+    crs   = x@crs[1]
+  )
+  
+  # terra fills by column, so transpose + reverse columns
+  # r <- terra::setValues(r,    as.vector(t(x@data[, ncol(x@data):1])))
+  r <- terra::setValues(r,    as.vector(t(x@data)) )
+  
+  return(r)
+})
+
+#' Coercion to SpatRaster (multi-layer)
+#'
+#' @name as.raster
+#' @rdname GPRcoercion
+#' @export
+setMethod("as.raster", signature(x = "GPRcube"), function(x){
+  
+  r <- as.raster(x[,,1])
+  
+  for (i in 2:dim(x@data)[3]) {
+    r <- terra::c(r, as.raster(x[,,i]))
+  }
+  
+  return(r)
 })

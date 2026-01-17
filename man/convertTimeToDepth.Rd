@@ -6,21 +6,21 @@
 \title{Time to depth conversion}
 \usage{
 convertTimeToDepth(
-  x,
+  obj,
   dz = NULL,
   zmax = NULL,
   method = c("pchip", "linear", "nearest", "spline", "cubic")
 )
 
 \S4method{convertTimeToDepth}{GPR}(
-  x,
+  obj,
   dz = NULL,
   zmax = NULL,
   method = c("pchip", "linear", "nearest", "spline", "cubic")
 )
 }
 \arguments{
-\item{x}{(\code{GPR* object}) An object of the class \code{GPR}}
+\item{obj}{(\code{GPR* object}) An object of the class \code{GPR}}
 
 \item{dz}{(\code{numeric[1]}) Desired depth resolution.
 If \code{dz = NULL}, then \code{dz} is set equal

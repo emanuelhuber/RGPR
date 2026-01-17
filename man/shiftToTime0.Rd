@@ -6,21 +6,21 @@
 \title{Time zero correction}
 \usage{
 shiftToTime0(
-  x,
+  obj,
   method = c("pchip", "linear", "nearest", "spline", "cubic", "none"),
   crop = TRUE,
   track = TRUE
 )
 
 \S4method{shiftToTime0}{GPR}(
-  x,
+  obj,
   method = c("pchip", "linear", "nearest", "spline", "cubic", "none"),
   crop = TRUE,
   track = TRUE
 )
 }
 \arguments{
-\item{x}{(\code{GPR* object}) An object of the class \code{GPR}}
+\item{obj}{(\code{GPR* object}) An object of the class \code{GPR}}
 
 \item{method}{(\code{character[1]}) Interpolation method to be applied
 (one of \code{pchip} \code{linear}, \code{nearest},
@@ -47,8 +47,8 @@ New traces are interpolated.
 \details{
 This function is a wrapper for the following commands
 \itemize{
-\item \code{x <- traceShift( x,  -time0(x), method = method, crop = crop)}
-\item \code{time0(x) <- 0}
+\item \code{obj <- traceShift( obj,  -time0(obj), method = method, crop = crop)}
+\item \code{time0(obj) <- 0}
 }
 
 Modified slots

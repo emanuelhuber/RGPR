@@ -1,4 +1,6 @@
 #' Reverse the trace position.
+#' 
+#' Reverse the trace position (but not the coordinates).
 #'
 #' @param x (`GPR`|`GPRsurvey`) Object of the class `GPR` or `GPRsurvey`
 #' @param id (`NULL`|`integer[n]`|`zigzag`) Wokrs only if `x` is an object of the class `GPRsurvey`.
@@ -10,12 +12,15 @@
 #'           YLINE02; cluster 3 = XYLINE1, XYLINE2, XYLINE3) and reverse the
 #'           data such that all GPR lines within the same cluster have the
 #'           same orientation (up to a tolerance value \code{tol}).
-#' @param to Length-one numeric vector. Tolerance angle in radian to determine
+#' @param tol Length-one numeric vector. Tolerance angle in radian to determine
 #'           if the data have the same orientation. The first data of the 
 #'           cluster is set as reference angle \eqn{\alpha_0}, then for data 
 #'           \eqn{i} in the same cluster, if \eqn{\alpha_i} is not between
 #'           \eqn{\alpha_0 - \frac{tol}{2}} and 
 #'           \eqn{\alpha_0 + \frac{tol}{2}}, then the data is reversed.
+#' @param onlyData (`logical[1]`) If `TRUE`, only the data are reversed. If 
+#'                                `FALSE`, both the data and the coordinates
+#'                                are reversed.
 #' @name reverse
 #' @rdname reverse
 #' @examples 
@@ -28,13 +33,13 @@
 #' @export
 #' @concept processing
 setGeneric("reverse", 
-           function(x, id = NULL,  tol = 0.3, track = TRUE)
+           function(x, id = NULL,  tol = 0.3, onlyData = FALSE, track = TRUE)
              standardGeneric("reverse"))
 
 
 #' @rdname reverse
 #' @export
-setMethod("reverse", "GPR", function(x, id = NULL,  tol = 0.3, track = TRUE){
+setMethod("reverse", "GPR", function(x, id = NULL,  tol = 0.3, onlyData = FALSE, track = TRUE){
   
   #------------------- check arguments
   # NOT REALLY USEFUL, since id and tol are not used!
@@ -52,14 +57,17 @@ setMethod("reverse", "GPR", function(x, id = NULL,  tol = 0.3, track = TRUE){
   xnew@time <- rev(x@time)
   xnew@markers <- rev(x@markers)
   xnew@ann <- rev(x@ann)
-  if(length(x@coord)>0){
-    xnew@coord <- x@coord[nrow(x@coord):1,]
-  }
-  if(length(x@rec)>0){
-    xnew@rec <- x@rec[nrow(x@rec):1,]
-  }
-  if(length(x@trans)>0){
-    xnew@trans <- x@trans[nrow(x@trans):1,]
+  if(isFALSE(onlyData)){
+    
+    if(length(x@coord)>0){
+      xnew@coord <- x@coord[nrow(x@coord):1,]
+    }
+    if(length(x@rec)>0){
+      xnew@rec <- x@rec[nrow(x@rec):1,]
+    }
+    if(length(x@trans)>0){
+      xnew@trans <- x@trans[nrow(x@trans):1,]
+    }
   }
   if(length(x@delineations) > 0){
     #FIXME NO IDEA IF IT WORKS!
@@ -83,11 +91,11 @@ setMethod("reverse", "GPR", function(x, id = NULL,  tol = 0.3, track = TRUE){
 #' @name reverse
 #' @rdname reverse
 #' @export
-setMethod("reverse", "GPRsurvey", function(x, id = NULL, tol = 0.3, track = TRUE){
-  id <- as.integer(id)
+setMethod("reverse", "GPRsurvey", function(x, id = NULL, tol = 0.3, onlyData = FALSE, track = TRUE){
+  
   #------------------- check arguments
   msg <- checkArgInit()
-  msg <- checkArg(id, msg, "INDEX_VECTOR_NULL_UPPER" , length(x))
+  # msg <- checkArg(id, msg, "INDEX_VECTOR_NULL_UPPER" , length(x))
   msg <- checkArg(tol,    msg, "NUMERIC1_SPOS", Inf)
   checkArgStop(msg)
   #-----------------------------------
@@ -108,20 +116,18 @@ setMethod("reverse", "GPRsurvey", function(x, id = NULL, tol = 0.3, track = TRUE
       }else{
         angi <- gprAngle(y) 
         if(!isTRUE(inBetAngle( angRef[typeNo], angi, atol = tol))){
-          y <- reverse(y)
-          # revTRUE[i] <- TRUE
+          y <- reverse(y, onlyData = onlyData)
           message(y@name, " > reverse!")
-          # tmpf <- tempfile(y@name)
-          # writeGPR(y, type = "rds", overwrite = FALSE, fPath = tmpf)
-          # x@filepaths[[i]]     <- paste0(tmpf, ".rds")
           x@paths[[i]]     <- .saveTempFile(y)
-          x@coords[[y@name]]   <- y@coord
-          x@markers[[y@name]]      <- y@markers
+          if(isFALSE(onlyData)){
+            x@coords[[i]]   <- x@coords[nrow(x@coords[[i]]):1, ]
+            x@markers[[i]]  <- rev(x@markers)
+          }
         }
       }
     }
     x@intersections <- list()
-    x <- setCoordref(x)
+    # x <- setCoordref(x)
     return(x)
   }
   if (is.null(id) || (is.character(id) && id == "zigzag")){
@@ -133,18 +139,16 @@ setMethod("reverse", "GPRsurvey", function(x, id = NULL, tol = 0.3, track = TRUE
     id <- as.integer(id)
     if(max(id) <= length(x) && min(id) >= 1){
       for(i in seq_along(id)){
-        y <- verboseF(getGPR(x, id = id[i]), verbose = FALSE)
-        y <- reverse(y)
+        y <- verboseF(x[[id[i]]], verbose = FALSE)
+        y <- reverse(y, onlyData = onlyData)
         x@paths[[id[i]]]     <- .saveTempFile(y)
-        if(length(y@coord) > 0){
-          # x@coords[[y@name]]   <- y@coord
-          x@coords[[id[i]]]   <- y@coord
+        if(isFALSE(onlyData)){
+          x@coords[[i]]   <- x@coords[[i]][nrow(x@coords[[i]]):1, ]
+          x@markers[[i]]  <- rev(x@markers)
         }
-        # x@fids[[y@name]]      <- y@fid
-        x@markers[[id[i]]]      <- y@markers
       }
       x@intersections <- list()
-      x <- setCoordref(x)
+      # x <- setCoordref(x)
       return(x) 
     }else{
       stop("id must be between 1 and ", length(x),"!")

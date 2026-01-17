@@ -30,7 +30,7 @@ setMethod("intersect", "GPRsurvey", function(x){
   x@intersections <- vector(length = length(x), mode = "list")
   
   if(sum(sel) == 1) return(x)  # FIXME compute self-intersection
-  if(length(unique(x@crs[!is.na(x@crs)])) != 1){
+  if(!is.na(x@crs) && length(unique(x@crs[!is.na(x@crs)])) != 1){
     warning("Your data have different 'crs'.\n",
             "  I recommend you to set an unique 'crs' to the data\n",
             "  using either 'crs()<-' or 'project()'")

@@ -6,12 +6,12 @@
 \alias{window.GPR}
 \title{Subset GPR data}
 \usage{
-\method{window}{GPRvirtual}(x, xlim = NULL, ylim = NULL, zlim = NULL, ...)
+\method{window}{GPRvirtual}(obj, xlim = NULL, ylim = NULL, zlim = NULL, ...)
 
-\method{window}{GPR}(x, xlim = NULL, zlim = NULL, ...)
+\method{window}{GPR}(obj, xlim = NULL, zlim = NULL, ...)
 }
 \arguments{
-\item{x}{(\code{GPR})}
+\item{obj}{(\code{GPR})}
 
 \item{xlim}{(\code{numeric[2]}) Data range along x-axis}
 

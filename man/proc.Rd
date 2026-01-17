@@ -3,17 +3,17 @@
 \name{proc}
 \alias{proc}
 \alias{proc<-}
-\alias{proc,GPR-method}
-\alias{proc<-,GPR-method}
+\alias{proc,GPRvirtual-method}
+\alias{proc<-,GPRvirtual-method}
 \title{Get processing steps applied to the data}
 \usage{
 proc(x)
 
 proc(x) <- value
 
-\S4method{proc}{GPR}(x)
+\S4method{proc}{GPRvirtual}(x)
 
-\S4method{proc}{GPR}(x) <- value
+\S4method{proc}{GPRvirtual}(x) <- value
 }
 \arguments{
 \item{x}{(\code{GPR}) An object of the class GPR.}

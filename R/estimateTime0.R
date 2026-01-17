@@ -9,16 +9,16 @@
 #' this case, all traces would have the same time-zero).
 #' 
 #' This function is a wrapper for the following commands:
-#' * `tfb <- pickFirstBreak(x, ...)`
-#' * `t0 <- firstBreakToTime0(x, tfb)`
-#' * `time0(x) <- t0` (if `FUN` is not `NULL` else `time0(x) <- FUN(t0, ...)`)
+#' * `tfb <- pickFirstBreak(obj, ...)`
+#' * `t0 <- firstBreakToTime0(obj, tfb)`
+#' * `time0(obj) <- t0` (if `FUN` is not `NULL` else `time0(obj) <- FUN(t0, ...)`)
 #' 
 #' 
 #' Modified slots:
 #' * `time0`: new estimated time-zero.
 #' * `proc`: updated with function name and arguments.
 #'
-#' @param x (`GPR`) An object of the class `GPR
+#' @param obj (`GPR`) An object of the class `GPR
 #' @param method (`character[1]) Method to be applied (either
 #'              `"coppens"`, `"threshold"` or `"MER"`). 
 #'              `"coppens"` corresponds to the modified Coppens method, 
@@ -68,7 +68,7 @@
 #' @export
 #' @concept processing
 setGeneric("estimateTime0",
-                function(x, method = c("coppens", "threshold", "MER"), 
+                function(obj, method = c("coppens", "threshold", "MER"), 
                          thr = NULL, w = NULL, ns = NULL, bet = NULL, 
                          shorten = TRUE, c0 = 0.299, 
                          FUN = NULL, ..., track = TRUE)
@@ -80,7 +80,7 @@ setGeneric("estimateTime0",
 #' @rdname estimateTime0
 #' @export
 setMethod("estimateTime0", "GPR", 
-          function(x, method = c("coppens", "threshold", "MER"), 
+          function(obj, method = c("coppens", "threshold", "MER"), 
                    thr = NULL, w = NULL, ns = NULL, bet = NULL, 
                    shorten = TRUE, c0 = 0.299, 
                    FUN = NULL, ..., track = TRUE){
@@ -88,8 +88,8 @@ setMethod("estimateTime0", "GPR",
             method <- method[1]
             
             # # shorten the file -> computed only for argument checking
-            # nmax <- nrow(x)
-            # tst <- which(as.matrix(x) == max(x), arr.ind = TRUE)
+            # nmax <- nrow(obj)
+            # tst <- which(as.matrix(obj) == max(obj), arr.ind = TRUE)
             # if(length(tst) > 0 ){
             #   nmax <- max(tst[,"row"])
             # }
@@ -99,9 +99,9 @@ setMethod("estimateTime0", "GPR",
             msg <- checkArg(method,  msg, "STRING_CHOICE", 
                             c("coppens", "threshold",  "MER"))
             msg <- checkArg(thr,     msg, "PERCENT1_NULL")
-            msg <- checkArg(w,       msg, "NUMERIC1_SPOS_NULL", max(x@z)/2)
-            # msg <- checkArg(ns     , msg, "NUMERIC1_SPOS_NULL", round((nmax - 1) * x@dz))
-            msg <- checkArg(ns,      msg, "NUMERIC1_SPOS_NULL", max(x@z))
+            msg <- checkArg(w,       msg, "NUMERIC1_SPOS_NULL", max(obj@z)/2)
+            # msg <- checkArg(ns     , msg, "NUMERIC1_SPOS_NULL", round((nmax - 1) * obj@dz))
+            msg <- checkArg(ns,      msg, "NUMERIC1_SPOS_NULL", max(obj@z))
             msg <- checkArg(bet,     msg, "NUMERIC1_SPOS_NULL", Inf)
             msg <- checkArg(shorten, msg, "LOGICAL_LEN", 1)
             msg <- checkArg(c0,      msg, "NUMERIC1_SPOS", Inf)
@@ -109,15 +109,15 @@ setMethod("estimateTime0", "GPR",
             checkArgStop(msg)
             #-----------------------------------
             
-            tfb <- pickFirstBreak(x, method = method, thr = thr, w = w, 
+            tfb <- pickFirstBreak(obj, method = method, thr = thr, w = w, 
                               ns = ns, bet = bet, shorten = shorten)
-            t0 <- firstBreakToTime0(x, tfb, c0 = c0)
+            t0 <- firstBreakToTime0(obj, tfb, c0 = c0)
             
             if(!is.null(FUN)) t0 <- FUN(t0, ...)
             
-            x <- setTime0(x, t0, track = FALSE)
+            obj <- setTime0(obj, t0, track = FALSE)
             
-            # x@proc <- x@proc[-length(x@proc)] # remove proc "time0()<-"
-            if(isTRUE(track)) proc(x) <- getArgs()
-            return(x)
+            # obj@proc <- obj@proc[-length(obj@proc)] # remove proc "time0()<-"
+            if(isTRUE(track)) proc(obj) <- getArgs()
+            return(obj)
           })

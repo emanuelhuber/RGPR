@@ -30,7 +30,9 @@ setMethod("[", signature(x = "GPRsurvey", i = "ANY", j = "ANY"),
     y@freqs          <- x@freqs[i]
     y@antseps        <- x@antseps[i]
     
-    y@spunit         <- x@spunit[i]
+    if(length(x@spunit) == length(x@names)){
+      y@spunit         <- x@spunit[i]
+    }
     # FIXME
     if(length(x@crs) == 1){
       y@crs <- x@crs

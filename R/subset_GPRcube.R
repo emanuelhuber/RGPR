@@ -78,9 +78,10 @@ setMethod(
                rot    = x@rot,
                #---------- GPRslice ------------------#
                z = vz[k]
+               
       )
       return(y)
-      # extract GPR alons x or y axis
+      # extract GPR along x or y axis
     }else if(length(i) == 1 || length(j) == 1){
       u <- which(c(length(i), length(j)) == 1)[1]
       if(u == 1){

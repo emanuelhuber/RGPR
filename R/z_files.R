@@ -98,9 +98,9 @@ safeName <- function(x, y){
 
 
 .saveTempFile <- function(x){
-  tmpf <- tempfile(x@name)
-  writeGPR(x, type = "rds", overwrite = FALSE, fPath = tmpf)
-  return(paste0(tmpf, ".rds"))
+  tmpf <- tempfile(pattern = x@name, fileext = ".rds")
+  writeGPR(x, dsn = tmpf, type = "rds", overwrite = TRUE)
+  return(tmpf)
 }
 
 

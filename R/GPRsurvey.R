@@ -21,7 +21,8 @@ GPRsurvey <- function(x, verbose = TRUE, ...){
   line_freq     <- numeric(n)
   line_antsep   <- numeric(n)
   line_lengths  <- numeric(n)
-  line_spunit  <- character(n)
+  line_spunit   <- character(n)
+  line_xunit   <- character(n)
   line_crs      <- character(n)
   line_nz       <- integer(n)
   line_zlengths <- numeric(n)
@@ -33,7 +34,7 @@ GPRsurvey <- function(x, verbose = TRUE, ...){
   
   for(i in seq_along(LINES)){
     verboseF(message("Read ", basename(LINES[i]), "..."), verbose = verbose)
-    gpr <- verboseF( readGPR(LINES[[i]], verbose = verbose), verbose = verbose)
+    gpr <- verboseF( readGPR(LINES[[i]], verbose = verbose, ...), verbose = verbose)
     if(inherits(gpr, "GPRset")){
       stop("HOW TO HANDLE GPRset OBJECT????")
     }
@@ -81,7 +82,8 @@ GPRsurvey <- function(x, verbose = TRUE, ...){
     }else{
       line_antsep[i]       <- gpr@antsep
     }
-    line_spunit[i]        <- gpr@spunit
+    line_spunit[i]         <- gpr@spunit
+    line_xunit[i]          <- gpr@xunit
     line_zunits[i]         <- gpr@zunit  
     line_crs[i]            <- gpr@crs
     xyzCoords[[i]]         <- gpr@coord
@@ -98,9 +100,11 @@ GPRsurvey <- function(x, verbose = TRUE, ...){
     }
   }
   line_crs <- .checkCRS(line_crs[!is.na(line_crs)][1])
-  # message(line_crs)
-  # line_spunit <- .checkUnit(line_spunit[line_spunit != ""][1])
-  line_spunit <- crsUnit(line_crs)
+  if(is.na(line_crs)){
+    line_spunit <- line_xunit[!is.na(line_xunit)][1]
+  }else{
+    line_spunit <- crsUnit(line_crs)
+  }
   
   # if(isTRUE(verbose)){
   #   # if( length(unique(line_spunit)) > 1 ){

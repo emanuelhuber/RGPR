@@ -20,7 +20,7 @@
 #' @param obj    (`GPR* object`) An object of the class GPR.
 #' @param a    (`numeric[1]`) Parameter of the exponential filter
 #'             (`a` \eqn{\geq} 0).
-#' @param b    `numeric(1)` Parameter of the power filter
+#' @param b    (`numeric[1]`) Parameter of the power filter
 #'             (`b` \eqn{\geq} 0). Usually, `b = 1`.
 #' @param t0   (`numeric[1]`) Start time of the gain filter
 #'             (if `t0 = NULL`, `t0` is set equal to `time0(x)`).
@@ -86,7 +86,7 @@ setMethod("gainSEC", "GPR", function(obj,
     return(obj*G)
   }
   # obj <- obj*G
-  return(obj)
+  # return(obj)
 })
 
 

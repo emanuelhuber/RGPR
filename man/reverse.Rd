@@ -5,11 +5,11 @@
 \alias{reverse,GPR-method}
 \title{Reverse the trace position.}
 \usage{
-reverse(x, id = NULL, tol = 0.3, track = TRUE)
+reverse(x, id = NULL, tol = 0.3, onlyData = FALSE, track = TRUE)
 
-\S4method{reverse}{GPR}(x, id = NULL, tol = 0.3, track = TRUE)
+\S4method{reverse}{GPR}(x, id = NULL, tol = 0.3, onlyData = FALSE, track = TRUE)
 
-\S4method{reverse}{GPRsurvey}(x, id = NULL, tol = 0.3, track = TRUE)
+\S4method{reverse}{GPRsurvey}(x, id = NULL, tol = 0.3, onlyData = FALSE, track = TRUE)
 }
 \arguments{
 \item{x}{(\code{GPR}|\code{GPRsurvey}) Object of the class \code{GPR} or \code{GPRsurvey}}
@@ -24,17 +24,19 @@ YLINE02; cluster 3 = XYLINE1, XYLINE2, XYLINE3) and reverse the
 data such that all GPR lines within the same cluster have the
 same orientation (up to a tolerance value \code{tol}).}
 
-\item{to}{Length-one numeric vector. Tolerance angle in radian to determine
+\item{tol}{Length-one numeric vector. Tolerance angle in radian to determine
 if the data have the same orientation. The first data of the
 cluster is set as reference angle \eqn{\alpha_0}, then for data
 \eqn{i} in the same cluster, if \eqn{\alpha_i} is not between
 \eqn{\alpha_0 - \frac{tol}{2}} and
 \eqn{\alpha_0 + \frac{tol}{2}}, then the data is reversed.}
+
+\item{onlyData}{(\code{logical[1]}) If \code{TRUE}, only the data are reversed. If
+\code{FALSE}, both the data and the coordinates
+are reversed.}
 }
 \description{
-Reverse the trace position.
-
-Reverse the trace position.
+Reverse the trace position (but not the coordinates).
 }
 \examples{
 \dontrun{

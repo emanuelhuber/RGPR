@@ -5,12 +5,12 @@
 \alias{shiftGridLine,GPRsurvey-method}
 \title{Shift trace positions of one GPR data}
 \usage{
-shiftGridLine(x, i, dx = 0, dy = 0, dz = 0)
+shiftGridLine(obj, i, dx = 0, dy = 0, dz = 0)
 
-\S4method{shiftGridLine}{GPRsurvey}(x, i, dx = 0, dy = 0, dz = 0)
+\S4method{shiftGridLine}{GPRsurvey}(obj, i, dx = 0, dy = 0, dz = 0)
 }
 \arguments{
-\item{x}{(\code{GPRsurvey}) Index of the line to be shifted}
+\item{obj}{(\code{GPRsurvey}) Index of the line to be shifted}
 
 \item{i}{(\code{numeric[1]}) Index of the line to be shifted}
 

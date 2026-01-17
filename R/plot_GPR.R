@@ -311,11 +311,12 @@ plot.GPR <- function(x,
       xat <- axis(side = 1,  tck = +0.01, mgp = c(1,0.5,0), lwd = -1, lwd.ticks = 1)
       
       if(isTRUE(secaxis)){
+        vall <- .getVel(x, type = "vrms", strict = FALSE)
       #if(grepl("[m]$", x@zunit) || !isCommonOffset(x) || anyNA(x@antsep) ){
-        if(isZDepth(x) || length(x@vel) == 0 ){
+        if(isZDepth(x) || is.null(vall) ){
           axis(side = 3, tck = +0.01, mgp = c(1,0.5,0), lwd = -1, lwd.ticks = 1)
         }else if(isZTime(x)){
-          vmean <- mean(.getVel(x, type = "vrms", strict = FALSE))
+          vmean <- mean(vall)
           if(isTRUE(horiz)){
             .depthAxis(x, z, vmean, t0, xat, side = 3 )
           }else{
@@ -484,7 +485,10 @@ plot.GPR <- function(x,
       asp <- ifelse(is.null(dots$asp), 1, dots$asp) 
       dots$asp <- NULL
       vmean <- 2
-      if(isZTime(x))  vmean <- mean(.getVel(x, type = "vrms", strict = FALSE))
+      if(isZTime(x)){
+        vall <- .getVel(x, type = "vrms", strict = FALSE)
+        if(!is.null(vall))    vmean <- mean(vall)
+      }  
       heightPDF <- fac * 0.2 * abs(diff(defaults$ylim)) * asp * vmean/2 + sum(par()$omi[c(1,3)] + par()$mai[c(1,3)])
       widthPDF <- fac * 0.2 * abs(diff(defaults$xlim))  +                 sum(par()$omi[c(2,4)] + par()$mai[c(2,4)])
       if(tolower(ext) == "pdf"){
@@ -583,9 +587,10 @@ plot.GPR <- function(x,
     axis(1, tck = 0.01, mgp = c(2, 0.5, 0), lwd = -1, lwd.ticks = 1)
     axis(2, tck = 0.01, mgp = c(2, 0.5, 0), lwd = -1, lwd.ticks = 1)
     if(isTRUE(secaxis)){
-      if(isZTime(x) && isCommonOffset(x)){
+      vall <- .getVel(x, type = "vrms", strict = FALSE)
+      if(isZTime(x) && isCommonOffset(x) && !is.null(vall)){
         # FIXME: is it vrms or vint?
-        vmean <- mean(.getVel(x, type = "vrms", strict = FALSE))
+        vmean <- mean(vall)
         xat <- sort(par()$usr[3:4])
         .secaxis(x, antsep = x@antsep, z = x@z, v = vmean, z0 = mean(x@z0), xat = xat, side = 4)
       }else{
@@ -778,11 +783,13 @@ plot.GPR <- function(x,
 #' @name lines
 #' @export
 lines.GPR <- function(x, relTime0 = FALSE, ...){
-  if(length(x@vel) > 0){ 
+  vall <- .getVel(x, type = "vrms", strict = FALSE)
+  if(!is.null(vall)){ 
     # FIXME: 
     #   - v <- getVel()
     #   - v <- mean(v)
-    v <- x@vel[[1]]
+    # v <- x@vel[[1]]
+    v <- mean(vall)
   }else{
     v <- 0
   }
@@ -831,11 +838,13 @@ lines.GPR <- function(x, relTime0 = FALSE, ...){
 #' @name points
 #' @export
 points.GPR <- function(x, relTime0 = FALSE, ...){
-  if(length(x@vel) > 0){  
+  vall <- .getVel(x, type = "vrms", strict = FALSE)
+  if(!is.null(vall)){ 
     # FIXME: 
     #   - v <- getVel()
     #   - v <- mean(v)
-    v <- x@vel[[1]]  
+    # v <- x@vel[[1]]
+    v <- mean(vall) 
   }else{
     v <- 0
   }

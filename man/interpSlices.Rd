@@ -6,7 +6,7 @@
 \title{Interpolate horizontal slices}
 \usage{
 interpSlices(
-  x,
+  obj,
   dx = NULL,
   dy = NULL,
   dz = NULL,
@@ -14,11 +14,12 @@ interpSlices(
   extend = c("bbox", "obbox", "chull", "buffer"),
   buffer = NULL,
   shp = NULL,
-  rot = FALSE
+  rot = FALSE,
+  verbose = TRUE
 )
 
 \S4method{interpSlices}{GPRsurvey}(
-  x,
+  obj,
   dx = NULL,
   dy = NULL,
   dz = NULL,
@@ -26,11 +27,12 @@ interpSlices(
   extend = c("bbox", "obbox", "chull", "buffer"),
   buffer = NULL,
   shp = NULL,
-  rot = FALSE
+  rot = FALSE,
+  verbose = TRUE
 )
 }
 \arguments{
-\item{x}{(\code{GPRsurvey})}
+\item{obj}{(\code{GPRsurvey})}
 
 \item{dx}{(\code{numeric[1]}) x-resolution}
 
@@ -38,19 +40,25 @@ interpSlices(
 
 \item{dz}{(\code{numeric[1]}) z-resolution}
 
-\item{h}{(\code{numeric[1]}) FIXME: see function...}
+\item{h}{(\code{numeric[1]}) FIXME: Number of levels in MBA hierarchy (see function...)}
 
-\item{extend}{(\code{character[1]}) FIXME: see function...}
+\item{extend}{(\code{character[1]}) FIXME: Method to define interpolation extent.}
 
-\item{buffer}{(\code{numeric[1]}) FIXME: see function...}
+\item{buffer}{(\code{numeric[1]}) FIXME: Buffer distance around survey lines.}
 
-\item{shp}{(\code{matrix[n,2]|list[2]|sf}) FIXME: see function...}
+\item{shp}{(\code{matrix[n,2]|list[2]|sf}) FIXME: Shape/polygon defining interpolation bounds.}
 
 \item{rot}{(\code{logical[1]|numeric[1]}) If \code{TRUE} the GPR lines are
 fist rotated such to minimise their axis-aligned bounding box.
 If \code{rot} is numeric, the GPR lines is rotated first
 rotated by \code{rot} (in radian).}
+
+\item{verbose}{(\code{logical[1]}) If TRUE, verbose.}
+}
+\value{
+(\code{GPRcube|GPRslice})
 }
 \description{
 Interpolate horizontal slices
 }
+\concept{3D}

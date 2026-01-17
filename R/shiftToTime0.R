@@ -6,8 +6,8 @@
 #'
 #' This function is a wrapper for the following commands
 #' \itemize{
-#'   \item `x <- traceShift( x,  -time0(x), method = method, crop = crop)`
-#'   \item `time0(x) <- 0`
+#'   \item `obj <- traceShift( obj,  -time0(obj), method = method, crop = crop)`
+#'   \item `time0(obj) <- 0`
 #' }
 #' 
 #' Modified slots
@@ -18,7 +18,7 @@
 #'   \item `proc`: updated with function name and arguments.
 #' }
 #'  
-#' @param x      (`GPR* object`) An object of the class `GPR`
+#' @param obj      (`GPR* object`) An object of the class `GPR`
 #' @param method (`character[1]`) Interpolation method to be applied
 #'               (one of `pchip` `linear`, `nearest`, 
 #'               `spline`, `cubic`, `none`, 
@@ -44,7 +44,7 @@
 # #'          into time zero.
 # #'          \code{\link{time0}} and \code{\link{setTime0}} to set time-zero;
 # #'          \code{\link{traceShift}} to shift the traces
-setGeneric("shiftToTime0", function(x,
+setGeneric("shiftToTime0", function(obj,
                                 method = c("pchip", "linear", "nearest", 
                                            "spline", "cubic", "none"), 
                                 crop = TRUE, track = TRUE) 
@@ -54,7 +54,7 @@ setGeneric("shiftToTime0", function(x,
 
 #' @rdname shiftToTime0
 #' @export
-setMethod("shiftToTime0", "GPR", function(x,
+setMethod("shiftToTime0", "GPR", function(obj,
                                       method = c("pchip", "linear", "nearest", 
                                                  "spline", "cubic", "none"), 
                                       crop = TRUE, track = TRUE){
@@ -69,14 +69,14 @@ setMethod("shiftToTime0", "GPR", function(x,
   checkArgStop(msg)
   #-----------------------------------
   
-  # ts <- -x@z0 
-  if(any(x@z0 != 0)){
-    x <- .traceShift(x, z = x@z0, method = method, crop = crop)
-    x@z0 <- rep(0, ncol(x@data))
-    if(isTRUE(track)) proc(x) <- getArgs()
-    return(x)
+  # ts <- -obj@z0 
+  if(any(obj@z0 != 0)){
+    obj <- .traceShift(obj, z = obj@z0, method = method, crop = crop)
+    obj@z0 <- rep(0, ncol(obj@data))
+    if(isTRUE(track)) proc(obj) <- getArgs()
+    return(obj)
   }else{
     message("Nothing shifted because all 't0' values are equal to zero!")
-    return(x)
+    return(obj)
   }
 })

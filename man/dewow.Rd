@@ -5,12 +5,12 @@
 \alias{dewow,GPR-method}
 \title{Trace dewowing}
 \usage{
-dewow(x, type = c("runmed", "runmean", "gaussian"), w = NULL, track = TRUE)
+dewow(obj, type = c("runmed", "runmean", "gaussian"), w = NULL, track = TRUE)
 
-\S4method{dewow}{GPR}(x, type = c("runmed", "runmean", "gaussian"), w = NULL, track = TRUE)
+\S4method{dewow}{GPR}(obj, type = c("runmed", "runmean", "gaussian"), w = NULL, track = TRUE)
 }
 \arguments{
-\item{x}{(\code{GPR}) An object of the class GPR.}
+\item{obj}{(\code{GPR}) An object of the class GPR.}
 
 \item{type}{(\code{character[1]}) Dewow method,
 one of \code{runmed} (running median),
@@ -23,7 +23,7 @@ trace unit;
 If \code{type} = \code{Gaussian}, standard deviation in trace
 unit.
 If \code{w = NULL}, \code{w} is estimated as five times the
-wavelength corresponding to the maximum frequency of x
+wavelength corresponding to the maximum frequency of obj
 (estimated with \link{spec})}
 
 \item{track}{(\code{logical[1]}) Should the processing step be tracked?}

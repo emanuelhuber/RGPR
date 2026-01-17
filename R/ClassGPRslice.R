@@ -17,5 +17,7 @@ setClass(
   contains = "GPRcube",
   slots=c(
     z     = "numeric"    # depth of the slice
+    # dlim  = "numeric"     # length 2: value range from the cube
+    # in fact the user can set clim from a GPRcube. so no need
   )
 )

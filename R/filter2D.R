@@ -16,32 +16,69 @@ setGeneric("filter2D", function(obj, type=c("median3x3", "adimpro", "gaussian"),
 
 #' @rdname filter2D
 #' @export
-setMethod("filter2D", "GPR", function(obj, 
+setMethod("filter2D", "GPRvirtual", function(obj, 
                                       type = c("median3x3", "adimpro", "gaussian"), 
                                       ...,
                                       track = TRUE){
   type <- match.arg(type, c("median3x3", "adimpro", "gaussian"))
-  if(type == "median3x3"){
-    obj@data <-  .medianFilter3x3(obj@data)
-  }else if( type == "adimpro"){
-    IMG <- obj@data
-    IMG <- (IMG-min(IMG))/(max(IMG)-min(IMG))
-    adimg <- adimpro::make.image(IMG)
-    # img.smooth <- adimpro::awsimage(adimg, hmax = 2)
-    # img.smooth <- adimpro::awsimage(adimg, hmax = 2)
-    # img.smooth <- adimpro::awsaniso(adimg, hmax = 2,...)
-    img.smooth <- adimpro::awsaniso(adimg, ...)
-    AA <- adimpro::extract.image(img.smooth)
-    AAA <- ( (AA - mean(AA))/sd(AA) ) * sd(obj@data)
-    obj@data <- AAA
-  }else if(type == "gaussian"){
-    obj@data <- mmand::gaussianSmooth(obj@data, ...)
+  obj@data <- .filter2D(obj@data, type = type, ...)
+  if(isTRUE(track)) proc(obj) <- getArgs()
+  #     obj@proc <- c(obj@proc, proc)
+  return(obj)
+} 
+)
+
+#' @rdname filter2D
+#' @export
+setMethod("filter2D", "GPRslice", function(obj, 
+                                      type = c("median3x3", "adimpro", "gaussian"), 
+                                      ...,
+                                      track = TRUE){
+  type <- match.arg(type, c("median3x3", "adimpro", "gaussian"))
+  obj@data <- .filter2D(obj@data, type = type, ...)
+  if(isTRUE(track)) proc(obj) <- getArgs()
+  #     obj@proc <- c(obj@proc, proc)
+  return(obj)
+} 
+)
+
+#' @rdname filter2D
+#' @export
+setMethod("filter2D", "GPRcube", function(obj, 
+                                           type = c("median3x3", "adimpro", "gaussian"), 
+                                           ...,
+                                           track = TRUE){
+  type <- match.arg(type, c("median3x3", "adimpro", "gaussian"))
+  for(i in 1:dim(obj)[3]){
+    obj@data[,,i] <- .filter2D(obj@data[,,i], type = type, ...)
   }
   if(isTRUE(track)) proc(obj) <- getArgs()
   #     obj@proc <- c(obj@proc, proc)
   return(obj)
 } 
 )
+
+
+
+.filter2D <- function(A, 
+                      type = c("median3x3", "adimpro", "gaussian"), 
+                      ...,
+                      track = TRUE){
+  if(type == "median3x3"){
+    return( .medianFilter3x3(A) )
+  }else if( type == "adimpro"){
+    IMG <- (A-min(A))/(max(A)-min(A))
+    adimg <- adimpro::make.image(IMG)
+    # img.smooth <- adimpro::awsimage(adimg, hmax = 2)
+    # img.smooth <- adimpro::awsimage(adimg, hmax = 2)
+    # img.smooth <- adimpro::awsaniso(adimg, hmax = 2,...)
+    img.smooth <- adimpro::awsaniso(adimg, ...)
+    AA <- adimpro::extract.image(img.smooth)
+    return( ( (AA - mean(AA))/sd(AA) ) * sd(A) )
+  }else if(type == "gaussian"){
+    return( mmand::gaussianSmooth(A, ...) )
+  }
+}
 
 .medianFilter3x3 <- function(A){
   B <- A  # <- matrix(0, 364,364)

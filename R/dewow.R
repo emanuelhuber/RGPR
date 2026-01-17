@@ -14,7 +14,7 @@
 #'   * `data`: trace dewowed.
 #'   * `proc`: updated with function name and arguments.
 #' 
-#' @param x    (`GPR`) An object of the class GPR.
+#' @param obj    (`GPR`) An object of the class GPR.
 #' @param type (`character[1]`) Dewow method,
 #'             one of `runmed` (running median),
 #'             `runmean` (running mean),
@@ -25,7 +25,7 @@
 #'             If `type` = `Gaussian`, standard deviation in trace
 #'             unit.
 #'             If `w = NULL`, `w` is estimated as five times the 
-#'             wavelength corresponding to the maximum frequency of x 
+#'             wavelength corresponding to the maximum frequency of obj 
 #'             (estimated with [spec])
 #' @param track (`logical[1]`) Should the processing step be tracked?
 #' @return (`GPR`) An object of the class GPR whose traces are dewowed.
@@ -34,14 +34,14 @@
 #' @export
 #' @concept processing
 setGeneric("dewow", 
-           function(x, type = c("runmed", "runmean", 
+           function(obj, type = c("runmed", "runmean", 
                                 "gaussian"), 
                     w = NULL, track = TRUE)
              standardGeneric("dewow"))
 
 #' @rdname dewow
 #' @export
-setMethod("dewow", "GPR", function(x, type = c("runmed", "runmean", 
+setMethod("dewow", "GPR", function(obj, type = c("runmed", "runmean", 
                                                "gaussian"), 
                                    w = NULL, track = TRUE){
   # type <- match.arg(type, c("MAD", "Gaussian"))
@@ -56,16 +56,16 @@ setMethod("dewow", "GPR", function(x, type = c("runmed", "runmean",
   checkArgStop(msg)
   #-----------------------------------
   
-  dz <- mean(diff(x@z))
+  dz <- mean(diff(obj@z))
   
   if(is.null(w)){
     # argument initialization
-    # pulse width in ns, (x@freq is in MHz)
+    # pulse width in ns, (obj@freq is in MHz)
     
     # FIXME
     stop("YOU MUST FIRST INTEGRATE FUNCTION 'spec' IN RGPR")
     
-    # a <- RGPR::spec(x, plotSpec = FALSE, unwrapPhase = FALSE)
+    # a <- RGPR::spec(obj, plotSpec = FALSE, unwrapPhase = FALSE)
     # freq <- a$freq[which.max(rowMeans(a$pow))]
     # pw <- 1/(freq * 10^6)/10^-9
     # w <- round((5 * pw)/dz)
@@ -73,18 +73,18 @@ setMethod("dewow", "GPR", function(x, type = c("runmed", "runmean",
     w <- round(w / dz)
   }
   if(type == "runmed"){
-    x@data <- x@data - .runmmmMat(x@data, w, type = "runmed")
+    obj@data <- obj@data - .runmmmMat(obj@data, w, type = "runmed")
   }else if(type == "runmean"){
-    x@data <- x@data - .runmmmMat(x@data, w, type = "runmean")
+    obj@data <- obj@data - .runmmmMat(obj@data, w, type = "runmean")
   }else if(type == "gaussian"){
-    xdata <- x@data
-    xDepth <- matrix(x@z, byrow = FALSE, nrow = nrow(x), ncol = ncol(x))
-    xTime0 <- matrix(x@z0, byrow = TRUE, nrow = nrow(x), ncol = ncol(x))
+    xdata <- obj@data
+    xDepth <- matrix(obj@z, byrow = FALSE, nrow = nrow(obj), ncol = ncol(obj))
+    xTime0 <- matrix(obj@z0, byrow = TRUE, nrow = nrow(obj), ncol = ncol(obj))
     test <- xDepth <= xTime0
-    # before_t0 <- x@z <= mean(x@z0)
+    # before_t0 <- obj@z <= mean(obj@z0)
     xdata[test] <- 0
-    x@data[!test] <- x@data[!test] - mmand::gaussianSmooth(xdata, w)[!test]
+    obj@data[!test] <- obj@data[!test] - mmand::gaussianSmooth(xdata, w)[!test]
   }
-  if(isTRUE(track)) proc(x) <- getArgs()
-  return(x) 
+  if(isTRUE(track)) proc(obj) <- getArgs()
+  return(obj) 
 })

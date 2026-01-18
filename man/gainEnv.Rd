@@ -4,7 +4,7 @@
 \alias{gainEnv}
 \title{Gain compensation based on envelop}
 \usage{
-\S4method{gainEnv}{GPR}(x, FUN = mean, track = TRUE)
+\S4method{gainEnv}{GPR}(x, global = TRUE, FUN = mean, track = TRUE)
 }
 \description{
 Gain compensation based on envelop

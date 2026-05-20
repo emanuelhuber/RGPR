@@ -1,4 +1,56 @@
-  
+# =============================================================================
+# io-rds.R
+#
+# R internal format  —  RDS
+#
+# Mandatory : *.rds
+# Optional  : (none)
+#
+# RDS files are written by writeGPR() and store a serialised GPR or GPRset
+# object directly.  No GPS post-processing is needed; the stored object
+# already has fully resolved coordinates.  The reader therefore returns the
+# object directly rather than the list(x, x_gps) convention used by the
+# other format readers — the dispatcher handles both return shapes.
+# =============================================================================
+
+
+#' Read an R-internal GPR file (.rds)
+#'
+#' Format-specific reader called by the dispatcher.  Not intended to be called
+#' directly by users; use \code{\link{readGPR}} instead.
+#'
+#' @param dsn     Named list with slot \code{RDS}.
+#' @param fName   (`character(1)`) Base filename of the .rds file.
+#' @param fPath   (`character(1)`) Full path of the .rds file.
+#' @param desc    (`character(1)`) Short data description (unused for RDS;
+#'                the stored object already contains its description).
+#' @param Vmax    (`numeric(1)|NULL`) Unused for RDS files.
+#' @param verbose (`logical(1)`) Print progress messages.
+#' @param ...     Currently unused; reserved for future use.
+#'
+#' @return A named list with:
+#'   \item{x}{Object of class \code{GPR} or \code{GPRset}.}
+#'   \item{x_gps}{\code{NULL} (RDS objects already contain coordinates).}
+#'
+#' @keywords internal
+.read_rds <- function(dsn, fName, fPath, desc, Vmax, verbose, ...) {
+  x <- verboseF(.read_RDS(dsn[["RDS"]]), verbose = verbose)
+  list(x = x, x_gps = NULL)
+}
+
+
+# -----------------------------------------------------------------------------
+# Format registration
+# -----------------------------------------------------------------------------
+register_gpr_format(
+  id         = "RDS",
+  detect_ext = "RDS",
+  mandatory  = c(RDS = "RDS"),
+  optional   = character(0),
+  gps_ext   = NULL,
+  reader_fn  = .read_rds
+)
+
 .read_RDS <- function(path){
   x <- readRDS(path)
   if(inherits(x, "GPRvirtual") || inherits(x, "GPRsurvey")){

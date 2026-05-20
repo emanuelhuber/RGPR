@@ -2,8 +2,10 @@
 % Please edit documentation in R/readDZT.R
 \name{readDZT}
 \alias{readDZT}
-\title{Read GSSI GPR data}
+\title{Read GSSI GPR data (.dzt)}
 \usage{
+readDZT(dsn)
+
 readDZT(dsn)
 }
 \arguments{
@@ -12,13 +14,22 @@ either the filepath to the GPR data (character),
 or an open file connection.}
 }
 \value{
+A list with elements:
+\item{hd}{Parsed header (list).}
+\item{data}{3-D array \code{[nSamples, nScans, nChannels]}.}
+\item{depth}{Time vector (ns).}
+\item{pos}{Nominal position vector (m).}
+
 (\code{list(4)}) \code{hd} header data,
 \code{data} GPR data, \code{depth} time or depth, and \code{pos}
 position of the traces.
 }
 \description{
-Read GSSI GPR data
+Reads the binary DZT file and returns the raw data array together with the
+parsed header and axis vectors.
 }
 \seealso{
+\code{\link[=readDZG]{readDZG()}}, \code{\link[=readDZX]{readDZX()}}
+
 \code{\link[=readDZG]{readDZG()}}, \code{\link[=readDZX]{readDZX()}}
 }

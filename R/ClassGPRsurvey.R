@@ -51,6 +51,10 @@ setClass(
   Class = "GPRsurvey",  
   slots = c(
     version       = "character",  # version of the class
+    name          = "character",  # name of the survey
+    desc          = "character",  # description of the suvey
+    path          = "character",  # path of the survey
+    
     paths         = "character", # filepath of the GPR data
     names         = "character",  # names of the GPR profiles
     descs         = "character",  # descriptions of the GPR profiles

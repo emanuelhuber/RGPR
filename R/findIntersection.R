@@ -13,14 +13,14 @@
 #'
 #' @param x      [`GPRsurvey`] An object of the class `GPRsurvey`
 #' @return (`object GPRsurvey`) An object of the class GPRsurvey.
-#' @name intersect
+#' @name findIntersection
 #' @concept spatial computing
-setGeneric("intersect", function(x) 
-  standardGeneric("intersect"))
+setGeneric("findIntersection", function(x) 
+  standardGeneric("findIntersection"))
 
-#' @rdname intersect
+#' @rdname findIntersection
 #' @export
-setMethod("intersect", "GPRsurvey", function(x){
+setMethod("findIntersection", "GPRsurvey", function(x){
   sel <- sapply(x@coords, function(x) length(x) > 0)
   if(all(!sel)){
     return(x)

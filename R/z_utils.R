@@ -366,6 +366,29 @@ setDots <- function(dots, defaults){
   return(def[[n]])
 }
 
+#' Safe slot accessor with length-zero guard
+#'
+#' Returns \code{slot(obj, slot_name)[1]} when length > 0, otherwise
+#' emits a warning and returns \code{default}.
+#'
+#' @param obj       S4 object.
+#' @param slot_name (`character(1)`) Slot name.
+#' @param default   Value to return when the slot has length zero.
+#' @param msg       (`character(1)`) Warning detail.
+#' @param verbose   (`logical(1)`) Emit warning?
+#'
+#' @keywords internal
+.setSlotDefault <- function(obj, slot_name, default, msg,
+                             verbose = TRUE) {
+  val <- methods::slot(obj, slot_name)
+  if (length(val) == 0L) {
+    if (isTRUE(verbose)) warning( msg, call. = FALSE)
+    return(default)
+  }
+  val[1L]
+}
+
+
 
 .whichMin <- function(x,y){
   which.min(abs(x-y))

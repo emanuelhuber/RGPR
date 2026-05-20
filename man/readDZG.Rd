@@ -2,8 +2,10 @@
 % Please edit documentation in R/readDZT.R
 \name{readDZG}
 \alias{readDZG}
-\title{Read GSSI GPS data}
+\title{Read GSSI GPS data (.dzg)}
 \usage{
+readDZG(dsn)
+
 readDZG(dsn)
 }
 \arguments{
@@ -12,12 +14,19 @@ either the filepath to the GPR data (character),
 or an open file connection.}
 }
 \value{
+A data frame with columns \code{x}, \code{y}, \code{z} (coordinates
+in decimal degrees), \code{id} (1-based trace index), and
+\code{time} (UTC time).
+
 (\code{data.frame(,5)}) position (\code{x}, \code{y}, \code{z}),
 trace id (\code{id}), and time (\code{time}).
 }
 \description{
-Read GSSI GPS data
+Parses NMEA GSSIS+GPGGA sentence pairs from a GSSI .dzg file and returns
+a data frame of georeferenced trace positions.
 }
 \seealso{
+\code{\link[=readDZT]{readDZT()}}, \code{\link[=readDZX]{readDZX()}}
+
 \code{\link[=readDZT]{readDZT()}}, \code{\link[=readDZX]{readDZX()}}
 }

@@ -2,7 +2,68 @@
 # - '.getHD()'
 
 
+# =============================================================================
+# io-dt1.R
+#
+# Sensors & Software  —  DT1 + HD (+ GPS)
+#
+# Mandatory : *.dt1 (data), *.hd (header)
+# Optional  : *.gps (GPS coordinates)
+# =============================================================================
 
+
+#' Read a Sensors & Software GPR file (.dt1 + .hd)
+#'
+#' Format-specific reader called by the dispatcher.  Not intended to be called
+#' directly by users; use \code{\link{readGPR}} instead.
+#'
+#' @param dsn     Named list with slots \code{DT1}, \code{HD}, and optionally
+#'                \code{GPS} (character paths or open connections).
+#' @param fName   (`character(1)`) Base filename of the primary (.dt1) file.
+#' @param fPath   (`character(1)`) Full path of the primary (.dt1) file.
+#' @param desc    (`character(1)`) Short data description.
+#' @param Vmax    (`numeric(1)|NULL`) Nominal input voltage for bit conversion.
+#' @param verbose (`logical(1)`) Print progress messages.
+#' @param ...     Currently unused; reserved for future use.
+#'
+#' @return A named list with:
+#'   \item{x}{Object of class \code{GPR}.}
+#'   \item{x_gps}{An \code{sf} object with GPS data, or \code{NULL}.}
+#'
+#' @keywords internal
+.read_dt1 <- function(dsn, fName, fPath, desc, Vmax, verbose, ...) {
+
+  hd  <- verboseF(readHD(dsn[["HD"]]),  verbose = verbose)
+  dt1 <- verboseF(readDT1(dsn[["DT1"]], ntr = hd$ntr, npt = hd$npt),
+                  verbose = verbose)
+
+  x <- verboseF(
+    .gprDT1(list(hd = hd$HD, dt1 = dt1$dt1hd, data = dt1$data),
+            fName = fName, fPath = fPath, desc = desc, Vmax = Vmax),
+    verbose = verbose
+  )
+
+  x_gps <- NULL
+  if (!is.null(dsn[["GPS"]])) {
+    x_gps <- verboseF(readGPS(dsn[["GPS"]], UTM = FALSE), verbose = verbose)
+    # UTM projection is handled centrally in .maybe_interp_gps()
+  }
+
+  list(x = x, x_gps = x_gps)
+}
+
+
+# -----------------------------------------------------------------------------
+# Format registration
+# -----------------------------------------------------------------------------
+register_gpr_format(
+  id         = "DT1",
+  detect_ext = "DT1",
+  mandatory  = c(DT1 = "DT1", HD = "HD"),
+  optional   = c(GPS = "GPS"),
+  gps_ext   = "GPS",
+  reader_fn  = .read_dt1
+)
 
 #------------------------------------------------------------------------------#
 # private function - constructor

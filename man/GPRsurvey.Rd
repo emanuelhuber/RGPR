@@ -2,18 +2,51 @@
 % Please edit documentation in R/GPRsurvey.R
 \name{GPRsurvey}
 \alias{GPRsurvey}
-\title{Create an object of the class GPRsurvey}
+\title{Create a GPRsurvey object}
 \usage{
-GPRsurvey(x, verbose = TRUE, ...)
+GPRsurvey(
+  x,
+  dsn,
+  name = "",
+  desc = "",
+  overwrite = FALSE,
+  compress = 5L,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
-\item{x}{(\code{character[k]})     Vector of \code{k} file paths of GPR data.}
+\item{x}{(\code{character[k]}) Vector of \code{k} file paths to GPR data
+files.  All formats supported by \code{\link{readGPR}} are
+accepted.}
 
-\item{verbose}{(\code{logical[1]}) If \code{TRUE} the function prints some
-information.}
+\item{dsn}{(\code{character(1)}) Path for the output HDF5 file (must end
+in \code{.h5} by convention).  The file is created; if it
+already exists and \code{overwrite = FALSE} an error is
+raised.}
 
-\item{...}{Additional parameters to be passed to \code{\link[=readGPR]{readGPR()}}.}
+\item{name}{(\code{character(1)}) Name of the survey}
+
+\item{desc}{(\code{character(1)}) Description of the survey}
+
+\item{overwrite}{(\code{logical(1)}) Overwrite an existing HDF5 file?
+Default \code{FALSE}.}
+
+\item{compress}{(\code{integer(1)}) gzip compression level 0–9 for the data
+arrays inside the HDF5 file.  Default \code{5L}.}
+
+\item{verbose}{(\code{logical(1)}) Print progress messages.}
+
+\item{...}{Additional arguments passed to \code{\link{readGPR}}.}
+}
+\value{
+An object of class \code{GPRsurvey}.
 }
 \description{
-Create an object of the class GPRsurvey using a vector of GPR data filepath
+Reads a set of GPR data files, collects survey-level metadata, writes
+everything to a single HDF5 file, and returns a lightweight
+\code{GPRsurvey} object backed by that file.
+}
+\seealso{
+\code{\link[=readGPRsurvey]{readGPRsurvey()}}, \code{\link[=writeGPR]{writeGPR()}}
 }

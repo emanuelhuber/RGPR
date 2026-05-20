@@ -16,56 +16,49 @@ readGPR(
 }
 \arguments{
 \item{dsn}{(\code{character|connection}) Data source name: either the
-filepath to the GPR data (character),
-or an open file connection (can be a list of filepaths or
-open file connections). See Details.}
+filepath to the GPR data (character), or an open file
+connection (can be a list of file paths or connections).}
 
-\item{desc}{(\code{character[1]}) Short description of the data.}
+\item{desc}{(\code{character(1)}) Short description of the data.}
 
-\item{Vmax}{(\code{numeric[1]|NULL}) Nominal analog input voltage used
-for the bits to volt transformation.
-It assumes that \code{Vmin = -Vmax}. If \code{Vmax = NULL},
-no bits to Volt transformation is applied.}
+\item{Vmax}{(\code{numeric(1)|NULL}) Nominal analog input voltage for the
+bits-to-volt transformation. \code{NULL} skips conversion.}
 
-\item{verbose}{(\code{logical[1]}) If \code{FALSE}, all messages and warnings are
+\item{verbose}{(\code{logical(1)}) If \code{FALSE}, all messages and warnings are
 suppressed (use with care).}
 
-\item{interpGPS}{(\code{logical[1]}) Should the trace position be interpolated
-if possible (that means if a GPS file is available)?}
+\item{interpGPS}{(\code{logical(1)}) Should trace positions be interpolated from
+GPS data when available?}
 
-\item{UTM}{(\code{logical[1]|character[1]}) If \code{TRUE} it is assumed
-that the coordinates are in the in geographic (longitude/latitude)
-coordinate reference system (WGS84) and the coordinates are
-projected into the guessed UTM WGS84 coordinate reference
-system (RGPR guesses the UTM zone based on the coordinates).
-Only used if \code{interpGPS = TRUE}.}
+\item{UTM}{(\code{logical(1)|character(1)}) If \code{TRUE}, geographic
+(lon/lat WGS84) coordinates are projected to UTM WGS84.
+Only used when \code{interpGPS = TRUE}.}
 
-\item{...}{additional parameters to be passed to \code{\link[=interpCoords]{interpCoords()}}}
+\item{...}{Additional parameters passed to \code{\link{interpCoords}}.}
 }
 \value{
-(\code{GPR|GPRset}) If the data contains more than one frequency
-data, it returns an object of the class \code{GPRset}. Else
-an object of the class \code{GPR}.
+(\code{GPR|GPRset}) An object of class \code{GPR}, or \code{GPRset} for
+multi-channel data.
 }
 \description{
 Read GPR data file from various manufacturers and interpolate trace
 positions.
 }
-\section{Supported file format}{
+\section{Supported file formats}{
 
 
 \tabular{llll}{
-\strong{Manufacturer}        \tab \strong{Mandatory files} \tab \strong{optional GPS files}  \tab \strong{other optional files}       \cr
-Sensors & software           \tab \strong{.dt1}, .hd      \tab .gps           \tab                        \cr
-MALA  16 bits                \tab \strong{.rd3}, .rad     \tab .cor           \tab                        \cr
-MALA  32 bits                \tab \strong{.rd7}, .rad     \tab .cor           \tab                        \cr
-ImpulseRadar                 \tab \strong{.iprb}, .iprh   \tab .cor           \tab .time , .mrk           \cr
-GSSI                         \tab \strong{.dzt}           \tab .dzg           \tab                        \cr
-Geomatrix Earth Science Ltd  \tab \strong{.dat}, .hdr     \tab .gps, .gpt     \tab                        \cr
-Radar Systems, Inc.          \tab \strong{.sgy/.segy}     \tab                \tab                        \cr
-SEG-Y                        \tab \strong{.sgy/.segy}     \tab                \tab                        \cr
-R internal file format       \tab \strong{.rds}           \tab                \tab                        \cr
-txt files                    \tab \strong{.txt}           \tab                \tab                        \cr
+\strong{Manufacturer}        \tab \strong{Mandatory files} \tab \strong{Optional GPS files}  \tab \strong{Other optional files}  \cr
+Sensors & Software      \tab \strong{.dt1}, .hd       \tab .gps                    \tab                           \cr
+MALA  16 bits           \tab \strong{.rd3}, .rad      \tab .cor                    \tab                           \cr
+MALA  32 bits           \tab \strong{.rd7}, .rad      \tab .cor                    \tab                           \cr
+ImpulseRadar            \tab \strong{.iprb}, .iprh    \tab .cor                    \tab .time, .mrk               \cr
+GSSI                    \tab \strong{.dzt}            \tab .dzg                    \tab .dzx                      \cr
+Geomatrix (UTSI)        \tab \strong{.dat}, .hdr      \tab .gps, .gpt              \tab                           \cr
+Radar Systems / SEG-Y   \tab \strong{.sgy/.segy}      \tab                         \tab                           \cr
+3d-Radar                \tab \strong{.vol}            \tab                         \tab                           \cr
+R internal format       \tab \strong{.rds}            \tab                         \tab                           \cr
+Text files              \tab \strong{.txt}            \tab                         \tab                           \cr
 }
 }
 
@@ -74,46 +67,42 @@ txt files                    \tab \strong{.txt}           \tab                \t
 
 \itemize{
 \item If the class of \code{dsn} is character, \code{readGPR} is
-insensitive to the case of the extension (.DT1 or dt1)
+insensitive to the case of the extension (.DT1 or .dt1).
 \item If \code{dsn} is a list of connections or a character vector, the
-order of the elements does not play any rolle.
+order of the elements does not matter.
 \item If you use connections, \code{dsn} must contain at least all the
 connections to the mandatory files (in any order). If there is
-more than one mandatory file, use a list of connection.
-\item If you use a file path for \code{dsn} (character), you only
-need to provide the path to the main mandatory file (marked in bold
-in the table): RGPR will find the other files if they only differ
-in their extension (same name). If the files have different names,
-you must provide at least the path to all the mandatory files.
-\item If an optional GPS data file is passed in \code{dsn} or exists,
-the GPS data file will be red even if \code{interpGPS = FALSE}.
-The (formated) content of the GPS data file is then stored as
-meta-data and can be retrieved with \code{metadata(x)$GPS}.
-\item If an optional GPS data file (longitude, latitude) is red
-(when \code{interpGPS = TRUE} and a GPS data file exists), the
-coordinates will be per default projected into the corresponding
-UTM (WGS 84) projection (see \code{\link[=interpCoords]{interpCoords()}}).
-\item When reading GPR data, the clipped signal values are directly
-estimated from the bit values and stored as metadata.
-They can be retrieved with \code{metadata(x)$clip}.
+more than one mandatory file, use a list of connections.
+\item If you use a file path for \code{dsn} (character), you only need to
+provide the path to the primary mandatory file (marked in bold in
+the table): RGPR will find the other files automatically if they
+share the same base name and differ only in extension. If the files
+have different names, supply at least the paths to all mandatory
+files.
+\item If an optional GPS data file is passed in \code{dsn} or is found
+on disk, it will be read even if \code{interpGPS = FALSE}. The formatted
+content is stored as metadata and can be retrieved with
+\code{metadata(x)$GPS}.
+\item When \code{interpGPS = TRUE} and a GPS file with longitude/latitude
+data exists, the coordinates are by default projected into the
+corresponding UTM (WGS 84) zone (see \code{\link{interpCoords}}).
+\item Clipped signal values are estimated from the bit depth and stored
+as metadata; retrieve with \code{metadata(x)$clip}.
 }
 }
 
 \examples{
 \dontrun{
-# argument dsn is a file path
+# File path
 x1 <- readGPR(dsn = "data/RD3/DAT_0052.rd3")
 y1 <- readGPR("data/FILE____050.DZT")
 
-# argument dsn is a connection
-con <- file("data/RD3/DAT_0052.rd3", "rb")   # binary mode
-con2 <- file("data/RD3/DAT_0052.rad", "rt")  # text mode
-x2 <- readGPR(dsn = list(con, con2))
-
-con <- file(dsn = "data/FILE____050.DZT", "rb")
-y1 <- readGPR(con)
+# Connection
+con  <- file("data/RD3/DAT_0052.rd3", "rb")
+con2 <- file("data/RD3/DAT_0052.rad", "rt")
+x2   <- readGPR(dsn = list(con, con2))
 }
 }
 \seealso{
-\code{\link[=writeGPR]{writeGPR()}}, \code{\link[=interpCoords]{interpCoords()}}, and \code{\link[=metadata]{metadata()}}
+\code{\link[=writeGPR]{writeGPR()}}, \code{\link[=interpCoords]{interpCoords()}}, \code{\link[=metadata]{metadata()}}
 }

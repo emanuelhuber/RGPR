@@ -2,8 +2,10 @@
 % Please edit documentation in R/readDZT.R
 \name{readDZX}
 \alias{readDZX}
-\title{Read GSSI's .dzx file}
+\title{Read GSSI extended XML metadata (.dzx)}
 \usage{
+readDZX(dsn)
+
 readDZX(dsn)
 }
 \arguments{
@@ -12,12 +14,27 @@ either the filepath to the GPR data (character),
 or an open file connection.}
 }
 \value{
+A list with some or all of the following elements:
+\item{pos}{Interpolated position for each scan (numeric vector).}
+\item{dx}{Mean spatial sampling interval (numeric).}
+\item{markers}{Character vector of marker labels, one per scan.}
+\item{hUnit}{Horizontal distance unit string (e.g. \code{"m"}).}
+\item{vUnit}{Vertical unit string.}
+\item{unitsPerMark}{Units per odometer mark (numeric).}
+\item{unitsPerScan}{Units per scan (numeric).}
+Returns \code{NULL} for empty or unreadable files.
+
 (\code{list}) contains the markers, the trace position and
 the spatial sampling.
 }
 \description{
+Extracts trace positions, spatial sampling, horizontal units, and fiducial
+markers from the XML companion file written by GSSI instruments.
+
 .dzx files are xml files
 }
 \seealso{
+\code{\link[=readDZT]{readDZT()}}, \code{\link[=readDZG]{readDZG()}}
+
 \code{\link[=readDZT]{readDZT()}}, \code{\link[=readDZG]{readDZG()}}
 }

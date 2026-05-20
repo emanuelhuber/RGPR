@@ -1,5 +1,55 @@
 # require rmNaCol
 
+# =============================================================================
+# io-txt.R
+#
+# Plain text  —  TXT
+#
+# Mandatory : *.txt
+# Optional  : (none)
+# =============================================================================
+
+
+#' Read a plain-text GPR file (.txt)
+#'
+#' Format-specific reader called by the dispatcher.  Not intended to be called
+#' directly by users; use \code{\link{readGPR}} instead.
+#'
+#' @param dsn     Named list with slot \code{TXT}.
+#' @param fName   (`character(1)`) Base filename of the .txt file.
+#' @param fPath   (`character(1)`) Full path of the .txt file.
+#' @param desc    (`character(1)`) Short data description.
+#' @param Vmax    (`numeric(1)|NULL`) Nominal input voltage for bit conversion.
+#' @param verbose (`logical(1)`) Print progress messages.
+#' @param ...     Currently unused; reserved for future use.
+#'
+#' @return A named list with:
+#'   \item{x}{Object of class \code{GPR}.}
+#'   \item{x_gps}{\code{NULL} (TXT carries no GPS companion file).}
+#'
+#' @keywords internal
+.read_txt <- function(dsn, fName, fPath, desc, Vmax, verbose, ...) {
+  
+  A <- verboseF(readTXT(dsn[["TXT"]]), verbose = verbose)
+  x <- verboseF(.gprTXT(A, fName = fName, fPath = fPath,
+                        desc = desc, Vmax = Vmax),
+                verbose = verbose)
+  
+  list(x = x, x_gps = NULL)
+}
+
+
+# -----------------------------------------------------------------------------
+# Format registration
+# -----------------------------------------------------------------------------
+register_gpr_format(
+  id         = "TXT",
+  detect_ext = "TXT",
+  mandatory  = c(TXT = "TXT"),
+  optional   = character(0),
+  gps_ext   = NULL,
+  reader_fn  = .read_txt
+)
 .gprTXT <- function(A, fName = character(0), desc = character(0),
                     fPath = character(0), Vmax = NULL){  
   

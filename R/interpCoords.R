@@ -436,7 +436,7 @@ setMethod("interpCoords", "GPRsurvey",
   }
   x@intersections <- list()
   # x <- coordref(x)
-  x <- intersect(x)
+  x <- findIntersection(x)
   return(x)
 })
 

@@ -58,9 +58,12 @@ setMethod("[", signature(x = "GPRsurvey", i = "ANY", j = "ANY"),
 #' @export
 setMethod("[[", signature(x = "GPRsurvey", i = "ANY", j = "ANY"),
           function(x, i, j, ..., exact = TRUE){
-            if(missing(i)) i <- j
-            y <- getGPR(x, id = i)
-            return(y)
+            nm <- if (is.numeric(i)) x@names[[i]] else i
+            if (!nm %in% x@names) {
+              stop("Line '", nm, "' not found in this GPRsurvey.", call. = FALSE)
+            }
+            .read_GPR_line_hdf5(x@filepath, nm)
+            
 })
 
 

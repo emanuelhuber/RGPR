@@ -136,7 +136,7 @@ setReplaceMethod("coordinates", signature="GPRsurvey", function(x, value){
   }
   # print(x_lengths)
   
-  x <- intersect(x)
+  x <- findIntersection(x)
   
   return(x)
 })

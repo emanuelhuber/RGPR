@@ -25,31 +25,43 @@ writeGPR(
 \S4method{writeGPR}{GPRsurvey}(
   obj,
   dsn = NULL,
-  format = c("DT1", "rds", "ASCII", "xta", "xyzv", "vtk"),
+  format = c("DT1", "rds", "ASCII", "xta", "xyzv", "vtk", "h5"),
   overwrite = FALSE,
+  compress = 5L,
   ...
 )
 }
 \arguments{
-\item{obj}{Object of the class \code{GPR} or \code{GPRsurvey}}
+\item{obj}{Object of class \code{GPRsurvey}.}
 
-\item{dsn}{Filepath (Length-one character vector). If \code{dsn = NULL},
-the file will be save in the current working directory with
-the name of obj (\code{name(obj)}) with the extension depending
-of \code{format}.}
+\item{dsn}{(\code{character(1)}) Output path.  Directory for multi-file
+formats; \code{.h5} file path for \code{format = "h5"}.}
 
-\item{format}{Format type. See Details.}
+\item{format}{(\code{character(1)}) One of \code{"DT1"}, \code{"rds"}, \code{"ASCII"},
+\code{"xta"}, \code{"xyzv"}, \code{"vtk"}, or \code{"h5"}.}
 
-\item{overwrite}{Boolean. If \code{TRUE} existing files will be overwritten,
-if \code{FALSE} an error will be thrown if the file(s)
-already exist(s).}
+\item{overwrite}{(\code{logical(1)}) If \code{FALSE} (default) and the output
+already exists, an error is raised.}
 
-\item{...}{additional parameters to be passed to \code{\link[=write.table]{write.table()}}
-when \code{format = "ASCII"} or \code{format = "xyza"}.}
+\item{...}{Additional arguments passed to the per-line
+\code{writeGPR()} calls (ignored for \code{"h5"} and \code{"vtk"}).}
+
+\item{compress}{(\code{integer(1)}) gzip compression level 0–9 for the data
+array inside HDF5 files.  Only used when
+\code{format = "h5"}.  Default \code{5L}.}
+}
+\value{
+Invisibly returns \code{obj} (updated \verb{@paths} slot) for multi-file
+formats, or the output file path for \code{"h5"}.
 }
 \description{
-Write the GPR object in a file.
+Dispatches to the appropriate writer depending on \code{format}.  For all
+formats except \code{"h5"} and \code{"vtk"}, \code{dsn} is treated as a directory path:
+RGPR creates the directory if necessary and writes one file per GPR line
+inside it.  For \code{"h5"}, \code{dsn} is the path to the output \code{.h5} file.
 }
 \seealso{
 \code{\link[=readGPR]{readGPR()}}
+
+\code{\link[=readGPRsurvey_hdf5]{readGPRsurvey_hdf5()}}, \code{\link[=writeGPR]{writeGPR()}}
 }

@@ -75,7 +75,7 @@ setMethod("project", "GPRsurvey", function(x, CRSobj){
     crs(x) <- CRSobj
     x@intersections <- list()
     # x <- coordref(x)
-    x <- intersect(x)
+    x <- findIntersection(x)
     # crs(x)   <- sf::st_crs(x_sf)
   }
   return(x)

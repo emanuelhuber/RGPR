@@ -129,8 +129,9 @@ http://emanuelhuber.github.io/RGPR
 You must first install [R](https://cran.r-project.org/). Then, in R console, enter the following:
 
 ```r
-if(!require("devtools")) install.packages("devtools")
-devtools::install_github("emanuelhuber/RGPR")
+if(!require("remotes")) install.packages("remotes")
+remotes::install_github("emanuelhuber/RGPR")
+
 library(RGPR)
 
 frenkeLine00  # data from the package

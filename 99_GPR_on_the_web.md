@@ -1,7 +1,7 @@
 ---
 layout: page
 title: RGPR in the web
-date: 2019-11-23
+date: 2025-12-29
 ---
 
 <!--
@@ -17,9 +17,8 @@ date: 2019-11-23
 
 * [RGPR: Best Poster Award at the 17th International Conference on Ground Penetrating Radar](https://www.gpr2018.hsr.ch/index.php?id=18108) - [Link to the poster](https://emanuelhuber.github.io/publications/poster_2018_huber-and-hans_RGPR-new-open-source-package.pdf)
 
-## They used / cited RGPR
 
-### Publications
+## Publications
 
 * [Bastien Dupuy, Arnt Grøver, Stéphane Garambois, Andrew Tobiesen, Pauline Lorand, Halgeir Dahle, Sean Salazar, Regula Frauenfelder, Benjamin Emmel, Aslak Einbu, and Tore Humstad (2026) **UAV-borne GPR for snowpack characterization: Potential, limitations and operational guidelines.** Cold Regions Science and Technology, Volume 241](https://doi.org/10.1016/j.coldregions.2025.104641)
 
@@ -96,7 +95,9 @@ date: 2019-11-23
 
 * [E. Huber, G. Hans (2018) **RGPR - An open-source package to process and visualize GPR data.** Conference proceeding: 17th International Conference on Ground Penetrating Radar, June 18–21, 2018 in Rapperswil, Switzerland](https://emanuelhuber.github.io/publications/2018_huber-and-hans_RGPR-new-R-package_notes.pdf)
 
-### Presentation/poster
+## Presentation/poster
+
+* [Fabian Casutt (2023) **Analysis of ground penetrating radar (GPR) profiles for the detection of specific ground conditions** MasterForum, University of Applied Sciences and Arts Northwestern Switzerland.](https://www.fhnw.ch/++api++/en/degree-programmes/architecture-construction-and-geomatics/master-mse-geomatics/master-thesis/mth_spr23_casutt.pdf/@@inline-file/file)
 
 * [K. Prince, J. R. Rodysill,  J. P. Donnelly, and E. Huber (2020) Investigating Holocene Hydroclimate using Sediment Cores from Florida Panhandle Sinkhole Lakes](https://ui.adsabs.harvard.edu/abs/2020AGUFMPP045..04P/abstract): Presentation at American Geophysical Union, Fall Meeting 2020
 
@@ -105,7 +106,7 @@ date: 2019-11-23
 
 
 
-### Theses and others...
+## Theses and others...
 
 * [John  Creighton, Lieven Verdonck, Martin Millett, and Thomas Matthews Boehmer (2025) **Ground Penetrating Radar Surveys within the Precinct of York Minster Roman York: beneath the streets.** GPR Report 1, University of Cambridge Open Data repository.](https://doi.org/10.17863/CAM.107099)
 

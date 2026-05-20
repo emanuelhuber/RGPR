@@ -78,8 +78,9 @@ I am developing this package on my free time as a gift to the GPR community. Any
 4. Install `RGPR`
 
     ```r
-    if(!require("devtools")) install.packages("devtools")
-    devtools::install_github("emanuelhuber/RGPR")
+    if(!require("remotes")) install.packages("remotes")
+    remotes::install_github("emanuelhuber/RGPR")
+    library(RGPR)
     ```
 
 

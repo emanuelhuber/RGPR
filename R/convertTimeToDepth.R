@@ -114,8 +114,9 @@ setMethod("convertTimeToDepth", "GPR",
     if( is.null(zmax)){
       zmax <- max(x_depth, na.rm = TRUE)
     }
+    zmin <- min(x_depth, na.rm = TRUE)
     
-    d <- seq(from = 0, to = zmax, by = dz)
+    d <- seq(from = zmin, to = zmax, by = dz)
     funInterp <- function(xt, x_depth, x_depth_int, method){
       signal::interp1(x = x_depth, y = xt, xi = x_depth_int, 
                       method = method)
@@ -182,9 +183,11 @@ setMethod("convertTimeToDepth", "GPR",
   x@dz        <- dz
   x@depthunit <- x@posunit
   
+  # plot(x)
+  
   zShift <- (max(topo) - topo)
-  testCrop <- apply(abs(x@data), 1, sum)
-  x <- x[!is.na(testCrop), ]
+  # testCrop <- apply(abs(x@data), 1, sum)
+  # x <- x[!is.na(testCrop), ]
   if( any(zShift != 0) ){
     x <- traceShift(x,  ts = zShift, method = c("pchip"), crop = FALSE)
   }

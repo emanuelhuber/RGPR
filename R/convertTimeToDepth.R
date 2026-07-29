@@ -186,7 +186,7 @@ setMethod("convertTimeToDepth", "GPR",
   testCrop <- apply(abs(x@data), 1, sum)
   x <- x[!is.na(testCrop), ]
   if( any(zShift != 0) ){
-    x <- traceShift(x,  ts = zShift, method = c("pchip"), crop = TRUE)
+    x <- traceShift(x,  ts = zShift, method = c("pchip"), crop = FALSE)
   }
   if(length(x@coord) > 0 && ncol(x@coord) == 3 ){
     x@coord[, 3] <- max(x@coord[,3])

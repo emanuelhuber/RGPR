@@ -179,7 +179,7 @@ setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, zmax = NULL,
   x@depthunit <- x@posunit
   
   zShift <- (max(topo) - topo)
-  if( all(zShift != 0) ){
+  if( any(zShift != 0) ){
     x <- traceShift(x,  ts = zShift, method = c("pchip"), crop = FALSE)
   }
   if(length(x@coord) > 0 && ncol(x@coord) == 3 ){

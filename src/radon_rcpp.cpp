@@ -17,9 +17,9 @@ Eigen::MatrixXd radon_transform_rcpp(
     int n_rho = 0,
     double delta_x = 1.0,
     double theta_min = 0.0,
-    double theta_max = M_PI,
-    double rho_min_in = NAN,
-    double delta_rho_in = NAN,
+    double theta_max = 3.1415926535897932384,
+    double rho_min_in = NA_REAL,
+    double delta_rho_in = NA_REAL,
     bool linear_interp = true,
     int normalization = 1 // 0=none, 1=PET, 2=skimage
 ) {

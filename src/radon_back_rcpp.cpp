@@ -57,9 +57,9 @@ Eigen::MatrixXd iradon_transform_fbp_rcpp(
     int N, int M,                     // output image size (rows N, cols M)
     double delta_x = 1.0,             // pixel spacing (assumed same in both axes)
     double theta_min = 0.0,
-    double theta_max = M_PI,
-    double rho_min_in = NAN,
-    double delta_rho_in = NAN,
+    double theta_max = 3.14159265358979323846,
+    double rho_min_in = NA_REAL,
+    double delta_rho_in = NA_REAL,
     const std::string &filter = "ramp",
     const std::string &normalization = "none"
 ) {

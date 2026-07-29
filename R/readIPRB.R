@@ -84,20 +84,20 @@ register_gpr_format(
   trans_coord <- matrix(nrow = 0, ncol = 0)
   coord <- matrix(nrow = 0, ncol = 0)
   pos_used <- integer(nrow(x$hd))
-  nbits <- .getHD(x$hd, "DATA VERSION", position = TRUE)
+  nbits <- .getHD(x$hd, "DATA VERSION")
   if(!is.null(nbits)){
     pos_used[nbits[2]] <- 1L
   }else{
     nbits <- 16
   }
   nTr <- ncol(x$data)
-  dx <- .getHD(x$hd, "USER DISTANCE INTERVAL", position = TRUE)
+  dx <- .getHD(x$hd, "USER DISTANCE INTERVAL")
   if(!is.null(dx)){
     pos_used[dx[2]] <- 1L
   }else{
     dx <- 1
   }
-  ttw  <- .getHD(x$hd,"TIMEWINDOW", position = TRUE)
+  ttw  <- .getHD(x$hd,"TIMEWINDOW")
   if(!is.null(ttw)){
     dz <- ttw[1]/nrow(x$data)
     pos_used[ttw[2]] <- 1L
@@ -106,7 +106,7 @@ register_gpr_format(
     dz <- 0.4
     ttw  <- nrow(x$data) * dz
   }
-  nT0 <- .getHD(x$hd, "ZERO LEVEL", position = TRUE)
+  nT0 <- .getHD(x$hd, "ZERO LEVEL")
   if(!is.null(nT0)){
     pos_used[nT0[2]] <- 1L
   }else{
@@ -117,7 +117,7 @@ register_gpr_format(
   }else{
     traceTime <- rep(0, nTr)
   }
-  afreq <- .getHD(x$hd, "ANTENNA", position = TRUE, number = FALSE)
+  afreq <- .getHD(x$hd, "ANTENNA", number = FALSE)
   if(!is.null(afreq)){
     antfreq <- freqFromString(afreq[1])
     pos_used[as.integer(afreq[2])] <- 1L
@@ -125,7 +125,7 @@ register_gpr_format(
     antfreq <- 0
     message("Antenna frequency set to 0 MHz. Set it with 'antfreq(x) <- ... '")
   }
-  antsep <- .getHD(x$hd, "ANTENNA SEPARATION", position = TRUE)
+  antsep <- .getHD(x$hd, "ANTENNA SEPARATION")
   if(!is.null(antsep)){
     pos_used[antsep[2]] <- 1L
   }else{
@@ -134,7 +134,7 @@ register_gpr_format(
     message("Antenna separation set to 0 ", "m", 
             ". Set it with 'antsep(x) <- ... '")
   }
-  surveyDate <- .getHD(x$hd, "DATE", position = TRUE, number = FALSE)
+  surveyDate <- .getHD(x$hd, "DATE")
   if(!is.null(surveyDate)){
     d <- as.character(as.Date(surveyDate[1], "%Y-%m-%d"))
     pos_used[surveyDate[2]] <- 1L

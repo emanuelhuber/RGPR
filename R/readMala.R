@@ -107,7 +107,7 @@ register_gpr_format(
   
   sup_hd <- list()
   # OK
-  startpos <- .getHD(x$hd, "START POSITION", position=TRUE)
+  startpos <- .getHD(x$hd, "START POSITION")
   if(!is.null(startpos)){
     pos_used[startpos[2]] <- 1L
     startpos <- as.numeric(startpos[1])
@@ -116,7 +116,7 @@ register_gpr_format(
     startpos <- 0
   }
   # OK
-  endpos <- .getHD(x$hd, "STOP POSITION", position=TRUE)
+  endpos <- .getHD(x$hd, "STOP POSITION")
   if(!is.null(endpos)){
     pos_used[endpos[2]] <- 1L
     endpos <- as.numeric(endpos[1])
@@ -126,7 +126,7 @@ register_gpr_format(
   }
   
   # OK
-  dx <- .getHD(x$hd, "DISTANCE INTERVAL", position=TRUE)
+  dx <- .getHD(x$hd, "DISTANCE INTERVAL")
   if(!is.null(dx)){
     if(dx[1] == 0){
       dx <- (endpos[1] - startpos[1])/ncol(x$data)
@@ -153,7 +153,7 @@ register_gpr_format(
     message("Antenna frequency set to 0 MHz. Set it with 'antfreq(x) <- ... '")
   }
   # OK
-  antsep <- .getHD(x$hd, "ANTENNA SEPARATION", position=TRUE)
+  antsep <- .getHD(x$hd, "ANTENNA SEPARATION")
   if(!is.null(antsep)){
     pos_used[antsep[2]] <- 1L
   }else{

@@ -158,29 +158,9 @@ register_gpr_format(
     }
   }
   
-  # nop  <- .getHD(x$hd, "NUMBER OF PTS/TRC")
-  # if(is.null(nop)){
-  #   pos_used[nop[2]] <- 1L
-  # }
-  # not <- .getHD(x$hd, "NUMBER OF TRACES", position = TRUE)
-  # if(!is.null(not)){
-  #   pos_used[not[2]] <- 1L
-  # }
+
   sup_hd <- list()
-  # startpos <- .getHD(x$hd, "STARTING POSITION", position = TRUE)
-  # if(!is.null(startpos)){
-  #   pos_used[startpos[2]] <- 1L
-  #   sup_hd[["startpos"]] <- as.numeric(startpos[1])
-  # }else{
-  #   startpos <- 0
-  # }
-  # endpos <- .getHD(x$hd, "FINAL POSITION", position = TRUE)
-  # if(!is.null(endpos)){
-  #   pos_used[endpos[2]] <- 1L
-  #   sup_hd[["startpos"]] <- as.numeric(endpos[1])
-  # }else{
-  #   endpos <- dx[1]*ncol(x$data)
-  # }
+
   #--- survey date
   allhd <- gsub(pattern ="[^0-9]", replacement = "-", x$hd$val)
   # 2014-04-10 (new PulseEkko format)
@@ -198,31 +178,7 @@ register_gpr_format(
       d <- as.Date(allhd[idx[1]], "%d-%m-%Y")
     }
   }
-  # #--- device type
-  # freepos <- which(pos_used[1:5] == 0)
-  # #   GPR_device <-  paste(x$hd[2,1],x$hd[2,2],sep="")
-  # GPR_device <-  x$hd[freepos, 2]
-  # testDevice <- grepl("^(Data.)", GPR_device)
-  # if(any(testDevice)){
-  #   sup_hd[["gprdevice"]] <- GPR_device[testDevice][1]
-  #   pos_used[which(testDevice)[1]] <- 1L
-  # }  
-  # x$hd2 <- x$hd[!pos_used,]
-  # if(nrow(x$hd2)>0){
-  #   key <-  trimStr(x$hd2[,1])
-  #   test <- key!=""
-  #   key <- key[test]
-  #   key2 <- gsub("[[:punct:]]", replacement = "", key)
-  #   key2 <- gsub(" ", replacement = "_", key2)
-  #   nameL <- trimStr(x$hd2[test,2])
-  #   names(nameL) <- as.character(key2)
-  #   sup_hd2 <- as.list(nameL)
-  #   sup_hd <- c(sup_hd, sup_hd2)
-  # }
-  # dorigin <- d
-  # if(length(dorigin) == 0){
-  #   dorigin <- "1970-01-01"
-  # }
+  
   traceTime <- as.double(as.POSIXct(x$dt1$time, origin = d))
   sup_hd[["clip"]] <- clippedBits(x$data, nbits = 16)
   sup_hd[["hd"]] <- x$hd

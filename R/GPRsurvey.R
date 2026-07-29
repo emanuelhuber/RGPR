@@ -75,6 +75,8 @@ GPRsurvey <- function(x, dsn,
   line_nx       <- integer(n)
   line_xlengths <- numeric(n)
   
+  xyzCoords <- list()
+  
   # ---- open HDF5 file for writing -------------------------------------------
   h5 <- hdf5r::H5File$new(dsn, mode = "w")
   on.exit(h5$close_all(), add = TRUE)
@@ -130,6 +132,9 @@ GPRsurvey <- function(x, dsn,
     line_zlengths[i]  <- abs(diff(range(gpr@z)))
     line_xlengths[i]  <- abs(diff(range(gpr@x)))
     
+    xyzCoords[[i]]         <- gpr@coord
+    if(ncol(gpr@coord) == 3 )  colnames(xyzCoords[[i]]) <- c("x", "y", "z")
+    
     # -- write GPR line to HDF5 using the finalised name ----------------------
     .write_GPR_line_hdf5(lg, name = line_names[i], gpr = gpr, compress = compress)
     verboseF(message("  Written to HDF5: ", line_names[i]), verbose = verbose)
@@ -170,7 +175,7 @@ GPRsurvey <- function(x, dsn,
   # ---- assemble the S4 object -----------------------------------------------
   survey <- new("GPRsurvey",
                 version   = "0.3",
-                path      = file,
+                path      = dsn,
                 name      = name,
                 desc      = desc,
                 
@@ -182,6 +187,7 @@ GPRsurvey <- function(x, dsn,
                 antseps   = line_antsep,
                 spunit    = survey_spunit,
                 crs       = if (is.na(survey_crs)) NA_character_ else survey_crs,
+                coords        = xyzCoords,       # (x,y,z) coordinates for each profiles
                 nz        = line_nz,
                 nx        = line_nx,
                 zlengths  = line_zlengths,

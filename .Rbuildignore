@@ -3,3 +3,5 @@
 ^.*\.md$
 .readthedocs.yaml
 ^docs/
+^\.positai$
+^\.claude$

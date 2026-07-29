@@ -97,6 +97,7 @@ as.GPRset.GPR <- function (x, ...){
 #' @method print GPRset 
 #' @name print
 #' @rdname show
+#' @export
 # > 2. S3 function:
 print.GPRset <- function(x, ...){
   jj <- .GPRset.print(x, ...)

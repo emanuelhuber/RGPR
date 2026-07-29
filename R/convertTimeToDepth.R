@@ -2,8 +2,10 @@
 #' @name convertTimeToDepth
 #' @rdname convertTimeToDepth
 #' @export
-setGeneric("convertTimeToDepth", function(x, dz = NULL, zmax = NULL, 
-                                          method = c("pchip", "linear", "nearest", "cubic", "spline")) 
+setGeneric("convertTimeToDepth", 
+           function(x, dz = NULL, zmax = NULL, 
+                    method = c("pchip", "linear", "nearest", "cubic", "spline"),
+                    track = TRUE) 
   standardGeneric("convertTimeToDepth"))
 
 
@@ -36,8 +38,10 @@ setGeneric("convertTimeToDepth", function(x, dz = NULL, zmax = NULL,
 #' @name convertTimeToDepth
 #' @rdname convertTimeToDepth
 #' @export
-setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, zmax = NULL, 
-                                                method = c("pchip", "linear", "nearest", "cubic", "spline")){
+setMethod("convertTimeToDepth", "GPR", 
+          function(x, dz = NULL, zmax = NULL,
+                   method = c("pchip", "linear", "nearest", "cubic", "spline"),
+                   track = TRUE){
   if(is.null(x@vel) || length(x@vel)==0){
     stop("You must first define the EM wave velocity ",
          "with 'vel(x) <- 0.1' for example!")
@@ -179,15 +183,17 @@ setMethod("convertTimeToDepth", "GPR", function(x, dz = NULL, zmax = NULL,
   x@depthunit <- x@posunit
   
   zShift <- (max(topo) - topo)
+  testCrop <- apply(abs(x@data), 1, sum)
+  x <- x[!is.na(testCrop), ]
   if( any(zShift != 0) ){
-    x <- traceShift(x,  ts = zShift, method = c("pchip"), crop = FALSE)
+    x <- traceShift(x,  ts = zShift, method = c("pchip"), crop = TRUE)
   }
   if(length(x@coord) > 0 && ncol(x@coord) == 3 ){
     x@coord[, 3] <- max(x@coord[,3])
   }
   x@vel <- list() 
 
-  proc(x) <- getArgs()
+  if(isTRUE(track)) proc(x) <- getArgs()
   return(x)
 } 
 )

@@ -8,14 +8,16 @@ convertTimeToDepth(
   x,
   dz = NULL,
   zmax = NULL,
-  method = c("pchip", "linear", "nearest", "cubic", "spline")
+  method = c("pchip", "linear", "nearest", "cubic", "spline"),
+  track = TRUE
 )
 
 \S4method{convertTimeToDepth}{GPR}(
   x,
   dz = NULL,
   zmax = NULL,
-  method = c("pchip", "linear", "nearest", "cubic", "spline")
+  method = c("pchip", "linear", "nearest", "cubic", "spline"),
+  track = TRUE
 )
 }
 \arguments{

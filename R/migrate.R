@@ -87,7 +87,7 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
   }
   type <- match.arg(type, c("static", "kirchhoff"))
   if(type == "static"){  
-    x <- convertTimeToDepth(x, ...)
+    x <- convertTimeToDepth(x, track = FALSE, ...)
   }else if(type == "kirchhoff"){
     A <- x@data
     #topo <- x@coord[,3]

@@ -2728,10 +2728,16 @@ rmNaCol <- function(x){
 # website   twitter.com/RyanGrannell
 # location   Galway, Ireland
 #' @export
-getArgs <- function (returnCharacter = TRUE, addArgs = NULL) {
+getArgs <- function (returnCharacter = TRUE, addArgs = NULL, topOnly = TRUE) {
   # print(sys.nframe())
   # 50 -> 1 error with devtools::test() and opencpu
   # 100 -> works with devtools::test() and does not work with opencpu
+  if(topOnly){
+    caller <- as.character(sys.call(-1)[[1]])
+    if(caller %in% c("convertTimeToDepth")){
+      return(character())
+    }
+  }
   if(sys.nframe() >= 2){
     arg <- as.list(match.call(definition = sys.function( -1 ),
                               call = sys.call(-1),

@@ -548,6 +548,7 @@ setMethod("getGPR", "GPRsurvey", function(x,id){
 #' @method print GPRsurvey
 #' @name print
 #' @rdname show
+#' @export
 # > 2. S3 function:
 # setMethod("print", "GPR", function(x) print.GPR(x))   
 # > 2. S3 function:

@@ -2390,6 +2390,7 @@ setMethod("rotatePhase", "GPR", function(x, phi, track = TRUE){
 #' @method print GPR 
 #' @name print
 #' @rdname show
+#' @export
 # > 2. S3 function:
 print.GPR <- function(x, ...){
   jj <- .GPR.print(x, ...)

@@ -369,11 +369,11 @@ trInterp <- function(x, z, zi){
 #' @return list with interpolation results:
 #'   \item{x}{x-coordinates of grid}
 #'   \item{y}{y-coordinates of grid}
-#'   \item{z}{3D array of interpolated values [nx x ny x nz]}
+#'   \item{z}{3D array of interpolated values `[nx x ny x nz]`}
 #'   \item{vz}{depth/time vector}
 #'   \item{x0}{original x-coordinates of observations}
 #'   \item{y0}{original y-coordinates of observations}
-#'   \item{z0}{interpolated data matrix [nz x n_traces]}
+#'   \item{z0}{interpolated data matrix `[nz x n_traces]`}
 #' @noRd
 .sliceInterp <- function(obj, dx = NULL, dy = NULL, dz = NULL, h = 6,
                          extend = "bbox", buffer = NULL, shp = NULL, 
@@ -468,7 +468,7 @@ trInterp <- function(x, z, zi){
 #' 
 #' @param gpr_obj Single GPR object
 #' @param vz Target depth/time vector
-#' @return matrix of interpolated values [length(vz) x ncol(gpr_obj)]
+#' @return matrix of interpolated values `[length(vz) x ncol(gpr_obj)]`
 #' @noRd
 .interpolateProfile <- function(gpr_obj, vz) {
   # Replace NA with zeros
@@ -513,7 +513,7 @@ trInterp <- function(x, z, zi){
 #' 
 #' @param obj GPRsurvey object
 #' @param vz Target depth/time vector
-#' @return matrix [length(vz) x total_traces]
+#' @return `matrix[length(vz),total_traces]`
 #' @noRd
 .interpolateAllProfiles <- function(obj, vz) {
   total_traces <- sum(obj@nx)
@@ -536,7 +536,7 @@ trInterp <- function(x, z, zi){
 #' 
 #' @param shp Shape specification (sf, list, matrix, or NULL)
 #' @param obj GPRsurvey object (fallback if shp is NULL)
-#' @return matrix [n x 2] of coordinates or GPRsurvey object
+#' @return `matrix[n,2]` of coordinates or GPRsurvey object
 #' @noRd
 .processShapeInput <- function(shp, obj) {
   if (is.null(shp)) {
@@ -554,7 +554,7 @@ trInterp <- function(x, z, zi){
 
 #' Compute default buffer size
 #' 
-#' @param xy_coords Coordinate matrix [n x 2]
+#' @param xy_coords (`matrix[n,2]`) Coordinate 
 #' @param fraction Fraction of extent to use as buffer (default 0.05)
 #' @return numeric buffer distance
 #' @noRd
@@ -726,7 +726,7 @@ trInterp <- function(x, z, zi){
 #' 
 #' @param x Grid x-coordinates
 #' @param y Grid y-coordinates
-#' @param clip_polygon Polygon vertices [n x 2] or NULL
+#' @param clip_polygon (`matrix[n,2]|NULL`) Polygon vertices or NULL
 #' @return logical matrix or NULL
 #' @noRd
 .createClippingMask <- function(x, y, clip_polygon) {
@@ -743,7 +743,7 @@ trInterp <- function(x, z, zi){
 
 #' Perform MBA interpolation for single depth slice
 #' 
-#' @param xypos Matrix [n x 2] of observation coordinates
+#' @param xypos (`matrix[n,2]`)  Observation coordinates
 #' @param values Vector of values at observation points
 #' @param bbox_params Bounding box parameters (list with nx, ny, bbox)
 #' @param h MBA hierarchy levels

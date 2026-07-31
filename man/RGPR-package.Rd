@@ -22,6 +22,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Emanuel Huber \email{emanuel.huber@pm.me}
   \item Guillaume Hans \email{guillaume.hans@fpinnovations.ca}
 }
 

@@ -2,14 +2,17 @@
 # - '.getHD()'
 
 
-# =============================================================================
+# ============================================================================ #
 # io-dt1.R
 #
 # Sensors & Software  —  DT1 + HD (+ GPS)
 #
 # Mandatory : *.dt1 (data), *.hd (header)
 # Optional  : *.gps (GPS coordinates)
-# =============================================================================
+# ============================================================================ #
+
+
+
 
 
 #' Read a Sensors & Software GPR file (.dt1 + .hd)
@@ -53,9 +56,9 @@
 }
 
 
-# -----------------------------------------------------------------------------
+# ---------------------------------------------------------------------------- #
 # Format registration
-# -----------------------------------------------------------------------------
+# ---------------------------------------------------------------------------- #
 register_gpr_format(
   id         = "DT1",
   detect_ext = "DT1",
@@ -65,7 +68,8 @@ register_gpr_format(
   reader_fn  = .read_dt1
 )
 
-#------------------------------------------------------------------------------#
+
+# ---------------------------------------------------------------------------- #
 # private function - constructor
 # x = list containing all the data
 # return object of class GPR
@@ -239,7 +243,7 @@ register_gpr_format(
 
 
 
-#------------------------------------------------------------------------------#
+# ---------------------------------------------------------------------------- #
 #' Read Sensors and Software GPR data
 #' 
 #' @param dsn (`character(1)|connection object`) data source name: 
@@ -249,13 +253,14 @@ register_gpr_format(
 #' @param npt (`integer(1)`) Number of samples per traces (given by .hd file)
 #' @return (`list(2)`) Two-elements list: `dt1hd` with trace header and
 #'         `data` with the traces.
-#' @seealso [readHD()], [readGPS()]
+#' @seealso [RGPR::readHD()], [RGPR::readGPS()]
 #' @name readDT1
 #' @rdname readDT1
 #' @export
 #' @concept I/O
 readDT1 <- function(dsn, ntr, npt){
   dsn <- .openFileIfNot(dsn)
+  on.exit(.closeFileIfNot(dsn))
   tags <- c("traces", "position", "samples", "topo", "NA1", "bytes",
             "window", "stacks", 
             "GPSx", "GPSy", "GPSz", 
@@ -280,10 +285,10 @@ readDT1 <- function(dsn, ntr, npt){
     # read the npt * 2 bytes trace data
     dataDT1[,i] <- readBinary(dsn, what = "integer", n = npt, size = 2)
   }
-  .closeFileIfNot(dsn)
+  # .closeFileIfNot(dsn)
   return( list(dt1hd = hDT1, data = dataDT1) )
 }
-#------------------------------------------------------------------------------#
+# ---------------------------------------------------------------------------- #
 
 #' Read Sensors and Software .HD file
 #' 
@@ -293,7 +298,7 @@ readDT1 <- function(dsn, ntr, npt){
 #' @return (`list(3)`)  Three-elements list: `HD` containing the 
 #'         header info, `ntr` the number of trace and `npt` the
 #'         number of points per trace.
-#' @seealso [readDT1()], [readGPS()]
+#' @seealso [RGPR::readDT1()], [RGPR::readGPS()]
 #' @name readHD
 #' @rdname readHD
 #' @export
@@ -302,6 +307,7 @@ readHD <- function(dsn){
   headHD <- scan(dsn, what = character(), strip.white = TRUE,
                  quiet = TRUE, fill = TRUE, blank.lines.skip = TRUE, 
                  flush = TRUE, sep = "\n")
+  on.exit(.closeFileIfNot(dsn))
   hHD <- data.frame( tag = character(), 
                      val = character(), 
                      stringsAsFactors = FALSE)
@@ -316,23 +322,23 @@ readHD <- function(dsn){
   }
   ntr <- as.integer(.getHD(hHD, "NUMBER OF TRACES"))
   npt <- as.integer(.getHD(hHD, "NUMBER OF PTS/TRC"))
-  .closeFileIfNot(dsn)
+  # .closeFileIfNot(dsn)
   return(list(HD = hHD, ntr = ntr, npt = npt))
 }
 
-#------------------------------------------------------------------------------#
+# ---------------------------------------------------------------------------- #
 
 #' Read Sensors and Software .GPS file
 #' 
-#' @param dsn (`character(1)|connection object`) data source name: 
+#' @param dsn (`character[1]|connection`) data source name: 
 #'             either the filepath to the GPR data (character),
 #'            or an open file connection.
-#' @param UTM (`logical(1)`) If `TRUE` project coordinates to 
+#' @param UTM (`logical[1]`) If `TRUE` project coordinates to 
 #'              the corresponding UTM zone. 
 #' @return (`sf|data.frame|NULL`) Either an object of class
 #'         `sf` or a `data.frame` or `NULL` if no
 #'         coordinates could be extracted.
-#' @seealso [readDT1()], [readHD()]
+#' @seealso [RGPR::readDT1()], [RGPR::readHD()]
 #' @name readGPS
 #' @rdname readGPS
 #' @export
@@ -344,34 +350,39 @@ readGPS <- function(dsn, UTM = TRUE){
   }else if(X$type == "GPGGA"){
     xyzt <- .getLonLatFromGPGGA(X$gpgga)
   }
-  xyzt_crs <- 4326
-  if(isTRUE(UTM)){
-    topoUTM <-  lonLatToUTM(lat = xyzt[,2], 
-                        lon = xyzt[,1], 
-                        zone = NULL, 
-                        south = (X[[tolower(X$type)]]$NS[1] == "S"),
-                        west  = (X[[tolower(X$type)]]$EW[1] == "W"))
-    xyzt[, 1:2] <- topoUTM$xy
-    xyzt_crs <- topoUTM$crs
-  }else if(is.character(UTM)){
-    UTM_crs <- UMTStringToEPSG(UTM)
-    xyzt[, 1:2] <- sf::sf_project(from = "EPSG:4326", 
-                                to   = paste0("EPSG:", UTM_crs), 
-                                pts  = xyzt[, 1:2])
-    xyzt_crs <- paste0("EPSG:", UTM_crs)
-  }
-  mrk <- cbind(xyzt[ ,1:3], X$tr_id, X$tr_pos, xyzt[ ,4])
+  
+  out <-projectXYZT(xyzt, UTM = UTM, 
+              NS = X[[tolower(X$type)]]$NS,
+              EW = X[[tolower(X$type)]]$EW)
+  
+  # xyzt_crs <- 4326
+  # if(isTRUE(UTM)){
+  #   topoUTM <-  lonLatToUTM(lat = xyzt[,2], 
+  #                       lon = xyzt[,1], 
+  #                       zone = NULL, 
+  #                       south = (X[[tolower(X$type)]]$NS[1] == "S"),
+  #                       west  = (X[[tolower(X$type)]]$EW[1] == "W"))
+  #   xyzt[, 1:2] <- topoUTM$xy
+  #   xyzt_crs <- topoUTM$crs
+  # }else if(is.character(UTM)){
+  #   UTM_crs <- UMTStringToEPSG(UTM)
+  #   xyzt[, 1:2] <- sf::sf_project(from = "EPSG:4326", 
+  #                               to   = paste0("EPSG:", UTM_crs), 
+  #                               pts  = xyzt[, 1:2])
+  #   xyzt_crs <- paste0("EPSG:", UTM_crs)
+  # }
+  mrk <- cbind(out$xyzt[ ,1:3], X$tr_id, X$tr_pos, out$xyzt[ ,4])
   names(mrk) <- c("x", "y", "z", "id", "pos", "time")
   mrk <- sf::st_as_sf(x      = mrk,
                       coords = c("x", "y", "z"),
-                      crs    = xyzt_crs)
-  .closeFileIfNot(dsn)
+                      crs    = out$xyzt_crs)
+  # .closeFileIfNot(dsn)
   return(mrk)
 }
 
 .readGPS <- function(dsn){
   x <- scan(dsn, what = character(), sep = "\n", quiet = TRUE)
-  
+  on.exit(.closeFileIfNot(dsn))
   # fac <- 1
   test1 <- grepl("(\\$GPGGA)", x)
   if(any(test1)){

@@ -2,31 +2,25 @@
 % Please edit documentation in R/readDZT.R
 \name{readDZG}
 \alias{readDZG}
-\title{Read GSSI GPS data (.dzg)}
+\title{Read GSSI GPS data}
 \usage{
-readDZG(dsn)
-
 readDZG(dsn)
 }
 \arguments{
-\item{dsn}{(\verb{character(1)|connection object}) data source name:
+\item{dsn}{(\code{character[1]|connection}) data source name:
 either the filepath to the GPR data (character),
 or an open file connection.}
+
+\item{UTM}{(\code{logical[1]}) If \code{TRUE} project coordinates to
+the corresponding UTM zone.}
 }
 \value{
-A data frame with columns \code{x}, \code{y}, \code{z} (coordinates
-in decimal degrees), \code{id} (1-based trace index), and
-\code{time} (UTC time).
-
 (\code{data.frame(,5)}) position (\code{x}, \code{y}, \code{z}),
 trace id (\code{id}), and time (\code{time}).
 }
 \description{
-Parses NMEA GSSIS+GPGGA sentence pairs from a GSSI .dzg file and returns
-a data frame of georeferenced trace positions.
+Read GSSI GPS data
 }
 \seealso{
-\code{\link[=readDZT]{readDZT()}}, \code{\link[=readDZX]{readDZX()}}
-
 \code{\link[=readDZT]{readDZT()}}, \code{\link[=readDZX]{readDZX()}}
 }

@@ -10,44 +10,45 @@ dewow(obj, type = c("runmed", "runmean", "gaussian"), w = NULL, track = TRUE)
 \S4method{dewow}{GPR}(obj, type = c("runmed", "runmean", "gaussian"), w = NULL, track = TRUE)
 }
 \arguments{
-\item{obj}{(\code{GPR}) An object of the class GPR.}
+\item{obj}{(\code{GPR}) A GPR object.}
 
-\item{type}{(\code{character[1]}) Dewow method,
-one of \code{runmed} (running median),
-\code{runmean} (running mean),
-\code{Gaussian} (Gaussian smoothing).}
+\item{type}{(\code{character[1]}) Dewow method. One of:
+\itemize{
+\item \code{runmed} for running median filtering;
+\item \code{runmean} for running mean filtering;
+\item \code{Gaussian} for Gaussian smoothing.
+}}
 
-\item{w}{(\code{numeric[1]}) If \code{type} = \code{runmed},
-\code{MAD} or \code{runmean}, window length of the filter in
-trace unit;
-If \code{type} = \code{Gaussian}, standard deviation in trace
-unit.
-If \code{w = NULL}, \code{w} is estimated as five times the
-wavelength corresponding to the maximum frequency of obj
-(estimated with \link{spec})}
+\item{w}{(\code{numeric[1]|NULL}) Filter width.
+For \code{runmed}, \code{MAD}, and \code{runmean}, this corresponds to the window
+length (in trace units). For \code{Gaussian}, it corresponds to the
+standard deviation (in trace units).
+
+If \code{NULL}, \code{w} is estimated as five times the wavelength associated
+with the maximum frequency of \code{obj} estimated by \code{\link[=spec]{spec()}}.}
 
 \item{track}{(\code{logical[1]}) Should the processing step be tracked?}
 }
 \value{
-(\code{GPR}) An object of the class GPR whose traces are dewowed.
+(\code{GPR}) A dewowed GPR object.
 }
 \description{
-\code{dewow} remove the low-frequency component (the so-called 'wow') of
-every traces.
+Removes the low-frequency component (the so-called \emph{wow}) from each
+trace.
 }
 \details{
-The low-frequency component is computed by different methods:
+The low-frequency component can be estimated using:
 \itemize{
-\item \code{runmed} running median based on \link[stats:runmed]{stats::runmed}
-\item \code{runmean} running mean based on \link[stats:filter]{stats::filter}
-\item \code{MAD} DEPRECATED - Median Absolute Deviation filter
-\item \code{Gaussian} Gaussian smoothing applied to the trace samples
-after time-zero based on \link[mmand:gaussianSmooth]{mmand::gaussianSmooth}
+\item \code{runmed}: running median based on \code{\link[stats:runmed]{stats::runmed()}}.
+\item \code{runmean}: running mean based on \code{\link[stats:filter]{stats::filter()}}.
+\item \code{MAD}: deprecated Median Absolute Deviation filter.
+\item \code{Gaussian}: Gaussian smoothing applied to trace samples after
+time-zero based on \code{\link[mmand:gaussianSmooth]{mmand::gaussianSmooth()}}.
 }
 
 Modified slots:
 \itemize{
-\item \code{data}: trace dewowed.
+\item \code{data}: dewowed traces.
 \item \code{proc}: updated with function name and arguments.
 }
 }

@@ -28,7 +28,7 @@ setGeneric("time0<-", function(obj, value) standardGeneric("time0<-"))
 #' @param track (`logical[1]`) Should the processing step be tracked? 
 #' @param value (`numeric[n]`) Time-zero with `n = 1` or `n = ncol(obj)`
 #' @return A vector containing the time-zero values of each traces.
-#' @seealso [pickFirstBreak()]  to estimate the first wave break.
+#' @seealso [RGPR::pickFirstBreak()]  to estimate the first wave break.
 #' @name setTime0
 #' @rdname time0
 #' @export

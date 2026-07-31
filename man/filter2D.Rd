@@ -209,9 +209,9 @@ Object of same class as \code{obj} with processed data.
 
 Object of same class as \code{obj} with processed data.
 
-Numeric matrix of the same dimensions as \code{image}, with values normalized to \link{0,1}.
+Numeric matrix of the same dimensions as \code{image}, with values normalized to \verb{[0,1]}.
 
-Numeric matrix of same size as image_matrix, normalized to \link{0,1}.
+Numeric matrix of same size as image_matrix, normalized to \verb{[0,1]}.
 }
 \description{
 Two-dimensional filters

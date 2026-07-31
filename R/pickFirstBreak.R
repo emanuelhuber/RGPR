@@ -54,12 +54,12 @@
 #' @return (`numeric[n]`] The time of the first wave break for every
 #'         traces in unit of time (`n = ncol(x) =` number of traces).
 #'         
-#' @seealso [firstBreakToTime0()] to convert time of first wave break
+#' @seealso [RGPR::firstBreakToTime0()] to convert time of first wave break
 #'          into time-zero; 
-#'          [time0()] and [setTime0()] to set time-zero;
-#'          [estimateTime0()] to estimate first wave break, convert
+#'          [RGPR::time0()] and [RGPR::setTime0()] to set time-zero;
+#'          [RGPR::estimateTime0()] to estimate first wave break, convert
 #'          it to time-zero and set time zero (all in one step);
-#'          [shiftToTime0()] to shift the traces such that they start
+#'          [RGPR::shiftToTime0()] to shift the traces such that they start
 #'          at time-zero.
 #'          
 #' @references

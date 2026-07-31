@@ -76,7 +76,7 @@ writeProfileVTK <- function(data_matrix, dsn, x, y, z0, depths) {
 #' @param overwrite Boolean. If `TRUE` existing files will be overwritten,
 #'                  if `FALSE` an error will be thrown if the file(s) 
 #'                  already exist(s).
-#' @seealso [readGPR()]
+#' @seealso [RGPR::readGPR()]
 #' @name writeVTK
 setGeneric("writeVTK", function(obj, dsn = NULL, 
                                 overwrite = TRUE){ standardGeneric("writeVTK")})

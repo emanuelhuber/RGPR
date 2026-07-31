@@ -57,11 +57,11 @@
 #' @param ...  Further arguments to be passed to `FUN`.
 #' @param track (`logical[1]`) Should the processing step be tracked? 
 #' @return (`GPR`) An object of the class `GPR`.
-#' @seealso [pickFirstBreak()] to estimate the first wave break;
-#'          [firstBreakToTime0()] to convert the first wave break
+#' @seealso [RGPR::pickFirstBreak()] to estimate the first wave break;
+#'          [RGPR::firstBreakToTime0()] to convert the first wave break
 #'          into time zero.
-#'          [time0()] and [setTime0()] to set time-zero;
-#'          [shiftToTime0()] to shift the traces such that they start
+#'          [RGPR::time0()] and [RGPR::setTime0()] to set time-zero;
+#'          [RGPR::shiftToTime0()] to shift the traces such that they start
 #'          at time-zero.
 #' @name estimateTime0
 #' @rdname estimateTime0

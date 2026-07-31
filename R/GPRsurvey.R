@@ -25,7 +25,7 @@
 #'
 #' @return An object of class \code{GPRsurvey}.
 #'
-#' @seealso [readGPRsurvey()], [writeGPR()]
+#' @seealso [RGPR::readGPRsurvey()], [RGPR::writeGPR()]
 #' @name GPRsurvey
 #' @export
 GPRsurvey <- function(x, dsn, 

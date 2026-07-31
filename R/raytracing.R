@@ -20,9 +20,9 @@ refracAng <- function(theta1, v1, v2){
 
 #' Ray tracing
 #' 
-#' @param h [`numeric(n)`] Layer heights
-#' @param v [`numeric(n)`] Layer velocity
-#' @param theta [`numeric(n)`] Incidence angle above first layer
+#' @param h (`numeric[n]`) Layer heights
+#' @param v (`numeric[n]`) Layer velocity
+#' @param theta (`numeric[n]`) Incidence angle above first layer
 #' @export
 raytrace <- function(h, v, theta, x = 0){
   n <- length(h)
@@ -63,9 +63,9 @@ pathDist <- function(x){
 
 #' Ray tracing
 #' 
-#' @param h [`numeric(n)`] Layer heights
-#' @param v [`numeric(n)`] Layer velocity
-#' @param theta [`numeric(n)`] Incidence angle above first layer
+#' @param h [`numeric[n]`] Layer heights
+#' @param v [`numeric[n]`] Layer velocity
+#' @param theta [`numeric[n]`] Incidence angle above first layer
 raytracehalf <- function(h, v, theta){
   n <- length(h)
   thetas <- numeric(n)
@@ -86,9 +86,9 @@ raytracehalf <- function(h, v, theta){
 #' CMP ray tracing
 #'
 #' Smulate ray tracing
-#' @param av [`numeric(m)`] antenna separation
-#' @param h [`numeric(n)`] Layer heights
-#' @param v [`numeric(n)`] Layer velocity
+#' @param av (`numeric[m]`) antenna separation
+#' @param h (`numeric[n]`) Layer heights
+#' @param v (`numeric[n]`) Layer velocity
 #' @export
 rayCMP <- function(av, h, v){
   m <- length(av)

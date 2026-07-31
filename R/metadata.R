@@ -11,7 +11,7 @@
 #'             It can be retrieved with `metadata(x)$hd`.}
 #'   \item{GPS}{When reading GPR data, the optional GPS data file is red if 
 #'              available and red even if `interpGPS = FALSE` 
-#'              (see [readGPR()]). If `interpGPS = FALSE`, 
+#'              (see [RGPR::readGPR()]). If `interpGPS = FALSE`, 
 #'              the (formated) content of the GPS data file is then stored as 
 #'              meta-data and can be retrieved with `metadata(x)$GPS`.}
 #'   \item{clipData}{When reading GPR data, the clipDataped signal values are directly
@@ -25,7 +25,7 @@
 #' @param x (`GPR`) An object of the class GPR.
 # @param value [\code{character}]
 #' @return (`list`) 
-#' @seealso [readGPR()] 
+#' @seealso [RGPR::readGPR()] 
 #, FIXME \code{\link{clipDatapedValues}}, and \code{\link{declipData}}
 #' @name metadata
 #' @rdname metadata

@@ -31,7 +31,7 @@
 #'                  already exist(s).
 #' @param ... additional parameters to be passed to [write.table()]
 #'            when `format = "ASCII"` or `format = "xyza"`.
-#' @seealso [readGPR()]
+#' @seealso [RGPR::readGPR()]
 #' @name writeGPR
 setGeneric("writeGPR", function(obj, dsn = NULL, 
                                 format = c("rds", "dt1", "ascii", "xta", "xyza", "vtk"),
@@ -123,7 +123,7 @@ setMethod("writeGPR", "GPR", function(obj, dsn = NULL,
 #' @return Invisibly returns `obj` (updated `@paths` slot) for multi-file
 #'         formats, or the output file path for `"h5"`.
 #'
-#' @seealso [readGPRsurvey_hdf5()], [writeGPR()]
+#' @seealso [RGPR::readGPRsurvey()], [RGPR::writeGPR()]
 #' @rdname writeGPR
 #' @export
 setMethod("writeGPR", "GPRsurvey",

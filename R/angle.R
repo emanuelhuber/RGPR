@@ -2,7 +2,7 @@
 #' Angle of the GPR data
 #'
 #' The angle is computed based on the orientation of the oriented bounding
-#' box ([obbox()]).
+#' box ([RGPR::obbox()]).
 #' @param x (`GPR|GPRsurvey`)
 #' @return (`numeric[1]`) The angle of the oriented bounding box.
 #' @name angle

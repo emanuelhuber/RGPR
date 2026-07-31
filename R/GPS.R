@@ -256,3 +256,71 @@ UMTStringToEPSG <- function(x){
   UTMToEPSG(zone = as.numeric(pat[1]),
             south = grepl("S", pat[2], ignore.case = TRUE))
 }
+
+
+
+#' Project geographic coordinates
+#'
+#' Projects longitude/latitude coordinates stored in an `xyzt` matrix to a
+#' UTM coordinate system.
+#'
+#' If `UTM = TRUE`, the UTM zone is estimated automatically from the
+#' coordinates using [RGPR::lonLatToUTM()]. If `UTM` is a character string,
+#' the coordinates are projected to the specified UTM zone using
+#' [sf::sf_project()].
+#'
+#' @param xyzt (`matrix`) Matrix whose first column contains longitude,
+#'   second column latitude, and remaining columns additional data
+#'   (e.g. elevation and time).
+#' @param UTM (`logical[1]|character[1]`) Coordinate projection option.
+#'   If `FALSE`, coordinates remain in WGS84 (`EPSG:4326`). If `TRUE`,
+#'   the UTM zone is determined automatically. If a character string,
+#'   coordinates are projected to the specified UTM zone.
+#' @param NS (`character[1]`) Hemisphere indicator (`"N"` or `"S"`).
+#'   Used only when `UTM = TRUE`.
+#' @param EW (`character[1]`) Longitude direction (`"E"` or `"W"`).
+#'   Used only when `UTM = TRUE`.
+#'
+#' @return A list with:
+#'   * `xyzt` (`matrix`): projected coordinates.
+#'   * `xyzt_crs` (`character[1]|numeric[1]`): coordinate reference system
+#'     of the returned coordinates.
+#'
+#' @seealso [RGPR::lonLatToUTM()], [sf::sf_project()]
+#'
+#' @keywords internal
+#' @noRd
+projectXYZT <- function(xyzt, UTM = FALSE, type = NULL, NS = NULL, EW = NULL){
+  xyzt_crs <- 4326
+  
+  if (isTRUE(UTM)) {
+    
+    topoUTM <- lonLatToUTM(
+      lat   = xyzt[, 2],
+      lon   = xyzt[, 1],
+      zone  = NULL,
+      south = (NS[1] == "S"),
+      west  = (EW[1] == "W")
+    )
+    
+    xyzt[, 1:2] <- topoUTM$xy
+    xyzt_crs <- topoUTM$crs
+    
+  } else if (is.character(UTM)) {
+    
+    UTM_crs <- UMTStringToEPSG(UTM)
+    
+    xyzt[, 1:2] <- sf::sf_project(
+      from = "EPSG:4326",
+      to   = paste0("EPSG:", UTM_crs),
+      pts  = xyzt[, 1:2]
+    )
+    
+    xyzt_crs <- paste0("EPSG:", UTM_crs)
+  }
+  
+  list(
+    xyzt = xyzt,
+    xyzt_crs = xyzt_crs
+  )
+}

@@ -17,7 +17,7 @@ readGPR(
 \arguments{
 \item{dsn}{(\code{character|connection}) Data source name: either the
 filepath to the GPR data (character), or an open file
-connection (can be a list of file paths or connections).}
+connection (can be a vector of file paths or connections).}
 
 \item{desc}{(\code{character(1)}) Short description of the data.}
 

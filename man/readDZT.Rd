@@ -5,13 +5,10 @@
 \title{Read GSSI GPR data (.dzt)}
 \usage{
 readDZT(dsn)
-
-readDZT(dsn)
 }
 \arguments{
-\item{dsn}{(\verb{character(1)|connection object}) data source name:
-either the filepath to the GPR data (character),
-or an open file connection.}
+\item{dsn}{(\code{character(1)|connection}) Path or open binary connection to
+the .dzt file.}
 }
 \value{
 A list with elements:
@@ -19,17 +16,11 @@ A list with elements:
 \item{data}{3-D array \code{[nSamples, nScans, nChannels]}.}
 \item{depth}{Time vector (ns).}
 \item{pos}{Nominal position vector (m).}
-
-(\code{list(4)}) \code{hd} header data,
-\code{data} GPR data, \code{depth} time or depth, and \code{pos}
-position of the traces.
 }
 \description{
 Reads the binary DZT file and returns the raw data array together with the
 parsed header and axis vectors.
 }
 \seealso{
-\code{\link[=readDZG]{readDZG()}}, \code{\link[=readDZX]{readDZX()}}
-
-\code{\link[=readDZG]{readDZG()}}, \code{\link[=readDZX]{readDZX()}}
+\code{\link[=readDZG]{readDZG()}}, \code{\link[=eadDZX]{eadDZX()}}
 }

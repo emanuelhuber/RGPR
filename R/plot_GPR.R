@@ -145,7 +145,10 @@ plot.GPR <- function(x,
                                  vclab = 0.5,
                                  clab = NULL),
                      ...){
+  
+
   x[is.infinite(x) | is.na(x)] <- 0
+  
   
   if(ncol(x) == 1){
     .plot1D(x, 

@@ -5,13 +5,10 @@
 \title{Read GSSI extended XML metadata (.dzx)}
 \usage{
 readDZX(dsn)
-
-readDZX(dsn)
 }
 \arguments{
-\item{dsn}{(\verb{character(1)|connection object}) data source name:
-either the filepath to the GPR data (character),
-or an open file connection.}
+\item{dsn}{(\code{character(1)|connection}) Path or open binary connection to
+the .dzx file.}
 }
 \value{
 A list with some or all of the following elements:
@@ -23,18 +20,11 @@ A list with some or all of the following elements:
 \item{unitsPerMark}{Units per odometer mark (numeric).}
 \item{unitsPerScan}{Units per scan (numeric).}
 Returns \code{NULL} for empty or unreadable files.
-
-(\code{list}) contains the markers, the trace position and
-the spatial sampling.
 }
 \description{
 Extracts trace positions, spatial sampling, horizontal units, and fiducial
 markers from the XML companion file written by GSSI instruments.
-
-.dzx files are xml files
 }
 \seealso{
-\code{\link[=readDZT]{readDZT()}}, \code{\link[=readDZG]{readDZG()}}
-
 \code{\link[=readDZT]{readDZT()}}, \code{\link[=readDZG]{readDZG()}}
 }

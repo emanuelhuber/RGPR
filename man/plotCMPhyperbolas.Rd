@@ -21,7 +21,7 @@ plotCMPhyperbolas(x, ...)
 (default is \code{1}). See \code{\link[graphics:par]{graphics::par()}}}
 
 \item{type}{(\code{character[1]}) what type of plot should be drawn
-(default is \code{"l"} for lines). See \code{\link[graphics:plot.default]{graphics::plot()}}}
+(default is \code{"l"} for lines). See \code{\link[graphics:plot]{graphics::plot()}}}
 }
 \value{
 (\code{list}) A list element key \code{antsep} containing a numeric

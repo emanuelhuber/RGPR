@@ -14,7 +14,7 @@ smooth2D(x, method = c("awsaniso", "aws", "awsp"), ...)
 
 \item{method}{(\code{character[1]}) \code{awsaniso} stand for anisotropic
 adaptive weights smoothing
-(call the function \code{\link[adimpro:awsimage]{adimpro::awsaniso()}}),
+(call the function \code{\link[adimpro:awsaniso]{adimpro::awsaniso()}}),
 \code{aws} stand for adaptive weights smoothing using
 a local constant model
 (call the function \code{\link[adimpro:awsimage]{adimpro::awsimage()}}), and
@@ -23,7 +23,7 @@ local polynomial models up to a degree of 2.
 (call the function \code{\link[adimpro:awsimage]{adimpro::awsimage()}}).}
 
 \item{...}{additional parameters to be passed to the \code{adimpro}
-functions: \code{\link[adimpro:awsimage]{adimpro::awsaniso()}},
+functions: \code{\link[adimpro:awsaniso]{adimpro::awsaniso()}},
 \code{\link[adimpro:awsimage]{adimpro::awsimage()}}, and
 \code{\link[adimpro:awsimage]{adimpro::awsimage()}}.}
 }
@@ -32,6 +32,6 @@ functions: \code{\link[adimpro:awsimage]{adimpro::awsaniso()}},
 }
 \description{
 A wrapper for the following \code{adimpro} functions:
-\code{\link[adimpro:awsimage]{adimpro::awsaniso()}}, \code{\link[adimpro:awsimage]{adimpro::awsimage()}}, and
+\code{\link[adimpro:awsaniso]{adimpro::awsaniso()}}, \code{\link[adimpro:awsimage]{adimpro::awsimage()}}, and
 \code{\link[adimpro:awsimage]{adimpro::awsimage()}}.
 }

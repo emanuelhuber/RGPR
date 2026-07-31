@@ -11,7 +11,7 @@ as.spatialPoints: x
 buffer: x, d, combine
 clippedData: obj, dlim, verbose
 CMPhyperbolas: x
-convertTimeToDepth: x, dz, zmax, method
+convertTimeToDepth: obj, dz, zmax, method
 convexhull: x, verbose
 coordinates: x
 coordinates<-: x, value
@@ -20,17 +20,19 @@ crs<-: x, value
 declip: obj, drange, lambda, mu, objclip
 delineate: x, name, values, n, plotDel, ...
 delineations: obj, name
-dewow: x, type, w, track
+dewow: obj, type, w, track
 dropDuplicatedCoords: x, tol, z, verbose
-estimateTime0: x, method, thr, w, ns, bet, shorten, c0, FUN, ..., track
+estimateTime0: obj, method, thr, w, ns, bet, shorten, c0, FUN, ..., track
 exportDelineations: obj, dsn
 filter1D: obj, type, w, track
-filter2D: obj, type, ..., track
+filterEigen: obj, eigenvalue, center, scale, track
 filterFreq1D: obj, f, type, L, plotSpec, track
 filterFreq2D: obj, fk, L, npad, track
 firstBreakToTime0: x, fb, c0
-freqSpectrum: obj, MARGIN, plotSpec, unwrapPhase, ...
-gainEnv: x, FUN, track
+freqSpectrum: obj, plotSpec, unwrapPhase, ...
+freqSpectrum2D: obj, plotSpec, unwrapPhase, ...
+gainAGC: obj, sig, p, r, floorquantile, return_gain, track
+gainEnv: obj, FUN, floorquantile, return_gain, track
 gainSEC: obj, a, b, t0, tend, tcst, return_gain, track
 getDepth: obj
 getVel: obj, type
@@ -41,7 +43,7 @@ interpCoords: x, coords, tt, r, UTM, interp3D, tol, verbose, plot, method
 isCMP: x
 isCommonOffset: x
 isCRSGeographic: x
-isSamplingRegular: x
+isSamplingRegular: x, axes
 isVelModel: x
 isVelSpectrum: x
 isZTime: x
@@ -51,38 +53,40 @@ NMOcorrect: x, thrs, v, method
 NMOstack: x, thrs, v, method
 NMOstreching: x, v
 obbox: x
+papply: obj, prc
 pickFirstBreak: x, method, thr, w, ns, bet, shorten
 plotCMPhyperbolas: x, ...
 plotDelineations: x, method, col, ...
 plotVel: x
 plotVelLayers: obj, method, col, ...
-proc: x
-proc<-: x, value
 project: x, CRSobj
 relPos: x
-rmDCShift: x, u, FUN, ..., track
+resampleRegGrid: x, dx, dz, method, track
+reverse: x, id, tol, onlyData, track
+rmDCShift: obj, u, FUN, ..., track
 rmDelineations<-: x, value
 scale1D: obj, type, track
 setTime0: obj, t0, track
 setVel: x, v, twt, type
 shift: x, z, method, crop, track
 shiftTopo: x, method, crop, track
-shiftToTime0: x, method, crop, track
+shiftToTime0: obj, method, crop, track
 smooth2D: x, method, ...
 spunit: x
 spunit<-: x, value
+switchPolarity: obj, ..., track
 time0: obj
 time0<-: obj, value
 trapply: x, w, FUN, ..., track
 vel: x
 vel<-: x, value
 velInterp: x, type, method
-velLayers: obj, name
 velPick: x, ...
 velSetLayers: obj, v, twt, method, clean
 velSmooth: x, type, w
 velSpectrum: x, method, v, w
 wapply: x, w, FUN, ..., track
-writeGPR: x, fPath, format, overwrite, ...
+writeGPR: obj, dsn, format, overwrite, ...
+writeVTK: obj, dsn, overwrite
 xpos: x
 xpos<-: x, value

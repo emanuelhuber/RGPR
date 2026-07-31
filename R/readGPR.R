@@ -59,7 +59,7 @@
 #'
 #' @param dsn       (`character|connection`) Data source name: either the
 #'                  filepath to the GPR data (character), or an open file
-#'                  connection (can be a list of file paths or connections).
+#'                  connection (can be a vector of file paths or connections).
 #' @param desc      (`character(1)`) Short description of the data.
 #' @param Vmax      (`numeric(1)|NULL`) Nominal analog input voltage for the
 #'                  bits-to-volt transformation. `NULL` skips conversion.
@@ -75,7 +75,7 @@
 #' @return (`GPR|GPRset`) An object of class `GPR`, or `GPRset` for
 #'         multi-channel data.
 #'
-#' @seealso [writeGPR()], [interpCoords()], [metadata()]
+#' @seealso [RGPR::writeGPR()], [RGPR::interpCoords()], [RGPR::metadata()]
 #' @examples
 #' \dontrun{
 #' # File path
@@ -268,6 +268,3 @@ readGPR <- function(dsn, desc = "", Vmax = NULL,
   x
 }
 
-
-# Null-coalescing operator (base R does not provide one)
-`%||%` <- function(a, b) if (!is.null(a)) a else b

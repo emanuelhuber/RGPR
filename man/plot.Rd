@@ -151,8 +151,8 @@ to time-zero. See details.}
 See details}
 
 \item{...}{additional arguments passed to the plotting methods
-\code{\link[graphics:plot.default]{graphics::plot()}} for 1D plot and
-\code{\link[plot3D:Image]{plot3D::image2D()}} for 2D plot. See also  \code{details}.}
+\code{\link[graphics:plot]{graphics::plot()}} for 1D plot and
+\code{\link[plot3D:image2D]{plot3D::image2D()}} for 2D plot. See also  \code{details}.}
 
 \item{dirArrows}{(\code{list|NULL}) If not \code{NULL}, display an arrow
 indicating the survey direction (only for plot of GPRsurvey)
@@ -175,7 +175,7 @@ The argument \code{col} is :
 The argument \code{type} is :
 \itemize{
 \item 1D plot: \code{p}, \code{l}, \code{b}, \code{c}, \code{o}, \code{h}, \code{s}, \code{S}, \code{n}
-(see argument \code{type} in \code{\link[graphics:plot.default]{graphics::plot()}}).
+(see argument \code{type} in \code{\link[graphics:plot]{graphics::plot()}}).
 \item 2D plot: \code{"raster"} (default), \code{"wiggles"} or \code{"contour"}.
 }
 

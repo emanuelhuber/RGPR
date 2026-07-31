@@ -37,7 +37,7 @@ setGeneric("declip", function(obj,
 #'              the positively clipped values, `-1` for the negatively
 #'              clipped values and `0` everywhere else. If 
 #'              `objclip = NULL`, the clipped values are estimated with
-#'              the function [clippedData()].
+#'              the function [RGPR::clippedData()].
 #' @return (`GPR`)    
 #' @rdname declip      
 #' @export

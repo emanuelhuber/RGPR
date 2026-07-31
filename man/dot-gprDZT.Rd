@@ -7,8 +7,8 @@
 .gprDZT(
   x,
   fName = character(0),
-  desc = character(0),
   fPath = character(0),
+  desc = character(0),
   Vmax = NULL
 )
 }
@@ -18,9 +18,9 @@ a \code{$dzx} element from \code{readDZX()}.}
 
 \item{fName}{(\code{character(1)}) Base filename (no path).}
 
-\item{desc}{(\code{character(1)}) Short data description.}
-
 \item{fPath}{(\code{character(1)}) Full path to the .dzt file.}
+
+\item{desc}{(\code{character(1)}) Short data description.}
 
 \item{Vmax}{(\code{numeric(1)|NULL}) Nominal voltage for bit conversion.}
 }

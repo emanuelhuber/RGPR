@@ -35,10 +35,7 @@
 #'
 #' @name filter2D
 #' @rdname filter2D
-#' @aliases filter2Dmedian3x3 filter2Dadimpro filter2Dgaussian
-#'          filter2Disoblur filter2Dmedianblur filter2Danisotropic
-#'          filter2Ddiffusiontensors filter2Dgradient
-#'          filter2Dfftlowpass
+#' @aliases filter2Dmedian3x3 filter2Dadimpro filter2Dgaussian filter2Disoblur filter2Dmedianblur filter2Danisotropic filter2Ddiffusiontensors filter2Dgradient filter2Dfftlowpass
 #' @concept processing
 #' @export
 NULL
@@ -541,7 +538,7 @@ setMethod("filter2Dimsharpen", "GPRvirtual", function(obj, amplitude = 1, type =
 #' @param window_size Odd integer specifying the size of the sliding window (default is 3).
 #' @param epsilon Small numeric value to avoid division by zero (default is 1e-8).
 #'
-#' @return Numeric matrix of the same dimensions as `image`, with values normalized to [0,1].
+#' @return Numeric matrix of the same dimensions as `image`, with values normalized to `[0,1]`.
 #'
 #' @examples
 #' set.seed(1)
@@ -620,7 +617,7 @@ setMethod("filter2DlocalContrast", "GPRvirtual", function(obj,  win = 3, alpha =
 #' @param scale Numeric value controlling soft threshold (default 0.05).
 #' @param power Numeric exponent for amplifying high values (default 1.5).
 #'
-#' @return Numeric matrix of same size as image_matrix, normalized to [0,1].
+#' @return Numeric matrix of same size as image_matrix, normalized to `[0,1]`.
 #'
 #' @examples
 #' set.seed(1)

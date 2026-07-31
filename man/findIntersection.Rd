@@ -10,7 +10,7 @@ findIntersection(x)
 \S4method{findIntersection}{GPRsurvey}(x)
 }
 \arguments{
-\item{x}{\code{\link{GPRsurvey}} An object of the class \code{GPRsurvey}}
+\item{x}{(\code{GPRsurvey}) An object of the class \code{GPRsurvey}}
 }
 \value{
 (\verb{object GPRsurvey}) An object of the class GPRsurvey.

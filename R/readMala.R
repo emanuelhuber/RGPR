@@ -1,5 +1,5 @@
 
-# =============================================================================
+# ============================================================================ #
 # io-rd3.R
 #
 # MALA  —  RD3 (16-bit) / RD7 (32-bit)  +  RAD  (+ COR)
@@ -9,7 +9,7 @@
 #
 # The RD7 variant uses 4-byte samples; RD3 uses 2-byte samples.
 # Both share the same .rad header and the same constructor (.gprRD3).
-# =============================================================================
+# ============================================================================ #
 
 
 #' Read a MALA GPR file (.rd3/.rd7 + .rad)
@@ -62,9 +62,9 @@
 }
 
 
-# -----------------------------------------------------------------------------
+# ---------------------------------------------------------------------------- #
 # Format registration
-# -----------------------------------------------------------------------------
+# ---------------------------------------------------------------------------- #
 
 # RD3 (16-bit) variant
 register_gpr_format(
@@ -85,11 +85,12 @@ register_gpr_format(
   gps_ext   = "COR",
   reader_fn  = .read_rd3
 )
-#--------------- read MALA files -------------------#
 
+
+#--------------- read MALA files -------------------#
 .gprRD3 <- function(x, fName = character(0), desc = character(0),
                     fPath = character(0), nbits = NULL, Vmax = NULL){  
-  #====== HEADER DATA (FILE *.HD) ======#
+  # ====== HEADER DATA (FILE *.HD) ====== #
   if(is.null(Vmax)) Vmax <- 50
   if(is.null(nbits)) Vmax <- 16
   
@@ -209,6 +210,7 @@ register_gpr_format(
 
 readRD37 <- function(dsn, ntr, npt, nbytes = 2, endian = .Platform$endian){
   dsn <- .openFileIfNot(dsn)
+  on.exit(.closeFileIfNot(dsn))
   # if(!inherits(dsn, "connection")){
   #   dsn <- file(dsn, 'rb')
   # }
@@ -238,13 +240,14 @@ readRD37 <- function(dsn, ntr, npt, nbytes = 2, endian = .Platform$endian){
     dataRD7[, i] <- readBin(dsn, what = integer(), n = npt, size = nbytes, endian = endian)
   }
   
-  .closeFileIfNot(dsn)
+  # .closeFileIfNot(dsn)
   return(dataRD7)
 }
 
 readRAD <- function(dsn){
   ##---- RAD file
   dsn <- .openFileIfNot(dsn)  # in case there is some binary stuff
+  on.exit(.closeFileIfNot(dsn))
   headRAD <- scan(dsn, what = character(), strip.white = TRUE,
                   quiet = TRUE, fill = TRUE, blank.lines.skip = TRUE, 
                   flush = TRUE, sep = "\n", skipNul = TRUE)
@@ -262,15 +265,14 @@ readRAD <- function(dsn){
   }
   ntr <- .getHD(hRAD, "LAST TRACE")
   npt <- .getHD(hRAD, "SAMPLES")
-  .closeFileIfNot(dsn)
+  # .closeFileIfNot(dsn)
   return(list(HD = hRAD, ntr = ntr, npt = npt))
 }
 
 #' @export
 readCOR <- function(dsn, toUTM = FALSE){
-  if(!inherits(dsn, "connection")){
-    dsn <- file(dsn, 'rb')
-  }
+  dsn <- .openFileIfNot(dsn)
+  on.exit(.closeFileIfNot(dsn))
   # hCOR <- read.table(dsn, sep = "\t", dec = ".", header = FALSE,
   #                    stringsAsFactors = FALSE)
   # colnames(hCOR) <- c("traces", "date", "time", "latitude", "longitude",
@@ -321,6 +323,6 @@ readCOR <- function(dsn, toUTM = FALSE){
   #   if(any(grepl("W", hCOR[["long"]]))) hCOR[["x"]] <- -hCOR[["x"]]
   # }
   
-  .closeFileIfNot(dsn)
+  # .closeFileIfNot(dsn)
   return(list(mrk = hCOR[c("x", "y", "z", "id", "date", "time")], crs = hCOR_crs))
 }

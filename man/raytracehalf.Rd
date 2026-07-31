@@ -7,11 +7,11 @@
 raytracehalf(h, v, theta)
 }
 \arguments{
-\item{h}{\code{\link{numeric(n)}} Layer heights}
+\item{h}{[\code{numeric[n]}] Layer heights}
 
-\item{v}{\code{\link{numeric(n)}} Layer velocity}
+\item{v}{[\code{numeric[n]}] Layer velocity}
 
-\item{theta}{\code{\link{numeric(n)}} Incidence angle above first layer}
+\item{theta}{[\code{numeric[n]}] Incidence angle above first layer}
 }
 \description{
 Ray tracing

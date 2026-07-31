@@ -30,8 +30,14 @@ setMethod("[", signature(x = "GPRset", i = "ANY", j = "ANY"),
     # if(length(x_freq) > 1 && length(x_freq) >= max(k)){
     #   x_freq <- x_freq[k]
     # }
+    
+    if(length(x@ann) > 0){
+      ann <- x@ann[j]
+    }else{
+      ann <- x@ann
+    }
+    
     if(length(k) == 1) {
-      # print("length(k) == 1")
       x <- new("GPR",   
           #--- class GPRvirtual
           version      = "0.3",  
@@ -70,7 +76,7 @@ setMethod("[", signature(x = "GPRset", i = "ANY", j = "ANY"),
           # markers      = .subsetVec(x@markers, j), 
           markers      = x@markers[j], 
           # ann          = .subsetVec(x@ann, j), 
-          ann          = x@ann[j], 
+          ann          = ann, 
           
           coord        = .subsetMat(x@coord, j),     
           rec          = .subsetMat(x@rec, j),     
@@ -122,8 +128,7 @@ setMethod("[", signature(x = "GPRset", i = "ANY", j = "ANY"),
                antsep       = .subsetVec(x@antsep, j),    
                # markers      = .subsetVec(x@markers, j), 
                markers      = x@markers[j], 
-               # ann          = .subsetVec(x@ann, j), 
-               ann          = x@ann[j], 
+               ann          = ann, 
                
                coord        = .subsetMat(x@coord, j),     
                rec          = .subsetMat(x@rec, j),     

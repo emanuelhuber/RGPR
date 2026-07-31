@@ -1,4 +1,4 @@
-# =============================================================================
+# ============================================================================ #
 # io-dat.R
 #
 # Geomatrix Earth Science Ltd (UTSI Electronics)  —  DAT + HDR  (+ GPS + GPT)
@@ -9,7 +9,7 @@
 # GPS interpolation for this format requires BOTH .gps AND .gpt to be present.
 # The .gpt file provides the timing relationship between GPS sentences and
 # data scans; without it the GPS data cannot be correctly georeferenced.
-# =============================================================================
+# ============================================================================ #
 
 
 #' Read a Geomatrix/UTSI GPR file (.dat + .hdr)
@@ -48,7 +48,7 @@
   if (!is.null(dsn[["GPS"]]) && !is.null(dsn[["GPT"]])) {
     gpt <- verboseF(readUtsiGPT(dsn[["GPT"]]), verbose = verbose)
     if (length(gpt) > 0L) {
-      x_gps <- verboseF(readUtsiGPS(dsn[["GPS"]], gpt), verbose = verbose)
+      x_gps <- verboseF(readUtsiGPS(dsn[["GPS"]], gpt, UTM = FALSE), verbose = verbose)
     }
   }
   
@@ -56,9 +56,9 @@
 }
 
 
-# -----------------------------------------------------------------------------
+# ---------------------------------------------------------------------------- #
 # Format registration
-# -----------------------------------------------------------------------------
+# ---------------------------------------------------------------------------- #
 register_gpr_format(
   id         = "DAT",
   detect_ext = "DAT",
@@ -68,37 +68,144 @@ register_gpr_format(
   reader_fn  = .read_dat
 )
 
-.gprUtsi <- function(x, fName = "", fPath = "", 
-                     desc = "", Vmax = NULL){
+# .gprUtsi <- function(x, fName = "", fPath = "", 
+#                      desc = "", Vmax = NULL){
+#   
+#   if(is.null(Vmax)) Vmax <- 50
+#   
+#   y <- new("GPR", 
+#            version     = "0.3",
+#            name        = fName,
+#            path        = fPath,
+#            
+#            data        = x[["data"]] * bits2volt(Vmax = Vmax, 
+#                                                  nbits = x$hd$bits),
+#            traces      = 1:ncol(x[["data"]]),       # trace numbering
+#            pos         = 1:ncol(x[["data"]]),                # trace position
+#            depth       = 1:nrow(x[["data"]]),
+#            time0       = rep(0, ncol(x[["data"]])),  
+#            time        = rep(0, ncol(x[["data"]])), # time of trace records
+#            proc        =  character(0),       
+#            vel         = list(v = 0.1),                 # m/ns
+#            description = desc,
+#            fid         = trimStr(x[['fid']]),
+#            dz          = 1, 
+#            dx          = 1, 
+#            depthunit   = "ns",
+#            posunit     = "m",
+#            freq        = 0,
+#            antsep      = 0, 
+#            surveymode  = "reflection",
+#            date        = format(Sys.time(), "%Y-%m-%d"),
+#            crs         = character(0),
+#            hd          = list())
+#   return(y)
+# }
+.gprUtsi <- function(x,
+                     fName = "",
+                     fPath = "",
+                     desc = "",
+                     Vmax = NULL){
   
-  if(is.null(Vmax)) Vmax <- 50
+  hd <- x$hd
   
-  y <- new("GPR", 
-           version     = "0.2",
-           data        = x[["data"]] * bits2volt(Vmax = Vmax, 
-                                                 nbits = x$hd$bits),
-           traces      = 1:ncol(x[["data"]]),       # trace numbering
-           pos         = 1:ncol(x[["data"]]),                # trace position
-           depth       = 1:nrow(x[["data"]]),
-           time0       = rep(0, ncol(x[["data"]])),  
-           time        = rep(0, ncol(x[["data"]])), # time of trace records
-           proc        =  character(0),       
-           vel         = list(v = 0.1),                 # m/ns
-           name        = fName,
-           description = desc,
-           filepath    = fPath,
-           fid         = trimStr(x[['fid']]),
-           dz          = 1, 
-           dx          = 1, 
-           depthunit   = "ns",
-           posunit     = "m",
-           freq        = 0,
-           antsep      = 0, 
-           surveymode  = "reflection",
-           date        = format(Sys.time(), "%Y-%m-%d"),
-           crs         = character(0),
-           hd          = list())
-  return(y)
+  if(is.null(Vmax)){
+    data <- x$data
+    dunit <- "bits"
+  }else{
+    data <- bits2volt(Vmax = Vmax) * x$data
+    dunit <- "mV"
+  }
+  
+  nr <- nrow(data)
+  nc <- ncol(data)
+  
+  # vertical axis (time window in ns)
+  z <- seq(
+    from = 0,
+    to = hd$time_sweep,
+    length.out = nr
+  )
+  
+  # trace positions
+  xpos <- seq_len(nc)
+  
+  # trace markers
+  markers <- as.character(x$fid)
+  
+  # metadata
+  md <- list(
+    hd   = hd,
+    clip = clippedBits(x$data, nbits = hd$bits)
+  )
+  
+  # empty geometry information
+  coord <- matrix(NA_real_, nc, 3)
+  rec   <- matrix(NA_real_, nc, 3)
+  trans <- matrix(NA_real_, nc, 3)
+  
+  angles <- matrix(NA_real_, nc, 2)
+  
+  # survey date
+  surveyDate <- tryCatch(
+    hd$date,
+    error = function(e) Sys.Date()
+  )
+  
+  new(
+    "GPR",
+    
+    # ----- GPRvirtual -----
+    version      = "0.3",
+    name         = fName,
+    path         = fPath,
+    desc         = desc,
+    
+    mode         = "CO",
+    date         = surveyDate,
+    freq         = NA_real_,
+    
+    data         = data,
+    
+    dunit        = dunit,
+    dlab         = "Amplitude",
+    
+    spunit       = "m",
+    crs          = "",
+    
+    xunit        = "trace",
+    xlab         = "Trace",
+    
+    zunit        = "ns",
+    zlab         = "Time",
+    
+    vel          = list(v = 0.1),
+    
+    proc         = list(),
+    delineations = list(),
+    
+    md           = md,
+    
+    # ----- GPR -----
+    z0           = rep(0, nc),
+    
+    time         = numeric(0),
+    
+    antsep       = rep(hd$antsep, nc),
+    
+    markers      = markers,
+    
+    ann          = rep("", nc),
+    
+    coord        = coord,
+    rec          = rec,
+    trans        = trans,
+    
+    x            = xpos,
+    z            = z,
+    
+    angles       = angles
+  )
 }
 
 
@@ -176,7 +283,7 @@ readUtsiHDR <- function(dsn){
   
   # u <- readLines(dsn, n = 1, skipNul = TRUE, warn = FALSE)
   u <- readBin(dsn, what = "character", n = 1)
-  hd$date <- as.Date(u[1], "%d\\%m\\%y")
+  hd$date <- as.Date(u[1], "%d\\%m\\%Y")
   
   invisible(readBin(dsn, what = "character", n = 1))
   u <- readBin(dsn, what = "character", n = 1)
@@ -253,33 +360,36 @@ readUtsiGPT <- function(dsn){
 # dsn <- dsn[["GPS"]]
 # $GPGGA,140454.00,5518.98033,N,00203.66162,W,1,09,1.19,123.0,M,48.6,M,,*48
 #' @export
-readUtsiGPS <- function(dsn, gpt){
-  if(!inherits(dsn, "connection")){
-    dsn <- file(dsn, 'rb')
-  }
-  # hCOR <- read.table(dsn, sep = "\t", dec = ".", header = FALSE,
-  #                    stringsAsFactors = FALSE)
-  # colnames(hCOR) <- c("traces", "date", "time", "latitude", "longitude",
-  #                 "height", "accuracy")
+readUtsiGPS <- function(dsn, gpt, UTM = TRUE){
+  x <- scan(dsn, what = character(), sep = "\n", quiet = TRUE)
+  on.exit(.closeFileIfNot(dsn))
+  
   content <- verboseF(readLines(dsn), verbose = FALSE)
   if(length(content) == 0){
-    .closeFileIfNot(dsn)
     return(NULL)
   }
-  # hCOR <- read.table(textConnection(gsub(",", "\t", readLines(dsn))), 
-  #                    dec = ".", header = FALSE, colClasses = "character",
-  #                    stringsAsFactors = FALSE)
+
   hCOR <- read.table(textConnection(content),
                      colClasses = "character",
                      stringsAsFactors = FALSE, 
                      sep = ",")
-  a <- getLonLatFromGPGGA(hCOR)
   
-  .closeFileIfNot(dsn)
+  xyz <- getLonLatFromGPGGA(hCOR)
   
-  if(nrow(a) == length(gpt)){
-    a2 <- cbind(a[,1:3], gpt)
-    return(a2)
+  
+  if(nrow(xyz) == length(gpt)){
+    out <-projectXYZT(xyz, UTM = UTM, 
+                      NS = hCOR$NS,
+                      EW = hCOR$EW)
+    
+    mrk <- cbind(out$xyzt[ ,1:3], gpt)
+    names(mrk) <- c("x", "y", "z", "id")
+    mrk <- sf::st_as_sf(x      = mrk,
+                        coords = c("x", "y", "z"),
+                        crs    = out$xyzt_crs)
+    # .closeFileIfNot(dsn
+    # a2 <- cbind(a[,1:3], gpt)
+    return(mrk)
   }else{
     return(NULL)
   }

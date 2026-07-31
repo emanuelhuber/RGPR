@@ -7,11 +7,11 @@
 readGPS(dsn, UTM = TRUE)
 }
 \arguments{
-\item{dsn}{(\verb{character(1)|connection object}) data source name:
+\item{dsn}{(\code{character[1]|connection}) data source name:
 either the filepath to the GPR data (character),
 or an open file connection.}
 
-\item{UTM}{(\code{logical(1)}) If \code{TRUE} project coordinates to
+\item{UTM}{(\code{logical[1]}) If \code{TRUE} project coordinates to
 the corresponding UTM zone.}
 }
 \value{

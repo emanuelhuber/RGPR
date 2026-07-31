@@ -7,11 +7,11 @@
 rayCMP(av, h, v)
 }
 \arguments{
-\item{av}{\code{\link{numeric(m)}} antenna separation}
+\item{av}{(\code{numeric[m]}) antenna separation}
 
-\item{h}{\code{\link{numeric(n)}} Layer heights}
+\item{h}{(\code{numeric[n]}) Layer heights}
 
-\item{v}{\code{\link{numeric(n)}} Layer velocity}
+\item{v}{(\code{numeric[n]}) Layer velocity}
 }
 \description{
 Smulate ray tracing

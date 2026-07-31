@@ -13,7 +13,7 @@
 #'
 #' @return Object of class \code{GPRsurvey}.
 #'
-#' @seealso [GPRsurvey()], [writeGPR()]
+#' @seealso [RGPR::GPRsurvey()], [RGPR::writeGPR()]
 #' @export
 readGPRsurvey <- function(file) {
   

@@ -4,7 +4,7 @@
 \alias{.readRFDate}
 \title{Decode an RF creation/modification date from a DZT file}
 \usage{
-.readRFDate(con, where = 31)
+.readRFDate(con, where = 31L)
 }
 \arguments{
 \item{con}{Open binary file connection.}

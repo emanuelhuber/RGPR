@@ -63,5 +63,5 @@ inside it.  For \code{"h5"}, \code{dsn} is the path to the output \code{.h5} fil
 \seealso{
 \code{\link[=readGPR]{readGPR()}}
 
-\code{\link[=readGPRsurvey_hdf5]{readGPRsurvey_hdf5()}}, \code{\link[=writeGPR]{writeGPR()}}
+\code{\link[=readGPRsurvey]{readGPRsurvey()}}, \code{\link[=writeGPR]{writeGPR()}}
 }

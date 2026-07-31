@@ -11,7 +11,7 @@
 #'         be smaller if `crop = TRUE`.
 #' }
 #'
-#' @param x      [`GPRsurvey`] An object of the class `GPRsurvey`
+#' @param x      (`GPRsurvey`) An object of the class `GPRsurvey`
 #' @return (`object GPRsurvey`) An object of the class GPRsurvey.
 #' @name findIntersection
 #' @concept spatial computing

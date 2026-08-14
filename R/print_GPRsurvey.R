@@ -6,12 +6,16 @@
 #' @export
 print.GPRsurvey <- function(x, ...){
   cat("*** Class GPRsurvey ***\n")
+  cat("Backing File: ", x@path, "\n")
   n <- length(x@paths)
   dirNames <- dirname(x@paths)
   if(length(unique(dirNames)) == 1){
     cat("Temp. directory: ", dirNames[1], "\n")
   }else{
     cat("Directories: ", dirNames,"\n")
+  }
+  if(x@view){
+    cat("Status hdf5: view, read-only\n")
   }
   testCoords <- sapply(x@coords, function(x) length(x) > 0)
   testCoords <- as.integer(testCoords) + 1

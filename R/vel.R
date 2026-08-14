@@ -149,7 +149,8 @@ checkVelIntegrity <- function(x, value){
 .getVel <- function(obj, type = c("vrms", "vint"), strict = TRUE){
   type <- match.arg(type, c("vrms", "vint"))
   if(length(obj@vel) == 0){
-    stop("You must first assign a positiv velocity value!")
+    return(NULL)
+    warning("You must first assign a positiv velocity value!")
   }
   if(!(type %in% names(obj@vel))){
     if(strict) stop("You must first set this type of velocity: ", type)

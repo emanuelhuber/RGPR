@@ -66,7 +66,7 @@ setClass(
     antseps       = "numeric",    # antenna separation of the GPR profiles
     
     spunit        = "character",  # position units  !!!length = 1!!!
-    crs           = "character",  # coordinates reference system
+    crs           = "character",  # coordinates reference system length = 1
     #coordref      = "numeric",   # reference position
     coords        = "list",       # (x,y,z) coordinates for each profiles
     
@@ -79,6 +79,8 @@ setClass(
     nx            = "integer",    # to control if nrow(@coord) == ncol(x[[i]])
     xlengths      = "numeric",     # depth/time window (vertical)
     
-    transf        = "numeric"
+    transf        = "numeric",
+    
+    view = "logical" # if TRUE = subset view backed by another HDF5 file, read-only
   )
 )

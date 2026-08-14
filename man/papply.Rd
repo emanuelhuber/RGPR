@@ -3,7 +3,7 @@
 \name{papply}
 \alias{papply}
 \alias{papply,GPRsurvey-method}
-\title{Apply bacth processing to GPRsurvey object}
+\title{Apply batch processing to a GPRsurvey object}
 \usage{
 papply(obj, prc = NULL)
 
@@ -12,14 +12,27 @@ papply(obj, prc = NULL)
 \S4method{papply}{GPR}(obj, prc = NULL)
 }
 \arguments{
-\item{obj}{(\code{GPR}) An object of the class GPR.}
+\item{obj}{Object of class \code{GPRsurvey}.}
 
-\item{prc}{(\code{list}) A list of processing funtions with their arguments}
+\item{prc}{A named list of processing functions and their arguments.}
 }
 \value{
-(\code{GPRsurvey})
+A processed \code{GPRsurvey} object.
 }
 \description{
-Apply bacth processing to GPRsurvey object
+Applies a list of processing functions to each GPR line of a materialized
+\code{GPRsurvey}. The processed lines are written back to the HDF5 backing
+file. Survey-level metadata and intersections are updated once at the
+end, which is more efficient than replacing each line through \verb{[[<-}.
+}
+\details{
+All lines are rewritten under a \strong{single} HDF5 update transaction (see
+\code{.h5_update_survey()} in \code{hdf5_update.R}): one lock, one temporary copy
+of the backing file, one open handle for the whole loop, one checksum
+verification pass, one atomic swap into place at the end. If processing
+fails partway through (e.g. one of the functions in \code{prc} errors on some
+line), the backing file is left completely untouched -- you get the
+error back with the \emph{original} file still intact, rather than a file
+that's been partially reprocessed.
 }
 \concept{processing}

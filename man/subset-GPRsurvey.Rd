@@ -5,11 +5,15 @@
 \alias{[,GPRsurvey-method}
 \alias{[[,GPRsurvey,ANY,ANY-method}
 \alias{[[,GPRsurvey-method}
+\alias{[[<-,GPRsurvey,ANY,ANY,GPR-method}
+\alias{[[<-,GPRsurvey-method}
 \title{Extract and replace parts of a GPRsurvey object}
 \usage{
 \S4method{[}{GPRsurvey,ANY,ANY}(x, i, j, ..., drop = TRUE)
 
 \S4method{[[}{GPRsurvey,ANY,ANY}(x, i, j, ..., exact = TRUE)
+
+\S4method{[[}{GPRsurvey,ANY,ANY,GPR}(x, i, j, ...) <- value
 }
 \arguments{
 \item{x}{(\code{GPRsurvey})}
@@ -28,5 +32,10 @@
 (\code{GPRsurvey})
 }
 \description{
+Subsetting a GPRsurvey returns a view. A view does not create a new HDF5
+file. It remains backed by the original HDF5 file and is not modified in
+place.
+}
+\details{
 Extract parts of a GPRsurvey object
 }

@@ -2,21 +2,39 @@
 % Please edit documentation in R/writeHDF5.R
 \name{.writeGPR_h5}
 \alias{.writeGPR_h5}
-\title{HDF5 write helper for writeGPR("GPRsurvey")}
+\title{HDF5 write helper for \code{writeGPR("GPRsurvey")}}
 \usage{
 .writeGPR_h5(obj, dsn, overwrite, compress)
+}
+\arguments{
+\item{obj}{Object of class \code{GPRsurvey}.}
+
+\item{dsn}{(\code{character(1)} or \code{NULL}) Destination \code{.h5} path.}
+
+\item{overwrite}{(\code{logical(1)}) Overwrite an existing \code{dst}?}
+
+\item{compress}{Unused here (compression is fixed by whatever the
+source file already contains) -- kept for a consistent call signature
+with the rest of the \code{writeGPR()} dispatch.}
 }
 \description{
 Three cases:
 }
 \details{
 \enumerate{
-\item \code{dsn} is \code{NULL} or identical to \code{obj@filepath}:
-the file is already current --- no-op, return \code{obj}.
-\item \code{dsn} is a different path: copy the backing HDF5 file there
-and return an updated \code{obj} pointing at the new location.
-\item \code{obj@filepath} no longer exists: raise an informative error
-asking the user to re-create with \code{GPRsurvey()}.
+\item \code{dsn} is \code{NULL} or identical to \code{obj@path}: the file is already
+current -- no-op, return \code{obj}.
+\item \code{dsn} is a different path: copy the backing HDF5 file there and
+return an updated \code{obj} pointing at the new location.
+\item \code{obj@path} no longer exists: raise an informative error asking the
+user to re-create with \code{GPRsurvey()}.
+}
+
+The copy in case 2 uses the same lock + temporary-file + checksum-verify
+\itemize{
+\item atomic-replace pattern as \code{.h5_update_survey()} (see \code{hdf5_update.R}),
+so an interrupted copy never leaves a partial/corrupt file at \code{dst}, and
+a concurrent writer to the \emph{source} file is guarded against with a lock.
 }
 }
 \keyword{internal}

@@ -5,59 +5,103 @@
 #'
 #' Reads a set of GPR data files, collects survey-level metadata, writes
 #' everything to a single HDF5 file, and returns a lightweight
-#' \code{GPRsurvey} object backed by that file.
+#' `GPRsurvey` object backed by that file. A `GPRsurvey` object is backed
+#' by an HDF5 file. The R object contains survey-level metadata and
+#' references line data stored in the backing file.
 #'
-#' @param x        (`character[k]`) Vector of \code{k} file paths to GPR data
-#'                 files.  All formats supported by \code{\link{readGPR}} are
-#'                 accepted.
-#' @param dsn     (`character(1)`) Path for the output HDF5 file (must end
-#'                 in \code{.h5} by convention).  The file is created; if it
-#'                 already exists and \code{overwrite = FALSE} an error is
-#'                 raised.
-#' @param name    (`character(1)`) Name of the survey
-#' @param desc    (`character(1)`) Description of the survey
-#' @param overwrite (`logical(1)`) Overwrite an existing HDF5 file?
-#'                  Default \code{FALSE}.
-#' @param compress (`integer(1)`) gzip compression level 0–9 for the data
-#'                 arrays inside the HDF5 file.  Default \code{5L}.
+#' ## How the file is written
+#' The backing file is built in a **temporary file in the same directory as
+#' `dsn`**, under a **lock** that prevents two processes from building/
+#' replacing the same file at the same time (see `.h5_lock_acquire()` in
+#' `hdf5_update.R`). Only once every line has been written, survey-level
+#' metadata has been written, intersections have been computed from the
+#' *final* coordinates of every line, and (by default) every dataset has
+#' been read back to validate its checksum, is the temporary file atomically
+#' swapped in for `dsn` (`file.rename()`). If anything fails partway through
+#' -- a malformed input file, a disk error, an interrupted session -- `dsn`
+#' is left completely untouched: either the previous file (if `overwrite =
+#' TRUE` and one existed) or nothing at all. You never end up with a
+#' truncated/corrupt file sitting at the path you expect a valid backup.
+#'
+#' ## Precision and compression
+#' The main data array is always stored as 64-bit floating point
+#' (`H5T_NATIVE_DOUBLE`), matching R's native numeric precision -- so
+#' writing to HDF5 never loses precision relative to the in-memory `GPR`
+#' object. Every dataset (including small metadata vectors) is chunked and
+#' protected with an HDF5 fletcher32 checksum. gzip compression (with a
+#' byte-shuffle pre-filter, which typically improves the ratio noticeably
+#' for floating-point data) is applied to the radar-data arrays and, for
+#' large surveys, to per-line coordinates; see `compress`.
+#'
+#' Whether compression is worth it for GPR data depends on the data:
+#' amplitude-sampled radargrams are noisy and don't compress as well as,
+#' say, images with large flat regions, so don't expect dramatic ratios --
+#' but shuffle+gzip typically still buys a modest (roughly 1.3-2x)
+#' reduction for a low CPU cost, which is usually worth it for a backup
+#' copy that is written once and read occasionally. If you process huge
+#' surveys very frequently and disk space is not a concern, set
+#' `compress = 0L` to skip compression entirely and maximize write/read
+#' speed.
+#'
+#' @param x        (`character[k]`) Vector of `k` file paths to GPR data
+#'                 files. All formats supported by [readGPR()] are accepted.
+#' @param dsn      (`character(1)`) Path for the output HDF5 file (must end
+#'                 in `.h5` by convention). If it already exists and
+#'                 `overwrite = FALSE`, an error is raised before any work
+#'                 is done; if `overwrite = TRUE`, the existing file is only
+#'                 replaced at the very end, once the new file has been
+#'                 fully built and verified (see Details).
+#' @param name     (`character(1)`) Name of the survey.
+#' @param desc     (`character(1)`) Description of the survey.
+#' @param overwrite (`logical(1)`) Overwrite an existing HDF5 file? Default
+#'                 `FALSE`.
+#' @param compress (`integer(1)`) gzip compression level 0-9 for the data
+#'                 arrays inside the HDF5 file; `0` disables compression.
+#'                 Default `5L`. See Details for guidance on whether
+#'                 compression is worth it for GPR data.
+#' @param verify   (`logical(1)`) Re-read every dataset after writing to
+#'                 validate checksums before the file is swapped in.
+#'                 Default `TRUE`.
 #' @param verbose  (`logical(1)`) Print progress messages.
-#' @param ...      Additional arguments passed to \code{\link{readGPR}}.
+#' @param ...      Additional arguments passed to [readGPR()].
 #'
-#' @return An object of class \code{GPRsurvey}.
+#' @return An object of class `GPRsurvey`.
 #'
 #' @seealso [RGPR::readGPRsurvey()], [RGPR::writeGPR()]
 #' @name GPRsurvey
 #' @export
-GPRsurvey <- function(x, dsn, 
-                      name = "", desc = "",
-                      overwrite = FALSE, compress = 5L,
-                      verbose = TRUE, ...) {
-  
+GPRsurvey <- function(x, dsn,
+                       name = "", desc = "",
+                       overwrite = FALSE, compress = 5L,
+                       verify = TRUE, verbose = TRUE, ...) {
+
   if (!requireNamespace("hdf5r", quietly = TRUE)) {
     stop("Package 'hdf5r' is required to create a GPRsurvey object.\n",
          "Install it with: install.packages('hdf5r')",
          call. = FALSE)
   }
-  
-  # ---- validate 'dsn' argument ---------------------------------------------
+
+  # ---- validate arguments ---------------------------------------------------
   if (missing(dsn) || !nzchar(dsn)) {
     stop("Argument 'dsn' is required: provide a path for the HDF5 output ",
          "dsn, e.g. GPRsurvey(paths, dsn = 'survey.h5').",
          call. = FALSE)
   }
   dsn <- normalizePath(dsn, mustWork = FALSE)
-  if (file.exists(dsn)) {
-    if (!overwrite) {
-      stop("File already exists: '", dsn, "'.\n",
-           "Use overwrite = TRUE to replace it.",
-           call. = FALSE)
-    }
-    file.remove(dsn)
+  if (file.exists(dsn) && !overwrite) {
+    stop("File already exists: '", dsn, "'.\n",
+         "Use overwrite = TRUE to replace it.",
+         call. = FALSE)
   }
-  
+
+  compress <- as.integer(compress)
+  if (length(compress) != 1L || is.na(compress) || compress < 0L || compress > 9L) {
+    stop("'compress' must be an integer between 0 and 9.", call. = FALSE)
+  }
+
   LINES <- x
   n     <- length(LINES)
-  
+
   line_paths    <- LINES
   # ---- per-line accumulator vectors -----------------------------------------
   line_names    <- character(n)
@@ -74,28 +118,41 @@ GPRsurvey <- function(x, dsn,
   line_zunits   <- character(n)
   line_nx       <- integer(n)
   line_xlengths <- numeric(n)
-  
-  xyzCoords <- list()
-  
-  # ---- open HDF5 file for writing -------------------------------------------
-  h5 <- hdf5r::H5File$new(dsn, mode = "w")
-  on.exit(h5$close_all(), add = TRUE)
-  
-  h5$create_attr("version",  "1.0")
-  h5$create_attr("software", "RGPR")
-  h5$create_attr("created",  format(Sys.time(), "%Y-%m-%dT%H:%M:%S"))
+  line_markers  <- vector("list", n)
+
+  xyzCoords <- vector("list", n)
+
+  # ---- acquire an exclusive lock on 'dsn' ------------------------------------
+  # Prevents two R sessions from building/replacing the same backing file at
+  # the same time. See .h5_lock_acquire()/.h5_lock_release() in hdf5_update.R.
+  lock <- .h5_lock_acquire(dsn)
+
+  # ---- build the file in a temporary location, then swap it in atomically --
+  # dsn itself is never opened for writing directly: if anything below fails,
+  # dsn (whatever it was before this call -- possibly nothing) is untouched.
+  tmp <- .h5_temp_path(dsn)
+
+  # Registered in the exact order they must run at exit -- see the identical
+  # pattern (and rationale) in .h5_update_survey() in hdf5_update.R.
+  h5 <- hdf5r::H5File$new(tmp, mode = "w")
+  on.exit(try(h5$close_all(), silent = TRUE), add = TRUE)
+  on.exit(unlink(tmp, force = TRUE), add = TRUE)
+  on.exit(.h5_lock_release(lock), add = TRUE)
+
+  h5$create_attr("format_version", "1.0")   # HDF5 layout/schema version
+  h5$create_attr("software",       "RGPR")
+  h5$create_attr("created",        format(Sys.time(), "%Y-%m-%dT%H:%M:%S"))
   h5$create_attr("name", name)
   h5$create_attr("desc", desc)
-  
+
   lg <- h5$create_group("lines")   # per-line data groups written as we go
-  sg <- NULL                       # survey group written after the loop
-  
+
   # ---- read and write each GPR line -----------------------------------------
   for (i in seq_along(LINES)) {
     verboseF(message("Reading ", basename(LINES[i]), " ..."), verbose = verbose)
-    
+
     gpr <- verboseF(readGPR(LINES[[i]], verbose = verbose, ...), verbose = verbose)
-    
+
     if (inherits(gpr, "GPRset")) {
       stop(
         "Multi-channel (GPRset) profiles are not yet supported in GPRsurvey.\n",
@@ -104,43 +161,56 @@ GPRsurvey <- function(x, dsn,
         call. = FALSE
       )
     }
-    
-    # -- unique name ----------------------------------------------------------
+
+    # -- guard against empty profiles -----------------------------------------
+    if (nrow(gpr) == 0L || ncol(gpr) == 0L) {
+      stop(
+        "File '", LINES[[i]], "' produced an empty GPR profile ",
+        "(nz = ", nrow(gpr), ", nx = ", ncol(gpr), "); ",
+        "empty profiles cannot be backed up.",
+        call. = FALSE
+      )
+    }
+
+    # -- unique name ------------------------------------------------------------
     line_names[i] <- if (nzchar(gpr@name[1L])) gpr@name[1L] else "default_name"
     if (i > 1L) {
       line_names[i] <- safeName(x = line_names[i], y = line_names[seq_len(i - 1L)])
     }
-    
-    # -- metadata with length-zero guards -------------------------------------
+
+    # -- metadata with length-zero guards ---------------------------------------
     line_descs[i]     <- gpr@desc
-    line_modes[i]     <- gpr@mode
-    line_dates[i]     <- .setSlotDefault(gpr, "date",   Sys.Date(),
-                                          msg = paste0(LINES[[i]], "\n date has length zero"),
-                                          verbose)
-    line_freq[i]      <- .setSlotDefault(gpr, "freq",   0,
-                                          paste0(LINES[[i]], "\n frequency has length zero"),
-                                          verbose)
-    line_antsep[i]    <- .setSlotDefault(gpr, "antsep", 0,
-                                          paste0(LINES[[i]], "\n antenna separation has length zero"),
-                                          verbose)
-    line_spunit[i]    <- gpr@spunit
-    line_xunit[i]     <- gpr@xunit
-    line_zunits[i]    <- gpr@zunit
-    line_crs[i]       <- gpr@crs
-    line_nz[i]        <- nrow(gpr)
-    line_nx[i]        <- ncol(gpr)
-    line_zlengths[i]  <- abs(diff(range(gpr@z)))
-    line_xlengths[i]  <- abs(diff(range(gpr@x)))
-    
-    xyzCoords[[i]]         <- gpr@coord
-    if(ncol(gpr@coord) == 3 )  colnames(xyzCoords[[i]]) <- c("x", "y", "z")
-    
-    # -- write GPR line to HDF5 using the finalised name ----------------------
+    line_modes[i]      <- gpr@mode
+    line_dates[i]      <- .setSlotDefault(gpr, "date",   Sys.Date(),
+                                           msg = paste0(LINES[[i]], "\n date has length zero"),
+                                           verbose)
+    line_freq[i]       <- .setSlotDefault(gpr, "freq",   0,
+                                           paste0(LINES[[i]], "\n frequency has length zero"),
+                                           verbose)
+    line_antsep[i]      <- .setSlotDefault(gpr, "antsep", 0,
+                                            paste0(LINES[[i]], "\n antenna separation has length zero"),
+                                            verbose)
+    line_spunit[i]      <- gpr@spunit
+    line_xunit[i]       <- gpr@xunit
+    line_zunits[i]       <- gpr@zunit
+    line_crs[i]          <- gpr@crs
+    line_nz[i]           <- nrow(gpr)
+    line_nx[i]           <- ncol(gpr)
+    line_zlengths[i]     <- abs(diff(range(gpr@z)))
+    line_xlengths[i]     <- abs(diff(range(gpr@x)))
+    line_markers[[i]]    <- .normalizeMarkers(gpr@markers, ncol(gpr), verbose = verbose)
+
+    xyzCoords[[i]] <- gpr@coord
+    if (ncol(gpr@coord) == 3L) colnames(xyzCoords[[i]]) <- c("x", "y", "z")
+
+    # -- write GPR line to HDF5 using the finalised name ------------------------
     .write_GPR_line_hdf5(lg, name = line_names[i], gpr = gpr, compress = compress)
+    # .write_GPR_line_hdf5(lg, name = .h5_line_group_id(i), gpr = gpr, compress = compress)
+    
     verboseF(message("  Written to HDF5: ", line_names[i]), verbose = verbose)
   }
-  
-  # ---- resolve survey-level CRS and spatial unit ----------------------------
+
+  # ---- resolve survey-level CRS and spatial unit -----------------------------
   if (length(unique(line_crs)) > 1L && isTRUE(verbose)) {
     warning(
       "Not all coordinate reference systems (CRS) are identical.\n",
@@ -154,31 +224,15 @@ GPRsurvey <- function(x, dsn,
   } else {
     crsUnit(survey_crs)
   }
-  
-  # ---- write survey-level metadata group ------------------------------------
-  sg <- h5$create_group("survey")
-  sg$create_attr("crs",    if (is.na(survey_crs)) "" else survey_crs)
-  sg$create_attr("spunit", survey_spunit)
-  
-  sg[["names"]]    <- line_names
-  sg[["descs"]]    <- line_descs
-  sg[["modes"]]    <- line_modes
-  sg[["dates"]]    <- format(line_dates, "%Y-%m-%d")
-  sg[["freqs"]]    <- line_freq
-  sg[["antseps"]]  <- line_antsep
-  sg[["nz"]]       <- line_nz
-  sg[["nx"]]       <- line_nx
-  sg[["zlengths"]] <- line_zlengths
-  sg[["xlengths"]] <- line_xlengths
-  sg[["zunits"]]   <- line_zunits
-  
-  # ---- assemble the S4 object -----------------------------------------------
+
+  # ---- assemble the S4 object -------------------------------------------------
   survey <- new("GPRsurvey",
                 version   = "0.3",
                 path      = dsn,
                 name      = name,
                 desc      = desc,
-                
+
+                paths     = line_paths,
                 names     = line_names,
                 descs     = line_descs,
                 modes     = line_modes,
@@ -187,186 +241,36 @@ GPRsurvey <- function(x, dsn,
                 antseps   = line_antsep,
                 spunit    = survey_spunit,
                 crs       = if (is.na(survey_crs)) NA_character_ else survey_crs,
-                coords        = xyzCoords,       # (x,y,z) coordinates for each profiles
+                coords    = xyzCoords,       # (x,y,z) coordinates for each profile
+
+                markers   = line_markers,
+
                 nz        = line_nz,
                 nx        = line_nx,
                 zlengths  = line_zlengths,
                 xlengths  = line_xlengths,
-                zunits    = line_zunits
+                zunits    = line_zunits,
+                transf    = numeric(0),
+                view      = FALSE
   )
-  
-  # ---- compute line intersections and write to HDF5 -------------------------
-  # intersect() is called on the assembled object; the result is written back
-  # to the HDF5 file under /survey/intersections/ if present.
+
+  # ---- compute line intersections ONCE, now that every line's coordinates
+  #      are final, then persist survey metadata + intersections -------------
   survey <- findIntersection(survey)
+
+  .write_survey_group_hdf5(h5, survey)
   .write_intersections_hdf5(h5, survey)
-  
-  return(survey)
-}
 
+  h5$flush()
+  h5$close_all()
 
-#' Write line intersection data into the HDF5 file
-#'
-#' Writes the \code{@intersections} slot (if non-empty) to
-#' \code{/survey/intersections/} as a dataset of crossing coordinates.
-#' Called once at the end of the constructor, after \code{intersect()}.
-#'
-#' @param h5     Open \code{hdf5r} H5File object.
-#' @param survey \code{GPRsurvey} object returned by \code{intersect()}.
-#'
-#' @keywords internal
-.write_intersections_hdf5 <- function(h5, survey) {
-  if (!.hasSlot(survey, "intersections")) return(invisible(NULL))
-  ints <- survey@intersections
-  if (length(ints) == 0L)              return(invisible(NULL))
-  
-  ig <- h5[["survey"]]$create_group("intersections")
-  for (nm in names(ints)) {
-    val <- ints[[nm]]
-    if (is.numeric(val) && length(val) > 0L) {
-      ig[[nm]] <- val
-    }
+  if (isTRUE(verify)) {
+    verboseF(message("Verifying checksums..."), verbose = verbose)
+    .h5_verify_checksums(tmp)
   }
-  invisible(NULL)
+
+  .h5_atomic_replace(tmp, dsn)
+  verboseF(message("GPRsurvey HDF5 file written: ", dsn), verbose = verbose)
+
+  survey
 }
-
-
-
-
-#  #' Create an object of the class GPRsurvey
-#  #'
-#  #' Create an object of the class GPRsurvey using a vector of GPR data filepath
-#  #' @param x (`character[k]`)     Vector of `k` file paths of GPR data.
-#  #' @param verbose (`logical[1]`) If `TRUE` the function prints some
-#  #'                                    information.
-#  #' @param ...     Additional parameters to be passed to [readGPR()].
-#  #' @name GPRsurvey
-#  #' @export
-# # LINES = list of datapath
-# GPRsurvey <- function(x, verbose = TRUE, ...){
-#   LINES <- x
-#   n <- length(LINES)
-#   line_paths    <- character(n)
-#   line_names    <- character(n)
-#   line_descs    <- character(n)
-#   line_modes    <- character(n)
-#   line_dates    <- as.Date(rep(NA, n))
-#   line_freq     <- numeric(n)
-#   line_antsep   <- numeric(n)
-#   line_lengths  <- numeric(n)
-#   line_spunit   <- character(n)
-#   line_xunit   <- character(n)
-#   line_crs      <- character(n)
-#   line_nz       <- integer(n)
-#   line_zlengths <- numeric(n)
-#   line_zunits   <- character(n)
-#   line_nx       <- integer(n)
-#   line_xlengths <- numeric(n)
-#   xyzCoords     <- list()
-#   line_markers  <- list()
-#   
-#   for(i in seq_along(LINES)){
-#     verboseF(message("Read ", basename(LINES[i]), "..."), verbose = verbose)
-#     gpr <- verboseF( readGPR(LINES[[i]], verbose = verbose, ...), verbose = verbose)
-#     if(inherits(gpr, "GPRset")){
-#       stop("HOW TO HANDLE GPRset OBJECT????")
-#     }
-#     line_paths[i] <- .saveTempFile(gpr)
-#     # FIX ME!
-#     #  > check if name(gpr) is unique
-#     line_nx[i]           <- ncol(gpr)
-#     line_nz[i]           <- nrow(gpr)
-#     line_zlengths[i]     <- abs(diff(range(gpr@z)))
-#     line_xlengths[i]     <- abs(diff(range(gpr@x)))
-#     line_names[i]        <- gpr@name[1]
-#     if(line_names[i] == ""){
-#       line_names[i] <- "default_name"
-#     }
-#     if(i > 1){
-#       line_names[i] <- safeName(x = line_names[i], 
-#                                 y = line_names[1:(i - 1)])
-#     }
-#     line_descs[i] <- gpr@desc
-#     line_modes[i]  <- gpr@mode
-#     if(length(gpr@date) == 0){
-#       # should never happen
-#       if(isTRUE(verbose)){
-#         warning(LINES[[i]], "\n", "date has length zero. Should never happen!")
-#       }
-#       line_dates[i]        <- Sys.Date()
-#     }else{
-#       line_dates[i]        <- gpr@date
-#     }
-#     if(length(gpr@freq) == 0){
-#       # should never happen
-#       if(isTRUE(verbose)){
-#         warning(LINES[[i]], "\n", "frequency has length zero Should never happen!")
-#       }
-#       line_freq[i]         <- 0
-#     }else{
-#       line_freq[i]         <- gpr@freq
-#     }
-#     if(length(gpr@antsep) == 0){
-#       # should never happen
-#       if(isTRUE(verbose)){
-#         warning(LINES[[i]], "\n", "ant. sep. has length zero")
-#       }
-#       line_antsep[i]       <- 0
-#     }else{
-#       line_antsep[i]       <- gpr@antsep
-#     }
-#     line_spunit[i]         <- gpr@spunit
-#     line_xunit[i]          <- gpr@xunit
-#     line_zunits[i]         <- gpr@zunit  
-#     line_crs[i]            <- gpr@crs
-#     xyzCoords[[i]]         <- gpr@coord
-#     if(ncol(gpr@coord) == 3 )  colnames(xyzCoords[[i]]) <- c("x", "y", "z")
-# 
-#     line_markers[[i]]      <- trimStr(gpr@markers)
-#   }
-#   # line_crs <- .checkCRSsurvey(line_crs)
-#   
-#   if(length(unique(line_crs)) > 1){
-#     if(isTRUE(verbose)){
-#       warning("Not all the coordinate reference systems (CRS) are identical!\n",
-#             "I take the first valid CRS!")
-#     }
-#   }
-#   line_crs <- .checkCRS(line_crs[!is.na(line_crs)][1])
-#   if(is.na(line_crs)){
-#     line_spunit <- line_xunit[!is.na(line_xunit)][1]
-#   }else{
-#     line_spunit <- crsUnit(line_crs)
-#   }
-#   
-#   x <- new("GPRsurvey",
-#            version       = "0.3",        # version of the class
-#            # paths         = LINES,        # filepath of the GPR data
-#            paths         = line_paths,        # filepath of the GPR data
-#            names         = line_names,   # names of the GPR profiles
-#            descs         = line_descs,   # descriptions of the GPR profiles
-#            modes         = line_modes,  # survey mode (reflection/CMP)
-#            
-#            dates         = line_dates,       # dates  of the GPR profiles
-#            
-#            freqs         = line_freq,    # frequencies of the GPR profiles
-#            antseps       = line_antsep,    # antenna separation of the GPR profiles
-#            
-#            spunit        = line_spunit,  # position units  !!!length = 1!!!
-#            crs           = line_crs,  # coordinates reference system
-#            #coordref      = "numeric",   # reference position
-#            coords        = xyzCoords,       # (x,y,z) coordinates for each profiles
-#            
-#            # intersections     = "list",       # (x,y) position of the profile intersections
-#            markers       = line_markers,       # fiducials of the GPR profiles
-#            
-#            nz            = line_nz,
-#            zlengths      = line_zlengths,    # depth/time window (vertical)
-#            zunits        = line_zunits,  # time/depth unit  !!!length = 1!!!
-#            nx            = line_nx,    # to control if nrow(@coord) == ncol(x[[i]])
-#            xlengths      = line_xlengths     # depth/time window (vertical)
-#   )
-#   x <- intersect(x)
-#   return(x)
-# }
-

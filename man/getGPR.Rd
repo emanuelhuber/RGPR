@@ -12,15 +12,35 @@ getGPR(x, id, verbose = FALSE)
 \arguments{
 \item{x}{(\code{GPRsurvey})}
 
-\item{id}{(\code{integer[1]|character[1]}) Indice or name of the GPR line to
+\item{id}{(\code{integer[1]|character[1]}) Index or name of the GPR line to
 extract.}
 
-\item{verbose}{(\code{logical[1]}) If \code{TRUE} the function prints some
-information.}
+\item{verbose}{(\code{logical[1]}) If \code{TRUE}, prints a short progress message.}
 }
 \value{
-(\verb{GPR class}) An object of the class GPR.
+(\code{GPR}) An object of class \code{GPR}.
 }
 \description{
-Extract GPR object from GPRsurvey object
+Extract a single GPR line from a \code{GPRsurvey} object.
+}
+\details{
+\code{getGPR()} is now a thin wrapper around \code{x[[id]]} (see
+\code{?"subset-GPRsurvey"}). Previously, \code{getGPR()} re-read the line from its
+\emph{original} raw file path (\code{x@paths[[id]]}), bypassing the HDF5 backing
+file entirely, and then patched in coordinates/CRS/units/intersection
+annotations from the survey object by hand. That made \code{getGPR()} depend
+on the original input files still being present at their original
+paths -- which defeats the point of having an HDF5 backup -- and it
+behaved inconsistently with \code{x[[id]]}, which already reads a
+self-consistent record straight from the HDF5 file (coordinates
+included: \code{gridCoords()} writes updated coordinates directly into
+\verb{/lines/<name>/coords/xyz}, so \code{x[[id]]} always reflects the latest
+values).
+
+One behavior change: the previous implementation also annotated
+crossing points from \code{x@intersections[[id]]} onto the returned \code{GPR}
+object. That annotation step is not reproduced here for now (it doesn't
+fit the "just read what's stored" model); if you rely on it, compute the
+annotation explicitly after calling \code{getGPR()}/\code{x[[id]]}, e.g. with
+\code{\link[=ann<-]{ann<-()}} and \code{\link[=findClosestCoord]{findClosestCoord()}}.
 }

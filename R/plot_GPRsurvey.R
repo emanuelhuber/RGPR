@@ -23,7 +23,7 @@ plot.GPRsurvey <- function(x,
     # main <- ""
     # 
     # lwd <- 1
-    print(list(...))
+    # print(list(...))
     dots <- list(...)
     if( length(dots) > 0 ){
       uN <- table(names(dots))

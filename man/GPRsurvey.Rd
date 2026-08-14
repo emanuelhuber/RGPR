@@ -11,33 +11,41 @@ GPRsurvey(
   desc = "",
   overwrite = FALSE,
   compress = 5L,
+  verify = TRUE,
   verbose = TRUE,
   ...
 )
 }
 \arguments{
 \item{x}{(\code{character[k]}) Vector of \code{k} file paths to GPR data
-files.  All formats supported by \code{\link{readGPR}} are
-accepted.}
+files. All formats supported by \code{\link[=readGPR]{readGPR()}} are accepted.}
 
 \item{dsn}{(\code{character(1)}) Path for the output HDF5 file (must end
-in \code{.h5} by convention).  The file is created; if it
-already exists and \code{overwrite = FALSE} an error is
-raised.}
+in \code{.h5} by convention). If it already exists and
+\code{overwrite = FALSE}, an error is raised before any work
+is done; if \code{overwrite = TRUE}, the existing file is only
+replaced at the very end, once the new file has been
+fully built and verified (see Details).}
 
-\item{name}{(\code{character(1)}) Name of the survey}
+\item{name}{(\code{character(1)}) Name of the survey.}
 
-\item{desc}{(\code{character(1)}) Description of the survey}
+\item{desc}{(\code{character(1)}) Description of the survey.}
 
-\item{overwrite}{(\code{logical(1)}) Overwrite an existing HDF5 file?
-Default \code{FALSE}.}
+\item{overwrite}{(\code{logical(1)}) Overwrite an existing HDF5 file? Default
+\code{FALSE}.}
 
-\item{compress}{(\code{integer(1)}) gzip compression level 0–9 for the data
-arrays inside the HDF5 file.  Default \code{5L}.}
+\item{compress}{(\code{integer(1)}) gzip compression level 0-9 for the data
+arrays inside the HDF5 file; \code{0} disables compression.
+Default \code{5L}. See Details for guidance on whether
+compression is worth it for GPR data.}
+
+\item{verify}{(\code{logical(1)}) Re-read every dataset after writing to
+validate checksums before the file is swapped in.
+Default \code{TRUE}.}
 
 \item{verbose}{(\code{logical(1)}) Print progress messages.}
 
-\item{...}{Additional arguments passed to \code{\link{readGPR}}.}
+\item{...}{Additional arguments passed to \code{\link[=readGPR]{readGPR()}}.}
 }
 \value{
 An object of class \code{GPRsurvey}.
@@ -45,7 +53,47 @@ An object of class \code{GPRsurvey}.
 \description{
 Reads a set of GPR data files, collects survey-level metadata, writes
 everything to a single HDF5 file, and returns a lightweight
-\code{GPRsurvey} object backed by that file.
+\code{GPRsurvey} object backed by that file. A \code{GPRsurvey} object is backed
+by an HDF5 file. The R object contains survey-level metadata and
+references line data stored in the backing file.
+}
+\details{
+\subsection{How the file is written}{
+
+The backing file is built in a \strong{temporary file in the same directory as
+\code{dsn}}, under a \strong{lock} that prevents two processes from building/
+replacing the same file at the same time (see \code{.h5_lock_acquire()} in
+\code{hdf5_update.R}). Only once every line has been written, survey-level
+metadata has been written, intersections have been computed from the
+\emph{final} coordinates of every line, and (by default) every dataset has
+been read back to validate its checksum, is the temporary file atomically
+swapped in for \code{dsn} (\code{file.rename()}). If anything fails partway through
+-- a malformed input file, a disk error, an interrupted session -- \code{dsn}
+is left completely untouched: either the previous file (if \code{overwrite = TRUE} and one existed) or nothing at all. You never end up with a
+truncated/corrupt file sitting at the path you expect a valid backup.
+}
+
+\subsection{Precision and compression}{
+
+The main data array is always stored as 64-bit floating point
+(\code{H5T_NATIVE_DOUBLE}), matching R's native numeric precision -- so
+writing to HDF5 never loses precision relative to the in-memory \code{GPR}
+object. Every dataset (including small metadata vectors) is chunked and
+protected with an HDF5 fletcher32 checksum. gzip compression (with a
+byte-shuffle pre-filter, which typically improves the ratio noticeably
+for floating-point data) is applied to the radar-data arrays and, for
+large surveys, to per-line coordinates; see \code{compress}.
+
+Whether compression is worth it for GPR data depends on the data:
+amplitude-sampled radargrams are noisy and don't compress as well as,
+say, images with large flat regions, so don't expect dramatic ratios --
+but shuffle+gzip typically still buys a modest (roughly 1.3-2x)
+reduction for a low CPU cost, which is usually worth it for a backup
+copy that is written once and read occasionally. If you process huge
+surveys very frequently and disk space is not a concern, set
+\code{compress = 0L} to skip compression entirely and maximize write/read
+speed.
+}
 }
 \seealso{
 \code{\link[=readGPRsurvey]{readGPRsurvey()}}, \code{\link[=writeGPR]{writeGPR()}}

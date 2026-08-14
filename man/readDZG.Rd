@@ -4,7 +4,7 @@
 \alias{readDZG}
 \title{Read GSSI GPS data}
 \usage{
-readDZG(dsn)
+readDZG(dsn, UTM = TRUE)
 }
 \arguments{
 \item{dsn}{(\code{character[1]|connection}) data source name:

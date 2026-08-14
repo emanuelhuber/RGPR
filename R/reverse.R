@@ -100,7 +100,12 @@ setMethod("reverse", "GPRsurvey", function(x, id = NULL, tol = 0.3, onlyData = F
   checkArgStop(msg)
   #-----------------------------------
   
-  if(is.null(id) && length(x@coords) > 0){
+  if(length(x@coords) == 0 || all(sapply(x@coords, length) == 0)){
+    message("No coordinates to reverse!")
+    return(x)
+  }
+  
+  if(is.null(id)){
     # reverse radargram based on their name 
     # (all the XLINE have the same orientation, 
     # all the YLINE have the same orientation)

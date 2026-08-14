@@ -90,6 +90,7 @@ Collate:
 	'writeGPR.R'
 	'writeDT1.R'
 	'writeHDF5.R'
+	'hdf5_update.R'
 	'writeProfileVTK.R'
 	'coercion_GPRvirtual.R'
 	'coercion_GPRset.R'

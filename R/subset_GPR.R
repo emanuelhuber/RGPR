@@ -69,72 +69,7 @@ setMethod("[", signature(x = "GPR", i = "ANY", j = "ANY"),
     x@trans        <- .subsetMat(x@trans, j)
     
     x@md[["clipData"]] <- .subsetclipData(x, i, j)
-    # if(!is.null(x@md[["clipData"]])){
-    #   test <- .clipDataMat(x@md[["clipData"]], n = nrow(x@data))
-    #   x@md[["clipData"]][["clipDatamin"]] <- apply(test[i, j], 2, function(x) which(x == -1))
-    #   x@md[["clipData"]][["clipDatamax"]] <- apply(test[i, j], 2, function(x) which(x == 1))
-    # }
-
-    # if(length(j) == 0) j <- seq_len(ncol(rval))
-    # if(!is.null(x@md[["clipData"]])){
-    #   if(!is.null(x@md[["clipData"]][["clipDatamin"]])){
-    #     x@md[["clipData"]][["clipDatamin"]] <- x@md[["clipData"]][["clipDatamin"]][j]
-    #   }
-    #   if(!is.null(x@md[["clipData"]][["clipDatamax"]])){
-    #     x@md[["clipData"]][["clipDatamax"]] <- x@md[["clipData"]][["clipDatamax"]][j]
-    #   }
-    # }
-    # 
-    # 
-    # 
-    # if(missing(i) || length(i) == 0) i <- seq_len(nrow(rval))
-    # if(length(dim(rval)) == 2) {
-    #   drop <- FALSE
-    #   if(missing(j)){
-    #     rval <- rval[i, , drop = drop]
-    #     x@z <- x@z[i]
-    #     if(!is.null(x@md[["clipData"]])){
-    #       test <- .clipDataMat(x@md[["clipData"]], n = nrow(x@data))
-    #       x@md[["clipData"]][["clipDatamin"]] <- apply(test[i, ], 2, function(x) which(x == -1))
-    #       x@md[["clipData"]][["clipDatamax"]] <- apply(test[i, ], 2, function(x) which(x == 1))
-    #     }
-    #   }else { 
-    #     if(length(j) == 0) j <- seq_len(ncol(rval))
-    #     rval <- rval[i, j, drop = drop]
-    #     x@z       <- x@z[i]
-    #     # trace related slots
-    #     x@x       <- x@x[j]
-    #     x@z0      <- x@z0[j]
-    #     x@time    <- x@time[j]
-    #     x@markers <- x@markers[j]
-    #     # if(length(x@antsep) > 1) x@antsep <- x@antsep[j]
-    #     x@antsep <- .subsetVec(x@antsep, j)
-    #     # if(length(x@coord) > 0)  x@coord  <- x@coord[j, , drop = FALSE]
-    #     # if(length(x@rec) > 0)    x@rec    <- x@rec[j, , drop= FALSE]
-    #     # if(length(x@trans) > 0)  x@trans  <- x@trans[j, , drop = FALSE]
-    #     x@coord        <- .subsetMat(x@coord, j)   
-    #     x@rec          <- .subsetMat(x@rec, j)
-    #     x@trans        <- .subsetMat(x@trans, j)
-    #     if(!is.null(x@md[["clipData"]])){
-    #       if(!is.null(x@md[["clipData"]][["clipDatamin"]])){
-    #         x@md[["clipData"]][["clipDatamin"]] <- x@md[["clipData"]][["clipDatamin"]][j]
-    #       }
-    #       if(!is.null(x@md[["clipData"]][["clipDatamax"]])){
-    #         x@md[["clipData"]][["clipDatamax"]] <- x@md[["clipData"]][["clipDatamax"]][j]
-    #       }
-    #     }
-    #   }
-    #   if(drop && length(rval) == 1){ rval <- c(rval)}
-    # }else{   # if(length(i) > 0){
-    #   stop("Problem: not a matrix. Please contact me: emanuel.huber@pm.me")
-    #   # rval <- rval[i]
-    #   # x@z <- x@z[i]
-    #   # if(!is.null(x@md[["clipData"]])){
-    #   #   test <- .clipDataMat(x@md[["clipData"]], n = nrow(x@data))
-    #   #   x@md[["clipData"]][["clipDatamin"]] <- apply(test[i, ], 2, function(x) which(x == -1))
-    #   #   x@md[["clipData"]][["clipDatamax"]] <- apply(test[i, ], 2, function(x) which(x == 1))
-    #   # }
-    # }
+  
     x@data <- rval
     return(x)
   }

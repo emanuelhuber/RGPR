@@ -34,19 +34,19 @@ writeGPR(
 \arguments{
 \item{obj}{Object of class \code{GPRsurvey}.}
 
-\item{dsn}{(\code{character(1)}) Output path.  Directory for multi-file
+\item{dsn}{(\code{character[1]}) Output path.  Directory for multi-file
 formats; \code{.h5} file path for \code{format = "h5"}.}
 
-\item{format}{(\code{character(1)}) One of \code{"DT1"}, \code{"rds"}, \code{"ASCII"},
+\item{format}{(\code{character[1]}) One of \code{"DT1"}, \code{"rds"}, \code{"ASCII"},
 \code{"xta"}, \code{"xyzv"}, \code{"vtk"}, or \code{"h5"}.}
 
-\item{overwrite}{(\code{logical(1)}) If \code{FALSE} (default) and the output
+\item{overwrite}{(\code{logical[1]}) If \code{FALSE} (default) and the output
 already exists, an error is raised.}
 
 \item{...}{Additional arguments passed to the per-line
 \code{writeGPR()} calls (ignored for \code{"h5"} and \code{"vtk"}).}
 
-\item{compress}{(\code{integer(1)}) gzip compression level 0–9 for the data
+\item{compress}{(\code{integer[1]}) gzip compression level 0–9 for the data
 array inside HDF5 files.  Only used when
 \code{format = "h5"}.  Default \code{5L}.}
 }

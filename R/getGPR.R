@@ -1,82 +1,50 @@
 #' Extract GPR object from GPRsurvey object
-#' 
-#' Extract GPR object from GPRsurvey object
+#'
+#' Extract a single GPR line from a `GPRsurvey` object.
+#'
+#' `getGPR()` is now a thin wrapper around `x[[id]]` (see
+#' `?"subset-GPRsurvey"`). Previously, `getGPR()` re-read the line from its
+#' *original* raw file path (`x@paths[[id]]`), bypassing the HDF5 backing
+#' file entirely, and then patched in coordinates/CRS/units/intersection
+#' annotations from the survey object by hand. That made `getGPR()` depend
+#' on the original input files still being present at their original
+#' paths -- which defeats the point of having an HDF5 backup -- and it
+#' behaved inconsistently with `x[[id]]`, which already reads a
+#' self-consistent record straight from the HDF5 file (coordinates
+#' included: `gridCoords()` writes updated coordinates directly into
+#' `/lines/<name>/coords/xyz`, so `x[[id]]` always reflects the latest
+#' values).
+#'
+#' One behavior change: the previous implementation also annotated
+#' crossing points from `x@intersections[[id]]` onto the returned `GPR`
+#' object. That annotation step is not reproduced here for now (it doesn't
+#' fit the "just read what's stored" model); if you rely on it, compute the
+#' annotation explicitly after calling `getGPR()`/`x[[id]]`, e.g. with
+#' [ann<-()] and [findClosestCoord()].
+#'
 #' @param x (`GPRsurvey`)
-#' @param id (`integer[1]|character[1]`) Indice or name of the GPR line to
-#'                                            extract.
-#' @param verbose (`logical[1]`) If `TRUE` the function prints some
-#'                                    information.
-#' @return (`GPR class`) An object of the class GPR.
+#' @param id (`integer[1]|character[1]`) Index or name of the GPR line to
+#'   extract.
+#' @param verbose (`logical[1]`) If `TRUE`, prints a short progress message.
+#' @return (`GPR`) An object of class `GPR`.
 #' @name getGPR
 #' @export
-setGeneric("getGPR", function(x, id, verbose = FALSE) 
+setGeneric("getGPR", function(x, id, verbose = FALSE)
   standardGeneric("getGPR"))
 
 #' @rdname getGPR
 #' @export
-setMethod("getGPR", "GPRsurvey", function(x, id, verbose = FALSE){
+setMethod("getGPR", "GPRsurvey", function(x, id, verbose = FALSE) {
 
-  if(length(id)>1){
-    warning("Length of id > 1, I take only the first element!\n")
-    id <- id[1]
+  if (length(id) > 1L) {
+    warning("Length of 'id' > 1; using only the first element.", call. = FALSE)
+    id <- id[1L]
   }
-  if(is.numeric(id)){
-    no <- id
-    gpr <- readGPR(x@paths[[id]])
-  }else if(is.character(id)){
-    no <- which(x@names == trimStr(id))
-    if(length(no) > 0){
-      id <- no[1]
-      gpr <- readGPR(x@paths[[id]])
-    }else{
-      stop("There is no GPR data with the name '", trimStr(id),"'\n")
-    }
-  }
-  if(length(x@coords[[id]]) > 0 ){
-     # FIXME -> check that nrow(x@coords[[id]]) is correct!!!!
-    if(nrow(x@coords[[id]]) != ncol(gpr)){
-      stop("nrow(x@coords[[id]]) != ncol(gpr)")
-    }
-    gpr@coord <- unname(x@coords[[id]] )
-    gpr@x <- relPos(gpr)
-  }
-  if(length(x@intersections) && length(x@intersections[[id]]) > 0 ){
-    
-    FUN <- function(y, x){
-      findClosestCoord(x, y = y)
-    }
-    x_tr <- apply(x@intersections[[id]], 1, FUN, gpr)
-    ann(gpr) <- cbind(x_tr, as.character(x@intersections[[id]]$name))
-    
-  }
-  # FIXME
-  if(length(x@crs) == 1){
-    gpr@crs <- x@crs
-  }else{
-    gpr@crs <- x@crs[id]
-  }
-  
-  # FIXME
-  if(length(x@spunit) == 1){
-    gpr@spunit <- x@spunit
-  }else{
-    gpr@spunit <- x@spunit[id]
-  }
-  
-  if(all(x@zunits != "")){
-    gpr@zunit <- x@zunits[id]
-  }else if(any(x@zunits != "")){
-    gpr@zunit <- x@zunits[x@zunits != ""][1]
-  }else{
-    gpr@zunit <- ""
-    warning("No z-units!!")
-  }
-  
-  # gpr@xunit <- x@spunit
-  
-  # what about gpr@xunit ??
-  # if(length(x@coordref)>0){
-  #   gpr@coordref <- x@coordref
-  # }
-  return(gpr)
+
+  verboseF(
+    message("Reading line '", id, "' from '", x@path, "' ..."),
+    verbose = verbose
+  )
+
+  x[[id]]
 })

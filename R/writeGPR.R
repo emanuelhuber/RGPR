@@ -108,13 +108,13 @@ setMethod("writeGPR", "GPR", function(obj, dsn = NULL,
 #' inside it.  For `"h5"`, `dsn` is the path to the output `.h5` file.
 #'
 #' @param obj       Object of class \code{GPRsurvey}.
-#' @param dsn       (`character(1)`) Output path.  Directory for multi-file
+#' @param dsn       (`character[1]`) Output path.  Directory for multi-file
 #'                  formats; `.h5` file path for `format = "h5"`.
-#' @param format    (`character(1)`) One of `"DT1"`, `"rds"`, `"ASCII"`,
+#' @param format    (`character[1]`) One of `"DT1"`, `"rds"`, `"ASCII"`,
 #'                  `"xta"`, `"xyzv"`, `"vtk"`, or `"h5"`.
-#' @param overwrite (`logical(1)`) If `FALSE` (default) and the output
+#' @param overwrite (`logical[1]`) If `FALSE` (default) and the output
 #'                  already exists, an error is raised.
-#' @param compress  (`integer(1)`) gzip compression level 0–9 for the data
+#' @param compress  (`integer[1]`) gzip compression level 0–9 for the data
 #'                  array inside HDF5 files.  Only used when
 #'                  `format = "h5"`.  Default `5L`.
 #' @param ...       Additional arguments passed to the per-line
@@ -140,7 +140,7 @@ setMethod("writeGPR", "GPRsurvey",
             
             # ---- HDF5 ---------------------------------------------------------------
             if (format == "h5") {
-              return(invisible(.writeGPR_h5(obj, file = dsn,
+              return(invisible(.writeGPR_h5(obj, dsn = dsn,
                                                     overwrite = overwrite,
                                                     compress  = compress)))
             }
@@ -176,50 +176,73 @@ setMethod("writeGPR", "GPRsurvey",
 
 
 
-# setMethod("writeGPR", "GPRsurvey", 
-#   function(obj, dsn = NULL, 
-#            format = c("DT1", "rds", "ASCII", "xta", "xyzv", "vtk"),
-#            overwrite = FALSE, ...){
-#     #setMethod("writeGPR", "GPRsurvey", 
-#     #    function(obj,dsn, format=c("DT1","rds"), overwrite=FALSE){
-#     format <- match.arg(tolower(format), c("dt1", "rds", "ascii", "xta", "xyza", "vtk"))
-#     if(format == "vtk"){
-#       writeVTK(obj, dsn)
-#     }else{
-#       mainDir <- dirname(dsn)
-#       if(mainDir =="." || mainDir =="/" ){
-#         mainDir <- ""
-#       }
-#       subDir <- basename(dsn)
-#       if ( !dir.exists( file.path(mainDir, subDir) )) {
-#         warning("Create new director ", subDir, " in ", mainDir, "\n")
-#         dir.create(file.path(mainDir, subDir))
-#       }
-#       
-#       for(i in seq_along(obj)){
-#         z <- obj[[i]]
-#         dsn <- file.path(mainDir, subDir, z@name)
-#         obj@paths[[i]] <- paste0(dsn, ".", tolower(format))
-#         writeGPR(z, dsn = dsn, format = format , overwrite = overwrite)
-#         message("Saved: ", obj@paths[[i]] )
-#         # gpr <- verboseF( obj[[i]] , verbose = FALSE)
-#         # #if(length(obj@coords[[i]]) > 0){
-#         # gpr@coord <- obj@coords[[i]]
-#         # #}
-#         # if(length(obj@intersections[[i]])>0){
-#         #   #ann(gpr) <- obj@intersections[[gpr@name]][,3:4]
-#         #   ann(gpr) <- cbind(obj@intersections[[i]]$trace,
-#         #                     obj@intersections[[i]]$name)
-#         # }
-#         # dsn <- file.path(mainDir, subDir, gpr@name)
-#         # obj@paths[[i]] <- paste0(dsn, ".", tolower(format))
-#         # writeGPR(gpr, dsn = dsn, format = format , overwrite = overwrite, ...)
-#         # message("Saved: ", dsn )
-#       } 
-#       # invisible(obj)
-#     }
-#   }
-# )
+#' Materialize a GPRsurvey object
+#'
+#' Create an independent HDF5-backed copy of a \code{GPRsurvey} object.
+#'
+#' A \code{GPRsurvey} may be a lightweight view created by subsetting another
+#' survey, for example with \code{x[1:10]}. Such a view remains backed by the
+#' original HDF5 file and is not modified in place. \code{materialize()} writes
+#' the selected survey lines and metadata to a new HDF5 backing file and returns
+#' a writable \code{GPRsurvey} object backed by that file.
+#'
+#' This function is equivalent in spirit to \code{writeGPR(x, format = "h5")},
+#' but is intended specifically for turning a survey view into an independent
+#' survey.
+#'
+#' @param obj Object of class \code{GPRsurvey}.
+#' @param dsn \code{character[1]}. Path to the output HDF5 backing file.
+#'   The file should conventionally use the extension \code{.h5}.
+#' @param overwrite \code{logical[1]}. If \code{FALSE}, the default, and
+#'   \code{dsn} already exists, an error is raised. If \code{TRUE}, the
+#'   existing file is replaced.
+#' @param compress \code{integer[1]}. gzip compression level from 0 to 9 for
+#'   data arrays stored in the HDF5 file. Default is \code{5L}.
+#' @param ... Additional arguments passed to \code{writeGPR()}.
+#'
+#' @return A materialized \code{GPRsurvey} object backed by \code{dsn}.
+#'
+#' @seealso \code{\link{writeGPR}}, \code{\link{GPRsurvey}}
+#' @name materialize
+setGeneric("materialize", function(obj, dsn,
+                                overwrite = FALSE,
+                                compress  = 5L,
+                                ...){ standardGeneric("materialize")})
 
-
-
+#' @rdname materialize
+#' @export
+setMethod(
+  "materialize",
+  "GPRsurvey",
+  function(obj, dsn,
+           overwrite = FALSE,
+           compress  = 5L,
+           ...) {
+    
+    if (missing(dsn) || is.null(dsn) || length(dsn) != 1L || !nzchar(dsn)) {
+      stop(
+        "Argument 'dsn' is required: provide the path to the output HDF5 ",
+        "backing file, e.g. materialize(x, dsn = 'subset.h5').",
+        call. = FALSE
+      )
+    }
+    
+    compress <- as.integer(compress)
+    
+    if (length(compress) != 1L || is.na(compress) ||
+        compress < 0L || compress > 9L) {
+      stop("'compress' must be an integer between 0 and 9.", call. = FALSE)
+    }
+    
+    out <- writeGPR(
+      obj,
+      dsn       = dsn,
+      format    = "h5",
+      overwrite = overwrite,
+      compress  = compress,
+      ...
+    )
+    out@view <- FALSE
+    out
+  }
+)

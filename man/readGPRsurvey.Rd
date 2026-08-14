@@ -8,15 +8,25 @@ readGPRsurvey(file)
 }
 \arguments{
 \item{file}{(\code{character(1)}) Path to the \code{.h5} file previously written by
-\code{\link{GPRsurvey}} or \code{\link{writeGPR}}.}
+\code{\link[=GPRsurvey]{GPRsurvey()}} or \code{writeGPR(..., format = "h5")}.}
 }
 \value{
 Object of class \code{GPRsurvey}.
 }
 \description{
-Reconstructs the lightweight \code{GPRsurvey} index from the \code{/survey}
-group of an RGPR HDF5 file.  Individual GPR lines are not loaded until
-accessed via \code{[[}.
+Reconstructs the \code{GPRsurvey} index from the \verb{/survey} group of an RGPR
+HDF5 file. The big per-line radar-data arrays are \strong{not} loaded until a
+line is accessed (via \code{x[[name]]} / \code{getGPR()}); only the small,
+per-line metadata (coordinates, markers) is read eagerly here, since
+those are needed for e.g. \code{gridCoords()}/\code{findIntersection()} to work
+correctly on a freshly-read survey.
+}
+\details{
+Every slot that \code{GPRsurvey()} sets is restored here, so
+\code{readGPRsurvey(dsn)} after \code{GPRsurvey(x, dsn = dsn)} yields an object
+equivalent to what \code{GPRsurvey()} returned directly (modulo \verb{@view},
+which is always \code{FALSE} for a survey read directly from disk -- see
+\code{.write_survey_group_hdf5()} for why \verb{@view} is not itself persisted).
 }
 \seealso{
 \code{\link[=GPRsurvey]{GPRsurvey()}}, \code{\link[=writeGPR]{writeGPR()}}

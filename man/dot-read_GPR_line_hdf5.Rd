@@ -4,10 +4,10 @@
 \alias{.read_GPR_line_hdf5}
 \title{Read a single GPR line from an HDF5 file}
 \usage{
-.read_GPR_line_hdf5(file, name)
+.read_GPR_line_hdf5(dsn, name)
 }
 \arguments{
-\item{file}{(\code{character(1)}) Path to the HDF5 file.}
+\item{dsn}{(\code{character(1)}) Path to the HDF5 file.}
 
 \item{name}{(\code{character(1)}) Line name (sub-group under \verb{/lines/}).}
 }

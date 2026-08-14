@@ -4,7 +4,7 @@
 \alias{.write_GPR_line_hdf5}
 \title{Write a single GPR line into an open HDF5 group}
 \usage{
-.write_GPR_line_hdf5(parent_grp, name, gpr, compress = 5L)
+.write_GPR_line_hdf5(parent_grp, name, gpr, compress = 0L)
 }
 \arguments{
 \item{parent_grp}{An open \code{hdf5r} group object (the \verb{/lines} group).}
@@ -13,12 +13,34 @@
 
 \item{gpr}{Object of class \code{GPR}.}
 
-\item{compress}{(\code{integer(1)}) gzip level 0–9.}
+\item{compress}{(\code{integer(1)}) gzip level 0-9 for the main data array
+(and, if large, the coordinate matrix). \code{0} disables compression.}
 }
 \value{
 Invisibly returns the created group object.
 }
 \description{
-Write a single GPR line into an open HDF5 group
+Creates \verb{parent_grp/<name>} and fills it with everything needed to fully
+reconstruct the corresponding \code{GPR} object later with
+\code{.read_GPR_line_hdf5()}:
+}
+\details{
+\if{html}{\out{<div class="sourceCode">}}\preformatted{<name>/
+  (attrs: name, date, freq, antsep, mode, crs, dunit, xunit, zunit,
+          version, desc, spunit)
+  data            -- nz x nx, 64-bit float, chunked, checksummed,
+                      optionally gzip-compressed
+  z, x, z0        -- axes
+  markers         -- character[nx], trimmed and padded/truncated to
+                      exactly nx elements (see `.normalizeMarkers()`)
+  coords/xyz      -- trace coordinates (if any)
+  coords/rec      -- receiver coordinates (if any)
+  coords/trans    -- transmitter coordinates (if any)
+  vel/v           -- velocity model (if any)
+  metadata/...    -- flattened, human-browsable copy of scalar @md entries
+  metadata_raw    -- the *entire* @md list, losslessly serialized (see
+                      `.h5_write_r_object()`); this is what is actually
+                      used to restore @md on read
+}\if{html}{\out{</div>}}
 }
 \keyword{internal}

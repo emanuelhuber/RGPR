@@ -1,6 +1,6 @@
-# =============================================================================
+# ============================================================================ #
 # HDF5 backing-file engine (internal)
-# =============================================================================
+# ============================================================================ #
 #
 # This file provides the low-level machinery shared by every function that
 # writes to a GPRsurvey HDF5 backing file:
@@ -17,7 +17,7 @@
 #                         `.normalizeMarkers()`
 #
 # DESIGN NOTES (why the file looks the way it does)
-# --------------------------------------------------------------------------
+# -------------------------------------------------------------------------- #
 # 1. Every write to an *existing* backing file goes through
 #    `.h5_update_survey()`. It never opens the real file in write mode
 #    directly. Instead it:
@@ -48,7 +48,7 @@
 #    vectors. Compression is applied only where it's likely to be worth the
 #    CPU cost (the radar-data array and, if large, per-line coordinates);
 #    small metadata arrays are chunked+checksummed but not compressed.
-# =============================================================================
+# ============================================================================ #
 
 
 # ------------------------------------------------------------------------- #
@@ -75,7 +75,7 @@
 .h5_lock_acquire <- function(dsn, timeout = 3, poll = 0.25) {
   lockdir <- paste0(dsn, ".lock")
   start   <- Sys.time()
-
+  
   repeat {
     if (dir.create(lockdir, showWarnings = FALSE)) {
       info_con <- file(file.path(lockdir, "info"), open = "w")
@@ -86,7 +86,7 @@
       close(info_con)
       return(lockdir)
     }
-
+    
     if (as.numeric(difftime(Sys.time(), start, units = "secs")) > timeout) {
       stop(
         "Could not acquire a lock on '", dsn, "' within ", timeout, " seconds.\n",
@@ -96,7 +96,7 @@
         call. = FALSE
       )
     }
-
+    
     Sys.sleep(poll)
   }
 }
@@ -141,7 +141,7 @@
   if (file.rename(tmp, dsn)) {
     return(invisible(dsn))
   }
-
+  
   ok <- file.copy(tmp, dsn, overwrite = TRUE)
   if (!ok) {
     stop(
@@ -161,72 +161,43 @@
 
 #' Recursively read every dataset under an HDF5 group
 #'
-#' Reading an entire dataset triggers all HDF5 filters associated with that
-#' dataset, including Fletcher32 checksum validation.
-#'
-#' @param grp An open `hdf5r::H5File` or `hdf5r::H5Group`.
-#' @param verbose Logical. Show each dataset while it is being checked.
-#'
-#' @return Invisibly returns the number of datasets successfully read.
-#'
+#' Reading a dataset that was written with the fletcher32 filter forces HDF5
+#' to validate its checksum; a mismatch raises an error. This function's only
+#' purpose is to trigger that validation for every dataset in the file.
 #' @keywords internal
 .h5_walk_and_read <- function(grp, verbose = FALSE) {
-  n_checked <- 0L
-  
-  walk <- function(parent) {
-    for (nm in names(parent)) {
-      obj <- parent[[nm]]
-      
-      if (inherits(obj, "H5Group")) {
-        tryCatch(
-          walk(obj),
-          finally = try(obj$close(), silent = TRUE)
-        )
-        
-        next
-      }
-      
-      path <- obj$get_obj_name()
-      
-      tryCatch(
-        {
-          if (isTRUE(verbose)) {
-            message("Checking: ", path)
-          }
-          
-          # Read the complete dataset. This triggers Fletcher32 validation.
-          value <- obj$read()
-          invisible(value)
-          
-          n_checked <<- n_checked + 1L
-        },
-        error = function(e) {
-          stop(
-            "Failed to read HDF5 dataset '", path, "'.\n",
-            "The dataset may be corrupted or incompatible with its ",
-            "configured filter pipeline.\n",
-            "Original error: ",
-            conditionMessage(e),
-            call. = FALSE
-          )
-        },
-        finally = {
-          try(obj$close(), silent = TRUE)
-        }
-      )
-    }
+  for (nm in names(grp)) {
+    obj <- grp[[nm]]
     
-    invisible(NULL)
+    tryCatch(
+      {
+        if (inherits(obj, "H5Group")) {
+          .h5_walk_and_read(obj, verbose = verbose)
+        } else {
+          if(isTRUE(verbose)) message("Checking: ", obj$get_obj_name())
+          invisible(obj$read())
+        }
+      },
+      finally = {
+        try(obj$close(), silent = TRUE)
+      }
+    )
   }
   
-  walk(grp)
-  
-  if (isTRUE(verbose)) {
-    message("Successfully checked ", n_checked, " datasets.")
-  }
-  
-  invisible(n_checked)
+  invisible(NULL)
 }
+# .h5_walk_and_read <- function(grp) {
+#   for (nm in names(grp)) {
+#     obj <- grp[[nm]]
+#     if (inherits(obj, "H5Group")) {
+#       .h5_walk_and_read(obj)
+#     } else {
+#       invisible(obj$read)
+#     }
+#     try(obj$close(), silent = TRUE)
+#   }
+#   invisible(NULL)
+# }
 
 #' Verify the checksums of every dataset in an HDF5 file
 #'
@@ -241,12 +212,12 @@
 #' @return `TRUE`, invisibly, if every dataset reads back cleanly. Raises an
 #'   error otherwise.
 #' @keywords internal
-.h5_verify_checksums <- function(path) {
+.h5_verify_checksums <- function(path, verbose = FALSE) {
   h5 <- hdf5r::H5File$new(path, mode = "r")
   on.exit(try(h5$close_all(), silent = TRUE), add = TRUE)
-
+  
   tryCatch(
-    .h5_walk_and_read(h5),
+    .h5_walk_and_read(h5, verbose = verbose),
     error = function(e) {
       stop(
         "Checksum verification failed for '", path, "': ", conditionMessage(e),
@@ -301,19 +272,19 @@
 #' @return Whatever `FUN` returned, invisibly.
 #' @keywords internal
 .h5_update_survey <- function(dsn, FUN, verify = TRUE, timeout = 30) {
-
+  
   dsn <- normalizePath(dsn, mustWork = TRUE)
-
+  
   lock <- .h5_lock_acquire(dsn, timeout = timeout)
   tmp  <- .h5_temp_path(dsn)
-
+  
   if (!file.copy(dsn, tmp, overwrite = TRUE)) {
     .h5_lock_release(lock)
     stop("Could not create a temporary working copy of '", dsn, "'.", call. = FALSE)
   }
-
+  
   h5 <- hdf5r::H5File$new(tmp, mode = "a")
-
+  
   # Registered in the exact order they must run at exit: close the file
   # handle first (required before the temp file can be deleted/renamed on
   # some platforms), then delete the temp file (a no-op once the atomic
@@ -321,18 +292,19 @@
   on.exit(try(h5$close_all(), silent = TRUE), add = TRUE)
   on.exit(unlink(tmp, force = TRUE), add = TRUE)
   on.exit(.h5_lock_release(lock), add = TRUE)
-
+  
   result <- FUN(h5)
-
+  
   h5$flush()
   h5$close_all()
-
+  
   if (isTRUE(verify)) {
     .h5_verify_checksums(tmp)
+    message("integrity checked!")
   }
-
+  
   .h5_atomic_replace(tmp, dsn)
-
+  
   invisible(result)
 }
 
@@ -368,33 +340,33 @@
 #' @return Whatever `FUN` returned, invisibly.
 #' @keywords internal
 .h5_update_survey_with_source <- function(dsn, src_dsn, FUN, verify = TRUE, timeout = 30) {
-
+  
   dsn     <- normalizePath(dsn, mustWork = TRUE)
   src_dsn <- normalizePath(src_dsn, mustWork = TRUE)
-
+  
   if (identical(dsn, src_dsn)) {
     # Same file: there is only one handle to open. Reuse .h5_update_survey()
     # and hand FUN the same handle twice.
     return(.h5_update_survey(dsn, function(h5) FUN(h5, h5), verify = verify, timeout = timeout))
   }
-
-  # ---- lock both files, always in the same (sorted) order -------------------
+  
+  # ---- lock both files, always in the same (sorted) order ------------------ #
   paths      <- c(dsn, src_dsn)
   lock_order <- order(paths)
   locks <- vector("list", 2L)
   for (idx in lock_order) {
     locks[[idx]] <- .h5_lock_acquire(paths[idx], timeout = timeout)
   }
-
+  
   tmp <- .h5_temp_path(dsn)
   if (!file.copy(dsn, tmp, overwrite = TRUE)) {
     for (idx in rev(lock_order)) .h5_lock_release(locks[[idx]])
     stop("Could not create a temporary working copy of '", dsn, "'.", call. = FALSE)
   }
-
+  
   h5     <- hdf5r::H5File$new(tmp, mode = "a")
   src_h5 <- hdf5r::H5File$new(src_dsn, mode = "r")
-
+  
   # Registered in the exact order they must run at exit -- mirrors
   # .h5_update_survey(): close both handles first (required before the temp
   # file can be deleted/renamed on some platforms), then delete the temp
@@ -405,19 +377,19 @@
   on.exit({
     for (idx in rev(lock_order)) .h5_lock_release(locks[[idx]])
   }, add = TRUE)
-
+  
   result <- FUN(h5, src_h5)
-
+  
   h5$flush()
   h5$close_all()
   src_h5$close_all()
-
+  
   if (isTRUE(verify)) {
     .h5_verify_checksums(tmp)
   }
-
+  
   .h5_atomic_replace(tmp, dsn)
-
+  
   invisible(result)
 }
 
@@ -591,7 +563,7 @@
     dcpl$set_deflate(compress)   # compression ratio a lot for numeric data
   }
   dcpl$set_fletcher32()
-
+  
   ds <- grp$create_dataset(
     name              = name,
     robj              = dta,
@@ -611,7 +583,7 @@
   if (is.null(data) || length(data) == 0L) return(invisible(NULL))
   if (!is.matrix(data)) data <- as.matrix(data)
   if (nrow(data) == 0L) return(invisible(NULL))
-
+  
   dcpl <- hdf5r::H5P_DATASET_CREATE$new()
   dcpl$set_chunk(dim(data))
   if (compress > 0L) {
@@ -619,7 +591,7 @@
     dcpl$set_deflate(compress)
   }
   dcpl$set_fletcher32()
-
+  
   ds <- grp$create_dataset(
     name              = name,
     robj              = data,
@@ -648,8 +620,8 @@
 .h5_write_data_array <- function(grp, gpr, compress = 0L) {
   nz <- nrow(gpr)
   nx <- ncol(gpr)
-
-  # ---- guard against empty profiles ----------------------------------------
+  
+  # ---- guard against empty profiles --------------------------------------- #
   # A dataset with a zero-length dimension cannot be meaningfully chunked
   # (HDF5 requires every chunk dimension to be >= 1), and an "empty backup"
   # of a line is almost certainly a sign that something upstream went wrong
@@ -663,9 +635,9 @@
       call. = FALSE
     )
   }
-
+  
   chunk_dims <- c(nz, min(nx, 128L))
-
+  
   dcpl <- hdf5r::H5P_DATASET_CREATE$new()
   dcpl$set_chunk(chunk_dims)
   if (compress > 0L) {
@@ -673,7 +645,7 @@
     dcpl$set_deflate(compress)
   }
   dcpl$set_fletcher32()
-
+  
   ds <- grp$create_dataset(
     name              = "data",
     dtype             = hdf5r::h5types$H5T_NATIVE_DOUBLE,
@@ -683,7 +655,7 @@
     gzip_level        = NULL
   )
   ds[1:nz, 1:nx] <- gpr@data
-
+  
   invisible(ds)
 }
 
@@ -750,13 +722,13 @@
 .normalizeMarkers <- function(markers, nx, verbose = TRUE) {
   markers <- trimStr(markers)
   n <- length(markers)
-
+  
   if (n == nx) return(markers)
-
+  
   if (n == 0L) {
     return(rep("", nx))
   }
-
+  
   if (n < nx) {
     verboseF(
       message("Markers vector shorter than the number of traces (",
@@ -765,7 +737,7 @@
     )
     return(c(markers, rep("", nx - n)))
   }
-
+  
   verboseF(
     message("Markers vector longer than the number of traces (",
             n, " > ", nx, "); truncating."),
@@ -804,58 +776,58 @@
 #' this in `.h5_update_survey()`.
 #'
 #' @param h5 Open, writable [hdf5r::H5File] handle.
-#' @param x Object of class `GPRsurvey` (already updated in memory).
-#' @param ids (`integer`) Indices (into `x@names`) of the lines whose
+#' @param obj Object of class `GPRsurvey` (already updated in memory).
+#' @param ids (`integer`) Indices (into `obj@names`) of the lines whose
 #'   coordinates changed.
 #' @keywords internal
-.write_GPRsurvey_coords_hdf5 <- function(h5, x, ids) {
-
+.write_GPRsurvey_coords_hdf5 <- function(h5, obj, ids) {
+  
   ids <- unique(as.integer(ids))
   ids <- ids[!is.na(ids)]
   if (length(ids) == 0L) return(invisible(NULL))
-
+  
   if (!"lines" %in% names(h5)) {
     stop("The HDF5 backing file has no '/lines' group.", call. = FALSE)
   }
   lines_group <- h5[["lines"]]
-
+  
   for (id in ids) {
-    line_name <- x@names[id]
+    line_name <- obj@names[id]
     if (!line_name %in% names(lines_group)) {
       stop(
         "Line group not found in HDF5 file: '/lines/", line_name, "'.",
         call. = FALSE
       )
     }
-
-    coord <- x@coords[[id]]
+    
+    coord <- obj@coords[[id]]
     if (is.null(coord) || length(coord) == 0L) next
-
+    
     if (ncol(coord) != 3L) {
       stop(
         "Coordinates for line '", line_name, "' must have three columns.",
         call. = FALSE
       )
     }
-    if (nrow(coord) != x@nx[id]) {
+    if (nrow(coord) != obj@nx[id]) {
       stop(
         "Number of coordinate rows for line '", line_name,
         "' does not match the number of traces.",
         call. = FALSE
       )
     }
-
+    
     line_group  <- lines_group[[line_name]]
     coord_group <- if ("coords" %in% names(line_group)) {
       line_group[["coords"]]
     } else {
       line_group$create_group("coords")
     }
-
+    
     .delete_h5_link_if_exists(coord_group, "xyz")
     .h5_write_matrix(coord_group, "xyz", coord)
   }
-
+  
   invisible(NULL)
 }
 
@@ -872,10 +844,10 @@
   if (!"lines" %in% names(dst_h5)) {
     dst_h5$create_group("lines")
   }
-
+  
   src_lines <- src_h5[["lines"]]
   dst_lines <- dst_h5[["lines"]]
-
+  
   if (!src_name %in% names(src_lines)) {
     stop(
       "Source line group not found in HDF5 file: '/lines/", src_name, "'.\n",
@@ -887,7 +859,7 @@
   if (dst_name %in% names(dst_lines)) {
     dst_lines$link_delete(dst_name)
   }
-
+  
   src_lines$obj_copy_to(
     dst_loc  = dst_lines,
     dst_name = dst_name,
@@ -925,44 +897,44 @@
 #' }
 #'
 #' @param h5 Open, writable [hdf5r::H5File] handle.
-#' @param x Object of class `GPRsurvey`.
+#' @param obj Object of class `GPRsurvey`.
 #' @keywords internal
-.write_survey_group_hdf5 <- function(h5, x) {
-
+.write_survey_group_hdf5 <- function(h5, obj) {
+  
   .delete_h5_link_if_exists(h5, "survey")
   sg <- h5$create_group("survey")
-
-  # ---- scalar attributes ----------------------------------------------------
-  sg$create_attr("version", x@version)
+  
+  # ---- scalar attributes --------------------------------------------------- #
+  sg$create_attr("version", obj@version)
   sg$create_attr(
     "crs",
-    if (length(x@crs) == 0L || is.na(x@crs[1L])) "" else x@crs[1L]
+    if (length(obj@crs) == 0L || is.na(obj@crs[1L])) "" else obj@crs[1L]
   )
   sg$create_attr(
     "spunit",
-    if (length(x@spunit) == 0L || is.na(x@spunit[1L])) "" else x@spunit[1L]
+    if (length(obj@spunit) == 0L || is.na(obj@spunit[1L])) "" else obj@spunit[1L]
   )
-
+  
   # ---- per-line vectors (one element per line, in the same order as
-  #      @names) -- every one of these is chunked + checksummed -------------
-  .h5_write_vector(sg, "names",    x@names)
-  .h5_write_vector(sg, "paths",    x@paths)
-  .h5_write_vector(sg, "descs",    x@descs)
-  .h5_write_vector(sg, "modes",    x@modes)
-  .h5_write_vector(sg, "dates",    format(x@dates, "%Y-%m-%d"))
-  .h5_write_vector(sg, "freqs",    x@freqs)
-  .h5_write_vector(sg, "antseps",  x@antseps)
-  .h5_write_vector(sg, "nz",       x@nz)
-  .h5_write_vector(sg, "nx",       x@nx)
-  .h5_write_vector(sg, "zlengths", x@zlengths)
-  .h5_write_vector(sg, "xlengths", x@xlengths)
-  .h5_write_vector(sg, "zunits",   x@zunits)
-
-  # ---- optional survey-level fields -----------------------------------------
-  if (length(x@transf) > 0L) {
-    .h5_write_vector(sg, "transf", x@transf)
+  #      @names) -- every one of these is chunked + checksummed -------------  #
+  .h5_write_vector(sg, "names",    obj@names)
+  .h5_write_vector(sg, "paths",    obj@paths)
+  .h5_write_vector(sg, "descs",    obj@descs)
+  .h5_write_vector(sg, "modes",    obj@modes)
+  .h5_write_vector(sg, "dates",    format(obj@dates, "%Y-%m-%d"))
+  .h5_write_vector(sg, "freqs",    obj@freqs)
+  .h5_write_vector(sg, "antseps",  obj@antseps)
+  .h5_write_vector(sg, "nz",       obj@nz)
+  .h5_write_vector(sg, "nx",       obj@nx)
+  .h5_write_vector(sg, "zlengths", obj@zlengths)
+  .h5_write_vector(sg, "xlengths", obj@xlengths)
+  .h5_write_vector(sg, "zunits",   obj@zunits)
+  
+  # ---- optional survey-level fields ---------------------------------------- #
+  if (length(obj@transf) > 0L) {
+    .h5_write_vector(sg, "transf", obj@transf)
   }
-
+  
   invisible(sg)
 }
 
@@ -977,7 +949,7 @@
 #'   `.write_survey_group_hdf5()` writes.
 #' @keywords internal
 .read_survey_group_hdf5 <- function(h5) {
-
+  
   if (!h5$exists("survey")) {
     stop(
       "This HDF5 file does not appear to be an RGPR GPRsurvey file ",
@@ -986,19 +958,19 @@
     )
   }
   sg <- h5[["survey"]]
-
+  
   .attr <- function(obj, key, default = "") {
     tryCatch(obj$attr_open(key)$read(), error = function(e) default)
   }
   .ds <- function(name, default) {
     if (sg$exists(name)) sg[[name]][] else default
   }
-
+  
   names_ <- .ds("names", character(0))
   n      <- length(names_)
-
+  
   crs_str <- .attr(sg, "crs", "")
-
+  
   list(
     version  = .attr(sg, "version", "0.3"),
     crs      = if (nzchar(crs_str)) crs_str else NA_character_,
@@ -1038,19 +1010,19 @@
   if (!.hasSlot(obj, "intersections")) return(invisible(NULL))
   ints <- obj@intersections
   if (length(ints) == 0L) return(invisible(NULL))
-
+  
   sg <- if ("survey" %in% names(h5)) h5[["survey"]] else h5$create_group("survey")
-
+  
   .delete_h5_link_if_exists(sg, "intersections")
   ig <- sg$create_group("intersections")
-
+  
   for (nm in names(ints)) {
     val <- ints[[nm]]
     if (is.numeric(val) && length(val) > 0L) {
       .h5_write_vector(ig, nm, val)
     }
   }
-
+  
   invisible(NULL)
 }
 
@@ -1065,7 +1037,7 @@
   if (!"survey" %in% names(h5)) return(list())
   sg <- h5[["survey"]]
   if (!sg$exists("intersections")) return(list())
-
+  
   ig  <- sg[["intersections"]]
   out <- list()
   for (nm in names(ig)) {
@@ -1073,3 +1045,132 @@
   }
   out
 }
+
+
+# -------------------------------------------------------------------------
+# ACCESS LINE GROUP ATTRIBUTE / VECTOR
+# -------------------------------------------------------------------------
+
+# # USAGE
+# xcoord <- .h5_line_read(survey, 2, "x")
+# xyz <- .h5_line_read(survey, 2, "coords/xyz")
+# data <- .h5_line_read(survey, 2, "data")
+# vel <- .h5_line_read(survey, 2, "vel/v")
+
+.h5_line_read <- function(x, i, path) {
+  .with_h5_line(x, i, function(grp) {
+    parts <- strsplit(path, "/", fixed = TRUE)[[1L]]
+    obj <- grp
+    for (p in parts) {
+      if (!obj$exists(p)) {
+        stop(
+          "Path '/lines/", x@names[i], "/", path,
+          "' does not exist.",
+          call. = FALSE
+        )
+      }
+      obj <- obj[[p]]
+    }
+    obj$read()
+  })
+}
+
+
+.with_h5_line <- function(x, i, FUN) {
+  stopifnot(inherits(x, "GPRsurvey"))
+  if (length(i) != 1L || is.na(i)) {
+    stop("'i' must be a single integer.", call. = FALSE)
+  }
+  i <- as.integer(i)
+  if (i < 1L || i > length(x@names)) {
+    stop(
+      "'i' out of range [1,", length(x@names), "].",
+      call. = FALSE
+    )
+  }
+  if (!file.exists(x@path)) {
+    stop(
+      "Backing HDF5 file not found: '", x@path, "'.",
+      call. = FALSE
+    )
+  }
+  h5 <- hdf5r::H5File$new(x@path, mode = "r")
+  on.exit(try(h5$close_all(), silent = TRUE), add = TRUE)
+  nm <- x@names[i]
+  if (!h5[["lines"]]$exists(nm)) {
+    stop(
+      "Line group '/lines/", nm, "' does not exist in HDF5 file.",
+      call. = FALSE
+    )
+  }
+  grp <- h5[["lines"]][[nm]]
+  FUN(grp)
+}
+
+# --------------------------------------------------------------------------
+
+.h5_line_read_all <- function(x, path) {
+  .with_h5_survey(x, function(h5) {
+    lg <- h5[["lines"]]
+    out <- vector("list", length(x@names))
+    names(out) <- x@names
+    parts <- strsplit(path, "/", fixed = TRUE)[[1L]]
+    for (i in seq_along(x@names)) {
+      obj <- lg[[x@names[i]]]
+      for (p in parts) {
+        if (!obj$exists(p)) {
+          stop(
+            "Path '/lines/", x@names[i], "/", path,
+            "' does not exist.",
+            call. = FALSE
+          )
+        }
+        obj <- obj[[p]]
+      }
+      out[[i]] <- obj$read()
+    }
+    out
+  })
+}
+
+.with_h5_survey <- function(x, FUN) {
+  stopifnot(inherits(x, "GPRsurvey"))
+  if (!file.exists(x@path)) {
+    stop(
+      "Backing HDF5 file not found: '", x@path, "'.",
+      call. = FALSE
+    )
+  }
+  h5 <- hdf5r::H5File$new(x@path, mode = "r")
+  on.exit(try(h5$close_all(), silent = TRUE), add = TRUE)
+  FUN(h5)
+}
+
+# # ------- READ A VECTOR
+# .h5_line_vector <- function(x, i, name) {
+#   .with_h5_line(x, i, function(grp) {
+#     if (!grp$exists(name)) {
+#       stop(
+#         "Dataset '", name,
+#         "' not found in '/lines/", x@names[i], "'.",
+#         call. = FALSE
+#       )
+#     }
+#     grp[[name]]$read()
+#   })
+# }
+# # ------- READ AN ATTRIBUTE
+# .h5_line_attr <- function(x, i, name) {
+#   .with_h5_line(x, i, function(grp) {
+#     attrs <- names(grp$attr_open())
+#     if (!name %in% attrs) {
+#       stop(
+#         "Attribute '", name,
+#         "' not found in '/lines/", x@names[i], "'.",
+#         call. = FALSE
+#       )
+#     }
+#     hdf5r::h5attr(grp, name)
+#   })
+# }
+

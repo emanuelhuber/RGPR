@@ -2,6 +2,14 @@
 #' Extract and replace parts of a GPRcube object
 #' 
 #' Extract parts of a GPR object
+#' 
+#' Works transparently whether `x@data` is an in-memory array or `x` is
+#' HDF5-backed (see `isH5Backed()`): in the HDF5-backed case, only the
+#' requested `[i, j, k]` region is read from the backing file -- the full
+#' cube is never loaded just to pull out a slice or sub-region (see
+#' `.readCubeRegion()` in `ClassGPRcube_hdf5.R`). The returned `GPRslice`/
+#' `GPR`/`GPRcube` is always a plain in-memory object, since the extracted
+#' region is expected to be much smaller than the source cube.
 #' @param x (`GPRcube`)
 #' @param i (`integer`) Indices specifying elements to extract or replace.
 #' @param j (`integer`) Indices specifying elements to extract or replace.
@@ -18,11 +26,12 @@ setMethod(
   f = "[",
   signature = "GPRcube",
   definition = function(x, i, j, k, drop = TRUE){
+    dim_x <- dim(x)   # dim(),GPRcube-method: reads HDF5 shape if HDF5-backed
     if(missing(i) || length(i) == 0){
-      i <- 1:dim(x@data)[1]
+      i <- 1:dim_x[1]
     } 
     if(missing(j) || length(j) == 0){
-      j <- 1:dim(x@data)[2]
+      j <- 1:dim_x[2]
     }
     # dots <- list(...)
     # if(length(dots) > 0){
@@ -30,11 +39,11 @@ setMethod(
     # }
     # print(dots)
     if(missing(k) || length(k) == 0){
-      k <- 1:dim(x@data)[3]
+      k <- 1:dim_x[3]
     }
-    vx <- x@center[1] + seq(0, by = x@dx, length.out = dim(x@data)[1])
-    vy <- x@center[2] + seq(0, by = x@dy, length.out = dim(x@data)[2])
-    vz <- x@center[3] + seq(0, by = x@dz, length.out = dim(x@data)[3])
+    vx <- x@center[1] + seq(0, by = x@dx, length.out = dim_x[1])
+    vy <- x@center[2] + seq(0, by = x@dy, length.out = dim_x[2])
+    vz <- x@center[3] + seq(0, by = x@dz, length.out = dim_x[3])
     # extract slice k
     if(length(k) == 1){
       new_center <- sapply(list(vx[i], vy[j], vz[k]), min)
@@ -48,7 +57,7 @@ setMethod(
                date         = x@date,
                freq         = x@freq,
                
-               data         = x@data[i, j, k, drop = TRUE],
+               data         = .readCubeRegion(x, i, j, k, drop = TRUE),
                dunit        = x@dunit,
                dlab         = x@dlab,
                
@@ -93,7 +102,7 @@ setMethod(
         # xpos <- x@x[i]
         xpos <- vx[i]
       }
-      xdata <- x@data[i, j, k]
+      xdata <- .readCubeRegion(x, i, j, k, drop = TRUE)
       if(is.null(dim(xdata))){
         n <- 1L
         dim(xdata) <- c(length(xdata), 1)
@@ -157,7 +166,7 @@ setMethod(
                date         = x@date,  
                freq         = x@freq,
                
-               data         = x@data[i, j, k, drop = FALSE],
+               data         = .readCubeRegion(x, i, j, k, drop = FALSE),
                dunit         = x@dunit,
                dlab         = x@dlab,
                

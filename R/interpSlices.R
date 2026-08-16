@@ -9,14 +9,48 @@
 #' @param dz (`numeric[1]`) z-resolution
 #' @param h (`numeric[1]`) FIXME: Number of levels in MBA hierarchy (see function...)
 #' @param extend (`character[1]`) FIXME: Method to define interpolation extent.
-#' @param buffer (`numeric[1]`) FIXME: Buffer distance around survey lines.
+#' @param bufferDist (`numeric[1]`) FIXME: Buffer distance around survey lines.
 #' @param shp (`matrix[n,2]|list[2]|sf`) FIXME: Shape/polygon defining interpolation bounds.
 #' @param rot (`logical[1]|numeric[1]`) If `TRUE` the GPR lines are 
 #'            fist rotated such to minimise their axis-aligned bounding box. 
 #'            If `rot` is numeric, the GPR lines is rotated first
 #'            rotated by `rot` (in radian).
 #' @param verbose (`logical[1]`) If TRUE, verbose.
+#' @param hdf5 (`character[1]`) Whether the resulting `GPRcube` should be
+#'            backed by an HDF5 file rather than held fully in memory:
+#'            `"auto"` (default) decides based on `mem_threshold_mb`,
+#'            `"always"` forces HDF5 backing, `"never"` forces an in-memory
+#'            array. Ignored when the result is a `GPRslice` (a single
+#'            slice is always small enough to keep in memory). See Details.
+#' @param dsn (`character[1]|NULL`) Destination path for the HDF5 backing
+#'            file when `hdf5` results in HDF5 backing. If `NULL`, a
+#'            temporary file is created (see [base::tempfile()]) -- move it
+#'            with `writeGPR()` if you want to keep it beyond the session.
+#' @param compress (`integer[1]`) gzip compression level (0-9) for the HDF5
+#'            backing file; `0` disables compression. Ignored for in-memory
+#'            results.
+#' @param overwrite (`logical[1]`) Overwrite `dsn` if it already exists?
+#' @param mem_threshold_mb (`numeric[1]`) When `hdf5 = "auto"`, the
+#'            estimated cube size (see `estimate = TRUE`) above which HDF5
+#'            backing is used instead of an in-memory array.
+#' @param batch_size (`integer[1]|NULL`) Number of depth slices computed
+#'            per parallel batch before being written out / accumulated.
+#'            If `NULL`, a size is chosen automatically so that one batch
+#'            stays under ~300 MB. Smaller values bound peak memory more
+#'            tightly at the cost of more scheduling overhead.
 #' @return (`GPRcube|GPRslice`)
+#' @details
+#' # Memory and HDF5 backing
+#' Depth-slice interpolation (MBA) is embarrassingly parallel across
+#' slices, so slices are computed in batches via [future.apply::future_lapply],
+#' bounding peak memory during computation to roughly one batch regardless
+#' of the number of depth slices. When the resulting cube is large
+#' (`hdf5 = "auto"` and estimated size > `mem_threshold_mb`, or
+#' `hdf5 = "always"`), each batch is written directly to a chunked,
+#' checksummed HDF5 file as it is computed instead of being accumulated in
+#' an R array; the returned `GPRcube` then has `data = array(dim = c(0,0,0))`
+#' and `path` pointing at that HDF5 file (see [loadCube()] to pull the full
+#' array back into memory when needed).
 #' @name interpSlices
 #' @rdname interpSlices
 #' @export
@@ -27,9 +61,16 @@ setGeneric("interpSlices", function(obj,
                                     dz = NULL, 
                                     h = 6,
                                     extend = c("bbox", "obbox", "chull", "buffer"),
-                                    buffer = NULL,
+                                    bufferDist = NULL,
                                     shp = NULL,
-                                    rot = FALSE, verbose = TRUE) 
+                                    rot = FALSE, verbose = TRUE,
+                                    estimate = FALSE,
+                                    hdf5 = c("auto", "always", "never"),
+                                    dsn = NULL,
+                                    compress = 5L,
+                                    overwrite = FALSE,
+                                    mem_threshold_mb = 500,
+                                    batch_size = NULL) 
   standardGeneric("interpSlices"))
 
 #' @rdname interpSlices
@@ -40,16 +81,24 @@ setMethod("interpSlices", "GPRsurvey", function(obj,
                                                 dz = NULL, 
                                                 h = 6,
                                                 extend = c("bbox", "obbox", "chull", "buffer"),
-                                                buffer = NULL,
+                                                bufferDist = NULL,
                                                 shp = NULL,
                                                 rot = FALSE,
-                                                verbose = TRUE){
+                                                verbose = TRUE,
+                                                estimate = FALSE,
+                                                hdf5 = c("auto", "always", "never"),
+                                                dsn = NULL,
+                                                compress = 5L,
+                                                overwrite = FALSE,
+                                                mem_threshold_mb = 500,
+                                                batch_size = NULL){
+  hdf5 <- match.arg(hdf5)
   
   
   extend = match.arg(extend, c("bbox", "obbox", "chull", "buffer"))
   test <- sapply(obj@coords, function(x) length(x) > 0)
   
-  if(all(!test)){
+  if(any(!test)){
     stop("Some of the data have no coordinates.\n", 
          " Please set first coordinates to all data,\n",
          " or remove these data!")
@@ -65,13 +114,13 @@ setMethod("interpSlices", "GPRsurvey", function(obj,
   stopifnot(length(obj@coords) == length(obj@zlengths))
   
   if(is.null(dx)){
-    dx <- mean(obj@xlengths/(obj@nx - 1))
+    dx <- mean(obj@xlengths/(max(obj@nx, 2) - 1))
   }
   if(is.null(dy)){
     dy <- dx
   }
   if(is.null(dz)){
-    dz <- mean(obj@zlengths/(obj@nz - 1))
+    dz <- mean(obj@zlengths/(max(obj@nz,2) - 1))
   }
   
   
@@ -91,8 +140,14 @@ setMethod("interpSlices", "GPRsurvey", function(obj,
   
   SXY <- .sliceInterp(obj = obj[test], dx = dx, dy = dy, dz = dz, h = h,
                       extend = extend,
-                      buffer = buffer,
-                      shp = shp, verbose = verbose)
+                      bufferDist = bufferDist,
+                      shp = shp, verbose = verbose, estimate = estimate,
+                      hdf5 = hdf5, dsn = dsn, compress = compress,
+                      overwrite = overwrite,
+                      mem_threshold_mb = mem_threshold_mb,
+                      batch_size = batch_size)
+  
+  if(isTRUE(estimate)) return(SXY)
   
   xyref <- c(min(SXY$x), min(SXY$y), SXY$vz[1])
   # xpos <- SXY$x #- min(SXY$x)
@@ -100,21 +155,37 @@ setMethod("interpSlices", "GPRsurvey", function(obj,
   
   xfreq <- ifelse(length(unique(obj@freqs[test])) == 1, obj@freqs[test][1], numeric(0))
   
-  if(dim(SXY$z)[3] == 1){
+  # SXY$h5 is TRUE only when the cube was written straight to an HDF5 file
+  # (see .sliceInterp()/.writeCubeHDF5()); SXY$z is NULL in that case and
+  # SXY$dim carries the [nx, ny, nz] shape instead.
+  is_h5 <- isTRUE(SXY$h5)
+  nz_result <- if (is_h5) SXY$dim[3] else dim(SXY$z)[3]
+
+  if (nz_result == 1) {
     class_name <- "GPRslice"
     ddata <- SXY$z[,,1]
-  }else{
+  } else if (is_h5) {
+    class_name <- "GPRcube"
+    ddata <- array(dim = c(0L, 0L, 0L))   # sentinel: data lives at @path (see loadCube())
+  } else {
     class_name <- "GPRcube"
     ddata <- SXY$z
   }
   xtrsf <- numeric(0)
   if(length(obj@transf)>0) xtrsf <- c(obj@transf[1:2], x_rot)
-  
+
+  # @path normally records the *source* survey path (see GPRvirtual). For an
+  # HDF5-backed GPRcube, @path instead points at the cube's own backing file
+  # -- that's where the data actually lives -- and the source survey path is
+  # kept in @md so it isn't silently lost.
+  obj_path <- if (is_h5) SXY$path else obj@paths[test][1]
+  obj_md   <- if (is_h5) list(source_survey_path = obj@paths[test][1]) else list()
+
   y <- new(class_name,
            #----------------- GPRvirtual --------------------------------------#
            version      = "0.3",
            name         = "",
-           path         = obj@paths[test][1],
+           path         = obj_path,
            desc         = "GPR cube",  # data description
            mode         = obj@modes[test][1],  # reflection/CMP/WARR (CMPAnalysis/spectrum/...)?
            date         = Sys.Date(),       # survey date (format %Y-%m-%d)
@@ -138,7 +209,7 @@ setMethod("interpSlices", "GPRsurvey", function(obj,
            
            # proc         = "list",       # processing steps
            # delineations = "list",       # delineations
-           # md           = "list",        # data from header file/meta-data
+           md           = obj_md,        # data from header file/meta-data
            #----------------- GPRcube -----------------------------------------#
            dx     = dx,   # xpos,
            dy     = dy,   # ypos,
@@ -187,173 +258,32 @@ setMethod("interpSlices", "GPRsurvey", function(obj,
 # x = amplitude
 # z = time/depth
 # zi = time/depth at which to interpolate
+#
+# NOTE: earlier versions of the caller zeroed out NA amplitudes across the
+# *entire* trace matrix before interpolation (an O(nrow*ncol) allocation
+# per profile) so that every column could be interpolated the same way.
+# Instead we drop non-finite points per-column here -- cheaper (no extra
+# matrix copy upstream) and arguably more correct (a real 0 amplitude and
+# a missing sample are not the same thing).
+# NOT: with method = "pchip" troubles because of Non-Monotonic Z Values
 trInterp <- function(x, z, zi){
-  # isNA <- is.na(x)
-  # xi <- signal::interp1(x = z[!isNA], y = x[!isNA], xi = zi, method = "spline", 
-  #                       extrap = 0)
-  # NOT: with method = "pchip" troubles because of Non-Monotonic Z Values
-  xi <- signal::interp1(x = z, y = x, xi = zi, method = "spline", extrap = 0)
+  ok <- is.finite(x) & is.finite(z)
+  if (sum(ok) < 2L) return(rep(NA_real_, length(zi)))
+  xi <- signal::interp1(x = z[ok], y = x[ok], xi = zi, method = "spline",
+                        extrap = 0)
   return(xi)
 }
 
-# 
-# .sliceInterp <- function(obj, dx = NULL, dy = NULL, dz = NULL, h = 6,
-#                          extend = "bbox", buffer = NULL, shp =  NULL, m = 1, n = 1){
-#   
-#   
-#   
-#   # target depth vector
-#   if(all(isZDepth(obj))){
-#     zmax <- max(sapply(obj@coords, function(x) max(x[,3])))
-#     zmin <- min(mapply(function(x, y) min(x[,3] - y), obj@coords, obj@zlengths))
-#     vz <- seq(zmax, to = zmin, by = -dz)
-#   }else{
-#     vz <- seq(from = 0, by = dz, to = max(obj@zlengths))
-#   }
-#   
-#   
-#   V <- matrix(0, nrow = length(vz), ncol = sum(obj@nx))
-#   posi <- 0
-#   for(i in seq_along(obj)){
-#     OBJI <- obj[[i]]
-#     OBJI@data[is.na(OBJI@data)] <- 0
-#     idx <- posi + (1:ncol(OBJI))
-#     if(isZDepth(OBJI)){
-#       if(length(unique(OBJI@coord[,3])) > 1){
-#         # z values accounting for topography
-#         Z <- matrix(OBJI@coord[, 3], nrow = nrow(OBJI), ncol = ncol(OBJI), byrow = TRUE) - 
-#           matrix(OBJI@z, nrow = nrow(OBJI), ncol = ncol(OBJI))
-#         V[, idx] <- vapply(seq_len(ncol(OBJI@data)),
-#                function(j) trInterp(OBJI@data[, j], Z[, j], vz),
-#                numeric(length(vz)))
-#       }else{
-#         V[, idx] <- apply(OBJI@data, 2, trInterp, 
-#                           z = OBJI@coord[1,3] - OBJI@z, 
-#                           zi = vz )
-#       } 
-#     }else{
-#       V[, idx] <- apply(OBJI@data, 2, trInterp, 
-#                         z = OBJI@z, 
-#                         zi = vz )
-#     }
-#     posi <- posi + ncol(OBJI)
-#   }
-#   
-# 
-#   # positions obervations
-#   xypos <- do.call(rbind, obj@coords)
-#   # xpos <- unlist(lapply(obj@coords, function(x) x[,1]))
-#   # ypos <- unlist(lapply(obj@coords, function(x) x[,2]))
-#   
-#   x_shp <- obj
-#   if(!is.null(shp)){
-#     if(inherits(shp, "sf") || inherits(shp, "sfc") || inherits(shp, "sfg")){
-#       x_shp <- sf::st_coordinates(shp)[,1:2]
-#     }else if(is.list(shp)){
-#       x_shp <- cbind(shp[[1]], shp[[2]])
-#     }else{
-#       x_shp <- shp
-#     }
-#   }
-#   
-#   # FIXME: Buffer logic issue:
-#   # When extend = "bbox" and shp = NULL, buffer is not explicitly set, causing 
-#   # getbbox_nx_ny to use its default (5% extension). 
-#   # This may not match user expectations
-#   xy_clip <- NULL
-#   if(extend == "chull"){
-#     xsf_chull <- convexhull(x_shp)
-#     if(is.null(buffer)){
-#       if(is.null(shp)){
-#         xsf_chull_xy <- sf::st_coordinates(xsf_chull)
-#         buffer <- min(diff(range(xsf_chull_xy[, 1])) * 0.05,  
-#                       diff(range(xsf_chull_xy[, 2])) * 0.05)
-#       }else{
-#         buffer <- 0
-#       }
-#     }
-#     if(buffer > 0){
-#       xsf_chull <- sf::st_buffer(xsf_chull, buffer)
-#     }
-#     xy_clip <- sf::st_coordinates(xsf_chull)
-#     para <- getbbox_nx_ny(xy_clip[,1], xy_clip[,2], dx, dy, buffer = 0)
-#   }else if(extend == "bbox"){
-#     if(!is.null(shp)){
-#       if(is.null(buffer)) buffer <- 0
-#       para <- getbbox_nx_ny(x_shp[,1], x_shp[,2], dx, dy, buffer)
-#     }else{
-#       para <- getbbox_nx_ny(xypos[,1], xypos[,2], dx, dy, buffer)
-#     }
-#   }else if(extend == "obbox"){
-#     sf_obb <- obbox(x_shp)
-#     if(is.null(buffer)){
-#       if(is.null(shp)){
-#         xsf_chull_xy <- sf::st_coordinates(sf_obb)
-#         buffer <- min(diff(range(xsf_chull_xy[, 1])) * 0.05,  
-#                       diff(range(xsf_chull_xy[, 2])) * 0.05)
-#       }else{
-#         buffer <- 0
-#       }
-#     }
-#     if(buffer > 0){
-#       sf_obb <- sf::st_buffer(sf_obb, buffer)
-#       sf_obb <- obbox(sf_obb)
-#     }
-#     xy_clip <- sf::st_coordinates(sf_obb)
-#     
-#     para <- getbbox_nx_ny(xy_clip[,1], xy_clip[,2], dx, dy, buffer = 0)
-#   }else if(extend == "buffer"){
-#     if(is.null(buffer) || !(buffer > 0)){
-#       stop("When 'extend = buffer', 'buffer' must be larger than 0!")
-#     }else{
-#       x_shp <- buffer(obj, buffer)
-#       xy_clip <- sf::st_coordinates(x_shp)
-#       para <- getbbox_nx_ny(xy_clip[,1], xy_clip[,2], dx, dy, buffer = 0)
-#     }
-#   }
-#   
-#   fk <- NULL
-#   
-#   SL <- array(dim = c(para$nx, para$ny, length(vz)))
-#   
-# 
-#   # ratio_x_y <- bbox_dy / bbox_dx
-#   ratio_x_y <- (para$bbox[4] - para$bbox[3]) / (para$bbox[2] - para$bbox[1])
-#   if(ratio_x_y < 1){
-#     if(is.null(m)) m <- round(1/ratio_x_y)
-#   }else{
-#     if(is.null(n)) n <- round(ratio_x_y)
-#   }
-#   if(m < 1) m <- 1L
-#   if(n < 1) n <- 1L
-#   
-#   fk <- NULL
-#   if(!is.null(xy_clip)){
-#     if(is.null(fk)){
-#       fk <- outer(S$x, S$y, inPoly,
-#                   vertx = xy_clip[,1],
-#                   verty = xy_clip[,2])
-#       fk <- !as.logical(fk)
-#     }
-#   }
-#   for(j in  seq_along(vz)){
-#     # val[[j]] <- unlist(lapply(V, function(v, k = j) v[k,]))
-#     # val[[j]] <- V[,j]
-#     # MBA::mba.surf echoes a warning when 
-#     # all(c(range(xpos), range(ypos)) == para$bbox) == TRUE!!
-#     S <- suppressWarnings(MBA::mba.surf(cbind(xypos, V[j,]), para$nx , para$ny, n = n, m = m, 
-#                                         extend = TRUE, h = h, b.box = para$bbox)$xyz.est)
-#     if(!is.null(fk)) S$z[fk] <- NA_real_
-#     SL[,,j] <- S$z
-#   }
-#   return(list(x = S$x, y = S$y, z = SL, vz = vz, x0 = xypos[,1], y0 = xypos[,2], z0 = V))
-#   
-# }  
 
 #' Interpolate GPR slices (refactored version)
 #' 
 #' This function interpolates GPR survey data onto a regular 3D grid using
-#' multilevel B-spline approximation (MBA).
+#' multilevel B-spline approximation (MBA). Depth slices are computed in
+#' batches (bounding peak memory during computation regardless of the
+#' number of slices) and either accumulated into an in-memory array or
+#' streamed straight to a chunked HDF5 file, depending on `hdf5`/
+#' `mem_threshold_mb` -- see `interpSlices()` for the user-facing parameter
+#' docs.
 #' 
 #' @param obj GPRsurvey object
 #' @param dx x-resolution
@@ -361,23 +291,47 @@ trInterp <- function(x, z, zi){
 #' @param dz z-resolution (depth or time spacing)
 #' @param h MBA hierarchy levels (controls smoothness, default 6)
 #' @param extend Extent method: "bbox", "obbox", "chull", or "buffer"
-#' @param buffer Buffer distance around survey lines
+#' @param bufferDist Buffer distance around survey lines
 #' @param shp Shape specification (sf object, list, or matrix)
 #' @param m MBA row refinement (usually leave as default)
 #' @param n MBA column refinement (usually leave as default)
 #' @param verbose (`logical[1]`) If TRUE, verbose.
+#' @param hdf5,dsn,compress,overwrite,mem_threshold_mb,batch_size See
+#'   `interpSlices()`.
 #' @return list with interpolation results:
 #'   \item{x}{x-coordinates of grid}
 #'   \item{y}{y-coordinates of grid}
-#'   \item{z}{3D array of interpolated values `[nx x ny x nz]`}
+#'   \item{z}{3D array of interpolated values `[nx x ny x nz]`, or `NULL`
+#'            when `h5 = TRUE` (data was streamed to `path` instead)}
 #'   \item{vz}{depth/time vector}
 #'   \item{x0}{original x-coordinates of observations}
 #'   \item{y0}{original y-coordinates of observations}
 #'   \item{z0}{interpolated data matrix `[nz x n_traces]`}
+#'   \item{dim}{`c(nx, ny, nz)`, always present (even when `z` is `NULL`)}
+#'   \item{h5}{`TRUE` if the cube was streamed to an HDF5 file}
+#'   \item{path}{path to the HDF5 backing file when `h5 = TRUE`, else `NULL`}
 #' @noRd
 .sliceInterp <- function(obj, dx = NULL, dy = NULL, dz = NULL, h = 6,
-                         extend = "bbox", buffer = NULL, shp = NULL, 
-                         m = 1, n = 1, verbose = TRUE) {
+                         extend = "bbox", bufferDist = NULL, shp = NULL, 
+                         m = 1, n = 1, verbose = TRUE, estimate = FALSE,
+                         hdf5 = c("auto", "always", "never"),
+                         dsn = NULL, compress = 5L, overwrite = FALSE,
+                         mem_threshold_mb = 500, batch_size = NULL) {
+  
+  hdf5 <- match.arg(hdf5)
+  
+  # We deliberately never call future::plan() ourselves -- CRAN policy (and
+  # good manners) reserve that decision for the user, since it affects the
+  # whole session, not just this call. But running under the default
+  # "sequential" plan silently gives zero parallelism for the MBA slice
+  # loop below, which is easy to miss, so just point it out once.
+  if (verbose && inherits(future::plan(), "sequential")) {
+    message(
+      "Note: depth-slice interpolation below runs under future::plan(\"sequential\") ",
+      "(no parallelism). Call e.g. future::plan(future::multisession) before ",
+      "interpSlices() to use multiple workers."
+    )
+  }
   
   # Step 1: Compute target depth vector
   vz <- .computeTargetDepths(obj, dz)
@@ -386,7 +340,6 @@ trInterp <- function(x, z, zi){
   V <- .interpolateAllProfiles(obj, vz)
   
   # Step 3: Extract spatial coordinates (returns matrix [n x 2])
-  # xypos <- .extractCoordinates(obj)
   xypos <- do.call(rbind, obj@coords)
   
   # Step 4: Process shape input
@@ -395,53 +348,175 @@ trInterp <- function(x, z, zi){
   
   # Step 5: Compute interpolation extent
   extent <- .computeInterpolationExtent(
-    extend, x_shp, xypos, dx, dy, buffer, shp_provided, obj
+    extend, x_shp, xypos, dx, dy, bufferDist, shp_provided, obj
   )
   bbox_params <- extent$bbox_params
+  
+  # ------------- Estimate size ---------------- #
+  nz <- length(vz)
+  n_cells <- bbox_params$nx * bbox_params$ny * nz
+  cube_size_mb <- n_cells * 8 / 1024^2   # double precision
+  if(verbose){
+    message(
+      sprintf(
+        paste(
+          "Creating cube:",
+          "%d x %d x %d cells",
+          "(%.2f million voxels)",
+          "~ %.1f MB"
+        ),
+        bbox_params$nx,
+        bbox_params$ny,
+        nz,
+        n_cells / 1e6,
+        cube_size_mb
+      )
+    )
+  }
+  
+  if(isTRUE(estimate)){
+    return(list(nx = bbox_params$nx,
+                ny = bbox_params$ny,
+                nz = nz,
+                ncells = n_cells,
+                sizeMB = cube_size_mb))
+  }
+  
+  # Decide backend now that we know the real size. A single slice
+  # (GPRslice) is always tiny -- never worth HDF5 overhead -- so only a
+  # true cube (nz > 1) is eligible.
+  use_h5 <- nz > 1 && switch(hdf5,
+                             "always" = TRUE,
+                             "never"  = FALSE,
+                             "auto"   = cube_size_mb > mem_threshold_mb)
+  
+  if (!use_h5 && cube_size_mb > 2000) {
+    warning(
+      sprintf(
+        "Cube will require approximately %.1f GB of memory. Consider hdf5 = \"always\" or a lower mem_threshold_mb.",
+        cube_size_mb/1000
+      )
+    )
+  }
+  
   xy_clip <- extent$clip_polygon
   
   # Step 6: Compute MBA refinement parameters
   mba_params <- .computeMBARefinement(bbox_params$bbox, m, n)
   
-  # Step 7: Initialize output array
-  SL <- array(dim = c(bbox_params$nx, bbox_params$ny, length(vz)))
+  gx <- seq(bbox_params$bbox[1], bbox_params$bbox[2], length.out = bbox_params$nx)
+  gy <- seq(bbox_params$bbox[3], bbox_params$bbox[4], length.out = bbox_params$ny)
   
-  # Step 8: Create clipping mask (computed once after first interpolation)
   clip_mask <- NULL
-  
-  # Step 9: Interpolate each depth slice
-  for (j in seq_along(vz)) {
-    if (verbose) {
-      message(sprintf("Interpolating slice %d/%d", j, length(vz)))
-    }
-    S <- .interpolateSlice(
-      xypos[, 1:2], V[j, ], 
-      bbox_params, h, mba_params$m, mba_params$n
-    )
-    
-    # Create mask on first iteration if clipping is needed
-    if (is.null(clip_mask) && !is.null(xy_clip)) {
-      clip_mask <- .createClippingMask(S$x, S$y, xy_clip)
-    }
-    
-    # Apply clipping if mask exists
-    if (!is.null(clip_mask)) {
-      S$z[clip_mask] <- NA_real_
-    }
-    
-    SL[, , j] <- S$z
+  if (!is.null(xy_clip)) {
+    clip_mask <- .createClippingMask(gx, gy, xy_clip)
   }
   
-  # Return results (note: z0 now returns the full interpolated matrix V)
-  list(
-    x = S$x,              # x-coordinates of grid
-    y = S$y,              # y-coordinates of grid
-    z = SL,               # 3D array of interpolated values
-    vz = vz,              # depth/time vector
-    x0 = xypos[, 1],      # original x-coordinates
-    y0 = xypos[, 2],      # original y-coordinates
-    z0 = V                # interpolated data at all depths [nz x n_traces]
+  if (use_h5) {
+    if (verbose) {
+      message(sprintf("Cube exceeds %.0f MB: streaming directly to an HDF5 file.",
+                      mem_threshold_mb))
+    }
+    path <- .writeCubeHDF5(
+      xypos = xypos, V = V, vz = vz,
+      bbox_params = bbox_params, mba_params = mba_params,
+      clip_mask = clip_mask, gx = gx, gy = gy, h = h,
+      dsn = dsn, compress = compress, overwrite = overwrite,
+      batch_size = batch_size, verbose = verbose
+    )
+    return(list(
+      x = gx, y = gy, z = NULL, vz = vz,
+      x0 = xypos[, 1], y0 = xypos[, 2], z0 = V,
+      dim = c(bbox_params$nx, bbox_params$ny, nz),
+      h5 = TRUE, path = path
+    ))
+  }
+  
+  # ---- in-memory path: still batched, so peak memory during computation
+  # stays bounded to ~one batch even though the final result is a single
+  # in-memory array (Phase 1 fix: previously future_lapply computed and
+  # held *all* nz slices simultaneously before simplify2array()). ---- #
+  SL <- .computeSlicesBatched(
+    xypos = xypos, V = V, vz = vz,
+    bbox_params = bbox_params, mba_params = mba_params,
+    clip_mask = clip_mask, h = h, batch_size = batch_size, verbose = verbose
   )
+  
+  list(
+    x = gx, y = gy, z = SL, vz = vz,
+    x0 = xypos[, 1], y0 = xypos[, 2], z0 = V,
+    dim = c(bbox_params$nx, bbox_params$ny, nz),
+    h5 = FALSE, path = NULL
+  )
+}
+
+#' Compute depth slices in memory-bounded batches
+#' 
+#' Shared batching logic used by both the in-memory and HDF5-streaming
+#' paths of `.sliceInterp()`. Splits `seq_along(vz)` into batches sized to
+#' stay under a target memory budget, computes each batch in parallel via
+#' [future.apply::future_lapply()], and assembles the full in-memory array.
+#' Each batch's rows are extracted from `V` fresh, right before that
+#' batch's `future_lapply()` call, and discarded immediately after -- so,
+#' unlike splitting the whole of `V` into a persistent row-list up front,
+#' peak extra memory is bounded to one batch's worth of rows rather than a
+#' full second copy of `V` held for the entire loop. The extracted subset
+#' is passed directly as `future_lapply()`'s `X` argument (not referenced
+#' by name from inside `FUN`), so only that batch's rows are ever
+#' serialized to workers -- referencing a captured list from inside `FUN`
+#' would instead make `future`'s automatic globals detection export the
+#' *whole* list on every batch, since it has no way to know only a few
+#' elements are used.
+#' 
+#' @param xypos (`matrix[n,2+]`) Observation coordinates; only the first
+#'   two columns (x, y) are used -- `obj@coords` (and hence `xypos`) may
+#'   carry a third (z) column that must NOT reach `.interpolateSlice()`,
+#'   since it does `cbind(xy, values)` and expects exactly x, y, value.
+#' @param V (`matrix[nz,n]`) Resampled trace values at all target depths
+#' @param vz Target depth/time vector
+#' @param bbox_params,mba_params,clip_mask,h See `.interpolateSlice()`
+#' @param batch_size (`integer[1]|NULL`) Slices per batch; auto if `NULL`
+#' @param verbose (`logical[1]`)
+#' @return `array[nx,ny,nz]`
+#' @noRd
+.computeSlicesBatched <- function(xypos, V, vz, bbox_params, mba_params,
+                                  clip_mask, h, batch_size = NULL,
+                                  verbose = TRUE) {
+  nx <- bbox_params$nx
+  ny <- bbox_params$ny
+  nz <- length(vz)
+  xy <- xypos[, 1:2]   # sliced once, outside the loop: tiny vs. V
+  
+  if (is.null(batch_size)) {
+    slice_mb   <- nx * ny * 8 / 1024^2
+    batch_size <- max(1L, min(nz, floor(300 / max(slice_mb, 1e-6))))
+  }
+  batches <- split(seq_len(nz), ceiling(seq_len(nz) / batch_size))
+  
+  SL <- array(NA_real_, dim = c(nx, ny, nz))
+  
+  for (b in batches) {
+    values_b <- lapply(b, function(j) V[j, , drop = TRUE])
+    
+    slices_b <- future.apply::future_lapply(
+      values_b,   # this batch's rows only, passed as X
+      function(values) {
+        S <- .interpolateSlice(xy, values, bbox_params, h,
+                               mba_params$m, mba_params$n)
+        if (!is.null(clip_mask)) S$z[clip_mask] <- NA_real_
+        S$z
+      },
+      future.packages = "MBA",
+      future.seed = FALSE
+    )
+    SL[, , b] <- simplify2array(slices_b)
+    rm(values_b, slices_b)
+    if (verbose) {
+      message(sprintf("  slices %d-%d / %d done", min(b), max(b), nz))
+    }
+  }
+  
+  SL
 }
 
 #' Compute target depth/time vector
@@ -470,39 +545,41 @@ trInterp <- function(x, z, zi){
 #' @param vz Target depth/time vector
 #' @return matrix of interpolated values `[length(vz) x ncol(gpr_obj)]`
 #' @noRd
-.interpolateProfile <- function(gpr_obj, vz) {
-  # Replace NA with zeros
-  gpr_obj@data[is.na(gpr_obj@data)] <- 0
-  
+.interpolateProfile <- function(gpr_obj, z, vz, coordz, isDepth) {
+  # NOTE: NAs are no longer zeroed out across the whole matrix here --
+  # trInterp() drops non-finite points per column instead, so we save one
+  # full nrow x ncol allocation/copy per profile.
   n_traces <- ncol(gpr_obj)
   
-  if (isZDepth(gpr_obj)) {
-    if (length(unique(gpr_obj@coord[, 3])) > 1) {
-      # Variable topography: each trace has different z-values
-      Z <- matrix(gpr_obj@coord[, 3], 
-                  nrow = nrow(gpr_obj), 
-                  ncol = n_traces, 
-                  byrow = TRUE) - 
-        matrix(gpr_obj@z, 
-               nrow = nrow(gpr_obj), 
-               ncol = n_traces)
-      
+  if (isDepth) {
+    if (length(unique(coordz)) > 1) {
+      # Variable topography: each trace has different z-values.
+      # NOTE: previously built two full [nrow x ncol] matrices (via
+      # matrix(..., byrow=TRUE) and matrix(z, ...)) just to subtract them
+      # column-by-column below; since we already loop per column, compute
+      # each column's z-vector directly instead of allocating full matrices.
       result <- vapply(seq_len(n_traces),
-                       function(j) trInterp(gpr_obj@data[, j], Z[, j], vz),
+                       function(j) trInterp(gpr_obj[, j], coordz[j] - z, vz),
                        numeric(length(vz)))
-      
-      # V[, idx] <- vapply(seq_len(ncol(OBJI@data)),
-      #                    #                function(j) trInterp(OBJI@data[, j], Z[, j], vz),
-      #                    #                numeric(length(vz)))
     } else {
       # Constant topography: all traces share z-values
-      x_z <- gpr_obj@coord[1, 3] - gpr_obj@z
-      result <- apply(gpr_obj@data, 2, trInterp, z = x_z, zi = vz)
+      x_z <- coordz[1] - z
+      result <- vapply(
+        seq_len(n_traces),
+        function(i)
+          trInterp(gpr_obj[, i], x_z, vz),
+        numeric(length(vz))
+      )
     }
   } else {
     # Time/depth mode (no topography)
-    x_z <- gpr_obj@z
-    result <- apply(gpr_obj@data, 2, trInterp, z = x_z, zi = vz)
+    x_z <- z
+    result <- vapply(
+      seq_len(n_traces),
+      function(i)
+        trInterp(gpr_obj[, i], x_z, vz),
+      numeric(length(vz))
+    )
   }
   
   return(result)
@@ -520,11 +597,35 @@ trInterp <- function(x, z, zi){
   V <- matrix(0, nrow = length(vz), ncol = total_traces)
   
   pos_start <- 0
-  for (i in seq_along(obj)) {
-    n_traces <- ncol(obj[[i]])
+  
+  h5 <- hdf5r::H5File$new(obj@path, mode = "r")
+  on.exit(try(h5$close_all(), silent = TRUE), add = TRUE)
+  nms <- names(h5[["lines"]])
+  isDepth <- isZDepth(SU)
+  
+  if (length(unique(isDepth)) != 1L) {
+    stop(
+      "The survey mixes depth-domain and time-domain profiles. ",
+      "Check with `isDepth(obj)`. ",
+      "All profiles must use the same vertical domain before creating slices.",
+      call. = FALSE
+    )
+  }
+  
+  for (i in seq_along(nms)) {
+    n_traces <- obj@nx[i] # ncol(obj[[i]])
     idx <- pos_start  + seq_len(n_traces)
     
-    V[, idx] <- .interpolateProfile(obj[[i]], vz)
+    grp <- h5[["lines"]][[nms[i]]]
+    gpr_val <- grp[["data"]]$read()
+    # z <- grp[["z"]]$read()
+    
+    z <- grp[["z"]]$read()
+    coordz <- obj@coords[[i]][, 3]
+    
+    # isDepth <- !grepl("(s|min|h)$", obj@zunits[i])
+    
+    V[, idx] <- .interpolateProfile(gpr_val, z, vz, coordz, isDepth = isDepth[i])
     
     pos_start <- pos_start + n_traces
   }
@@ -568,17 +669,17 @@ trInterp <- function(x, z, zi){
 #' Compute interpolation extent for convex hull method
 #' 
 #' @param x_shp Shape coordinates
-#' @param buffer Buffer distance (will compute default if NULL and shp not provided)
+#' @param bufferDist Buffer distance (will compute default if NULL and shp not provided)
 #' @param shp_provided Was shape explicitly provided?
 #' @param dx x-resolution
 #' @param dy y-resolution
 #' @return list with bbox_params and clip_polygon
 #' @noRd
-.computeExtentConvexHull <- function(x_shp, buffer, shp_provided, dx, dy) {
+.computeExtentConvexHull <- function(x_shp, bufferDist, shp_provided, dx, dy) {
   xsf_chull <- convexhull(x_shp)
   
-  if (is.null(buffer)) {
-    buffer <- if (shp_provided) {
+  if (is.null(bufferDist)) {
+    bufferDist <- if (shp_provided) {
       0
     } else {
       xsf_chull_xy <- sf::st_coordinates(xsf_chull)
@@ -586,12 +687,12 @@ trInterp <- function(x, z, zi){
     }
   }
   
-  if (buffer > 0) {
-    xsf_chull <- sf::st_buffer(xsf_chull, buffer)
+  if (bufferDist > 0) {
+    xsf_chull <- sf::st_buffer(xsf_chull, bufferDist)
   }
   
   xy_clip <- sf::st_coordinates(xsf_chull)
-  para <- getbbox_nx_ny(xy_clip[, 1], xy_clip[, 2], dx, dy, buffer = 0)
+  para <- getbbox_nx_ny(xy_clip[, 1], xy_clip[, 2], dx, dy, bufferDist = 0)
   
   list(bbox_params = para, clip_polygon = xy_clip)
 }
@@ -600,19 +701,19 @@ trInterp <- function(x, z, zi){
 #' 
 #' @param x_shp Shape coordinates (matrix or GPRsurvey)
 #' @param xypos Observation coordinates matrix
-#' @param buffer Buffer distance
+#' @param bufferDist Buffer distance
 #' @param shp_provided Was shape explicitly provided?
 #' @param dx x-resolution
 #' @param dy y-resolution
 #' @return list with bbox_params and clip_polygon (NULL)
 #' @noRd
-.computeExtentBBox <- function(x_shp, xypos, buffer, shp_provided, dx, dy) {
+.computeExtentBBox <- function(x_shp, xypos, bufferDist, shp_provided, dx, dy) {
   if (shp_provided) {
-    if (is.null(buffer)) buffer <- 0
-    para <- getbbox_nx_ny(x_shp[, 1], x_shp[, 2], dx, dy, buffer)
+    if (is.null(bufferDist)) bufferDist <- 0
+    para <- getbbox_nx_ny(x_shp[, 1], x_shp[, 2], dx, dy, bufferDist)
   } else {
-    # When shp is NULL, buffer=NULL means getbbox_nx_ny uses 5% default
-    para <- getbbox_nx_ny(xypos[, 1], xypos[, 2], dx, dy, buffer)
+    # When shp is NULL, bufferDist=NULL means getbbox_nx_ny uses 5% default
+    para <- getbbox_nx_ny(xypos[, 1], xypos[, 2], dx, dy, bufferDist)
   }
   
   list(bbox_params = para, clip_polygon = NULL)
@@ -622,17 +723,17 @@ trInterp <- function(x, z, zi){
 #' Compute interpolation extent for oriented bounding box method
 #' 
 #' @param x_shp Shape coordinates
-#' @param buffer Buffer distance (will compute default if NULL and shp not provided)
+#' @param bufferDist Buffer distance (will compute default if NULL and shp not provided)
 #' @param shp_provided Was shape explicitly provided?
 #' @param dx x-resolution
 #' @param dy y-resolution
 #' @return list with bbox_params and clip_polygon
 #' @noRd
-.computeExtentOBBox <- function(x_shp, buffer, shp_provided, dx, dy) {
+.computeExtentOBBox <- function(x_shp, bufferDist, shp_provided, dx, dy) {
   sf_obb <- obbox(x_shp)
   
-  if (is.null(buffer)) {
-    buffer <- if (shp_provided) {
+  if (is.null(bufferDist)) {
+    bufferDist <- if (shp_provided) {
       0
     } else {
       xsf_obb_xy <- sf::st_coordinates(sf_obb)
@@ -640,13 +741,13 @@ trInterp <- function(x, z, zi){
     }
   }
   
-  if (buffer > 0) {
-    sf_obb <- sf::st_buffer(sf_obb, buffer)
+  if (bufferDist > 0) {
+    sf_obb <- sf::st_buffer(sf_obb, bufferDist)
     sf_obb <- obbox(sf_obb)
   }
   
   xy_clip <- sf::st_coordinates(sf_obb)
-  para <- getbbox_nx_ny(xy_clip[, 1], xy_clip[, 2], dx, dy, buffer = 0)
+  para <- getbbox_nx_ny(xy_clip[, 1], xy_clip[, 2], dx, dy, bufferDist = 0)
   
   list(bbox_params = para, clip_polygon = xy_clip)
 }
@@ -654,19 +755,19 @@ trInterp <- function(x, z, zi){
 #' Compute interpolation extent for buffer method
 #' 
 #' @param obj GPRsurvey object
-#' @param buffer Buffer distance (must be > 0)
+#' @param bufferDist Buffer distance (must be > 0)
 #' @param dx x-resolution
 #' @param dy y-resolution
 #' @return list with bbox_params and clip_polygon
 #' @noRd
-.computeExtentBuffer <- function(obj, buffer, dx, dy) {
-  if (is.null(buffer) || !(buffer > 0)) {
-    stop("When 'extend = buffer', 'buffer' must be larger than 0!")
+.computeExtentBuffer <- function(obj, bufferDist, dx, dy) {
+  if (is.null(bufferDist) || !(bufferDist > 0)) {
+    stop("When 'extend = bufferDist', 'bufferDist' must be larger than 0!")
   }
   
-  x_shp <- buffer(obj, buffer)
+  x_shp <- buffer(obj, bufferDist)
   xy_clip <- sf::st_coordinates(x_shp)
-  para <- getbbox_nx_ny(xy_clip[, 1], xy_clip[, 2], dx, dy, buffer = 0)
+  para <- getbbox_nx_ny(xy_clip[, 1], xy_clip[, 2], dx, dy, bufferDist = 0)
   
   list(bbox_params = para, clip_polygon = xy_clip)
 }
@@ -679,18 +780,18 @@ trInterp <- function(x, z, zi){
 #' @param xypos Observation coordinates matrix
 #' @param dx x-resolution
 #' @param dy y-resolution
-#' @param buffer Buffer distance
+#' @param bufferDist Buffer distance
 #' @param shp_provided Was shape explicitly provided?
 #' @param obj GPRsurvey object (for buffer method)
 #' @return list with bbox_params and clip_polygon
 #' @noRd
 .computeInterpolationExtent <- function(extend, x_shp, xypos, 
-                                        dx, dy, buffer, shp_provided, obj) {
+                                        dx, dy, bufferDist, shp_provided, obj) {
   switch(extend,
-         "chull" = .computeExtentConvexHull(x_shp, buffer, shp_provided, dx, dy),
-         "bbox"  = .computeExtentBBox(x_shp, xypos, buffer, shp_provided, dx, dy),
-         "obbox" = .computeExtentOBBox(x_shp, buffer, shp_provided, dx, dy),
-         "buffer" = .computeExtentBuffer(obj, buffer, dx, dy),
+         "chull" = .computeExtentConvexHull(x_shp, bufferDist, shp_provided, dx, dy),
+         "bbox"  = .computeExtentBBox(x_shp, xypos, bufferDist, shp_provided, dx, dy),
+         "obbox" = .computeExtentOBBox(x_shp, bufferDist, shp_provided, dx, dy),
+         "buffer" = .computeExtentBuffer(obj, bufferDist, dx, dy),
          stop("Invalid extend method: ", extend)
   )
 }
@@ -778,20 +879,20 @@ trInterp <- function(x, z, zi){
 #' @param ypos y-coordinates
 #' @param dx x-resolution
 #' @param dy y-resolution
-#' @param buffer Buffer distance (NULL for auto 5%)
+#' @param bufferDist Buffer distance (NULL for auto 5%)
 #' @return list with bbox, nx, ny
 #' @noRd
-getbbox_nx_ny <- function(xpos, ypos, dx, dy, buffer = NULL) {
+getbbox_nx_ny <- function(xpos, ypos, dx, dy, bufferDist = NULL) {
   xpos_rg <- range(xpos, na.rm = TRUE)
   ypos_rg <- range(ypos, na.rm = TRUE)
   
-  if (is.null(buffer)) {
-    buffer <- min(diff(xpos_rg) * 0.05, diff(ypos_rg) * 0.05)
+  if (is.null(bufferDist)) {
+    bufferDist <- min(diff(xpos_rg) * 0.05, diff(ypos_rg) * 0.05)
   }
   
-  if (buffer > 0) {
-    xpos_rg <- xpos_rg + c(-1, 1) * buffer
-    ypos_rg <- ypos_rg + c(-1, 1) * buffer
+  if (bufferDist > 0) {
+    xpos_rg <- xpos_rg + c(-1, 1) * bufferDist
+    ypos_rg <- ypos_rg + c(-1, 1) * bufferDist
   }
   
   bbox <- c(xpos_rg, ypos_rg)

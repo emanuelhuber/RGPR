@@ -219,7 +219,9 @@ Imports:
     Rcpp,
     RcppEigen,
     RcppThread,
-    hdf5r
+    hdf5r,
+    future,
+    future.apply
 LinkingTo: Rcpp, RcppEigen, RcppThread
 Suggests: 
     geojsonsf,

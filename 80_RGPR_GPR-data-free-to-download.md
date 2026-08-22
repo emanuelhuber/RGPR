@@ -1,107 +1,120 @@
----
-layout: page
-title: Free GPR data
-date: 2023-07-15
----
+-- -  
+layout: page  
+title: Free GPR data  
+date: 2026-08-22  
+-- -
 
 <!--
 "/media/huber/Elements/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
 "G:/UNIBAS/software/codeR/package_RGPR/RGPR-gh-pages/2014_04_25_frenke"
 -->
 
--   Ground-penetrating radar data from Schmelzbach and Huber (2015):
-    [GPR data recorded with Pulse Ekko Pro from Sensors & Software on
-    the river bed of the Tagliamento River (NE
-    Italy)](https://doi.org/10.5281/zenodo.2586189). Avalaible on
-    Zenodo:
-    [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2586189.svg)](https://doi.org/10.5281/zenodo.2586189)
-    This data was used to test the *efficient deconvolution* scheme of
-    Schmelzbar and Huber (2015):
+- Check [GPRbase](https://www.gprbase.com/index.php) an open library of
+  real-world GPR data, all acquired with GSSI equipment.
 
-    > C. Schmelzbach, E. Huber (2015) Efficient Deconvolution of
-    > Ground-Penetrating Radar Data. IEEE Transactions on Geoscience and
-    > Remote Sensing, 53(9): 5209 - 5217. doi:
-    > [10.1109/TGRS.2015.2419235](http://dx.doi.org/10.1109/TGRS.2015.2419235).
-    > [PDF](public/schmelzbach-and-huber_2015_GPR-efficient-deconvolution.pdf)
+- Ground-penetrating radar data from Schmelzbach and Huber (2015): [GPR
+  data recorded with Pulse Ekko Pro from Sensors & Software on the river
+  bed of the Tagliamento River (NE
+  Italy)](https://doi.org/10.5281/zenodo.2586189). Avalaible on Zenodo:
+  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2586189.svg)](https://doi.org/10.5281/zenodo.2586189)
+  This data was used to test the *efficient deconvolution* scheme of
+  Schmelzbar and Huber (2015):
 
--   The Frenke GPR data set: Five GPR lines plus a common mid-point
-    (CMP) data:
-    [2014\_04\_25\_frenke.zip](http://emanuelhuber.github.io/RGPR/2014_04_25_frenke.zip)
+  > C. Schmelzbach, E. Huber (2015) Efficient Deconvolution of
+  > Ground-Penetrating Radar Data. IEEE Transactions on Geoscience and
+  > Remote Sensing, 53(9): 5209 - 5217. doi:
+  > [10.1109/TGRS.2015.2419235](http://dx.doi.org/10.1109/TGRS.2015.2419235).
+  > [PDF](public/schmelzbach-and-huber_2015_GPR-efficient-deconvolution.pdf)
 
--   [6 raw ground-penetrating radar (GPR) profiles collected at 4
-    locations in the Wahiba Sands dune field of Oman in May of
-    2014](https://ieee-dataport.org/documents/probing-shallow-aquifers-hyper-arid-dune-fields-using-vhf-sounding-radar-raw-ground)
+- The Frenke GPR data set: Five GPR lines plus a common mid-point (CMP)
+  data:
+  [2014_04_25_frenke.zip](http://emanuelhuber.github.io/RGPR/2014_04_25_frenke.zip)
 
--   [NSGeophysics/GPRdata](https://github.com/NSGeophysics/GPRdata)
-    (\*.dzt format,\*.dt1,)
+- [GPR data collected to image the subsurface surrounding beaver ponds
+  in a tundra region near Kotzebue,
+  Alaska](https://arcticdata.io/catalog/view/doi:10.18739/A2TD9N96Z)
 
--   [USGS: Ground-Penetrating Radar Data and Differential Global
-    Positioning System Data Collected from Long Beach Island, New
-    Jersey, April 2015](https://pubs.usgs.gov/ds/1006/ds1006_data.html)
+- [Ground-Penetrating Radar data from Jarvis Glacier, Alaska,
+  2016](https://arcticdata.io/catalog/view/doi%3A10.18739%2FA2CR5NB9R)
 
--   [USGS: Raw ground-penetrating radar data, Edwin B. Forsythe National
-    Wildlife Refuge, New Jersey,
-    2014-15](https://www.sciencebase.gov/catalog/item/5a0c59bce4b09af898cd15ce)
+- [Mapping inland water bathymetry with Ground Penetrating Radar (GPR)
+  on board Unmanned Aerial Systems
+  (UASs)](https://zenodo.org/records/7292999)
 
--   [USGS: Archive of Ground Penetrating Radar Data Collected During
-    USGS Field Activity 13BIM01: Dauphin Island, Alabama, April
-    2013](https://pubs.usgs.gov/ds/0982/ds982_data_downloads.html)
+- [6 raw ground-penetrating radar (GPR) profiles collected at 4
+  locations in the Wahiba Sands dune field of Oman in May of
+  2014](https://ieee-dataport.org/documents/probing-shallow-aquifers-hyper-arid-dune-fields-using-vhf-sounding-radar-raw-ground)
 
--   [Howard, F.J.F. 2016. Ground Penetrating Radar (GPR) Data - Old Bar
-    Beach Survey. Geoscience Australia,
-    Canberra.](http://pid.geoscience.gov.au/dataset/ga/100224)
+- [NSGeophysics/GPRdata](https://github.com/NSGeophysics/GPRdata)
+  (\*.dzt format, \*.dt1,)
 
--   [Howard, F.J.F. 2016. Ground Penetrating Radar (GPR) Data - Adelaide
-    Metropolitan Beaches Survey. Geoscience Australia,
-    Canberra.](http://pid.geoscience.gov.au/dataset/ga/100226)
+- [USGS: Ground-Penetrating Radar Data and Differential Global
+  Positioning System Data Collected from Long Beach Island, New Jersey,
+  April 2015](https://pubs.usgs.gov/ds/1006/ds1006_data.html)
 
--   TU1208 Open Database of Radargrams: The Dataset of the IFSTTAR
-    Geophysical Test Site:
-    [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1211173.svg)](https://doi.org/10.5281/zenodo.1211173)
+- [USGS: Raw ground-penetrating radar data, Edwin B. Forsythe National
+  Wildlife Refuge, New Jersey,
+  2014-15](https://www.sciencebase.gov/catalog/item/5a0c59bce4b09af898cd15ce)
 
--   Mauna Kea permafrost survey, Geophysical Data:
-    [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.896963.svg)](https://doi.org/10.5281/zenodo.896963)
+- [USGS: Archive of Ground Penetrating Radar Data Collected During USGS
+  Field Activity 13BIM01: Dauphin Island, Alabama, April
+  2013](https://pubs.usgs.gov/ds/0982/ds982_data_downloads.html)
 
--   Hydrogeophysical data Schillerslage test site, joint MRT ERT GPR:
-    [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2686824.svg)](https://doi.org/10.5281/zenodo.2686824)
+- [Howard, F.J.F. 2016. Ground Penetrating Radar (GPR) Data - Old Bar
+  Beach Survey. Geoscience Australia,
+  Canberra.](http://pid.geoscience.gov.au/dataset/ga/100224)
 
--   Estimating belowground carbon stocks in isolated wetlands of the
-    Northern Everglades Watershed, central Florida, using ground
-    penetrating radar (GPR) and aerial imagery:
-    [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.848862.svg)](https://doi.org/10.5281/zenodo.848862)
+- [Howard, F.J.F. 2016. Ground Penetrating Radar (GPR) Data - Adelaide
+  Metropolitan Beaches Survey. Geoscience Australia,
+  Canberra.](http://pid.geoscience.gov.au/dataset/ga/100226)
 
--   Geophysical data from: “A review of geophysical methods for soil
-    structure characterization”:
-    [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1451685.svg)](https://doi.org/10.5281/zenodo.1451685)
+- TU1208 Open Database of Radargrams: The Dataset of the IFSTTAR
+  Geophysical Test Site:
+  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1211173.svg)](https://doi.org/10.5281/zenodo.1211173)
 
--   Dataset of the analysis described in the article: EM signal
-    penetration in a planetary soil simulant: Estimated attenuation
-    rates using GPR and TDR in volcanic deposits on Mount Etna:
-    [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.573306.svg)](https://doi.org/10.5281/zenodo.573306)
+- Mauna Kea permafrost survey, Geophysical Data:
+  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.896963.svg)](https://doi.org/10.5281/zenodo.896963)
 
--   Physical controls on the spatial and temporal biogenic gas dynamics
-    in two subtropical wetland ecosystems in Florida:
-    [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1469818.svg)](https://doi.org/10.5281/zenodo.1469818)
+- Hydrogeophysical data Schillerslage test site, joint MRT ERT GPR:
+  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.2686824.svg)](https://doi.org/10.5281/zenodo.2686824)
 
--   Data from the tutorials for the GPR software application
-    **GPRslice** <https://www.gpr-survey.com/tutorials.html>
+- Estimating belowground carbon stocks in isolated wetlands of the
+  Northern Everglades Watershed, central Florida, using ground
+  penetrating radar (GPR) and aerial imagery:
+  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.848862.svg)](https://doi.org/10.5281/zenodo.848862)
 
--   [Grid block data used in discovery of the early Christian church of
-    Notre Dame de Baudes near Labastide-du-Temple, France (see
-    Supplementary Materials to download the
-    data](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4866399) [Direct
-    link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4866399/bin/mmc1.zip)
+- Geophysical data from: “A review of geophysical methods for soil
+  structure characterization”:
+  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1451685.svg)](https://doi.org/10.5281/zenodo.1451685)
 
--   [The Itapemirim River Delta GPR
-    Dataset](https://www.frontiersin.org/articles/10.3389/feart.2021.653275/full)
+- Dataset of the analysis described in the article: EM signal
+  penetration in a planetary soil simulant: Estimated attenuation rates
+  using GPR and TDR in volcanic deposits on Mount Etna:
+  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.573306.svg)](https://doi.org/10.5281/zenodo.573306)
+
+- Physical controls on the spatial and temporal biogenic gas dynamics in
+  two subtropical wetland ecosystems in Florida:
+  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1469818.svg)](https://doi.org/10.5281/zenodo.1469818)
+
+- Data from the tutorials for the GPR software application **GPRslice**
+  <https://www.gpr-survey.com/tutorials.html>
+
+- [Grid block data used in discovery of the early Christian church of
+  Notre Dame de Baudes near Labastide-du-Temple, France (see
+  Supplementary Materials to download the
+  data](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4866399) [Direct
+  link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4866399/bin/mmc1.zip)
+
+- [The Itapemirim River Delta GPR
+  Dataset](https://www.frontiersin.org/articles/10.3389/feart.2021.653275/full)
 
 ------------------------------------------------------------------------
 
 **[gprMax](https://www.gprmax.com/) data:**
 
--   [A synthetic 3D ground-penetrating radar (GPR) data set across a
-    realistic sedimentary
-    model](https://data.mendeley.com/datasets/by3yh79hx4/1)
+- [A synthetic 3D ground-penetrating radar (GPR) data set across a
+  realistic sedimentary
+  model](https://data.mendeley.com/datasets/by3yh79hx4/1)
 
 <!--
 * Geophysics Forum: [GPR data with aircraft buried in the ice in Greenland](http://forum.detectation.com/viewtopic.php?f=2&t=4228); [direct link to google drive](https://drive.google.com/open?id=1PI660GXAGMtwoamq-lYB6ZX3hE2RXBeW)

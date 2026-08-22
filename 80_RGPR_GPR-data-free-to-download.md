@@ -1,8 +1,11 @@
 ---
-
-layout: page  
-title: Free GPR data  
-date: 2026-08-22  
+layout: page
+title: "Free GPR data"
+date: "2026-08-22"
+output:
+  md_document:
+    variant: markdown_github
+    preserve_yaml: true
 ---
 
 <!--
@@ -11,7 +14,8 @@ date: 2026-08-22
 -->
 
 - Check [GPRbase](https://www.gprbase.com/index.php) an open library of
-  real-world GPR data, all acquired with GSSI equipment.
+  real-world GPR data, all acquired with GSSI equipment. See also:
+  [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21894933.svg)](https://doi.org/10.5281/zenodo.21894933)
 
 - Ground-penetrating radar data from Schmelzbach and Huber (2015): [GPR
   data recorded with Pulse Ekko Pro from Sensors & Software on the river

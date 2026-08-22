@@ -1,7 +1,7 @@
 ---
 layout: page
 title: RGPR in the web
-date: 2025-12-29
+date: 2026-08-22
 ---
 
 <!--
@@ -107,6 +107,8 @@ date: 2025-12-29
 
 
 ## Theses and others...
+
+* [Kahlenberg, Raphael Gerhard (2026) Geoarchaeological Approaches to Dynamic Coastal Landscapes: Challenges and Opportunities on Holy Island (Lindisfarne). Doctoral thesis, Durham University](https://etheses.durham.ac.uk/id/eprint/16766/)
 
 * [John  Creighton, Lieven Verdonck, Martin Millett, and Thomas Matthews Boehmer (2025) **Ground Penetrating Radar Surveys within the Precinct of York Minster Roman York: beneath the streets.** GPR Report 1, University of Cambridge Open Data repository.](https://doi.org/10.17863/CAM.107099)
 

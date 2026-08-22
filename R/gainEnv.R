@@ -46,12 +46,13 @@ setMethod("gainEnv", "GPR", function(obj, FUN = mean, floorquantile = 0.05, retu
   # lines(obj_env[, 10], col="red")
   # lines(obj4_env_mean, col="green")
   # plot(maobj(obj4_env_mean) - obj4_env_mean)
-  g0 <- as.vector(obj_mean/max(obj_mean))
+  g0 <- as.vector(obj_mean/max(obj_mean, na.rm = TRUE))
   gmin <- quantile(g0[g0 > 0], floorquantile, na.rm = TRUE)
   
   test <- g0 >= gmin & g0 > 0
   # 5. compute gain
-  G <- 1/g0[test ]
+  G <- numeric(length(g0))
+  G[test] <- 1/g0[test ]
   G[!test] <- 1
   
   # sel <- seq_along(g0) > which.max(g0)

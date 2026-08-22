@@ -171,7 +171,10 @@ setMethod("filter2Dadimpro", "GPRvirtual", function(obj, ..., track = TRUE){
     if (!requireNamespace("adimpro", quietly = TRUE)) {
       stop("Please install the 'adimpro' package to use filter2Dadimpro().")
     }
+    print(sum(is.na(A)))
     IMG <- (A - min(A, na.rm = TRUE)) / (diff(range(A, na.rm = TRUE)))
+    # print(sum(IMG))
+    IMG[is.na(IMG)] <- 0
     adimg <- adimpro::make.image(IMG)
     img.smooth <- adimpro::awsaniso(adimg, ...)
     AA <- adimpro::extract.image(img.smooth)

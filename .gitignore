@@ -46,5 +46,5 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
-.rds
-.h5
+*.rds
+*.h5

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DZX xmlns="www.geophysical.com/DZX/1.020000">
+    <GlobalProperties>
+        <verticalUnit>cm</verticalUnit>
+        <horizontalUnit>cm</horizontalUnit>
+        <dielectric>9.050000</dielectric>
+        <readOnly>0</readOnly>
+        <unitsPerMark>0.000000</unitsPerMark>
+        <unitsPerScan>0.250000</unitsPerScan>
+    </GlobalProperties>
+    <DataCollection>
+        <system>FlexNX</system>
+        <softwareVersion>2.433</softwareVersion>
+        <Ctable>10</Ctable>
+        <colorStretch>0.000000</colorStretch>
+        <colorSlide>0.000000</colorSlide>
+        <displayGainType>0</displayGainType>
+        <displayGain>0</displayGain>
+        <depthRange>1.152808</depthRange>
+        <originalDielectric>9.050000</originalDielectric>
+        <scanPerMeters>400.000000</scanPerMeters>
+        <gridId>60x60cm</gridId>
+        <dielectricOffset>0.000000</dielectricOffset>
+        <baseGainInDB>0.000000</baseGainInDB>
+        <antennaType>150</antennaType>
+    </DataCollection>
+    <File>
+        <scanRange>0,240</scanRange>
+        <name>251113_005_X11_1.dzt</name>
+        <Profile>
+            <scanRange>0,240</scanRange>
+            <WayPt>
+                <scan>0</scan>
+                <localCoords>0.000000,50.000000, 0.0</localCoords>
+            </WayPt>
+            <WayPt>
+                <scan>240</scan>
+                <localCoords>60.000004,50.000000, 0.0</localCoords>
+            </WayPt>
+        </Profile>
+    </File>
+</DZX>

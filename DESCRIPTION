@@ -196,6 +196,8 @@ Collate:
 	'filter2D_all.R'
 	'radon.R'
 	'RcppExports.R'
+	'ClassGPRcube_hdf5.R'
+  'hdf5_writeCube.R'
 Imports:
     methods,
     graphics,

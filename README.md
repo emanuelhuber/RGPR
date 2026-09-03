@@ -1,4 +1,57 @@
-# [RGPR](http://emanuelhuber.github.io/RGPR): a free and open-source software package for ground-penetrating radar (GPR) data processing
+# [RGPR](http://emanuelhuber.github.io/RGPR)
+
+## Open-source GPR processing in [R](https://cran.r-project.org/)
+
+**Read · Process · Visualise · Analyse · Interpret**
+
+[RGPR](http://emanuelhuber.github.io/RGPR) is a **free and open-source R package** for reading, processing, visualising and analysing ground-penetrating radar (GPR) data.
+
+Work with data from different GPR systems, build your own processing workflows, automate repetitive tasks and keep your entire workflow in code.
+
+**No proprietary processing software required. No black box. Your data, your workflow, your code.**
+
+
+[![Documentation](https://img.shields.io/badge/docs-online-blue)](https://emanuelhuber.github.io/RGPR/)
+[![GitHub stars](https://img.shields.io/github/stars/emanuelhuber/RGPR?style=social)](https://github.com/emanuelhuber/RGPR)
+
+
+
+---
+
+## Why RGPR?
+
+GPR processing often involves many small steps: filtering, gain, background removal, time-zero correction, migration, coordinate correction and more.
+
+With graphical software, these steps can be difficult to reproduce or automate.
+
+With RGPR, the workflow is simply **R code**:
+
+```r
+library(RGPR)
+
+gpr <- readGPR("profile.DT1")
+
+gpr <- gpr |>
+  dcshift() |>
+  dewow() |>
+  gain(type = "agc") |>
+  fFilter(type = "bandpass")
+
+plot(gpr)
+```
+
+The same workflow can be:
+
+* **reproduced** on another dataset;
+* **automated** for many profiles;
+* **shared** with colleagues;
+* **modified** when your processing needs change;
+* **tracked** in Git;
+* **combined** with the rest of the R ecosystem.
+
+### Open source means control
+
+RGPR is open source. You can inspect how processing is performed, modify existing functions, add your own methods and contribute improvements to the project.
 
 **If you have any questions, comments or suggestions, feel free to contact me (in English, French or German):**
 **emanuel.huber@pm.me**
@@ -11,62 +64,51 @@
 
 [Buy me a coffee with Paypal](https://www.paypal.com/donate/?hosted_button_id=ZGSWR9SLV4MM2)
 
-
-
-[RGPR](http://emanuelhuber.github.io/RGPR) is a free and open-source software package to read, export, analyse, process and visualise *ground-penetrating radar* (GPR) data. [RGPR](http://emanuelhuber.github.io/RGPR) is written in [R](https://cran.r-project.org/), a high-level  programming language for statistical computing and graphics that is freely available under the GNU General Public License and runs on Linux, Windows and MacOS. [R](https://cran.r-project.org/) is a interpreted scripting language (not compiled) in the same veine as python or matlab.
-
-[RGPR](http://emanuelhuber.github.io/RGPR) was initially developed to compensate for shortcomings of commercial GPR data processing applications. The  ultimate  goal  of  [RGPR](http://emanuelhuber.github.io/RGPR)  is  to  promote  GPR  related research   by   providing   access   to the flexible   and   rich   R environment.    [RGPR](http://emanuelhuber.github.io/RGPR)    has    also    a    didactic    vocation    by encouraging  students  and   researchers  to  learn  about GPR  signal  processing  through  various  tutorials  available  on the [RGPR](http://emanuelhuber.github.io/RGPR) GitHub repository and the R documentation (companion website with tutorials: http://emanuelhuber.github.io/RGPR).
+## Table of content
 
 ## Table of content
 
 <!--ts-->
-   * [How to cite](#how-to-cite)
-   * [Notes](#notes)
-      * [Supported file formats](#supported-binary-formats) 
-      * [Current limitations](#current-limitations)
-      * [Yes, you can contribute](#yes-you-can-contribute)
-   * [Online tutorials](#online-tutorials)
-   * [How to install](#how-to-install)
-   * [Function overview](#function-overview)
-   * [Contributions](#contributions)
+
+	* [Features](#features)
+	  * [📂 Read GPR data](#-read-gpr-data)
+	    * [Supported file formats (read only)](#supported-file-formats-read-only)
+	    * [Supported export file formats](#supported-export-file-formats)
+	    * [Format currently not supported](#format-currently-not-supported)
+	  * [📡 Process radargrams](#-process-radargrams)
+	  * [🚀 Build reproducible processing pipelines](#-build-reproducible-processing-pipelines)
+	  * [📐 Velocity analysis and migration](#-velocity-analysis-and-migration)
+	  * [🗺️ Work with spatial GPR surveys](#-work-with-spatial-gpr-surveys)
+	  * [🧊 Explore GPR data in 3D](#-explore-gpr-data-in-3d)
+	  * [✏️ Interpret your data](#-interpret-your-data)
+	* [Installation](#installation)
+	* [Try RGPR in five minutes](#try-rgpr-in-five-minutes)
+	* [Documentation](#documentation)
+	  * [Getting started](#getting-started)
+	  * [Spatial GPR](#spatial-gpr)
+	  * [Advanced processing](#advanced-processing)
+	* [Open source and collaboration](#open-source-and-collaboration)
+	* [Reproducibility](#reproducibility)
+	* [How to cite](#how-to-cite)
+	  * [How to cite](#how-to-cite)
+	  * [Bibtex format](#bibtex-format)
+	* [License](#license)
+	* [Get involved](#get-involved)
+
 <!--te-->
 
 
-## How to cite
 
-> E. Huber and G. Hans (2018) RGPR — An open-source package to process and visualize GPR data. 17th International Conference on Ground Penetrating Radar (GPR), Switzerland, Rapperswil, 18-21 June 2018, pp. 1-4.
-> doi: [10.1109/ICGPR.2018.8441658](https://doi.org/10.1109/ICGPR.2018.8441658)
 
-[PDF](https://emanuelhuber.github.io/publications/2018_huber-and-hans_RGPR-new-R-package_notes.pdf) [Poster](https://emanuelhuber.github.io/publications/poster_2018_huber-and-hans_RGPR-new-open-source-package.pdf)
 
-Bibtex format
+---
 
-```
-@INPROCEEDINGS{huber&hans:2018,
-author    = {Emanuel Huber and Guillaume Hans},
-booktitle = {2018 17th International Conference on Ground Penetrating Radar (GPR)},
-title     = {RGPR — An open-source package to process and visualize GPR data},
-year      = {2018},
-pages     = {1--4},
-doi       = {10.1109/ICGPR.2018.8441658},
-ISSN      = {2474-3844}}
-```
+# Features
 
-My current affiliation:
+## 📂 Read GPR data
 
-```
-Emanuel Huber,
-GEOTEST AG
-Bernstrasse 165
-3052 Zollikofen 
-Switzerland
-```
 
-## Notes
-
-### Faster plot function
-
-Instead of `plot(x)` use `plotFast(x)`!
+RGPR aims to make your data accessible regardless of the software originally used to acquire it.
 
 
 ### Supported file formats (read only):
@@ -96,9 +138,6 @@ Instead of `plot(x)` use `plotFast(x)`!
 See tutorial [Import GPR data](https://emanuelhuber.github.io/RGPR/00_RGPR_tutorial_import-GPR-data/).
 
     
-Do you miss your preferred file format? Send me the file format description with a test file and I will adapt the RGPR-package to support this file format. 
-
-
 ### Supported export file formats
 
 - [X] [Sensors & Software](https://www.sensoft.ca) file format (**\*.dt1**, **\*.hd**).
@@ -107,193 +146,305 @@ Do you miss your preferred file format? Send me the file format description with
 - [X] [SEG-Y](https://en.wikipedia.org/wiki/SEG-Y) file format (**\*.sgy**)
 
 
-### Yes, you can contribute
+### Format currently not supported
 
-**This is an ongoing project.**
+If your GPR format is not currently supported, contributions are welcome.
 
-To report bugs and contribute to the development of [RGPR](http://emanuelhuber.github.io/RGPR), see [how to contribute](https://github.com/emanuelhuber/RGPR/blob/master/CONTRIBUTING.md).
+When possible, provide:
 
-If you have any questions, comments or suggestions, feel free to contact me (in english, french or german):
+1. a small example dataset;
+2. information about the file format;
+3. information about the acquisition system;
+4. an example of the expected result.
 
-**emanuel.huber@pm.me**
+---
 
-Thank you!
+## 📡 Process radargrams
 
-## Online tutorials
-Check the companion website for more info, tutorials, etc.
+A broad collection of processing tools is available:
 
-http://emanuelhuber.github.io/RGPR
+* time-zero correction
+* first-break estimation
+* DC-shift correction
+* dewow
+* background removal
+* trace averaging
+* frequency filtering
+* f-k filtering
+* median filtering
+* gain functions
+* eigenimage filtering
+* phase rotation
+* convolution
+* deconvolution
+* resampling
 
-## How to install
+Processing functions can be combined into workflows and applied repeatedly to multiple datasets.
+
+---
+
+## 🚀 Build reproducible processing pipelines
+
+Instead of manually repeating the same processing steps, define them once:
+
+```r
+pipeline <- list(
+  dcshift,
+  dewow,
+  function(x) gain(x, type = "agc"),
+  function(x) fFilter(x, type = "bandpass")
+)
+
+processed <- papply(gpr, pipeline)
+```
+
+Your processing recipe becomes part of your project rather than a sequence of clicks that has to be remembered.
+
+---
+
+## 📐 Velocity analysis and migration
+
+Tools are available for:
+
+* CMP/WARR analysis
+* velocity estimation
+* NMO correction
+* Kirchhoff migration
+* topographic migration
+* hyperbola fitting
+
+```r
+plot(gpr)
+
+# Estimate or select velocity
+
+gpr_mig <- migration(gpr, ...)
+```
+
+---
+
+## 🗺️ Work with spatial GPR surveys
+
+Combine individual profiles into spatial surveys using `GPRsurvey`.
+
+Work with:
+
+* trace coordinates;
+* GPS information;
+* coordinate reference systems;
+* survey geometry;
+* profile positions;
+* spatial interpolation;
+* time/depth slices.
+
+---
+
+## 🧊 Explore GPR data in 3D
+
+Combine spatially distributed GPR profiles and create 3D representations of your data.
+
+```r
+cube <- interpSlices(SU, dx = 0.05, dy = 0.05, dz = 0.05, h = 6)
+
+plot(cube)
+```
+
+Explore GPR volumes, time/depth slices and interpreted features in 3D.
+
+---
+
+## ✏️ Interpret your data
+
+Delineate and analyse features directly from GPR profiles.
+
+Use interpretations to:
+
+* trace reflections;
+* identify horizons;
+* extract coordinates;
+* analyse interpreted features;
+* visualise interpretations in 2D and 3D.
+
+---
+
+
+
+# Installation
 
 You must first install [R](https://cran.r-project.org/). Then, in R console, enter the following:
 
-```r
-if(!require("remotes")) install.packages("remotes")
-remotes::install_github("emanuelhuber/RGPR")
+Install the development version from GitHub:
 
+```r
+install.packages("remotes")
+
+remotes::install_github("emanuelhuber/RGPR")
+```
+
+---
+
+## Try RGPR in five minutes
+
+RGPR includes example GPR datasets so that you can start without finding your own data. In R console, enter the following:
+
+```r
 library(RGPR)
 
-frenkeLine00  # data from the package
+data(frenkeLine00)
 
 plot(frenkeLine00)
-
 ```
 
-Alternatively, you can download the package as a zip file and install it in R
-following these instructions:
+Apply a simple processing workflow:
 
-https://riptutorial.com/r/example/5556/install-package-from-local-source
-
-## Function overview
-
-**NOTE: this overview is not up to date!! More functions than those listed below are available!** 
-
-The documentation is still incomplete (but check the tutorials, http://emanuelhuber.github.io/RGPR and do not hesitate to contact me if you need addtional informations)
-
-### Input/output functions
-* `readGPR()`: reads various GPR file formats (Sensors & Software, MALA, SEG-Y, ImpulseRadar, GSSI, Utsi Electronic, IDS, Tansient technology, serialized Python object, ENVI band sequential file format, ASCII, etc.)
-* `writeGPR()`: writes various GPR file format (Sensors & Software, R-format, ASCII, 'xyz')
-* `exportPDF()`: exports high quality pdf graphic
-* `exportDelineations()`: exports delineations
-* `exportFID()`: exports fiducial markers as ASCII-file
-* `exportCoord()`: exports coordinates as SpatialLines, SpatialPoints or ASCII-file
-* `exportProc()`: exports the processing steps as ASCII-file
-
-### Plot functions
-
-* GPR data
-  * 1D/2D: `plot()`, plotFast()`, `contour()`, `lines()`, `points()`
-  * 3D (plot in openGL): `plot3DRGL()`
-  * superposition of all traces: `trPlot()`
-* Amplitude: `plotAmpl()`
-* Spectrum:
-  * 1D frequency spectrum: `spec()`
-  * 2D frequency spectrum (frequency-wavenumber): `spec(x, type = "f-k")`
-* Delineations
-  * 2D: `plotDelineations()`
-  * 3D: `plot3DDelineations()`
-* Velocity layers: `plotVelocityLayers()`
-* Structure tensor: `plotTensor()`
-* Color palette: `plotPal()`
-
-### 3D GPR data (interpolation to slices
-* interpSlices(
-
-### GPR data positioning and referencing
-
-* Trace position reversal: `reverse()`
-* Vertical trace shift: `traceShift()`
-* Georeference coordinates (based on center and rotation angle): `georef()` 
-* Interpolate trace position (x, y, z) from known positions: `interpPos()`
-* Estimate shift between two parallel profiles: `shiftEst()`
-
-### GPR data analysis and processing
-####  GPR data analysis and transforms
-* Trace amplitude: `ampl()`, plot trace amplitude: `plotAmpl()`
-* Average trace: `traceAverage()`
-* Spectrum (f-x and f-k): `spec(x, type = c("f-x", "f-k"))`
-* Structure tensor: `strTensor()`, plot structure tensor: `plotTensor()`
-
-#### GPR data interpolation
-* Trace interpolation at regularly spaced positions: `regInterpPos()`
-* Upsampling (time and position): `upsample()`
-* Relative position on the radargramm: `relPos()`
-
-#### GPR signal correction
-* DC-shift correction: `dcshift()`
-* Low-frequency ('wow') component removal: `dewow()` (type = "MAD", "Gaussian")
-* First-break picking: `firstBreak()` (method = "coppens", "threshold",  "MER")
-* Shift the traces vertically such that they start at time zero: `time0Cor()`
-* Constant offset time correction: `timeCorOffset()` 
-
-#### GPR signal attenuation compensation (gain)
-* Linear, power, exponential, ang agc gain: `gain()` (type = "power", "exp", "agc")
-
-
-#### GPR signal enhancement
-* Clip the GPR signal values: `clip()`
-* Gamma correction of the GPR signal values: `gammaCorrection()`
-* Trace scaling: `traceScaling()`
-* Trace filters (1D): `filter1D()`: type = "median", "hampel", "Gaussian"
-* Radargramm filters (2D): `filter2D()`: type = "median3x3", "adimpro"
-* Trace frequency filter (1D): `fFilter()`: freqency filter, type = 'low','high','bandpass'
-* Frequency-wavenumber filter (2D): `fkFilter()`
-* Trace (1D) and radargramm (2D) convolution: `conv1D()` and `conv2D()` 
-* Deconvolution: `deconv()` (type = "spiking", "wavelet", "min-phase",
-  "mixed-phase")
-* Phase rotation `rotatePhase()`
-
-#### GPR signal velocity 
-* Common-mid point analysis (CMP): `CMPAnalysis()` (method = "semblance", "winsemblance",
-  "wincoherence")
-* Normal Move-Out correction (NMO): `NMOCor()`
-
-#### GPR data topographic correction and migration 
-* Topography correction and topographic Kirchhoff migration: `migration()` (type = "static", "kirchhoff")
-
-#### Generic processing functions
-* Apply many processing steps: `papply()`
-
-###  GPR data delineation and mapping
-* `delineate()`
-* `rmDelineations()<-`
-* `delineations()`
-* `addDelineation()`
-* `plotDelineations3D()`
-* `plotDelineations()`
-* `identifyDelineation()`
-
-
-### Miscellaneous
-* Operators: `+`, `-`, `*`, `/`, `^`
-* Mathematical functions: `max()`, `min()`, `mean()`, `median()`, `summary()`, `range()`, `abs()`, `sign()`, `sqrt()`, `ceiling()`, ...
-* Matrix functions: `length()`, `nrow()`, `ncol()`, `dim()`
-* Coercion: `as.matrix()`, `as.numeric()`, `as.double()`, `as.list()`, `as.SpatialLines()`, `as.SpatialPoints()`
-
-### Setter/getter functions
-* `depthunit()` & `depthunit()<-`
-* `description()` & `description()<-`
-* `ann()` & `ann()<-`
-* `coord()` & `coord()<-`
-* `crs()` & `crs()<-`
-* `fid()` & `fid()<-`
-* `filepath()` & `filepath()<-`
-* `pos()` & `pos()<-`
-* `posunit()` & `posunit()<-`
-* `proc<-()` & `processing` 
-* `name()` & `name()<-`
-* `values()` & `values()<-`
-* `vel()` & `vel()<-` 
-* `gethd()`
-* `svDate()` & `svDate()<-`
-
-
-### List of the functions from the class `GPR`
 ```r
-library(RGPR)
-mtext <-  showMethods(class="GPR", printTo =FALSE )
-i <- grepl('Function', mtext) & grepl('package RGPR', mtext) 
-fvec <- gsub( "Function(\\:\\s|\\s\\\")(.+)(\\s\\(|\\\")(.+$)", "\\2", mtext[i] )
-fvec
+gpr <- frenkeLine00 |>
+  dcshift() |>
+  dewow()
+
+plot(gpr)
 ```
 
-### List of the functions from the class `GPRsurvey`
-```r
-library(RGPR)
-mtext <-  showMethods(class="GPRsurvey", printTo =FALSE )
-i <- grepl('Function', mtext) & grepl('package RGPR', mtext) 
-gvec <- gsub( "Function(\\:\\s|\\s\\\")(.+)(\\s\\(|\\\")(.+$)", "\\2", mtext[i] )
-gvec
+From there, explore filtering, gain, migration, spatial positioning, interpolation and interpretation.
+
+---
+
+# Documentation
+
+The documentation contains tutorials and examples covering the main RGPR workflow.
+
+**[Read the RGPR documentation →](https://emanuelhuber.github.io/RGPR/)**
+
+## Getting started
+
+* [Import GPR data](https://emanuelhuber.github.io/RGPR/00_RGPR_tutorial_import-GPR-data/)
+* [Plot GPR data](01_RGPR_tutorial_plot-GPR-data)
+* [Basic GPR data processing](02_RGPR_tutorial_basic-GPR-data-processing)
+* [Pipe processing](03_RGPR_tutorial_processing-GPR-data-with-pipe-operator)
+
+
+
+
+## Spatial GPR
+
+* [Add coordinates to GPR data](04_RGPR_tutorial_GPR-data-survey)
+* [Time/depth slice interpolation](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D)
+
+
+## Advanced processing
+
+* [GPR data migration](07_RGPR_tutorial_GPR-data-migration)
+* [Hyperbola fitting](09_RGPR_tutorial_hyperbola_fitting)
+* [Deconvolution](10_RGPR_mixed-phase-wavelet-deconvolution)
+
+
+
+
+# Open source and collaboration
+
+RGPR is developed openly and welcomes contributions from the GPR community.
+
+Contributions can include:
+
+* bug reports;
+* new file-format readers;
+* processing algorithms;
+* performance improvements;
+* tests;
+* documentation;
+* examples;
+* datasets;
+* tutorials;
+* translations.
+
+You don't need to be an expert R developer to contribute.
+
+A small example dataset, a bug report or an improvement to the documentation can be just as valuable as a new algorithm.
+
+---
+
+# Reproducibility
+
+A major advantage of using RGPR is that your processing workflow can live alongside your data and analysis code.
+
+For example:
+
+```text
+my-gpr-project/
+│
+├── data/
+│   ├── raw/
+│   └── processed/
+│
+├── R/
+│   └── processing.R
+│
+├── figures/
+│
+├── results/
+│
+└── README.md
 ```
 
-### Incomplete overview of the RGPR-package
-```r
-?RGPR
+Your processing is no longer hidden inside a software project file.
+
+It is code that can be inspected, version-controlled, shared and rerun.
+
+---
+
+# Citation
+
+
+## How to cite
+
+> E. Huber and G. Hans (2018) RGPR — An open-source package to process and visualize GPR data. 17th International Conference on Ground Penetrating Radar (GPR), Switzerland, Rapperswil, 18-21 June 2018, pp. 1-4.
+> doi: [10.1109/ICGPR.2018.8441658](https://doi.org/10.1109/ICGPR.2018.8441658)
+
+[PDF](https://emanuelhuber.github.io/publications/2018_huber-and-hans_RGPR-new-R-package_notes.pdf) [Poster](https://emanuelhuber.github.io/publications/poster_2018_huber-and-hans_RGPR-new-open-source-package.pdf)
+
+## Bibtex format
+
+```
+@INPROCEEDINGS{huber&hans:2018,
+author    = {Emanuel Huber and Guillaume Hans},
+booktitle = {2018 17th International Conference on Ground Penetrating Radar (GPR)},
+title     = {RGPR — An open-source package to process and visualize GPR data},
+year      = {2018},
+pages     = {1--4},
+doi       = {10.1109/ICGPR.2018.8441658},
+ISSN      = {2474-3844}}
 ```
 
-## Contributions
+My current affiliation:
 
-Thanks to:
+```
+Emanuel Huber,
+GEOTEST AG
+Bernstrasse 165
+3052 Zollikofen 
+Switzerland
+```
+---
 
--  @jmerc13
+# License
+
+RGPR is free and open-source software released under the GNU General Public License.
+
+---
+
+# Get involved
+
+Have an idea?
+
+Found a bug?
+
+Need support for another GPR format?
+
+Want to contribute?
+
+**Open an issue, start a discussion or submit a pull request.**
+
+[GitHub →](https://github.com/emanuelhuber/RGPR)
+
+**RGPR is built openly, for everyone working with GPR data.**
+

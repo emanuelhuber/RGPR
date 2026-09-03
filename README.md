@@ -66,34 +66,33 @@ RGPR is open source. You can inspect how processing is performed, modify existin
 
 ## Table of content
 
-## Table of content
 
 <!--ts-->
 
-	* [Features](#features)
-	  * [📂 Read GPR data](#-read-gpr-data)
-	    * [Supported file formats (read only)](#supported-file-formats-read-only)
-	    * [Supported export file formats](#supported-export-file-formats)
-	    * [Format currently not supported](#format-currently-not-supported)
-	  * [📡 Process radargrams](#-process-radargrams)
-	  * [🚀 Build reproducible processing pipelines](#-build-reproducible-processing-pipelines)
-	  * [📐 Velocity analysis and migration](#-velocity-analysis-and-migration)
-	  * [🗺️ Work with spatial GPR surveys](#-work-with-spatial-gpr-surveys)
-	  * [🧊 Explore GPR data in 3D](#-explore-gpr-data-in-3d)
-	  * [✏️ Interpret your data](#-interpret-your-data)
-	* [Installation](#installation)
-	* [Try RGPR in five minutes](#try-rgpr-in-five-minutes)
-	* [Documentation](#documentation)
-	  * [Getting started](#getting-started)
-	  * [Spatial GPR](#spatial-gpr)
-	  * [Advanced processing](#advanced-processing)
-	* [Open source and collaboration](#open-source-and-collaboration)
-	* [Reproducibility](#reproducibility)
-	* [How to cite](#how-to-cite)
-	  * [How to cite](#how-to-cite)
-	  * [Bibtex format](#bibtex-format)
-	* [License](#license)
-	* [Get involved](#get-involved)
+* [Features](#features)
+  * [📂 Read GPR data](#-read-gpr-data)
+    * [Supported file formats (read only)](#supported-file-formats-read-only)
+    * [Supported export file formats](#supported-export-file-formats)
+    * [Format currently not supported](#format-currently-not-supported)
+  * [📡 Process radargrams](#-process-radargrams)
+  * [🚀 Build reproducible processing pipelines](#-build-reproducible-processing-pipelines)
+  * [📐 Velocity analysis and migration](#-velocity-analysis-and-migration)
+  * [🗺️ Work with spatial GPR surveys](#-work-with-spatial-gpr-surveys)
+  * [🧊 Explore GPR data in 3D](#-explore-gpr-data-in-3d)
+  * [✏️ Interpret your data](#-interpret-your-data)
+* [Installation](#installation)
+* [Try RGPR in five minutes](#try-rgpr-in-five-minutes)
+* [Documentation](#documentation)
+  * [Getting started](#getting-started)
+  * [Spatial GPR](#spatial-gpr)
+  * [Advanced processing](#advanced-processing)
+* [Open source and collaboration](#open-source-and-collaboration)
+* [Reproducibility](#reproducibility)
+* [Citation](#citation)
+  * [How to cite](#how-to-cite)
+  * [Bibtex format](#bibtex-format)
+* [License](#license)
+* [Get involved](#get-involved)
 
 <!--te-->
 

@@ -708,7 +708,7 @@
 #' Normalize a markers vector to match the number of traces
 #'
 #' Ensures the markers vector for a line always has exactly `nx` elements
-#' (one per trace), trimmed with [trimStr()]. This guarantees the same,
+#' (one per trace), trimmed with [RGPR::trimStr()]. This guarantees the same,
 #' consistent vector is used both for the per-line HDF5 dataset
 #' (`/lines/<name>/markers`) and for the survey-level `@markers` slot, which
 #' previously could disagree (`trimStr()` was applied in one place but not

@@ -4,7 +4,7 @@
 \alias{.h5_lock_acquire}
 \title{Acquire an exclusive lock for a GPRsurvey backing file}
 \usage{
-.h5_lock_acquire(dsn, timeout = 30, poll = 0.25)
+.h5_lock_acquire(dsn, timeout = 3, poll = 0.25)
 }
 \arguments{
 \item{dsn}{(\code{character(1)}) Path to the \code{.h5} file being protected. The

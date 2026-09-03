@@ -44,7 +44,7 @@
 #' speed.
 #'
 #' @param x        (`character[k]`) Vector of `k` file paths to GPR data
-#'                 files. All formats supported by [readGPR()] are accepted.
+#'                 files. All formats supported by [RGPR::readGPR()] are accepted.
 #' @param dsn      (`character(1)`) Path for the output HDF5 file (must end
 #'                 in `.h5` by convention). If it already exists and
 #'                 `overwrite = FALSE`, an error is raised before any work
@@ -63,7 +63,7 @@
 #'                 validate checksums before the file is swapped in.
 #'                 Default `TRUE`.
 #' @param verbose  (`logical(1)`) Print progress messages.
-#' @param ...      Additional arguments passed to [readGPR()].
+#' @param ...      Additional arguments passed to [RGPR::readGPR()].
 #'
 #' @return An object of class `GPRsurvey`.
 #'

@@ -20,7 +20,7 @@
 #' object. That annotation step is not reproduced here for now (it doesn't
 #' fit the "just read what's stored" model); if you rely on it, compute the
 #' annotation explicitly after calling `getGPR()`/`x[[id]]`, e.g. with
-#' [ann<-()] and [findClosestCoord()].
+#' [RGPR::ann<-()] and [RGPR::findClosestCoord()].
 #'
 #' @param x (`GPRsurvey`)
 #' @param id (`integer[1]|character[1]`) Index or name of the GPR line to

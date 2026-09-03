@@ -2,39 +2,36 @@
 % Please edit documentation in R/gridCoords.R
 \name{.finalize_gridCoords_GPRsurvey}
 \alias{.finalize_gridCoords_GPRsurvey}
-\title{Persist changed coordinates (and recomputed intersections) to HDF5}
+\title{Persist changed grid coordinates}
 \usage{
 .finalize_gridCoords_GPRsurvey(x, changed_ids)
 }
 \arguments{
-\item{x}{(\code{GPRsurvey}) Survey with \verb{@coords} already updated in memory.}
+\item{x}{A \code{\linkS4class{GPRsurvey}} object whose in-memory
+coordinates have already been updated.}
 
-\item{changed_ids}{(\code{integer}) Indices (into \code{x@names}) of the lines
-whose coordinates changed during this call.}
+\item{changed_ids}{Integer indices into \code{x@names} identifying the
+lines whose coordinates changed.}
 }
 \value{
-The (possibly updated) \code{GPRsurvey} object.
+The updated \code{\linkS4class{GPRsurvey}} object.
 }
 \description{
-Called once at the end of \verb{gridCoords<-}, after \emph{every} requested
-coordinate assignment (both the \code{xlines} and \code{ylines} blocks above) has
-already been applied to \code{x@coords} in memory. This function:
+Finalize a grid-coordinate update after all requested coordinate
+assignments have been applied to the in-memory survey object.
 }
 \details{
+The function performs the following operations:
+
 \enumerate{
-\item Recomputes \verb{@intersections} a single time, now that all coordinates
-for this call are final (recomputing per-line, inside the loops
-above, would repeat the same O(n^2) intersection search once per
-changed line for no benefit).
-\item Persists both the updated coordinates and the recomputed
-intersections to the HDF5 backing file in a \strong{single} update
-transaction via \code{.h5_update_survey()} (see \code{hdf5_update.R}): one
-lock, one temporary copy, one open file handle, one checksum
-verification pass, one atomic replace. The previous version of this
-function opened/closed the backing file separately for the
-coordinates and for the intersections, which was neither atomic
-(a crash between the two calls could leave them out of sync) nor as
-efficient.
+\item Removes duplicated, missing, and invalid changed-line indices.
+\item Recomputes survey intersections once, after all coordinate changes
+are complete.
+\item Persists the changed coordinates and recomputed intersections in a
+single HDF5 update transaction.
 }
+
+Updating coordinates and intersections together prevents the two datasets
+from becoming inconsistent if an error occurs during persistence.
 }
 \keyword{internal}

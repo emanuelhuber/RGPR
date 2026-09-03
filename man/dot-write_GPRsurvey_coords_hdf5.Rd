@@ -4,14 +4,14 @@
 \alias{.write_GPRsurvey_coords_hdf5}
 \title{Write updated trace coordinates for selected lines (internal)}
 \usage{
-.write_GPRsurvey_coords_hdf5(h5, x, ids)
+.write_GPRsurvey_coords_hdf5(h5, obj, ids)
 }
 \arguments{
 \item{h5}{Open, writable \link[hdf5r:H5File]{hdf5r::H5File} handle.}
 
-\item{x}{Object of class \code{GPRsurvey} (already updated in memory).}
+\item{obj}{Object of class \code{GPRsurvey} (already updated in memory).}
 
-\item{ids}{(\code{integer}) Indices (into \code{x@names}) of the lines whose
+\item{ids}{(\code{integer}) Indices (into \code{obj@names}) of the lines whose
 coordinates changed.}
 }
 \description{

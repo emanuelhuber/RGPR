@@ -4,7 +4,7 @@
 \alias{gridCoords}
 \alias{gridCoords<-}
 \alias{gridCoords<-,GPRsurvey-method}
-\title{Set grid coordinates the trace position.}
+\title{Get or set grid coordinates}
 \usage{
 gridCoords(x, value)
 
@@ -13,15 +13,98 @@ gridCoords(x) <- value
 \S4method{gridCoords}{GPRsurvey}(x) <- value
 }
 \arguments{
-\item{x}{An object of the class GPRsurvey}
+\item{x}{A \code{\linkS4class{GPRsurvey}} object.}
 
-\item{value}{A list with following elements: \code{xlines} (number or id of
-the GPR data along the x-coordinates), \code{ylines} (number or
-id of the GPR data along the y-coordinates), \code{x}
-(position of the x-GPR data on the x-axis),
-\code{x} (position of the y-GPR data on the y-axis)}
+\item{value}{A named list describing the grid geometry. It may contain:
+\describe{
+\item{\code{xlines}}{
+Integer indices of lines having a constant x-coordinate.
+}
+\item{\code{ylines}}{
+Integer indices of lines having a constant y-coordinate.
+}
+\item{\code{x}}{
+Constant x-coordinate for every line in \code{xlines}.
+}
+\item{\code{y}}{
+Constant y-coordinate for every line in \code{ylines}.
+}
+\item{\code{xstart}}{
+Optional starting y-coordinate for every line in \code{xlines}.
+Defaults to zero.
+}
+\item{\code{ystart}}{
+Optional starting x-coordinate for every line in \code{ylines}.
+Defaults to zero.
+}
+\item{\code{xlength}}{
+Optional ending y-coordinate for every line in \code{xlines}.
+If omitted, the original trace positions are read from HDF5.
+}
+\item{\code{ylength}}{
+Optional ending x-coordinate for every line in \code{ylines}.
+If omitted, the original trace positions are read from HDF5.
+}
+\item{\code{xreverse}}{
+Optional logical vector indicating whether the trace direction of
+each line in \code{xlines} should be reversed. Defaults to
+\code{FALSE}.
+}
+\item{\code{yreverse}}{
+Optional logical vector indicating whether the trace direction of
+each line in \code{ylines} should be reversed. Defaults to
+\code{FALSE}.
+}
+}
+
+The vectors associated with \code{xlines} must have the same length as
+\code{xlines}. Likewise, the vectors associated with \code{ylines} must
+have the same length as \code{ylines}.
+
+Line indices must be unique, valid indices into the survey, and cannot
+occur in both \code{xlines} and \code{ylines}.}
+}
+\value{
+\code{gridCoords(x)} returns the grid coordinates associated with
+\code{x}. The replacement form returns the modified
+\code{\linkS4class{GPRsurvey}} object.
 }
 \description{
-Set grid coordinates to a survey
+Get or set grid coordinates for the traces of a
+\code{\linkS4class{GPRsurvey}} object.
+}
+\details{
+Grid lines are divided into two groups:
+
+\itemize{
+\item \code{xlines}: survey lines with a constant x-coordinate and
+varying y-coordinates.
+\item \code{ylines}: survey lines with varying x-coordinates and a
+constant y-coordinate.
+}
+
+When \code{xlength} or \code{ylength} is supplied, trace coordinates are
+generated as an evenly spaced sequence between the corresponding start
+and end coordinates. Otherwise, the original trace-position vectors are
+read from the HDF5 backing file and shifted by \code{xstart} or
+\code{ystart}.
+
+Coordinates cannot be modified while the survey is an HDF5 view. Use
+\code{materialize()} first to create an independent, writable survey.
+}
+\examples{
+\dontrun{
+gridCoords(SU) <- list(
+  xlines  = 1:10,
+  x       = seq(0, by = 2, length.out = 10),
+  xstart  = rep(0, 10),
+  xlength = rep(20, 10),
+  ylines  = 11:15,
+  y       = seq(0, by = 2, length.out = 5),
+  ystart  = rep(0, 5),
+  ylength = rep(18, 5)
+)
+}
+
 }
 \concept{spatial computing}

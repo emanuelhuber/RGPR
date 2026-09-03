@@ -198,6 +198,7 @@ Collate:
 	'RcppExports.R'
 	'ClassGPRcube_hdf5.R'
   'hdf5_writeCube.R'
+  'materialize_GPRcube.R'
 Imports:
     methods,
     graphics,

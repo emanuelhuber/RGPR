@@ -49,7 +49,7 @@
 #' `hdf5 = "always"`), each batch is written directly to a chunked,
 #' checksummed HDF5 file as it is computed instead of being accumulated in
 #' an R array; the returned `GPRcube` then has `data = array(dim = c(0,0,0))`
-#' and `path` pointing at that HDF5 file (see [loadCube()] to pull the full
+#' and `path` pointing at that HDF5 file (see [RGPR::loadCube()] to pull the full
 #' array back into memory when needed).
 #' @name interpSlices
 #' @rdname interpSlices

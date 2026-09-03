@@ -4,7 +4,7 @@
 \alias{.h5_walk_and_read}
 \title{Recursively read every dataset under an HDF5 group}
 \usage{
-.h5_walk_and_read(grp)
+.h5_walk_and_read(grp, verbose = FALSE)
 }
 \description{
 Reading a dataset that was written with the fletcher32 filter forces HDF5

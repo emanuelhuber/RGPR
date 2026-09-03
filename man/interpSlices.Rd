@@ -12,10 +12,17 @@ interpSlices(
   dz = NULL,
   h = 6,
   extend = c("bbox", "obbox", "chull", "buffer"),
-  buffer = NULL,
+  bufferDist = NULL,
   shp = NULL,
   rot = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  estimate = FALSE,
+  hdf5 = c("auto", "always", "never"),
+  dsn = NULL,
+  compress = 5L,
+  overwrite = FALSE,
+  mem_threshold_mb = 500,
+  batch_size = NULL
 )
 
 \S4method{interpSlices}{GPRsurvey}(
@@ -25,10 +32,17 @@ interpSlices(
   dz = NULL,
   h = 6,
   extend = c("bbox", "obbox", "chull", "buffer"),
-  buffer = NULL,
+  bufferDist = NULL,
   shp = NULL,
   rot = FALSE,
-  verbose = TRUE
+  verbose = TRUE,
+  estimate = FALSE,
+  hdf5 = c("auto", "always", "never"),
+  dsn = NULL,
+  compress = 5L,
+  overwrite = FALSE,
+  mem_threshold_mb = 500,
+  batch_size = NULL
 )
 }
 \arguments{
@@ -44,7 +58,7 @@ interpSlices(
 
 \item{extend}{(\code{character[1]}) FIXME: Method to define interpolation extent.}
 
-\item{buffer}{(\code{numeric[1]}) FIXME: Buffer distance around survey lines.}
+\item{bufferDist}{(\code{numeric[1]}) FIXME: Buffer distance around survey lines.}
 
 \item{shp}{(\code{matrix[n,2]|list[2]|sf}) FIXME: Shape/polygon defining interpolation bounds.}
 
@@ -54,6 +68,34 @@ If \code{rot} is numeric, the GPR lines is rotated first
 rotated by \code{rot} (in radian).}
 
 \item{verbose}{(\code{logical[1]}) If TRUE, verbose.}
+
+\item{hdf5}{(\code{character[1]}) Whether the resulting \code{GPRcube} should be
+backed by an HDF5 file rather than held fully in memory:
+\code{"auto"} (default) decides based on \code{mem_threshold_mb},
+\code{"always"} forces HDF5 backing, \code{"never"} forces an in-memory
+array. Ignored when the result is a \code{GPRslice} (a single
+slice is always small enough to keep in memory). See Details.}
+
+\item{dsn}{(\code{character[1]|NULL}) Destination path for the HDF5 backing
+file when \code{hdf5} results in HDF5 backing. If \code{NULL}, a
+temporary file is created (see \code{\link[base:tempfile]{base::tempfile()}}) -- move it
+with \code{writeGPR()} if you want to keep it beyond the session.}
+
+\item{compress}{(\code{integer[1]}) gzip compression level (0-9) for the HDF5
+backing file; \code{0} disables compression. Ignored for in-memory
+results.}
+
+\item{overwrite}{(\code{logical[1]}) Overwrite \code{dsn} if it already exists?}
+
+\item{mem_threshold_mb}{(\code{numeric[1]}) When \code{hdf5 = "auto"}, the
+estimated cube size (see \code{estimate = TRUE}) above which HDF5
+backing is used instead of an in-memory array.}
+
+\item{batch_size}{(\code{integer[1]|NULL}) Number of depth slices computed
+per parallel batch before being written out / accumulated.
+If \code{NULL}, a size is chosen automatically so that one batch
+stays under ~300 MB. Smaller values bound peak memory more
+tightly at the cost of more scheduling overhead.}
 }
 \value{
 (\code{GPRcube|GPRslice})
@@ -61,4 +103,17 @@ rotated by \code{rot} (in radian).}
 \description{
 Interpolate horizontal slices
 }
+\section{Memory and HDF5 backing}{
+Depth-slice interpolation (MBA) is embarrassingly parallel across
+slices, so slices are computed in batches via \link[future.apply:future_lapply]{future.apply::future_lapply},
+bounding peak memory during computation to roughly one batch regardless
+of the number of depth slices. When the resulting cube is large
+(\code{hdf5 = "auto"} and estimated size > \code{mem_threshold_mb}, or
+\code{hdf5 = "always"}), each batch is written directly to a chunked,
+checksummed HDF5 file as it is computed instead of being accumulated in
+an R array; the returned \code{GPRcube} then has \code{data = array(dim = c(0,0,0))}
+and \code{path} pointing at that HDF5 file (see \code{\link[=loadCube]{loadCube()}} to pull the full
+array back into memory when needed).
+}
+
 \concept{3D}

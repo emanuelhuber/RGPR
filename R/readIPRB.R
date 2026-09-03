@@ -117,7 +117,7 @@ register_gpr_format(
   }else{
     traceTime <- rep(0, nTr)
   }
-  afreq <- .getHD(x$hd, "ANTENNA", number = FALSE)
+  afreq <- .getHD(x$hd, "ANTENNA")
   if(!is.null(afreq)){
     antfreq <- freqFromString(afreq[1])
     pos_used[as.integer(afreq[2])] <- 1L

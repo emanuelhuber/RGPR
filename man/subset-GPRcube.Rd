@@ -25,3 +25,25 @@ only if \code{x[]}.
 \description{
 Extract parts of a GPR object
 }
+\details{
+Works transparently whether \code{x@data} is an in-memory array or \code{x} is
+HDF5-backed (see \code{isH5Backed()}). Reading is always lazy where it can
+be: for an HDF5-backed source, only the requested \verb{[i, j, k]} region is
+ever touched, and slicing/profile extraction (\code{GPRslice}/\code{GPR} results,
+below) reads just that region and returns a plain in-memory object,
+since those are expected to be small.
+
+A \code{GPRcube}-returning sub-cube extraction (\code{x[i, j, k]} where \code{i}, \code{j},
+and \code{k} all have length > 1) behaves differently for an HDF5-backed
+source: it returns a \emph{view} (\verb{@view = TRUE}, see \code{GPRcube-class})
+rather than reading anything at all. A view's \verb{@data} stays empty and
+\verb{@path} still points at \code{x}'s original backing file; subsetting a view
+again composes the index mapping (\verb{@viewIdx}) rather than reading, so
+chained subsetting like \code{x[1:50,,][ ,1:20, ]} still resolves back to
+the original file correctly. Use \code{loadCube()} to pull just a view's
+region into memory, or \code{materialize()} to write it to its own
+independent HDF5 file without ever loading it into R (see
+\code{materialize_GPRcube.R}). For an in-memory source, the sub-cube branch
+still reads eagerly as before (\verb{@view = FALSE}) -- there's no backing
+file to defer reading from.
+}

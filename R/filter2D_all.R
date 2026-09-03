@@ -1,4 +1,4 @@
-################################################################################
+# ############################################################################ #
 #' Two-dimensional processing methods for GPR objects (filter2D family)
 #'
 #' A collection of 2-D processing methods that operate on objects inheriting
@@ -39,11 +39,11 @@
 #' @concept processing
 #' @export
 NULL
-################################################################################
+# ############################################################################ #
 
-# -------------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
 # Helper: apply FUN to obj@data respecting classes (GPR, GPRslice, GPRcube)
-# -------------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
 .filter2D_apply <- function(obj, FUN, track = TRUE, ...){
   # FUN: function(A, ...) returning processed numeric matrix of same dims
   if (!is.function(FUN)) stop("FUN must be a function(A, ...) returning a matrix")
@@ -65,9 +65,9 @@ NULL
   }
 }
 
-# -------------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
 # Utility conversions (matrix <-> cimg)
-# -------------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
 .mat_to_cimg <- function(A){
   if (!is.matrix(A)) stop("Input must be a numeric matrix")
   if (!requireNamespace("imager", quietly = TRUE)) {
@@ -85,9 +85,9 @@ NULL
   stop("Unexpected cimg structure")
 }
 
-# -------------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
 # small custom median 3x3 (keeps same edges behaviour as original)
-# -------------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
 .medianFilter3x3_mat <- function(A){
   # vectorized implementation using imager if available, else fallback
   if (requireNamespace("imager", quietly = TRUE)) {
@@ -108,9 +108,9 @@ NULL
   }
 }
 
-# -------------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
 # Custom FFT low-pass along columns (useful for destriping)
-# -------------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
 .filter2D_fft_lowpass_mat <- function(A, cutoff = 0.04, strength = 0.85){
   n <- nrow(A)
   # build mask in centered frequency coordinates then shift to R FFT order
@@ -133,9 +133,9 @@ NULL
   Aout
 }
 
-# -------------------------------------------------------------------------
-# GENERIC / METHOD: median3x3
-# -------------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# ---- GENERIC / METHOD: median3x3 ----
+# ------------------------------------------------------------------------- #
 #' Two-dimensional median 3x3 filter
 #'
 #' Apply a 3x3 median filter to \code{obj@data}.
@@ -151,9 +151,9 @@ setMethod("filter2Dmedian3x3", "GPRvirtual", function(obj, ..., track = TRUE){
   .filter2D_apply(obj, FUN = .medianFilter3x3_mat, track = track, ...)
 })
 
-# -------------------------------------------------------------------------
-# GENERIC / METHOD: adimpro (your existing adimpro wrapper)
-# -------------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# ---- GENERIC / METHOD: adimpro (your existing adimpro wrapper) ----
+# ------------------------------------------------------------------------- #
 #' Two-dimensional adimpro anisotropic smoothing
 #'
 #' Wrapper around \pkg{adimpro} anisotropic smoothing (awsaniso).
@@ -167,7 +167,7 @@ setGeneric("filter2Dadimpro", function(obj, ..., track = TRUE)
 #' @rdname filter2D
 #' @export
 setMethod("filter2Dadimpro", "GPRvirtual", function(obj, ..., track = TRUE){
-  .filter2D_apply(obj, FUN = function(A, ...){
+  .filter2D_apply(obj,FUN = function(A, ...){
     if (!requireNamespace("adimpro", quietly = TRUE)) {
       stop("Please install the 'adimpro' package to use filter2Dadimpro().")
     }
@@ -184,9 +184,9 @@ setMethod("filter2Dadimpro", "GPRvirtual", function(obj, ..., track = TRUE){
   }, track = track, ...)
 })
 
-# -------------------------------------------------------------------------
-# GENERIC / METHOD: gaussian (mmand::gaussianSmooth)
-# -------------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# ---- GENERIC / METHOD: gaussian (mmand::gaussianSmooth) ----
+# ------------------------------------------------------------------------- #
 #' Two-dimensional Gaussian smoothing
 #'
 #' Apply a 2-D Gaussian smoothing using \pkg{mmand} (or fallback to imager).
@@ -217,10 +217,13 @@ setMethod("filter2Dgaussian", "GPRvirtual", function(obj, ..., track = TRUE){
   }, track = track, ...)
 })
 
-# -------------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
 # imager-based filters: isoblur, medianblur, blur_anisotropic, diffusion_tensors,
 # imgradient, imsobel
-# -------------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+
+# ---- 2D isometric / Gaussian blur  ----
+
 #' 2D isometric / Gaussian blur (imager::isoblur)
 #'
 #' @param sigma numeric blur sigma (default 1)
@@ -240,6 +243,8 @@ setMethod("filter2Disoblur", "GPRvirtual", function(obj, sigma = 1, ..., track =
   }, track = track, sigma = sigma, ...)
 })
 
+# ---- 2D median blur ----
+
 #' 2D median blur (imager::medianblur)
 #' @param n odd integer kernel size (default 3)
 #' @rdname filter2D
@@ -257,6 +262,9 @@ setMethod("filter2Dmedianblur", "GPRvirtual", function(obj, n = 3, threshold = 0
     .cimg_to_mat(out)
   }, track = track, n = n, threshold = threshold, ...)
 })
+
+
+# ---- Anisotropic blur / edge-preserving smoothing ----
 
 #' Anisotropic blur / edge-preserving smoothing (imager::blur_anisotropic)
 #' @param amplitude numeric
@@ -290,6 +298,9 @@ setMethod("filter2Danisotropic", "GPRvirtual", function(obj, amplitude = 1, shar
   anisotropy = anisotropy, alpha = alpha, sigma = sigma, dl = dl, da = da, ...)
 })
 
+
+# ---- Diffusion tensors ----
+
 #' Diffusion tensors (imager::diffusion_tensors)
 #' @param sharpness numeric
 #' @param anisotropy numeric
@@ -312,6 +323,9 @@ setMethod("filter2Ddiffusiontensors", "GPRvirtual", function(obj, sharpness = 0.
     .cimg_to_mat(out)
   }, track = track, sharpness = sharpness, anisotropy = anisotropy, alpha = alpha, sigma = sigma, ...)
 })
+
+
+# ---- 2D gradient ----
 
 #' 2D gradient (imager::imgradient)
 #' @rdname filter2D
@@ -341,9 +355,9 @@ setMethod("filter2Dgradient", "GPRvirtual", function(obj, type = c("xy","x","y")
 })
 
 
-# -------------------------------------------------------------------------
-# FFT low-pass destriping wrapper
-# -------------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
+# ---- FFT low-pass destriping wrapper ----
+# ------------------------------------------------------------------------- #
 #' Column-wise FFT low-pass (destriping)
 #'
 #' This function performs a column-wise FFT attenuation of low-frequency
@@ -363,7 +377,7 @@ setMethod("filter2Dfftlowpass", "GPRvirtual", function(obj, cutoff = 0.04, stren
 })
 
 
-# -------------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
 #' Two-dimensional anisotropic blur / edge-preserving smoothing
 #'
 #' Apply an edge-preserving anisotropic blur to the GPR data.
@@ -409,7 +423,7 @@ setMethod("filter2Dblur_anisotropic", "GPRvirtual", function(obj, amplitude = 1,
   anisotropy = anisotropy, alpha = alpha, sigma = sigma, dl = dl, da = da, ...)
 })
 
-# -------------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
 #' Two-dimensional Canny edge detection
 #'
 #' Applies the Canny edge detection algorithm to 2D GPR data.
@@ -442,7 +456,7 @@ setMethod("filter2DcannyEdges", "GPRvirtual", function(obj, sigma = 1, alpha = 0
 
 
 
-# -------------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
 #' Two-dimensional Hessian filter
 #'
 #' Enhances ridges and edges using Hessian-based filtering.
@@ -472,7 +486,7 @@ setMethod("filter2Dimhessian", "GPRvirtual", function(obj, sigma = 1, ..., track
   }, track = track, sigma = sigma, ...)
 })
 
-# -------------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
 #' Two-dimensional Laplacian filter
 #'
 #' Enhances edges by computing the Laplacian of the image.
@@ -500,7 +514,7 @@ setMethod("filter2Dimlap", "GPRvirtual", function(obj, ..., track = TRUE){
   }, track = track, ...)
 })
 
-# -------------------------------------------------------------------------
+# ------------------------------------------------------------------------- #
 #' Two-dimensional sharpening
 #'
 #' Sharpens the GPR data using \pkg{imager}::imsharpen.
@@ -532,16 +546,54 @@ setMethod("filter2Dimsharpen", "GPRvirtual", function(obj, amplitude = 1, type =
 
 
 
-#' Local Contrast Enhancement Using Sliding Window
+#' Sliding-Window Local Contrast Enhancement
 #'
-#' Enhances the local contrast of a grayscale image (matrix) using a sliding window approach.
-#' Each pixel is transformed based on the local mean and standard deviation in its neighborhood.
+#' Enhances the local contrast of a numeric matrix by centring each cell on
+#' the mean of its local neighbourhood and scaling it by the corresponding
+#' local standard deviation.
 #'
-#' @param image Numeric matrix representing a grayscale image.
-#' @param window_size Odd integer specifying the size of the sliding window (default is 3).
-#' @param epsilon Small numeric value to avoid division by zero (default is 1e-8).
+#' @description
+#' The matrix is processed using a square sliding window. For each finite cell
+#' \eqn{x_{ij}}, the locally standardized value is calculated as
 #'
-#' @return Numeric matrix of the same dimensions as `image`, with values normalized to `[0,1]`.
+#' \deqn{
+#' z_{ij} =
+#' \frac{x_{ij} - \mu_{ij}}
+#' {\max(\sigma_{ij}, \sigma_{\mathrm{min}})}
+#' }
+#'
+#' where \eqn{\mu_{ij}} and \eqn{\sigma_{ij}} are the mean and standard
+#' deviation within the local window. The lower bound
+#' \eqn{\sigma_{\mathrm{min}}} is defined as
+#' `alpha` times the global standard deviation of the matrix, subject to
+#' the absolute lower bound given by `epsilon`.
+#'
+#' The standard-deviation floor prevents excessive amplification of small
+#' variations in locally homogeneous areas. This transformation produces
+#' signed local standardized values and does not perform histogram
+#' equalization.
+#'
+#' Matrix edges are handled by replicating the nearest edge values. Non-finite
+#' values are excluded from the local statistics, and non-finite cells in the
+#' original matrix remain missing in the output.
+#'
+#' @param obj (`GPR* object`)
+#' @param win (`integer[1]`) A positive odd integer greater than or equal to `3`
+#' specifying the number of rows and columns in the square sliding window.
+#' Larger values enhance features relative to a broader spatial
+#' neighbourhood. The default is `3L`.
+#' @param alpha (`numeric[1]`) A non-negative numeric scalar defining the minimum local
+#' standard deviation as a fraction of the global standard deviation of
+#' `image`. For example, `alpha = 0.1` prevents the local standard
+#' deviation from falling below 10 percent of the global standard deviation.
+#' This limits noise amplification in locally homogeneous areas. Set to
+#' `0` to disable the relative standard-deviation floor. The default is
+#' `0.1`.
+#' @param epsilon (`numeric[1]`)A positive numeric scalar defining the absolute lower bound
+#' applied to the denominator. It provides numerical stability when the
+#' global and local standard deviations are zero or nearly zero. The default
+#' is `sqrt(.Machine$double.eps)`.
+#' @return GPR object
 #'
 #' @examples
 #' set.seed(1)
@@ -551,63 +603,253 @@ setMethod("filter2Dimsharpen", "GPRvirtual", function(obj, amplitude = 1, type =
 #'
 #' @rdname filter2D
 #' @export
-setGeneric("filter2DlocalContrast", function(obj, win = 3, alpha = 0, epsilon = 1e-8, ..., track = TRUE)
+setGeneric("filter2DlocalContrast", function(obj, win = 3, alpha = 0.1, epsilon = sqrt(.Machine$double.eps), ..., track = TRUE)
   standardGeneric("filter2DlocalContrast"))
 
-setMethod("filter2DlocalContrast", "GPRvirtual", function(obj,  win = 3, alpha = 0, epsilon = 1e-8, ..., track = TRUE){
+setMethod("filter2DlocalContrast", "GPRvirtual", function(obj,  win = 3, alpha = 0.1, epsilon = sqrt(.Machine$double.eps), ..., track = TRUE){
   .filter2D_apply(obj, FUN = .local_contrast_enhancement, track = track, win , alpha , epsilon)
 })
 
-.local_contrast_enhancement <- function(image, window_size = 3, alpha = 0, epsilon = 1e-8) {
-  # image: numeric matrix
-  # window_size: odd integer (e.g., 3, 5, 7)
-  # epsilon: small value to avoid division by zero
+# @param min_valid An optional integer specifying the minimum number of finite
+# values required within a local window. If fewer valid values are
+# available, the corresponding output cell is set to `NA_real_`. If `NULL`,
+# at least half of the cells in the window must be finite. The default is
+# `NULL`.
+.local_contrast_enhancement <- function(
+    image,
+    win = 3L,
+    alpha = 0.1,
+    epsilon = sqrt(.Machine$double.eps),
+    # clip = NULL,
+    min_valid = NULL
+) {
   
-  if (window_size %% 2 == 0) {
-    stop("window_size must be an odd number")
+  # Validate input matrix
+  if (!is.matrix(image) || !is.numeric(image)) {
+    stop("'image' must be a numeric matrix.", call. = FALSE)
+  }
+  
+  # Validate window size
+  if (length(win) != 1L ||
+      !is.finite(win) ||
+      win != as.integer(win) ||
+      win < 3L ||
+      win %% 2L == 0L) {
+    stop(
+      "'window_size' must be an odd integer greater than or equal to 3.",
+      call. = FALSE
+    )
+  }
+  
+  # Validate standard-deviation floor
+  if (length(alpha) != 1L ||
+      !is.finite(alpha) ||
+      alpha < 0) {
+    stop(
+      "'alpha' must be a non-negative finite number.",
+      call. = FALSE
+    )
+  }
+  
+  # Validate epsilon
+  if (length(epsilon) != 1L ||
+      !is.finite(epsilon) ||
+      epsilon <= 0) {
+    stop(
+      "'epsilon' must be a positive finite number.",
+      call. = FALSE
+    )
+  }
+  
+  # # Validate clipping limit
+  # if (!is.null(clip) &&
+  #     (length(clip) != 1L ||
+  #      !is.finite(clip) ||
+  #      clip <= 0)) {
+  #   stop(
+  #     "'clip' must be NULL or a positive finite number.",
+  #     call. = FALSE
+  #   )
+  # }
+  
+  win <- as.integer(win)
+  
+  # Default minimum number of valid cells per window
+  if (is.null(min_valid)) {
+    min_valid <- ceiling(win^2 / 2)
+  }
+  
+  if (length(min_valid) != 1L ||
+      !is.finite(min_valid) ||
+      min_valid != as.integer(min_valid) ||
+      min_valid < 2L ||
+      min_valid > win^2) {
+    stop(
+      "'min_valid' must be an integer between 2 and win^2.",
+      call. = FALSE
+    )
+  }
+  
+  min_valid <- as.integer(min_valid)
+  
+  # Identify finite input values
+  valid <- is.finite(image)
+  
+  if (!any(valid)) {
+    return(image)
   }
   
   nr <- nrow(image)
   nc <- ncol(image)
-  pad <- floor(window_size / 2)
+  pad <- win %/% 2L
   
-  # Pad image using edge replication
-  padded <- matrix(0, nr + 2 * pad, nc + 2 * pad)
-  padded[(pad + 1):(pad + nr), (pad + 1):(pad + nc)] <- image
+  # Edge-replication indices
+  row_index <- pmin(
+    pmax(seq.int(1L - pad, nr + pad), 1L),
+    nr
+  )
   
-  # Replicate borders
-  padded[1:pad, (pad + 1):(pad + nc)] <- image[rep(1, pad), ]
-  padded[(pad + nr + 1):(nr + 2 * pad), (pad + 1):(pad + nc)] <- image[rep(nr, pad), ]
-  padded[, 1:pad] <- padded[, rep(pad + 1, pad)]
-  padded[, (pad + nc + 1):(nc + 2 * pad)] <- padded[, rep(pad + nc, pad)]
+  col_index <- pmin(
+    pmax(seq.int(1L - pad, nc + pad), 1L),
+    nc
+  )
   
-  # Output image
-  output <- matrix(0, nr, nc)
+  # Pad matrix by replicating edge values
+  padded <- image[
+    row_index,
+    col_index,
+    drop = FALSE
+  ]
   
-  for (i in 1:nr) {
-    for (j in 1:nc) {
-      window <- padded[i:(i + 2 * pad), j:(j + 2 * pad)]
+  # Calculate scale-aware minimum standard deviation
+  global_sd <- stats::sd(image[valid])
+  
+  if (!is.finite(global_sd)) {
+    global_sd <- 0
+  }
+  
+  minimum_sd <- max(
+    alpha * global_sd,
+    epsilon
+  )
+  
+  # Initialize output matrix
+  output <- matrix(
+    NA_real_,
+    nrow = nr,
+    ncol = nc,
+    dimnames = dimnames(image)
+  )
+  
+  # Calculate local standardized values
+  for (i in seq_len(nr)) {
+    
+    row_id <- i:(i + 2L * pad)
+    
+    for (j in seq_len(nc)) {
+      
+      # Preserve NA, NaN and infinite input cells
+      if (!valid[i, j]) {
+        next
+      }
+      
+      col_id <- j:(j + 2L * pad)
+      
+      window <- padded[
+        row_id,
+        col_id,
+        drop = FALSE
+      ]
+      
+      # Exclude non-finite values from local statistics
+      window <- window[is.finite(window)]
+      
+      if (length(window) < min_valid) {
+        next
+      }
       
       local_mean <- mean(window)
-      local_sd   <- sd(as.vector(window))
-      local_min <- min(window)
-      local_max <- max(window)
-      # Local contrast enhancement
-      output[i, j] <- (image[i, j] - local_mean) / (local_sd + epsilon)
-      # if (local_max != local_min) {
-      #   local_eq <- (image[i,j] - local_min) / (local_max - local_min)
-      # } else {
-      #   local_eq <- 0
-      # }
-      # output[i,j] <- (1 - alpha) * image[i,j] + alpha * local_eq
+      local_sd <- stats::sd(window)
+      
+      if (!is.finite(local_sd)) {
+        next
+      }
+      
+      denominator <- max(
+        local_sd,
+        minimum_sd
+      )
+      
+      output[i, j] <- (
+        image[i, j] - local_mean
+      ) / denominator
     }
   }
   
-  # Normalize output to [0, 1]
-  output <- (output - min(output)) / (max(output) - min(output))
+
+  
+  # # Store processing parameters
+  # attr(output, "local_contrast") <- list(
+  #   win = win,
+  #   alpha = alpha,
+  #   minimum_sd = minimum_sd,
+  #   epsilon = epsilon,
+  #   clip = clip,
+  #   min_valid = min_valid
+  # )
   
   return(output)
 }
+# .local_contrast_enhancement <- function(image, window_size = 3, alpha = 0, epsilon = 1e-8) {
+#   # image: numeric matrix
+#   # window_size: odd integer (e.g., 3, 5, 7)
+#   # epsilon: small value to avoid division by zero
+#   
+#   if (window_size %% 2 == 0) {
+#     stop("window_size must be an odd number")
+#   }
+#   
+#   nr <- nrow(image)
+#   nc <- ncol(image)
+#   pad <- floor(window_size / 2)
+#   
+#   # Pad image using edge replication
+#   padded <- matrix(0, nr + 2 * pad, nc + 2 * pad)
+#   padded[(pad + 1):(pad + nr), (pad + 1):(pad + nc)] <- image
+#   
+#   # Replicate borders
+#   padded[1:pad, (pad + 1):(pad + nc)] <- image[rep(1, pad), ]
+#   padded[(pad + nr + 1):(nr + 2 * pad), (pad + 1):(pad + nc)] <- image[rep(nr, pad), ]
+#   padded[, 1:pad] <- padded[, rep(pad + 1, pad)]
+#   padded[, (pad + nc + 1):(nc + 2 * pad)] <- padded[, rep(pad + nc, pad)]
+#   
+#   # Output image
+#   output <- matrix(0, nr, nc)
+#   
+#   for (i in 1:nr) {
+#     for (j in 1:nc) {
+#       window <- padded[i:(i + 2 * pad), j:(j + 2 * pad)]
+#       
+#       local_mean <- mean(window)
+#       local_sd   <- sd(as.vector(window))
+#       local_min <- min(window)
+#       local_max <- max(window)
+#       # Local contrast enhancement
+#       output[i, j] <- (image[i, j] - local_mean) / (local_sd + epsilon)
+#       # if (local_max != local_min) {
+#       #   local_eq <- (image[i,j] - local_min) / (local_max - local_min)
+#       # } else {
+#       #   local_eq <- 0
+#       # }
+#       # output[i,j] <- (1 - alpha) * image[i,j] + alpha * local_eq
+#     }
+#   }
+#   
+#   # Normalize output to [0, 1]
+#   output <- (output - min(output)) / (max(output) - min(output))
+#   
+#   return(output)
+# }
 
 
 

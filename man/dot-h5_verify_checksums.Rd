@@ -4,7 +4,7 @@
 \alias{.h5_verify_checksums}
 \title{Verify the checksums of every dataset in an HDF5 file}
 \usage{
-.h5_verify_checksums(path)
+.h5_verify_checksums(path, verbose = FALSE)
 }
 \arguments{
 \item{path}{(\code{character(1)}) Path to the HDF5 file to verify.}

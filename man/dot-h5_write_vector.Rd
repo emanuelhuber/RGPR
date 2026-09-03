@@ -4,14 +4,14 @@
 \alias{.h5_write_vector}
 \title{Write a 1-D vector as a chunked, checksummed HDF5 dataset}
 \usage{
-.h5_write_vector(grp, name, data, compress = 0L)
+.h5_write_vector(grp, name, dta, compress = 0L)
 }
 \arguments{
 \item{grp}{An open, writable \code{hdf5r} group.}
 
 \item{name}{(\code{character(1)}) Dataset name.}
 
-\item{data}{Atomic vector to write. If \code{length(data) == 0}, nothing is
+\item{dta}{Atomic vector to write. If \code{length(data) == 0}, nothing is
 written (this keeps optional fields such as \code{z0} or \code{transf} absent
 from the file rather than present-but-empty).}
 

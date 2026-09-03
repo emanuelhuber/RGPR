@@ -18,7 +18,7 @@
 #' `.write_survey_group_hdf5()` for why `@view` is not itself persisted).
 #'
 #' @param file (`character(1)`) Path to the `.h5` file previously written by
-#'             [GPRsurvey()] or `writeGPR(..., format = "h5")`.
+#'             [RGPR::GPRsurvey()] or `writeGPR(..., format = "h5")`.
 #'
 #' @return Object of class `GPRsurvey`.
 #'

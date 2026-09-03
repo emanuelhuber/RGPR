@@ -4,12 +4,12 @@
 \alias{.write_survey_group_hdf5}
 \title{Write the complete \verb{/survey} metadata group (internal)}
 \usage{
-.write_survey_group_hdf5(h5, x)
+.write_survey_group_hdf5(h5, obj)
 }
 \arguments{
 \item{h5}{Open, writable \link[hdf5r:H5File]{hdf5r::H5File} handle.}
 
-\item{x}{Object of class \code{GPRsurvey}.}
+\item{obj}{Object of class \code{GPRsurvey}.}
 }
 \description{
 Writes every slot of a \code{GPRsurvey} object that makes sense to persist

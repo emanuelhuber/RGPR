@@ -20,6 +20,10 @@ date: 2026-08-22
 
 ## Publications
 
+* [Wenhao Luo, Tong Hao, Qian Ma, Chen Lv, Zhiyi Cao (2026) **Transparentize A Shallow Cryosphere: High-Resolution Subsurface Imaging using UAV-Borne GPR A review and prospective.**  	arXiv:2609.22326 ](https://doi.org/10.48550/arXiv.2609.22326)
+
+* [Thompson Jobe, J., Briggs, R., Diaz, V. O., Lynch, E. M., Hughes, K. S., Pratt, T., et al. (2026). **The Parguera Fault system: Possible Quaternary reactivation of bedrock faults in southwest Puerto Rico**. Tectonics, 45, e2026TC009355](https://doi.org/10.1029/2026TC009355)
+
 * [Bastien Dupuy, Arnt Grøver, Stéphane Garambois, Andrew Tobiesen, Pauline Lorand, Halgeir Dahle, Sean Salazar, Regula Frauenfelder, Benjamin Emmel, Aslak Einbu, and Tore Humstad (2026) **UAV-borne GPR for snowpack characterization: Potential, limitations and operational guidelines.** Cold Regions Science and Technology, Volume 241](https://doi.org/10.1016/j.coldregions.2025.104641)
 
 
@@ -32,9 +36,6 @@ date: 2026-08-22
 * [Vergnano, Andrea, Diego Franco, and Alberto Godio (2025) **Integrating GPR and ice-thickness models for improved bedrock detection: the case study of Rutor temperate glacier.** The Cryosphere 19(12): 6965-6988.](https://doi.org/10.5194/tc-19-6965-2025)
 
 <!-- Moqadam, Hameed, and Olaf Eisen. "Feature tracing in radio-echo sounding products of terrestrial ice sheets and planetary bodies." The Cryosphere 19(6) (2025): 2159-2196. https://doi.org/10.5194/tc-19-2159-2025-->
-
-
-
 
 
 * [Koki Oikawa, Hirotaka Saito, Seiichiro Kuroda, Kazunori Takahashi (2024) **Construction of dense CMP data from sparsely collected GPR CMP data for the improved estimation of soil dielectric constant profile.** Vadose Zone Journal, Volume 24, Issue 1](https://doi.org/10.1002/vzj2.20392)

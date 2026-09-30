@@ -1,4 +1,3 @@
-
 #--------------------- 'migration()' = DEPRECATED -----------------------------#
 #' @name migration
 #' @rdname migrate
@@ -77,7 +76,7 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
   }
   if(length(x@coord) != 0 && ncol(x@coord) == 3){
     topo <- x@coord[, 3]
-
+    
   }else{
     topo <- rep.int(0L, ncol(x@data))
     message("Trace vertical position set to zero!")
@@ -92,10 +91,18 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
     #topo <- x@coord[,3]
     dx <- x@dx
     dts <- x@dz
-    v <- x@vel[[1]]
+    # interval velocity (m/ns): scalar, vector (length nrow(x)) or matrix
+    # (nrow(x) x ncol(x)), same convention as in convertTimeToDepth()
+    v <- .getVel2(x, type = "vint", strict = FALSE)
     # initialisation
     #max_depth <- nrow(x)*x@dx
-    max_depth <- max(x@depth) * v / 2 * 0.9
+    if(length(v) == 1L){
+      max_depth <- max(x@depth) * v / 2 * 0.9
+    }else{
+      tt <- x@depth - x@depth[1]
+      vm <- if(is.matrix(v)) v else matrix(v, nrow = length(v), ncol = ncol(x))
+      max_depth <- max(apply(c(0, diff(tt)) * vm / 2, 2, sum)) * 0.9
+    }
     dz <- 0.25 * x@dz
     fdo <- x@freq
     FUN <- sum
@@ -116,6 +123,17 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
     if( !is.null(dots$wavelet_filter)) wavelet_filter <- dots$wavelet_filter
     if( !is.null(dots$weight))         weight         <- dots$weight
     if( !is.null(dots$normalize))      normalize      <- dots$normalize
+    # variable-velocity ray sampling (ignored for a constant velocity)
+    vel_dx    <- NULL   # horizontal spacing of the velocity grid (m)
+    vel_dz    <- NULL   # vertical spacing of the velocity grid (m)
+    ray_step  <- NULL   # spacing of the samples along a ray (m)
+    n_ray     <- 16L    # maximum number of samples per ray leg
+    vel_mode  <- "auto" # "auto", "constant", "layered", "general"
+    if( !is.null(dots$vel_mode))       vel_mode       <- dots$vel_mode
+    if( !is.null(dots$vel_dx))         vel_dx         <- dots$vel_dx
+    if( !is.null(dots$vel_dz))         vel_dz         <- dots$vel_dz
+    if( !is.null(dots$ray_step))       ray_step       <- dots$ray_step
+    if( !is.null(dots$n_ray))          n_ray          <- dots$n_ray
     
     # attributes:
     #   - "z"
@@ -127,7 +145,9 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
                        normalize = normalize, spreading = spreading,
                        wavelet_filter = wavelet_filter, # "none", # "halfderiv"),
                        antialias = antialias,
-                       aa_factor = aa_factor)
+                       aa_factor = aa_factor,
+                       vel_mode = vel_mode, vel_dx = vel_dx, vel_dz = vel_dz,
+                       ray_step = ray_step, n_ray = n_ray)
     x@data <- unclass(xkir)
     # rows = depth below max(topo); the trace elevation stays in @coord
     x@depth     <- attr(xkir, "z") # seq(0,by=dz, length.out = nrow(x))
@@ -172,6 +192,95 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
   y[seq_len(nt), , drop = FALSE]
 }
 
+
+
+# --------------------------------------------------------------------------- #
+# Cumulative one-way slowness Sigma(d) = int_0^d (1/v) dd for horizontal layers,
+# tabulated at the depths `depth_out` below the reference (highest trace).
+#
+# With d(t) = int v dt / 2 (as in convertTimeToDepth) one gets exactly
+# Sigma(d(t)) = t / 2, so the table is a simple interpolation of time against
+# depth. Below the last sample the deepest velocity is extended.
+# --------------------------------------------------------------------------- #
+.kirLayerSigma <- function(v, tt, depth_out) {
+  nt <- length(tt)
+  if (length(v) == 1L) v <- rep(v, nt)
+  if (length(v) != nt) stop("Layered velocity must be a scalar or a vector of length nrow(x).")
+  if (any(!is.finite(v)) || any(v <= 0)) stop("Velocities must be finite and positive.")
+  dep <- cumsum(c(0, diff(tt)) * v / 2)
+  sig <- stats::approx(dep, tt / 2, xout = depth_out, rule = 1)$y
+  deeper <- depth_out > dep[nt]
+  sig[deeper] <- tt[nt] / 2 + (depth_out[deeper] - dep[nt]) / v[nt]
+  list(sigma = sig, vref = mean(v))
+}
+
+# --------------------------------------------------------------------------- #
+# Build the slowness grid (ns/m) used by the variable-velocity Kirchhoff
+# migration.
+#
+# v   : interval velocity (m/ns) in the TIME domain: scalar, vector of length
+#       nt (depth-varying) or matrix nt x nx (depth- and laterally-varying).
+#       Rows = time samples of the data, columns = traces (at `xpos`).
+#
+# The time-to-depth relation is the one of convertTimeToDepth():
+#       depth_i(t_m) = sum_{k <= m} (t_k - t_{k-1}) * v_{k,i} / 2 ,
+# with depth measured from the ground surface at trace i. The velocity is
+# therefore a function of DEPTH BELOW THE LOCAL GROUND SURFACE, and follows the
+# topography. It is resampled to a regular (x, depth) grid, then to the
+# (x, elevation) frame of the output image. Above the ground the surface
+# velocity is used, below the last sample the deepest velocity.
+# --------------------------------------------------------------------------- #
+.kirSlownessGrid <- function(v, tt, xpos, topoGPR, xrange, zout, zmax,
+                             dz, vel_dx = NULL, vel_dz = NULL) {
+  nt <- length(tt)
+  nx <- length(xpos)
+  if (is.matrix(v)) {
+    if (nrow(v) != nt || ncol(v) != nx)
+      stop("A velocity matrix must have dim = c(nrow(x), ncol(x)).")
+    vm <- v
+  } else if (length(v) == nt) {
+    vm <- matrix(v, nrow = nt, ncol = nx)
+  } else if (length(v) == 1L) {
+    vm <- matrix(v, nrow = nt, ncol = nx)
+  } else {
+    stop("Velocity must be a scalar, a vector of length nrow(x) or a matrix.")
+  }
+  if (any(!is.finite(vm)) || any(vm <= 0))
+    stop("Velocities must be finite and positive.")
+  
+  # depth below the local surface of every time sample (nt x nx)
+  dep <- apply(c(0, diff(tt)) * vm / 2, 2, cumsum)
+  
+  # regular depth grid
+  if (is.null(vel_dz)) vel_dz <- dz
+  dmax <- max(dep[nt, ])
+  nd   <- max(2L, ceiling(dmax / vel_dz) + 1L)
+  dgrid <- vel_dz * (seq_len(nd) - 1L)
+  Vd <- vapply(seq_len(nx), function(i)
+    stats::approx(dep[, i], vm[, i], xout = dgrid, rule = 2)$y, numeric(nd))
+  
+  # regular horizontal grid covering pixels and antennas
+  if (is.null(vel_dx)) vel_dx <- mean(diff(xpos))
+  xv0 <- xrange[1]
+  nxv <- max(2L, ceiling((xrange[2] - xrange[1]) / vel_dx - 1e-9) + 1L)
+  xv  <- xv0 + vel_dx * (seq_len(nxv) - 1L)
+  Vx  <- t(vapply(seq_len(nd), function(r)
+    stats::approx(xpos, Vd[r, ], xout = xv, rule = 2)$y, numeric(nxv)))
+  Vx <- matrix(Vx, nrow = nd, ncol = nxv)
+  
+  # to the output frame: row k, column i -> depth = surface_i - zout_k
+  surf_v <- stats::approx(xpos, topoGPR, xout = xv, rule = 2)$y - zmax
+  S <- matrix(0, nrow = length(zout), ncol = nxv)
+  for (i in seq_len(nxv)) {
+    f  <- pmax(surf_v[i] - zout, 0) / vel_dz
+    i0 <- pmin(floor(f), nd - 2L)
+    w  <- pmin(f - i0, 1)
+    S[, i] <- 1 / ((1 - w) * Vx[i0 + 1L, i] + w * Vx[i0 + 2L, i])
+  }
+  list(slow = S, xv0 = xv0, dxv = vel_dx, vel_dz = vel_dz, vel_dx = vel_dx,
+       vref = mean(vm))
+}
+
 #' Topographic Kirchhoff migration with bistatic antenna geometry
 #'
 #' Migrate a two-dimensional GPR profile directly from the acquisition
@@ -208,8 +317,39 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
 #'   trace. Positions must be finite and strictly increasing.
 #' @param dts Positive numeric scalar giving the temporal sampling interval in
 #'   nanoseconds.
-#' @param v Positive numeric scalar giving the constant GPR-wave velocity in
-#'   metres per nanosecond.
+#' @param v GPR-wave interval velocity in metres per nanosecond. Either a
+#'   positive scalar (constant velocity), a numeric vector of length `nrow(x)`
+#'   (velocity varying with two-way time, i.e. with depth) or a numeric matrix
+#'   of dimension `nrow(x)` x `ncol(x)` (velocity varying with depth and
+#'   laterally). Vectors and matrices are defined in the time domain, exactly as
+#'   for [convertTimeToDepth()]; the time axis is `(seq_len(nrow(x)) - 1) * dts`.
+#' @param vel_mode Algorithm used for the travel times. `"auto"` (default)
+#'   chooses from the type of `v`: scalar -> `"constant"`, vector ->
+#'   `"layered"`, matrix -> `"general"`.
+#'   \describe{
+#'     \item{`"constant"`}{Travel time = distance / v (fastest).}
+#'     \item{`"layered"`}{Horizontal layers. The velocity profile is applied
+#'       as a function of depth below the highest trace, so layers are
+#'       horizontal in the image. Travel times along straight rays are exact
+#'       and computed in constant time from the cumulative slowness (about as
+#'       fast as `"constant"`). With strong topography the layers do not follow
+#'       the ground surface; for this use `"general"`.}
+#'     \item{`"general"`}{Velocity varying with depth and position. The
+#'       velocity is a function of depth below the LOCAL ground surface (it
+#'       follows the topography, like in [convertTimeToDepth()]) and travel
+#'       times are obtained by integrating the slowness along straight rays.
+#'       A vector or scalar `v` is accepted and replicated for all traces,
+#'       which gives topography-following layers.}
+#'   }
+#' @param vel_dx,vel_dz Horizontal and vertical spacing (m) of the regular grid
+#'   on which the velocity model is resampled. Defaults: mean trace spacing and
+#'   `dz`. Only used for `vel_mode = "general"`.
+#' @param ray_step,n_ray For `vel_mode = "general"`, travel times are
+#'   obtained by integrating the slowness along the straight
+#'   antenna-to-pixel segments, with one sample every `ray_step` metres
+#'   (default `max(vel_dx, vel_dz)`), but at most `n_ray` (default 16) and at
+#'   least 2 samples per segment. Increase `n_ray` for strong velocity
+#'   contrasts (computing time grows about linearly with it).
 #' @param max_depth Positive numeric scalar giving the maximum vertical
 #'   migration depth below the local ground surface, in metres.
 #' @param dz Positive numeric scalar giving the vertical sampling interval of
@@ -279,10 +419,16 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
 #'   \item Sum the contributions into the migrated image.
 #' }
 #'
-#' The implementation assumes a two-dimensional profile, a constant and
-#' isotropic velocity, straight propagation paths, and coordinates expressed
-#' in metres. It does not model refraction at the ground surface, lateral
-#' velocity variation, antenna radiation patterns, or out-of-plane energy.
+#' The implementation assumes a two-dimensional profile, isotropic velocity,
+#' straight propagation paths, and coordinates expressed in metres. With a
+#' non-constant velocity model, the travel time of each leg is the integral of
+#' the slowness (1/v) along the straight segment between the antenna and the
+#' image point (no ray bending, no refraction at the ground surface). The
+#' Fresnel aperture uses the velocity at the image point, and the anti-aliasing
+#' moveout uses the surface slowness at the antennas. The spreading
+#' (\eqn{\sqrt{d_{tx} d_{rx}}}) and legacy \eqn{1/\sqrt{2\pi t v}} weights
+#' use geometric path lengths. Antenna radiation patterns and out-of-plane
+#' energy are not modelled.
 #'
 #' @references
 #' Dujardin, J.-R. and Bano, M. (2013). Topographic migration of GPR
@@ -311,7 +457,10 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
     spreading = FALSE,
     wavelet_filter = c("none", "halfderiv"),
     antialias = TRUE,
-    aa_factor = 1) {
+    aa_factor = 1,
+    vel_mode = c("auto", "constant", "layered", "general"),
+    vel_dx = NULL, vel_dz = NULL,
+    ray_step = NULL, n_ray = 16L) {
   
   weight         <- match.arg(weight)
   wavelet_filter <- match.arg(wavelet_filter)
@@ -332,7 +481,17 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
   
   pos <- function(a) is.numeric(a) && length(a) == 1L && is.finite(a) && a > 0
   if (!pos(dts))       stop("'dts' must be positive.")
-  if (!pos(v))         stop("'v' must be positive.")
+  vel_mode <- match.arg(vel_mode)
+  if (!is.numeric(v)) stop("'v' must be numeric.")
+  if (vel_mode == "auto")
+    vel_mode <- if (length(v) == 1L) "constant" else if (is.matrix(v)) "general" else "layered"
+  if (vel_mode == "constant" && length(v) != 1L)
+    stop("vel_mode = 'constant' requires a scalar 'v'.")
+  if (vel_mode == "layered" && is.matrix(v))
+    stop("vel_mode = 'layered' requires a scalar or a vector 'v', not a matrix.")
+  if (any(!is.finite(v)) || any(v <= 0)) stop("'v' must contain finite positive values.")
+  if (!is.numeric(n_ray) || length(n_ray) != 1L || n_ray < 2)
+    stop("'n_ray' must be a single number >= 2.")
   if (!pos(max_depth)) stop("'max_depth' must be positive.")
   if (!pos(dz))        stop("'dz' must be positive.")
   if (!pos(aa_factor)) stop("'aa_factor' must be positive.")
@@ -351,7 +510,6 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
   lambda <- 0
   if (use_fresnel) {
     if (!pos(fdo)) stop("'fdo' must be positive when 'max_angle' is NULL.")
-    lambda <- 1000 * v / fdo                 # metres (v in m/ns, fdo in MHz)
     max_angle <- 90
   } else if (!is.numeric(max_angle) || length(max_angle) != 1L ||
              !is.finite(max_angle) || max_angle <= 0 || max_angle > 90) {
@@ -382,6 +540,28 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
   dmx <- diff(mid_x)
   wq  <- (c(dmx, 0) + c(0, dmx)) / 2
   
+  # ---- Velocity model -----------------------------------------------------
+  # constant : nothing to prepare (fast path, original algorithm)
+  # layered  : cumulative slowness Sigma(depth) on the output rows
+  # general  : slowness grid in the (x, elevation) frame of the image
+  tt <- (seq_len(nrow(x)) - 1L) * dts
+  cum  <- numeric(0)
+  slow <- matrix(0, 0, 0); xv0 <- 0; dxv <- 1
+  if (vel_mode == "constant") {
+    # nothing to prepare
+  } else if (vel_mode == "layered") {
+    cum   <- .kirLayerSigma(v, tt, depth_out)$sigma
+  } else {
+    sg <- .kirSlownessGrid(
+      v, tt = tt, xpos = xpos, topoGPR = topoGPR,
+      xrange = range(c(xout, tx_x, rx_x)), zout = zout, zmax = zmax, dz = dz,
+      vel_dx = vel_dx, vel_dz = vel_dz)
+    slow <- sg$slow; xv0 <- sg$xv0; dxv <- sg$dxv
+    if (is.null(ray_step)) ray_step <- max(sg$vel_dx, sg$vel_dz)
+  }
+  if (is.null(ray_step)) ray_step <- 1
+  lambda_per_v <- if (use_fresnel) 1000 / fdo else 0   # lambda = 1000 v / fdo
+  
   weight_type <- switch(
     weight,
     none = 0L,
@@ -389,29 +569,33 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
     legacy = 2L
   )
   
-  out <- kirMigTopo_cpp(
-    x = x,
-    tx_x = tx_x,
-    tx_z = tx_z,
-    rx_x = rx_x,
-    rx_z = rx_z,
-    wq = wq,
-    xout = xout,
-    surface = surface,
-    zout = zout,
-    dz = dz,
-    dts = dts,
-    v = v,
-    max_depth = max_depth,
-    use_fresnel = use_fresnel,
-    lambda = lambda,
-    max_angle = max_angle * pi / 180,
-    weight_type = weight_type,
-    spreading = spreading,
-    normalize = normalize,
-    antialias = antialias,
-    aa_factor = aa_factor
-  )
+  if (vel_mode == "constant") {
+    # original constant-velocity core: no velocity model at all
+    out <- kirMigTopoConst_cpp(
+      x = x, tx_x = tx_x, tx_z = tx_z, rx_x = rx_x, rx_z = rx_z, wq = wq,
+      xout = xout, surface = surface, zout = zout, dz = dz,
+      dts = dts, v = v, max_depth = max_depth,
+      use_fresnel = use_fresnel,
+      lambda = if (use_fresnel) 1000 * v / fdo else 0,
+      max_angle = max_angle * pi / 180,
+      weight_type = weight_type, spreading = spreading,
+      normalize = normalize, antialias = antialias, aa_factor = aa_factor
+    )
+  } else {
+    out <- kirMigTopoVar_cpp(
+      x = x, tx_x = tx_x, tx_z = tx_z, rx_x = rx_x, rx_z = rx_z, wq = wq,
+      xout = xout, surface = surface, zout = zout, dz = dz,
+      dts = dts, max_depth = max_depth,
+      use_fresnel = use_fresnel,
+      lambda_per_v = lambda_per_v,
+      max_angle = max_angle * pi / 180,
+      weight_type = weight_type, spreading = spreading,
+      normalize = normalize, antialias = antialias, aa_factor = aa_factor,
+      vel_mode = c(layered = 1L, general = 2L)[[vel_mode]],
+      cum = cum, slow = slow, xv0 = xv0, dxv = dxv,
+      ray_step = ray_step, n_ray_max = as.integer(n_ray)
+    )
+  }
   # x, tx_x, tx_z, rx_x, rx_z, wq, xout, surface, zout, dz,
   # dts, v, max_depth,
   # use_fresnel, lambda, max_angle * pi / 180,
@@ -460,34 +644,34 @@ setMethod("migrate", "GPR", function(x, type = c("static", "kirchhoff"), ...){
       z_idx <-  floor(z_d[k] /dz) + 1
       # print(z_idx)
       # if(z_idx <= nrow(kirTopoGPR) && z_idx > 0){
-        # Fresnel zone
-        # Pérez-Gracia et al. (2008) Horizontal resolution in a non-destructive
-        # shallow GPR survey: An experimental evaluation. NDT & E International,
-        # 41(8): 611–620. doi:10.1016/j.ndteint.2008.06.002
-        rf <- 0.5 * sqrt(lambda * 2 * (z_d[k] - z[i]))
-        rf_tr <- round(rf/dx)
-        mt <- (i - rf_tr):(i + rf_tr)
-        mt <- mt[mt > 0 & mt <= m]
-        
-        lmt <- length(mt)
-        Ampl <- numeric(lmt)
-        for(j in mt){
-          # x_a <- (j-1)*dx
-          x_a <- xpos[j]
-          t_top <-  t_0 - 2*(z[j] - z[i])/v
-          t_x <- sqrt( t_top^2 +   4*(x_a - x_d)^2 /v2)
-          t1 <- floor(t_x/dts) + 1 # the largest integers not greater
-          t2 <- ceiling(t_x/dts) + 1 # smallest integers not less
-          if(t2 <= n && t1 > 0 && t_x != 0){
-            w <- ifelse(t1 != t2, abs((t1 - t_x)/(t1 - t2)), 0)
-            # Dujardin & Bano amplitude factor weight: cos(alpha) = t_top/t_x
-            # Ampl[j- mt[1] + 1] <- (t_top/t_x) * 
-            # ((1-w)*A[t1,j] + w*A[t2,j])
-            # http://sepwww.stanford.edu/public/docs/sep87/SEP087.Bevc.pdf
-            Ampl[j- mt[1] + 1] <- (dx/sqrt(2*pi*t_x*v))*
-                                  (t_top/t_x) * 
-                                  ((1-w)*x[t1,j] + w*x[t2,j])
-          }
+      # Fresnel zone
+      # Pérez-Gracia et al. (2008) Horizontal resolution in a non-destructive
+      # shallow GPR survey: An experimental evaluation. NDT & E International,
+      # 41(8): 611–620. doi:10.1016/j.ndteint.2008.06.002
+      rf <- 0.5 * sqrt(lambda * 2 * (z_d[k] - z[i]))
+      rf_tr <- round(rf/dx)
+      mt <- (i - rf_tr):(i + rf_tr)
+      mt <- mt[mt > 0 & mt <= m]
+      
+      lmt <- length(mt)
+      Ampl <- numeric(lmt)
+      for(j in mt){
+        # x_a <- (j-1)*dx
+        x_a <- xpos[j]
+        t_top <-  t_0 - 2*(z[j] - z[i])/v
+        t_x <- sqrt( t_top^2 +   4*(x_a - x_d)^2 /v2)
+        t1 <- floor(t_x/dts) + 1 # the largest integers not greater
+        t2 <- ceiling(t_x/dts) + 1 # smallest integers not less
+        if(t2 <= n && t1 > 0 && t_x != 0){
+          w <- ifelse(t1 != t2, abs((t1 - t_x)/(t1 - t2)), 0)
+          # Dujardin & Bano amplitude factor weight: cos(alpha) = t_top/t_x
+          # Ampl[j- mt[1] + 1] <- (t_top/t_x) * 
+          # ((1-w)*A[t1,j] + w*A[t2,j])
+          # http://sepwww.stanford.edu/public/docs/sep87/SEP087.Bevc.pdf
+          Ampl[j- mt[1] + 1] <- (dx/sqrt(2*pi*t_x*v))*
+            (t_top/t_x) * 
+            ((1-w)*x[t1,j] + w*x[t2,j])
+        }
         # }
         kirTopoGPR[z_idx, i] <- FUN(Ampl)
       }

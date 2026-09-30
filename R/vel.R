@@ -39,7 +39,7 @@ setGeneric("vel<-", function(x, value) standardGeneric("vel<-"))
 setReplaceMethod("vel", "GPR", function(x, value){
   if(is.list(value)){
     # FIXME
-    print(names(value))
+    # print(names(value))
     if(all(names(value) %in% c("t", "v"))){
       x@vel <- list("v" = checkVelIntegrity(x, value))
     }else{
@@ -47,7 +47,7 @@ setReplaceMethod("vel", "GPR", function(x, value){
       sel <- names(value) %in% c("vrms", "vint", "v")
       print(sel)
       if(!all(sel)){
-        print(!all(sel))
+        # print(!all(sel))
         warning("velocity type/s '", names(value)[!sel], "' is/are not supported.\n",
                 "Please use one of the following: 'vrms', 'vint', 'v'")
       }

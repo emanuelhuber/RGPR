@@ -74,9 +74,9 @@ setMethod("as.sf", signature(x = "GPRsurvey"), function(x){
 #------------------------------ SPATIAL LINES ---------------------------------#
 
 
-#' Coerce object to an object of the class SpatialLines
+#' Coerce object to an object of the class sf lines
 #'
-#' Coerce object to an object of the class SpatialLines
+#' Coerce object to an object of the class sf lines
 #' @param x (`class GPR|GPRsurvey`)
 #' @return (`SpatialLines object`)
 #' @name as.spatialLines
@@ -100,9 +100,9 @@ setMethod("as.spatialLines", signature(x = "GPR"), function(x){
 #------------------------------ SPATIAL POINTS --------------------------------#
 
 
-#' Coerce object to an object of the class SpatialPoints
+#' Coerce object to an object of the class sf points
 #'
-#' Coerce object to an object of the class SpatialPoints
+#' Coerce object to an object of the class sf points
 #' @param x (`class GPR|GPRsurvey`)
 #' @return (`SpatialPoints`)
 #' @name as.spatialPoints

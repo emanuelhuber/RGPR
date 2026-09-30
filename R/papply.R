@@ -32,13 +32,16 @@ setGeneric("papply", function(obj, prc = NULL) standardGeneric("papply"))
 setMethod("papply", "GPRsurvey", function(obj, prc = NULL) {
   
   if (isTRUE(obj@view)) {
-    message(
+
+    stop(
+      "Cannot modify a read-only GPRsurvey view. ",
+      "Use materialize() first.",
       "This GPRsurvey object is a view of an existing HDF5 file. ",
       "The processing was not written to the HDF5 file, and the object ",
       "is returned unchanged. Use materialize(x, dsn = ...) first if ",
       "you want an independent, writable survey."
     )
-    return(obj)
+    # return(obj)
   }
   
   if (!is.list(prc)) {

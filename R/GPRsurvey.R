@@ -335,17 +335,17 @@ GPRsurveyInit <- function(n = 1){
       names          = character(n),     
       descs          = character(n),
       modes      = character(n),
-      dates     = character(n),
+      dates     = as.Date(rep(NA, n)),
       freqs     = numeric(n),
       antseps   = numeric(n),
       spunit    = NA_character_,
       crs       = NA_character_,
-      coords    = list(),       # (x,y,z) coordinates for each profile
+      coords    = vector("list", n),       # (x,y,z) coordinates for each profile
       
-      markers   = list(),
+      markers   = vector("list", n),
       
-      nz        = numeric(n),
-      nx        = numeric(0),
+      nz        = integer(n),
+      nx        = integer(0),
       zlengths  = numeric(n),
       xlengths  = numeric(n),
       zunits    = character(n),

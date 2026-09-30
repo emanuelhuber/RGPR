@@ -349,6 +349,34 @@ readUtsiDat <- function(dsn, splPerScan = 512, bits = 16){
   return(list(data = xdata, fid = mrkr))
 }
 
+#' Read Utsi Electronics GPT marker files
+#'
+#' Reads a GPT file produced by Utsi Electronics GPR systems and returns
+#' the trace or marker identifiers associated with the survey.
+#'
+#' GPT files typically contain a sequence of trace indices used to link
+#' GPS positions and radar traces.
+#'
+#' @param dsn Character string or connection pointing to a GPT file.
+#'
+#' @return A numeric vector containing trace or marker identifiers.
+#'
+#' @details
+#' The function reads all values from the GPT file 
+#' and returns the resulting vector unchanged.
+#'
+#' GPT files are commonly used together with GPS files and can be passed
+#' directly to \code{\link{readUtsiGPS}} for georeferencing.
+#'
+#' @seealso
+#' \code{\link{readUtsiGPS}}
+#'
+#' @examples
+#' \dontrun{
+#' gpt <- readUtsiGPT("PROFILE.GPT")
+#' head(gpt)
+#' }
+#'
 #' @export
 readUtsiGPT <- function(dsn){
   dsn <- .openFileIfNot(dsn)  # in case there is some binary stuff
@@ -356,9 +384,60 @@ readUtsiGPT <- function(dsn){
   .closeFileIfNot(dsn)
   return(gpt)
 }
-# dsn0 <- dsn
-# dsn <- dsn[["GPS"]]
-# $GPGGA,140454.00,5518.98033,N,00203.66162,W,1,09,1.19,123.0,M,48.6,M,,*48
+
+#' Read Utsi Electronics GPS files
+#'
+#' Reads GPS data exported by Utsi Electronics GPR systems and associates
+#' the recorded positions with trace identifiers stored in a GPT file.
+#'
+#' GPS coordinates are extracted from NMEA GPGGA sentences and may
+#' optionally be projected to UTM coordinates.
+#'
+#' @param dsn Character string or connection pointing to the GPS file.
+#' @param gpt Numeric vector of trace identifiers, typically obtained
+#' from \code{\link{readUtsiGPT}}.
+#' @param UTM Logical. If `TRUE`, coordinates are projected to UTM.
+#' If `FALSE`, geographic coordinates are retained.
+#'
+#' @return
+#' An \code{sf} object with a single attribute:
+#' \describe{
+#' \item{id}{Trace identifier from the GPT file.}
+#' }
+#'
+#' Geometry coordinates correspond to \code{x}, \code{y} and \code{z}
+#' positions derived from the GPS records.
+#'
+#' Returns `NULL` if the GPS file is empty or if the number of GPS
+#' positions does not match the number of GPT trace identifiers.
+#'
+#' @details
+#' The function expects NMEA GPGGA records, for example:
+#'
+#' \preformatted{
+#' $GPGGA,140454.00,5518.98033,N,00203.66162,W,
+#' 1,09,1.19,123.0,M,48.6,M,,*48
+#' }
+#'
+#' Geographic coordinates are extracted using
+#' \code{\link{getLonLatFromGPGGA}} and optionally projected using
+#' \code{\link{projectXYZT}}. The resulting coordinates are combined
+#' with the GPT trace identifiers and returned as an
+#' \code{\link[sf]{sf}} point object.
+#'
+#' @seealso
+#' \code{\link{readUtsiGPT}},
+#' \code{\link{getLonLatFromGPGGA}}
+#'
+#' @examples
+#' \dontrun{
+#' gpt <- readUtsiGPT("PROFILE.GPT")
+#' gps <- readUtsiGPS("PROFILE.GPS", gpt)
+#'
+#' plot(sf::st_geometry(gps))
+#' head(gps)
+#' }
+#'
 #' @export
 readUtsiGPS <- function(dsn, gpt, UTM = TRUE){
   x <- scan(dsn, what = character(), sep = "\n", quiet = TRUE)

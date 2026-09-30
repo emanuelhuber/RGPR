@@ -3,10 +3,10 @@
 \name{resampleRegGrid}
 \alias{resampleRegGrid}
 \alias{resampleRegGrid,GPR-method}
-\title{Resample GPR data (2D) to a regular grid}
+\title{Resample a GPR profile to a regular grid}
 \usage{
 resampleRegGrid(
-  x,
+  obj,
   dx = NULL,
   dz = NULL,
   method = c("linear", "nearest", "pchip", "cubic", "spline"),
@@ -14,7 +14,7 @@ resampleRegGrid(
 )
 
 \S4method{resampleRegGrid}{GPR}(
-  x,
+  obj,
   dx = NULL,
   dz = NULL,
   method = c("linear", "nearest", "pchip", "cubic", "spline"),
@@ -22,45 +22,81 @@ resampleRegGrid(
 )
 }
 \arguments{
-\item{x}{(\code{GPR}) An object of the class GPR.}
+\item{obj}{A \code{\linkS4class{GPR}} object.}
 
-\item{track}{(\code{logical[1]}) Should the processing step be tracked?}
+\item{dx}{Numeric. Desired trace spacing in the horizontal direction.
+If \code{NULL}, the average spacing of \code{obj@x} is used. If
+\code{FALSE}, no resampling is performed along the horizontal axis.}
 
-\item{type}{(\code{character[1]}) Dewow method,
-one of \code{runmed} (running median),
-\code{runmean} (running mean),
-\code{Gaussian} (Gaussian smoothing).}
+\item{dz}{Numeric. Desired sample spacing in the vertical direction.
+If \code{NULL}, the average spacing of \code{obj@z} is used. If
+\code{FALSE}, no resampling is performed along the vertical axis.}
 
-\item{w}{(\code{numeric[1]}) If \code{type} = \code{runmed},
-\code{MAD} or \code{runmean}, window length of the filter in
-trace unit;
-If \code{type} = \code{Gaussian}, standard deviation in trace
-unit.
-If \code{w = NULL}, \code{w} is estimated as five times the
-wavelength corresponding to the maximum frequency of x
-(estimated with \link{spec})}
+\item{method}{Character string specifying the interpolation method passed
+to \code{\link[signal]{interp1}}. One of:
+\describe{
+\item{\code{"linear"}}{Linear interpolation.}
+\item{\code{"nearest"}}{Nearest-neighbour interpolation.}
+\item{\code{"pchip"}}{Shape-preserving cubic interpolation.}
+\item{\code{"cubic"}}{Cubic interpolation.}
+\item{\code{"spline"}}{Cubic spline interpolation.}
+}}
+
+\item{track}{Logical. If \code{TRUE}, the processing step is added to the
+processing history stored in the object.}
 }
 \value{
-(\code{GPR}) An object of the class GPR whose traces are dewowed.
+A \code{\linkS4class{GPR}} object resampled onto a regular grid.
 }
 \description{
-\code{resampleRegGrid} remove the low-frequency component (the so-called 'wow') of
-every traces.
+Resamples a \code{\linkS4class{GPR}} object onto a regular spatial
+(\eqn{x}) and/or temporal/depth (\eqn{z}) grid using interpolation.
 }
 \details{
-The low-frequency component is computed by different methods:
+This function is useful for correcting irregular trace spacing,
+standardizing sampling intervals, and preparing data for imaging,
+migration, filtering, or comparison between profiles.
+
+The radargram amplitudes are interpolated independently along the
+horizontal (\eqn{x}) and vertical (\eqn{z}) dimensions.
+
+When resampling along the profile direction (\code{dx}), the function also
+interpolates associated trace attributes where available:
 \itemize{
-\item \code{runmed} running median based on \link[stats:runmed]{stats::runmed}
-\item \code{runmean} running mean based on \link[stats:filter]{stats::filter}
-\item \code{MAD} DEPRECATED - Median Absolute Deviation filter
-\item \code{Gaussian} Gaussian smoothing applied to the trace samples
-after time-zero based on \link[mmand:gaussianSmooth]{mmand::gaussianSmooth}
+\item trace positions (\code{@x}),
+\item first-break positions (\code{@z0}),
+\item acquisition times (\code{@time}),
+\item antenna separations (\code{@antsep}),
+\item marker information (\code{@markers}),
+\item annotations (\code{@ann}),
+\item spatial coordinates (\code{@coord}),
+\item antenna orientation angles (\code{@angles}).
 }
 
-Modified slots:
-\itemize{
-\item \code{data}: trace dewowed.
-\item \code{proc}: updated with function name and arguments.
+Spatial coordinates are resampled along cumulative profile distance using
+\code{\link{pathRelPos}}. This preserves the geometry of curved survey
+lines.
+
+Resampling of receiver coordinates (\code{@rec}) and transmitter
+coordinates (\code{@trans}) is currently not implemented and will generate
+an error if present.
 }
+\examples{
+\dontrun{
+data(frenkeLine00)
+
+# Resample to a regular trace spacing of 0.05 m
+x <- resampleRegGrid(frenkeLine00, dx = 0.05)
+
+# Resample both horizontal and vertical axes
+x <- resampleRegGrid(frenkeLine00,
+dx = 0.05,
+dz = 0.2)
+
+# Use shape-preserving interpolation
+x <- resampleRegGrid(frenkeLine00,
+method = "pchip")
+}
+
 }
 \concept{processing}

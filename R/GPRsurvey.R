@@ -274,3 +274,100 @@ GPRsurvey <- function(x, dsn,
 
   survey
 }
+
+#' Create an empty GPRsurvey object
+#'
+#' Creates and initializes an empty \code{GPRsurvey} object containing
+#' metadata and placeholders for \code{n} GPR profiles. The returned object
+#' can subsequently be populated with imported or manually created
+#' \code{GPR} datasets.
+#'
+#' @param n Integer. Number of profiles to initialize in the survey.
+#' Must be greater than 0. Values are rounded and coerced to integer.
+#'
+#' @return
+#' An object of class \code{\linkS4class{GPRsurvey}} with slots initialized
+#' to empty values of the appropriate type and length.
+#'
+#' @details
+#' The function allocates storage for profile-level metadata including:
+#' \itemize{
+#' \item file paths and profile names,
+#' \item acquisition dates,
+#' \item antenna frequencies,
+#' \item antenna separations,
+#' \item coordinate reference system (CRS),
+#' \item spatial coordinates,
+#' \item profile dimensions and units.
+#' }
+#'
+#' The survey-level fields \code{path}, \code{name}, and \code{desc} are
+#' initialized as empty character vectors, while profile-specific
+#' information is stored in the corresponding plural slots
+#' (\code{paths}, \code{names}, \code{descs}, etc.).
+#'
+#' @seealso
+#' \code{\linkS4class{GPRsurvey}},
+#' \code{\link{GPRsurvey}}
+#'
+#' @examples
+#' \dontrun{
+#' # Create an empty survey containing a single profile
+#' s <- GPRsurveyInit()
+#'
+#' # Create an empty survey for 10 profiles
+#' s <- GPRsurveyInit(10)
+#'
+#' # Check number of allocated profiles
+#' length(s@paths)
+#' }
+#' @export
+GPRsurveyInit <- function(n = 1){
+  n <- as.integer(round(n))
+  if(n < 1) stop("'n' must be strictly positiv!")
+  new("GPRsurvey",
+      version       = "0.3",
+      path          = character(n),      
+      name          = character(1),     
+      desc          = character(1),
+      
+      paths          = character(n),      
+      names          = character(n),     
+      descs          = character(n),
+      modes      = character(n),
+      dates     = character(n),
+      freqs     = numeric(n),
+      antseps   = numeric(n),
+      spunit    = NA_character_,
+      crs       = NA_character_,
+      coords    = list(),       # (x,y,z) coordinates for each profile
+      
+      markers   = list(),
+      
+      nz        = numeric(n),
+      nx        = numeric(0),
+      zlengths  = numeric(n),
+      xlengths  = numeric(n),
+      zunits    = character(n),
+      transf    = numeric(0),
+      view      = FALSE
+
+  )
+}
+
+
+# Compute the orientation angle of GPR profile
+# TODO: compute all the angles (maybe not a good idea...)
+gprAngle <- function(x){
+  #dEN <- x@coord[1:(length(x) - 1),1:2] - x@coord[2:length(x),1:2]
+  # return(atan2(dEN[1,2], dEN[1,1]))
+  dEN <- x@coord[1,1:2] - tail(x@coord[,1:2],1)
+  return(atan2(dEN[2], dEN[1]))
+}
+
+# is angle b between aref - 1/2*atol and aref + 1/2*atol?
+inBetAngle <- function(aref, b, atol = pi/10){
+  dot <- cos(b)*cos(aref) + sin(b) * sin(aref)
+  return(acos(dot) <= atol)
+}
+

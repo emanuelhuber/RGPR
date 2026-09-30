@@ -11,6 +11,7 @@ readGPR(
   verbose = TRUE,
   interpGPS = TRUE,
   UTM = TRUE,
+  endian = .Platform$endian,
   ...
 )
 }

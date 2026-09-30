@@ -22,5 +22,5 @@ Reads the binary DZT file and returns the raw data array together with the
 parsed header and axis vectors.
 }
 \seealso{
-\code{\link[=readDZG]{readDZG()}}, \code{\link[=eadDZX]{eadDZX()}}
+\code{\link[=readDZG]{readDZG()}}, \code{\link[=readDZX]{readDZX()}}
 }

@@ -27,6 +27,8 @@
 #' @param desc    (`character(1)`) Short data description.
 #' @param Vmax    (`numeric(1)|NULL`) Nominal input voltage for bit conversion.
 #' @param verbose (`logical(1)`) Print progress messages.
+#' @param endian (`character(1)`) The endian-ness ("big" or "little") of the target system for 
+#'               the file. Using "swap" will force swapping endian-ness.
 #' @param ...     Currently unused; reserved for future use.
 #'
 #' @return A named list with:
@@ -34,7 +36,8 @@
 #'   \item{x_gps}{\code{NULL} (SEG-Y carries no GPS companion file).}
 #'
 #' @keywords internal
-.read_sgy <- function(dsn, fName, fPath, desc, Vmax, verbose, ...) {
+#' @noRd
+.read_sgy <- function(dsn, fName, fPath, desc, Vmax, verbose, endian = .Platform$endian, ...) {
   
   # Accept either extension key
   data_slot <- if (!is.null(dsn[["SGY"]])) "SGY" else "SEGY"
@@ -45,26 +48,43 @@
     con <- file(con, "rb")
   }
   
-  ENDIAN <- "big"
-  THD    <- readSGY_textual_file_header(con, ENDIAN = ENDIAN)
+  ndn <- c("little", "big")
   
-  is_radsys <- any(verboseF(grepl("Prism",              THD), verbose = FALSE)) &&
-    any(verboseF(grepl("Radar Systems, Inc.", THD), verbose = FALSE))
+  # first attempt
+  A <- tryCatch( verboseF(readSGY(con, ENDIAN = endian), verbose = verbose),
+    error = function(e) NULL
+  )
   
-  if (is_radsys) {
-    A <- verboseF(readSEGY_RadSys_Zond_GPR(con), verbose = verbose)
-    x <- verboseF(.gprSEGY(A, fName = fName, fPath = fPath,
-                           desc = desc, Vmax = Vmax),
-                  verbose = verbose)
-  } else {
-    A <- verboseF(readSGY(con), verbose = verbose)
-    x <- verboseF(.gprSGY(A, fName = fName, fPath = fPath,
-                          desc = desc, Vmax = Vmax),
-                  verbose = verbose)
+  # second attempt with opposite endianness
+  if (is.null(A)) {
+    if (inherits(con, "connection")) {
+      try(suppressWarnings(close(con)), silent = TRUE)
+      if (!inherits(dsn[[data_slot]], "connection")) {
+        con <- file(dsn[[data_slot]], "rb")
+      } else {
+        con <- dsn[[data_slot]]
+      }
+    }
+    
+    ndn2 <- ndn[ndn != endian]
+    A <- tryCatch(verboseF(readSGY(con, ENDIAN = ndn2), verbose = verbose),
+      error = function(e) NULL
+    )
   }
+  
+  if (is.null(A)) {
+    stop("Failed to read SEG-Y file with either '", endian, "' or '",
+      ndn[ndn != endian], "' endianness.")
+  }
+  
+  x <- verboseF(
+    .gprSGY(A, fName = fName, fPath = fPath, desc = desc, Vmax = Vmax ),
+    verbose = verbose
+  )
   
   list(x = x, x_gps = NULL)
 }
+
 
 
 # -----------------------------------------------------------------------------
@@ -278,13 +298,13 @@ register_gpr_format(
     }
   }
   
-  xpos <- 1:n
+  xx <- 1:n
   if(sum(abs(data_xyz)) > 1e-5){
     if(sum(abs(data_xyz[, 2:3])) < 1e-5){
-      xpos <- data_xyz[, 1]
+      xx <- data_xyz[, 1]
       data_xyz <- matrix(nrow = 0, ncol = 0)
     }else{
-      xpos <- posLine(data_xyz)
+      xx <- xpos(data_xyz)
     } 
   }
   
@@ -295,7 +315,7 @@ register_gpr_format(
            traces      = x$DTR$trHD[1,],
            fid         = rep("", n),
            coord       = data_xyz, # matrix(nrow = 0, ncol = 0),
-           pos         = xpos,
+           pos         = xx,
            depth       = seq(0, by = data_dt, length.out = nrow(x$DTR$data)),
            rec         = matrix(nrow = 0, ncol = 0),
            trans       = matrix(nrow = 0, ncol = 0),
@@ -326,7 +346,7 @@ register_gpr_format(
     trc_seq_unique <- unique(trc_seq)
     if(length(trc_seq_unique) > 1){
       # Y <- list()
-      Ys <- GPRsurveyEmpty(length(trc_seq_unique))
+      Ys <- GPRsurveyInit(length(trc_seq_unique))
       for(i in seq_along(trc_seq_unique)){
         # Y[[i]] <- y[, trc_seq %in% trc_seq_unique[i]]
         Ys[[i]] <- y[, trc_seq %in% trc_seq_unique[i]]

@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{(\code{GPR})}
 
-\item{...}{Additional parameters to be passed (see \code{\link[=mean]{mean()}}).}
+\item{...}{Additional parameters to be passed (see \code{\link[base:mean]{base::mean()}}).}
 }
 \description{
 Mean of all the values contained in \code{x}.

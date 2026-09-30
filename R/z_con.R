@@ -77,3 +77,28 @@ readBinary <- function(con, what, n = 1L, size = NA_integer_, signed = TRUE,
 # .skipBin <- function(con, n, size = 1L){
 #   if(n > 0) invisible(readBin(con, "integer", n = n, size = size))
 # }
+
+int2ascii <- function(con, n){
+  x <- readBin(con, what = integer(), n = n, size = 1)
+  return( (intToUtf8(x)) )
+}
+
+# read characters and coerce them to numeric
+ascii2num <- function(con, n){
+  x <- readBin(con, what = integer(), n = n, size = 1)
+  return( as.numeric(intToUtf8(x)) )
+}
+
+readBinChar <- function(con, n = 1L, size = NA_integer_, signed = TRUE,
+                        endian = .Platform$endian){
+  intToUtf8(readBin(con, what = integer(), n = n, size = size,
+                    signed = signed, endian = endian))
+}
+
+#' Fix a 32 bit unsigned integer that has been read as signed
+int32touint32 <- function(x, nbits = 32){
+  signs <- sign(x)
+  x[signs < 0] <- x[signs < 0] + 2^nbits
+  return(x)
+}
+

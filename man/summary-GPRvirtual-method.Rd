@@ -9,7 +9,7 @@
 \arguments{
 \item{object}{(\code{GPR})}
 
-\item{...}{Additional parameters to be passed (see \code{\link[=summary]{summary()}}).}
+\item{...}{Additional parameters to be passed (see \code{\link[base:summary]{base::summary()}}).}
 }
 \description{
 Summary of all the values contained in \code{object}.

@@ -29,11 +29,17 @@ reference system to a regional reference coordinate system),
 \describe{
 \item{\code{version}}{(\code{character[1]}) Version of RGPR.}
 
+\item{\code{name}}{(\code{character[1]}) Name of the GPR survey}
+
+\item{\code{desc}}{(\code{character[1]}) Description of the GPR survey}
+
+\item{\code{path}}{(\code{character[1]}) File path of the original GPR survey}
+
 \item{\code{names}}{(\code{character[k]}) Names of the GPR data.}
 
-\item{\code{paths}}{(\code{character[k]}) File paths of the original GPR data.}
-
 \item{\code{descs}}{(\code{character[k]}) Descriptions of the GPR data.}
+
+\item{\code{paths}}{(\code{character[k]}) File paths of the original GPR data.}
 
 \item{\code{modes}}{(\code{character[k]}) Survey modes of the GPR data
 (e.g., \code{"CO"}, \code{"CMP"}).}

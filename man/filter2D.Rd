@@ -147,8 +147,8 @@ filter2Dimsharpen(
 filter2DlocalContrast(
   obj,
   win = 3,
-  alpha = 0,
-  epsilon = 1e-08,
+  alpha = 0.1,
+  epsilon = sqrt(.Machine$double.eps),
   ...,
   track = TRUE
 )
@@ -156,7 +156,7 @@ filter2DlocalContrast(
 filter2DsmoothSparse(obj, scale = 0.05, power = 1.5, ..., track = TRUE)
 }
 \arguments{
-\item{obj}{(\code{GPR* object}) Object inheriting from \code{GPRvirtual}.}
+\item{obj}{(\code{GPR* object})}
 
 \item{type}{(\code{character[1]}) Filter method.}
 
@@ -174,7 +174,13 @@ filter2DsmoothSparse(obj, scale = 0.05, power = 1.5, ..., track = TRUE)
 
 \item{anisotropy}{numeric, default 0.6. Controls anisotropy of smoothing.}
 
-\item{alpha}{numeric, default 0.5. Threshold blending factor.}
+\item{alpha}{(\code{numeric[1]}) A non-negative numeric scalar defining the minimum local
+standard deviation as a fraction of the global standard deviation of
+\code{image}. For example, \code{alpha = 0.1} prevents the local standard
+deviation from falling below 10 percent of the global standard deviation.
+This limits noise amplification in locally homogeneous areas. Set to
+\code{0} to disable the relative standard-deviation floor. The default is
+\code{0.1}.}
 
 \item{dl}{numeric, default 0.8. Step size along linear diffusion.}
 
@@ -184,17 +190,21 @@ filter2DsmoothSparse(obj, scale = 0.05, power = 1.5, ..., track = TRUE)
 
 \item{strength}{numeric attenuation factor (0-1)}
 
-\item{epsilon}{Small numeric value to avoid division by zero (default is 1e-8).}
+\item{win}{(\code{integer[1]}) A positive odd integer greater than or equal to \code{3}
+specifying the number of rows and columns in the square sliding window.
+Larger values enhance features relative to a broader spatial
+neighbourhood. The default is \code{3L}.}
+
+\item{epsilon}{(\code{numeric[1]})A positive numeric scalar defining the absolute lower bound
+applied to the denominator. It provides numerical stability when the
+global and local standard deviations are zero or nearly zero. The default
+is \code{sqrt(.Machine$double.eps)}.}
 
 \item{scale}{Numeric value controlling soft threshold (default 0.05).}
 
 \item{power}{Numeric exponent for amplifying high values (default 1.5).}
 
 \item{amount}{numeric, default 1. Strength of sharpening.}
-
-\item{image}{Numeric matrix representing a grayscale image.}
-
-\item{window_size}{Odd integer specifying the size of the sliding window (default is 3).}
 
 \item{image_matrix}{Numeric matrix representing the GPR depth-slice.}
 }
@@ -209,7 +219,7 @@ Object of same class as \code{obj} with processed data.
 
 Object of same class as \code{obj} with processed data.
 
-Numeric matrix of the same dimensions as \code{image}, with values normalized to \verb{[0,1]}.
+GPR object
 
 Numeric matrix of same size as image_matrix, normalized to \verb{[0,1]}.
 }
@@ -242,8 +252,29 @@ Uses \pkg{imager}::imlap.
 
 Sharpens the GPR data using \pkg{imager}::imsharpen.
 
-Enhances the local contrast of a grayscale image (matrix) using a sliding window approach.
-Each pixel is transformed based on the local mean and standard deviation in its neighborhood.
+The matrix is processed using a square sliding window. For each finite cell
+\eqn{x_{ij}}, the locally standardized value is calculated as
+
+\deqn{
+z_{ij} =
+\frac{x_{ij} - \mu_{ij}}
+{\max(\sigma_{ij}, \sigma_{\mathrm{min}})}
+}
+
+where \eqn{\mu_{ij}} and \eqn{\sigma_{ij}} are the mean and standard
+deviation within the local window. The lower bound
+\eqn{\sigma_{\mathrm{min}}} is defined as
+\code{alpha} times the global standard deviation of the matrix, subject to
+the absolute lower bound given by \code{epsilon}.
+
+The standard-deviation floor prevents excessive amplification of small
+variations in locally homogeneous areas. This transformation produces
+signed local standardized values and does not perform histogram
+equalization.
+
+Matrix edges are handled by replicating the nearest edge values. Non-finite
+values are excluded from the local statistics, and non-finite cells in the
+original matrix remain missing in the output.
 
 Applies a smooth nonlinear transformation to increase sparsity in a GPR depth-slice.
 Small values near zero are compressed while peaks and valleys are amplified.
@@ -267,6 +298,10 @@ processed independently.
 Many functions rely on the \pkg{imager} package. If \pkg{imager} is not
 installed the corresponding functions will throw an informative error
 telling the user to install \pkg{imager}.
+
+Enhances the local contrast of a numeric matrix by centring each cell on
+the mean of its local neighbourhood and scaling it by the corresponding
+local standard deviation.
 }
 \examples{
 \dontrun{

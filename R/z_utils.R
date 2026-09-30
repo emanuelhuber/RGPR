@@ -279,6 +279,8 @@ freqFromString <- function(s){
   }
 }
 
+
+
 # x = data.frame tag + val
 .getHD <- function(x, pattern){
   idx <- grep(pattern, x$tag, ignore.case = TRUE)
@@ -290,6 +292,53 @@ freqFromString <- function(s){
 }
 
 
+#' Extract frequency values followed by MHz or GHz from a character string
+#'
+#' Searches a character string for a numeric value immediately followed by
+#' the units "MHz" or "GHz" (case-insensitive) and returns the extracted
+#' frequency as a numeric value.
+#'
+#' Non-UTF-8 characters are removed before pattern matching. Any decimal
+#' separators or unit strings are stripped from the matched text before
+#' conversion to numeric.
+#'
+#' @param s A character string potentially containing a frequency value
+#' followed by the unit "MHz" or "GHz".
+#'
+#' @return
+#' A numeric value containing the extracted frequency. Returns `NULL` if
+#' no frequency pattern is found.
+#'
+#' @details
+#' The function searches for patterns of the form:
+#' \preformatted{
+#' <number>MHz
+#' <number>GHz
+#' }
+#'
+#' Matching is case-insensitive. Note that decimal points are currently
+#' removed during extraction because all non-numeric characters are
+#' stripped before conversion. For example, `"12.3 GHz"` is returned as
+#' `123`.
+#'
+#' @examples
+#' freqFromStringMHzGHz("200-MHZ")
+#' freqFromStringMHzGHz("12.3 GHz")
+#' freqFromStringMHzGHz("Radar_400MHz")
+#' freqFromStringMHzGHz("No frequency here")
+#'
+#' @export
+freqFromStringMHzGHz <- function(s){
+  s <- iconv(s, "UTF-8", "UTF-8",sub='') ## replace any non UTF-8 by '
+  a <- regexpr("[0-9]+.(MHZ|GHZ)",  s, ignore.case = TRUE, perl = FALSE)
+  b <- regmatches(s,  a)
+  b <- as.numeric(gsub("[^0-9]", "", b))
+  if(length(b) == 0){
+    return(NULL)
+  }else{
+    return(b)
+  }
+}
 
 
 #' Estimate antenna separation from antenna frequency

@@ -227,6 +227,7 @@ freqFromString <- function(ant_name) {
 #'         \code{GPRset} (multi-channel).
 #'
 #' @keywords internal
+#' @noRd
 .gprDZT <- function(x, fName = character(0), fPath = character(0),
                     desc = character(0), Vmax = NULL) {
   
@@ -365,7 +366,7 @@ freqFromString <- function(ant_name) {
 #'   \item{depth}{Time vector (ns).}
 #'   \item{pos}{Nominal position vector (m).}
 #'
-#' @seealso [RGPR::readDZG()], [RGPR::eadDZX()]
+#' @seealso [RGPR::readDZG()], [RGPR::readDZX()]
 #' @name readDZT
 #' @rdname readDZT
 #' @export

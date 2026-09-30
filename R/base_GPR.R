@@ -17,7 +17,7 @@ setMethod("length", "GPRcube", function(x) dim(x@data)[3])
 #' 
 #' Summary of all the values contained in `object`.
 #' @param object (`GPR`)
-#' @param ... Additional parameters to be passed (see [summary()]).
+#' @param ... Additional parameters to be passed (see [base::summary()]).
 #' @aliases summary,GPRvirtual-method
 #' @export
 #' @concept statistics
@@ -27,7 +27,7 @@ setMethod("summary", "GPRvirtual", function(object, ...) summary(as.vector(objec
 #' 
 #' Mean of all the values contained in `x`.
 #' @param x (`GPR`)
-#' @param ... Additional parameters to be passed (see [mean()]).
+#' @param ... Additional parameters to be passed (see [base::mean()]).
 #' @aliases mean,GPRvirtual-method
 #' @export
 #' @concept statistics
@@ -107,7 +107,7 @@ setMethod("dim", "GPRvirtual", function(x)   dim(x@data))
 #' @param na.rm	(`logical[1]`). Should missing values (including 
 #' `NaN`) be omitted from the calculations?
 #' @param dims (`integer[1]`)  Which dimensions are regarded as ‘rows’ or 
-#'             ‘columns’ to sum over.(see [colSums()]).
+#'             ‘columns’ to sum over.(see [base::colSums()]).
 #' @aliases colSums,GPRvirtual-method
 #' @rdname colSums
 #' @export

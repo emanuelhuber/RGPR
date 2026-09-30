@@ -601,7 +601,7 @@ trInterp <- function(x, z, zi){
   h5 <- hdf5r::H5File$new(obj@path, mode = "r")
   on.exit(try(h5$close_all(), silent = TRUE), add = TRUE)
   nms <- names(h5[["lines"]])
-  isDepth <- isZDepth(SU)
+  isDepth <- isZDepth(obj)
   
   if (length(unique(isDepth)) != 1L) {
     stop(

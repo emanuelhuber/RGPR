@@ -1,5 +1,48 @@
 
 
+#' Read IDS DT radar files
+#'
+#' Reads an IDS GeoRadar DT file and returns the radargram together with
+#' acquisition metadata stored in the file header.
+#'
+#' The function parses the proprietary DT header structure, extracts survey
+#' parameters (antenna frequency, spatial sampling, scan settings, GPS
+#' offsets, acquisition geometry, etc.), and loads the radar traces into a
+#' matrix.
+#'
+#' @param dsn Character string or binary connection pointing to a DT file.
+#' @param endian Character string specifying the byte order used when reading
+#' binary values. Typically `"little"` or `"big"`.
+#'
+#' @return A list with the following elements:
+#' \describe{
+#' \item{data}{Matrix containing radar amplitudes. Rows correspond to
+#' samples and columns to traces.}
+#' \item{HD}{List containing header information and acquisition metadata.}
+#' \item{mrk1}{Numeric vector containing marker information for each trace.}
+#' \item{mrk2}{Numeric vector containing additional marker information for
+#' each trace.}
+#' }
+#'
+#' @details
+#' The DT format contains a sequence of tagged header records followed by
+#' radar trace data. The function iteratively parses all supported tags and
+#' stores the extracted information in the returned `HD` list.
+#'
+#' The trace data are stored as signed 16-bit integers and are returned
+#' without amplitude conversion. Use \code{\link{.gprDT}} to convert the
+#' output into a \code{\linkS4class{GPR}} object.
+#'
+#' @seealso
+#' \code{\link{.gprDT}}
+#'
+#' @examples
+#' \dontrun{
+#' x <- readDT("profile.DT")
+#' str(x$HD)
+#' image(x$data)
+#' }
+#'
 #' @export
 readDT <- function(dsn, endian = endian){
   if(!inherits(dsn, "connection")){
@@ -194,6 +237,53 @@ readDT <- function(dsn, endian = endian){
   return(list(data = DD, HD = hd, mrk1 = DDhd1, mrk2 = DDhd2))
 }
 
+
+#' Convert DT data to a GPR object
+#'
+#' Internal helper function converting the output of
+#' \code{\link{readDT}} into a \code{\linkS4class{GPR}} object.
+#'
+#' Radar amplitudes are converted to voltages using calibration parameters
+#' stored in the DT header or user-supplied acquisition specifications.
+#' Spatial and temporal axes are reconstructed from the acquisition metadata.
+#'
+#' @param x List returned by \code{\link{readDT}}.
+#' @param fName Character string containing the profile name.
+#' @param desc Character string containing a profile description.
+#' @param fPath Character string containing the file path.
+#' @param nbits Optional integer specifying ADC resolution in bits.
+#' @param Vmax Optional numeric value specifying the maximum acquisition
+#' voltage. Used together with `nbits` for amplitude scaling.
+#'
+#' @return An object of class \code{\linkS4class{GPR}}.
+#'
+#' @details
+#' If both `nbits` and `Vmax` are `NULL`, amplitudes are converted using
+#' the calibration coefficients stored in the DT header:
+#'
+#' \deqn{V = (A - offset) \times conversion\_factor}
+#'
+#' where `A` is the recorded digital amplitude.
+#'
+#' Marker information is translated into trace fiducials ("MRK1", "MRK2",
+#' "GPS", or "NVSWP"). Horizontal positions are reconstructed from the
+#' acquisition spacing (`x_cell`) and offset (`offset_x`).
+#'
+#' Antenna frequency is obtained preferentially from `scan_freq`; if
+#' unavailable, `tx_freq` is used.
+#'
+#' @seealso
+#' \code{\link{readDT}},
+#' \code{\linkS4class{GPR}}
+#'
+#' @examples
+#' \dontrun{
+#' raw <- readDT("profile.DT")
+#' gpr <- .gprDT(raw)
+#' plot(gpr)
+#' }
+#' @keywords internal
+#' @noRd
 .gprDT <- function(x, fName = character(0), desc = character(0),
                    fPath = character(0), nbits = NULL, Vmax = NULL){
   # plot3D::image2D(DD)
@@ -270,6 +360,43 @@ readDT <- function(dsn, endian = endian){
   )
 }
 
+#' Read IDS GeoRadar georeferencing files
+#'
+#' Reads an IDS GeoRadar GEC file containing profile coordinates and marker
+#' information.
+#'
+#' The function extracts georeferenced positions and returns them as a matrix
+#' suitable for assigning coordinates to a \code{\linkS4class{GPR}} object.
+#'
+#' @param dsn Character string or connection pointing to a GEC file.
+#'
+#' @return A character matrix containing:
+#' \describe{
+#' \item{x}{X coordinate.}
+#' \item{y}{Y coordinate.}
+#' \item{z}{Elevation.}
+#' \item{ID}{Trace or marker identifier.}
+#' \item{crs}{Coordinate reference system identifier.}
+#' \item{crs_add}{Additional CRS information.}
+#' }
+#'
+#' @details
+#' GEC files contain metadata tags followed by comma-separated coordinate
+#' records. The function automatically locates the beginning of the coordinate
+#' table, reads all entries, and returns the relevant coordinate fields.
+#'
+#' The returned coordinates can be used to georeference a GPR profile with
+#' functions such as \code{coord<-()}.
+#'
+#' @seealso
+#' \code{\linkS4class{GPR}}
+#'
+#' @examples
+#' \dontrun{
+#' xyz <- readGEC("profile.GEC")
+#' head(xyz)
+#' }
+#'
 #' @export
 readGEC <- function(dsn){
   # if(!inherits(dsn, "connection")){

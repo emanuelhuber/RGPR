@@ -199,6 +199,7 @@ Collate:
 	'ClassGPRcube_hdf5.R'
   'hdf5_writeCube.R'
   'materialize_GPRcube.R'
+  'migrate.R'
 Imports:
     methods,
     graphics,
@@ -232,4 +233,4 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Roxygen: list(markdown = TRUE)
-Config/roxygen2/version: 8.0.0
+Config/roxygen2/version: 8.1.0

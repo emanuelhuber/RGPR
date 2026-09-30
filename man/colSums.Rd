@@ -22,7 +22,7 @@
 \code{NaN}) be omitted from the calculations?}
 
 \item{dims}{(\code{integer[1]})  Which dimensions are regarded as ‘rows’ or
-‘columns’ to sum over.(see \code{\link[=colSums]{colSums()}}).}
+‘columns’ to sum over.(see \code{\link[base:colSums]{base::colSums()}}).}
 }
 \description{
 Form row and column sums and means

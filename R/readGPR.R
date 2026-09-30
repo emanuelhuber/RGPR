@@ -92,7 +92,7 @@
 #' @export
 readGPR <- function(dsn, desc = "", Vmax = NULL,
                     verbose = TRUE, interpGPS = TRUE,
-                    UTM = TRUE, ...) {
+                    UTM = TRUE, endian = .Platform$endian, ...) {
 
   # ---- argument validation ---------------------------------------------------
   msg <- checkArgInit()
@@ -155,6 +155,7 @@ readGPR <- function(dsn, desc = "", Vmax = NULL,
                   desc    = desc,
                   Vmax    = Vmax,
                   verbose = verbose,
+                  endian = endian,
                   ...),
     verbose = verbose
   )

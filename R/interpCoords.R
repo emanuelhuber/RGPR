@@ -502,7 +502,7 @@ setMethod("interpCoords", "GPRsurvey",
 #   mrk0 <- GPGGA
 #   
 #   #--- Convert to UTM
-#   tr_crs <-  llToUTM(lat = median(sp::coordinates(mrk0)[,2]), 
+#   tr_crs <-  lonLatToUTM(lat = median(sp::coordinates(mrk0)[,2]), 
 #                      lon = median(sp::coordinates(mrk0)[,1]), 
 #                      zone = NULL, south = NULL)$crs
 #   mrk <- as.data.frame(sp::spTransform(mrk0, tr_crs))
@@ -580,7 +580,7 @@ setMethod("interpCoords", "GPRsurvey",
 #   #---- 2. convert to UTM
 #   XY <- sf::st_coordinates(xyz)
 #   XY <- XY[XY[, "L1"] == XY[1, "L1"], ]       # take the first structure
-#   u <- llToUTM(lat = XY[,2], lon = XY[,1])
+#   u <- lonLatToUTM(lat = XY[,2], lon = XY[,1])
 #   #plot(u$xy, type = "l", asp = 1)
 #   
 #   #---- 3. create "coords" file

@@ -12,6 +12,74 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// kirMigTopoConst_cpp
+NumericMatrix kirMigTopoConst_cpp(const NumericMatrix& x, const NumericVector& tx_x, const NumericVector& tx_z, const NumericVector& rx_x, const NumericVector& rx_z, const NumericVector& wq, const NumericVector& xout, const NumericVector& surface, const NumericVector& zout, double dz, double dts, double v, double max_depth, bool use_fresnel, double lambda, double max_angle, int weight_type, bool spreading, bool normalize, bool antialias, double aa_factor);
+RcppExport SEXP _RGPR_kirMigTopoConst_cpp(SEXP xSEXP, SEXP tx_xSEXP, SEXP tx_zSEXP, SEXP rx_xSEXP, SEXP rx_zSEXP, SEXP wqSEXP, SEXP xoutSEXP, SEXP surfaceSEXP, SEXP zoutSEXP, SEXP dzSEXP, SEXP dtsSEXP, SEXP vSEXP, SEXP max_depthSEXP, SEXP use_fresnelSEXP, SEXP lambdaSEXP, SEXP max_angleSEXP, SEXP weight_typeSEXP, SEXP spreadingSEXP, SEXP normalizeSEXP, SEXP antialiasSEXP, SEXP aa_factorSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type tx_x(tx_xSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type tx_z(tx_zSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type rx_x(rx_xSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type rx_z(rx_zSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type wq(wqSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type xout(xoutSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type surface(surfaceSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type zout(zoutSEXP);
+    Rcpp::traits::input_parameter< double >::type dz(dzSEXP);
+    Rcpp::traits::input_parameter< double >::type dts(dtsSEXP);
+    Rcpp::traits::input_parameter< double >::type v(vSEXP);
+    Rcpp::traits::input_parameter< double >::type max_depth(max_depthSEXP);
+    Rcpp::traits::input_parameter< bool >::type use_fresnel(use_fresnelSEXP);
+    Rcpp::traits::input_parameter< double >::type lambda(lambdaSEXP);
+    Rcpp::traits::input_parameter< double >::type max_angle(max_angleSEXP);
+    Rcpp::traits::input_parameter< int >::type weight_type(weight_typeSEXP);
+    Rcpp::traits::input_parameter< bool >::type spreading(spreadingSEXP);
+    Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
+    Rcpp::traits::input_parameter< bool >::type antialias(antialiasSEXP);
+    Rcpp::traits::input_parameter< double >::type aa_factor(aa_factorSEXP);
+    rcpp_result_gen = Rcpp::wrap(kirMigTopoConst_cpp(x, tx_x, tx_z, rx_x, rx_z, wq, xout, surface, zout, dz, dts, v, max_depth, use_fresnel, lambda, max_angle, weight_type, spreading, normalize, antialias, aa_factor));
+    return rcpp_result_gen;
+END_RCPP
+}
+// kirMigTopoVar_cpp
+NumericMatrix kirMigTopoVar_cpp(const NumericMatrix& x, const NumericVector& tx_x, const NumericVector& tx_z, const NumericVector& rx_x, const NumericVector& rx_z, const NumericVector& wq, const NumericVector& xout, const NumericVector& surface, const NumericVector& zout, double dz, double dts, double max_depth, bool use_fresnel, double lambda_per_v, double max_angle, int weight_type, bool spreading, bool normalize, bool antialias, double aa_factor, int vel_mode, const NumericVector& cum, const NumericMatrix& slow, double xv0, double dxv, double ray_step, int n_ray_max);
+RcppExport SEXP _RGPR_kirMigTopoVar_cpp(SEXP xSEXP, SEXP tx_xSEXP, SEXP tx_zSEXP, SEXP rx_xSEXP, SEXP rx_zSEXP, SEXP wqSEXP, SEXP xoutSEXP, SEXP surfaceSEXP, SEXP zoutSEXP, SEXP dzSEXP, SEXP dtsSEXP, SEXP max_depthSEXP, SEXP use_fresnelSEXP, SEXP lambda_per_vSEXP, SEXP max_angleSEXP, SEXP weight_typeSEXP, SEXP spreadingSEXP, SEXP normalizeSEXP, SEXP antialiasSEXP, SEXP aa_factorSEXP, SEXP vel_modeSEXP, SEXP cumSEXP, SEXP slowSEXP, SEXP xv0SEXP, SEXP dxvSEXP, SEXP ray_stepSEXP, SEXP n_ray_maxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type tx_x(tx_xSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type tx_z(tx_zSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type rx_x(rx_xSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type rx_z(rx_zSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type wq(wqSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type xout(xoutSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type surface(surfaceSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type zout(zoutSEXP);
+    Rcpp::traits::input_parameter< double >::type dz(dzSEXP);
+    Rcpp::traits::input_parameter< double >::type dts(dtsSEXP);
+    Rcpp::traits::input_parameter< double >::type max_depth(max_depthSEXP);
+    Rcpp::traits::input_parameter< bool >::type use_fresnel(use_fresnelSEXP);
+    Rcpp::traits::input_parameter< double >::type lambda_per_v(lambda_per_vSEXP);
+    Rcpp::traits::input_parameter< double >::type max_angle(max_angleSEXP);
+    Rcpp::traits::input_parameter< int >::type weight_type(weight_typeSEXP);
+    Rcpp::traits::input_parameter< bool >::type spreading(spreadingSEXP);
+    Rcpp::traits::input_parameter< bool >::type normalize(normalizeSEXP);
+    Rcpp::traits::input_parameter< bool >::type antialias(antialiasSEXP);
+    Rcpp::traits::input_parameter< double >::type aa_factor(aa_factorSEXP);
+    Rcpp::traits::input_parameter< int >::type vel_mode(vel_modeSEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type cum(cumSEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type slow(slowSEXP);
+    Rcpp::traits::input_parameter< double >::type xv0(xv0SEXP);
+    Rcpp::traits::input_parameter< double >::type dxv(dxvSEXP);
+    Rcpp::traits::input_parameter< double >::type ray_step(ray_stepSEXP);
+    Rcpp::traits::input_parameter< int >::type n_ray_max(n_ray_maxSEXP);
+    rcpp_result_gen = Rcpp::wrap(kirMigTopoVar_cpp(x, tx_x, tx_z, rx_x, rx_z, wq, xout, surface, zout, dz, dts, max_depth, use_fresnel, lambda_per_v, max_angle, weight_type, spreading, normalize, antialias, aa_factor, vel_mode, cum, slow, xv0, dxv, ray_step, n_ray_max));
+    return rcpp_result_gen;
+END_RCPP
+}
 // iradon_transform_fbp_rcpp
 Eigen::MatrixXd iradon_transform_fbp_rcpp(const Eigen::MatrixXd& R, int N, int M, double delta_x, double theta_min, double theta_max, double rho_min_in, double delta_rho_in, const std::string& filter, const std::string& normalization);
 RcppExport SEXP _RGPR_iradon_transform_fbp_rcpp(SEXP RSEXP, SEXP NSEXP, SEXP MSEXP, SEXP delta_xSEXP, SEXP theta_minSEXP, SEXP theta_maxSEXP, SEXP rho_min_inSEXP, SEXP delta_rho_inSEXP, SEXP filterSEXP, SEXP normalizationSEXP) {
@@ -65,6 +133,8 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_RGPR_kirMigTopoConst_cpp", (DL_FUNC) &_RGPR_kirMigTopoConst_cpp, 21},
+    {"_RGPR_kirMigTopoVar_cpp", (DL_FUNC) &_RGPR_kirMigTopoVar_cpp, 27},
     {"_RGPR_iradon_transform_fbp_rcpp", (DL_FUNC) &_RGPR_iradon_transform_fbp_rcpp, 10},
     {"_RGPR_radon_transform_rcpp", (DL_FUNC) &_RGPR_radon_transform_rcpp, 10},
     {"_RGPR_test_phantom_projection", (DL_FUNC) &_RGPR_test_phantom_projection, 1},

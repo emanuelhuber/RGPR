@@ -87,7 +87,6 @@ rotatePhase <- function(x, phi){
 
 # Hilbert transform
 # https://github.com/cran/spectral/blob/master/R/hilbert.R
-#' @export
 HilbertTransf <- function(x, npad = 10){
   x <- as.numeric(x)
   n <- length(x)
@@ -129,7 +128,6 @@ HilbertTransf <- function(x, npad = 10){
 
 # Hilbert transform
 # https://github.com/cran/spectral/blob/master/R/hilbert.R
-#' @export
 HilbertTransfMV <- function(x, npad = 10){
   if(npad < 0) stop("'npad' must be larger than 0")
   if(is.null(dim(x))) dim(x) <- c(length(x), 1)

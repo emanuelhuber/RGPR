@@ -23,9 +23,12 @@
 #'   \item estimate the spatial shift between two (parallel)GPR profiles.
 #' }
 #' @slot version   (`character[1]`) Version of RGPR.
+#' @slot name      (`character[1]`) Name of the GPR survey
+#' @slot desc      (`character[1]`) Description of the GPR survey
+#' @slot path      (`character[1]`) File path of the original GPR survey
 #' @slot names     (`character[k]`) Names of the GPR data.
-#' @slot paths     (`character[k]`) File paths of the original GPR data.
 #' @slot descs     (`character[k]`) Descriptions of the GPR data.
+#' @slot paths     (`character[k]`) File paths of the original GPR data.
 #' @slot modes     (`character[k]`) Survey modes of the GPR data
 #'                 (e.g., `"CO"`, `"CMP"`).
 #' @slot dates     (`Date[k]`) Date of the GPR data (class `Date`,

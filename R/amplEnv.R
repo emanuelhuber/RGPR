@@ -67,7 +67,6 @@ getAmplLocalMax <- function(x, threshold = 2){
 }
 
 # https://stackoverflow.com/questions/6836409/finding-local-maxima-and-minima
-#' @export
 localMax <- function(x, threshold = 2, addEnds = TRUE){
   up   <- sapply(1:threshold, function(n) c(x[-seq(n)], rep(NA, n)))
   down <-  sapply(-1:-threshold, function(n) c(rep(NA, abs(n)), x[-seq(length(x), length(x) - abs(n) + 1)]))

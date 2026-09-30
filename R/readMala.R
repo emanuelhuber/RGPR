@@ -310,7 +310,7 @@ readCOR <- function(dsn, toUTM = FALSE){
   }
   hCOR_crs <- "EPSG:4326"
   if(toUTM == TRUE){
-    topoUTM <-  llToUTM(lat = hCOR[["y"]], 
+    topoUTM <-  lonLatToUTM(lat = hCOR[["y"]], 
                         lon = hCOR[["x"]], 
                         zone = NULL, 
                         south = any(grepl("S", hCOR[["lat"]])),

@@ -1,7 +1,7 @@
----
-layout: page
-title: Pipe processing
-date: 2020-05-20
+--- 
+layout: page  
+title: Pipe processing  
+date: 2026-09-30  
 ---
 
 <!--
@@ -13,56 +13,56 @@ date: 2020-05-20
 
 **Note**:
 
--   This R-package is still in development, and therefore some of the functions may change in a near future.
--   If you have any questions, comments or suggestions, feel free to contact me (in english, french or german): <emanuel.huber@pm.me>.
+- This R-package is still in development, and therefore some of the
+  functions may change in a near future.
+- If you have any questions, comments or suggestions, feel free to
+  contact me (in english, french or german): <emanuel.huber@pm.me>.
 
-Table of Contents
-=================
+# Table of Contents
 
--   [Objectives of this tutorial](#objectives-of-this-tutorial)
--   [Preliminary](#preliminary)
-    -   [Install/load `RGPR`](#installload-rgpr)
-    -   [The GPR data](#the-gpr-data)
-    -   [Compute time zero](#compute-time-zero)
--   [Using the pipe operators with RPGR](#using-the-pipe-operators-with-rpgr)
-    -   [Basic piping](#basic-piping)
-    -   [The `%>%` pipe operator](#the--pipe-operator)
-    -   [The `%T>%` tee operator](#the-t-tee-operator)
+- [Objectives of this tutorial](#objectives-of-this-tutorial)
+- [Preliminary](#preliminary)
+  - [Install/load `RGPR`](#installload-rgpr)
+  - [The GPR data](#the-gpr-data)
+  - [Compute time zero](#compute-time-zero)
+- [Using the pipe operators with
+  RPGR](#using-the-pipe-operators-with-rpgr)
+  - [Basic piping](#basic-piping)
+  - [The `|>` pipe operator](#the--pipe-operator)
 
-Objectives of this tutorial
-===========================
+# Objectives of this tutorial
 
--   Learn how to use the pipe operator `%>%` to process elegantly GPR data.
+- Learn how to use the pipe operator `%>%` to process elegantly GPR
+  data.
 
-Preliminary
-===========
+# Preliminary
 
--   Read the tutorial [Basic GPR data processing](http://emanuelhuber.github.io/RGPR/01_RGPR_tutorial_basic-processing/) to learn more about the processing methods
+- Read the tutorial [Basic GPR data
+  processing](http://emanuelhuber.github.io/RGPR/01_RGPR_tutorial_basic-processing/)
+  to learn more about the processing methods
 
-Install/load `RGPR`
--------------------
+## Install/load `RGPR`
 
 ``` r
-# install "devtools" if not already done
-if(!require("devtools")) install.packages("devtools")
-devtools::install_github("emanuelhuber/RGPR")
+# install "remotes" if not already done
+if(!require("remotes")) install.packages("remotes")
+remotes::install_github("emanuelhuber/RGPR")
 library(RGPR)       # load RGPR in the current R session
 ```
 
-The GPR data
-------------
+## The GPR data
 
-`RPGR` comes along with a GPR data called `frenkeLine00`. Because this name is long, we set `x` equal to `frenkeLine00`:
+`RPGR` comes along with a GPR data called `frenkeLine00`. Because this
+name is long, we set `x` equal to `frenkeLine00`:
 
 ``` r
 x <- frenkeLine00
 plot(x)
 ```
 
-![plot(x)](03_RGPR_tutorial_processing-GPR-data-with-pipe-operator_tp_files/figure-markdown_github/x-1.png)
+![](03_RGPR_tutorial_processing-GPR-data-with-pipe-operator_files/figure-markdown_github/x-1.png)
 
-Compute time zero
------------------
+## Compute time zero
 
 ``` r
 tfb <- firstBreak(x, w = 10, method = "coppens", thr = 0.05)
@@ -71,28 +71,30 @@ t0 <- firstBreakToTime0(tfb[1], x[,1])
 abline(v = c(tfb[1], t0[1]), col = c("green", "blue"))
 ```
 
-![time zero](03_RGPR_tutorial_processing-GPR-data-with-pipe-operator_tp_files/figure-markdown_github/time_zero-1.png)
+![](03_RGPR_tutorial_processing-GPR-data-with-pipe-operator_files/figure-markdown_github/time_zero-1.png)
 
-Using the pipe operators with RPGR
-==================================
+# Using the pipe operators with RPGR
 
-Basic piping
-------------
+## Basic piping
 
-Here a short excerpt of this webpage (<https://magrittr.tidyverse.org/>) that explains how to use `%>%`.
+Here a short excerpt that explains how to use pipe operators:
 
-> The operators pipe their left-hand side values forward into expressions that appear on the right-hand side, i.e. one can replace `f(x)` with `x %>% f()`, where `%>%` is the pipe operator.
+<https://rstudio-pubs-static.s3.amazonaws.com/1368525_31210c1c422f4faa9c8df4364ea8543d.html>
 
--   `x %>% f` is equivalent to `f(x)`
--   `x %>% f(y)` is equivalent to `f(x, y)`
--   `x %>% f %>% g %>% h` is equivalent to `h(g(f(x)))`
+**Note:** In the following, we will only focus on the base R pipe
+operator `|>`.
+
+> The operators pipe their left-hand side values forward into
+> expressions that appear on the right-hand side, i.e. one can replace
+> `f(x)` with `x |> f()`, where `|>` is the pipe operator.
+
+- `x |> f` is equivalent to `f(x)`
+- `x |> f(y)` is equivalent to `f(x, y)`
+- `x |> f |> g |> h` is equivalent to `h(g(f(x)))`
 
 With pipe operators, the code is more compact and better readable.
 
-The `%>%` pipe operator
------------------------
-
-`RGPR` exports the `%>%` pipe operator from the `magrittr` package.
+## The `|>` pipe operator
 
 Without pipe operator, we would code something like that:
 
@@ -105,19 +107,20 @@ x4 <- fFilter(x3, f = c(100, 280), type = "low", plotSpec = FALSE)
 x5 <- gain(x4, type = "agc", w =  5)
 ```
 
-The same code with the `%>%` pipe operator.
+The same code with the `|>` pipe operator.
 
 ``` r
-xnew <- x %>%
-  setTime0(t0) %>%
-  dcshift() %>%
-  dewow(type = "runmed", w = 50) %>%
-  time0Cor() %>%
-  fFilter(f = c(100, 280), type = "low", plotSpec = FALSE)  %>%
+xnew <- x |> 
+  setTime0(t0) |>
+  dcshift() |>
+  dewow(type = "runmed", w = 50) |>
+  time0Cor() |>
+  fFilter(f = c(100, 280), type = "low", plotSpec = FALSE)  |>
   gain(type = "agc", w =  5)
 ```
 
-Note that we here the `setTime0()` instead of `time0()<-`. `setTime0()` is nothing else than a wrapper for `time0()<-`:
+Note that we here the `setTime0()` instead of `time0()<-`. `setTime0()`
+is nothing else than a wrapper for `time0()<-`:
 
 ``` r
 setTime0 <- function(x, t0){
@@ -125,28 +128,5 @@ setTime0 <- function(x, t0){
 }
 ```
 
-Currently, the other replace methods of `RGPR`(`function()<-`) do not have such a wrapper. Don't hesitate to write you own wrapper.
-
-The `%T>%` tee operator
------------------------
-
-But what if you would like to plot the GPR data after the dewow filter? The function `plot()` does not return anything... The solution is to use the tee operator `%T>%` before `plot()`. `RGPR` exports the `%T>%` tee operator from the `magrittr` package.
-
-> The tee operator works exactly like %&gt;%, but it returns the left-hand side value rather than the potential result of the right-hand side operations ([source](https://www.datacamp.com/community/tutorials/pipe-r-tutorial))
-
-Here the example:
-
-``` r
-xnew <- x %>%
-  setTime0(t0) %>%
-  dcshift() %>%
-  dewow(type = "runmed", w = 50) %T>%
-  plot() %>%
-  time0Cor() %>%
-  fFilter(f = c(100, 280), type = "low", plotSpec = FALSE)  %>%
-  gain(type = "agc", w =  5)
-```
-
-![plot(dewow(x))](03_RGPR_tutorial_processing-GPR-data-with-pipe-operator_tp_files/figure-markdown_github/w_tee_pipe-1.png)
-
-In this example `dewow(type = "runmed", w = 50) %T>%  plot()` returns the output of the `dewow()` function.
+Currently, the other replace methods of `RGPR`(`function()<-`) do not
+have such a wrapper. Don’t hesitate to write you own wrapper.

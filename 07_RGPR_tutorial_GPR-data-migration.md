@@ -4,7 +4,6 @@ title: GPR data migration
 date: 2026-09-30  
 ---
 
-
 ------------------------------------------------------------------------
 
 **Note**:
@@ -69,20 +68,20 @@ I suggest to organise your files and directories as follows:
 - Install and load the `RGPR`-package
 
   ``` r
-  # install "devtools" if not already done
-  if(!require("devtools")) install.packages("devtools")
-  devtools::install_github("emanuelhuber/RGPR")
+  # install "remotes" package if not already done
+  if(!require("remotes")) install.packages("remotes")
+  remotes::install_github("emanuelhuber/RGPR")
   ```
 
       ## 
       ## ── R CMD build ─────────────────────────────────────────────────────────────────
-      ##      checking for file ‘/tmp/RtmpbpXTev/remotes485416e288a5/emanuelhuber-RGPR-5893f20/DESCRIPTION’ ...  ✔  checking for file ‘/tmp/RtmpbpXTev/remotes485416e288a5/emanuelhuber-RGPR-5893f20/DESCRIPTION’
+      ##      checking for file ‘/tmp/RtmpUv0H2M/remotes536c6d38ec54/emanuelhuber-RGPR-94ff686/DESCRIPTION’ ...  ✔  checking for file ‘/tmp/RtmpUv0H2M/remotes536c6d38ec54/emanuelhuber-RGPR-94ff686/DESCRIPTION’
       ##   ─  preparing ‘RGPR’:
-      ##    checking DESCRIPTION meta-information ...  ✔  checking DESCRIPTION meta-information
-      ## ─  cleaning src
-      ##   ─  checking for LF line-endings in source and make files and shell scripts (464ms)
+      ##    checking DESCRIPTION meta-information     checking DESCRIPTION meta-information ...  ✔  checking DESCRIPTION meta-information
+      ##     ─  cleaning src
+      ##   ─  checking for LF line-endings in source and make files and shell scripts (496ms)
       ##   ─  checking for empty or unneeded directories
-      ##   ─  building ‘RGPR_0.0.11.tar.gz’ (843ms)
+      ##   ─  building ‘RGPR_0.0.11.tar.gz’ (884ms)
       ##      
       ## 
 

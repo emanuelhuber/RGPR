@@ -222,7 +222,7 @@ gpr_mig <- migration(gpr, ...)
 
 ---
 
-## 🗺️ Work with spatial GPR surveys
+## 🗺️  Work with spatial GPR surveys
 
 Combine individual profiles into spatial surveys using `GPRsurvey`.
 
@@ -252,7 +252,7 @@ Explore GPR volumes, time/depth slices and interpreted features in 3D.
 
 ---
 
-## ✏️ Interpret your data
+## ✏️  Interpret your data
 
 Delineate and analyse features directly from GPR profiles.
 
@@ -317,24 +317,24 @@ The documentation contains tutorials and examples covering the main RGPR workflo
 ## Getting started
 
 * [Import GPR data](https://emanuelhuber.github.io/RGPR/00_RGPR_tutorial_import-GPR-data/)
-* [Plot GPR data](01_RGPR_tutorial_plot-GPR-data)
-* [Basic GPR data processing](02_RGPR_tutorial_basic-GPR-data-processing)
-* [Pipe processing](03_RGPR_tutorial_processing-GPR-data-with-pipe-operator)
+* [Plot GPR data](https://emanuelhuber.github.io/RGPR/01_RGPR_tutorial_plot-GPR-data)
+* [Basic GPR data processing](https://emanuelhuber.github.io/RGPR/02_RGPR_tutorial_basic-GPR-data-processing)
+* [Pipe processing](https://emanuelhuber.github.io/RGPR/03_RGPR_tutorial_processing-GPR-data-with-pipe-operator)
 
 
 
 
 ## Spatial GPR
 
-* [Add coordinates to GPR data](04_RGPR_tutorial_GPR-data-survey)
-* [Time/depth slice interpolation](05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D)
+* [Add coordinates to GPR data](https://emanuelhuber.github.io/RGPR/04_RGPR_tutorial_GPR-data-survey)
+* [Time/depth slice interpolation](https://emanuelhuber.github.io/RGPR/05_RGPR_tutorial_GPR-data-time-slice-interpolation-3D)
 
 
 ## Advanced processing
 
-* [GPR data migration](07_RGPR_tutorial_GPR-data-migration)
-* [Hyperbola fitting](09_RGPR_tutorial_hyperbola_fitting)
-* [Deconvolution](10_RGPR_mixed-phase-wavelet-deconvolution)
+* [GPR data migration](https://emanuelhuber.github.io/RGPR/07_RGPR_tutorial_GPR-data-migration)
+* [Hyperbola fitting](https://emanuelhuber.github.io/RGPR/09_RGPR_tutorial_hyperbola_fitting)
+* [Deconvolution](https://emanuelhuber.github.io/RGPR/10_RGPR_mixed-phase-wavelet-deconvolution)
 
 
 

@@ -1,66 +1,61 @@
--–
-layout: page
-title: GPR data migration
-date: 2023-09-24
--–
+---
+layout: page  
+title: GPR data migration  
+date: 2026-09-30  
+---
+
 
 ------------------------------------------------------------------------
 
 **Note**:
 
--   This R-package is still in development, and therefore some of the
-    functions may change in a near future.
--   If you have any questions, comments or suggestions, feel free to
-    contact me (in english, french or german):
-    <a href="mailto:emanuel.huber@pm.me" class="email">emanuel.huber@pm.me</a>.
+- This R-package is still in development, and therefore some of the
+  functions may change in a near future.
+- If you have any questions, comments or suggestions, feel free to
+  contact me (in english, french or german): <emanuel.huber@pm.me>.
 
-Table of Contents
-=================
+# Table of Contents
 
--   [Objectives of this tutorial](#objectives-of-this-tutorial)
--   [Preliminary](#preliminary)
-    -   [File organisation](#file-organisation)
-    -   [Install/load `RGPR` and set the working
-        directory](#installload-rgpr-and-set-the-working-directory)
--   [Read GPR data](#read-gpr-data)
--   [Pre-processing](#pre-processing)
-    -   [Add topographic data
-        (coordinates)](#add-topographic-data-coordinates)
-    -   [DC shift removal](#dc-shift-removal)
-    -   [First wave break estimation and set
-        time-zero](#first-wave-break-estimation-and-set-time-zero)
-    -   [Dewow](#dewow)
-    -   [Frequency filter](#frequency-filter)
-    -   [Time gain](#time-gain)
--   [Topographic Kirchhoff migration](#topographic-kirchhoff-migration)
-    -   [Pre-processing](#pre-processing)
-        -   [Constant offset correction](#constant-offset-correction)
-        -   [Time upsampling (sinc-interpolation) of the GPR data to
-            reduce the aliasing
-            risk.](#time-upsampling-sinc-interpolation-of-the-gpr-data-to-reduce-the-aliasing-risk)
-    -   [Topographic Kirchhoff
-        migration.](#topographic-kirchhoff-migration)
-    -   [Post-processing](#post-processing)
-    -   [Comparison before/after
-        migration](#comparison-beforeafter-migration)
+- [Objectives of this tutorial](#objectives-of-this-tutorial)
+- [Preliminary](#preliminary)
+  - [File organisation](#file-organisation)
+  - [Install/load `RGPR` and set the working
+    directory](#installload-rgpr-and-set-the-working-directory)
+- [Read GPR data](#read-gpr-data)
+- [Pre-processing](#pre-processing)
+  - [Add topographic data
+    (coordinates)](#add-topographic-data-coordinates)
+  - [DC shift removal](#dc-shift-removal)
+  - [First wave break estimation and set
+    time-zero](#first-wave-break-estimation-and-set-time-zero)
+  - [Dewow](#dewow)
+  - [Frequency filter](#frequency-filter)
+  - [Time gain](#time-gain)
+- [Topographic Kirchhoff migration](#topographic-kirchhoff-migration)
+  - [Pre-processing](#pre-processing)
+    - [Constant offset correction](#constant-offset-correction)
+    - [Time upsampling (sinc-interpolation) of the GPR data to reduce
+      the aliasing
+      risk.](#time-upsampling-sinc-interpolation-of-the-gpr-data-to-reduce-the-aliasing-risk)
+  - [Topographic Kirchhoff migration.](#topographic-kirchhoff-migration)
+  - [Post-processing](#post-processing)
+  - [Comparison before/after
+    migration](#comparison-beforeafter-migration)
 
-Objectives of this tutorial
-===========================
+# Objectives of this tutorial
 
 **Learn how to migrate GPR data.**
 
 Note that his tutorial will not explain you the math/algorithms behind
 the different processing methods.
 
-Preliminary
-===========
+# Preliminary
 
--   Download the data
-    [2014\_04\_25\_frenke.zip](http://emanuelhuber.github.io/RGPR/2014_04_25_frenke.zip)
--   Unzip the data
+- Download the data
+  [2014_04_25_frenke.zip](http://emanuelhuber.github.io/RGPR/2014_04_25_frenke.zip)
+  <!-- * Unzip the data -->
 
-File organisation
------------------
+## File organisation
 
 I suggest to organise your files and directories as follows:
 
@@ -69,41 +64,49 @@ I suggest to organise your files and directories as follows:
         /rawGPR          (the raw GPR data, never modify them!)
         RGPR_tutorial.R  (this is you R script for this tutorial)
 
-Install/load `RGPR` and set the working directory
--------------------------------------------------
+## Install/load `RGPR` and set the working directory
 
--   Install and load the `RGPR`-package
+- Install and load the `RGPR`-package
 
-    ``` r
-    # install "devtools" if not already done
-    if(!require("devtools")) install.packages("devtools")
-    devtools::install_github("emanuelhuber/RGPR")
-    library(RGPR)       # load RGPR in the current R session
-    ```
+  ``` r
+  # install "devtools" if not already done
+  if(!require("devtools")) install.packages("devtools")
+  devtools::install_github("emanuelhuber/RGPR")
+  ```
 
--   Set the working directory:
+      ## 
+      ## ── R CMD build ─────────────────────────────────────────────────────────────────
+      ##      checking for file ‘/tmp/RtmpbpXTev/remotes485416e288a5/emanuelhuber-RGPR-5893f20/DESCRIPTION’ ...  ✔  checking for file ‘/tmp/RtmpbpXTev/remotes485416e288a5/emanuelhuber-RGPR-5893f20/DESCRIPTION’
+      ##   ─  preparing ‘RGPR’:
+      ##    checking DESCRIPTION meta-information ...  ✔  checking DESCRIPTION meta-information
+      ## ─  cleaning src
+      ##   ─  checking for LF line-endings in source and make files and shell scripts (464ms)
+      ##   ─  checking for empty or unneeded directories
+      ##   ─  building ‘RGPR_0.0.11.tar.gz’ (843ms)
+      ##      
+      ## 
 
-    ``` r
-    myDir <- "~/2014_04_25_frenke"  # adapt that to your directory structure
-    setwd(myDir)    # set the working directory
-    getwd()         # Return the current working directory (just to check)
-    ```
+  ``` r
+  library(RGPR)       # load RGPR in the current R session
+  ```
 
-Read GPR data
-=============
+- Set the working directory:
+
+  ``` r
+  myDir <- "~/2014_04_25_frenke"  # adapt that to your directory structure
+  setwd(myDir)    # set the working directory
+  getwd()         # Return the current working directory (just to check)
+  ```
+
+# Read GPR data
 
 ``` r
-A <- readGPR(fPath = "rawGPR/LINE00.DT1")   # the filepath is case sensitive!
+A <- readGPR(dsn = "rawGPR/LINE00.DT1")   # the filepath is case sensitive!
 ```
 
-    ## Warning in readGPR(fPath = "rawGPR/LINE00.DT1"): Argument 'fPath' is
-    ## deprecated. Use instead 'dsn' (data source name)
+# Pre-processing
 
-Pre-processing
-==============
-
-Add topographic data (coordinates)
-----------------------------------
+## Add topographic data (coordinates)
 
 We assume that for each GPR record there is a file containing the (x, y,
 z) coordinates of every traces. The header of these files is “E”, “N”,
@@ -135,8 +138,7 @@ TOPOList <- readTopo(TOPO, sep = "\t")
 coord(A) <- TOPOList[[1]]
 ```
 
-DC shift removal
-----------------
+## DC shift removal
 
 Remove the DC-offset estimated on the first n samples usind the function
 `dcshift()`. This function takes as argument the `GPR` object and the
@@ -144,11 +146,10 @@ sample index used to estimate the DC shift (in this case, the first 110
 samples):
 
 ``` r
-A1 <- dcshift(A, 1:110)   # new object A1
+A1 <- dcshift(A, 1:110)   # new object A1 
 ```
 
-First wave break estimation and set time-zero
----------------------------------------------
+## First wave break estimation and set time-zero
 
 The first wave break time, *t*<sub>fb</sub>, is estimated for each
 traces
@@ -160,11 +161,11 @@ tfb <- firstBreak(A1, w = 20, method = "coppens")   # take some time
 Convert the first wave break time *t*<sub>fb</sub> into time-zero
 *t*<sub>0</sub> with `firstBreakToTime0()`.
 
-Here we define $t\_0 = t\_{\\text{fb}} -\\frac{a}{c\_0}$, where *a* is
-the distance between the transmitter and receiver and *c*<sub>0</sub> is
-the wave velocity in the media between the transmitter and receiver (in
-our case, air). The value $\\frac{a}{c\_0}$ corresponds to the wave
-travel time from the transmitter to the receiver.
+Here we define $t_0 = t\_{\text{fb}} - \frac{a}{c_0}$, where *a* is the
+distance between the transmitter and receiver and *c*<sub>0</sub> is the
+wave velocity in the media between the transmitter and receiver (in our
+case, air). The value $\frac{a}{c_0}$ corresponds to the wave travel
+time from the transmitter to the receiver.
 
 ``` r
 t0 <- firstBreakToTime0(tfb, A1)
@@ -177,18 +178,16 @@ To shift the traces to time-zero, use the function `time0Cor`.
 A2 <- time0Cor(A1, method = "spline")
 ```
 
-Dewow
------
+## Dewow
 
 Remove the low-frequency components (the so-called “wow”) of the GPR
 record with:
 
 ``` r
-A3 <- dewow(A2, type = "runmed", w = 50)
+A3 <- dewow(A2, type = "runmed", w = 50)  
 ```
 
-Frequency filter
-----------------
+## Frequency filter
 
 Eliminate the high-frequency (noise) component of the GPR record with a
 bandpass filter. We define as corner frequencies at 150 *M**H**z* and
@@ -199,10 +198,9 @@ signal, the filtered signal and the filter.
 A4 <- fFilter(A3, f = c(150, 260), type = "low", plotSpec = TRUE)
 ```
 
-![](07_RGPR_tutorial_GPR-data-migration_tp_files/figure-markdown_github/unnamed-chunk-10-1.png)
+![](07_RGPR_tutorial_GPR-data-migration_files/figure-markdown_github/unnamed-chunk-10-1.png)
 
-Time gain
----------
+## Time gain
 
 Apply a power gain and a spherical gain to compensate for geometric wave
 spreading and attenuation (Kruse and Jol, 2003; Grimm et al., 2006).
@@ -212,15 +210,13 @@ A5 <- gain(A4, type = "power", alpha = 1, te = 150, tcst = 20)
 A6 <- gain(A5, type = "exp", alpha = 0.11, t0 = 0, te = 125)
 ```
 
-Topographic Kirchhoff migration
-===============================
+# Topographic Kirchhoff migration
 
 See *Dujardin & Bano (2013, Topographic migration of GPR data: Examples
-from Chad and Mongolia, Comptes Rendus Géoscience, 345(2):73-80. Doi:
+from Chad and Mongolia, Comptes Rendus Géoscience, 345(2):73-80. Doi :
 10.1016/j.crte.2013.01.003)*
 
-Pre-processing
---------------
+## Pre-processing
 
 ### Constant offset correction
 
@@ -234,7 +230,7 @@ A7 <- timeCorOffset(A6)
 plot(A7)
 ```
 
-![](07_RGPR_tutorial_GPR-data-migration_tp_files/figure-markdown_github/unnamed-chunk-12-1.png)
+![](07_RGPR_tutorial_GPR-data-migration_files/figure-markdown_github/unnamed-chunk-12-1.png)
 
 ### Time upsampling (sinc-interpolation) of the GPR data to reduce the aliasing risk.
 
@@ -242,17 +238,15 @@ plot(A7)
 A8 <- upsample(A7, n = c(3,1))
 ```
 
-Topographic Kirchhoff migration.
---------------------------------
+## Topographic Kirchhoff migration.
 
 Vertical resolution of the migrated data, we set `dz = 0.01`m.
 
 The dominant *return* frequency can be estimated by visual inspection of
 the spectrum of `A8` (to display the frequency spectrum of `A8` use the
 function `spec()`, e.g. `spec(A8)`). Here, the dominant return frequency
-is estimated to be $80 MHz$
-and therefore we set `fdo = 80` (the dominant frequency is used to
-estimate the Fresnel zone).
+is estimated to be 80*M**H**z* and therefore we set `fdo = 80` (the
+dominant frequency is used to estimate the Fresnel zone).
 
 For the moment the algorithm works **only with a constant radar wave
 velocity**. In this example the velocity is:
@@ -277,28 +271,27 @@ vel(A8)  <- 0.09        # velocity in ns
 ```
 
 ``` r
-A9 <- migrate(A8, type="kirchhoff", max_depth = 20,
+A9 <- migrate(A8, type="kirchhoff", max_depth = 20, 
                  dz = 0.01, fdo = 80)
 plot(A9)
 ```
 
-![](07_RGPR_tutorial_GPR-data-migration_tp_files/figure-markdown_github/unnamed-chunk-16-1.png)
+![](07_RGPR_tutorial_GPR-data-migration_files/figure-markdown_github/unnamed-chunk-16-1.png)
 
 You don’t see so much: we need some post-processing!
 
-Post-processing
----------------
+## Post-processing
 
 Trace smoothing with a Gaussian filter
 
 ``` r
-A10 <- filter1D(A9, type = "Gaussian", w = 2.5)
+A10 <- filter1D(A9, type = "Gaussian", w = 2.5) 
 ```
 
 Automatic gain control
 
 ``` r
-A11 <- gain(A10, type = "agc", w = 0.55)
+A11 <- gain(A10, type = "agc", w = 0.55) 
 ```
 
 inverse normal transformations
@@ -307,8 +300,7 @@ inverse normal transformations
 A12 <- traceScaling(A11, type = "invNormal")
 ```
 
-Comparison before/after migration
----------------------------------
+## Comparison before/after migration
 
 Before migration
 
@@ -316,7 +308,7 @@ Before migration
 plot(traceScaling(A8, type = "invNormal"))
 ```
 
-![](07_RGPR_tutorial_GPR-data-migration_tp_files/figure-markdown_github/unnamed-chunk-20-1.png)
+![](07_RGPR_tutorial_GPR-data-migration_files/figure-markdown_github/unnamed-chunk-20-1.png)
 
 After migration
 
@@ -324,4 +316,4 @@ After migration
 plot(A12)
 ```
 
-![](07_RGPR_tutorial_GPR-data-migration_tp_files/figure-markdown_github/unnamed-chunk-21-1.png)
+![](07_RGPR_tutorial_GPR-data-migration_files/figure-markdown_github/unnamed-chunk-21-1.png)

@@ -1623,12 +1623,139 @@ rollapplyHampel <- function(x, w, FUN){
 }
 
 
-
+#' Normal-score transformation
+#'
+#' Transforms a numeric vector to an approximately Gaussian distribution
+#' using empirical ranks. Equal input values are assigned equal normal
+#' scores through average ranks.
+#'
+#' The transformation can preserve the mean and standard deviation of the
+#' original finite observations. An inverse transformation can be performed
+#' when a transformation table is supplied.
+#'
+#' @param x A numeric vector. For a forward transformation, `x` contains the
+#' values to transform. For an inverse transformation, `x` contains the
+#' normal scores to back-transform.
+#'
+#' @param inverse Logical scalar. If `FALSE`, perform the forward normal-score
+#' transformation. If `TRUE`, back-transform normal scores using `tbl`.
+#'
+#' @param tbl An optional two-column numeric matrix or data frame containing
+#' the transformation table. The first column must contain original values
+#' and the second column must contain corresponding normal scores.
+#'
+#' A transformation table is required when `inverse = TRUE`. For the forward
+#' transformation, `tbl` is currently not used because scores are derived
+#' directly from the empirical ranks of `x`.
+#'
+#' @return A numeric vector with the same length as `x`.
+#'
+#' For the forward transformation, non-finite input values are returned as
+#' `NA_real_`. A finite constant vector is returned as zeros because its
+#' standard deviation is zero and a normal-score transformation is not
+#' uniquely defined.
+#'
+#' For the inverse transformation, values are obtained by linear
+#' interpolation of the supplied transformation table. Values outside the
+#' table range are assigned the nearest endpoint value.
+#'
+#' @details
+#' For a vector containing \eqn{n} finite observations, plotting positions
+#' are computed as
+#'
+#' \deqn{p_i = \frac{r_i - 0.5}{n},}
+#'
+#' where \eqn{r_i} is the average rank of observation \eqn{i}. Normal scores
+#' are then calculated as
+#'
+#' \deqn{z_i = \Phi^{-1}(p_i),}
+#'
+#' where \eqn{\Phi^{-1}} is the standard normal quantile function.
+#'
+#' Average ranks ensure that tied input values obtain identical normal
+#' scores. Plotting positions are strictly between zero and one, which
+#' prevents infinite values from [stats::qnorm()].
+#'
+#' The resulting standard normal scores are rescaled to the mean and standard
+#' deviation of the original finite observations.
+#'
+#' During inverse transformation, duplicate normal scores in `tbl` are
+#' collapsed by averaging their corresponding original values. This ensures
+#' that the interpolation coordinates are unique.
+#'
+#' @seealso [base::rank()], [stats::qnorm()], [stats::approxfun()]
+#'
+#' @examples
+#' x <- c(1, 1, 1, 2, 3, 5, 8)
+#'
+#' # Tied values receive identical transformed values
+#' z <- .nScoreTrans(x)
+#' z
+#'
+#' # Missing values are retained as missing
+#' .nScoreTrans(c(1, 2, NA, 4))
+#'
+#' # A constant vector is transformed to zero
+#' .nScoreTrans(rep(5, 10))
+#'
+#' # Example of an inverse transformation table
+#' tbl <- data.frame(
+#' value = sort(unique(x)),
+#' nscore = .nScoreTrans(sort(unique(x)))
+#' )
+#'
+#' .nScoreTrans(
+#' tbl$nscore,
+#' inverse = TRUE,
+#' tbl = tbl
+#' )
+#'
+#' @keywords internal
+.nScoreTrans <- function(x, inverse = FALSE, tbl = NULL) {
+  if (isTRUE(inverse)) {
+    if (is.null(tbl)) {
+      stop("tbl must be provided for the inverse transformation")
+    }
+    tbl <- tbl[complete.cases(tbl), , drop = FALSE]
+    tbl <- tbl[order(tbl[, 2]), , drop = FALSE]
+    # Required because approxfun() also expects unique interpolation values
+    tbl <- aggregate(tbl[, 1],
+                     by = list(nscore = tbl[, 2]),
+                     FUN = mean)
+    names(tbl) <- c("nscore", "value")
+    back.xf <- approxfun(
+      x = tbl$nscore,
+      y = tbl$value,
+      rule = 2,
+      ties = mean
+    )
+    return(back.xf(x))
+  }
+  ok <- is.finite(x)
+  y_n <- rep(NA_real_, length(x))
+  n <- sum(ok)
+  if (n == 0L) {
+    return(y_n)
+  }
+  # A constant trace cannot meaningfully be transformed.
+  if (n == 1L || sd(x[ok]) < .Machine$double.eps^0.5) {
+    y_n[ok] <- 0
+    return(y_n)
+  }
+  # Equal amplitudes receive equal ranks and therefore equal scores.
+  r <- rank(x[ok], ties.method = "average")
+  # Plotting positions strictly between 0 and 1
+  p <- (r - 0.5) / n
+  z <- qnorm(p)
+  # Preserve the original trace mean and standard deviation.
+  y_n[ok] <- z * sd(x[ok]) + mean(x[ok])
+  y_n
+}
 
 
 # histogram transformation to normal distributed data with same mean and sd
 # https://msu.edu/~ashton/temp/nscore.R
-.nScoreTrans <- function(x, inverse = FALSE, tbl = NULL){
+.nScoreTransInterp <- function(x, inverse = FALSE, tbl = NULL){
   if(isTRUE(inverse)){
     if(is.null(tbl)){
       stop("tbl must be provided")
@@ -1694,6 +1821,105 @@ unscale <- function(x, y){
 
 #.rms <- function(num) sqrt(sum(num^2)/length(num))
 
+#' Scale the columns of a numeric matrix
+#'
+#' Applies a selected scaling or normalization method independently to each
+#' column of a numeric matrix. In the context of GPR data, each column is
+#' generally interpreted as an individual trace.
+#'
+#' The normal-score transformation (`type = "invNormal"`) replaces the
+#' empirical distribution of each trace with an approximately Gaussian
+#' distribution while preserving the original mean and standard deviation.
+#' Equal input values receive equal transformed values.
+#'
+#' A numeric value between 0 and 100 can also be supplied through `type`.
+#' In that case, each column is divided by the difference between two
+#' complementary quantiles. For example, `"95"` uses the difference between
+#' the 95th and 5th percentiles.
+#'
+#' @param A A numeric matrix or an object coercible to a numeric matrix.
+#' Columns are scaled independently.
+#'
+#' @param type Character or numeric scalar defining the scaling method.
+#' Available character methods are:
+#'
+#' \describe{
+#' \item{`"stat"`}{
+#' Standardize each column by subtracting its mean and dividing by its
+#' standard deviation.
+#' }
+#' \item{`"min-max"`}{
+#' Divide each column by its range, without subtracting the minimum.
+#' }
+#' \item{`"95"`}{
+#' Divide each column by the difference between the 95th and 5th
+#' percentiles. Other numeric percentages between 0 and 100 may also
+#' be supplied.
+#' }
+#' \item{`"eq"`}{
+#' Apply trace-energy equalization based on the sum of squared
+#' amplitudes.
+#' }
+#' \item{`"sum"`}{
+#' Divide each column by the sum of its absolute amplitudes.
+#' }
+#' \item{`"rms"`}{
+#' Divide each column by its root-mean-square amplitude. This corresponds
+#' to the scaling factor used by [base::scale()] when `center = FALSE`.
+#' }
+#' \item{`"mad"`}{
+#' Center each column on its median and divide it by its median absolute
+#' deviation.
+#' }
+#' \item{`"invNormal"`}{
+#' Apply a rank-based normal-score transformation independently to each
+#' column.
+#' }
+#' }
+#'
+#' @return A numeric matrix with the same dimensions and dimnames as `A`.
+#' Non-finite values introduced by undefined scaling factors, such as
+#' scaling a constant trace, are replaced by zero. Existing missing values
+#' are preserved by the normal-score transformation.
+#'
+#' @details
+#' Scaling is performed independently for each column.
+#'
+#' For `type = "invNormal"`, average ranks are assigned to tied amplitudes.
+#' Consequently, identical input amplitudes receive identical normal scores.
+#' This avoids interpolation warnings caused by duplicated amplitude values.
+#'
+#' The normal-score transformation is nonlinear. It changes relative
+#' amplitudes within a trace and should therefore be used cautiously when
+#' amplitudes have a physical interpretation. It is generally more
+#' appropriate for visualization or distribution normalization than for
+#' amplitude-preserving processing.
+#'
+#' @seealso [base::scale()], [stats::quantile()], [.nScoreTrans()]
+#'
+#' @examples
+#' A <- matrix(
+#' c(
+#' 1, 1, 2, 3, 4,
+#' 2, 3, 4, 5, 6
+#' ),
+#' nrow = 5,
+#' ncol = 2
+#' )
+#'
+#' # Standardize each column
+#' scaleCol(A, type = "stat")
+#'
+#' # Divide each column by its amplitude range
+#' scaleCol(A, type = "min-max")
+#'
+#' # Rank-based normal-score transformation
+#' scaleCol(A, type = "invNormal")
+#'
+#' # Scale using the difference between the 90th and 10th percentiles
+#' scaleCol(A, type = "90")
+#'
+#' @keywords internal
 scaleCol <- function(A, type = c("stat", "min-max", "95",
                                  "eq", "sum", "rms", "mad", "invNormal")){
   A <-  as.matrix(A)

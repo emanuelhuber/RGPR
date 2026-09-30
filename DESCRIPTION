@@ -181,7 +181,6 @@ Imports:
     Rcpp
 LinkingTo:
   Rcpp
-SystemRequirements: C++11
 Suggests: 
     testthat,
     plotly

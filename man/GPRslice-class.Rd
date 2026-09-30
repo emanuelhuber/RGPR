@@ -13,3 +13,9 @@ and \eqn{p} traces or A-scans along \eqn{y}), with grid cell sizes
 \eqn{dx}, \eqn{dy}.
 We assume that the unit along y is the same as the unit along x.
 }
+\details{
+\code{GPRslice} has no slots of its own: it's simply a \code{GPRcube} (see
+\code{GPRcube-class}) whose \verb{@z} has length 1 -- the depth/time of that
+single slice -- and whose validity constraint (\verb{@z} strictly
+monotonic) is trivially satisfied for a length-1 vector.
+}

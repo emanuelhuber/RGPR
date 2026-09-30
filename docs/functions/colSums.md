@@ -18,6 +18,10 @@ rowMeans(x, na.rm = FALSE, dims = 1)
 
 - `x`: (`GPR`)
 - `na.rm`: (`logical[1]`). Should missing values (including `NaN`) be omitted from the calculations?
-- `dims`: (`integer[1]`) Which dimensions are regarded as ‘rows’ or ‘columns’ to sum over.(see `colSums()`).
+- `dims`: (`integer[1]`) Which dimensions are regarded as ‘rows’ or ‘columns’ to sum over.(see `base::colSums()`).
+
+## Description
 
 Form row and column sums and means
+
+

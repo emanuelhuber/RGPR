@@ -14,12 +14,29 @@ print.GPRcube <- function(x, ...){
                 "angle:  ",
                 "crs:    "
                 )
+  
+  d <- dim(x)   # dim(),GPRcube-method: works for in-memory, HDF5-backed, and view cubes
+  
+  # @z need not be evenly spaced (see GPRcube-class); show the constant
+  # spacing if there is one, otherwise the min/max spacing as "irregular".
+  z_res <- if (length(x@z) < 2L) {
+    NA_character_
+  } else {
+    zd <- diff(x@z)
+    if (length(unique(zd)) == 1L) {
+      format(zd[1])
+    } else {
+      paste0("irregular (", signif(min(abs(zd)), 3), " to ", signif(max(abs(zd)), 3), ")")
+    }
+  }
+  z_extent <- if (length(x@z) >= 1L) diff(range(x@z)) else NA_real_
+  
   prt_content <- c(
-    paste0(dim(x@data), collapse = " x "),
-    paste(c(x@dx, x@dy, x@dz), c(rep(x@xunit, 2), x@zunit), collapse = " x "),
-    paste(c(x@dx * (dim(x@data)[1] - 1), 
-                    x@dy * (dim(x@data)[2] - 1), 
-                    x@dz * (dim(x@data)[1] - 1)), 
+    paste0(d, collapse = " x "),
+    paste(c(x@dx, x@dy, z_res), c(rep(x@xunit, 2), x@zunit), collapse = " x "),
+    paste(c(x@dx * (d[1] - 1), 
+                    x@dy * (d[2] - 1), 
+                    z_extent), 
                     c(rep(x@xunit, 2), x@zunit), collapse = " x "),
     paste(x@center, c(rep(x@xunit, 2), x@zunit), collapse = ", "),
     ifelse(length(x@rot) == 5, x@rot[5], 0),

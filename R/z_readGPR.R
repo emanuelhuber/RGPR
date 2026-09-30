@@ -60,7 +60,7 @@
 #'                    `function(dsn, fName, fPath, desc, Vmax, verbose, ...)`.
 #'
 #' @keywords internal
-#' @export
+#' @noRd
 register_gpr_format <- function(id, detect_ext, mandatory, optional = character(0),
                                 gps_ext = NULL, reader_fn) {
   stopifnot(
@@ -90,6 +90,7 @@ register_gpr_format <- function(id, detect_ext, mandatory, optional = character(
 #' @return The matching format descriptor list, or `NULL` if none matched.
 #'
 #' @keywords internal
+#' @noRd
 .detect_format <- function(ext_vec) {
   ext_upper <- toupper(ext_vec)
   for (fmt in .GPR_FORMAT_REGISTRY) {
@@ -134,6 +135,7 @@ register_gpr_format <- function(id, detect_ext, mandatory, optional = character(
 #' @return Updated `dsn` list with all mandatory + optional slots populated.
 #'
 #' @keywords internal
+#' @noRd
 resolve_companion_files <- function(dsn, fPath, fmt) {
 
   all_connections <- all(sapply(dsn, inherits, "connection"))
@@ -221,6 +223,7 @@ resolve_companion_files <- function(dsn, fPath, fmt) {
 #' @return List with `$dsn`, `$fPath`, `$fName`, `$ext`.
 #'
 #' @keywords internal
+#' @noRd
 .normalise_dsn <- function(dsn) {
 
   # Ensure dsn is a list so we can iterate uniformly

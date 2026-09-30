@@ -21,6 +21,8 @@ antsep(x) <- value
 
 (`GPR`)
 
+## Description
+
 Antenna separation distance(s)
 
 ## Details
@@ -29,3 +31,5 @@ Modified slots
 
  * `antsep` the antenna separation distance
  * `x` the x-position only for CMP/WARR (plot twt as a function of antenna separation)
+
+

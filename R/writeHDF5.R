@@ -25,6 +25,7 @@
 #'   source file already contains) -- kept for a consistent call signature
 #'   with the rest of the `writeGPR()` dispatch.
 #' @keywords internal
+#' @noRd
 .writeGPR_h5 <- function(obj, dsn, overwrite, compress) {
 
   src <- obj@path
@@ -120,6 +121,7 @@
 #'
 #' @return Invisibly returns the created group object.
 #' @keywords internal
+#' @noRd
 .write_GPR_line_hdf5 <- function(parent_grp, name, gpr, compress = 0L) {
 
   nz <- nrow(gpr)
@@ -150,20 +152,29 @@
   grp$create_attr("version", gpr@version)
   grp$create_attr("desc",    gpr@desc)
   grp$create_attr("spunit",  gpr@spunit)
+  
+  grp$create_attr("dlab",   gpr@dlab)
+  grp$create_attr("xlab",   gpr@xlab)
+  grp$create_attr("zlab",   gpr@zlab)
 
   # ---- Data array (64-bit, chunked, checksummed, optionally compressed) ----
   .h5_write_data_array(grp, gpr, compress = compress)
 
-  # ---- Axes -------------------------------------------------------------
+  # ---- Axes ------------------------------------------------------------- 
   .h5_write_vector(grp, "z",  gpr@z)
   .h5_write_vector(grp, "x",  gpr@x)
   .h5_write_vector(grp, "z0", gpr@z0)
+  
+  .h5_write_vector(grp, "angles", gpr@angles)
+  
+  .h5_write_vector(grp, "time", gpr@time)
 
-  # ---- Markers ------------------------------------------------------------
+  # ---- Markers / Annotations ------------------------------------------------
   # Always exactly `nx` elements, trimmed with trimStr(). Using the same
   # helper here as in GPRsurvey.R keeps /lines/<name>/markers and the
   # survey-level @markers list in agreement.
   .h5_write_vector(grp, "markers", .normalizeMarkers(gpr@markers, nx))
+  .h5_write_vector(grp, "ann", .normalizeMarkers(gpr@ann, nx))
 
   # ---- Coordinates ----------------------------------------------------------
   cg <- grp$create_group("coords")
@@ -174,31 +185,32 @@
   if (length(gpr@trans) > 0L) .h5_write_matrix(cg, "trans", gpr@trans)
 
   # ---- Velocity model -------------------------------------------------------
-  vg <- grp$create_group("vel")
-  if (!is.null(gpr@vel$v)) .h5_write_vector(vg, "v", gpr@vel$v)
+  # vg <- grp$create_group("vel")
+  # if (!is.null(gpr@vel$v)) .h5_write_vector(vg, "v", gpr@vel$v)
+  .h5_write_list(grp, "vel", gpr@vel)
 
-  # ---- Raw manufacturer metadata (`@md`) ------------------------------------
-  # Stored twice, for two different purposes:
-  #
-  #  1) `metadata/<key>` -- one dataset per *scalar* entry of `@md`, purely
-  #     for convenience: this is what shows up if you browse the file with
-  #     an external HDF5 tool (h5dump, HDFView, h5py, ...). Non-scalar
-  #     entries (vectors, lists, NULL, ...) are simply not represented here.
-  #
-  #  2) `metadata_raw` -- the entire `@md` list, serialized losslessly with
-  #     `.h5_write_r_object()`. This is the one `.read_GPR_line_hdf5()`
-  #     actually restores `@md` from, so nothing in `@md` is lost on a
-  #     round trip, regardless of its structure.
-  mg <- grp$create_group("metadata")
-  for (key in names(gpr@md)) {
-    val <- gpr@md[[key]]
-    if (is.atomic(val) && length(val) == 1L) {
-      mg[[key]] <- if (is.na(val)) "NA" else val
-    }
-  }
-  if (length(gpr@md) > 0L) {
-    .h5_write_r_object(grp, "metadata_raw", gpr@md)
-  }
+  # # ---- Raw manufacturer metadata (`@md`) ------------------------------------
+  # # Stored twice, for two different purposes:
+  # #
+  # #  1) `metadata/<key>` -- one dataset per *scalar* entry of `@md`, purely
+  # #     for convenience: this is what shows up if you browse the file with
+  # #     an external HDF5 tool (h5dump, HDFView, h5py, ...). Non-scalar
+  # #     entries (vectors, lists, NULL, ...) are simply not represented here.
+  # #
+  # #  2) `metadata_raw` -- the entire `@md` list, serialized losslessly with
+  # #     `.h5_write_r_object()`. This is the one `.read_GPR_line_hdf5()`
+  # #     actually restores `@md` from, so nothing in `@md` is lost on a
+  # #     round trip, regardless of its structure.
+  # mg <- grp$create_group("metadata")
+  # for (key in names(gpr@md)) {
+  #   val <- gpr@md[[key]]
+  #   if (is.atomic(val) && length(val) == 1L) {
+  #     mg[[key]] <- if (is.na(val)) "NA" else val
+  #   }
+  # }
+  # if (length(gpr@md) > 0L) {
+  #   .h5_write_r_object(grp, "metadata_raw", gpr@md)
+  # }
 
   invisible(grp)
 }

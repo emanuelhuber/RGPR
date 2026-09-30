@@ -3,13 +3,13 @@
 \name{[,GPRset,ANY,ANY,ANY-method}
 \alias{[,GPRset,ANY,ANY,ANY-method}
 \alias{[,GPRset-method}
-\alias{[<-,GPRset,ANY,ANY,ANY-method}
+\alias{[<-,GPRset,ANY,ANY-method}
 \alias{[<-,GPRset-method}
 \title{Extract and replace parts of a GPRset object}
 \usage{
 \S4method{[}{GPRset,ANY,ANY,ANY}(x, i, j, k, ..., drop)
 
-\S4method{[}{GPRset,ANY,ANY,ANY}(x, i, j, k, ...) <- value
+\S4method{[}{GPRset,ANY,ANY}(x, i, j, k, ...) <- value
 }
 \arguments{
 \item{x}{(\code{GPRset})}

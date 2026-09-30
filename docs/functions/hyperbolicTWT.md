@@ -14,4 +14,8 @@ hyperbolicTWT(t0, antsep, v)
 
 (`numeric`) two-way travel time
 
+## Description
+
 Returns two-way travel time as a function of antenna separation, two-way travel time at zero-offset, and wave velocity in the medium
+
+

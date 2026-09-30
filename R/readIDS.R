@@ -30,11 +30,7 @@
 #' stores the extracted information in the returned `HD` list.
 #'
 #' The trace data are stored as signed 16-bit integers and are returned
-#' without amplitude conversion. Use \code{\link{.gprDT}} to convert the
-#' output into a \code{\linkS4class{GPR}} object.
-#'
-#' @seealso
-#' \code{\link{.gprDT}}
+#' without amplitude conversion. 
 #'
 #' @examples
 #' \dontrun{

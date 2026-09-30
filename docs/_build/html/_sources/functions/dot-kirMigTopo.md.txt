@@ -1,0 +1,104 @@
+# Topographic Kirchhoff migration with bistatic antenna geometry
+
+```r
+.kirMigTopo(
+  x,
+  topoGPR,
+  xpos,
+  dts,
+  v,
+  fdo = NULL,
+  max_depth = 8,
+  dz = 0.025,
+  xout = xpos,
+  tx_x = xpos,
+  rx_x = xpos,
+  tx_z = topoGPR,
+  rx_z = topoGPR,
+  max_angle = NULL,
+  weight = c("obliquity", "legacy", "none"),
+  normalize = FALSE,
+  spreading = FALSE,
+  wavelet_filter = c("none", "halfderiv"),
+  antialias = TRUE,
+  aa_factor = 1,
+  vel_mode = c("auto", "constant", "layered", "general"),
+  vel_dx = NULL,
+  vel_dz = NULL,
+  ray_step = NULL,
+  n_ray = 16L
+)
+```
+
+## Arguments
+
+- `x`: Numeric matrix containing the GPR amplitudes. Rows are time samples and columns are traces.
+- `topoGPR`: Numeric vector giving the ground-surface elevation, in metres, at each position in `xpos`.
+- `xpos`: Numeric vector giving the profile position, in metres, of each trace. Positions must be finite and strictly increasing.
+- `dts`: Positive numeric scalar giving the temporal sampling interval in nanoseconds.
+- `v`: GPR-wave interval velocity in metres per nanosecond. Either a positive scalar (constant velocity), a numeric vector of length `nrow(x)` (velocity varying with two-way time, i.e. with depth) or a numeric matrix of dimension `nrow(x)` x `ncol(x)` (velocity varying with depth and laterally). Vectors and matrices are defined in the time domain, exactly as for `convertTimeToDepth()`; the time axis is `(seq_len(nrow(x)) - 1) * dts`.
+- `fdo`: Positive numeric scalar giving the antenna centre frequency in MHz. Required when `max_angle = NULL`.
+- `max_depth`: Positive numeric scalar giving the maximum vertical migration depth below the local ground surface, in metres.
+- `dz`: Positive numeric scalar giving the vertical sampling interval of the migrated image, in metres.
+- `xout`: Numeric vector giving the horizontal coordinates of the output image. By default, the input trace positions are used.
+- `tx_x, rx_x`: Numeric vectors giving the horizontal transmitter and receiver coordinates for every trace. By default, both are equal to `xpos`, corresponding to zero-offset acquisition.
+- `tx_z, rx_z`: Numeric vectors giving the transmitter and receiver elevations for every trace. By default, both are equal to `topoGPR`.
+- `max_angle`: Maximum migration aperture angle in degrees, measured from the vertical. A trace contributes only if both the transmitter-to-pixel and receiver-to-pixel angles do not exceed this value. Set to `90` to disable angle-based aperture restriction. If `NULL` (default), the aperture is derived for each image point from the first depth-dependent Fresnel zone (Pérez-Gracia et al., 2008): with wavelength `\lambda = 1000 v / f_{do}` and depth `d` below the local ground surface, the Fresnel radius is `r_f = 0.5\sqrt{2 \lambda d}` and the limiting angle is `\arctan(r_f / d)`. The aperture therefore narrows with depth.
+- `weight`: Character string specifying the migration weighting: `"none"` applies only the spatial quadrature weights; `"obliquity"` additionally applies the symmetric bistatic obliquity factor `\sqrt{\cos(\theta_{tx})\cos(\theta_{rx})}`; `"legacy"` applies the obliquity factor and the distance-dependent amplitude decay used by the former RGPR Kirchhoff implementation, proportional to `1 / \sqrt{2\pi t v}`.
+- `normalize`: Logical. If `TRUE`, divide the migrated image by the sum of the absolute migration weights contributing to each pixel. This reduces amplitude variations caused by changing aperture size. It is not a display normalization.
+- `spreading`: Logical. Compensate 2D geometrical spreading by multiplying each contribution by sqrt(d_tx * d_rx) (metres).
+- `wavelet_filter`: "none" or "halfderiv" (2D wavelet-shaping filter).
+- `antialias`: Logical. Low-pass each contribution with a triangle filter whose half-width equals the travel-time moveout between neighbouring traces (Lumley et al., 1994; Gray, 1992).
+- `aa_factor`: Scaling of the anti-alias half-width (default 1).
+- `vel_mode`: Algorithm used for the travel times. `"auto"` (default) chooses from the type of `v`: scalar -> `"constant"`, vector -> `"layered"`, matrix -> `"general"`.
+    
+    - **`"constant"`**: Travel time = distance / v (fastest).
+    - **`"layered"`**: Horizontal layers. The velocity profile is applied as a function of depth below the highest trace, so layers are horizontal in the image. Travel times along straight rays are exact and computed in constant time from the cumulative slowness (about as fast as `"constant"`). With strong topography the layers do not follow the ground surface; for this use `"general"`.
+    - **`"general"`**: Velocity varying with depth and position. The velocity is a function of depth below the LOCAL ground surface (it follows the topography, like in `convertTimeToDepth()`) and travel times are obtained by integrating the slowness along straight rays. A vector or scalar `v` is accepted and replicated for all traces, which gives topography-following layers.
+- `vel_dx, vel_dz`: Horizontal and vertical spacing (m) of the regular grid on which the velocity model is resampled. Defaults: mean trace spacing and `dz`. Only used for `vel_mode = "general"`.
+- `ray_step, n_ray`: For `vel_mode = "general"`, travel times are obtained by integrating the slowness along the straight antenna-to-pixel segments, with one sample every `ray_step` metres (default `max(vel_dx, vel_dz)`), but at most `n_ray` (default 16) and at least 2 samples per segment. Increase `n_ray` for strong velocity contrasts (computing time grows about linearly with it).
+
+## Returns
+
+A numeric matrix with elevations in rows and horizontal positions in columns. Pixels above the ground surface or more than `max_depth` below it are returned as `NA_real_`.
+
+Output coordinates are stored in attributes:
+
+- **`x`**: Horizontal output coordinates.
+- **`z`**: Output elevations, ordered from high to low.
+- **`topography`**: Interpolated ground elevation at `xout`.
+
+## Description
+
+Migrate a two-dimensional GPR profile directly from the acquisition topography onto a regular distance-elevation grid. Transmitter and receiver coordinates may differ, allowing bistatic or common-offset antenna geometries. Coincident transmitter and receiver coordinates give the zero-offset formulation.
+
+## Details
+
+For every image point `\mathbf{p}`, the two-way travel time associated with trace `j` is calculated as
+
+c("`\n`", "`t_j(\\mathbf{p}) =\n`", "`\\frac{\n`", "`  \\Vert \\mathbf{p} - \\mathbf{s}_j \\Vert +\n`", "`  \\Vert \\mathbf{p} - \\mathbf{r}_j \\Vert\n`", "`}{v},\n`")
+
+where `\mathbf{s}_j` and `\mathbf{r}_j` are the transmitter and receiver coordinates and `v` is the constant electromagnetic-wave velocity. The input trace is linearly interpolated at this travel time and its contribution is added to the image point.
+
+Migration is performed directly from the real acquisition surface; no elevation static correction is applied. This follows the principle of topographic Kirchhoff migration described by Dujardin and Bano (2013).
+
+The main processing steps are:
+
+1. Construct a regular distance-elevation output grid.
+2. Mask image points outside the subsurface domain.
+3. Calculate transmitter-to-pixel and receiver-to-pixel distances.
+4. Select traces within the angular migration aperture.
+5. Calculate bistatic travel times.
+6. Linearly interpolate trace amplitudes at those travel times.
+7. Apply spatial-integration and optional obliquity weights.
+8. Sum the contributions into the migrated image.
+
+The implementation assumes a two-dimensional profile, isotropic velocity, straight propagation paths, and coordinates expressed in metres. With a non-constant velocity model, the travel time of each leg is the integral of the slowness (1/v) along the straight segment between the antenna and the image point (no ray bending, no refraction at the ground surface). The Fresnel aperture uses the velocity at the image point, and the anti-aliasing moveout uses the surface slowness at the antennas. The spreading (`\sqrt{d_{tx} d_{rx}}`) and legacy `1/\sqrt{2\pi t v}` weights use geometric path lengths. Antenna radiation patterns and out-of-plane energy are not modelled.
+
+## References
+
+Dujardin, J.-R. and Bano, M. (2013). Topographic migration of GPR data: Examples from Chad and Mongolia. Comptes Rendus Geoscience, 345(2), 73--80. tools:::Rd_expr_doi("10.1016/j.crte.2013.01.003")
+
+Pérez-Gracia, V., Di Capua, D., Caselles, O., Rial, F., Lorenzo, H., González-Drigo, R. and Armesto, J. (2008). Horizontal resolution in a non-destructive shallow GPR survey: An experimental evaluation. NDT & E International, 41(8), 611--620. tools:::Rd_expr_doi("10.1016/j.ndteint.2008.06.002")
+
+

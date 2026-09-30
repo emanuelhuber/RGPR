@@ -14,19 +14,6 @@
 #' @param normalization Character, type of normalization: 'none', 'PET', or 'skimage' (default 'PET').
 #' 
 #' @return Numeric matrix: the Radon transform (sinogram) with rows corresponding to rho bins and columns to angles.
-#'
-#' @examples
-#' # Generate a simple test image
-#' n <- 64
-#' img <- matrix(0, n, n)
-#' mid <- n/2
-#' img[mid, ] <- 1
-#' img[, mid] <- 1
-#'
-#' # Compute sinogram
-#' sino <- radon_wrapper(img, n_theta = 180, n_rho = 90)
-#' image(t(sino[nrow(sino):1, ]), col = gray.colors(256), main = 'Sinogram')
-#'
 #' @export
 radon <- function(image_matrix,
                   n_theta = 180,
@@ -87,13 +74,6 @@ radon <- function(image_matrix,
 #' @param normalization Character. Normalization scheme: "delta" (PET), "scikit" (scikit-image/MATLAB), "none" (average). Default is "delta".
 #'
 #' @return Numeric matrix of size N x M representing the reconstructed image.
-#' @examples
-#' # Small numeric example
-#' sinogram <- matrix(1:9, nrow = 3, ncol = 3)
-#' img_pet <- iradon_fbp_wrapper(sinogram, N = 3, M = 3, normalization = "delta")
-#' img_sci <- iradon_fbp_wrapper(sinogram, N = 3, M = 3, normalization = "scikit")
-#' img_pet
-#' img_sci
 #'
 #' @export
 radoninv <- function(sinogram,

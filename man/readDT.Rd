@@ -38,8 +38,7 @@ radar trace data. The function iteratively parses all supported tags and
 stores the extracted information in the returned \code{HD} list.
 
 The trace data are stored as signed 16-bit integers and are returned
-without amplitude conversion. Use \code{\link{.gprDT}} to convert the
-output into a \code{\linkS4class{GPR}} object.
+without amplitude conversion.
 }
 \examples{
 \dontrun{
@@ -48,7 +47,4 @@ str(x$HD)
 image(x$data)
 }
 
-}
-\seealso{
-\code{\link{.gprDT}}
 }

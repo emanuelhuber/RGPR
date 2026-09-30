@@ -4,7 +4,7 @@
 \alias{as.spatialLines}
 \alias{as.spatialLines,GPRsurvey-method}
 \alias{as.spatialLines,GPR-method}
-\title{Coerce object to an object of the class SpatialLines}
+\title{Coerce object to an object of the class sf lines}
 \usage{
 as.spatialLines(x)
 
@@ -19,6 +19,6 @@ as.spatialLines(x)
 (\verb{SpatialLines object})
 }
 \description{
-Coerce object to an object of the class SpatialLines
+Coerce object to an object of the class sf lines
 }
 \concept{coercion}

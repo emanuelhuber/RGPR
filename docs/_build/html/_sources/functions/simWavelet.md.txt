@@ -16,6 +16,8 @@ simWavelet(twt, type = c("annan", "ricker"), fc = 100, lag = 0, q = 1)
 
 (`numeric[n]`) The wavelet
 
+## Description
+
 Simulates a GPR wavelet with specified center frequency.
 
 ## Examples
@@ -34,3 +36,5 @@ plot(xt, simWavelet(xt, type = "ricker", fc = fc, q = 0.9, lag = -10), type = "l
 plot(xt, simWavelet(xt, type = "ricker", fc = fc, q = 0.9, lag = -3e3/(pi * fc)), type = "l")
 abline(v = 0)
 ```
+
+

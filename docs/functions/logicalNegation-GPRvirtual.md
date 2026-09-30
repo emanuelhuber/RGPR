@@ -9,4 +9,8 @@
 
 - `x`: (`GPRvirtual`)
 
+## Description
+
 Apply logical negation to GPR data
+
+

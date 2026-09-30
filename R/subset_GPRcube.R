@@ -56,7 +56,11 @@ setMethod(
     }
     vx <- x@center[1] + seq(0, by = x@dx, length.out = dim_x[1])
     vy <- x@center[2] + seq(0, by = x@dy, length.out = dim_x[2])
-    vz <- x@center[3] + seq(0, by = x@dz, length.out = dim_x[3])
+    vz <- x@z   # depths/times of x's own slices (see GPRcube-class)
+    if (length(vz) != dim_x[3]) {
+      stop("Internal error: length(x@z) (", length(vz), ") does not match ",
+           "the number of z-slices (", dim_x[3], ").", call. = FALSE)
+    }
     # extract slice k
     if(length(k) == 1){
       new_center <- sapply(list(vx[i], vy[j], vz[k]), min)
@@ -93,13 +97,11 @@ setMethod(
                #---------- GPRcube ------------------#
                dx     = x@dx,
                dy     = x@dy,
-               dz     = x@dz,
+               z      = vz[k],
                ylab   = x@ylab,  # set names, length = 1|p
                
                center = new_center,    # coordinates grid corner bottom left (0, 0, 0)
-               rot    = x@rot,
-               #---------- GPRslice ------------------#
-               z = vz[k]
+               rot    = x@rot
                
       )
       return(y)
@@ -209,7 +211,7 @@ setMethod(
              #----------------- GPRcube -----------------------------------------#
                   dx     = x@dx,   # xpos,
                   dy     = x@dy,   # ypos,
-                  dz     = x@dz,   # SXY$vz,
+                  z      = vz[k],   # depths of the selected slices
                   ylab   = x@ylab,   #,  # set names, length = 1|p
                   
                   center = c(vx[i][1], vy[j][1], vz[k][1]),
@@ -247,7 +249,7 @@ setMethod(
            #----------------- GPRcube -----------------------------------------#
                 dx     = x@dx,   # xpos,
                 dy     = x@dy,   # ypos,
-                dz     = x@dz,   # SXY$vz,
+                z      = vz[k],   # depths of the selected slices
                 ylab   = x@ylab,   #,  # set names, length = 1|p
                 
                 center = c(vx[i][1], vy[j][1], vz[k][1]),

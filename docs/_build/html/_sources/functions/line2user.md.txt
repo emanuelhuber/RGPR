@@ -13,4 +13,8 @@ line2user(line, side)
 
 (`numeric[2]`) Coordinates in user coordinate system.
 
+## Description
+
 Get user coordinates from margin line location.
+
+

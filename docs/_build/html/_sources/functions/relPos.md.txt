@@ -15,4 +15,8 @@ relPos(x)
 
 (`numeric[m]`) Relative trace position along GPR line.
 
+## Description
+
 Returns the relative positions.
+
+

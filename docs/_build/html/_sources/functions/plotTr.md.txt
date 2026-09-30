@@ -13,4 +13,8 @@ plotTr(x, add = FALSE, ...)
 - `add`: (`logical[1]`) If `TRUE`, add to current plot.
 - `...`: Arguments to be passed to `plot`/`line`
 
+## Description
+
 Plot all the traces in one 1D plot
+
+

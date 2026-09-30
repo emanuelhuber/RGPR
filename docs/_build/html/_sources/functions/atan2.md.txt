@@ -22,4 +22,8 @@ atan2(y, x)
 
 (`GPR`)
 
+## Description
+
 The arc-tangent of two arguments atan2(y, x) returns the angle between the x-axis and the vector from the origin to (x, y), i.e., for positive arguments atan2(y, x) == atan(y/x).
+
+

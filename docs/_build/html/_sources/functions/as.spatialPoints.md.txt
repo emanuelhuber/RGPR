@@ -1,4 +1,4 @@
-# Coerce object to an object of the class SpatialPoints
+# Coerce object to an object of the class sf points
 
 ```r
 as.spatialPoints(x)
@@ -18,4 +18,8 @@ as.spatialPoints(x)
 
 (`SpatialPoints`)
 
-Coerce object to an object of the class SpatialPoints
+## Description
+
+Coerce object to an object of the class sf points
+
+

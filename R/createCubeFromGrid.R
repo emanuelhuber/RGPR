@@ -38,7 +38,7 @@ setMethod("createCubeFromGrid", "GPRsurvey",
     yrg <- range(XYZ[,2])
     # zrg <- range(sapply(obj@coords, function(x)  range(x[,3])))
     
-    vz <- RGPR:::.computeTargetDepths(obj, dz)
+    vz <- .computeTargetDepths(obj, dz)
     
     # zrg2 <- max(obj@nz)
     
@@ -57,7 +57,17 @@ setMethod("createCubeFromGrid", "GPRsurvey",
         vi <- unique(obji@coord[,2]) / dy + 1
         vj <- (obji@coord[,1] - xrg[1])/ dx + 1
       }
-      U[vj, vi, ] <-  t(RGPR:::.interpolateProfile(obji, vz))
+      # NOTE: .interpolateProfile()'s signature is (gpr_obj, z, vz, coordz,
+      # isDepth) -- z is obji's own per-trace depth/time axis, coordz is
+      # its per-trace surface coordinate (for topography correction), and
+      # isDepth flags whether obji is depth- or time-domain. This call was
+      # previously passing just (obji, vz), which stopped matching the
+      # signature during an earlier refactor of interpSlices.R and had
+      # gone unnoticed since; fixed here to match .interpolateAllProfiles()'s
+      # call pattern in interpSlices.R.
+      coordz  <- obji@coord[, 3]
+      isDepth_i <- isZDepth(obji)
+      U[vj, vi, ] <-  t(.interpolateProfile(obji@data, obji@z, vz, coordz, isDepth = isDepth_i))
       # for(j in 1:ncol(obji)){
       #   vk <- round((zrg[2]  - obji@coord[j,3] ) / dz)
       #   U[vj, vi[j], vk+1:nrow(obji)] <- obji@data[,j]
@@ -65,7 +75,7 @@ setMethod("createCubeFromGrid", "GPRsurvey",
     }
     
     # image(U[,,350])
-    uu <- as(list(data = U, dx = dx, dy = dy, dz = dz,
+    uu <- as(list(data = U, dx = dx, dy = dy, z = vz,
                   spunit = obj@spunit, crs = obj@crs,
                   zunit = obj@zunits[1], date = Sys.Date(),
                   name = name, desc = desc), "GPRcube")

@@ -1,26 +1,27 @@
 # Direct-Current shift removal
 
 ```r
-rmDCShift(x, u = NULL, FUN = mean, ..., track = TRUE)
+rmDCShift(obj, u = NULL, FUN = mean, ..., track = TRUE)
 
 ## S4 method for signature 'GPR'
-rmDCShift(x, u = NULL, FUN = mean, ..., track = TRUE)
+rmDCShift(obj, u = NULL, FUN = mean, ..., track = TRUE)
 ```
 
 ## Arguments
 
-- `x`: (`GPR`) An object of the class `GPR`.
+- `obj`: (`GPR`) An object of the class `GPR`.
 - `u`: (`integer[1]`) Index of the trace samples used to evaluate for every trace the DC-shift. If `u = NULL`, the function takes for each trace 90\
     
     of samples can vary from trace to trace).
-- `FUN`: (`function()`) A function to apply on the `u` trace samples (default is `mean`; alternatively, `median`
-    
-    could be of interest because it is more robust but slower to compute).
+- `FUN`: (`function()`) A function to apply on the `u` trace samples (default is `mean`; alternatively, `median` could be of interest because it is more robust but slower to compute).
 - `...`: (`ANY`) Further arguments to be passed to `FUN`.
+- `track`: (`logical[1]`) Should the processing step be tracked?
 
 ## Returns
 
 (`GPR`) An object of the class `GPR`.
+
+## Description
 
 The direct-current offset (DC-shift) is estimated and removed from every trace individually. For a given trace, the DC-shift is estimated by a user supplied function applied on few trace samples, normally the samples before time-zero (e.g., the average of the samples before time-zero). Then, the DC-shift is substracted from the trace.
 
@@ -32,3 +33,5 @@ Modified slots
 
  * `data`: DC-shift removed (data dimensions unchanged).
  * `proc`: updated with function name and arguments.
+
+

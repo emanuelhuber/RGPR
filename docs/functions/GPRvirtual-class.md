@@ -1,4 +1,4 @@
-class
+ class
 
 # Class GPR
 
@@ -8,9 +8,7 @@ extractPattern(x, pattern, start = 0, stop = -1)
 
 ## Arguments
 
-- `x`: (`character`) A character vector where matches are sought, or an object which can be coerced by `as.character()`
-    
-    to a character vector.
+- `x`: (`character`) A character vector where matches are sought, or an object which can be coerced by `as.character()` to a character vector.
 - `pattern`: (`character`) String containing a regular expression to be matched (see `grep()`).
 - `start`: (`integer`) The first element of the matched string to be extracted (see `substr()`).
 - `stop`: (`integer`) The last element of the matched string to be extracted (see `substr()`).
@@ -18,6 +16,8 @@ extractPattern(x, pattern, start = 0, stop = -1)
 ## Returns
 
 (`character`) The matched string
+
+## Description
 
 A virtual S4 class to represent a ground-penetrating radar (GPR) data.
 
@@ -65,3 +65,5 @@ survey mode, difference between reflection and CMP and WARR
 ## See Also
 
 `substr()` and `regexpr()`
+
+

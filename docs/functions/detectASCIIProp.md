@@ -14,8 +14,12 @@ detectASCIIProp(dsn, lns = 20, verbose = TRUE)
 
 1. header, 2) skip, 3)
 
+## Description
+
 To get header, separator, column with na values, etc.
 
 ## Details
 
 don't forget to skip blank line when reading dsn
+
+

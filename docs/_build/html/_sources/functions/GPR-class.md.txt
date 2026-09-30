@@ -1,6 +1,8 @@
-class
+ class
 
 # Class GPR
+
+## Description
 
 An S4 class to represent a ground-penetrating radar (GPR) data.
 
@@ -21,3 +23,5 @@ Matrix of dimension `n \times m` (`n` samples, `m` traces or A-scans).
 - **`x`**: (`numeric`) Relative trace position
 - **`z`**: (`numeric`) Relative sample position
 - **`angles`**: (`matrix[m,2]`) Transmitter positions
+
+

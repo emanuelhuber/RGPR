@@ -21,6 +21,8 @@ xpos(x) <- value
 
 (`GPR`)
 
+## Description
+
 Antenna separation distance(s)
 
 ## Details
@@ -29,3 +31,5 @@ Modified slots
 
  * `x` the x-position
  * `xpos` the antenna separation distance only for CMP/WARR (plot twt as a function of antenna separation)
+
+

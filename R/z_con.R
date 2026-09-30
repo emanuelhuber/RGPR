@@ -96,6 +96,7 @@ readBinChar <- function(con, n = 1L, size = NA_integer_, signed = TRUE,
 }
 
 #' Fix a 32 bit unsigned integer that has been read as signed
+#' @noRd
 int32touint32 <- function(x, nbits = 32){
   signs <- sign(x)
   x[signs < 0] <- x[signs < 0] + 2^nbits

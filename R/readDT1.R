@@ -34,6 +34,7 @@
 #'   \item{x_gps}{An \code{sf} object with GPS data, or \code{NULL}.}
 #'
 #' @keywords internal
+#' @noRd
 .read_dt1 <- function(dsn, fName, fPath, desc, Vmax, verbose, ...) {
 
   hd  <- verboseF(readHD(dsn[["HD"]]),  verbose = verbose)

@@ -11,4 +11,8 @@ points(x, relTime0 = FALSE, ...)
 - `relTime0`: (`logical[1]`) If `TRUE`, shift `x` to time- zero.
 - `...`: Additional parameters to be passed to `points()`.
 
+## Description
+
 Add a GPR trace points on a plot
+
+

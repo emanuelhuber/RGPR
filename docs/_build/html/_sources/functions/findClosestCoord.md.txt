@@ -13,4 +13,8 @@ findClosestCoord(x, y)
 
 Indice (integer) of the closest trace.
 
+## Description
+
 Return the indice of the closest trace to the point `y`
+
+

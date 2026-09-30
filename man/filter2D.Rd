@@ -319,15 +319,17 @@ gpr2 <- filter2Dimlap(gpr_obj)
 \dontrun{
 gpr2 <- filter2Dimsharpen(gpr_obj, amount = 1.5)
 }
+\dontrun{
 set.seed(1)
 img <- matrix(runif(100), nrow = 10)
 enhanced <- local_contrast_enhancement(img, window_size = 5)
 print(enhanced)
-
+}
+\dontrun{
 set.seed(1)
 gpr_slice <- matrix(rnorm(100, 0, 0.05), nrow = 10)
 enhanced_slice <- smooth_sparse_gpr_image(gpr_slice, scale = 0.05, power = 2)
 print(enhanced_slice)
-
+}
 }
 \concept{processing}

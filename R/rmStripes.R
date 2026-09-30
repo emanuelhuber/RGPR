@@ -143,6 +143,7 @@ setMethod("rmStripes", "GPRslice",
 #'
 #' Ernenwein, E. G., & Kvamme, K. L. (2008).
 #' Data processing issues in large-area GPR surveys.
+#' @noRd
 .destripe <- function(
     S,
     stripeDir = "column",
@@ -206,6 +207,7 @@ setMethod("rmStripes", "GPRslice",
 #'
 #' @return Numeric vector of length `ncol(S)` representing
 #'   relative stripe strength per column.
+#' @noRd
 .estimateStripeStrength <- function(S) {
   # High-pass vertically (perpendicular to stripes)
   hp <- t(apply(S, 1, function(x) diff(c(x[1], x))))
@@ -226,6 +228,7 @@ setMethod("rmStripes", "GPRslice",
 #' @param max_len Integer. Maximum smoothing window length.
 #'
 #' @return Numeric matrix with adaptively smoothed columns.
+#' @noRd
 .adaptiveStripeSmoothing <- function(
     S,
     min_len = 3,
@@ -281,6 +284,7 @@ setMethod("rmStripes", "GPRslice",
 #' @param strength Numeric. Attenuation strength (0–1).
 #'
 #' @return Numeric matrix with frequency-domain stripe reduction.
+#' @noRd
 .fft_destripe <- function(
     S,
     stripe_dir = c("column", "row"),

@@ -13,4 +13,8 @@ pathRelPos(xy, lonlat = FALSE)
 
 Relative position of the coordinates (cumulative distance).
 
+## Description
+
 Relative position of each coordinates (knots) along a path (polyline).
+
+

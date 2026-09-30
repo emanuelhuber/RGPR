@@ -123,6 +123,7 @@ setGeneric(
 #' @return An integer vector of validated line indices, or \code{NULL}.
 #'
 #' @keywords internal
+#' @noRd
 .validate_grid_line_ids <- function(ids, nlines, tag) {
   
   if (is.null(ids)) {
@@ -190,6 +191,7 @@ setGeneric(
 #' @return A vector of length \code{n}.
 #'
 #' @keywords internal
+#' @noRd
 .normalize_grid_argument <- function(value, n, default, name) {
   if (is.null(value)) {
     return(rep(default, n))
@@ -215,6 +217,7 @@ setGeneric(
 #' @return The validated argument.
 #'
 #' @keywords internal
+#' @noRd
 .validate_required_grid_argument <- function(value, n, name, lines_name) {
   if (is.null(value)) {
     stop(
@@ -260,6 +263,7 @@ setGeneric(
 #' @return The validated argument, or \code{NULL}.
 #'
 #' @keywords internal
+#' @noRd
 .validate_optional_grid_argument <- function(
     value,
     n,
@@ -306,6 +310,7 @@ setGeneric(
 #' @return A logical vector of length \code{n}.
 #'
 #' @keywords internal
+#' @noRd
 .normalize_grid_reverse <- function(value, n, name) {
   
   value <- .normalize_grid_argument(
@@ -341,6 +346,7 @@ setGeneric(
 #' @return A numeric matrix with columns \code{x}, \code{y}, and \code{z}.
 #'
 #' @keywords internal
+#' @noRd
 .make_grid_line_coords <- function(
     ntr,
     fixed_coordinate,
@@ -678,6 +684,7 @@ setReplaceMethod(
 #' @return The updated \code{\linkS4class{GPRsurvey}} object.
 #'
 #' @keywords internal
+#' @noRd
 .finalize_gridCoords_GPRsurvey <- function(x, changed_ids) {
   
   changed_ids <- unique(as.integer(changed_ids))

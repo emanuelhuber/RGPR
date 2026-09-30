@@ -269,6 +269,7 @@ setReplaceMethod(
 #'   call already applied.
 #' @return The (possibly updated) `GPRsurvey` object.
 #' @keywords internal
+#' @noRd
 .finalize_replace_write_hdf5 <- function(h5, x) {
   x@intersections <- list()
   x <- findIntersection(x)
@@ -298,6 +299,7 @@ setReplaceMethod(
 #' @param compress (`integer(1)`) gzip level for the rewritten line.
 #' @return The updated `GPRsurvey` object (HDF5 line already written).
 #' @keywords internal
+#' @noRd
 .replace_one_GPRsurvey_line_hdf5 <- function(h5, x, i, value, compress = 5L) {
   if (!inherits(value, "GPR")) {
     stop("'value' must be of class 'GPR'.", call. = FALSE)
@@ -395,6 +397,7 @@ setReplaceMethod(
 #' @param value (`GPRsurvey`) Source survey (same backing file as `x`).
 #' @return The updated `GPRsurvey` object.
 #' @keywords internal
+#' @noRd
 .replace_lines_same_file_hdf5 <- function(h5, x, ii, value) {
   tmp_names <- paste0(
     ".RGPR_tmp_replace_",
@@ -455,6 +458,7 @@ setReplaceMethod(
 #' @param value (`GPRsurvey`) Source survey (different backing file).
 #' @return The updated `GPRsurvey` object.
 #' @keywords internal
+#' @noRd
 .replace_lines_cross_file_hdf5 <- function(h5, src_h5, x, ii, value) {
   for (k in seq_along(ii)) {
     old_name <- x@names[ii[k]]

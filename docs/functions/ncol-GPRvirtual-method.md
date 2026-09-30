@@ -9,4 +9,8 @@ ncol(x)
 
 - `x`: (`GPR`)
 
+## Description
+
 Number of columns (samples per trace)
+
+

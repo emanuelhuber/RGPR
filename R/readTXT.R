@@ -28,6 +28,7 @@
 #'   \item{x_gps}{\code{NULL} (TXT carries no GPS companion file).}
 #'
 #' @keywords internal
+#' @noRd
 .read_txt <- function(dsn, fName, fPath, desc, Vmax, verbose, ...) {
   
   A <- verboseF(readTXT(dsn[["TXT"]]), verbose = verbose)
@@ -139,7 +140,7 @@ readTXT <- function(dsn){
   #                 sep    = pp$sep)
   
   # remove NA columns
-  X <- rmNaCol(X)
+  X <- .rmNaCols(X)
   
   if(ncol(X) < 3){
     stop("The data are not correctly formated.")

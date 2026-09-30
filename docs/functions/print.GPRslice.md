@@ -10,4 +10,8 @@ print(x, ...)
 - `x`: (`GPRslice object`)
 - `...`: Not used.
 
+## Description
+
 Print GPRslice
+
+

@@ -9,4 +9,8 @@ show(object)
 
 - `object`: (`GPRcube object`)
 
+## Description
+
 Identical to print().
+
+

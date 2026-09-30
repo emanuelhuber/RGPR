@@ -14,4 +14,8 @@ readGPGGA(dsn, sep = ",", returnSf = TRUE)
 
 (`SpatialPoints`)
 
+## Description
+
 Read GPS file with GPGGA string
+
+

@@ -3,16 +3,16 @@
 \name{[,GPR,ANY,ANY,ANY-method}
 \alias{[,GPR,ANY,ANY,ANY-method}
 \alias{[,GPR-method}
-\alias{[<-,GPR,ANY,ANY,ANY-method}
+\alias{[<-,GPR,ANY,ANY-method}
 \alias{[<-,GPR-method}
-\alias{[<-,GPRsurvey,ANY,ANY,ANY-method}
+\alias{[<-,GPRsurvey,ANY,ANY-method}
 \title{Extract and replace parts of a GPR object}
 \usage{
 \S4method{[}{GPR,ANY,ANY,ANY}(x, i, j, ..., drop = TRUE)
 
-\S4method{[}{GPR,ANY,ANY,ANY}(x, i, j, ...) <- value
+\S4method{[}{GPR,ANY,ANY}(x, i, j, ...) <- value
 
-\S4method{[}{GPRsurvey,ANY,ANY,ANY}(x, i, j, ...) <- value
+\S4method{[}{GPRsurvey,ANY,ANY}(x, i, j, ...) <- value
 }
 \arguments{
 \item{x}{(\code{GPR})}

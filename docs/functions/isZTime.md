@@ -26,4 +26,8 @@ isZDepth(x)
 
 (`logical[1]`) `TRUE` if the z-dimension is in unit of time, `FALSE` if the z-dimension is in unit of length (depth)
 
+## Description
+
 Is the z-dimension time?
+
+

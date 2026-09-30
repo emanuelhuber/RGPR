@@ -9,4 +9,8 @@ show(object)
 
 - `object`: (`GPRslice object`)
 
+## Description
+
 Identical to print().
+
+

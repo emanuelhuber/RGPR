@@ -9,6 +9,7 @@ NMOcorrect(
   x,
   thrs = NULL,
   v = NULL,
+  rmNARows = FALSE,
   method = c("linear", "nearest", "pchip", "cubic", "spline")
 )
 
@@ -16,19 +17,21 @@ NMOcorrect(
   x,
   thrs = NULL,
   v = NULL,
+  rmNARows = FALSE,
   method = c("linear", "nearest", "pchip", "cubic", "spline")
 )
 }
 \arguments{
 \item{x}{An object of the class \code{GPR}}
 
-\item{thrs}{(\code{numeric[1]|NULL}) Definite the threshold for muting
-(i.e., suppressing) the values where the NMO-stretching is
-above the threshold. Setting \code{thrs = NULL}, the full data
-will be used. \code{thrs = NULL} ranges between 0 and 1.}
+\item{thrs}{(\code{numeric[1]|NULL}) Stretch-muting threshold. Values for which
+the relative NMO stretch exceeds \code{thrs} are muted. Set \code{thrs = NULL} to
+disable stretch muting. When specified, \code{thrs} must lie between 0 and 1.}
 
 \item{v}{A length-one numeric vector defining the radar wave velocity in
 the ground}
+
+\item{rmNARows}{(\code{logical[1]}) If \code{TRUE} removes the rows containing only NA's.}
 
 \item{method}{(\code{character[1]}) Interpolation method to be applied:
 one of \code{pchip}, \code{linear}, \code{nearest},

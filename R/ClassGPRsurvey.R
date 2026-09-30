@@ -46,7 +46,8 @@
 #' @slot zunits    (`character[1]`) Unit of `z`.
 #' @slot nx        (`integer[k]`) Number of traces in each GPR data.
 #' @slot xlengths  (`numeric[k]`) Length of the GPR data.
-#' @slot transf  (`numeric(5)`) Translation vector before rotation, after and rotation angle
+#' @slot transf  (`numeric[2]`) Translation vector before rotation, after and rotation angle
+#' @slot view (`logical[1]`) TRUE if only a view.
 #' @name GPRsurvey-class
 #' @rdname GPRsurvey-class
 #' @export

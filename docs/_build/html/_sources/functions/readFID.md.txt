@@ -14,4 +14,8 @@ readFID(FID, sep = NULL, verbose = TRUE)
 
 list
 
+## Description
+
 read fiducial marker files
+
+

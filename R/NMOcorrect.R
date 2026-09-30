@@ -35,12 +35,12 @@
 #' 
 #' 
 #' @param x An object of the class `GPR`
-#' @param thrs (`numeric[1]|NULL`) Definite the threshold for muting
-#'             (i.e., suppressing) the values where the NMO-stretching is
-#'             above the threshold. Setting `thrs = NULL`, the full data
-#'             will be used. `thrs = NULL` ranges between 0 and 1.
+#' @param thrs (`numeric[1]|NULL`) Stretch-muting threshold. Values for which
+#'   the relative NMO stretch exceeds `thrs` are muted. Set `thrs = NULL` to
+#'   disable stretch muting. When specified, `thrs` must lie between 0 and 1.
 #' @param v A length-one numeric vector defining the radar wave velocity in 
 #'          the ground
+#' @param rmNARows (`logical[1]`) If `TRUE` removes the rows containing only NA's.
 #' @param method (`character[1]`) Interpolation method to be applied:
 #'               one of `pchip`, `linear`, `nearest`, 
 #'               `spline`, `cubic` 
@@ -56,14 +56,14 @@
 #'         473-488}
 #' }
 #' @name NMOcorrect
-setGeneric("NMOcorrect", function(x, thrs = NULL, v = NULL, 
+setGeneric("NMOcorrect", function(x, thrs = NULL, v = NULL, rmNARows = FALSE,
                               method = c("linear", "nearest", 
                                                       "pchip", "cubic", "spline")) 
   standardGeneric("NMOcorrect"))
 
 #' @rdname NMOcorrect
 #' @export
-setMethod("NMOcorrect", "GPR", function(x, thrs = NULL, v = NULL, 
+setMethod("NMOcorrect", "GPR", function(x, thrs = NULL, v = NULL, rmNARows = FALSE, 
                                     method = c("linear", "nearest", "pchip",   
                                                "cubic", "spline")){
   method <- match.arg(method[1], c("spline", "linear", "nearest", "pchip", 
@@ -101,6 +101,11 @@ setMethod("NMOcorrect", "GPR", function(x, thrs = NULL, v = NULL,
   
   x <- .NMOCor(x, v = v, asep = asep, method = method)
   x@antsep <- 0 
+  if(isTRUE(rmNARows)){
+    rmRow <- which(apply(x@data, 1, function(x) sum(is.na(x))) > 0)
+    if(length(rmRow) > 0)    x <- x[- rmRow, ]
+  }
+  
   proc(x) <- getArgs()
   return(x)
 })
@@ -114,7 +119,7 @@ setMethod("NMOcorrect", "GPR", function(x, thrs = NULL, v = NULL,
   #   v <- x@vel[[1]]
   # }
   # works when v is a vector.
-  tt <- outer(x@z, x@antsep, hyperbolicTWT, v = v)
+  tt <- outer(x@z, asep, hyperbolicTWT, v = v)
   for(i in seq_along(x)){
     # tt <- sqrt( x@z^2 + (asep[i]^2 )/v^2 )
     valreg <- signal::interp1(x  = x@z, 
@@ -127,7 +132,7 @@ setMethod("NMOcorrect", "GPR", function(x, thrs = NULL, v = NULL,
   }
   # x_nmoCor@data[is.na(x_nmoCor@data)] <- 0
   x_nmoCor@data[is.infinite(x_nmoCor@data)] <- NA
-  x_nmoCor@x <- asep
+  # x_nmoCor@x <- asep
   return(x_nmoCor)
 }
 

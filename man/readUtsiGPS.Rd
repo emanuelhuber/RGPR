@@ -43,8 +43,8 @@ $GPGGA,140454.00,5518.98033,N,00203.66162,W,
 }
 
 Geographic coordinates are extracted using
-\code{\link{getLonLatFromGPGGA}} and optionally projected using
-\code{\link{projectXYZT}}. The resulting coordinates are combined
+\code{\link{getLonLatFromGPGGA}} and optionally projected.
+The resulting coordinates are combined
 with the GPT trace identifiers and returned as an
 \code{\link[sf]{sf}} point object.
 }

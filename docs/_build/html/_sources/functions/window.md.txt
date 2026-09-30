@@ -2,15 +2,15 @@
 
 ```r
 ## S3 method for class 'GPRvirtual'
-window(x, xlim, ylim, zlim, ...)
+window(obj, xlim = NULL, ylim = NULL, zlim = NULL, ...)
 
 ## S3 method for class 'GPR'
-window(x, xlim, zlim, ...)
+window(obj, xlim = NULL, zlim = NULL, ...)
 ```
 
 ## Arguments
 
-- `x`: (`GPR`)
+- `obj`: (`GPR`)
 - `xlim`: (`numeric[2]`) Data range along x-axis
 - `ylim`: (`numeric[2]`) Data range along y-axis
 - `zlim`: (`numeric[2]`) Data range along z-axis
@@ -20,4 +20,8 @@ window(x, xlim, zlim, ...)
 
 (`GPR`)
 
+## Description
+
 Based on the units...
+
+

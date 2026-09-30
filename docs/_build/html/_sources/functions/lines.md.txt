@@ -14,4 +14,8 @@ lines(x, ...)
 - `relTime0`: (`logical[1]`) If `TRUE`, shift `x` to time- zero.
 - `...`: Additional parameters to be passed to `lines()`.
 
+## Description
+
 Add a GPR trace on a plot
+
+

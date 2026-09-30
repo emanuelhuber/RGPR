@@ -46,12 +46,3 @@ This function reconstructs an image from a sinogram using filtered backprojectio
 via a high-performance C++ implementation. Supports multiple filter types and normalization
 conventions (PET vs scikit-image / MATLAB style).
 }
-\examples{
-# Small numeric example
-sinogram <- matrix(1:9, nrow = 3, ncol = 3)
-img_pet <- iradon_fbp_wrapper(sinogram, N = 3, M = 3, normalization = "delta")
-img_sci <- iradon_fbp_wrapper(sinogram, N = 3, M = 3, normalization = "scikit")
-img_pet
-img_sci
-
-}

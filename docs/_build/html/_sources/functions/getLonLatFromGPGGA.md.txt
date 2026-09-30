@@ -12,4 +12,8 @@ getLonLatFromGPGGA(a)
 
 (`data.frame`) Columns = latitude, longitude, elevation and time
 
+## Description
+
 Get longitude and latitude from GPGGA sentence information (NMEA)
+
+

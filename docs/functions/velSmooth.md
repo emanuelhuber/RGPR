@@ -17,4 +17,8 @@ velSmooth(x, type = c("vrms", "vint"), w)
 
 (`GPR class`) An object of the class GPR.
 
+## Description
+
 Define the smoothing parameters that will be used when the velocities will be plotted or used in other functions. To undo smoothing, set `w = NULL`.
+
+

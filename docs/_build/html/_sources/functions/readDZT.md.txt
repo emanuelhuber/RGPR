@@ -1,4 +1,4 @@
-# Read GSSI GPR data
+# Read GSSI GPR data (.dzt)
 
 ```r
 readDZT(dsn)
@@ -6,16 +6,24 @@ readDZT(dsn)
 
 ## Arguments
 
-- `dsn`: (`character(1)|connection object`) data source name: either the filepath to the GPR data (character), or an open file connection.
+- `dsn`: (`character(1)|connection`) Path or open binary connection to the .dzt file.
 
 ## Returns
 
-(`list(4)`) `hd` header data, `data` GPR data, `depth` time or depth, and `pos`
+A list with elements: - **hd**: Parsed header (list).
 
-position of the traces.
+- **data**: 3-D array `[nSamples, nScans, nChannels]`.
 
-Read GSSI GPR data
+- **depth**: Time vector (ns).
+
+- **pos**: Nominal position vector (m).
+
+## Description
+
+Reads the binary DZT file and returns the raw data array together with the parsed header and axis vectors.
 
 ## See Also
 
 `readDZG()`, `readDZX()`
+
+

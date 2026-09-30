@@ -13,4 +13,8 @@ antSepFromAntFreq(antfreq, verbose = TRUE)
 
 (`numeric[1]`) Antenna separation
 
+## Description
+
 Estimate antenna separation from antenna frequency
+
+

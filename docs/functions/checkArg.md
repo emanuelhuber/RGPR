@@ -12,4 +12,8 @@ checkArg(x, u, type, y, ...)
 - `y`: Additional argument for checking (e.g., length).
 - `...`: Additional argument for checking.
 
+## Description
+
 To be used inside a function.
+
+

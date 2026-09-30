@@ -9,4 +9,8 @@ show(object)
 
 - `object`: (`GPR`)
 
+## Description
+
 Identical to print().
+
+

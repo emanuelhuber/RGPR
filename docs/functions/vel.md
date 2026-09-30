@@ -21,6 +21,8 @@ vel(x) <- value
 
 (`list|numeric|matrix`) The velocities as they are stored in `x`.
 
+## Description
+
 Set and get velocity model
 
 ## Details
@@ -31,3 +33,5 @@ The argument `value` can be
  * a vector of length equal to the sample number (row number) of x (`m`).
  * a matrix of dimension equal to the sample and trace numner (row and column number) of x (`m` `\times` `n`).
  * a list with elements `t` and `v` having the same length. `t` defines the lower time boundaries of the velocities `v`. FIXME: "intp", "smooth"
+
+

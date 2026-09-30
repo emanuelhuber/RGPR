@@ -18,4 +18,8 @@ as.sf(x)
 
 (`class sf`) Geometry type is `POINT`.
 
+## Description
+
 Coerce object to a simple feature (sf) geometry POINT. Only coordinates are coerced, no additional information.
+
+

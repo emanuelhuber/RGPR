@@ -16,4 +16,8 @@ Logic(e1, e2)
 - `e1`: An object of the class GPRvirtual
 - `e2`: An object of the class GPRvirtual
 
+## Description
+
 Methods for the base Logic methods S4groupGeneric : "==", ">", "<", "!=", "<=", ">="
+
+

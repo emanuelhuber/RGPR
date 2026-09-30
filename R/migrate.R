@@ -28,6 +28,9 @@
 #' @param type Character string specifying the migration method. Currently,
 #'   `"kirchhoff"` performs topographic Kirchhoff migration.
 #'
+#' @param dz vertical sampling interval of the migrated image, in metres.
+#'     The default is `0.25 * obj_dz`, where `obj_dz` is the mean vertical
+#'     sampling interval.
 #' @param x Optional numeric vector giving the horizontal position, in metres,
 #'   of every trace. If `NULL`, `obj@x` is used. The vector must have length
 #'   `ncol(obj@data)` and must contain finite, strictly increasing values.
@@ -96,9 +99,6 @@
 #'     metres. If omitted, it is estimated from the time axis and the velocity
 #'     model.
 #'
-#'   - `dz`: vertical sampling interval of the migrated image, in metres.
-#'     The default is `0.25 * obj@dz`.
-#'
 #'   - `vel_mode`: travel-time algorithm. One of `"auto"`, `"constant"`,
 #'     `"layered"`, or `"general"`.
 #'
@@ -166,8 +166,9 @@ setGeneric(
   function(
     obj,
     type = c("static", "kirchhoff"),
-    x = NULL,
+    dz = NULL,
     fdo = NULL,
+    x = NULL,
     maxangle = NULL,
     weight = "obliquity",
     normalize = FALSE,
@@ -190,8 +191,9 @@ setMethod(
   function(
     obj,
     type = c("static", "kirchhoff"),
-    x = NULL,
+    dz = NULL,
     fdo = NULL,
+    x = NULL,
     maxangle = NULL,
     weight = "obliquity",
     normalize = FALSE,
@@ -213,56 +215,37 @@ setMethod(
       )
     }
     
-    weight <- match.arg(
-      weight,
-      choices = c("obliquity", "legacy", "none")
-    )
+    weight <- match.arg(weight, choices = c("obliquity", "legacy", "none"))
     
-    waveletfilter <- match.arg(
-      waveletfilter,
-      choices = c("halfderiv", "none")
-    )
+    waveletfilter <- match.arg(waveletfilter, choices = c("halfderiv", "none"))
     
     # --------------------------------------------------------------------- #
     # Validate object properties
     # --------------------------------------------------------------------- #
     
     if (length(obj@antsep) == 0L || !is.numeric(obj@antsep)) {
-      stop(
-        "You must first define the antenna separation, for example with ",
-        "'antsep(obj) <- 0'."
-      )
+      stop("You must first define the antenna separation, for example with ",
+        "'antsep(obj) <- 0'.")
     }
     
     if (is.null(obj@vel) || length(obj@vel) == 0L) {
-      stop(
-        "You must first define the EM-wave velocity, for example with ",
-        "'vel(obj) <- 0.1'."
-      )
+      stop("You must first define the EM-wave velocity, for example with ",
+        "'vel(obj) <- 0.1'.")
     }
     
     if (!isTRUE(isSamplingRegular(obj, axes = 2))) {
-      stop(
-        "Vertical sampling must be regular. Use `resampleRegGrid()` first."
-      )
+      stop("Vertical sampling must be regular. Use `resampleRegGrid()` first.")
     }
     
     # --------------------------------------------------------------------- #
     # Trace positions
     # --------------------------------------------------------------------- #
-    
     if (is.null(x)) {
       x <- obj@x
     }
-    
-    if (!is.numeric(x) ||
-        length(x) != ncol(obj@data) ||
-        any(!is.finite(x))) {
-      stop(
-        "'x' must be a finite numeric vector with length ncol(obj@data)."
-      )
+    if (!is.numeric(x) || length(x) != ncol(obj@data) || any(!is.finite(x))) {
+      stop("'x' must be a finite numeric vector with length ncol(obj@data).")
     }
-    
     if (is.unsorted(x, strictly = TRUE)) {
       stop("'x' must be strictly increasing.")
     }
@@ -270,16 +253,11 @@ setMethod(
     # --------------------------------------------------------------------- #
     # Acquisition topography
     # --------------------------------------------------------------------- #
-    
     if (length(obj@coord) != 0L && ncol(obj@coord) >= 3L) {
       topo <- obj@coord[, 3L]
-      
-      if (length(topo) != ncol(obj@data) ||
-          any(!is.finite(topo))) {
-        stop(
-          "The third column of 'obj@coord' must contain one finite ",
-          "elevation per trace."
-        )
+      if (length(topo) != ncol(obj@data) || any(!is.finite(topo))) {
+        stop("The third column of 'obj@coord' must contain one finite ",
+          "elevation per trace.")
       }
     } else {
       topo <- rep.int(0, ncol(obj@data))
@@ -289,10 +267,9 @@ setMethod(
     # --------------------------------------------------------------------- #
     # Input data and velocity
     # --------------------------------------------------------------------- #
-    
     A   <- obj@data
-    dts <- obj@dz
-    
+    dts <- abs(mean(diff(obj@z)))
+  
     # Interval velocity in m/ns:
     # scalar, vector with length nrow(A), or matrix with dim(A).
     v <- .getVel(obj, type = "vint", strict = FALSE)
@@ -300,33 +277,18 @@ setMethod(
     # --------------------------------------------------------------------- #
     # Defaults derived from the GPR object
     # --------------------------------------------------------------------- #
-    
     if (length(v) == 1L) {
       max_depth <- max(obj@z) * v / 2 * 0.9
     } else {
       tt <- obj@z - obj@z[1L]
-      
       vm <- if (is.matrix(v)) {
         v
       } else {
-        matrix(
-          v,
-          nrow = length(v),
-          ncol = ncol(A)
-        )
+        matrix(v, nrow = length(v), ncol = ncol(A))
       }
-      
-      max_depth <- max(
-        apply(
-          c(0, diff(tt)) * vm / 2,
-          2L,
-          sum
-        )
-      ) * 0.9
+      max_depth <- max(apply(c(0, diff(tt)) * vm / 2, 2L, sum)) * 0.9
     }
-    
-    dz <- 0.25 * obj@dz
-    
+    if(is.null(dz))    dz <- 0.25 * dts
     if (is.null(fdo)) {
       fdo <- obj@freq
     }
@@ -719,7 +681,7 @@ setMethod(
 #' \doi{10.1016/j.ndteint.2008.06.002}
 #'
 #' @keywords internal
-#'
+#' @noRd
 .kirMigTopo <- function(
     x, topoGPR, xpos, dts, v,
     fdo = NULL,
@@ -845,6 +807,8 @@ setMethod(
     obliquity = 1L,
     legacy = 2L
   )
+  
+  x[is.na(x)] <- 0
   
   if (vel_mode == "constant") {
     # original constant-velocity core: no velocity model at all

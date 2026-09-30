@@ -1,6 +1,16 @@
 # Time of first wave break
 
 ```r
+pickFirstBreak(
+  x,
+  method = c("coppens", "threshold", "MER"),
+  thr = NULL,
+  w = NULL,
+  ns = NULL,
+  bet = NULL,
+  shorten = TRUE
+)
+
 ## S4 method for signature 'GPR'
 pickFirstBreak(
   x,
@@ -27,6 +37,8 @@ pickFirstBreak(
 
 (`numeric[n]`] The time of the first wave break for every traces in unit of time (`n = ncol(x) =` number of traces).
 
+## Description
+
 Pick the time of the first wave break in each trace (trace-by-trace function).
 
 ## Details
@@ -44,4 +56,6 @@ In the threshold method (`"threshold"`), the sample before the first sample that
 
 ## See Also
 
-`firstBreakToTime0()` to convert time of first wave break into time-zero; `time0()` and `setTime0()` to set time-zero; `estimateTime0()` to estimate first wave break, convert it to time-zero and set time zero (all in one step); `time0Cor()` to shift the traces such that they start at time-zero.
+`firstBreakToTime0()` to convert time of first wave break into time-zero; `time0()` and `setTime0()` to set time-zero; `estimateTime0()` to estimate first wave break, convert it to time-zero and set time zero (all in one step); `shiftToTime0()` to shift the traces such that they start at time-zero.
+
+

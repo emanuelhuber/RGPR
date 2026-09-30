@@ -11,4 +11,8 @@ palCol(x, col = palGPR(n = 101), sym = TRUE, clim = NULL)
 - `sym`: (`logical[1]`) Should the color palette be symmetric?
 - `clim`: (`numeric[2]`) The range of the color values, used in the color palette.
 
+## Description
+
 Return color from palette
+
+

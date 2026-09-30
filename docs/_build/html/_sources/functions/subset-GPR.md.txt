@@ -6,6 +6,9 @@ x[i, j, ..., drop = TRUE]
 
 ## S4 replacement method for signature 'GPR,ANY,ANY'
 x[i, j, ...] <- value
+
+## S4 replacement method for signature 'GPRsurvey,ANY,ANY'
+x[i, j, ...] <- value
 ```
 
 ## Arguments
@@ -21,4 +24,8 @@ x[i, j, ...] <- value
 
 (`GPR|`)numeric`] Returns a numeric vector only if`x[]`.
 
+## Description
+
 Extract parts of a GPR object
+
+

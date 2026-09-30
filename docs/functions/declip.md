@@ -19,8 +19,12 @@ declip(obj, drange = NULL, lambda = 1, mu = 0, objclip = NULL)
 
 (`GPR`)
 
+## Description
+
 Use constrained least squares. Based on the code of Ivan Selesnick: we minimize the energy of the the third derivative. This encourages the filled in data to have the form of a parabola (second order polynomial), because the third derivative of a parabola is zero.".
 
 ## Details
 
 M. J. Harvilla and R. M. Stern, "Efficient audio declipping using regularized least squares," 2015 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP), South Brisbane, QLD, Australia, 2015, pp. 221-225, doi: 10.1109/ICASSP.2015.7177964.
+
+

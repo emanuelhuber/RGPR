@@ -12,6 +12,7 @@ as.GPRcube.array <- function (x, ...){
                               call = sys.call(-2),
                               expand.dots = FALSE ))
   d_name <- paste(eval(myArg[2]))
+  nz <- if (length(dim(x)) >= 3L) dim(x)[3] else 1L
   new("GPRcube", 
       #--- class GPRvirtual
       version      = "0.3",  
@@ -45,7 +46,9 @@ as.GPRcube.array <- function (x, ...){
       #--- class GPRcube
       dx     = 1,
       dy     = 1,
-      dz     = 1,
+      # zunit = "m" is a depth unit -> @z must be strictly decreasing,
+      # top to bottom (see GPRcube-class validity)
+      z      = seq(0, by = -1, length.out = nz),
       ylab   = "y-position",  # set names, length = 1|p
       
       center = c(0,0,0),    # coordinates grid corner bottom left (0, 0, 0)
@@ -76,8 +79,17 @@ as.GPRcube.list <- function (x, ...){
   if(is.null(x[["dy"]]) ){
     x[["dy"]] <- 1
   }
-  if(is.null(x[["dz"]]) ){
-    x[["dz"]] <- 1
+  if(is.null(x[["z"]])){
+    # No explicit z vector given: synthesize an evenly-spaced one from
+    # 'dz' (defaulting to 1). zunit is hardcoded to "ns" (a time unit)
+    # below, so per GPRcube-class's validity constraint z must be
+    # strictly increasing, top to bottom.
+    if(is.null(x[["dz"]]) ){
+      x[["dz"]] <- 1
+    }
+    nz <- dim(x[["data"]])[3]
+    if(is.null(nz) || is.na(nz)) nz <- 1L
+    x[["z"]] <- seq(0, by = x[["dz"]], length.out = nz)
   }
   if(is.null(x[["ylab"]]) ){
     x[["ylab"]] <- "y-position"
@@ -145,7 +157,7 @@ as.GPRcube.list <- function (x, ...){
            #--- class GPR
            dx     = x[["dx"]],
            dy     = x[["dy"]],
-           dz     = x[["dz"]],
+           z      = x[["z"]],
            ylab   = x[["ylab"]],  # set names, length = 1|p
            
            center = x[["center"]],    # coordinates grid corner bottom left (0, 0, 0)

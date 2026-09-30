@@ -9,4 +9,8 @@ length(x)
 
 - `x`: (`GPR`)
 
+## Description
+
 Return length of a GPRcube/GPRslice object (number of slices)
+
+

@@ -4,7 +4,7 @@
 \alias{as.spatialPoints}
 \alias{as.spatialPoints,GPR-method}
 \alias{as.spatialPoints,GPRsurvey-method}
-\title{Coerce object to an object of the class SpatialPoints}
+\title{Coerce object to an object of the class sf points}
 \usage{
 as.spatialPoints(x)
 
@@ -19,6 +19,6 @@ as.spatialPoints(x)
 (\code{SpatialPoints})
 }
 \description{
-Coerce object to an object of the class SpatialPoints
+Coerce object to an object of the class sf points
 }
 \concept{coercion}

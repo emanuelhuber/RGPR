@@ -27,6 +27,7 @@
 #'   \item{x_gps}{An \code{sf} object with GPS data, or \code{NULL}.}
 #'
 #' @keywords internal
+#' @noRd
 .read_ipr <- function(dsn, fName, fPath, desc, Vmax, verbose, ...) {
   
   hd   <- verboseF(readIPRH(dsn[["IPRH"]]), verbose = verbose)

@@ -13,4 +13,8 @@ velDix(twt, v)
 
 (`list`) List with two elements: `t` (time) and `v` (corresponding Dix velocities)
 
+## Description
+
 Computes Dix velocities from root-mean-square velocity and corresponding two-way travel times
+
+

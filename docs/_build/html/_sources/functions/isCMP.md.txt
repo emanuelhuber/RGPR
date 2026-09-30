@@ -30,4 +30,8 @@ isVelModel(x)
 
 (`logical()`) `TRUE` if `x` is of type CMP/WARR
 
+## Description
+
 Return TRUE if survey mode is CMP/WARR
+
+

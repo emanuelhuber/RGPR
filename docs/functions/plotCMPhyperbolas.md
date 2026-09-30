@@ -17,8 +17,10 @@ plotCMPhyperbolas(x, lty = 1, lwd = 1, type = "l", ...)
 
 ## Returns
 
-(`list`) A list element key `antsep` containing a numeric vector of `n` antenna separation values, and element `twt`
+(`list`) A list element key `antsep` containing a numeric vector of `n` antenna separation values, and element `twt` containing a `n \times m` matrix, where `m` is the number of hyperbolas (i.e., the number of velocities).
 
-containing a `n \times m` matrix, where `m` is the number of hyperbolas (i.e., the number of velocities).
+## Description
 
 Plot hyperbolas associated with root-mean-square velocities stored in the CMP data.
+
+

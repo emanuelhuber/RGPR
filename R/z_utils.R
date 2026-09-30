@@ -260,7 +260,7 @@ getAntFreqGSSI <- function(x){
 #' freqFromString(s) 
 #' s <- "D1230MLF"
 #' freqFromString(s) 
-#' @export
+#' @noRd
 freqFromString <- function(s){
   if(length(s) > 1){
     unlist(sapply(s, freqFromString))
@@ -327,7 +327,7 @@ freqFromString <- function(s){
 #' freqFromStringMHzGHz("Radar_400MHz")
 #' freqFromStringMHzGHz("No frequency here")
 #'
-#' @export
+#' @noRd
 freqFromStringMHzGHz <- function(s){
   s <- iconv(s, "UTF-8", "UTF-8",sub='') ## replace any non UTF-8 by '
   a <- regexpr("[0-9]+.(MHZ|GHZ)",  s, ignore.case = TRUE, perl = FALSE)
@@ -389,7 +389,7 @@ inPoly <- function(x, y, vertx, verty){
 #' 
 #' @param x (`list`) A list.
 #' @param xdefault (`list`) The list with default values.
-#' @export
+#' @noRd
 setDefaultListValues <- function(x, xdefault){
   if(is.null(x) || isFALSE(x)){
     x <- NULL
@@ -409,7 +409,7 @@ setDefaultListValues <- function(x, xdefault){
 #' Set default values to missing elements of a list.
 #' @param dots (`list`) A list.
 #' @param defaults (`list`) The list with default values.
-#' @export
+#' @noRd
 setDots <- function(dots, defaults){
   sapply(names(defaults), .setDots, dots, defaults, simplify = FALSE)
 }
@@ -430,6 +430,7 @@ setDots <- function(dots, defaults){
 #' @param verbose   (`logical(1)`) Emit warning?
 #'
 #' @keywords internal
+#' @noRd
 .setSlotDefault <- function(obj, slot_name, default, msg,
                              verbose = TRUE) {
   val <- methods::slot(obj, slot_name)
@@ -521,3 +522,19 @@ interpRegRaster <- function(vx, vy, z, nx, ny, method = c("linear", "nearest", "
   }
   return(z)
 }
+
+.rmNaCols <- function(x){
+  # remove NA columns
+  rmCol <- which(apply(x, 2, function(x) sum(is.na(x))) > 0)
+  if(length(rmCol) > 0)    x <- x[, - rmCol]
+  return(x)
+}
+
+.rmNaRows <- function(x){
+  # remove NA columns
+  rmRow <- which(apply(x, 1, function(x) sum(is.na(x))) > 0)
+  if(length(rmRow) > 0)    x <- x[- rmRow, ]
+  return(x)
+}
+
+

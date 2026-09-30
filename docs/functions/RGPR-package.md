@@ -1,6 +1,8 @@
-package
+ package
 
 # RGPR: A package for processing and visualising ground-penetrating data radar (GPR) data.
+
+## Description
 
 The RGPR package provides two classes GPR and GPRsurvey
 
@@ -17,4 +19,7 @@ Maintainer : Emanuel Huber emanuel.huber@pm.me
 
 Authors:
 
+ * Emanuel Huber emanuel.huber@pm.me
  * Guillaume Hans guillaume.hans@fpinnovations.ca
+
+

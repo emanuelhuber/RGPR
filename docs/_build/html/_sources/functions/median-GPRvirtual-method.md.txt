@@ -10,4 +10,8 @@ median(x, na.rm = FALSE)
 - `x`: (`GPR`)
 - `na.rm`: `logical` If `TRUE` NA values are stripped before the computation proceeds.
 
+## Description
+
 Median of all the values contained in `x`.
+
+

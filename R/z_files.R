@@ -178,9 +178,3 @@ detectSep <- function(x){
   sep <- unique(substring(x, i[[1]], i[[1]]))
 }
 
-rmNaCol <- function(x){
-  # remove NA columns
-  rmCol <- which(apply(x, 2, function(x) sum(is.na(x))) > 0)
-  if(length(rmCol) > 0)    x <- x[, - rmCol]
-  return(x)
-}

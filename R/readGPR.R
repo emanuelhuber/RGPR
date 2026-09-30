@@ -201,6 +201,7 @@ readGPR <- function(dsn, desc = "", Vmax = NULL,
 #' @return Updated GPR object.
 #'
 #' @keywords internal
+#' @noRd
 .maybe_interp_gps <- function(x, x_gps, dsn,
                                interpGPS, UTM, verbose, ...) {
   if (!is.null(x_gps)) {
@@ -256,6 +257,7 @@ readGPR <- function(dsn, desc = "", Vmax = NULL,
 #' @return Updated GPR object.
 #'
 #' @keywords internal
+#' @noRd
 .maybe_set_cmp_mode <- function(x) {
   if (grepl("CMP", x@mode)) {
     x@mode <- "CMP"

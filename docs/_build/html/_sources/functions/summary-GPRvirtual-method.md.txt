@@ -8,6 +8,10 @@ summary(object, ...)
 ## Arguments
 
 - `object`: (`GPR`)
-- `...`: Additional parameters to be passed (see `summary()`).
+- `...`: Additional parameters to be passed (see `base::summary()`).
+
+## Description
 
 Summary of all the values contained in `object`.
+
+

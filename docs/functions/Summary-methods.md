@@ -11,6 +11,8 @@ Summary(x, ..., na.rm = FALSE)
 - `...`: further arguments
 - `na.rm`: (`logical[1]`) should missing values be removed?
 
+## Description
+
 Methods for the base Summary methods S4groupGeneric
 
 ## Details
@@ -18,3 +20,5 @@ Methods for the base Summary methods S4groupGeneric
 Currently implemented methods include:
 
  * all, any, sum, prod, min, max, range
+
+

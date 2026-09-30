@@ -43,8 +43,14 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/tutorials_01_plotGPR.html">Plot GPR data</a></li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">Functions</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="functions/amplEnv.html">amplEnv</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/analyticSignal.html">analyticSignal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/angle.html">angle</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/ann.html">ann</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/antsep.html">antsep</a></li>
@@ -68,6 +74,7 @@
 <li class="toctree-l1"><a class="reference internal" href="functions/convertTimeToDepth.html">convertTimeToDepth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/convexhull.html">convexhull</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/coordinates.html">coordinates</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/createCubeFromGrid.html">createCubeFromGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/crs.html">crs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/crsUnit.html">crsUnit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/declip.html">declip</a></li>
@@ -77,17 +84,78 @@
 <li class="toctree-l1"><a class="reference internal" href="functions/detectASCIIProp.html">detectASCIIProp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/dewow.html">dewow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/dim-GPRvirtual-method.html">dim-GPRvirtual-method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-adaptiveStripeSmoothing.html">dot-adaptiveStripeSmoothing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-destripe.html">dot-destripe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-detect_format.html">dot-detect_format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-estimateStripeStrength.html">dot-estimateStripeStrength</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-fft_destripe.html">dot-fft_destripe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-finalize_gridCoords_GPRsurvey.html">dot-finalize_gridCoords_GPRsurvey</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-finalize_replace_write_hdf5.html">dot-finalize_replace_write_hdf5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-h5_atomic_replace.html">dot-h5_atomic_replace</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-h5_line_group_id.html">dot-h5_line_group_id</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-h5_lock_acquire.html">dot-h5_lock_acquire</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-h5_lock_release.html">dot-h5_lock_release</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-h5_resolve_line_ids.html">dot-h5_resolve_line_ids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-h5_safe_name.html">dot-h5_safe_name</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-h5_temp_path.html">dot-h5_temp_path</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-h5_update_survey_with_source.html">dot-h5_update_survey_with_source</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-h5_update_survey.html">dot-h5_update_survey</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-h5_verify_checksums.html">dot-h5_verify_checksums</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-h5_walk_and_read.html">dot-h5_walk_and_read</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-h5_write_data_array.html">dot-h5_write_data_array</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-h5_write_matrix.html">dot-h5_write_matrix</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-h5_write_r_object.html">dot-h5_write_r_object</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-h5_write_vector.html">dot-h5_write_vector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-kirMigTopo.html">dot-kirMigTopo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-make_grid_line_coords.html">dot-make_grid_line_coords</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-maybe_interp_gps.html">dot-maybe_interp_gps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-maybe_set_cmp_mode.html">dot-maybe_set_cmp_mode</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-normalise_dsn.html">dot-normalise_dsn</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-normalize_grid_argument.html">dot-normalize_grid_argument</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-normalize_grid_reverse.html">dot-normalize_grid_reverse</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-normalizeMarkers.html">dot-normalizeMarkers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-read_dat.html">dot-read_dat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-read_dt1.html">dot-read_dt1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-read_dzt.html">dot-read_dzt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-read_GPR_line_hdf5.html">dot-read_GPR_line_hdf5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-read_intersections_hdf5.html">dot-read_intersections_hdf5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-read_ipr.html">dot-read_ipr</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-read_rd3.html">dot-read_rd3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-read_rds.html">dot-read_rds</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-read_survey_group_hdf5.html">dot-read_survey_group_hdf5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-read_txt.html">dot-read_txt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-read_vol.html">dot-read_vol</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-readRFDate.html">dot-readRFDate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-replace_lines_cross_file_hdf5.html">dot-replace_lines_cross_file_hdf5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-replace_lines_same_file_hdf5.html">dot-replace_lines_same_file_hdf5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-replace_one_GPRsurvey_line_hdf5.html">dot-replace_one_GPRsurvey_line_hdf5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-resolve_gssi_antfreq.html">dot-resolve_gssi_antfreq</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-validate_grid_line_ids.html">dot-validate_grid_line_ids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-validate_optional_grid_argument.html">dot-validate_optional_grid_argument</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-validate_required_grid_argument.html">dot-validate_required_grid_argument</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-write_GPR_line_hdf5.html">dot-write_GPR_line_hdf5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-write_GPRsurvey_coords_hdf5.html">dot-write_GPRsurvey_coords_hdf5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-write_intersections_hdf5.html">dot-write_intersections_hdf5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-write_survey_group_hdf5.html">dot-write_survey_group_hdf5</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/dot-writeGPR_h5.html">dot-writeGPR_h5</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/dropDuplicatedCoords.html">dropDuplicatedCoords</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/estimateTime0.html">estimateTime0</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/filter1D.html">filter1D</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/filter2D.html">filter2D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/filterEigen.html">filterEigen</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/filterFreq.html">filterFreq</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/findClosestCoord.html">findClosestCoord</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/findIntersection.html">findIntersection</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/firstBreakToTime0.html">firstBreakToTime0</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/freqFromString.html">freqFromString</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/freqSpectrum.html">freqSpectrum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/freqSpectrum2D.html">freqSpectrum2D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/gainAGC.html">gainAGC</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/gainEnv.html">gainEnv</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/gainSEC.html">gainSEC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/georef.html">georef</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/getAntFreqGSSI.html">getAntFreqGSSI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/getDepth.html">getDepth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/getFName.html">getFName</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/getGPR.html">getGPR</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/getLonLatFromGPGGA.html">getLonLatFromGPGGA</a></li>
@@ -100,9 +168,13 @@
 <li class="toctree-l1"><a class="reference internal" href="functions/GPRslice-class.html">GPRslice-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/GPRsurvey-class.html">GPRsurvey-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/GPRsurvey.html">GPRsurvey</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/GPRsurveyInit.html">GPRsurveyInit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/GPRvirtual-class.html">GPRvirtual-class</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/gridCoords.html">gridCoords</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/hyperbolicTWT.html">hyperbolicTWT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/instAmpl.html">instAmpl</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/instPhase.html">instPhase</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/int32touint32.html">int32touint32</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/interpCoords.html">interpCoords</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/interpRegRaster.html">interpRegRaster</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/interpSlices.html">interpSlices</a></li>
@@ -111,20 +183,25 @@
 <li class="toctree-l1"><a class="reference internal" href="functions/is.na.html">is.na</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/isCMP.html">isCMP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/isCRSGeographic.html">isCRSGeographic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/isH5Backed.html">isH5Backed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/isSamplingRegular.html">isSamplingRegular</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/isZTime.html">isZTime</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/length-GPR-method.html">length-GPR-method</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/length-GPRcube-method.html">length-GPRcube-method</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/length-GPRsurvey-method.html">length-GPRsurvey-method</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/line2user.html">line2user</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/lines.html">lines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/loadCube.html">loadCube</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/Logic-methods.html">Logic-methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/logicalNegation-GPRvirtual.html">logicalNegation-GPRvirtual</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/lonLatToUTM.html">lonLatToUTM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/materialize.html">materialize</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/Math-methods.html">Math-methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/Math2-methods.html">Math2-methods</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/mean-GPRvirtual-method.html">mean-GPRvirtual-method</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/median-GPRvirtual-method.html">median-GPRvirtual-method</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/metadata.html">metadata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/migrate.html">migrate</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/ncol-GPRvirtual-method.html">ncol-GPRvirtual-method</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/NMO.html">NMO</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/NMOcorrect.html">NMOcorrect</a></li>
@@ -134,6 +211,7 @@
 <li class="toctree-l1"><a class="reference internal" href="functions/obbox.html">obbox</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/palCol.html">palCol</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/palGPR.html">palGPR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/papply.html">papply</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/pathLength.html">pathLength</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/pathRelPos.html">pathRelPos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/pickFirstBreak.html">pickFirstBreak</a></li>
@@ -141,6 +219,7 @@
 <li class="toctree-l1"><a class="reference internal" href="functions/plotCMPhyperbolas.html">plotCMPhyperbolas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/plotTr.html">plotTr</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/plotVel.html">plotVel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/plotVelLayers.html">plotVelLayers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/points.html">points</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/print.GPR.html">print.GPR</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/print.GPRcube.html">print.GPRcube</a></li>
@@ -148,21 +227,46 @@
 <li class="toctree-l1"><a class="reference internal" href="functions/print.GPRsurvey.html">print.GPRsurvey</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/proc.html">proc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/project.html">project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/radon.html">radon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/radoninv.html">radoninv</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/rayCMP.html">rayCMP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/raytrace.html">raytrace</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/raytracehalf.html">raytracehalf</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/readCOR.html">readCOR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/readDT.html">readDT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/readDT1.html">readDT1</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/readDZG.html">readDZG</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/readDZT.html">readDZT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/readDZX.html">readDZX</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/readFID.html">readFID</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/readGEC.html">readGEC</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/readGPGGA.html">readGPGGA</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/readGPR.html">readGPR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/readGPRsurvey.html">readGPRsurvey</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/readGPS.html">readGPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/readGPSUSRADAR.html">readGPSUSRADAR</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/readHD.html">readHD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/readIPRCOR.html">readIPRCOR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/readSEG2.html">readSEG2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/readSGY.html">readSGY</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/readTopo.html">readTopo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/readUSRadar.html">readUSRadar</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/readUtsiGPS.html">readUtsiGPS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/readUtsiGPT.html">readUtsiGPT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/readVOL.html">readVOL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/refracAng.html">refracAng</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/register_gpr_format.html">register_gpr_format</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/relPos.html">relPos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/resampleRegGrid.html">resampleRegGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/resolve_companion_files.html">resolve_companion_files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/reverse.html">reverse</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/RGPR-package.html">RGPR-package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/rmDCShift.html">rmDCShift</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/rmStripes.html">rmStripes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/robustSmooth.html">robustSmooth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/rotatePhase.html">rotatePhase</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/scale1D.html">scale1D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/scaleCol.html">scaleCol</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/setDefaultListValues.html">setDefaultListValues</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/setDots.html">setDots</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/setVel.html">setVel</a></li>
@@ -174,6 +278,7 @@
 <li class="toctree-l1"><a class="reference internal" href="functions/show-GPRcube-method.html">show-GPRcube-method</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/show-GPRslice-method.html">show-GPRslice-method</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/show-GPRsurvey-method.html">show-GPRsurvey-method</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/simCMP.html">simCMP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/simWavelet.html">simWavelet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/smooth2D.html">smooth2D</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/spunit.html">spunit</a></li>
@@ -183,6 +288,7 @@
 <li class="toctree-l1"><a class="reference internal" href="functions/subset-GPRsurvey.html">subset-GPRsurvey</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/summary-GPRvirtual-method.html">summary-GPRvirtual-method</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/Summary-methods.html">Summary-methods</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/switchPolarity.html">switchPolarity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/time0.html">time0</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/timeToDepth.html">timeToDepth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/trapply.html">trapply</a></li>
@@ -196,11 +302,15 @@
 <li class="toctree-l1"><a class="reference internal" href="functions/velInterp.html">velInterp</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/velLayers.html">velLayers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/velPick.html">velPick</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/velSetLayers.html">velSetLayers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/velSmooth.html">velSmooth</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/velSpectrum.html">velSpectrum</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/verboseF.html">verboseF</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/wapply.html">wapply</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/window.html">window</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/writeGPR.html">writeGPR</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/writeProfileVTK.html">writeProfileVTK</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions/writeVTK.html">writeVTK</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions/xpos.html">xpos</a></li>
 </ul>
 
@@ -242,7 +352,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Emanuel Huber, Guillaume Hans.</p>
+    <p>&#169; Copyright 2026, Emanuel Huber, Guillaume Hans.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

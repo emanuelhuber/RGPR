@@ -7,8 +7,9 @@
 migrate(
   obj,
   type = c("static", "kirchhoff"),
-  x = NULL,
+  dz = NULL,
   fdo = NULL,
+  x = NULL,
   maxangle = NULL,
   weight = "obliquity",
   normalize = FALSE,
@@ -22,8 +23,9 @@ migrate(
 \S4method{migrate}{GPR}(
   obj,
   type = c("static", "kirchhoff"),
-  x = NULL,
+  dz = NULL,
   fdo = NULL,
+  x = NULL,
   maxangle = NULL,
   weight = "obliquity",
   normalize = FALSE,
@@ -40,14 +42,18 @@ migrate(
 \item{type}{Character string specifying the migration method. Currently,
 \code{"kirchhoff"} performs topographic Kirchhoff migration.}
 
-\item{x}{Optional numeric vector giving the horizontal position, in metres,
-of every trace. If \code{NULL}, \code{obj@x} is used. The vector must have length
-\code{ncol(obj@data)} and must contain finite, strictly increasing values.}
+\item{dz}{vertical sampling interval of the migrated image, in metres.
+The default is \code{0.25 * obj_dz}, where \code{obj_dz} is the mean vertical
+sampling interval.}
 
 \item{fdo}{Optional positive numeric scalar giving the antenna centre or
 dominant frequency in MHz. If \code{NULL}, \code{obj@freq} is used. The frequency is
 required when \code{maxangle = NULL}, because the migration aperture is then
 calculated from the first Fresnel zone.}
+
+\item{x}{Optional numeric vector giving the horizontal position, in metres,
+of every trace. If \code{NULL}, \code{obj@x} is used. The vector must have length
+\code{ncol(obj@data)} and must contain finite, strictly increasing values.}
 
 \item{maxangle}{Maximum migration aperture angle in degrees, measured from
 the vertical. A trace contributes only if both the transmitter-to-pixel
@@ -106,8 +112,6 @@ Currently supported arguments include:
 \item \code{max_depth}: maximum migration depth below the local ground surface, in
 metres. If omitted, it is estimated from the time axis and the velocity
 model.
-\item \code{dz}: vertical sampling interval of the migrated image, in metres.
-The default is \code{0.25 * obj@dz}.
 \item \code{vel_mode}: travel-time algorithm. One of \code{"auto"}, \code{"constant"},
 \code{"layered"}, or \code{"general"}.
 \item \code{vel_dx}, \code{vel_dz}: horizontal and vertical spacing, in metres, of the

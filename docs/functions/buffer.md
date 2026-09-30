@@ -26,4 +26,8 @@ buffer(x, d, combine = TRUE)
 
 (`sfc`) Polygon as a simple feature geometry list-column.
 
+## Description
+
 Returns the buffered lines as polygon(s)
+
+

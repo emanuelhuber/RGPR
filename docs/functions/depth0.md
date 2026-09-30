@@ -14,4 +14,8 @@ depth0(t0 = 0, v = 0.1, antsep = 1)
 
 (`numeric`) Position of depth-zero on the two-way time axis
 
+## Description
+
 Useful if you want to plot a depth axis beside the two-way travel time axis.
+
+

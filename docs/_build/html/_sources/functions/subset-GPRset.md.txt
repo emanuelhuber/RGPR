@@ -22,4 +22,8 @@ x[i, j, k, ...] <- value
 
 (`GPR|numeric`) Returns a numeric vector only if `x[]`.
 
+## Description
+
 Extract parts of a GPR object
+
+

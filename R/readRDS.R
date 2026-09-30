@@ -33,6 +33,7 @@
 #'   \item{x_gps}{\code{NULL} (RDS objects already contain coordinates).}
 #'
 #' @keywords internal
+#' @noRd
 .read_rds <- function(dsn, fName, fPath, desc, Vmax, verbose, ...) {
   x <- verboseF(.read_RDS(dsn[["RDS"]]), verbose = verbose)
   list(x = x, x_gps = NULL)

@@ -1,6 +1,8 @@
-class
+ class
 
 # GPR survey data
+
+## Description
 
 An S4 class to represent a collection of `k` GPR data. An object of the class `GPRsurvey` does only contain the links to the GPR data files as well as information about the GPR data such as coordinates, frequencies, antenna separation etc. The methods of the `GPRsurvey` class exclusively manipulate the trace (A-scan) coordinates. More specifically, the methods currently allow to:
 
@@ -14,9 +16,12 @@ An S4 class to represent a collection of `k` GPR data. An object of the class `G
 ## Slots
 
 - **`version`**: (`character[1]`) Version of RGPR.
+- **`name`**: (`character[1]`) Name of the GPR survey
+- **`desc`**: (`character[1]`) Description of the GPR survey
+- **`path`**: (`character[1]`) File path of the original GPR survey
 - **`names`**: (`character[k]`) Names of the GPR data.
-- **`paths`**: (`character[k]`) File paths of the original GPR data.
 - **`descs`**: (`character[k]`) Descriptions of the GPR data.
+- **`paths`**: (`character[k]`) File paths of the original GPR data.
 - **`modes`**: (`character[k]`) Survey modes of the GPR data (e.g., `"CO"`, `"CMP"`).
 - **`dates`**: (`Date[k]`) Date of the GPR data (class `Date`, e.g., `Sys.Date()`).
 - **`freqs`**: (`numeric[k]`) Antennae frequency of the GPR data (in MHz).
@@ -32,3 +37,5 @@ An S4 class to represent a collection of `k` GPR data. An object of the class `G
 - **`nx`**: (`integer[k]`) Number of traces in each GPR data.
 - **`xlengths`**: (`numeric[k]`) Length of the GPR data.
 - **`transf`**: (`numeric(5)`) Translation vector before rotation, after and rotation angle
+
+

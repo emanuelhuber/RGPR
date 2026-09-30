@@ -27,6 +27,8 @@ crs(x) <- value
 
 (`GPR class`) An object of the class `GPR`
 
+## Description
+
 Coordinate reference system (CRS) of the GPR data
 
 ## Details
@@ -45,3 +47,5 @@ x <- readGPR("LINE.DT1")
 crs(x) <- "EPSG:3857"
 ## End(Not run)
 ```
+
+

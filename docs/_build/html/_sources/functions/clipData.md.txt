@@ -17,6 +17,10 @@ clipData(x, cl = NULL, track = TRUE)
 
 (`GPR class`) clipDataped GPR object.
 
+## Description
+
 Clip the amplitude
 
 Clip the amplitude
+
+

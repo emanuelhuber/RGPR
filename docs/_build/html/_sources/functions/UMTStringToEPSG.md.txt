@@ -12,4 +12,8 @@ UMTStringToEPSG(x)
 
 (`integer[1]`) The EPSG code.
 
+## Description
+
 Returns the EPSG code from UTM zone string (e.g., '32N'). EPSG code is: 32600+zone for positive latitudes and 32700+zone for negatives latitudes.
+
+

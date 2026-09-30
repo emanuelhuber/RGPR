@@ -2,44 +2,52 @@
 
 ```r
 writeGPR(
-  x,
-  fPath = NULL,
-  format = c("rds", "dt1", "ascii", "xta", "xyza"),
+  obj,
+  dsn = NULL,
+  format = c("rds", "dt1", "ascii", "xta", "xyza", "vtk"),
   overwrite = FALSE,
   ...
 )
 
 ## S4 method for signature 'GPR'
 writeGPR(
-  x,
-  fPath = NULL,
-  format = c("rds", "dt1", "ascii", "xta", "xyza"),
+  obj,
+  dsn = NULL,
+  format = c("rds", "dt1", "ascii", "xta", "xyza", "vtk"),
   overwrite = FALSE,
   ...
 )
 
 ## S4 method for signature 'GPRsurvey'
 writeGPR(
-  x,
-  fPath = NULL,
-  format = c("DT1", "rds", "ASCII", "xta", "xyzv"),
+  obj,
+  dsn = NULL,
+  format = c("DT1", "rds", "ASCII", "xta", "xyzv", "vtk", "h5"),
   overwrite = FALSE,
+  compress = 5L,
   ...
 )
 ```
 
 ## Arguments
 
-- `x`: Object of the class `GPR` or `GPRsurvey`
-- `fPath`: Filepath (Length-one character vector). If `fPath = NULL`, the file will be save in the current working directory with the name of x (`name(x)`) with the extension depending of `format`.
-- `format`: Format type. See Details.
-- `overwrite`: Boolean. If `TRUE` existing files will be overwritten, if `FALSE` an error will be thrown if the file(s) already exist(s).
-- `...`: additional parameters to be passed to `write.table()`
-    
-    when `format = "ASCII"` or `format = "xyza"`.
+- `obj`: Object of class `GPRsurvey`.
+- `dsn`: (`character[1]`) Output path. Directory for multi-file formats; `.h5` file path for `format = "h5"`.
+- `format`: (`character[1]`) One of `"DT1"`, `"rds"`, `"ASCII"`, `"xta"`, `"xyzv"`, `"vtk"`, or `"h5"`.
+- `overwrite`: (`logical[1]`) If `FALSE` (default) and the output already exists, an error is raised.
+- `...`: Additional arguments passed to the per-line `writeGPR()` calls (ignored for `"h5"` and `"vtk"`).
+- `compress`: (`integer[1]`) gzip compression level 0–9 for the data array inside HDF5 files. Only used when `format = "h5"`. Default `5L`.
 
-Write the GPR object in a file.
+## Returns
+
+Invisibly returns `obj` (updated `@paths` slot) for multi-file formats, or the output file path for `"h5"`.
+
+## Description
+
+Dispatches to the appropriate writer depending on `format`. For all formats except `"h5"` and `"vtk"`, `dsn` is treated as a directory path: RGPR creates the directory if necessary and writes one file per GPR line inside it. For `"h5"`, `dsn` is the path to the output `.h5` file.
 
 ## See Also
 
-`readGPR()`
+`readGPR()` `readGPRsurvey()`, `writeGPR()`
+
+

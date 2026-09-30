@@ -18,4 +18,8 @@ angle(x)
 
 (`numeric[1]`) The angle of the oriented bounding box.
 
+## Description
+
 The angle is computed based on the orientation of the oriented bounding box (`obbox()`).
+
+

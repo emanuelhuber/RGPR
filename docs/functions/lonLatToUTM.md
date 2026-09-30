@@ -16,4 +16,8 @@ lonLatToUTM(lon, lat, zone = NULL, south = NULL, west = FALSE)
 
 (`list[2]`) `xy` the coordinates in UTM, `crs` the UTM coordinate reference system (proj4string).
 
+## Description
+
 see https://stackoverflow.com/a/30225804 https://stackoverflow.com/questions/18639967/converting-latitude-and-longitude-points-to-utm check also https://stackoverflow.com/questions/176137/java-convert-lat-lon-to-utm
+
+

@@ -31,6 +31,7 @@
 #'   \item{x_gps}{An \code{sf} object with GPS data, or \code{NULL}.}
 #'
 #' @keywords internal
+#' @noRd
 .read_dat <- function(dsn, fName, fPath, desc, Vmax, verbose, ...) {
   
   hd <- readUtsiHDR(dsn[["HDR"]])
@@ -420,8 +421,8 @@ readUtsiGPT <- function(dsn){
 #' }
 #'
 #' Geographic coordinates are extracted using
-#' \code{\link{getLonLatFromGPGGA}} and optionally projected using
-#' \code{\link{projectXYZT}}. The resulting coordinates are combined
+#' \code{\link{getLonLatFromGPGGA}} and optionally projected.
+#' The resulting coordinates are combined
 #' with the GPT trace identifiers and returned as an
 #' \code{\link[sf]{sf}} point object.
 #'

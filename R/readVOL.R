@@ -30,6 +30,7 @@
 #'   \item{x_gps}{\code{NULL} (VOL carries no GPS companion file).}
 #'
 #' @keywords internal
+#' @noRd
 .read_vol <- function(dsn, fName, fPath, desc, Vmax, verbose, ...) {
   
   A <- verboseF(readVOL(dsn[["VOL"]]), verbose = verbose)
@@ -113,6 +114,7 @@ register_gpr_format(
     )
   }
   if(x$hd$dim == "3D"){
+    stop("definition cube not correct!")
     y <- new("GPRcube",
              version      = "0.2",
              name         = fName,

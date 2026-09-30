@@ -9,4 +9,8 @@ length(x)
 
 - `x`: (`GPRsurvey`)
 
+## Description
+
 Return length of a GPRsurvey object (number of GPR lines)
+
+

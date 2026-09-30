@@ -5,6 +5,7 @@ NMOcorrect(
   x,
   thrs = NULL,
   v = NULL,
+  rmNARows = FALSE,
   method = c("linear", "nearest", "pchip", "cubic", "spline")
 )
 
@@ -13,6 +14,7 @@ NMOcorrect(
   x,
   thrs = NULL,
   v = NULL,
+  rmNARows = FALSE,
   method = c("linear", "nearest", "pchip", "cubic", "spline")
 )
 ```
@@ -20,15 +22,16 @@ NMOcorrect(
 ## Arguments
 
 - `x`: An object of the class `GPR`
-- `thrs`: (`numeric[1]|NULL`) Definite the threshold for muting (i.e., suppressing) the values where the NMO-stretching is above the threshold. Setting `thrs = NULL`, the full data will be used. `thrs = NULL` ranges between 0 and 1.
+- `thrs`: (`numeric[1]|NULL`) Stretch-muting threshold. Values for which the relative NMO stretch exceeds `thrs` are muted. Set `thrs = NULL` to disable stretch muting. When specified, `thrs` must lie between 0 and 1.
 - `v`: A length-one numeric vector defining the radar wave velocity in the ground
-- `method`: (`character[1]`) Interpolation method to be applied: one of `pchip`, `linear`, `nearest`, `spline`, `cubic`
-    
-    (see also `signal::interp1()`).
+- `rmNARows`: (`logical[1]`) If `TRUE` removes the rows containing only NA's.
+- `method`: (`character[1]`) Interpolation method to be applied: one of `pchip`, `linear`, `nearest`, `spline`, `cubic` (see also `signal::interp1()`).
 
 ## Returns
 
 An object of the class `GPR` with NMO removed and with antenna separation set equal to zero.
+
+## Description
 
 Remove the Normal Move-Out (NMO) from the trace given a velocity. The NMO correction is a non-linear transformation of the time axis to compensate for the offset between transmitter and receiver antennae (antenna separation distance): the time of data acquired with a bi-static antenna system is converted into the time of data virtually acquired with a mono-static system under the assumption of the multi-layer model with constant velocities. Note that only the conventional NMO correction is currently implemented. The conventional NMO introduces a streching effect. A nonstretch NMO will be implemented in a near future. The Normal Move-out is defined as the difference between the two-way time at a given offset and the two-way zero-offset time.
 
@@ -46,3 +49,5 @@ Therefore, the NMO-correction `\Delta_{NMO}` is `\Delta_{NMO} = t_{TWT}(x) - t_0
 
  * Tillard and Dubois (1995) Analysis of GPR data: wave propagation velocity determination. Journal of Applied Geophysics, 33:77-91
  * Shatilo and Aminzadeh (2000) Constant normal-moveout (CNMO) correction: a technique and test results. Geophysical Prospecting, 473-488
+
+

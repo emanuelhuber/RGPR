@@ -14,8 +14,12 @@ readDT1(dsn, ntr, npt)
 
 (`list(2)`) Two-elements list: `dt1hd` with trace header and `data` with the traces.
 
+## Description
+
 Read Sensors and Software GPR data
 
 ## See Also
 
 `readHD()`, `readGPS()`
+
+

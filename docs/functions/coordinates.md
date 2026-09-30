@@ -27,6 +27,8 @@ coordinates(x) <- value
 
 (`GPR class`) An object of the class `GPR`
 
+## Description
+
 Return or update the trace coordinates (x, y, z). Not that you cannot change the number of coordinates with `coord`.
 
 ## Details
@@ -41,3 +43,5 @@ Modified slots class GPRsurvey
  * `coords` the trace coordinates
  * `xlengths` the local trace position (along profile)
  * `intersections` the local trace position (along profile)
+
+

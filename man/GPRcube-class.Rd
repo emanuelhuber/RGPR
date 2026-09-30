@@ -12,8 +12,9 @@
 An S4 class to represent 3D ground-penetrating radar (GPR) data.
 Array of dimension \eqn{n \times m \times p}  (\eqn{n} samples,
 \eqn{m} traces or A-scans along \eqn{x},
-and \eqn{p} traces or A-scans along \eqn{y}), with grid cell sizes
-\eqn{dx}, \eqn{dy}, and \eqn{dz}.
+and \eqn{p} traces or A-scans along \eqn{y}), with horizontal grid cell
+sizes \eqn{dx} and \eqn{dy}, and slices at the depths/times given by
+\code{z} (which need not be evenly spaced).
 We assume that the unit along y is the same as the unit along x.
 }
 \section{Slots}{
@@ -23,11 +24,21 @@ We assume that the unit along y is the same as the unit along x.
 
 \item{\code{dy}}{(\code{numeric[1]}) Grid cell size along y}
 
-\item{\code{dz}}{(\code{numeric[1]}) Grid cell size along z}
+\item{\code{z}}{(\code{numeric[p]}) Depth/time of each of the \code{p} slices (the
+cube's 3rd data dimension), in \verb{@zunit}. Slices need not
+be evenly spaced, but \code{z} must be \emph{strictly monotonic}
+from top to bottom: strictly increasing (small to large)
+when \verb{@zunit} is a time unit (see \code{isZTime()}), strictly
+decreasing (large to small) when it's a depth/elevation
+unit -- enforced by this class's validity check (see
+\code{setValidity()} below). \code{length(z)} must match the size of
+the cube's 3rd dimension.}
 
 \item{\code{ylab}}{(\code{character[1|p]}) Label of \code{y}.}
 
-\item{\code{center}}{(\code{numeric[3]}) Coordinates of the bottom left grid corner.}
+\item{\code{center}}{(\code{numeric[3]}) Coordinates of the bottom left grid corner;
+the 3rd element is redundant with (and should equal)
+\code{z[1]}, kept for backward compatibility.}
 
 \item{\code{rot}}{(\code{numeric[1]}) Rotation angle}
 

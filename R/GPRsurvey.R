@@ -199,7 +199,15 @@ GPRsurvey <- function(x, dsn,
     line_zlengths[i]     <- abs(diff(range(gpr@z)))
     line_xlengths[i]     <- abs(diff(range(gpr@x)))
     line_markers[[i]]    <- .normalizeMarkers(gpr@markers, ncol(gpr), verbose = verbose)
-
+    # line_ann[[i]]    <- .normalizeMarkers(gpr@ann, ncol(gpr), verbose = verbose)
+    # 
+    # line_angles[[i]] <- gpr@angles
+    # 
+    # line_times[i] <- gpr@time
+    # line_dlab[i] <- gpr@dlab
+    # line_xlab[i] <- gpr@xlab
+    # line_zlab[i] <- gpr@zlab
+    
     xyzCoords[[i]] <- gpr@coord
     if (ncol(gpr@coord) == 3L) colnames(xyzCoords[[i]]) <- c("x", "y", "z")
 

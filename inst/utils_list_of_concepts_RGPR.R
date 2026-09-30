@@ -27,9 +27,10 @@ for(j in seq_along(lf)){
         #   k[i] <- k[i] + 1
         # }
         k[i] <- k[i] + 1
+        str <- paste(x[k[i]+0:3], collapse = "")
         if(grepl("setGeneric", x[k[i]])){
-          matches2 <- regmatches(x[k[i]], 
-                                 regexec("setGeneric\\((?:name\\s*=\\s*)?\\\"(.*?)\\\"", x[k[i] ]))
+          pattern <- "setGeneric\\(\\s*(?:name\\s*=\\s*)?\"([^\"]+)\""
+          matches2 <- regmatches(str, regexec(pattern, str))
           tst <- FALSE
         }else if(grepl("setMethod", x[k[i] ])){
           matches2 <- regmatches(x[k[i]], 
@@ -55,7 +56,7 @@ for(j in seq_along(lf)){
   }
 }
 
-write.table( concept , file = "inst/list_of_concepts____.txt", row.names = FALSE, col.names = FALSE) 
+write.table( unique(concept) , file = "inst/list_of_concepts____.txt", row.names = FALSE, col.names = FALSE) 
 
 library(yaml)
 

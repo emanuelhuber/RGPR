@@ -74,7 +74,7 @@ plot(
   sym = TRUE,
   clim = NULL,
   add = FALSE,
-  asp = NA,
+  asp = 1,
   secaxis = TRUE,
   elev = FALSE,
   export = NULL,
@@ -112,9 +112,9 @@ plot(
 - `...`: additional arguments passed to the plotting methods `graphics::plot()` for 1D plot and `plot3D::image2D()` for 2D plot. See also `details`.
 - `dirArrows`: (`list|NULL`) If not `NULL`, display an arrow indicating the survey direction (only for plot of GPRsurvey) data.
 
-Nice function to plot data. If the GPR object consists of a single trace, wiggle plot is shown. For CMP, the position of the traces on the x-axis is defined by the antenna separation (`antsep(x)`).
+## Description
 
-`contour` extends `plot3D::contour2D` and creates a contour plot.
+Nice function to plot data. If the GPR object consists of a single trace, wiggle plot is shown. For CMP, the position of the traces on the x-axis is defined by the antenna separation (`antsep(x)`). `contour` extends `plot3D::contour2D` and creates a contour plot.
 
 ## Details
 
@@ -125,9 +125,7 @@ The argument `col` is :
 
 The argument `type` is :
 
- * 1D plot: `p`, `l`, `b`, `c`, `o`, `h`, `s`, `S`, `n`
-   
-   (see argument `type` in `graphics::plot()`).
+ * 1D plot: `p`, `l`, `b`, `c`, `o`, `h`, `s`, `S`, `n` (see argument `type` in `graphics::plot()`).
  * 2D plot: `"raster"` (default), `"wiggles"` or `"contour"`.
 
 The argument `wiggles` is a list with following items:
@@ -175,3 +173,5 @@ The argument `cbar` is a list with following items:
  * `fticks` length factor for the ticks (default = 0.5)
  * `vclab` length factor for the ticks (if `vclab = 1`, then the tick length is equal to the space between the colorbar and the text.
  * `clab` The label of the colorbar that is plotted above the colorbar (default = NULL, the label is inferred from the GPR data `x`)
+
+

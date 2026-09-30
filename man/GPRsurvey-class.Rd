@@ -72,6 +72,8 @@ e.g., \code{Sys.Date()}).}
 
 \item{\code{xlengths}}{(\code{numeric[k]}) Length of the GPR data.}
 
-\item{\code{transf}}{(\code{numeric(5)}) Translation vector before rotation, after and rotation angle}
+\item{\code{transf}}{(\code{numeric[2]}) Translation vector before rotation, after and rotation angle}
+
+\item{\code{view}}{(\code{logical[1]}) TRUE if only a view.}
 }}
 

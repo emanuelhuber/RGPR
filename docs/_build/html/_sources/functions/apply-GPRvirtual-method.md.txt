@@ -13,4 +13,8 @@ apply(X, MARGIN, FUN, ..., simplify = TRUE)
 - `...`: Additional parameters to be passed (see `apply()`).
 - `simplify`: (`logical[1]`) If `TRUE` the results should be simplified if possible.
 
+## Description
+
 Apply a function along the rows (samples per trace) or columns (traces)
+
+

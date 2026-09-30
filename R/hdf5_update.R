@@ -72,6 +72,7 @@
 #' @return (`character(1)`) The lock directory path. Pass this to
 #'   `.h5_lock_release()` to release the lock.
 #' @keywords internal
+#' @noRd
 .h5_lock_acquire <- function(dsn, timeout = 3, poll = 0.25) {
   lockdir <- paste0(dsn, ".lock")
   start   <- Sys.time()
@@ -104,6 +105,7 @@
 #' Release a lock acquired with `.h5_lock_acquire()`
 #' @param lockdir (`character(1)`) Value returned by `.h5_lock_acquire()`.
 #' @keywords internal
+#' @noRd
 .h5_lock_release <- function(lockdir) {
   if (!is.null(lockdir) && dir.exists(lockdir)) {
     unlink(lockdir, recursive = TRUE, force = TRUE)
@@ -121,6 +123,7 @@
 #' Using the same directory guarantees `file.rename()` is an atomic,
 #' same-filesystem operation when the file is later swapped into place.
 #' @keywords internal
+#' @noRd
 .h5_temp_path <- function(dsn) {
   file.path(
     dirname(dsn),
@@ -137,6 +140,7 @@
 #' the operation is no longer atomic, so this is a best-effort fallback, not
 #' the primary path.
 #' @keywords internal
+#' @noRd
 .h5_atomic_replace <- function(tmp, dsn) {
   if (file.rename(tmp, dsn)) {
     return(invisible(dsn))
@@ -165,6 +169,7 @@
 #' to validate its checksum; a mismatch raises an error. This function's only
 #' purpose is to trigger that validation for every dataset in the file.
 #' @keywords internal
+#' @noRd
 .h5_walk_and_read <- function(grp, verbose = FALSE) {
   for (nm in names(grp)) {
     obj <- grp[[nm]]
@@ -212,6 +217,7 @@
 #' @return `TRUE`, invisibly, if every dataset reads back cleanly. Raises an
 #'   error otherwise.
 #' @keywords internal
+#' @noRd
 .h5_verify_checksums <- function(path, verbose = FALSE) {
   h5 <- hdf5r::H5File$new(path, mode = "r")
   on.exit(try(h5$close_all(), silent = TRUE), add = TRUE)
@@ -271,6 +277,7 @@
 #'
 #' @return Whatever `FUN` returned, invisibly.
 #' @keywords internal
+#' @noRd
 .h5_update_survey <- function(dsn, FUN, verify = TRUE, timeout = 30) {
   
   dsn <- normalizePath(dsn, mustWork = TRUE)
@@ -339,6 +346,7 @@
 #'
 #' @return Whatever `FUN` returned, invisibly.
 #' @keywords internal
+#' @noRd
 .h5_update_survey_with_source <- function(dsn, src_dsn, FUN, verify = TRUE, timeout = 30) {
   
   dsn     <- normalizePath(dsn, mustWork = TRUE)
@@ -436,6 +444,7 @@
 #'   ordered the same way).
 #' @return (`character`) e.g. `"line000001"`.
 #' @keywords internal
+#' @noRd
 .h5_line_group_id <- function(i) {
   sprintf("line%06d", as.integer(i))
 }
@@ -454,6 +463,7 @@
 #'   `value@names`, or a subset of it).
 #' @return (`character`) HDF5 group ids, same length/order as `names_vec`.
 #' @keywords internal
+#' @noRd
 .h5_resolve_line_ids <- function(h5, names_vec) {
   if (!"survey" %in% names(h5) || !"names" %in% names(h5[["survey"]])) {
     stop("Source HDF5 file has no '/survey/names' dataset.", call. = FALSE)
@@ -498,6 +508,7 @@
 #'   replaced by `_`. Falls back to `"default_name"` if `name` is empty,
 #'   `NA`, or becomes empty after trimming.
 #' @keywords internal
+#' @noRd
 .h5_safe_name <- function(name) {
   if (length(name) == 0L || is.na(name) || !nzchar(trimws(name))) {
     return("default_name")
@@ -516,6 +527,253 @@
 # gzip+shuffle compression only where it's worth the CPU cost)
 # ------------------------------------------------------------------------- #
 
+
+# ============================================================================ #
+# Write / read nested R lists to / from HDF5 (hdf5r)
+# ============================================================================ #
+#
+# Depends on helpers from hdf5_update.R:
+#   .h5_safe_name(), .delete_h5_link_if_exists()
+#
+# DESIGN (same spirit as hdf5_update.R)
+# -------------------------------------------------------------------------- #
+# * list           -> HDF5 group. Child order, original (unsanitised) names and
+#                     "unnamed list" status are stored as attributes, because
+#                     HDF5 iterates links alphabetically, not in insertion order.
+# * plain atomic   -> native HDF5 dataset (numeric / integer / logical /
+#   (no attributes    character), chunked + fletcher32 checksum, optional
+#   except `dim`)     shuffle+gzip for large arrays. Scalars, vectors, matrices
+#                     and N-d arrays are all handled.
+# * NULL           -> empty group tagged r_type = "NULL"  (round-trips)
+# * anything else  -> lossless fallback: serialize() into a byte dataset
+#   (factor, data.frame, named vector, complex, raw, character with NA,
+#    zero-length vectors, S4 / S3 objects, ...)
+# * names          -> sanitised with .h5_safe_name() ("/" would otherwise be
+#                     read as an HDF5 path separator), de-duplicated, and the
+#                     original name is restored on read.
+# * existing link  -> replaced if overwrite = TRUE, error otherwise.
+# * failure        -> the partially written node is removed again. For full
+#                     atomicity wrap the call in .h5_update_survey().
+#
+# USAGE
+# -------------------------------------------------------------------------- #
+# vel <- list(vrms = 0.01, vint = c(0.1, 0.12, 0.11), v = matrix(runif(20), 5))
+#
+# h5 <- hdf5r::H5File$new("test.h5", mode = "a")
+# write_list_h5(h5, "vel", vel)
+# vel2 <- read_list_h5(h5, "vel")
+# h5$close_all()
+# identical(vel, vel2)
+#
+# # inside the safe-update machinery (temp copy -> write -> verify -> replace):
+# .h5_update_survey(dsn, function(h5) {
+#   write_list_h5(h5[["lines"]][[.h5_line_group_id(2)]], "vel", vel)
+# })
+# ============================================================================ #
+
+#' Write an R object (typically a nested list) into an HDF5 group
+#'
+#' @param grp An open, writable `hdf5r` file or group.
+#' @param name (`character(1)`) Name of the group/dataset to create under `grp`.
+#' @param x The object to write. Lists become groups (recursively), plain
+#'   numeric/integer/logical/character arrays become checksummed datasets,
+#'   `NULL` becomes an empty tagged group, everything else is serialised.
+#' @param overwrite (`logical(1)`) Replace an existing object called `name`.
+#'   If `FALSE`, an existing object raises an error.
+#' @param compress (`integer(1)`) gzip level 0-9 for numeric arrays with at
+#'   least 1000 elements. Default `0` (no compression).
+#' @return The HDF5 link name actually used (after sanitising), invisibly.
+#' @noRd
+.h5_write_list <- function(grp, name, x, overwrite = TRUE, compress = 0L) {
+  
+  if (length(name) != 1L || is.na(name) || !nzchar(trimws(name))) {
+    stop("'name' must be a single, non-empty string.", call. = FALSE)
+  }
+  compress <- as.integer(compress)
+  if (is.na(compress) || compress < 0L || compress > 9L) {
+    stop("'compress' must be an integer between 0 and 9.", call. = FALSE)
+  }
+  
+  id <- .h5_safe_name(name)
+  
+  if (grp$exists(id)) {
+    if (!isTRUE(overwrite)) {
+      stop("An HDF5 object named '", id, "' already exists in '",
+           grp$get_obj_name(), "'. Use overwrite = TRUE to replace it.",
+           call. = FALSE)
+    }
+    .delete_h5_link_if_exists(grp, id)
+  }
+  
+  # From here on, a failure must not leave a half-written node behind.
+  ok <- FALSE
+  on.exit(if (!ok) try(.delete_h5_link_if_exists(grp, id), silent = TRUE),
+          add = TRUE)
+  
+  .h5_write_node(grp, id, x, compress)
+  ok <- TRUE
+  invisible(id)
+}
+
+#' Read back an object written with `write_list_h5()`
+#'
+#' @param grp An open `hdf5r` file or group.
+#' @param name (`character(1)`) Name of the group/dataset to read.
+#' @return The reconstructed R object (list structure, names and order intact).
+#' @noRd
+.h5_read_list <- function(grp, name) {
+  if (!grp$exists(name)) {
+    stop("No HDF5 object named '", name, "' in '", grp$get_obj_name(), "'.",
+         call. = FALSE)
+  }
+  obj <- grp[[name]]
+  on.exit(try(obj$close(), silent = TRUE), add = TRUE)
+  .h5_read_node(obj)
+}
+
+# Keep every chunk <= max_elems elements (~8 MB for doubles); HDF5 needs
+# chunk dims >= 1 and <= dataset dims.
+.h5_chunk_dims <- function(dims, max_elems = 2^20) {
+  chunk <- as.numeric(dims)
+  while (prod(chunk) > max_elems) {
+    k <- which.max(chunk)
+    chunk[k] <- ceiling(chunk[k] / 2)
+  }
+  as.integer(chunk)
+}
+
+# TRUE if x can be stored as a native HDF5 dataset without losing anything.
+.h5_is_native <- function(x) {
+  is.atomic(x) &&
+    length(x) > 0L &&
+    !is.object(x) &&
+    (is.numeric(x) || is.logical(x) || is.character(x)) &&
+    length(setdiff(names(attributes(x)), "dim")) == 0L &&
+    !(is.character(x) && anyNA(x))
+}
+
+.h5_attr <- function(obj, key, default = NULL) {
+  if (obj$attr_exists(key)) hdf5r::h5attr(obj, key) else default
+}
+
+# Chunked + checksummed dataset for numeric / integer / logical / character.
+.h5_write_native <- function(grp, id, x, compress = 0L) {
+  
+  # hdf5r maps character vectors to variable-length strings; filters
+  # are not applied to those (same rule as .h5_write_vector()).
+  if (is.character(x)) {
+    return(invisible(grp$create_dataset(name = id, robj = x)))
+  }
+  
+  dims <- if (is.null(dim(x))) length(x) else dim(x)
+  
+  dcpl <- hdf5r::H5P_DATASET_CREATE$new()
+  on.exit(try(dcpl$close(), silent = TRUE), add = TRUE)
+  dcpl$set_chunk(.h5_chunk_dims(dims))
+  if (compress > 0L && length(x) >= 1000L) {   # tiny arrays: not worth it
+    dcpl$set_shuffle()
+    dcpl$set_deflate(compress)
+  }
+  dcpl$set_fletcher32()
+  
+  invisible(grp$create_dataset(
+    name              = id,
+    robj              = x,
+    dataset_create_pl = dcpl,
+    chunk_dim         = NULL,
+    gzip_level        = NULL
+  ))
+}
+
+# Recursive worker: writes `x` as child `id` of `parent`.
+.h5_write_node <- function(parent, id, x, compress) {
+  
+  # ---- NULL --------------------------------------------------------------- #
+  if (is.null(x)) {
+    g <- parent$create_group(id)
+    on.exit(try(g$close(), silent = TRUE), add = TRUE)
+    g$create_attr("r_type", "NULL")
+    return(invisible(NULL))
+  }
+  
+  # ---- plain list -> group ------------------------------------------------ #
+  if (is.list(x) && !is.object(x)) {
+    g <- parent$create_group(id)
+    on.exit(try(g$close(), silent = TRUE), add = TRUE)
+    
+    n         <- length(x)
+    nms       <- names(x)
+    has_names <- !is.null(nms)
+    if (!has_names) nms <- rep("", n)
+    nms[is.na(nms)] <- ""
+    
+    ids <- vapply(seq_len(n), function(i) {
+      if (nzchar(nms[i])) .h5_safe_name(nms[i]) else sprintf("item%06d", i)
+    }, character(1))
+    ids <- make.unique(ids, sep = "_")
+    
+    g$create_attr("r_type", "list")
+    g$create_attr("has_names", as.integer(has_names))
+    if (n > 0L) {
+      g$create_attr("child_ids",   ids)   # physical link names, in order
+      g$create_attr("child_names", nms)   # original names, in order
+    }
+    
+    for (i in seq_len(n)) {
+      .h5_write_node(g, ids[i], x[[i]], compress)
+    }
+    return(invisible(NULL))
+  }
+  
+  # ---- native atomic -> dataset ------------------------------------------- #
+  if (.h5_is_native(x)) {
+    ds <- .h5_write_native(parent, id, x, compress)
+    on.exit(try(ds$close(), silent = TRUE), add = TRUE)
+    ds$create_attr("r_type", typeof(x))
+    return(invisible(NULL))
+  }
+  
+  # ---- fallback: lossless serialisation ----------------------------------- #
+  ds <- .h5_write_native(parent, id, as.integer(serialize(x, connection = NULL)))
+  on.exit(try(ds$close(), silent = TRUE), add = TRUE)
+  ds$create_attr("r_type", "serialized")
+  invisible(NULL)
+}
+
+# Recursive reader for one node (dataset or group).
+.h5_read_node <- function(obj) {
+  type <- .h5_attr(obj, "r_type", NULL)
+  
+  if (inherits(obj, "H5Group")) {
+    if (identical(type, "NULL")) return(NULL)
+    
+    # Groups not written by write_list_h5() (no attributes): fall back to
+    # alphabetical link order and the link names themselves.
+    ids <- .h5_attr(obj, "child_ids", NULL)
+    if (is.null(ids)) ids <- names(obj)
+    
+    out <- vector("list", length(ids))
+    for (i in seq_along(ids)) {
+      child <- obj[[ids[i]]]
+      val   <- tryCatch(.h5_read_node(child), finally = try(child$close(), silent = TRUE))
+      out[i] <- list(val)                    # keeps NULL elements in place
+    }
+    
+    if (is.null(type)) {
+      names(out) <- ids
+    } else if (isTRUE(as.logical(.h5_attr(obj, "has_names", 0L)))) {
+      names(out) <- .h5_attr(obj, "child_names", ids)
+    }
+    return(out)
+  }
+  
+  if (identical(type, "serialized")) {
+    return(unserialize(as.raw(obj$read())))
+  }
+  obj$read()
+}
+
+
 #' Write a 1-D vector as a chunked, checksummed HDF5 dataset
 #'
 #' Every dataset gets the fletcher32 checksum filter (HDF5 requires chunked
@@ -531,6 +789,7 @@
 #'   from the file rather than present-but-empty).
 #' @param compress (`integer(1)`) gzip level 0-9; `0` disables compression.
 #' @keywords internal
+#' @noRd
 .h5_write_vector <- function(grp, name, dta, compress = 0L) {
   n <- length(dta)
   if (n == 0L) return(invisible(NULL))
@@ -579,6 +838,7 @@
 #' @param data A matrix. If `NULL`, zero-length, or has zero rows, nothing
 #'   is written.
 #' @keywords internal
+#' @noRd
 .h5_write_matrix <- function(grp, name, data, compress = 0L) {
   if (is.null(data) || length(data) == 0L) return(invisible(NULL))
   if (!is.matrix(data)) data <- as.matrix(data)
@@ -617,6 +877,7 @@
 #'   See the package documentation / `?GPRsurvey` for guidance on whether
 #'   compression is worth it for GPR data.
 #' @keywords internal
+#' @noRd
 .h5_write_data_array <- function(grp, gpr, compress = 0L) {
   nz <- nrow(gpr)
   nx <- ncol(gpr)
@@ -683,6 +944,7 @@
 #' @param name (`character(1)`) Dataset name.
 #' @param obj Any R object understood by [base::serialize()].
 #' @keywords internal
+#' @noRd
 .h5_write_r_object <- function(grp, name, obj) {
   bytes <- serialize(obj, connection = NULL)
   .delete_h5_link_if_exists(grp, name)
@@ -695,11 +957,20 @@
 #' @param name (`character(1)`) Dataset name.
 #' @return The original R object.
 #' @keywords internal
+#' @noRd
 .h5_read_r_object <- function(grp, name) {
   vals <- grp[[name]][]
   unserialize(as.raw(vals))
 }
 
+# Read object if it exists, otherwise return default
+.h5_read_if_exists <- function(grp, name, default = NULL) {
+  if (grp$exists(name)) {
+    grp[[name]]$read()
+  } else {
+    default
+  }
+}
 
 # ------------------------------------------------------------------------- #
 # Markers
@@ -719,6 +990,7 @@
 #' @param verbose (`logical(1)`) Print a message when padding/truncating.
 #' @return (`character[nx]`) Trimmed markers vector of length exactly `nx`.
 #' @keywords internal
+#' @noRd
 .normalizeMarkers <- function(markers, nx, verbose = TRUE) {
   markers <- trimStr(markers)
   n <- length(markers)
@@ -752,6 +1024,7 @@
 # ------------------------------------------------------------------------- #
 
 #' @keywords internal
+#' @noRd
 .delete_h5_link_if_exists <- function(group, name) {
   if (length(name) != 1L || is.na(name) || !nzchar(name)) {
     return(invisible(FALSE))
@@ -780,6 +1053,7 @@
 #' @param ids (`integer`) Indices (into `obj@names`) of the lines whose
 #'   coordinates changed.
 #' @keywords internal
+#' @noRd
 .write_GPRsurvey_coords_hdf5 <- function(h5, obj, ids) {
   
   ids <- unique(as.integer(ids))
@@ -837,6 +1111,7 @@
 # src_h5 and dst_h5 are open hdf5r::H5File objects.
 # src_name and dst_name are group names under /lines.
 #' @keywords internal
+#' @noRd
 .copy_h5_line_group <- function(src_h5, dst_h5, src_name, dst_name) {
   if (!"lines" %in% names(src_h5)) {
     stop("Source HDF5 file has no '/lines' group.", call. = FALSE)
@@ -899,6 +1174,7 @@
 #' @param h5 Open, writable [hdf5r::H5File] handle.
 #' @param obj Object of class `GPRsurvey`.
 #' @keywords internal
+#' @noRd
 .write_survey_group_hdf5 <- function(h5, obj) {
   
   .delete_h5_link_if_exists(h5, "survey")
@@ -948,6 +1224,7 @@
 #' @return A named list with one element per `GPRsurvey` slot that
 #'   `.write_survey_group_hdf5()` writes.
 #' @keywords internal
+#' @noRd
 .read_survey_group_hdf5 <- function(h5) {
   
   if (!h5$exists("survey")) {
@@ -1006,6 +1283,7 @@
 #' @param obj `GPRsurvey` object, typically just returned by
 #'   [RGPR::findIntersection()].
 #' @keywords internal
+#' @noRd
 .write_intersections_hdf5 <- function(h5, obj) {
   if (!.hasSlot(obj, "intersections")) return(invisible(NULL))
   ints <- obj@intersections
@@ -1033,6 +1311,7 @@
 #' @param h5 Open [hdf5r::H5File] handle.
 #' @return A named list of numeric vectors (possibly empty).
 #' @keywords internal
+#' @noRd
 .read_intersections_hdf5 <- function(h5) {
   if (!"survey" %in% names(h5)) return(list())
   sg <- h5[["survey"]]

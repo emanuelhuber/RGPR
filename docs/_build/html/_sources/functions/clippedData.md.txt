@@ -17,4 +17,8 @@ clippedData(obj, dlim = NULL, verbose = TRUE)
 
 (`GPR`) The object with the clipped values.
 
+## Description
+
 Max and min values
+
+

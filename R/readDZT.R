@@ -34,6 +34,7 @@
 #'   \item{x_gps}{An \code{sf} object with GPS data, or \code{NULL}.}
 #'
 #' @keywords internal
+#' @noRd
 .read_dzt <- function(dsn, fName, fPath, desc, Vmax, verbose, ...) {
   
   dzt <- verboseF(readDZT(dsn[["DZT"]]), verbose = verbose)
@@ -181,6 +182,7 @@ freqFromString <- function(ant_name) {
 #' @return A named list: \code{$freq} (numeric), \code{$unit} (character).
 #'
 #' @keywords internal
+#' @noRd
 .resolve_gssi_antfreq <- function(ant_name) {
   freq <- getAntFreqGSSI(ant_name)
   
@@ -682,6 +684,7 @@ readDZX <- function(dsn) {
 #'         \code{$time} (character, \code{"HH:MM:SS"}).
 #'
 #' @keywords internal
+#' @noRd
 .readRFDate <- function(con, where = 31L) {
   seek(con, where = where, origin = "start")
   rhb_cdt0 <- readBin(con, what = "raw", n = 4L, size = 1L, endian = "little")

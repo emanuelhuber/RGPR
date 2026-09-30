@@ -6,7 +6,18 @@
 #' @param obj (`GPRsurvey`)
 #' @param dx (`numeric[1]`) x-resolution
 #' @param dy (`numeric[1]`) y-resolution
-#' @param dz (`numeric[1]`) z-resolution
+#' @param dz (`numeric[1]`) z-resolution. Ignored if `vz` is given. One of
+#'            `dz` or `vz` must be provided.
+#' @param zlim (`numeric[2]|NULL`) `c(minz, maxz)`: restrict the target
+#'            depth/time slices to this range. Applies whether the
+#'            slice vector comes from `dz` or is given directly via `vz`
+#'            -- either way, values outside `[min(zlim), max(zlim)]` are
+#'            dropped. `NULL` (default) keeps the full range.
+#' @param vz  (`numeric[n]|NULL`) Explicit vector of target depths/times
+#'            for the slices, bypassing `dz`-based generation entirely
+#'            (the slices need not be evenly spaced). One of `dz` or `vz`
+#'            must be provided. `NULL` (default) derives the vector from
+#'            `dz`.
 #' @param h (`numeric[1]`) FIXME: Number of levels in MBA hierarchy (see function...)
 #' @param extend (`character[1]`) FIXME: Method to define interpolation extent.
 #' @param bufferDist (`numeric[1]`) FIXME: Buffer distance around survey lines.
@@ -49,7 +60,7 @@
 #' `hdf5 = "always"`), each batch is written directly to a chunked,
 #' checksummed HDF5 file as it is computed instead of being accumulated in
 #' an R array; the returned `GPRcube` then has `data = array(dim = c(0,0,0))`
-#' and `path` pointing at that HDF5 file (see [RGPR::loadCube()] to pull the full
+#' and `path` pointing at that HDF5 file (see [loadCube()] to pull the full
 #' array back into memory when needed).
 #' @name interpSlices
 #' @rdname interpSlices
@@ -59,6 +70,8 @@ setGeneric("interpSlices", function(obj,
                                     dx = NULL, 
                                     dy = NULL, 
                                     dz = NULL, 
+                                    zlim = NULL,
+                                    vz = NULL,
                                     h = 6,
                                     extend = c("bbox", "obbox", "chull", "buffer"),
                                     bufferDist = NULL,
@@ -79,6 +92,8 @@ setMethod("interpSlices", "GPRsurvey", function(obj,
                                                 dx = NULL, 
                                                 dy = NULL, 
                                                 dz = NULL, 
+                                                zlim = NULL,
+                                                vz = NULL,
                                                 h = 6,
                                                 extend = c("bbox", "obbox", "chull", "buffer"),
                                                 bufferDist = NULL,
@@ -138,7 +153,8 @@ setMethod("interpSlices", "GPRsurvey", function(obj,
     x_rot <- 0
   }
   
-  SXY <- .sliceInterp(obj = obj[test], dx = dx, dy = dy, dz = dz, h = h,
+  SXY <- .sliceInterp(obj = obj[test], dx = dx, dy = dy, dz = dz,
+                      zlim = zlim, vz = vz, h = h,
                       extend = extend,
                       bufferDist = bufferDist,
                       shp = shp, verbose = verbose, estimate = estimate,
@@ -213,19 +229,12 @@ setMethod("interpSlices", "GPRsurvey", function(obj,
            #----------------- GPRcube -----------------------------------------#
            dx     = dx,   # xpos,
            dy     = dy,   # ypos,
-           # FIXME: dz sign handling is confusing and fragile. 
-           # In setMethod() you take dz * sign(mean(diff(SXY$vz))) — that stores 
-           # a signed dz in the object. This is confusing for consumers of the 
-           # class. Better to keep dz positive (the sampling spacing) and store 
-           # orientation/direction by storing z0 (top) and vz explicitly (which 
-           # you already do).
-           dz     = dz * sign(mean(diff(SXY$vz))),   # SXY$vz,
+           z      = SXY$vz,   # depth/time of each slice -- see GPRcube-class
            ylab   = "",   #,  # set names, length = 1|p
            
            center = xyref,    # coordinates grid corner bottom left (0,0)
            rot    = xtrsf #x_rot     # rotation angle
   )
-  if(class_name == "GPRslice") y@z <- SXY$vz[1]
   return(y)
 })
 
@@ -296,8 +305,8 @@ trInterp <- function(x, z, zi){
 #' @param m MBA row refinement (usually leave as default)
 #' @param n MBA column refinement (usually leave as default)
 #' @param verbose (`logical[1]`) If TRUE, verbose.
-#' @param hdf5,dsn,compress,overwrite,mem_threshold_mb,batch_size See
-#'   `interpSlices()`.
+#' @param zlim,vz,hdf5,dsn,compress,overwrite,mem_threshold_mb,batch_size
+#'   See `interpSlices()`.
 #' @return list with interpolation results:
 #'   \item{x}{x-coordinates of grid}
 #'   \item{y}{y-coordinates of grid}
@@ -314,6 +323,7 @@ trInterp <- function(x, z, zi){
 .sliceInterp <- function(obj, dx = NULL, dy = NULL, dz = NULL, h = 6,
                          extend = "bbox", bufferDist = NULL, shp = NULL, 
                          m = 1, n = 1, verbose = TRUE, estimate = FALSE,
+                         zlim = NULL, vz = NULL,
                          hdf5 = c("auto", "always", "never"),
                          dsn = NULL, compress = 5L, overwrite = FALSE,
                          mem_threshold_mb = 500, batch_size = NULL) {
@@ -326,15 +336,22 @@ trInterp <- function(x, z, zi){
   # "sequential" plan silently gives zero parallelism for the MBA slice
   # loop below, which is easy to miss, so just point it out once.
   if (verbose && inherits(future::plan(), "sequential")) {
-    message(
-      "Note: depth-slice interpolation below runs under future::plan(\"sequential\") ",
-      "(no parallelism). Call e.g. future::plan(future::multisession) before ",
-      "interpSlices() to use multiple workers."
-    )
+    # message(
+    #   "Note: depth-slice interpolation below runs under future::plan(\"sequential\") ",
+    #   "(no parallelism). Call e.g. future::plan(future::multisession) before ",
+    #   "interpSlices() to use multiple workers."
+    # )
+    
+    # # e.g.
+    # future::plan(future::multisession, workers = 2)
+    # SXY <- interpSlices(SU, dx = 0.01, dy = 0.01, dz = 0.01, hdf5 = "never")
+    # future::plan(future::sequential)  # reset when done
   }
   
-  # Step 1: Compute target depth vector
-  vz <- .computeTargetDepths(obj, dz)
+  # Step 1: Resolve target depth vector -- explicit 'vz' (if given) takes
+  # priority over 'dz'-based generation; 'zlim' (if given) then trims
+  # either one down to the requested range.
+  vz <- .resolveTargetDepths(obj, dz, zlim, vz)
   
   # Step 2: Interpolate all profiles to target depths
   V <- .interpolateAllProfiles(obj, vz)
@@ -537,6 +554,63 @@ trInterp <- function(x, z, zi){
     vz <- seq(from = 0, by = dz, to = max(obj@zlengths))
   }
   return(vz)
+}
+
+#' Resolve the final target depth/time vector for slice interpolation
+#' 
+#' Combines the three ways of specifying which depths/times to interpolate
+#' slices at:
+#'   - `vz` given directly: used as-is (need not be evenly spaced),
+#'     bypassing `dz`-based generation entirely.
+#'   - `vz` not given: falls back to `.computeTargetDepths(obj, dz)`, as
+#'     before (requires `dz`).
+#'   - `zlim = c(minz, maxz)`, if given, trims whichever of the above was
+#'     used down to that range (order-independent: `range(zlim)` is used,
+#'     so `zlim = c(5, 0)` and `zlim = c(0, 5)` behave the same).
+#' 
+#' @param obj GPRsurvey object
+#' @param dz (`numeric[1]|NULL`) depth/time resolution; ignored if `vz` is
+#'   given.
+#' @param zlim (`numeric[2]|NULL`) `c(minz, maxz)` range restriction.
+#' @param vz (`numeric[n]|NULL`) explicit target depths/times.
+#' @return numeric vector of z values
+#' @noRd
+.resolveTargetDepths <- function(obj, dz, zlim, vz) {
+  if (!is.null(zlim)) {
+    if (!is.numeric(zlim) || length(zlim) != 2L || anyNA(zlim)) {
+      stop("'zlim' must be a numeric vector of length 2: c(minz, maxz).",
+           call. = FALSE)
+    }
+  }
+  
+  vz_supplied <- !is.null(vz)
+  
+  if (vz_supplied) {
+    if (!is.numeric(vz) || length(vz) < 1L || anyNA(vz)) {
+      stop("'vz' must be a numeric vector of target depths/times with no NAs.",
+           call. = FALSE)
+    }
+  } else {
+    if (is.null(dz)) {
+      stop("Either 'dz' (slice spacing) or 'vz' (explicit target depths) ",
+           "must be provided.", call. = FALSE)
+    }
+    vz <- .computeTargetDepths(obj, dz)
+  }
+  
+  if (!is.null(zlim)) {
+    zr <- range(zlim)
+    vz <- vz[vz >= zr[1] & vz <= zr[2]]
+    if (length(vz) == 0L) {
+      stop(
+        "No depth/time values remain after applying zlim = c(", zr[1], ", ", zr[2],
+        ") to the ", if (vz_supplied) "supplied 'vz'" else "'dz'-derived target depths",
+        ".", call. = FALSE
+      )
+    }
+  }
+  
+  vz
 }
 
 #' Interpolate single GPR profile to target depths

@@ -16,4 +16,8 @@ getVel(obj, type = c("vint", "vrms"))
 
 (`GPR class`) An object of the class `GPR` containing the velocity model.
 
+## Description
+
 Return the velocity model (either the root-mean square or internal velocity).
+
+

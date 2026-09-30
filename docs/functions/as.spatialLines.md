@@ -1,4 +1,4 @@
-# Coerce object to an object of the class SpatialLines
+# Coerce object to an object of the class sf lines
 
 ```r
 as.spatialLines(x)
@@ -18,4 +18,8 @@ as.spatialLines(x)
 
 (`SpatialLines object`)
 
-Coerce object to an object of the class SpatialLines
+## Description
+
+Coerce object to an object of the class sf lines
+
+

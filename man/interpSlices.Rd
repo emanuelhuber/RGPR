@@ -10,6 +10,8 @@ interpSlices(
   dx = NULL,
   dy = NULL,
   dz = NULL,
+  zlim = NULL,
+  vz = NULL,
   h = 6,
   extend = c("bbox", "obbox", "chull", "buffer"),
   bufferDist = NULL,
@@ -30,6 +32,8 @@ interpSlices(
   dx = NULL,
   dy = NULL,
   dz = NULL,
+  zlim = NULL,
+  vz = NULL,
   h = 6,
   extend = c("bbox", "obbox", "chull", "buffer"),
   bufferDist = NULL,
@@ -52,7 +56,20 @@ interpSlices(
 
 \item{dy}{(\code{numeric[1]}) y-resolution}
 
-\item{dz}{(\code{numeric[1]}) z-resolution}
+\item{dz}{(\code{numeric[1]}) z-resolution. Ignored if \code{vz} is given. One of
+\code{dz} or \code{vz} must be provided.}
+
+\item{zlim}{(\code{numeric[2]|NULL}) \code{c(minz, maxz)}: restrict the target
+depth/time slices to this range. Applies whether the
+slice vector comes from \code{dz} or is given directly via \code{vz}
+-- either way, values outside \verb{[min(zlim), max(zlim)]} are
+dropped. \code{NULL} (default) keeps the full range.}
+
+\item{vz}{(\code{numeric[n]|NULL}) Explicit vector of target depths/times
+for the slices, bypassing \code{dz}-based generation entirely
+(the slices need not be evenly spaced). One of \code{dz} or \code{vz}
+must be provided. \code{NULL} (default) derives the vector from
+\code{dz}.}
 
 \item{h}{(\code{numeric[1]}) FIXME: Number of levels in MBA hierarchy (see function...)}
 

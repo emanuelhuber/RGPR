@@ -8,15 +8,12 @@ antsep<-: x, value
 as.sf: x
 as.spatialLines: x
 as.spatialPoints: x
-buffer: x, d, combine
 clippedData: obj, dlim, verbose
 CMPhyperbolas: x
 convertTimeToDepth: obj, dz, zmax, method
 convexhull: x, verbose
 coordinates: x
 coordinates<-: x, value
-crs: x
-crs<-: x, value
 declip: obj, drange, lambda, mu, objclip
 delineate: x, name, values, n, plotDel, ...
 delineations: obj, name
@@ -46,10 +43,10 @@ isCRSGeographic: x
 isSamplingRegular: x, axes
 isVelModel: x
 isVelSpectrum: x
-isZTime: x
 metadata: x
+migrate: obj, type, dz, fdo, x, maxangle, weight, normalize, spreading, waveletfilter, antialias, aafactor, ...
 NMO: x, v
-NMOcorrect: x, thrs, v, method
+NMOcorrect: x, thrs, v, rmNARows, method
 NMOstack: x, thrs, v, method
 NMOstreching: x, v
 obbox: x
@@ -59,16 +56,14 @@ plotCMPhyperbolas: x, ...
 plotDelineations: x, method, col, ...
 plotVel: x
 plotVelLayers: obj, method, col, ...
-project: x, CRSobj
 relPos: x
-resampleRegGrid: x, dx, dz, method, track
+resampleRegGrid: obj, dx, dz, method, track
 reverse: x, id, tol, onlyData, track
 rmDCShift: obj, u, FUN, ..., track
 rmDelineations<-: x, value
 scale1D: obj, type, track
 setTime0: obj, t0, track
 setVel: x, v, twt, type
-shift: x, z, method, crop, track
 shiftTopo: x, method, crop, track
 shiftToTime0: obj, method, crop, track
 smooth2D: x, method, ...

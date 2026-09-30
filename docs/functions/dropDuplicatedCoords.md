@@ -17,4 +17,8 @@ dropDuplicatedCoords(x, tol = NULL, z = FALSE, verbose = TRUE)
 - `z`: (`logical[1]`) If `TRUE`, the third dimension (z-dimension) will also be accounted for.
 - `verbose`: Logical. `TRUE`: a message will be thrown, `FALSE`: no message will be thrown.
 
+## Description
+
 Checks for duplicates trace positions (up to precision defined by 'tol') and remove them from 'x' (object of the class GPR or GPRsurvey).
+
+

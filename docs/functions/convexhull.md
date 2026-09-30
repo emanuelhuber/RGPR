@@ -18,4 +18,8 @@ convexhull(x, verbose = FALSE)
 - `x`: (`GPR|GPRsurvey`)
 - `verbose`: (`logical[1]`) If `FALSE`, all messages and warnings are suppressed (use with care).
 
+## Description
+
 Return the convex hull.
+
+

@@ -12,8 +12,12 @@ readHD(dsn)
 
 (`list(3)`) Three-elements list: `HD` containing the header info, `ntr` the number of trace and `npt` the number of points per trace.
 
+## Description
+
 Read Sensors and Software .HD file
 
 ## See Also
 
 `readDT1()`, `readGPS()`
+
+

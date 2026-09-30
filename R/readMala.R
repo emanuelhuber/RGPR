@@ -32,6 +32,7 @@
 #'   \item{x_gps}{An \code{sf} object with GPS data, or \code{NULL}.}
 #'
 #' @keywords internal
+#' @noRd
 .read_rd3 <- function(dsn, fName, fPath, desc, Vmax, verbose, ...) {
   
   # Determine which variant is present and its byte width

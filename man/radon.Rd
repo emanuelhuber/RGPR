@@ -39,16 +39,3 @@ Numeric matrix: the Radon transform (sinogram) with rows corresponding to rho bi
 This function is an R wrapper for the C++ implementation \code{radon_transform_rcpp}.
 It computes the discrete Radon transform (sinogram) of a given 2D numeric image.
 }
-\examples{
-# Generate a simple test image
-n <- 64
-img <- matrix(0, n, n)
-mid <- n/2
-img[mid, ] <- 1
-img[, mid] <- 1
-
-# Compute sinogram
-sino <- radon_wrapper(img, n_theta = 180, n_rho = 90)
-image(t(sino[nrow(sino):1, ]), col = gray.colors(256), main = 'Sinogram')
-
-}

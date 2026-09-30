@@ -13,4 +13,8 @@ pathLength(xy, lonlat = FALSE)
 
 Path length.
 
+## Description
+
 Path length
+
+

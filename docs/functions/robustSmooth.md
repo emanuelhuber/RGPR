@@ -20,4 +20,8 @@ robustSmooth(
 - `extrapolate`: a logical indicating whether the level estimations should be extrapolated to the edges of the time series. See `[robfilter:hybrid.filter()]`.
 - `minNonNAs`: a positive integer defining the minimum number of non-missing observationswithin each window (half) which is required for a 'sensible' estimation. See `[robfilter:hybrid.filter()]`.
 
+## Description
+
 A wrapper for the functions `robfilter::hybrid.filter` and `smooth.spline`
+
+

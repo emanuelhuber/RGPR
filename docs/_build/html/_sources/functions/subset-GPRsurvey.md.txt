@@ -6,6 +6,9 @@ x[i, j, ..., drop = TRUE]
 
 ## S4 method for signature 'GPRsurvey,ANY,ANY'
 x[[i, j, ..., exact = TRUE]]
+
+## S4 replacement method for signature 'GPRsurvey,ANY,ANY,GPR'
+x[[i, j, ...]] <- value
 ```
 
 ## Arguments
@@ -21,4 +24,12 @@ x[[i, j, ..., exact = TRUE]]
 
 (`GPRsurvey`)
 
+## Description
+
+Subsetting a GPRsurvey returns a view. A view does not create a new HDF5 file. It remains backed by the original HDF5 file and is not modified in place.
+
+## Details
+
 Extract parts of a GPRsurvey object
+
+

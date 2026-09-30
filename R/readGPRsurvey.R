@@ -1,6 +1,6 @@
-# =============================================================================
+# ============================================================================ #
 # readGPRsurvey()  -  reconstruct a GPRsurvey from an existing HDF5 file
-# =============================================================================
+# ============================================================================ #
 
 #' Read a GPRsurvey object from an HDF5 file
 #'
@@ -98,9 +98,9 @@ readGPRsurvey <- function(file) {
 }
 
 
-# =============================================================================
+# ============================================================================ #
 # Internal helpers
-# =============================================================================
+# ============================================================================ #
 
 #' Read a single GPR line from an HDF5 file
 #'
@@ -109,6 +109,7 @@ readGPRsurvey <- function(file) {
 #'
 #' @return Object of class `GPR`.
 #' @keywords internal
+#' @noRd
 .read_GPR_line_hdf5 <- function(dsn, name) {
 
   h5 <- hdf5r::H5File$new(dsn, mode = "r")
@@ -131,39 +132,40 @@ readGPRsurvey <- function(file) {
   crs_val <- if (nzchar(crs_str)) crs_str else NA_character_
 
   # -- coordinates (optional groups) -------------------------------------------
-  coord <- matrix(numeric(0), nrow = 0L, ncol = 3L)
-  rec   <- coord
-  trans <- coord
+  emptymat <- matrix(numeric(0), nrow = 0L, ncol = 3L)
   if (grp$exists("coords")) {
     cg <- grp[["coords"]]
-    if (cg$exists("xyz"))   coord <- cg[["xyz"]]$read()
-    if (cg$exists("rec"))   rec   <- cg[["rec"]]$read()
-    if (cg$exists("trans")) trans <- cg[["trans"]]$read()
+    coord <- .h5_read_if_exists(cg, "xyz", emptymat)
+    rec   <- .h5_read_if_exists(cg, "rec", emptymat)
+    trans <- .h5_read_if_exists(cg, "trans", emptymat)
   }
 
   # -- velocity model -----------------------------------------------------------
   vel <- list(v = NULL)
-  if (grp$exists("vel") && grp[["vel"]]$exists("v")) {
-    vel$v <- grp[["vel"]][["v"]]$read()
+  # if (grp$exists("vel") && grp[["vel"]]$exists("v")) {
+  #   vel$v <- grp[["vel"]][["v"]]$read()
+  # }
+  if (grp$exists("vel") ) {
+    vel <- .h5_read_list(grp, "vel")
   }
 
-  # -- raw metadata (`@md`) -----------------------------------------------------
-  # Prefer the lossless serialized copy (`metadata_raw`, see
-  # `.h5_write_r_object()` in hdf5_update.R); fall back to the flattened,
-  # scalars-only `metadata` group for files written before `metadata_raw`
-  # existed.
-  md <- list()
-  if (grp$exists("metadata_raw")) {
-    md <- tryCatch(.h5_read_r_object(grp, "metadata_raw"), error = function(e) list())
-  }
-  if (length(md) == 0L && grp$exists("metadata")) {
-    mg   <- grp[["metadata"]]
-    keys <- names(mg)
-    for (key in keys) {
-      val       <- mg[[key]][]
-      md[[key]] <- if (identical(val, "NA")) NA else val
-    }
-  }
+  # # -- raw metadata (`@md`) -----------------------------------------------------
+  # # Prefer the lossless serialized copy (`metadata_raw`, see
+  # # `.h5_write_r_object()` in hdf5_update.R); fall back to the flattened,
+  # # scalars-only `metadata` group for files written before `metadata_raw`
+  # # existed.
+  # md <- list()
+  # if (grp$exists("metadata_raw")) {
+  #   md <- tryCatch(.h5_read_r_object(grp, "metadata_raw"), error = function(e) list())
+  # }
+  # if (length(md) == 0L && grp$exists("metadata")) {
+  #   mg   <- grp[["metadata"]]
+  #   keys <- names(mg)
+  #   for (key in keys) {
+  #     val       <- mg[[key]][]
+  #     md[[key]] <- if (identical(val, "NA")) NA else val
+  #   }
+  # }
 
   new("GPR",
       version  = .attr(grp, "version", "0.3"),
@@ -179,15 +181,23 @@ readGPRsurvey <- function(file) {
       xunit    = .attr(grp, "xunit",  "m"),
       zunit    = .attr(grp, "zunit",  "ns"),
       spunit   = .attr(grp, "spunit", ""),
+      
+      dlab     = .attr(grp, "dlab", ""),
+      xlab     = .attr(grp, "xlab", ""),
+      zlab     = .attr(grp, "zlab", ""),
+      
       data     = grp[["data"]][1:nz, 1:nx],
       z        = grp[["z"]][],
       x        = grp[["x"]][],
       z0       = grp[["z0"]][],
+      time     = .h5_read_if_exists(grp, "time", numeric(0)),
+      angles   = .h5_read_if_exists(grp, "angles", numeric(0)),
       markers  = grp[["markers"]][],
+      ann  = grp[["ann"]][],
       coord    = coord,
       rec      = rec,
       trans    = trans,
-      vel      = vel,
-      md       = md
+      vel      = vel #,
+      # md       = md
   )
 }

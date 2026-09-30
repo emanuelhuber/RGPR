@@ -27,4 +27,8 @@ spunit(x) <- value
 
 (`GPR class`) An object of the class `GPR`
 
+## Description
+
 Spatial unit of the trace coordinates
+
+

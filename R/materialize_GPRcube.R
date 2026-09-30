@@ -60,7 +60,11 @@ setMethod(
     
     gx <- obj@center[1] + seq(0, by = obj@dx, length.out = nx)
     gy <- obj@center[2] + seq(0, by = obj@dy, length.out = ny)
-    vz <- obj@center[3] + seq(0, by = obj@dz, length.out = nz)
+    vz <- obj@z   # depths/times of obj's own slices (see GPRcube-class)
+    if (length(vz) != nz) {
+      stop("Internal error: length(obj@z) (", length(vz), ") does not match ",
+           "the number of z-slices (", nz, ").", call. = FALSE)
+    }
     
     if (isH5Backed(obj)) {
       # There IS a backing HDF5 file (obj is a view, or a "whole"

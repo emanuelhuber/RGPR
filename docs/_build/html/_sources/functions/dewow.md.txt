@@ -1,34 +1,45 @@
 # Trace dewowing
 
 ```r
-dewow(x, type = c("runmed", "runmean", "gaussian"), w = NULL, track = TRUE)
+dewow(obj, type = c("runmed", "runmean", "gaussian"), w = NULL, track = TRUE)
 
 ## S4 method for signature 'GPR'
-dewow(x, type = c("runmed", "runmean", "gaussian"), w = NULL, track = TRUE)
+dewow(obj, type = c("runmed", "runmean", "gaussian"), w = NULL, track = TRUE)
 ```
 
 ## Arguments
 
-- `x`: (`GPR`) An object of the class GPR.
-- `type`: (`character[1]`) Dewow method, one of `runmed` (running median), `runmean` (running mean), `Gaussian` (Gaussian smoothing).
-- `w`: (`numeric[1]`) If `type` = `runmed`, `MAD` or `runmean`, window length of the filter in trace unit; If `type` = `Gaussian`, standard deviation in trace unit. If `w = NULL`, `w` is estimated as five times the wavelength corresponding to the maximum frequency of x (estimated with spec )
+- `obj`: (`GPR`) A GPR object.
+- `type`: (`character[1]`) Dewow method. One of:
+    
+     * `runmed` for running median filtering;
+     * `runmean` for running mean filtering;
+     * `Gaussian` for Gaussian smoothing.
+- `w`: (`numeric[1]|NULL`) Filter width. For `runmed`, `MAD`, and `runmean`, this corresponds to the window length (in trace units). For `Gaussian`, it corresponds to the standard deviation (in trace units).
+    
+    If `NULL`, `w` is estimated as five times the wavelength associated with the maximum frequency of `obj` estimated by `spec()`.
+- `track`: (`logical[1]`) Should the processing step be tracked?
 
 ## Returns
 
-(`GPR`) An object of the class GPR whose traces are dewowed.
+(`GPR`) A dewowed GPR object.
 
-`dewow` remove the low-frequency component (the so-called 'wow') of every traces.
+## Description
+
+Removes the low-frequency component (the so-called **wow**) from each trace.
 
 ## Details
 
-The low-frequency component is computed by different methods:
+The low-frequency component can be estimated using:
 
- * `runmed` running median based on stats::runmed
- * `runmean` running mean based on stats::filter
- * `MAD` DEPRECATED - Median Absolute Deviation filter
- * `Gaussian` Gaussian smoothing applied to the trace samples after time-zero based on mmand::gaussianSmooth
+ * `runmed`: running median based on `stats::runmed()`.
+ * `runmean`: running mean based on `stats::filter()`.
+ * `MAD`: deprecated Median Absolute Deviation filter.
+ * `Gaussian`: Gaussian smoothing applied to trace samples after time-zero based on `mmand::gaussianSmooth()`.
 
 Modified slots:
 
- * `data`: trace dewowed.
+ * `data`: dewowed traces.
  * `proc`: updated with function name and arguments.
+
+

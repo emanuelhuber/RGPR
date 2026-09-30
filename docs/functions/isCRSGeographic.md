@@ -30,4 +30,8 @@ isCRSGeographic(x)
 
 (`logical`) `TRUE` if lon/lat else `FALSE`
 
+## Description
+
 Returns `TRUE` or `FALSE`.
+
+

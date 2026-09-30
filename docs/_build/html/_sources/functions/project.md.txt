@@ -15,6 +15,8 @@ project(x, CRSobj)
 - `x`: Object of the class GPR
 - `CRSobj`: (`character[1]`) A string accepted by GDAL (e.g., `"EPSG:2056"`, WKT-string).
 
+## Description
+
 Project the trace coordinates give a coordinate reference system.
 
 ## Details
@@ -25,3 +27,5 @@ Modified slots
  * `x` the local trace position (along profile)
  * `crs` the coordinate reference system.
  * `spunit` the spatial units are updated accroding to the new coordinate reference system.
+
+

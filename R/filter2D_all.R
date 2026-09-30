@@ -596,11 +596,12 @@ setMethod("filter2Dimsharpen", "GPRvirtual", function(obj, amplitude = 1, type =
 #' @return GPR object
 #'
 #' @examples
+#' \dontrun{
 #' set.seed(1)
 #' img <- matrix(runif(100), nrow = 10)
 #' enhanced <- local_contrast_enhancement(img, window_size = 5)
 #' print(enhanced)
-#'
+#' }
 #' @rdname filter2D
 #' @export
 setGeneric("filter2DlocalContrast", function(obj, win = 3, alpha = 0.1, epsilon = sqrt(.Machine$double.eps), ..., track = TRUE)
@@ -865,11 +866,12 @@ setMethod("filter2DlocalContrast", "GPRvirtual", function(obj,  win = 3, alpha =
 #' @return Numeric matrix of same size as image_matrix, normalized to `[0,1]`.
 #'
 #' @examples
+#' \dontrun{
 #' set.seed(1)
 #' gpr_slice <- matrix(rnorm(100, 0, 0.05), nrow = 10)
 #' enhanced_slice <- smooth_sparse_gpr_image(gpr_slice, scale = 0.05, power = 2)
 #' print(enhanced_slice)
-#'
+#' }
 #' @rdname filter2D
 #' @export
 setGeneric("filter2DsmoothSparse", function(obj, scale = 0.05, power = 1.5, ..., track = TRUE)

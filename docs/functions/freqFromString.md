@@ -1,4 +1,4 @@
-# Extract frequency from string
+# Extract a frequency value (in MHz) from a free-form antenna name string
 
 ```r
 freqFromString(s)
@@ -6,21 +6,14 @@ freqFromString(s)
 
 ## Arguments
 
-- `s`: (`character`) Character string that may contain an indication of a frequency.
+- `ant_name`: (`character`) Antenna name string(s).
 
 ## Returns
 
-(`numeric`) The frequency (`NA` if no frequency value is found)
+(`numeric`) Frequency in MHz, or `NA` if none found.
 
-Extract with regex the antenna frequency in a string
+## Description
 
-## Examples
+Falls back to pattern matching on strings like `"800 MHz"`, `"1.5GHz"`, etc. when `getAntFreqGSSI` returns `NA`.
 
-```r
-s <- "1230 fds 200-MHZ 12.3"
-freqFromString(s) 
-s <- "1230MLF"
-freqFromString(s) 
-s <- "D1230MLF"
-freqFromString(s)
-```
+

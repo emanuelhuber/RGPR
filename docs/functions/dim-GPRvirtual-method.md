@@ -9,4 +9,8 @@ dim(x)
 
 - `x`: (`GPR`)
 
+## Description
+
 Return the number of rows (samples per trace) and columns (samples per trace).
+
+

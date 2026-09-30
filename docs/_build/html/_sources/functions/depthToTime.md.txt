@@ -15,4 +15,8 @@ depthToTime(x, t0, v = 0.1, antsep = 1)
 
 (`numeric`) Corresponding two-way travel time
 
+## Description
+
 Convert depth to the equivalent two-way travel time by accounting for the antenna separation between the transmitter and the receiver.
+
+

@@ -9,4 +9,8 @@ length(x)
 
 - `x`: (`GPR`)
 
+## Description
+
 Return length of a GPR object (number of traces)
+
+

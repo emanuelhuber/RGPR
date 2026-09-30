@@ -9,4 +9,8 @@ nrow(x)
 
 - `x`: (`GPR`)
 
+## Description
+
 Number of rows (samples per trace)
+
+

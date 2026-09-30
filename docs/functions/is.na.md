@@ -7,10 +7,14 @@ is.na(x)
 
 ## Arguments
 
-- `x`: (`GPR*`)
+- `x`: (`GPR* object`)
 
 ## Returns
 
-(`GPR*`) With logical values (`TRUE` is the value is `NA`, `FALSE` if not.)
+(`GPR* object`) With logical values (`TRUE` is the value is `NA`, `FALSE` if not.)
+
+## Description
 
 Indicates which elements are missing.
+
+

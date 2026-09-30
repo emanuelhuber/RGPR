@@ -2,7 +2,7 @@
 #' @name CMPAnalysis
 #' @rdname CMPAnalysis-methods
 #' @exportMethod CMPAnalysis
-setGenericVerif("CMPAnalysis", function(x, method = c("semblance", 
+setGeneric("CMPAnalysis", function(x, method = c("semblance", 
                                                       "winsemblance", "wincoherence", "wincoherence2"), v = NULL, 
                                         w = NULL) standardGeneric("CMPAnalysis"))
 

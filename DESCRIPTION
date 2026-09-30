@@ -21,6 +21,7 @@ URL: https://github.com/emanuelhuber/RGPR
 BugReports: https://github.com/emanuelhuber/RGPR/issues
 LazyData: true
 Encoding: UTF-8
+ByteCompile: true
 Collate:
 	'RGPR.R'
 	'global.R'    
@@ -148,6 +149,7 @@ Collate:
   'interpolateTimeToDepth.R'
   'inspect.R'
   'coercion_spatial.R'
+  'RcppExports.R'
 Imports:
     methods,
     graphics,
@@ -175,8 +177,14 @@ Imports:
     png,
     units,
     hdf5r,
-    ggplot2
+    ggplot2,
+    Rcpp
+LinkingTo:
+  Rcpp
+SystemRequirements: C++11
 Suggests: 
     testthat,
     plotly
-Config/roxygen2/version: 8.0.0
+Config/testthat/edition: 3
+Config/roxygen2/version: 8.1.0
+

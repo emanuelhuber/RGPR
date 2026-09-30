@@ -50,3 +50,8 @@
 #' @references Several books!
 "_PACKAGE"
 #> [1] "_PACKAGE"
+
+
+#' @useDynLib RGPR
+#' @importFrom Rcpp sourceCpp
+NULL

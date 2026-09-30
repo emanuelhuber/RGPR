@@ -23,7 +23,7 @@
 #' @export
 #' @name ACF
 #' @rdname ACF
-setGenericVerif("ACF", function(x,
+setGeneric("ACF", function(x,
                                 lag.max   = 100,
                                 type      = c("correlation", "covariance", "partial"),
                                 MARGIN    = 2,

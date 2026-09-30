@@ -5,6 +5,16 @@
 \alias{CCF}
 \title{Auto-Correlation and Cross-Covariance Function Estimation}
 \usage{
+ACF(
+  x,
+  lag.max = 100,
+  type = c("correlation", "covariance", "partial"),
+  MARGIN = 2,
+  na.action = na.fail,
+  demean = TRUE,
+  ...
+)
+
 \S4method{ACF}{GPR}(
   x,
   lag.max = 100,

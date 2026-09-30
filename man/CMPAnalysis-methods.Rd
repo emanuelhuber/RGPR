@@ -5,6 +5,13 @@
 \alias{CMPAnalysis,GPR-method}
 \title{Velocity Analysis of CMP Gather}
 \usage{
+CMPAnalysis(
+  x,
+  method = c("semblance", "winsemblance", "wincoherence", "wincoherence2"),
+  v = NULL,
+  w = NULL
+)
+
 \S4method{CMPAnalysis}{GPR}(
   x,
   method = c("semblance", "winsemblance", "wincoherence", "wincoherence2"),

@@ -306,7 +306,7 @@ setMethod(
     dots <- list(...)
     
     if (!is.null(dots$max_depth)) max_depth <- dots$max_depth
-    if (!is.null(dots$dz))        dz        <- dots$dz
+    # if (!is.null(dots$dz))        dz        <- dots$dz
     if (!is.null(dots$vel_mode))  vel_mode  <- dots$vel_mode
     if (!is.null(dots$vel_dx))    vel_dx    <- dots$vel_dx
     if (!is.null(dots$vel_dz))    vel_dz    <- dots$vel_dz
